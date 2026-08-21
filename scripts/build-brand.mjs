@@ -467,14 +467,14 @@ async function main() {
   const fav16 = await resizeSquare(fav512, 16);
   const ico = icoFromPngs([fav16, fav32, fav48]);
   const faviconSvg = svgWrapPng(fav256, 256);
-  const apple = await glyphTile(180, sevens, 0.8);
+  const apple = await glyphTile(180, mark, 0.82);
 
-  // Avatars: the 77 numerals — the established profile identity — cut from the
-  // painted lockup, big enough to survive Discord's smallest circle renders.
-  const avatar1024 = await glyphTile(1024, sevens, 0.88);
+  // Avatars: the //77 mark, same composition as the app icon but on a square
+  // canvas — Discord applies its own circle mask, baked corners would clip.
+  const avatar1024 = await glyphTile(1024, mark, 0.82);
   const avatar512 = await resizeSquare(avatar1024, 512);
   const avatar200 = await resizeSquare(avatar1024, 200);
-  const avatarCircle = await glyphTile(1024, sevens, 0.78, { circle: true });
+  const avatarCircle = await glyphTile(1024, mark, 0.76, { circle: true });
 
   // Social banners: the full lockup on the glow background.
   const og = await compositeOnGlow(darkFull, 1200, 630, 0.72);
