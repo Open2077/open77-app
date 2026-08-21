@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useId, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 
 import { useFavorites } from "@/components/favorites";
-import { FilterIcon, PlugIcon, SearchIcon, StarIcon } from "@/components/icons";
+import { DiscordIcon, FilterIcon, PlugIcon, SearchIcon, StarIcon } from "@/components/icons";
 import { useToast } from "@/components/toast";
+import { site } from "@/lib/site";
 import {
   LANGUAGES,
   PRIMARY_MODES,
@@ -342,34 +343,66 @@ export function ServerBrowser({
         </label>
       </div>
 
-      <div className="sb-layout">
-        <section className="sb-col-main" aria-label="All servers">
-          <div className="sb-col-head">
-            <h2>All servers</h2>
-            <span className="sb-count">
-              {visible.length} / {servers.length} (demo)
-            </span>
-          </div>
-          <ul className="sb-list">
-            {visible.map((server) => (
-              <ServerRow
-                key={server.id}
-                server={server}
-                isFavorite={isFavorite(server.id)}
-                onToggleFavorite={() => toggle(server.id)}
-                onConnect={() => showToast("Connecting goes live with the first public build.")}
-              />
-            ))}
-            {visible.length === 0 ? (
-              <li className="server-empty">
-                No servers match these filters. Clear the search or pick another mode.
-              </li>
+      {servers.length === 0 ? (
+        /* The honest default: the directory is empty until the real API is
+           wired in, and pretending otherwise is exactly what this page must
+           never do. The toolbar above stays — it shows the shape of the
+           product — but the listing area says what is actually true. */
+        <div className="sb-offline" role="status">
+          <p className="sb-offline-title">
+            <span className="live-dot live-dot-idle" aria-hidden="true" /> NO SERVERS LIVE YET
+          </p>
+          <p className="sb-offline-body">
+            The public directory opens with the first alpha build. The moment communities bring
+            their worlds online, they show up right here — this browser is already wired for it.
+          </p>
+          <div className="sb-offline-ctas">
+            {site.links.discord ? (
+              <a
+                className="btn btn-discord"
+                href={site.links.discord}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                <DiscordIcon size={16} />
+                Join our Discord
+              </a>
             ) : null}
-          </ul>
-        </section>
+            <Link className="btn btn-ghost" href="/create">
+              Plan your own server
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="sb-layout">
+          <section className="sb-col-main" aria-label="All servers">
+            <div className="sb-col-head">
+              <h2>All servers</h2>
+              <span className="sb-count">
+                {visible.length} / {servers.length} (demo)
+              </span>
+            </div>
+            <ul className="sb-list">
+              {visible.map((server) => (
+                <ServerRow
+                  key={server.id}
+                  server={server}
+                  isFavorite={isFavorite(server.id)}
+                  onToggleFavorite={() => toggle(server.id)}
+                  onConnect={() => showToast("Connecting goes live with the first public build.")}
+                />
+              ))}
+              {visible.length === 0 ? (
+                <li className="server-empty">
+                  No servers match these filters. Clear the search or pick another mode.
+                </li>
+              ) : null}
+            </ul>
+          </section>
 
-        {featured}
-      </div>
+          {featured}
+        </div>
+      )}
 
       {toastNode}
     </>

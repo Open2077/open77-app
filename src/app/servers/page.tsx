@@ -11,7 +11,7 @@ import { serverDirectory, type GameServer } from "@/lib/servers";
 export const metadata = pageMetadata({
   title: "Server browser",
   description:
-    "Browse OPEN//77 community servers for Cyberpunk 2077. Search, compare player counts, filter by mode, region and language. Pre-alpha: listings are demo data until the first public build.",
+    "Browse OPEN//77 community servers for Cyberpunk 2077. Search, compare player counts, filter by mode, region and language. Pre-alpha: the public directory opens with the first alpha build.",
   path: "/servers",
 });
 
@@ -71,14 +71,23 @@ export default async function ServersPage() {
               <Eyebrow>SERVER BROWSER</Eyebrow>
               <h1 className="sb-title">Find your world.</h1>
             </div>
-            <DemoDataNotice />
+            {servers.length > 0 ? <DemoDataNotice /> : null}
           </header>
 
-          <ServerBrowser servers={servers} featured={<FeaturedRail servers={featured} />} />
+          <ServerBrowser
+            servers={servers}
+            featured={featured.length > 0 ? <FeaturedRail servers={featured} /> : null}
+          />
         </div>
       </main>
 
-      <SiteFooter fineprint="Pre-alpha. All server listings on this page are demo data, not live statistics." />
+      <SiteFooter
+        fineprint={
+          servers.length > 0
+            ? "Pre-alpha. All server listings on this page are demo data, not live statistics."
+            : "Pre-alpha. No public servers exist yet; the directory opens with the first alpha build."
+        }
+      />
 
       {/*
         Deliberately no ItemList of the listings: emitting structured data for
@@ -91,7 +100,7 @@ export default async function ServersPage() {
           collectionPageNode({
             name: "OPEN//77 server browser",
             description:
-              "Directory of OPEN//77 community servers for Cyberpunk 2077. During pre-alpha the listings are illustrative demo data rather than live servers.",
+              "Directory of OPEN//77 community servers for Cyberpunk 2077. During pre-alpha no public servers exist; live listings arrive with the first alpha build.",
             path: "/servers",
           }),
           breadcrumbNode([

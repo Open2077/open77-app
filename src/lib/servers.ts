@@ -1,4 +1,4 @@
-import { DEMO_HANDLES, DEMO_SERVERS } from "@/lib/servers-demo";
+import { DEMO_HANDLES } from "@/lib/servers-demo";
 
 export type ServerRegion = "EU" | "NA" | "SA" | "AS" | "OC";
 export type ServerLanguage = "EN" | "FR" | "DE" | "ES";
@@ -40,20 +40,22 @@ export const LANGUAGES: ServerLanguage[] = ["EN", "FR", "DE", "ES"];
 /**
  * The server directory.
  *
- * `isLive` is false while the listings come from `servers-demo.ts`; every
- * surface that renders servers checks it and shows the demo notice. Replacing
- * this object with a `fetch` against the real directory and flipping `isLive`
- * is the entire migration.
+ * Empty on purpose: no public servers exist during pre-alpha, and the browser
+ * renders its honest "no servers live yet" state from an empty list. Pointing
+ * `list`/`get` at the real directory API and flipping `isLive` is the entire
+ * migration; `servers-demo.ts` is kept for previewing the populated browser
+ * locally.
  */
 export const serverDirectory = {
   isLive: false as boolean,
 
   async list(): Promise<GameServer[]> {
-    return DEMO_SERVERS;
+    return [];
   },
 
   async get(id: string): Promise<GameServer | null> {
-    return DEMO_SERVERS.find((server) => server.id === id) ?? null;
+    void id; // the real directory looks this up; the empty one has nothing to find
+    return null;
   },
 };
 
