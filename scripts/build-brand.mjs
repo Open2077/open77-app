@@ -482,6 +482,7 @@ async function main() {
   const bannerDiscord = await compositeOnGlow(darkFull, 1920, 1080, 0.6);
   const bannerDiscordServer = await compositeOnGlow(darkFull, 960, 540, 0.62);
   const bannerYoutube = await compositeOnGlow(darkFull, 2560, 1440, 0.54);
+  const bannerTiktok = await compositeOnGlow(darkFull, 1080, 1920, 0.86);
 
   await writePng(path.join(BRAND, "logo", "open77-logo-dark.png"), uiDark);
   await writePng(path.join(BRAND, "logo", "open77-logo-light.png"), uiLight);
@@ -511,6 +512,15 @@ async function main() {
   await writePng(path.join(BRAND, "social", "banner-discord-1920x1080.png"), bannerDiscord);
   await writePng(path.join(BRAND, "social", "banner-discord-server-960x540.png"), bannerDiscordServer);
   await writePng(path.join(BRAND, "social", "banner-youtube-2560x1440.png"), bannerYoutube);
+  await writePng(path.join(BRAND, "social", "banner-tiktok-1080x1920.png"), bannerTiktok);
+
+  // Content hash of the OG card, appended to its URL as ?v= by src/lib/site.ts.
+  // Link scrapers (Discord, Telegram) and the CDN cache previews per URL, so a
+  // regenerated card must move to a fresh URL or nobody ever refetches it.
+  await writeFile(
+    path.join(ROOT, "src", "lib", "brand-assets.json"),
+    `${JSON.stringify({ ogCard: createHash("sha256").update(og).digest("hex").slice(0, 8) }, null, 2)}\n`,
+  );
 
   const kitFiles = await collectBrandFiles(BRAND);
   const zip = zipStore(kitFiles);

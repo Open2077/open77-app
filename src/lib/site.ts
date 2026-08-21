@@ -6,6 +6,8 @@
  * to render a disabled state instead of a dead anchor.
  */
 
+import brandAssets from "./brand-assets.json";
+
 /**
  * Canonical origin. Always the production origin, even on preview deployments,
  * so canonical URLs and structured data never point at a throwaway host.
@@ -42,7 +44,12 @@ export const site = {
     "or sponsored by CD PROJEKT S.A. “Cyberpunk”, “Cyberpunk 2077” and related marks are trademarks of " +
     "CD PROJEKT S.A. Game imagery is used for illustration of a fan project. Playing on OPEN//77 will " +
     "always require your own legal copy of Cyberpunk 2077.",
-  ogImage: "/brand/social/og-card-1200x630.png",
+  /**
+   * The ?v= content hash moves the URL whenever the card is regenerated:
+   * Discord, Telegram and the CDN all cache link previews per URL and would
+   * otherwise keep showing the old image forever.
+   */
+  ogImage: `/brand/social/og-card-1200x630.png?v=${brandAssets.ogCard}`,
   links: {
     /**
      * The platform repository is not public yet, so this is `null` rather than

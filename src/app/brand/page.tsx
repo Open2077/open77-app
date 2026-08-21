@@ -142,6 +142,14 @@ const BANNER_TILES: BrandTile[] = [
     banner: true,
     downloads: [{ href: "/brand/social/banner-youtube-2560x1440.png", label: "PNG" }],
   },
+  {
+    preview: "/brand/social/banner-tiktok-1080x1920.png",
+    previewAlt: "TikTok vertical card, 1080 by 1920",
+    tone: "bt-dark",
+    caption: "TikTok vertical 1080×1920",
+    banner: true,
+    downloads: [{ href: "/brand/social/banner-tiktok-1080x1920.png", label: "PNG" }],
+  },
 ];
 
 const PALETTE = [
