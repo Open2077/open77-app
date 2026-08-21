@@ -246,7 +246,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section light-zone" id="script">
+        <section className="section light-zone" id="lua">
           <span className="lz-corner" aria-hidden="true">
             <i />
             <i />
