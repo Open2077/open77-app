@@ -49,7 +49,7 @@ export const REQUIREMENTS_SERVER_INTRO =
 export const PLAYER_STEPS = [
   {
     title: "Own the game",
-    body: `OPEN//77 requires your own legal copy of Cyberpunk 2077, at build ${GAME_BUILD}, with the ${GAME_EXPANSION} expansion. The platform never distributes game content — it builds on the game you already have.`,
+    body: `OPEN//77 requires your own legal copy of Cyberpunk 2077, at build ${GAME_BUILD}, with ${GAME_EXPANSION}. The platform never distributes game content — it builds on the game you already have.`,
   },
   {
     title: "Install the client",
@@ -203,7 +203,7 @@ export const FAQ = [
   {
     question: "Do I need to own Cyberpunk 2077?",
     answer:
-      `Yes, always. OPEN//77 never distributes the game or its assets. You need your own legal copy of Cyberpunk 2077 on 64-bit Windows, at game build ${GAME_BUILD}, with the ${GAME_EXPANSION} expansion installed. The platform adds multiplayer infrastructure on top of it.`,
+      `Yes, always. OPEN//77 never distributes the game or its assets. You need your own legal copy of Cyberpunk 2077 on 64-bit Windows, at game build ${GAME_BUILD}, with ${GAME_EXPANSION} installed. The platform adds multiplayer infrastructure on top of it.`,
   },
   {
     question: `Is ${GAME_EXPANSION} required, or only recommended?`,

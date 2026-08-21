@@ -27,6 +27,7 @@
   .hero-facts li:nth-child(-n+2) { border-top: 0; }
   .hero-facts li + li { border-left: 0; }
   .hero-facts li:nth-child(even) { border-left: 1px solid var(--line); padding-left: 18px; }
+  .hero-fact-requires .fact-v { white-space: normal; }
 
   .distinction-grid { grid-template-columns: 1fr; }
 

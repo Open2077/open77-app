@@ -24,7 +24,7 @@
  */
 
 export const GAME_BUILD = "2.31";
-export const GAME_EXPANSION = "Phantom Liberty";
+export const GAME_EXPANSION = "Phantom Liberty DLC";
 
 /** The one-line version, for the hero and for structured data. */
 export const PLAYER_REQUIREMENT_SHORT = `Cyberpunk 2077 ${GAME_BUILD} + ${GAME_EXPANSION}`;

@@ -87,7 +87,9 @@
   padding: 0;
   margin: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* Requires is the long fact; size that column to its one-line value so the
+     others can share the leftover instead of forcing a wrap at 1fr. */
+  grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr) minmax(0, 1fr);
   border-block: 1px solid var(--line);
 }
 .hero-facts li {
@@ -97,6 +99,9 @@
   gap: 3px;
 }
 .hero-facts li + li { border-left: 1px solid var(--line); padding-left: 18px; }
+.hero-fact-requires .fact-v {
+  white-space: nowrap;
+}
 .fact-k {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -104,4 +109,4 @@
   text-transform: uppercase;
   color: var(--text-faint);
 }
-.fact-v { font-size: 14.5px; color: var(--text); font-weight: 500; }
+.fact-v { font-size: 14px; color: var(--text); font-weight: 500; }

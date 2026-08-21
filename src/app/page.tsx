@@ -116,7 +116,7 @@ export default async function HomePage() {
             </div>
             <ul className="hero-facts" aria-label="Platform facts">
               {HERO_FACTS.map((fact) => (
-                <li key={fact.key}>
+                <li key={fact.key} className={fact.key === "Requires" ? "hero-fact-requires" : undefined}>
                   <span className="fact-k">{fact.key}</span>
                   <span className="fact-v">{fact.value}</span>
                 </li>
