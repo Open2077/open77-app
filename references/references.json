@@ -1,0 +1,62 @@
+[
+  {
+    "source": "https://fivem.net",
+    "capture": "shots/fivem-home.png",
+    "type": "layout",
+    "takeaway": "Dark blue-charcoal (#161923) + ivory text + one neon accent (#F40552); live player count next to the download CTA is the credibility engine; secondary CTA 'CREATE YOUR OWN SERVER' in spaced mono uppercase splits the audience in the hero."
+  },
+  {
+    "source": "https://fivem.net",
+    "capture": "shots/fivem-full.png",
+    "type": "component",
+    "takeaway": "Feature grid of flat square-cornered cards (icon + short claim) over a dimmed in-game screenshot; the whole page is one background with sections separated by density, not color bands."
+  },
+  {
+    "source": "https://cfx.re",
+    "capture": "shots/cfx-home.png",
+    "type": "palette",
+    "takeaway": "Near-black + ivory wordmark + pink links and nothing else: extreme restraint is what makes a modding platform read as an institution, not a fan page."
+  },
+  {
+    "source": "https://vercel.com",
+    "capture": "shots/vercel-home.png",
+    "type": "typography",
+    "takeaway": "Infrastructure legitimacy = enormous tight-tracked display type, monochrome UI, one geometric mark, and a partner-logo wall; color is almost absent so every accent means something."
+  },
+  {
+    "source": "https://tailscale.com",
+    "capture": "shots/tailscale-home.png",
+    "type": "component",
+    "takeaway": "Mono uppercase micro-labels in the utility bar + small line icons on flat feature cards give instant 'serious network product' credibility without any decoration."
+  },
+  {
+    "source": "https://www.cyberpunk.net",
+    "capture": "shots/cyberpunk-home.png",
+    "type": "typography",
+    "takeaway": "Study, don't copy: keep its devices — '///' mono section labels (.NEWS.MODULE_HIGHLIGHT), trailing underscores, notched button corners — and drop its yellow/glitch identity entirely."
+  },
+  {
+    "source": "https://discord.com",
+    "capture": "shots/discord-home.png",
+    "type": "palette",
+    "takeaway": "Nocturnal without pure black: a deep blue-violet field with subtle depth gradient feels like a place (community), where flat #000 feels like a void."
+  },
+  {
+    "source": "https://unsplash.com (Hong Kong street at night)",
+    "capture": "mood/night-city.jpg",
+    "type": "mood",
+    "takeaway": "Night city is mostly deep blue-teal darkness (#02131a) punctuated by small saturated neon signs — neon is punctuation, never the field."
+  },
+  {
+    "source": "https://www.pexels.com/photo/1148820",
+    "capture": "mood/server-racks.jpg",
+    "type": "mood",
+    "takeaway": "Server rack in the dark: near-black blue with one electric cyan LED glow (#01a9e7) — the exact 'quiet infrastructure, live signal' mood of the platform."
+  },
+  {
+    "source": "https://www.pexels.com (circuit board macro)",
+    "capture": "mood/circuit-texture.jpg",
+    "type": "mood",
+    "takeaway": "Dense monochrome circuit texture works as background material at very low contrast — technical depth without color noise."
+  }
+]

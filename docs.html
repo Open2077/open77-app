@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docs — OPEN//77</title>
+  <meta name="description" content="OPEN//77 documentation: how the platform works, dedicated server architecture, resources and the scripting API design, project roadmap and FAQ.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#080E19">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="OPEN//77">
+  <meta property="og:title" content="Docs — OPEN//77">
+  <meta property="og:description" content="OPEN//77 documentation: how the platform works, dedicated server architecture, resources and the scripting API design, project roadmap and FAQ.">
+  <meta property="og:url" content="https://broker-api.kalit.ai/api/flow/ram-preview/d746ec86863d18f6/docs.html">
+  <meta property="og:image" content="https://broker-api.kalit.ai/api/flow/ram-preview/d746ec86863d18f6/brand/social/og-card-1200x630.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://broker-api.kalit.ai/api/flow/ram-preview/d746ec86863d18f6/brand/social/og-card-1200x630.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;600;700&family=Saira:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <div class="header-inner">
+      <a class="wordmark" href="index.html" aria-label="OPEN//77 home">
+        <svg class="logotype" viewBox="0 0 179 26" aria-hidden="true"><g fill="currentColor"><path d="M0 0H19V6L14 7.6V5H0Z M0 0H5V26H0Z M0 21H19V26H0Z M14 10.6L19 9V26H14Z"/><path fill-rule="evenodd" d="M26 0H45V15H31V26H26ZM31 5H40V10H31Z"/><path d="M52 0H71V5H57V10.5H69V15.5H57V21H71V26H52V0Z"/><path d="M78 26V0H83.5L92 15.5V0H97V26H91.5L83 10.5V26H78Z"/><path d="M134 0H153V26H148V5H134V0Z"/><path d="M160 0H179V26H174V5H160V0Z"/></g><path class="lt-s1" d="M112.5 0H117.5L109 26H104L112.5 0Z"/><path class="lt-s2" d="M122 0H127L118.5 26H113.5L122 0Z"/></svg>
+      </a>
+      <nav class="main-nav" id="main-nav" aria-label="Main">
+        <a href="servers.html">Servers</a>
+        <a href="create.html">Create a Server</a>
+        <a href="docs.html" aria-current="page">Docs</a>
+        <a href="community.html">Community</a>
+      </nav>
+      <div class="header-actions">
+        <span class="stage-chip" title="Current development stage">PRE-ALPHA</span>
+        <a class="btn btn-small btn-primary" href="community.html#alpha">Join alpha</a>
+        <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile" hidden>
+      <a href="index.html">Home</a>
+      <a href="servers.html">Servers</a>
+      <a href="create.html">Create a Server</a>
+      <a href="docs.html" aria-current="page">Docs</a>
+      <a href="community.html">Community</a>
+      <a class="btn btn-primary" href="community.html#alpha">Join alpha</a>
+    </nav>
+  </header>
+
+  <main id="main">
+
+    <section class="page-hero page-hero-plain">
+      <div class="section-inner">
+        <p class="eyebrow"><span class="eyebrow-slash">//</span> DOCUMENTATION</p>
+        <h1 class="page-title">How OPEN//77 works.</h1>
+        <p class="section-lead">The platform, the architecture, and the creator toolkit &mdash; documented
+        in the open as the pre-alpha evolves. Design documents, not final specs.</p>
+      </div>
+    </section>
+
+    <div class="section-inner docs-layout">
+      <aside class="docs-sidebar" aria-label="Docs sections">
+        <p class="footer-col-title">On this page</p>
+        <a href="#overview">Overview</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#dedicated-servers">Dedicated servers</a>
+        <a href="#resources">Resources &amp; scripting</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#faq">FAQ</a>
+      </aside>
+
+      <div class="docs-content">
+
+        <!-- OVERVIEW -->
+        <section class="docs-section" id="overview">
+          <h2 class="docs-title"><span class="eyebrow-slash">//</span> Overview</h2>
+          <p class="docs-p">
+            OPEN//77 is an open platform that brings community-run multiplayer servers to
+            Cyberpunk&nbsp;2077 &mdash; the way FiveM opened GTA&nbsp;V. Not one server: an
+            ecosystem of them, each with its own game mode, rules and community.
+          </p>
+          <div class="distinction-grid">
+            <div class="distinction-card is-not">
+              <p class="distinction-label">OPEN//77 is not</p>
+              <ul class="distinction-list">
+                <li>
+                  <svg class="li-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                  One official multiplayer server run by us
+                </li>
+                <li>
+                  <svg class="li-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                  A fixed game mode you have to play
+                </li>
+                <li>
+                  <svg class="li-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                  A peer-to-peer co-op session mod
+                </li>
+                <li>
+                  <svg class="li-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                  A product of CD Projekt RED
+                </li>
+              </ul>
+            </div>
+            <div class="distinction-card is-yes">
+              <p class="distinction-label">OPEN//77 is</p>
+              <ul class="distinction-list">
+                <li>
+                  <svg class="li-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  The infrastructure that lets anyone run a Cyberpunk&nbsp;2077 server
+                </li>
+                <li>
+                  <svg class="li-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  A client that discovers and connects you to community servers
+                </li>
+                <li>
+                  <svg class="li-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  A creator toolkit for building custom game modes and systems
+                </li>
+                <li>
+                  <svg class="li-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 8.5 6.5 12 13 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Common ground for players, server owners and developers
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section class="docs-section" id="how-it-works">
+          <h2 class="docs-title"><span class="eyebrow-slash">//</span> How it works (for players)</h2>
+          <ol class="steps steps-2 docs-steps">
+            <li class="step">
+              <span class="step-num">01</span>
+              <h3>Own the game</h3>
+              <p>OPEN//77 requires your own legal copy of Cyberpunk&nbsp;2077. The platform never
+              distributes game content &mdash; it builds on the game you already have.</p>
+            </li>
+            <li class="step">
+              <span class="step-num">02</span>
+              <h3>Install the client</h3>
+              <p>The OPEN//77 client runs alongside your installation. Your single-player game,
+              saves and mods stay untouched.</p>
+            </li>
+            <li class="step">
+              <span class="step-num">03</span>
+              <h3>Browse the servers</h3>
+              <p>Open the server browser, filter by game mode or language, read a server's page,
+              and pick the world you want to live in tonight.</p>
+            </li>
+            <li class="step">
+              <span class="step-num">04</span>
+              <h3>Connect &amp; play</h3>
+              <p>The client fetches that server's resources automatically and drops you into
+              Night City &mdash; alongside every other player on the same server.</p>
+            </li>
+          </ol>
+        </section>
+
+        <!-- DEDICATED SERVERS -->
+        <section class="docs-section" id="dedicated-servers">
+          <h2 class="docs-title"><span class="eyebrow-slash">//</span> Dedicated servers</h2>
+          <p class="docs-p">
+            OPEN//77 is built around real dedicated servers, not peer-to-peer sessions. A server
+            is a persistent process that a community operates &mdash; it holds the authoritative
+            state of its world, and players connect to it.
+          </p>
+          <ul class="dedicated-points">
+            <li>
+              <h3>Persistent worlds</h3>
+              <p>The world keeps running when you log off. Economies, factions and stories
+              continue &mdash; the server remembers.</p>
+            </li>
+            <li>
+              <h3>Authoritative state</h3>
+              <p>Positions, inventories, vehicles, money: the server decides what's true. That's
+              what makes real economies and fair PvP possible.</p>
+            </li>
+            <li>
+              <h3>Operated by communities</h3>
+              <p>Anyone will be able to run the server software &mdash; on their own hardware or a
+              rented machine &mdash; and set their world's rules, mods and moderation.</p>
+            </li>
+          </ul>
+          <div class="dedicated-diagram docs-diagram" aria-label="Diagram: players connect to a community-run dedicated server which owns the world state">
+            <div class="diagram" id="arch-diagram"></div>
+          </div>
+        </section>
+
+        <!-- RESOURCES -->
+        <section class="docs-section" id="resources">
+          <h2 class="docs-title"><span class="eyebrow-slash">//</span> Resources &amp; scripting</h2>
+          <p class="docs-p">
+            A server is only as interesting as what runs on it. Resources are packages of server
+            and client logic that add systems to a world &mdash; from a taxi job to an entire
+            roleplay framework:
+          </p>
+          <ul class="creators-list">
+            <li><strong>Game modes</strong> &mdash; races, heists, survival rules, team PvP, story co-op</li>
+            <li><strong>Player systems</strong> &mdash; jobs, factions, reputation, character identity</li>
+            <li><strong>Economy</strong> &mdash; currencies, shops, property, player-run markets</li>
+            <li><strong>World interactions</strong> &mdash; vehicles, doors, props, districts, events</li>
+            <li><strong>Custom UI</strong> &mdash; HUDs, menus, phones, tablets rendered in-game</li>
+          </ul>
+          <div class="code-window docs-code" aria-label="Example resource script (design preview)">
+            <div class="code-titlebar">
+              <span class="client-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="code-filename">resources/delivery-job/server.ts</span>
+              <span class="client-badge">API&nbsp;DESIGN&nbsp;PREVIEW</span>
+            </div>
+            <pre class="code-body"><code id="code-sample"></code></pre>
+          </div>
+          <p class="creators-note">The scripting API sketched here is a design preview &mdash; the
+          surface will evolve with the pre-alpha.</p>
+        </section>
+
+        <!-- ROADMAP -->
+        <section class="docs-section" id="roadmap">
+          <h2 class="docs-title"><span class="eyebrow-slash">//</span> Roadmap</h2>
+          <p class="docs-p">
+            OPEN//77 is in pre-alpha. There is no public build, no live server list, and no
+            release date &mdash; and we won't invent any. Here is the honest shape of the road.
+          </p>
+          <ol class="roadmap">
+            <li class="roadmap-item is-now">
+              <div class="roadmap-marker" aria-hidden="true"></div>
+              <div class="roadmap-body">
+                <p class="roadmap-stage">NOW <span class="roadmap-chip">PRE-ALPHA</span></p>
+                <h3>Core multiplayer foundations</h3>
+                <p>Client/server architecture, session handling, and synchronizing players inside
+                the same world &mdash; the unglamorous groundwork everything else depends on.</p>
+              </div>
+            </li>
+            <li class="roadmap-item">
+              <div class="roadmap-marker" aria-hidden="true"></div>
+              <div class="roadmap-body">
+                <p class="roadmap-stage">NEXT</p>
+                <h3>Dedicated server &amp; resource system</h3>
+                <p>The self-hostable server build, the resource format, and automatic resource
+                delivery to connecting clients.</p>
+              </div>
+            </li>
+            <li class="roadmap-item">
+              <div class="roadmap-marker" aria-hidden="true"></div>
+              <div class="roadmap-body">
+                <p class="roadmap-stage">THEN</p>
+                <h3>Server browser &amp; creator SDK</h3>
+                <p>Public server discovery, server pages, and a documented scripting API so the
+                first community worlds can open their doors.</p>
+              </div>
+            </li>
+            <li class="roadmap-item">
+              <div class="roadmap-marker" aria-hidden="true"></div>
+              <div class="roadmap-body">
+                <p class="roadmap-stage">BEYOND</p>
+                <h3>The ecosystem</h3>
+                <p>Featured communities, server reputation, resource sharing between servers &mdash;
+                the parts that only matter once real worlds exist. The community will shape these.</p>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <!-- FAQ -->
+        <section class="docs-section" id="faq">
+          <h2 class="docs-title"><span class="eyebrow-slash">//</span> FAQ</h2>
+          <div class="faq-list" id="faq-list">
+            <details class="faq-item">
+              <summary>Is OPEN//77 official? Is CD Projekt RED involved?</summary>
+              <p>No. OPEN//77 is an independent community project. It is not affiliated with,
+              endorsed by, or supported by CD Projekt RED. Cyberpunk&nbsp;2077 is the property of
+              CD PROJEKT S.A. &mdash; we build alongside the game, not on their behalf.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Do I need to own Cyberpunk 2077?</summary>
+              <p>Yes, always. OPEN//77 never distributes the game or its assets. You need your own
+              legal copy of Cyberpunk&nbsp;2077 on PC; the platform adds multiplayer infrastructure
+              on top of it.</p>
+            </details>
+            <details class="faq-item">
+              <summary>So is this one big multiplayer server?</summary>
+              <p>No &mdash; and this is the core idea. OPEN//77 is the platform underneath many servers.
+              Communities run their own independent worlds with their own game modes and rules; the
+              client lets you browse and join them. If FiveM's model for GTA&nbsp;V is familiar,
+              that's the shape.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Can I play it right now?</summary>
+              <p>Not yet. The project is in pre-alpha and there is no public build. We publish
+              development progress openly rather than promising dates &mdash; when a build is ready
+              for testing, it will be announced through the project's channels.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Will I be able to host my own server?</summary>
+              <p>That's the whole design. The dedicated server software will be self-hostable, so
+              you can run your world on your own hardware or a rented machine, moderate it your way,
+              and list it in the public browser. See <a href="create.html">Create a Server</a>.</p>
+            </details>
+            <details class="faq-item">
+              <summary>What can server creators actually customize?</summary>
+              <p>Servers run resources &mdash; packages of server-side and client-side scripts. That
+              covers game modes, jobs, economies, missions, vehicle handling, custom UI and world
+              interactions. A pure racing server and a hardcore roleplay city can both be OPEN//77
+              servers.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Will it break my single-player game or saves?</summary>
+              <p>The client is designed to run alongside your installation without touching your
+              single-player saves or mod setup. Multiplayer state lives on the server you join.</p>
+            </details>
+            <details class="faq-item">
+              <summary>How much will it cost?</summary>
+              <p>OPEN//77 is a community project, not a storefront. The platform itself is intended
+              to be free to play on. Beyond that, honest answer: sustainability decisions come after
+              a working platform, and they'll be discussed in the open.</p>
+            </details>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="wordmark" href="index.html" aria-label="OPEN//77 home">
+          <svg class="logotype" viewBox="0 0 179 26" aria-hidden="true"><g fill="currentColor"><path d="M0 0H19V6L14 7.6V5H0Z M0 0H5V26H0Z M0 21H19V26H0Z M14 10.6L19 9V26H14Z"/><path fill-rule="evenodd" d="M26 0H45V15H31V26H26ZM31 5H40V10H31Z"/><path d="M52 0H71V5H57V10.5H69V15.5H57V21H71V26H52V0Z"/><path d="M78 26V0H83.5L92 15.5V0H97V26H91.5L83 10.5V26H78Z"/><path d="M134 0H153V26H148V5H134V0Z"/><path d="M160 0H179V26H174V5H160V0Z"/></g><path class="lt-s1" d="M112.5 0H117.5L109 26H104L112.5 0Z"/><path class="lt-s2" d="M122 0H127L118.5 26H113.5L122 0Z"/></svg>
+        </a>
+        <p class="footer-tag">Cyberpunk&nbsp;2077 multiplayer. Find a world to play in &mdash; or build your own.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Footer">
+        <div class="footer-col">
+          <p class="footer-col-title">Play</p>
+          <a href="servers.html">Server browser</a>
+          <a href="docs.html#how-it-works">How it works</a>
+          <a href="docs.html#faq">FAQ</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Create</p>
+          <a href="create.html">Create a server</a>
+          <a href="docs.html#dedicated-servers">Dedicated servers</a>
+          <a href="docs.html#resources">Resources &amp; scripting</a>
+        </div>
+        <div class="footer-col">
+          <p class="footer-col-title">Project</p>
+          <a href="docs.html#roadmap">Status &amp; roadmap</a>
+          <a href="community.html">Community</a>
+          <a href="docs.html">Documentation</a>
+        <a href="brand.html">Brand kit</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-legal">
+      <p>OPEN//77 is an unofficial, independent community project. It is not affiliated with,
+      endorsed by, or sponsored by CD PROJEKT S.A. &ldquo;Cyberpunk&rdquo;, &ldquo;Cyberpunk&nbsp;2077&rdquo; and related
+      marks are trademarks of CD PROJEKT S.A. Game imagery is used for illustration of a fan project.
+      Playing on OPEN//77 will always require your own legal copy of Cyberpunk&nbsp;2077.</p>
+      <p class="footer-fine">Pre-alpha. Documentation describes design intent, not shipped software.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
