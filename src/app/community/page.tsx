@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { Eyebrow } from "@/components/brand";
-import { DiscordIcon } from "@/components/icons";
+import { DiscordIcon, TikTokIcon, XIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
 import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
@@ -50,6 +50,7 @@ export default function CommunityPage() {
                   target="_blank"
                   rel="noreferrer noopener"
                 >
+                  <XIcon size={14} />
                   X / Twitter
                 </a>
               ) : null}
@@ -60,6 +61,7 @@ export default function CommunityPage() {
                   target="_blank"
                   rel="noreferrer noopener"
                 >
+                  <TikTokIcon size={14} />
                   TikTok
                 </a>
               ) : null}
@@ -79,24 +81,24 @@ export default function CommunityPage() {
                   its doors, it will be announced on the official Discord first. Being there is the
                   closest thing to a waiting list this project will ever have.
                 </p>
+              </div>
+              <div className="alpha-side">
+                <p className="alpha-status">
+                  <span className="live-dot" aria-hidden="true" /> STATUS: {site.stage} — IN
+                  DEVELOPMENT
+                </p>
                 {site.links.discord ? (
-                  <div className="hero-ctas">
-                    <a
-                      className="btn btn-discord"
-                      href={site.links.discord}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      <DiscordIcon size={16} />
-                      Join our Discord
-                    </a>
-                  </div>
+                  <a
+                    className="btn btn-discord"
+                    href={site.links.discord}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    <DiscordIcon size={16} />
+                    Join our Discord
+                  </a>
                 ) : null}
               </div>
-              <p className="alpha-status">
-                <span className="live-dot" aria-hidden="true" /> STATUS: {site.stage} — IN
-                DEVELOPMENT
-              </p>
             </div>
 
             <div className="follow-cards">

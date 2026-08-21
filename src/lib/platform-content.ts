@@ -41,7 +41,7 @@ export const IS = [
 ];
 
 export const REQUIREMENTS_INTRO =
-  `Two of these are stricter than the usual "you need the game" line, so they are worth stating plainly: the client is built against game build ${GAME_BUILD} specifically rather than that version or newer, and ${GAME_EXPANSION} is required rather than recommended.`;
+  `Two of these are stricter than the usual "you need the game" line, so they are worth stating plainly: the client is built against game build ${GAME_BUILD} specifically rather than that version or newer, and ${GAME_EXPANSION} is required rather than recommended. One more thing is not negotiable: OPEN//77 does not accept piracy. You buy Cyberpunk 2077, or you do not play on it.`;
 
 export const REQUIREMENTS_SERVER_INTRO =
   "Hosting is a different list. A dedicated server is a normal server process and has no relationship with the game at all.";
@@ -49,7 +49,7 @@ export const REQUIREMENTS_SERVER_INTRO =
 export const PLAYER_STEPS = [
   {
     title: "Own the game",
-    body: `OPEN//77 requires your own legal copy of Cyberpunk 2077, at build ${GAME_BUILD}, with ${GAME_EXPANSION}. The platform never distributes game content — it builds on the game you already have.`,
+    body: `OPEN//77 requires your own legal copy of Cyberpunk 2077, at build ${GAME_BUILD}, with ${GAME_EXPANSION}. The platform never distributes game content — it builds on the game you bought. Pirated or cracked copies are not supported and not welcome.`,
   },
   {
     title: "Install the client",
@@ -204,6 +204,11 @@ export const FAQ = [
     question: "Do I need to own Cyberpunk 2077?",
     answer:
       `Yes, always. OPEN//77 never distributes the game or its assets. You need your own legal copy of Cyberpunk 2077 on 64-bit Windows, at game build ${GAME_BUILD}, with ${GAME_EXPANSION} installed. The platform adds multiplayer infrastructure on top of it.`,
+  },
+  {
+    question: "Does OPEN//77 work with pirated or cracked copies?",
+    answer:
+      "No — and it never will, as a matter of principle, not just engineering. This project exists because we love Cyberpunk 2077; buying the game and its expansion is how the studio that made it gets paid, and it is the baseline for being part of this community. Pirated and cracked installations are unsupported, receive no help in any community channel, and server operators are expected to turn them away. If you cannot buy the game yet, wait for a sale — do not pirate it.",
   },
   {
     question: `Is ${GAME_EXPANSION} required, or only recommended?`,

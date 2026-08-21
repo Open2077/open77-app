@@ -197,6 +197,28 @@ export function DiscordIcon(props: IconProps) {
   );
 }
 
+export function XIcon(props: IconProps) {
+  return (
+    <svg {...svgProps({ size: 13, ...props })}>
+      <path
+        d="M9.52 6.78 14.48 1h-1.18L9 6.02 5.56 1H1.6l5.2 7.57L1.6 14.6h1.18l4.55-5.29 3.63 5.29h3.96L9.52 6.78Zm-1.61 1.87-.53-.75L3.2 1.89h1.8l3.38 4.84.53.75 4.4 6.29h-1.8L7.91 8.65Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function TikTokIcon(props: IconProps) {
+  return (
+    <svg {...svgProps({ size: 13, ...props })}>
+      <path
+        d="M11.2 1.2c.3 1.6 1.4 2.9 3.1 3.1v2.3c-1.1 0-2.2-.4-3.1-1v4.6a4.4 4.4 0 1 1-4.4-4.4c.3 0 .5 0 .8.1v2.4a2.1 2.1 0 1 0 1.4 2V1.2h2.2Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 export function MenuIcon({ size = 22, className }: IconProps) {
   return (
     <svg

@@ -43,7 +43,8 @@ export const site = {
     "OPEN//77 is an unofficial, independent community project. It is not affiliated with, endorsed by, " +
     "or sponsored by CD PROJEKT S.A. “Cyberpunk”, “Cyberpunk 2077” and related marks are trademarks of " +
     "CD PROJEKT S.A. Game imagery is used for illustration of a fan project. Playing on OPEN//77 will " +
-    "always require your own legal copy of Cyberpunk 2077.",
+    "always require your own legal copy of Cyberpunk 2077 — the platform does not accept piracy, and " +
+    "pirated or cracked copies are neither supported nor welcome.",
   /**
    * The ?v= content hash moves the URL whenever the card is regenerated:
    * Discord, Telegram and the CDN all cache link previews per URL and would

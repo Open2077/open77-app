@@ -358,7 +358,7 @@ export default async function HomePage() {
         </section>
       </main>
 
-      <SiteFooter fineprint="Pre-alpha. No public build exists yet; server listings shown on this site are demo data." />
+      <SiteFooter fineprint="Pre-alpha. No public build exists yet; the server directory opens with the first alpha." />
 
       <JsonLd
         data={jsonLdGraph(

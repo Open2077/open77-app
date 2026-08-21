@@ -31,8 +31,8 @@ export const PLAYER_REQUIREMENT_SHORT = `Cyberpunk 2077 ${GAME_BUILD} + ${GAME_E
 
 export const PLAYER_REQUIREMENTS = [
   {
-    label: "Your own copy of Cyberpunk 2077",
-    body: "OPEN//77 never distributes the game or any of its assets. It builds on the installation you already own.",
+    label: "Your own legal copy of Cyberpunk 2077",
+    body: "OPEN//77 never distributes the game or any of its assets. It builds on the installation you already own — bought, not pirated. Cracked copies are not supported and not welcome.",
   },
   {
     label: `Game build ${GAME_BUILD}`,

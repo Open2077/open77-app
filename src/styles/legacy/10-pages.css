@@ -845,6 +845,16 @@ body.detail-open { overflow: hidden; }
 }
 .alpha-band p { color: var(--text-dim); font-size: 15px; max-width: 560px; }
 .alpha-band .browser-cta-title { margin-top: 4px; }
+/* Status chip and the Discord door share one right-hand column, so the CTA
+   has its own zone instead of hanging under the paragraph. */
+.alpha-side {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+}
+.alpha-side .alpha-status { justify-content: center; }
+.alpha-side .btn-discord { width: 100%; }
 .alpha-status {
   display: inline-flex;
   align-items: center;

@@ -48,6 +48,13 @@
   padding: 2px 0;
 }
 .footer-col a:hover { color: var(--text); }
+.footer-col a.footer-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.footer-col a.footer-social svg { flex-shrink: 0; opacity: 0.85; }
+.footer-col a.footer-social:hover svg { opacity: 1; }
 
 .footer-legal {
   /* navy signal band — splits the white footer from the page's end */
