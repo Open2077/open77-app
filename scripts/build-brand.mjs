@@ -469,14 +469,36 @@ async function main() {
   const faviconSvg = svgWrapPng(fav256, 256);
   const apple = await glyphTile(180, mark, 0.82);
 
-  // Avatars: the //77 mark, same composition as the app icon but on a square
-  // canvas — Discord applies its own circle mask, baked corners would clip.
-  // Near-full-bleed: at sidebar size a wide mark is a thin band, so it needs
-  // every pixel of width it can get inside the circle.
-  const avatar1024 = await glyphTile(1024, mark, 0.96);
+  // Avatars: the //77 glyphs stacked — // above, 77 below. In one line the
+  // ~3:1 mark can never be more than a third of the circle tall; stacked, the
+  // same painted cuts fill most of it while Discord's crop keeps everything.
+  async function avatarStackTile(size, { circle = false } = {}) {
+    const slash = await sharp(slashes).resize({ height: Math.round(size * 0.33) }).png().toBuffer();
+    const slashMeta = await sharp(slash).metadata();
+    const sev = await sharp(sevens).resize({ width: Math.round(size * 0.72) }).png().toBuffer();
+    const sevMeta = await sharp(sev).metadata();
+    const gap = Math.round(size * 0.05);
+    const top = Math.round((size - (slashMeta.height + gap + sevMeta.height)) / 2);
+    const bg = await glowBackground(size, size, TILE_GLOWS);
+    let tile = await sharp(bg)
+      .composite([
+        { input: slash, left: Math.round((size - slashMeta.width) / 2), top },
+        { input: sev, left: Math.round((size - sevMeta.width) / 2), top: top + slashMeta.height + gap },
+      ])
+      .png()
+      .toBuffer();
+    if (circle) {
+      tile = await sharp(tile)
+        .composite([{ input: circleMask(size), blend: "dest-in" }])
+        .png()
+        .toBuffer();
+    }
+    return tile;
+  }
+  const avatar1024 = await avatarStackTile(1024);
   const avatar512 = await resizeSquare(avatar1024, 512);
   const avatar200 = await resizeSquare(avatar1024, 200);
-  const avatarCircle = await glyphTile(1024, mark, 0.9, { circle: true });
+  const avatarCircle = await avatarStackTile(1024, { circle: true });
 
   // Social banners: the full lockup on the glow background.
   const og = await compositeOnGlow(darkFull, 1200, 630, 0.72);
