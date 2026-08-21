@@ -1,6 +1,15 @@
 # Vercel
 .vercel
 
+# Next.js build output
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Screenshots written by scripts/screenshot.mjs
+.shots/
+
 # Dependencies
 node_modules/
 

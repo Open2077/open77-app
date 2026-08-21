@@ -1,0 +1,61 @@
+/* ============================================================
+   Reset & base
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+/* Anchor targets clear the sticky header. `--header-h` is published by the
+   header itself from its measured height, so this stays correct when the header
+   wraps on a narrow viewport; the fallback covers the first paint. */
+[id] { scroll-margin-top: calc(var(--header-h, 64px) + 20px); }
+
+/* The hidden attribute always wins over class-level display values. */
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+img, svg { display: inline-block; vertical-align: middle; }
+
+a { color: inherit; }
+
+h1, h2, h3, p, ul, ol { margin: 0; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+::selection { background: var(--accent); color: var(--accent-ink); }
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--accent);
+  color: var(--accent-ink);
+  padding: 10px 16px;
+  font-weight: 600;
+}
+.skip-link:focus { left: 0; }

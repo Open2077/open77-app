@@ -1,0 +1,19 @@
+/*
+ * OPEN//77 design system — the hand-authored stylesheet, split into cascade
+ * layers by scripts/split-legacy-css.mjs. Order is significant: these files
+ * rely on source order for specificity, so do not reorder the imports.
+ */
+
+@import "./01-tokens.css";
+@import "./02-base.css";
+@import "./03-buttons.css";
+@import "./04-header.css";
+@import "./05-layout.css";
+@import "./06-hero.css";
+@import "./07-content.css";
+@import "./08-footer.css";
+@import "./09-responsive.css";
+@import "./10-pages.css";
+@import "./11-server-browser.css";
+@import "./12-signal.css";
+@import "./13-brand.css";

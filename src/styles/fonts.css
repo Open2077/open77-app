@@ -1,0 +1,21 @@
+/*
+ * Font wiring.
+ *
+ * The typefaces are self-hosted by `next/font` instead of being fetched from
+ * the Google Fonts CDN: it removes a render-blocking third-party request on
+ * every page, and it emits size-adjusted fallback metrics so the layout does
+ * not shift when the webfont lands.
+ *
+ * `next/font` exposes each family through a generated CSS variable, so the
+ * design tokens are re-pointed at those variables here. The original family
+ * names stay in the stack as a fallback, which keeps this override harmless if
+ * the font loader is ever removed.
+ *
+ * Orbitron is deliberately not loaded: its only reference was `.wordmark-text`,
+ * a retired header treatment replaced by the painted lockup.
+ */
+:root {
+  --font-display: var(--font-rajdhani), "Rajdhani", "Chakra Petch", sans-serif;
+  --font-body: var(--font-saira), "Saira", "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+}

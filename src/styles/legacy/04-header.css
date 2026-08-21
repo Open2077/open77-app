@@ -1,0 +1,124 @@
+/* ============================================================
+   Header
+   ============================================================ */
+
+.site-header {
+  /* the white application bar from the brand board — local token flip */
+  --text: #0c1524;
+  --text-rgb: 12, 21, 36;
+  --text-dim: #4a586e;
+  --text-faint: rgba(74, 88, 110, 0.7);
+  --line: rgba(13, 22, 36, 0.12);
+  --line-strong: rgba(13, 22, 36, 0.24);
+  --bg-elev: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #e4ebf3;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  /* PERF: near-opaque solid instead of backdrop-filter — a blurred backdrop
+     above animated layers forces a re-blur every frame on weaker GPUs */
+  background: rgba(248, 251, 253, 0.97);
+  color: var(--text);
+}
+.header-rule {
+  /* inside the header so --header-h includes it; between the bar and the
+     mobile menu so the line stays under the bar when the menu opens */
+  height: 2px;
+  width: 100%;
+  flex-shrink: 0;
+  background: var(--accent);
+}
+
+.header-inner {
+  max-width: var(--max-w-wide);
+  margin: 0 auto;
+  padding: 14px var(--pad-x);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+}
+.wordmark-glyph { color: var(--accent); flex: none; }
+.wordmark-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: 0.05em;
+}
+.wordmark-slash { color: var(--accent); }
+
+.main-nav {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+.main-nav a {
+  padding: 8px 13px;
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s var(--ease);
+}
+.main-nav a:hover { color: var(--accent); }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stage-chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+
+.nav-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+}
+
+.mobile-nav {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px var(--pad-x) 22px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-elev);
+}
+.mobile-nav a {
+  padding: 13px 8px;
+  text-decoration: none;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+}
+.mobile-nav a.btn { margin-top: 10px; }

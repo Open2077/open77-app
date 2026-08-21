@@ -1,0 +1,52 @@
+/* ============================================================
+   Shared section scaffolding
+   ============================================================ */
+
+.section { padding-top: var(--section-gap); }
+.section:last-of-type { padding-bottom: var(--section-gap); }
+
+.section-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+.section-inner-wide { max-width: var(--max-w-wide); }
+.section-inner-narrow { max-width: var(--max-w-narrow); }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.eyebrow-slash { color: var(--accent); margin-right: 6px; }
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  text-wrap: balance;
+}
+
+.section-lead {
+  font-size: clamp(16px, 1.6vw, 19px);
+  color: var(--text-dim);
+  max-width: 640px;
+  margin-bottom: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -1,0 +1,64 @@
+/* ============================================================
+   Footer
+   ============================================================ */
+
+.site-footer {
+  /* the white application block — mirrors the header's light bar */
+  --text: #0c1524;
+  --text-rgb: 12, 21, 36;
+  --text-dim: #4a586e;
+  --text-faint: rgba(74, 88, 110, 0.72);
+  --line: rgba(13, 22, 36, 0.12);
+  --line-strong: rgba(13, 22, 36, 0.24);
+  --bg-elev: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #e4ebf3;
+  background: linear-gradient(180deg, #f5f8fb, #e9eff5);
+  color: var(--text);
+  margin-top: var(--section-gap);
+}
+
+.footer-inner {
+  max-width: var(--max-w-wide);
+  margin: 0 auto;
+  padding: 60px var(--pad-x) 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.footer-brand { max-width: 300px; }
+.footer-tag { margin-top: 14px; font-size: 14px; color: var(--text-dim); }
+
+.footer-nav { display: flex; gap: clamp(36px, 6vw, 80px); flex-wrap: wrap; }
+.footer-col { display: flex; flex-direction: column; gap: 10px; }
+.footer-col-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 6px;
+}
+.footer-col a {
+  font-size: 14px;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 2px 0;
+}
+.footer-col a:hover { color: var(--text); }
+
+.footer-legal {
+  /* navy signal band — splits the white footer from the page's end */
+  position: relative;
+  max-width: none;
+  margin: 0;
+  padding: 30px max(var(--pad-x), calc((100% - 1280px) / 2 + var(--pad-x))) 46px;
+  background: #080e19;
+  font-size: 12.5px;
+  color: rgba(148, 160, 177, 0.95);
+  line-height: 1.7;
+}
+.footer-legal p { max-width: 840px; }
+.footer-fine { margin-top: 10px; color: rgba(148, 160, 177, 0.7); }

@@ -1,0 +1,60 @@
+/* ============================================================
+   OPEN//77 — design tokens (see references/design-system.md)
+   ============================================================ */
+
+:root {
+  /* OPEN SIGNAL — the default system.
+     One chromatic family with depth (Ice / Electric / Deep) instead of a
+     flat cyan; navy ladder for surfaces; blue-gray borders (not cyan);
+     coral reserved for rare semantic "signal" moments (~2-3% budget).
+     "Cyberpunk supplies the chaos. OPEN//77 supplies the signal."
+     Theme system: html[data-theme] blocks below override these tokens;
+     the *-rgb triplets feed every translucent overlay/gradient. */
+  --void: #060a12;
+  --bg: #080e19;
+  --bg-rgb: 8, 14, 25;
+  --text-rgb: 242, 246, 248;
+  --accent-rgb: 34, 216, 226;
+  --bg-elev: #0d1624;
+  --surface: #101b2b;
+  --surface-2: #132032;
+  --line: rgba(174, 211, 224, 0.1);         /* blue-gray hairlines, not cyan */
+  --line-strong: rgba(174, 211, 224, 0.19);
+  --text: #f2f6f8;              /* cold white */
+  --text-dim: #8d99a8;          /* steel */
+  --text-faint: rgba(141, 153, 168, 0.72);
+  --accent: #22d8e2;            /* OPEN Electric — CTAs, links, active states */
+  --accent-ice: #70f3f5;        /* OPEN Ice — brand-mark highlights only */
+  --accent-deep: #18c8d4;       /* OPEN Deep — the second signal channel */
+  --accent-ink: #071013;        /* on-accent text */
+  --accent-soft: rgba(var(--accent-rgb), 0.1);
+  --accent-2: #22d8e2;          /* legacy alias */
+  --accent-2-soft: rgba(var(--accent-rgb), 0.12);
+  --signal: #ff5964;            /* Signal Coral — full/new/live semantics ONLY, never CTAs */
+  --slash-1: var(--accent-ice); /* the // is two channels: / Signal Ice #70F3F5… */
+  --slash-2: var(--accent);     /* …/ OPEN Signal Cyan #22D8E2 (controlled brand values) */
+  --danger: #ff5c5c;
+
+  --glow-accent: 0 0 24px rgba(var(--accent-rgb), 0.25);
+  --diagram-line: rgba(var(--text-rgb), 0.32);
+
+  /* type — Rajdhani: the condensed HUD voice of the game's own interface;
+     Saira: same foundry DNA for body copy */
+  --font-display: "Rajdhani", "Chakra Petch", sans-serif;
+  --font-body: "Saira", "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* shape */
+  --radius-sm: 2px;
+  --radius-md: 6px;
+  --notch: 12px;
+  --notch-clip: polygon(0 0, calc(100% - var(--notch)) 0, 100% var(--notch), 100% 100%, 0 100%);
+
+  /* layout */
+  --max-w: 1200px;
+  --max-w-wide: 1280px;
+  --max-w-narrow: 860px;
+  --pad-x: clamp(20px, 4vw, 48px);
+  --section-gap: clamp(88px, 11vw, 128px);
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+}

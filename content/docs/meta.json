@@ -1,0 +1,183 @@
+{
+  "$comment": "Documentation navigation. Hand-maintained: the wiki has no ordering of its own, so this file is the single source of truth for sidebar structure, short nav labels and search-engine descriptions. `kind: \"guide\"` resolves to content/docs/<slug>.md; `kind: \"page\"` is a route implemented in src/app.",
+  "sections": [
+    {
+      "id": "introduction",
+      "title": "Introduction",
+      "pages": [
+        {
+          "slug": "index",
+          "kind": "guide",
+          "file": "README.md",
+          "nav": "Overview",
+          "title": "OPEN//77 documentation",
+          "description": "How OPEN//77 packages gameplay as resources: the session model, the authoritative server, a hello-world manifest, and the conventions shared by every Lua API."
+        },
+        {
+          "slug": "platform",
+          "kind": "page",
+          "nav": "How the platform works",
+          "title": "How OPEN//77 works",
+          "description": "What OPEN//77 is and is not, how players connect, why it is built on dedicated servers rather than peer-to-peer sessions, the project roadmap, and answers to the questions people ask most."
+        }
+      ]
+    },
+    {
+      "id": "getting-started",
+      "title": "Getting started",
+      "pages": [
+        {
+          "slug": "server-resources",
+          "kind": "guide",
+          "nav": "Server resources",
+          "description": "Resource manifests, the client and server runtime split, signing and download, hot reload, and the security model around resources the server hands to connecting players."
+        }
+      ]
+    },
+    {
+      "id": "identity",
+      "title": "Identity and access control",
+      "pages": [
+        {
+          "slug": "identity",
+          "kind": "guide",
+          "nav": "Player identity",
+          "description": "Durable player identifiers, session-scoped ids, display names, the rename flow, and what a game server can actually verify about a connecting player."
+        },
+        {
+          "slug": "server-acl",
+          "kind": "guide",
+          "nav": "Commands and ACL",
+          "description": "Exporting a public identity, whitelisting a player, and declaring restricted server commands behind the access control list."
+        }
+      ]
+    },
+    {
+      "id": "server-api",
+      "title": "Server API",
+      "pages": [
+        {
+          "slug": "server-api",
+          "kind": "guide",
+          "nav": "Complete server Lua API",
+          "description": "Every dedicated-server global, CyberM namespace, permission, constant and result shape: scheduler, events, commands, players, combat, routing buckets, loot, vehicles, NPCs, elevators, database and logging."
+        },
+        {
+          "slug": "resource-exports",
+          "kind": "guide",
+          "nav": "Official resource exports",
+          "description": "Every client export published by the official OPEN//77 resource packages, with signatures per package and how to call them safely across resources."
+        }
+      ]
+    },
+    {
+      "id": "world",
+      "title": "World systems",
+      "pages": [
+        {
+          "slug": "vehicles",
+          "kind": "guide",
+          "nav": "Vehicles",
+          "description": "Network vehicle identity, streaming, authority leases, seats and proxy replication, doors and glass, damage profiles, and the full asymmetric server and client Lua API."
+        },
+        {
+          "slug": "npcs",
+          "kind": "guide",
+          "nav": "NPCs",
+          "description": "Server-owned NPCs: templates, streaming, authority leases, the task queue, health and damage, events, the read-only client API, and the current limitations."
+        },
+        {
+          "slug": "elevators",
+          "kind": "guide",
+          "nav": "Elevators",
+          "description": "Server-authoritative native lifts: adopting a LiftDevice, bucket and chunk streaming, movement and pause control, late-join catch-up, and the reference resource commands."
+        },
+        {
+          "slug": "loot",
+          "kind": "guide",
+          "nav": "Loot",
+          "description": "Authoritative ground drops: creating and projecting item drops, validating pickups, the onLootPickup hook, and where native UI ends and server authority begins."
+        },
+        {
+          "slug": "weather",
+          "kind": "guide",
+          "nav": "Time and weather",
+          "description": "Synchronised session time and weather: the network model, shared configuration, ACL-gated commands, random weather events, and the server and client APIs."
+        }
+      ]
+    },
+    {
+      "id": "client",
+      "title": "Client and interface",
+      "pages": [
+        {
+          "slug": "blips",
+          "kind": "guide",
+          "nav": "Blips and map pins",
+          "description": "Vanilla map markers and mappins: creating and updating blips, attaching them to entities, custom icon metadata, stable aliases, and the complete sprite catalogue."
+        },
+        {
+          "slug": "interactions",
+          "kind": "guide",
+          "nav": "Contextual interactions",
+          "description": "Custom world and NPC prompts: attaching interactions to players or NPCs, multiple actions and hold keys, the definition reference, and keeping server authority intact."
+        },
+        {
+          "slug": "notifications",
+          "kind": "guide",
+          "nav": "Notifications",
+          "description": "Reusable WebUI toasts: local client notifications, server-targeted delivery, updating and dismissing, queue limits, positions and progress."
+        },
+        {
+          "slug": "effects",
+          "kind": "guide",
+          "nav": "Visual and audio effects",
+          "description": "Resource-owned world and entity visual effects plus spatialised sound effects, with inspection, cleanup and the curated alias catalogues."
+        },
+        {
+          "slug": "chat",
+          "kind": "guide",
+          "nav": "Chat",
+          "description": "Chat messages, slash commands, completion, and the built-in developer commands available to every player."
+        },
+        {
+          "slug": "clipboard",
+          "kind": "guide",
+          "nav": "Clipboard",
+          "description": "The write-only client clipboard API, the clipboard.write permission, failure reasons, and the built-in /pos and /rot transform commands."
+        },
+        {
+          "slug": "client-kvp",
+          "kind": "guide",
+          "nav": "Client persistent KVP",
+          "description": "Endpoint- and resource-isolated local key/value persistence: CRUD, search, atomic operations, quotas, and why it must never hold secrets."
+        }
+      ]
+    },
+    {
+      "id": "reference",
+      "title": "Reference",
+      "pages": [
+        {
+          "slug": "api",
+          "kind": "page",
+          "nav": "API reference",
+          "title": "Lua API reference",
+          "description": "Searchable reference for every registered OPEN//77 Lua function, separated by runtime so a client projection is never mistaken for server authority."
+        },
+        {
+          "slug": "data-reference",
+          "kind": "guide",
+          "nav": "Game data reference",
+          "description": "NPC templates, vehicle records, seat and door constants, items, weapons, effects, sounds, animations and sprite catalogues, with explicit support levels."
+        },
+        {
+          "slug": "debug-runtime",
+          "kind": "guide",
+          "nav": "Privileged debug runtime",
+          "description": "The ACL-gated in-game Lua laboratory: client execution, native lab commands, the REDscript bridge, and the limits that keep it out of gameplay code."
+        }
+      ]
+    }
+  ]
+}

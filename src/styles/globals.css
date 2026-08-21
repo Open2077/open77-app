@@ -1,0 +1,12 @@
+/*
+ * Global stylesheet entry point.
+ *
+ * Import order is load-bearing. `legacy/` is the hand-authored OPEN SIGNAL
+ * design system, split into cascade layers that rely on source order for
+ * specificity; `fonts.css` re-points the type tokens at the self-hosted
+ * families; `docs.css` adds the documentation surfaces, which are new and must
+ * therefore come last.
+ */
+@import "./legacy/index.css";
+@import "./fonts.css";
+@import "./docs.css";
