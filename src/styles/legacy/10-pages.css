@@ -596,6 +596,7 @@ body.detail-open { overflow: hidden; }
   gap: 20px;
   margin-top: 44px;
 }
+.benefit-grid-3 { grid-template-columns: repeat(3, 1fr); }
 .benefit-card {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);

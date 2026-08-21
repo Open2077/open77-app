@@ -50,24 +50,21 @@ const LOGO_TILES: BrandTile[] = [
     downloads: [{ href: "/brand/logo/open77-monogram-1024.png", label: "PNG" }],
   },
   {
-    preview: "/brand/logo/open77-mark.svg",
-    previewAlt: "The OPEN//77 slash mark",
+    preview: "/brand/logo/open77-mark-1024.png",
+    previewAlt: "The //77 mark cut from the painted lockup",
     previewClass: "bt-mark",
     tone: "bt-dark",
-    caption: "The // mark",
-    note: "vector",
-    downloads: [
-      { href: "/brand/logo/open77-mark.svg", label: "SVG" },
-      { href: "/brand/logo/open77-mark-1024.png", label: "PNG" },
-    ],
+    caption: "The //77 mark",
+    note: "raster",
+    downloads: [{ href: "/brand/logo/open77-mark-1024.png", label: "PNG" }],
   },
   {
-    preview: "/brand/logo/open77-app-icon.svg",
-    previewAlt: "OPEN//77 app icon, slashes in a rounded navy square",
+    preview: "/brand/logo/open77-app-icon.png",
+    previewAlt: "OPEN//77 app icon, the painted //77 in a rounded navy square",
     previewClass: "bt-icon",
     tone: "bt-dark",
     caption: "App icon",
-    downloads: [{ href: "/brand/logo/open77-app-icon.svg", label: "SVG" }],
+    downloads: [{ href: "/brand/logo/open77-app-icon.png", label: "PNG" }],
   },
 ];
 
@@ -83,6 +80,7 @@ const PROFILE_TILES: BrandTile[] = [
       { href: "/brand/social/avatar-1024.png", label: "1024" },
       { href: "/brand/social/avatar-512.png", label: "512" },
       { href: "/brand/social/avatar-200.png", label: "200" },
+      { href: "/brand/social/avatar-circle-1024.png", label: "circle" },
     ],
   },
   {
@@ -202,8 +200,9 @@ export default function BrandPage() {
             <Eyebrow>BRAND KIT</Eyebrow>
             <h1 className="page-title">The OPEN//77 mark.</h1>
             <p className="section-lead">
-              Painted lockup (PNG), the vector <strong>{"//"}</strong> mark, favicons, avatars and
-              social banners — everything in one download, plus individual files below.
+              Painted lockup (PNG), the <strong>{"//77"}</strong> mark and <strong>77</strong>{" "}
+              monogram cut from it, favicons, avatars and social banners — everything in one
+              download, plus individual files below.
             </p>
             <div className="hero-ctas">
               <a className="btn btn-primary" href="/brand/open77-brand-kit.zip" download>

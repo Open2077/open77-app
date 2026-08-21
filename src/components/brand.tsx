@@ -15,7 +15,7 @@ export function Logotype() {
       className="logotype"
       src="/brand/logo/open77-logo-light.png"
       alt=""
-      width={728}
+      width={723}
       height={96}
       decoding="async"
       aria-hidden="true"

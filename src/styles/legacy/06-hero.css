@@ -87,9 +87,10 @@
   padding: 0;
   margin: 0;
   display: grid;
-  /* Requires is the long fact; size that column to its one-line value so the
-     others can share the leftover instead of forcing a wrap at 1fr. */
-  grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr) minmax(0, 1fr);
+  /* Every column sizes to its own one-line value and the leftover is shared
+     equally. Equal 1fr tracks wrapped the long Requires value; giving Requires
+     max-content starved the other facts into wrapping instead. */
+  grid-template-columns: repeat(4, auto);
   border-block: 1px solid var(--line);
 }
 .hero-facts li {

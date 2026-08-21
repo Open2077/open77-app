@@ -1,10 +1,13 @@
 /**
  * Regenerates public/brand/ from the painted lockup in brand-src/open77.png.
  *
- * The wordmark is a raster (italic letterforms, speed lines, subtitle). Shipping
- * it as SVG would mean wrapping a bitmap in a data URI, which is not a vector
- * mark. Geometry we can actually construct — the // bars — is written as SVG.
- * Favicons and avatars use that mark, not a squashed lockup.
+ * Every asset is cut from the painted lockup itself — the // bars, the 77
+ * numerals and the //77 mark are colour-separated crops of the real artwork,
+ * not redrawn geometry, so avatars and favicons match the logo exactly.
+ * Where letterforms interleave (the N's trailing leg reaches into the slash
+ * zone, the first 7 reaches into slash 2's), the cut is a crop plus a
+ * colour erase: the slashes are the only saturated cyan in their zone and the
+ * numerals the only near-white in theirs.
  *
  * Usage: node scripts/build-brand.mjs
  */
@@ -24,105 +27,121 @@ const PUBLIC = path.join(ROOT, "public");
 /** Content bbox measured from opaque pixels in the source lockup. */
 const CONTENT = { left: 51, top: 199, width: 2071, height: 314 };
 /** Wordmark + speed lines, excluding the MULTIPLAYER MOD subtitle. */
-const WORDMARK = { left: 51, top: 199, width: 2071, height: 273 };
-/** The 77 numerals, for the monogram PNG. */
-const SEVENS = { left: 1518, top: 220, width: 516, height: 256 };
+const WORDMARK = { left: 51, top: 199, width: 2071, height: 275 };
+/**
+ * Glyph zones, in source coordinates. The N's leg ends at x=1286, slash 1
+ * starts at x=1316; the first 7 starts at x=1531 where slash 2 still overlaps.
+ */
+const MARK_ZONE = { left: 1291, top: 199, width: 831, height: 275 };
+const SLASH_ZONE = { left: 1291, top: 199, width: 240, height: 275 };
+const SEVENS_ZONE = { left: 1501, top: 199, width: 580, height: 275 };
 
-const VOID = { r: 8, g: 14, b: 25, alpha: 1 };
+const BG_HI = { r: 10, g: 17, b: 25 };
+const BG_LO = { r: 6, g: 9, b: 15 };
+const CYAN_GLOW = { r: 34, g: 224, b: 238 };
 const NAVY = { r: 12, g: 21, b: 36, alpha: 1 };
-const CYAN = "#00F7FC";
-const VOID_HEX = "#080E19";
-
-/** Parallelogram // at the lockup's ~23° italic, one cyan (the painted mark is not dual-channel). */
-const MARK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 46 42"><g transform="translate(8 8)"><path fill="${CYAN}" d="M11 0H18L7 26H0Z"/><path fill="${CYAN}" d="M23 0H30L19 26H12Z"/></g></svg>
-`;
-
-const FAVICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="${VOID_HEX}"/><path fill="${CYAN}" d="M10.2 6.5H16.4L9.2 25.5H3Z"/><path fill="${CYAN}" d="M18.8 6.5H25L17.8 25.5H11.6Z"/></svg>
-`;
-
-const APP_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="${VOID_HEX}"/><rect x="14" y="14" width="484" height="484" rx="84" fill="none" stroke="${CYAN}" stroke-width="16"/><path fill="${CYAN}" d="M168 128H248L168 384H88Z"/><path fill="${CYAN}" d="M280 128H360L280 384H200Z"/></svg>
-`;
-
-const AVATAR_CIRCLE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="${VOID_HEX}"/><circle cx="512" cy="512" r="400" fill="${VOID_HEX}"/><path fill="${CYAN}" d="M336 256H496L336 768H176Z"/><path fill="${CYAN}" d="M560 256H720L560 768H400Z"/></svg>
-`;
 
 const OBSOLETE = [
   "logo/open77-logo-dark.svg",
   "logo/open77-logo-light.svg",
   "logo/open77-logo-navy-bg.svg",
   "logo/open77-monogram.svg",
+  // The mark used to be redrawn vector geometry; it is now a cut of the
+  // painted artwork, which only exists as raster.
+  "logo/open77-mark.svg",
+  "logo/open77-app-icon.svg",
+  "logo/open77-avatar-circle.svg",
 ];
 
 function isCyan(r, g, b, a) {
   if (a < 10) return false;
-  return Math.min(g, b) - r > 24 && Math.min(g, b) > 70 && r < 200;
+  return b > r + 60 && g > r + 40;
 }
 
-function isContent(r, g, b, a) {
-  if (a < 12) return false;
-  return r > 12 || g > 12 || b > 12;
+function isWhite(r, g, b, a) {
+  if (a < 10) return false;
+  const mx = Math.max(r, g, b);
+  const mn = Math.min(r, g, b);
+  return !isCyan(r, g, b, a) && mx - mn < 60;
 }
 
-async function measure(input) {
-  const image = sharp(input);
-  const meta = await image.metadata();
-  const { data, info } = await image.ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  const { width, height } = info;
-  let minX = width;
-  let minY = height;
-  let maxX = 0;
-  let maxY = 0;
-  let opaque = 0;
-  let transparent = 0;
-  let cyanN = 0;
-  let cyanR = 0;
-  let cyanG = 0;
-  let cyanB = 0;
-  const hexCounts = new Map();
+async function rawOf(png) {
+  const { data, info } = await sharp(png).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  return { data, width: info.width, height: info.height };
+}
 
+function rawToSharp(raw) {
+  return sharp(raw.data, { raw: { width: raw.width, height: raw.height, channels: 4 } });
+}
+
+/** Zeroes haze pixels (alpha < 10) — matte residue from background removal. */
+function cleanHaze(raw) {
+  const { data } = raw;
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] < 10) {
+      data[i] = 0;
+      data[i + 1] = 0;
+      data[i + 2] = 0;
+      data[i + 3] = 0;
+    }
+  }
+  return raw;
+}
+
+/** Erases 'white' or 'cyan' pixels inside [fromX, toX). */
+function erase(raw, mode, fromX = 0, toX = Infinity) {
+  const { data, width, height } = raw;
+  const upper = Math.min(toX, width);
   for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
+    for (let x = fromX; x < upper; x += 1) {
       const i = (y * width + x) * 4;
-      const r = data[i];
-      const g = data[i + 1];
-      const b = data[i + 2];
-      const a = data[i + 3];
-      if (a < 8) transparent += 1;
-      else opaque += 1;
-      if (!isContent(r, g, b, a)) continue;
-      if (x < minX) minX = x;
-      if (y < minY) minY = y;
-      if (x > maxX) maxX = x;
-      if (y > maxY) maxY = y;
-      if (isCyan(r, g, b, a) && a > 200) {
-        cyanN += 1;
-        cyanR += r;
-        cyanG += g;
-        cyanB += b;
-        const key = `#${[r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("")}`;
-        hexCounts.set(key, (hexCounts.get(key) ?? 0) + 1);
+      const kill =
+        mode === "white"
+          ? isWhite(data[i], data[i + 1], data[i + 2], data[i + 3])
+          : isCyan(data[i], data[i + 1], data[i + 2], data[i + 3]);
+      if (kill) {
+        data[i] = 0;
+        data[i + 1] = 0;
+        data[i + 2] = 0;
+        data[i + 3] = 0;
       }
     }
   }
+  return raw;
+}
 
-  const topHex = [...hexCounts.entries()].sort((a, b) => b[1] - a[1])[0];
-  return {
-    format: meta.format,
-    width: meta.width,
-    height: meta.height,
-    channels: meta.channels,
-    hasAlpha: meta.hasAlpha,
-    opaque,
-    transparent,
-    contentBBox: { minX, minY, maxX, maxY, w: maxX - minX + 1, h: maxY - minY + 1 },
-    cyanAvg:
-      cyanN === 0
-        ? null
-        : `#${[Math.round(cyanR / cyanN), Math.round(cyanG / cyanN), Math.round(cyanB / cyanN)]
-            .map((v) => v.toString(16).padStart(2, "0"))
-            .join("")}`,
-    cyanMode: topHex?.[0] ?? null,
-  };
+/** Crops to the bbox of pixels with alpha >= 24. */
+function trimRaw(raw) {
+  const { data, width, height } = raw;
+  let minX = width;
+  let minY = height;
+  let maxX = -1;
+  let maxY = -1;
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      if (data[(y * width + x) * 4 + 3] >= 24) {
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX < 0) throw new Error("trimRaw: empty image");
+  const w = maxX - minX + 1;
+  const h = maxY - minY + 1;
+  const out = Buffer.alloc(w * h * 4);
+  for (let y = 0; y < h; y += 1) {
+    data.copy(out, y * w * 4, ((y + minY) * width + minX) * 4, ((y + minY) * width + minX + w) * 4);
+  }
+  return { data: out, width: w, height: h };
+}
+
+async function extractGlyph(zone, { eraseMode = null, eraseTo = Infinity } = {}) {
+  const crop = await sharp(SRC).extract(zone).ensureAlpha().png().toBuffer();
+  let raw = cleanHaze(await rawOf(crop));
+  if (eraseMode) raw = erase(raw, eraseMode, 0, eraseTo);
+  return rawToSharp(trimRaw(raw)).png().toBuffer();
 }
 
 async function extractPadded(region, padRatio = 0.08) {
@@ -143,16 +162,106 @@ async function extractPadded(region, padRatio = 0.08) {
 }
 
 async function toLight(png) {
-  const { data, info } = await sharp(png).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  const out = Buffer.from(data);
-  for (let i = 0; i < out.length; i += 4) {
-    if (out[i + 3] < 10) continue;
-    if (isCyan(out[i], out[i + 1], out[i + 2], out[i + 3])) continue;
-    out[i] = NAVY.r;
-    out[i + 1] = NAVY.g;
-    out[i + 2] = NAVY.b;
+  const raw = cleanHaze(await rawOf(png));
+  const { data } = raw;
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] < 10) continue;
+    if (isCyan(data[i], data[i + 1], data[i + 2], data[i + 3])) continue;
+    data[i] = NAVY.r;
+    data[i + 1] = NAVY.g;
+    data[i + 2] = NAVY.b;
   }
-  return sharp(out, { raw: { width: info.width, height: info.height, channels: 4 } })
+  return rawToSharp(raw).png().toBuffer();
+}
+
+/**
+ * Branded background: vertical navy gradient with soft cyan glows, rendered
+ * per-pixel at 1/8 scale and upscaled — a full-resolution radial gradient
+ * would band, the upscale interpolation keeps it smooth.
+ * Glows: [cxFrac, cyFrac, radiusFrac(of width), alpha 0-255].
+ */
+const BANNER_GLOWS = [
+  [0.8, 0.05, 0.45, 40],
+  [0.1, 1.02, 0.36, 18],
+];
+const TILE_GLOWS = [
+  [0.82, 0.06, 0.75, 26],
+  [0.1, 1.0, 0.55, 13],
+];
+
+async function glowBackground(width, height, glows) {
+  const sw = Math.max(48, Math.round(width / 8));
+  const sh = Math.max(48, Math.round(height / 8));
+  const data = Buffer.alloc(sw * sh * 4);
+  for (let y = 0; y < sh; y += 1) {
+    const t = y / (sh - 1);
+    const baseR = BG_HI.r + (BG_LO.r - BG_HI.r) * t;
+    const baseG = BG_HI.g + (BG_LO.g - BG_HI.g) * t;
+    const baseB = BG_HI.b + (BG_LO.b - BG_HI.b) * t;
+    for (let x = 0; x < sw; x += 1) {
+      let a = 0;
+      for (const [cx, cy, cr, alpha] of glows) {
+        const dx = x - cx * sw;
+        const dy = y - cy * sh;
+        const r = cr * sw;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < r) {
+          const f = 1 - d / r;
+          a += alpha * f * f;
+        }
+      }
+      const k = Math.min(255, a) / 255;
+      const i = (y * sw + x) * 4;
+      data[i] = Math.round(baseR + (CYAN_GLOW.r - baseR) * k);
+      data[i + 1] = Math.round(baseG + (CYAN_GLOW.g - baseG) * k);
+      data[i + 2] = Math.round(baseB + (CYAN_GLOW.b - baseB) * k);
+      data[i + 3] = 255;
+    }
+  }
+  return sharp(data, { raw: { width: sw, height: sh, channels: 4 } })
+    .resize(width, height, { kernel: "cubic" })
+    .png()
+    .toBuffer();
+}
+
+/** Centres `art` on a glow background at `widthFrac` of the canvas width. */
+async function compositeOnGlow(art, width, height, widthFrac, glows = BANNER_GLOWS) {
+  const meta = await sharp(art).metadata();
+  const targetW = Math.round(width * widthFrac);
+  const targetH = Math.round((targetW * meta.height) / meta.width);
+  const fitted = await sharp(art).resize({ width: targetW }).png().toBuffer();
+  const bg = await glowBackground(width, height, glows);
+  return sharp(bg)
+    .composite([
+      {
+        input: fitted,
+        left: Math.round((width - targetW) / 2),
+        top: Math.round((height - targetH) / 2),
+      },
+    ])
+    .png()
+    .toBuffer();
+}
+
+function roundedMask(size, radius) {
+  return Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><rect width="${size}" height="${size}" rx="${radius}" fill="#fff"/></svg>`,
+  );
+}
+
+function circleMask(size) {
+  return Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}"><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="#fff"/></svg>`,
+  );
+}
+
+/** Square glow tile with the mark centred; radiusFrac > 0 rounds the corners. */
+async function glyphTile(size, mark, markFrac, { radiusFrac = 0, circle = false } = {}) {
+  const tile = await compositeOnGlow(mark, size, size, markFrac, TILE_GLOWS);
+  if (!circle && radiusFrac <= 0) return tile;
+  const mask = circle ? circleMask(size) : roundedMask(size, Math.round(size * radiusFrac));
+  return sharp(tile)
+    .composite([{ input: mask, blend: "dest-in" }])
     .png()
     .toBuffer();
 }
@@ -161,38 +270,13 @@ async function resizePng(png, width) {
   return sharp(png).resize({ width, withoutEnlargement: false }).png().toBuffer();
 }
 
+async function resizeSquare(png, size) {
+  return sharp(png).resize(size, size).png().toBuffer();
+}
+
 async function writePng(filePath, png) {
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, png);
-}
-
-async function rasterSvg(svg, width, height, { background } = {}) {
-  const pipeline = sharp(Buffer.from(svg)).resize(width, height);
-  if (background) {
-    return pipeline.flatten({ background }).png().toBuffer();
-  }
-  return pipeline.png().toBuffer();
-}
-
-async function compositeOnVoid(png, width, height) {
-  const fitted = await sharp(png)
-    .resize({
-      width: Math.round(width * 0.78),
-      height: Math.round(height * 0.62),
-      fit: "inside",
-      withoutEnlargement: true,
-    })
-    .png()
-    .toBuffer();
-  const meta = await sharp(fitted).metadata();
-  const left = Math.round((width - meta.width) / 2);
-  const top = Math.round((height - meta.height) / 2);
-  return sharp({
-    create: { width, height, channels: 4, background: VOID },
-  })
-    .composite([{ input: fitted, left, top }])
-    .png()
-    .toBuffer();
 }
 
 function crc32(buf) {
@@ -300,6 +384,12 @@ function icoFromPngs(pngs) {
   return out;
 }
 
+/** favicon.svg is the real painted tile wrapped as SVG, so it stays one file. */
+function svgWrapPng(png, size) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><image width="${size}" height="${size}" href="data:image/png;base64,${png.toString("base64")}"/></svg>
+`;
+}
+
 async function collectBrandFiles(dir, prefix = "") {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = [];
@@ -317,9 +407,6 @@ async function collectBrandFiles(dir, prefix = "") {
 }
 
 async function main() {
-  const stats = await measure(SRC);
-  console.log("source", JSON.stringify(stats, null, 2));
-
   await mkdir(path.join(BRAND, "logo"), { recursive: true });
   await mkdir(path.join(BRAND, "favicon"), { recursive: true });
   await mkdir(path.join(BRAND, "social"), { recursive: true });
@@ -328,67 +415,73 @@ async function main() {
     await rm(path.join(BRAND, rel), { force: true });
   }
 
+  // Lockup family.
   const darkFull = await extractPadded(CONTENT);
   const lightFull = await toLight(darkFull);
   const darkWord = await extractPadded(WORDMARK, 0.04);
   const lightWord = await toLight(darkWord);
   const dark2000 = await resizePng(darkFull, 2000);
   const light2000 = await resizePng(lightFull, 2000);
-  const navyBg = await sharp(dark2000)
-    .flatten({ background: VOID })
-    .png()
-    .toBuffer();
+  const navyBg = await compositeOnGlow(darkFull, 2000, 700, 0.82);
 
-  const uiLight = await sharp(lightWord)
-    .resize({ height: 96, withoutEnlargement: false })
-    .png()
-    .toBuffer();
-  const uiDark = await sharp(darkWord)
-    .resize({ height: 96, withoutEnlargement: false })
-    .png()
-    .toBuffer();
+  const uiLight = await sharp(lightWord).resize({ height: 96 }).png().toBuffer();
+  const uiDark = await sharp(darkWord).resize({ height: 96 }).png().toBuffer();
 
-  const sevens = await extractPadded(SEVENS, 0.12);
-  const sevensMeta = await sharp(sevens).metadata();
-  const side = Math.max(sevensMeta.width, sevensMeta.height);
-  const sevensSquare = await sharp({
-    create: { width: side, height: side, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
+  // Glyph cuts from the painted artwork.
+  const mark = await extractGlyph(MARK_ZONE, { eraseMode: "white", eraseTo: 34 });
+  const slashes = await extractGlyph(SLASH_ZONE, { eraseMode: "white" });
+  const sevens = await extractGlyph(SEVENS_ZONE, { eraseMode: "cyan", eraseTo: 220 });
+
+  const markSquare = await sharp({
+    create: { width: 1024, height: 1024, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
   })
     .composite([
       {
-        input: sevens,
-        left: Math.round((side - sevensMeta.width) / 2),
-        top: Math.round((side - sevensMeta.height) / 2),
+        input: await sharp(mark).resize({ width: 920 }).png().toBuffer(),
+        left: 52,
+        top: Math.round((1024 - (920 * (await sharp(mark).metadata()).height) / (await sharp(mark).metadata()).width) / 2),
       },
     ])
     .png()
     .toBuffer();
-  const monogram = await sharp(sevensSquare).resize(1024, 1024, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer();
+  const monogram = await sharp({
+    create: { width: 1024, height: 1024, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
+  })
+    .composite([
+      {
+        input: await sharp(sevens).resize({ width: 880 }).png().toBuffer(),
+        left: 72,
+        top: Math.round((1024 - (880 * (await sharp(sevens).metadata()).height) / (await sharp(sevens).metadata()).width) / 2),
+      },
+    ])
+    .png()
+    .toBuffer();
 
-  await writeFile(path.join(BRAND, "logo", "open77-mark.svg"), MARK_SVG);
-  await writeFile(path.join(BRAND, "logo", "open77-app-icon.svg"), APP_ICON_SVG);
-  await writeFile(path.join(BRAND, "logo", "open77-avatar-circle.svg"), AVATAR_CIRCLE_SVG);
-  await writeFile(path.join(BRAND, "favicon", "favicon.svg"), FAVICON_SVG);
-  await writeFile(path.join(PUBLIC, "assets", "favicon.svg"), FAVICON_SVG);
+  const appIcon = await glyphTile(1024, mark, 0.76, { radiusFrac: 0.22 });
 
-  const mark1024 = await rasterSvg(MARK_SVG, 1024, 1024);
-  const appIconPng = await rasterSvg(APP_ICON_SVG, 512, 512, { background: VOID });
-
-  const fav16 = await rasterSvg(FAVICON_SVG, 16, 16, { background: VOID });
-  const fav32 = await rasterSvg(FAVICON_SVG, 32, 32, { background: VOID });
-  const fav48 = await rasterSvg(FAVICON_SVG, 48, 48, { background: VOID });
-  const apple = await rasterSvg(FAVICON_SVG, 180, 180, { background: VOID });
+  // Favicons: the // device is the only cut that stays legible at 16px.
+  const fav512 = await glyphTile(512, slashes, 0.46, { radiusFrac: 0.19 });
+  const fav256 = await resizeSquare(fav512, 256);
+  const fav48 = await resizeSquare(fav512, 48);
+  const fav32 = await resizeSquare(fav512, 32);
+  const fav16 = await resizeSquare(fav512, 16);
   const ico = icoFromPngs([fav16, fav32, fav48]);
+  const faviconSvg = svgWrapPng(fav256, 256);
+  const apple = await glyphTile(180, sevens, 0.8);
 
-  const avatar200 = await rasterSvg(FAVICON_SVG, 200, 200, { background: VOID });
-  const avatar512 = await rasterSvg(FAVICON_SVG, 512, 512, { background: VOID });
-  const avatar1024 = await rasterSvg(FAVICON_SVG, 1024, 1024, { background: VOID });
+  // Avatars: the 77 numerals — the established profile identity — cut from the
+  // painted lockup, big enough to survive Discord's smallest circle renders.
+  const avatar1024 = await glyphTile(1024, sevens, 0.88);
+  const avatar512 = await resizeSquare(avatar1024, 512);
+  const avatar200 = await resizeSquare(avatar1024, 200);
+  const avatarCircle = await glyphTile(1024, sevens, 0.78, { circle: true });
 
-  const og = await compositeOnVoid(darkFull, 1200, 630);
-  const bannerX = await compositeOnVoid(darkFull, 1500, 500);
-  const bannerDiscord = await compositeOnVoid(darkFull, 1920, 1080);
-  const bannerDiscordServer = await compositeOnVoid(darkFull, 960, 540);
-  const bannerYoutube = await compositeOnVoid(darkFull, 2560, 1440);
+  // Social banners: the full lockup on the glow background.
+  const og = await compositeOnGlow(darkFull, 1200, 630, 0.72);
+  const bannerX = await compositeOnGlow(darkFull, 1500, 500, 0.44);
+  const bannerDiscord = await compositeOnGlow(darkFull, 1920, 1080, 0.6);
+  const bannerDiscordServer = await compositeOnGlow(darkFull, 960, 540, 0.62);
+  const bannerYoutube = await compositeOnGlow(darkFull, 2560, 1440, 0.54);
 
   await writePng(path.join(BRAND, "logo", "open77-logo-dark.png"), uiDark);
   await writePng(path.join(BRAND, "logo", "open77-logo-light.png"), uiLight);
@@ -396,20 +489,23 @@ async function main() {
   await writePng(path.join(BRAND, "logo", "open77-logo-light-2000.png"), light2000);
   await writePng(path.join(BRAND, "logo", "open77-logo-navy-bg.png"), navyBg);
   await writePng(path.join(BRAND, "logo", "open77-monogram-1024.png"), monogram);
-  await writePng(path.join(BRAND, "logo", "open77-mark-1024.png"), mark1024);
-  await writePng(path.join(BRAND, "logo", "open77-app-icon.png"), appIconPng);
+  await writePng(path.join(BRAND, "logo", "open77-mark-1024.png"), markSquare);
+  await writePng(path.join(BRAND, "logo", "open77-app-icon.png"), appIcon);
 
   await writePng(path.join(BRAND, "favicon", "favicon-16.png"), fav16);
   await writePng(path.join(BRAND, "favicon", "favicon-32.png"), fav32);
   await writePng(path.join(BRAND, "favicon", "favicon-48.png"), fav48);
   await writePng(path.join(BRAND, "favicon", "apple-touch-icon.png"), apple);
   await writeFile(path.join(BRAND, "favicon", "favicon.ico"), ico);
+  await writeFile(path.join(BRAND, "favicon", "favicon.svg"), faviconSvg);
   await writeFile(path.join(PUBLIC, "favicon.ico"), ico);
+  await writeFile(path.join(PUBLIC, "assets", "favicon.svg"), faviconSvg);
   await writePng(path.join(PUBLIC, "apple-touch-icon.png"), apple);
 
   await writePng(path.join(BRAND, "social", "avatar-200.png"), avatar200);
   await writePng(path.join(BRAND, "social", "avatar-512.png"), avatar512);
   await writePng(path.join(BRAND, "social", "avatar-1024.png"), avatar1024);
+  await writePng(path.join(BRAND, "social", "avatar-circle-1024.png"), avatarCircle);
   await writePng(path.join(BRAND, "social", "og-card-1200x630.png"), og);
   await writePng(path.join(BRAND, "social", "banner-x-1500x500.png"), bannerX);
   await writePng(path.join(BRAND, "social", "banner-discord-1920x1080.png"), bannerDiscord);
@@ -420,19 +516,16 @@ async function main() {
   const zip = zipStore(kitFiles);
   await writeFile(path.join(BRAND, "open77-brand-kit.zip"), zip);
 
-  const darkMeta = await sharp(dark2000).metadata();
-  const lightUi = await sharp(uiLight).metadata();
-  const names = kitFiles.map((f) => f.name);
-  if (names.some((n) => n.endsWith(".zip"))) {
-    throw new Error("brand kit zip included itself");
-  }
-
+  const markMeta = await sharp(mark).metadata();
+  const slashMeta = await sharp(slashes).metadata();
+  const sevensMeta = await sharp(sevens).metadata();
   console.log(
     JSON.stringify(
       {
-        dark2000: { width: darkMeta.width, height: darkMeta.height },
-        uiLight: { width: lightUi.width, height: lightUi.height },
-        kitFiles: names.length,
+        mark: { width: markMeta.width, height: markMeta.height },
+        slashes: { width: slashMeta.width, height: slashMeta.height },
+        sevens: { width: sevensMeta.width, height: sevensMeta.height },
+        kitFiles: kitFiles.length,
         kitSha: createHash("sha256").update(zip).digest("hex").slice(0, 16),
       },
       null,

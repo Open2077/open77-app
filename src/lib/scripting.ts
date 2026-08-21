@@ -6,43 +6,71 @@
  * runtime in those trees — C# is the dedicated-server process, and Chromium
  * WebUI pages are optional interfaces, not a second gameplay language.
  *
- * The snippets are the "Minimal resource" example from
- * `base/docs/lua-resources.md`, so the landing page cannot invent an API.
+ * The sample is a complete two-file resource built only from documented calls:
+ * `RegisterCommand` and `CyberM.players.position` / `CyberM.vehicles.create`
+ * (docs/server-api.md, docs/vehicles.md) on the server, and
+ * `CyberM.blips.create` (docs/blips.md) plus the `cyberm_notifications`
+ * export (docs/notifications.md) on the client — the landing page does not
+ * get to invent an API.
  */
 
-export const HOME_SERVER_LUA = `RegisterNetEvent("garage:request", function(garageId)
-    local playerId = source
-    TriggerClientEvent("garage:state", playerId, {
-        id = garageId,
-        open = true
+export const HOME_SERVER_LUA = `local GALENA = "Vehicle.v_standard2_thorton_galena_player"
+
+RegisterCommand("ride", function(source, args)
+    local spot = CyberM.players.position(source)
+    if spot == nil then return end
+
+    local id = CyberM.vehicles.create({
+        record = args[1] or GALENA,
+        position = { x = spot.x + 3.0, y = spot.y, z = spot.z },
+        bucket = spot.bucket,
     })
-end)`;
 
-export const HOME_CLIENT_LUA = `RegisterNetEvent("garage:state", function(state)
-    print(("Garage %s: %s"):format(state.id, state.open and "open" or "closed"))
-end)
-
-CreateThread(function()
-    local sent, reason = TriggerServerEvent("garage:request", "city-center")
-    if not sent then
-        print("Request failed: " .. tostring(reason))
+    if id then
+        TriggerClientEvent("ride:delivered", source, id, spot)
     end
 end)`;
 
-export const SCRIPT_RUNTIMES = [
+export const HOME_CLIENT_LUA = `RegisterNetEvent("ride:delivered", function(id, spot)
+    CyberM.blips.create({
+        position = { x = spot.x + 3.0, y = spot.y, z = spot.z },
+        sprite = "objective",
+        title = ("Ride #%d"):format(id)
+    })
+
+    CyberM.exports.call("cyberm_notifications", "show", {
+        type = "success",
+        title = "Ride delivered",
+        message = "Your wheels are waiting outside."
+    })
+end)`;
+
+/** What `/ride` does, spelled out next to the code. */
+export const SCRIPT_SAMPLE_NOTE =
+  "The complete resource: a chat command that spawns a real, server-owned vehicle " +
+  "beside the player, then marks it on their map with a toast. Every call is in the docs.";
+
+export const SCRIPT_PILLARS = [
   {
-    tag: "CLIENT RUNTIME",
-    title: "Client Lua",
-    body: "Runs inside the game process. Native APIs, world projection, events and optional WebUI — documented apart from the server so a client call is never mistaken for authority.",
+    tag: "LUA 5.4",
+    title: "One language, two runtimes",
+    body: "Client scripts run inside the game; server scripts own the authoritative world. Each resource gets its own isolated Lua VM — and hot reload: save the file, it is live.",
+    href: "/docs/server-resources",
+    link: "Resource model",
+  },
+  {
+    tag: "REAL GAME APIS",
+    title: "Drive the actual engine",
+    body: "Vehicles, blips, NPCs, weather, loot, interactions, notifications — the same permission-gated natives OPEN//77's own resources are built on.",
     href: "/docs/api",
     link: "Lua API reference",
   },
   {
-    tag: "SERVER RUNTIME",
-    title: "Server Lua",
-    body: "Runs on the dedicated server. Authoritative state, commands, permissions and the signed resource set that connecting clients download.",
-    href: "/docs/server-resources",
-    link: "Server resources",
+    tag: "WEB INTERFACES",
+    title: "UI with the web stack",
+    body: "A resource can ship a Chromium WebUI page: build HUDs, menus and apps in HTML, CSS and JavaScript, out of process so the game never pays for your UI.",
+    href: "/docs/notifications",
+    link: "WebUI in practice",
   },
 ] as const;
 

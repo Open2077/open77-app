@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { Eyebrow, EyebrowSpan, SlashMark } from "@/components/brand";
 import { JsonLd } from "@/components/json-ld";
-import { ArrowRightIcon, CodeIcon, ServerRackIcon } from "@/components/icons";
+import { ArrowRightIcon, CodeIcon, GlobeIcon, PlugIcon } from "@/components/icons";
 import { SiteFooter } from "@/components/site-footer";
 import { highlightCode } from "@/lib/docs";
 import { cssBackgrounds, expCardArt, images } from "@/lib/images";
@@ -12,7 +12,8 @@ import {
   HOME_CLIENT_LUA,
   HOME_SERVER_LUA,
   SCRIPT_DOC_LINKS,
-  SCRIPT_RUNTIMES,
+  SCRIPT_PILLARS,
+  SCRIPT_SAMPLE_NOTE,
 } from "@/lib/scripting";
 import { breadcrumbNode, jsonLdGraph, pageMetadata, softwareApplicationNode } from "@/lib/seo";
 import { site } from "@/lib/site";
@@ -30,9 +31,10 @@ const HERO_FACTS = [
   { key: "Stage", value: "Pre-alpha, developed in the open" },
 ];
 
-const RUNTIME_ICONS = {
-  "CLIENT RUNTIME": CodeIcon,
-  "SERVER RUNTIME": ServerRackIcon,
+const PILLAR_ICONS = {
+  "LUA 5.4": CodeIcon,
+  "REAL GAME APIS": PlugIcon,
+  "WEB INTERFACES": GlobeIcon,
 } as const;
 
 function Snippet({ filename, badge, html }: { filename: string; badge: string; html: string }) {
@@ -252,47 +254,52 @@ export default async function HomePage() {
           <div className="section-inner">
             <div className="split-head">
               <div>
-                <Eyebrow>FOR SCRIPT AUTHORS</Eyebrow>
-                <h2 className="section-title">Develop in Lua.</h2>
+                <Eyebrow>FOR DEVELOPERS</Eyebrow>
+                <h2 className="section-title">
+                  Script your
+                  <br />
+                  own Night City.
+                </h2>
               </div>
               <p className="split-head-lead">
-                Every resource is Lua&nbsp;5.4. Client scripts run inside the game; server scripts
-                run on the dedicated server. Each resource gets its own isolated Lua state — there
-                is one language, and two runtimes that the docs keep apart on purpose.
+                Gameplay on an OPEN//77 server is not configured — it is scripted. A resource is a
+                small Lua&nbsp;5.4 package your server loads, hot-reloads and streams to every
+                player who joins. This is the entire <code>/ride</code> command, for real:
               </p>
             </div>
           </div>
 
           <div className="section-inner section-inner-wide">
-            <div className="benefit-grid">
-              {SCRIPT_RUNTIMES.map((runtime) => {
-                const Icon = RUNTIME_ICONS[runtime.tag];
+            <div className="distinction-grid">
+              <Snippet
+                filename="resources/ride/server/main.lua"
+                badge="SERVER RUNTIME"
+                html={serverHtml}
+              />
+              <Snippet
+                filename="resources/ride/client/main.lua"
+                badge="CLIENT RUNTIME"
+                html={clientHtml}
+              />
+            </div>
+            <p className="section-cta-note">{SCRIPT_SAMPLE_NOTE}</p>
+
+            <div className="benefit-grid benefit-grid-3">
+              {SCRIPT_PILLARS.map((pillar) => {
+                const Icon = PILLAR_ICONS[pillar.tag];
                 return (
-                  <article className="benefit-card" key={runtime.tag}>
+                  <article className="benefit-card" key={pillar.tag}>
                     <Icon className="feat-icon" />
-                    <span className="audience-tag">{runtime.tag}</span>
-                    <h3>{runtime.title}</h3>
-                    <p>{runtime.body}</p>
-                    <Link className="btn btn-ghost" href={runtime.href}>
-                      {runtime.link}
+                    <span className="audience-tag">{pillar.tag}</span>
+                    <h3>{pillar.title}</h3>
+                    <p>{pillar.body}</p>
+                    <Link className="btn btn-ghost" href={pillar.href}>
+                      {pillar.link}
                       <ArrowRightIcon />
                     </Link>
                   </article>
                 );
               })}
-            </div>
-
-            <div className="distinction-grid">
-              <Snippet
-                filename="resources/garage/client/main.lua"
-                badge="CLIENT RUNTIME"
-                html={clientHtml}
-              />
-              <Snippet
-                filename="resources/garage/server/main.lua"
-                badge="SERVER RUNTIME"
-                html={serverHtml}
-              />
             </div>
 
             <div className="section-cta-row">
@@ -307,7 +314,7 @@ export default async function HomePage() {
                     <Link href={link.href}>{link.label}</Link>
                   </span>
                 ))}
-                . Samples are the garage resource from the Lua resources guide.
+                .
               </p>
             </div>
           </div>
