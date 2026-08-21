@@ -471,10 +471,12 @@ async function main() {
 
   // Avatars: the //77 mark, same composition as the app icon but on a square
   // canvas — Discord applies its own circle mask, baked corners would clip.
-  const avatar1024 = await glyphTile(1024, mark, 0.82);
+  // Near-full-bleed: at sidebar size a wide mark is a thin band, so it needs
+  // every pixel of width it can get inside the circle.
+  const avatar1024 = await glyphTile(1024, mark, 0.96);
   const avatar512 = await resizeSquare(avatar1024, 512);
   const avatar200 = await resizeSquare(avatar1024, 200);
-  const avatarCircle = await glyphTile(1024, mark, 0.76, { circle: true });
+  const avatarCircle = await glyphTile(1024, mark, 0.9, { circle: true });
 
   // Social banners: the full lockup on the glow background.
   const og = await compositeOnGlow(darkFull, 1200, 630, 0.72);
