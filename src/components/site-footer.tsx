@@ -21,11 +21,22 @@ export function SiteFooter({ fineprint }: { fineprint?: string }) {
           {footerNav.map((column) => (
             <div className="footer-col" key={column.title}>
               <p className="footer-col-title">{column.title}</p>
-              {column.links.map((link) => (
-                <Link key={link.href + link.label} href={link.href}>
-                  {link.label}
-                </Link>
-              ))}
+              {column.links.map((link) =>
+                link.href.startsWith("http") ? (
+                  <a
+                    key={link.href + link.label}
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link key={link.href + link.label} href={link.href}>
+                    {link.label}
+                  </Link>
+                ),
+              )}
             </div>
           ))}
         </nav>

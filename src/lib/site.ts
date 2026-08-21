@@ -59,8 +59,10 @@ export const site = {
      */
     platformRepo: null as string | null,
     siteRepo: "https://github.com/Open2077/open77-app",
-    /** Community channels open with the first public pre-alpha milestone. */
-    discord: null as string | null,
+    /** The one official community — everything is discussed there directly. */
+    discord: "https://discord.open2077.net" as string | null,
+    x: "https://x.com/open2077" as string | null,
+    tiktok: "https://www.tiktok.com/@open2077_network" as string | null,
     devlog: null as string | null,
   },
 } as const;
@@ -111,6 +113,14 @@ export const footerNav = [
       { href: "/community", label: "Community" },
       { href: "/docs", label: "Documentation" },
       { href: "/brand", label: "Brand kit" },
+    ],
+  },
+  {
+    title: "Follow",
+    links: [
+      { href: "https://discord.open2077.net", label: "Discord" },
+      { href: "https://x.com/open2077", label: "X / Twitter" },
+      { href: "https://www.tiktok.com/@open2077_network", label: "TikTok" },
     ],
   },
 ] as const;

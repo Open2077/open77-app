@@ -80,6 +80,26 @@
   gap: 14px;
 }
 
+/* Icon-only Discord entry point; stays visible on mobile where the alpha
+   button hides, so the community door is always one tap away. */
+.header-discord {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: #5865f2;
+  transition: color 0.15s var(--ease), background 0.15s var(--ease),
+              border-color 0.15s var(--ease);
+}
+.header-discord:hover {
+  background: #5865f2;
+  border-color: #5865f2;
+  color: #fff;
+}
+
 .stage-chip {
   font-family: var(--font-mono);
   font-size: 11px;

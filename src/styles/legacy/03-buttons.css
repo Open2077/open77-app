@@ -45,3 +45,13 @@
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 
 .btn-small { padding: 9px 16px; font-size: 12.5px; min-height: 38px; }
+
+/* Discord-branded call to action: blurple, same notch language as btn-primary. */
+.btn-discord {
+  background: #5865f2;
+  color: #fff;
+  clip-path: var(--notch-clip);
+}
+.btn-discord:hover { background: #6d78f4; color: #fff; }
+.btn-discord:focus-visible { clip-path: none; }
+.btn-discord svg { flex-shrink: 0; }

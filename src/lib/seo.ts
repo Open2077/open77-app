@@ -95,9 +95,13 @@ export function organizationNode(): JsonLdNode {
     },
     // Only profiles that actually resolve: `sameAs` pointing at a 404 is worse
     // than a shorter list.
-    sameAs: [site.links.platformRepo, site.links.siteRepo].filter(
-      (url): url is string => url !== null,
-    ),
+    sameAs: [
+      site.links.platformRepo,
+      site.links.siteRepo,
+      site.links.discord,
+      site.links.x,
+      site.links.tiktok,
+    ].filter((url): url is string => url !== null),
   };
 }
 

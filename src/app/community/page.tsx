@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Eyebrow } from "@/components/brand";
+import { DiscordIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
 import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
@@ -9,7 +10,7 @@ import { site } from "@/lib/site";
 export const metadata = pageMetadata({
   title: "Community",
   description:
-    "OPEN//77 is developed in the open. Community channels — Discord, code repository, devlog — open with the first public pre-alpha milestone.",
+    "OPEN//77 is developed in the open, and the official Discord is where it is discussed directly. Join in — alpha news lands there first.",
   path: "/community",
 });
 
@@ -27,10 +28,42 @@ export default function CommunityPage() {
             </h1>
             <p className="section-lead">
               OPEN//77 is being built in the open, and the interesting part — the worlds — will be
-              built by people like you. Community channels open with the first public pre-alpha
-              milestone; this page will link them the moment they exist. Until then, no fake
-              buttons.
+              built by people like you. The official Discord is the one place where the project is
+              discussed directly: development, questions, feedback, and every announcement, first.
             </p>
+            <div className="hero-ctas">
+              {site.links.discord ? (
+                <a
+                  className="btn btn-discord"
+                  href={site.links.discord}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <DiscordIcon size={16} />
+                  Join our Discord
+                </a>
+              ) : null}
+              {site.links.x ? (
+                <a
+                  className="btn btn-ghost"
+                  href={site.links.x}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  X / Twitter
+                </a>
+              ) : null}
+              {site.links.tiktok ? (
+                <a
+                  className="btn btn-ghost"
+                  href={site.links.tiktok}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  TikTok
+                </a>
+              ) : null}
+            </div>
           </div>
         </section>
 
@@ -43,9 +76,22 @@ export default function CommunityPage() {
                 <p>
                   OPEN//77 is in pre-alpha and there is no public build — so there&apos;s no signup
                   form to fill in, and we won&apos;t pretend otherwise. When the first alpha opens
-                  its doors, it will be announced right here and through the community channels
-                  below.
+                  its doors, it will be announced on the official Discord first. Being there is the
+                  closest thing to a waiting list this project will ever have.
                 </p>
+                {site.links.discord ? (
+                  <div className="hero-ctas">
+                    <a
+                      className="btn btn-discord"
+                      href={site.links.discord}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      <DiscordIcon size={16} />
+                      Join our Discord
+                    </a>
+                  </div>
+                ) : null}
               </div>
               <p className="alpha-status">
                 <span className="live-dot" aria-hidden="true" /> STATUS: {site.stage} — IN
@@ -57,8 +103,9 @@ export default function CommunityPage() {
               <div className="follow-card">
                 <h3>Players</h3>
                 <p>
-                  Nothing to install yet. When a test build exists, it will be announced here first
-                  — and the <Link href="/servers">server browser</Link> goes live with it.
+                  Nothing to install yet. When a test build exists, the Discord hears it first and
+                  this page follows — and the <Link href="/servers">server browser</Link> goes live
+                  with it.
                 </p>
               </div>
               <div className="follow-card">

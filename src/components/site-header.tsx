@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Wordmark } from "@/components/brand";
-import { MenuIcon } from "@/components/icons";
+import { DiscordIcon, MenuIcon } from "@/components/icons";
 import { mainNav, site } from "@/lib/site";
 
 function isActive(pathname: string, href: string): boolean {
@@ -72,6 +72,18 @@ export function SiteHeader() {
           <span className="stage-chip" title="Current development stage">
             {site.stage}
           </span>
+          {site.links.discord ? (
+            <a
+              className="header-discord"
+              href={site.links.discord}
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label="Join our Discord"
+              title="Join our Discord"
+            >
+              <DiscordIcon size={17} />
+            </a>
+          ) : null}
           <Link className="btn btn-small btn-primary" href="/community#alpha">
             Join alpha
           </Link>
@@ -105,6 +117,17 @@ export function SiteHeader() {
         <Link className="btn btn-primary" href="/community#alpha">
           Join alpha
         </Link>
+        {site.links.discord ? (
+          <a
+            className="btn btn-discord"
+            href={site.links.discord}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <DiscordIcon size={16} />
+            Join our Discord
+          </a>
+        ) : null}
       </nav>
     </header>
   );

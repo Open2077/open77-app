@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { Eyebrow, EyebrowSpan, SlashMark } from "@/components/brand";
 import { JsonLd } from "@/components/json-ld";
-import { ArrowRightIcon, CodeIcon, GlobeIcon, PlugIcon } from "@/components/icons";
+import { ArrowRightIcon, CodeIcon, DiscordIcon, GlobeIcon, PlugIcon } from "@/components/icons";
 import { SiteFooter } from "@/components/site-footer";
 import { highlightCode } from "@/lib/docs";
 import { cssBackgrounds, expCardArt, images } from "@/lib/images";
@@ -336,6 +336,17 @@ export default async function HomePage() {
               <Link className="btn btn-primary btn-lg" href="/community#alpha">
                 Join alpha
               </Link>
+              {site.links.discord ? (
+                <a
+                  className="btn btn-discord btn-lg"
+                  href={site.links.discord}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <DiscordIcon size={18} />
+                  Join our Discord
+                </a>
+              ) : null}
               <Link className="btn btn-light btn-lg" href="/create">
                 Create a server
               </Link>
