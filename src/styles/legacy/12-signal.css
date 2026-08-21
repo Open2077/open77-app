@@ -507,9 +507,71 @@ section.section.light-zone {
   outline-offset: 3px;
 }
 
+/* Hover glitch. Two ghost copies of the lockup sit over the real one:
+   ::before is a chroma-shifted slice ghost that jumps between horizontal
+   bands, ::after is clipped to the // bars alone (59%-70% of the image
+   width) and jolts sideways — the slashes are the part that "hacks". */
+.wordmark { position: relative; display: inline-flex; }
+.wordmark::before,
+.wordmark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/brand/logo/open77-logo-light.png") no-repeat left center / contain;
+  opacity: 0;
+  pointer-events: none;
+}
+.wordmark::after {
+  clip-path: inset(0 30% 0 59%);
+  filter: brightness(1.5) saturate(2.4);
+}
+.wordmark::before {
+  filter: sepia(1) saturate(9) hue-rotate(-75deg) brightness(1.15) contrast(1.2);
+}
+.wordmark:hover .logotype,
+.wordmark:focus-visible .logotype {
+  animation: logo-jitter 0.9s linear infinite;
+}
+.wordmark:hover::before,
+.wordmark:focus-visible::before {
+  animation: logo-glitch-slices 0.9s steps(1, end) infinite;
+}
+.wordmark:hover::after,
+.wordmark:focus-visible::after {
+  animation: logo-slash-jolt 0.9s steps(1, end) infinite;
+}
+
+@keyframes logo-glitch-slices {
+  0%, 24%, 54%, 86%, 100% { opacity: 0; transform: none; }
+  8% { opacity: 0.75; clip-path: inset(4% 0 68% 0); transform: translate(-2px, -1px); }
+  16% { opacity: 0.75; clip-path: inset(58% 0 12% 0); transform: translate(2px, 1px); }
+  46% { opacity: 0.75; clip-path: inset(30% 0 44% 0); transform: translate(-3px, 0); }
+  78% { opacity: 0.75; clip-path: inset(72% 0 2% 0); transform: translate(2px, 0); }
+}
+@keyframes logo-slash-jolt {
+  0%, 40%, 72%, 100% { opacity: 0; transform: none; }
+  10% { opacity: 1; transform: translateX(3px) skewX(-8deg); }
+  22% { opacity: 0.4; transform: translateX(-3px); }
+  30% { opacity: 1; transform: translateX(2px); }
+  62% { opacity: 1; transform: translateX(-4px) skewX(6deg); }
+}
+@keyframes logo-jitter {
+  0%, 44%, 56%, 100% { transform: none; }
+  48% { transform: translate(-1px, 0.5px) skewX(-2deg); }
+  52% { transform: translateX(1px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wordmark .logotype { transition: none; }
   .wordmark:hover .logotype { filter: none; }
+  .wordmark:hover .logotype,
+  .wordmark:focus-visible .logotype,
+  .wordmark:hover::before,
+  .wordmark:focus-visible::before,
+  .wordmark:hover::after,
+  .wordmark:focus-visible::after {
+    animation: none;
+  }
 }
 
 /* ============================================================
