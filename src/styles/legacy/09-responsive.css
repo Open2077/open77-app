@@ -50,6 +50,15 @@
   .cell-region { grid-area: region; align-self: center; justify-self: end; }
 }
 
+/* Phone widths: the stage chip is the header's least load-bearing element and
+   was pushing the menu toggle past the right edge once the Discord chip
+   arrived. The wordmark also gives back a few pixels. */
+@media (max-width: 560px) {
+  .stage-chip { display: none; }
+  .header-actions { gap: 10px; }
+  .logotype { height: 19px; }
+}
+
 @media (max-width: 640px) {
   .hero-caret { display: none; }
   .code-titlebar, .client-titlebar { flex-wrap: wrap; row-gap: 8px; }

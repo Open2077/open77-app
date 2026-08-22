@@ -14,6 +14,10 @@ html { scroll-behavior: smooth; }
 /* The hidden attribute always wins over class-level display values. */
 [hidden] { display: none !important; }
 
+/* `hidden` on body alone still lets mobile browsers pan the layout viewport
+   sideways when something pokes past the edge; clipping the root ends it. */
+html { overflow-x: clip; }
+
 body {
   margin: 0;
   background: var(--bg);
