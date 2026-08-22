@@ -43,17 +43,17 @@ const CHECKS = [
   // A real signature, not a word from the search placeholder — the earlier
   // version of this check passed against a suggested function that did not
   // exist, which is exactly the failure it was supposed to catch.
-  { path: "/docs/api", expect: 200, contains: "CyberM.vehicles.breakGlass" },
+  { path: "/docs/api", expect: 200, contains: "Open77.vehicles.breakGlass" },
   { path: "/docs/api/client/globals", expect: 200, contains: "AddEventHandler" },
-  { path: "/docs/api/server/cyberm-vehicles", expect: 200, contains: "routing bucket" },
+  { path: "/docs/api/server/open77-vehicles", expect: 200, contains: "routing bucket" },
 
   // Markdown twins, reached through the rewrites.
-  { path: "/docs.md", expect: 200, type: "text/markdown", contains: "# CyberM" },
+  { path: "/docs.md", expect: 200, type: "text/markdown", contains: "# Open77" },
   { path: "/docs/vehicles.md", expect: 200, type: "text/markdown", contains: "```lua" },
   { path: "/docs/platform.md", expect: 200, type: "text/markdown", contains: "## FAQ" },
   { path: "/docs/api.md", expect: 200, type: "text/markdown", contains: "Lua API reference" },
   {
-    path: "/docs/api/client/cyberm-camera.md",
+    path: "/docs/api/client/open77-camera.md",
     expect: 200,
     type: "text/markdown",
     contains: "camera",

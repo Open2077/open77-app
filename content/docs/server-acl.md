@@ -1,6 +1,6 @@
 # Public identity, server commands, and ACL
 
-Server-side Lua commands are typed straight into the CyberM developer terminal in game (`²`). A
+Server-side Lua commands are typed straight into the Open77 developer terminal in game (`²`). A
 command the client knows stays local; anything else is forwarded to the server over the
 authenticated network session, then looked up among the `RegisterCommand` registrations of the Lua
 resources.
@@ -10,7 +10,7 @@ identity the server actually trusts.
 
 ## Exporting your public identity
 
-In the CyberM terminal:
+In the Open77 terminal:
 
 ```text
 identity.dump
@@ -19,12 +19,12 @@ identity.dump
 The reply gives the absolute path and the SHA-256 fingerprint:
 
 ```text
-OK identity_public_dumped path=".../red4ext/plugins/CyberM/exports/identity-<uuid>.json" fingerprint=sha256:...
+OK identity_public_dumped path=".../red4ext/plugins/Open77/exports/identity-<uuid>.json" fingerprint=sha256:...
 ```
 
 The file holds the `userId`, the P-256 public key, its fingerprint, and a ready-to-copy
 `aclPrincipal` object. It never holds the private key, the DPAPI blob, the session proof, or the
-`%LOCALAPPDATA%/CyberM/identity-v1.dat` file. Do not copy that last one to the server.
+`%LOCALAPPDATA%/Open77/identity-v1.dat` file. Do not copy that last one to the server.
 
 ## Whitelisting a player
 
@@ -75,4 +75,4 @@ and stays authorised for local administration.
 
 The transport caps a line at 32 tokens and each token at 256 UTF-8 bytes, validates the command
 name, and reuses the network limit of 32 events per second. Refusals and results come back to the
-CyberM terminal through `cyberm:command:result`.
+Open77 terminal through `open77:command:result`.

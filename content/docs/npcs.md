@@ -1,10 +1,10 @@
 # Server-owned NPCs
 
-CyberM NPCs are canonical server entities projected into REDengine only for nearby players. A Lua
+Open77 NPCs are canonical server entities projected into REDengine only for nearby players. A Lua
 resource creates and owns the canonical NPC; the server controls identity, routing bucket, health,
 tasks and simulation authority. Clients cannot create or mutate canonical NPCs.
 
-The reference implementation is [`resources/cyberm_npcs`](../resources/cyberm_npcs/README.md).
+The reference implementation is [`resources/open77_npcs`](../resources/open77_npcs/README.md).
 
 ## Manifest permissions
 
@@ -32,10 +32,10 @@ permissions { "world.npcs", "npcs.read" }
 ## Templates
 
 Raw `Character.*` records are deliberately not accepted. Use a reviewed alias from
-`CyberM.npcs.templates()`:
+`Open77.npcs.templates()`:
 
 ```lua
-for _, template in ipairs(CyberM.npcs.templates()) do
+for _, template in ipairs(Open77.npcs.templates()) do
     print(template.name, template.record)
 end
 ```
@@ -71,15 +71,15 @@ See the [methodology, source hashes, limitations and validation backlog](../docs
 ## Create and inspect
 
 ```lua
-local npcId, reason = CyberM.npcs.create({
+local npcId, reason = Open77.npcs.create({
     template = "civilian_female_relaxed_01",
     position = { x = -1378.0, y = 1262.0, z = 123.0 },
     yaw = 90.0,
     bucket = 0,
     appearance = nil,
     loadout = {},
-    aiMode = CyberM.npcs.ai.tasks,
-    damagePolicy = CyberM.npcs.damage.immortal,
+    aiMode = Open77.npcs.ai.tasks,
+    damagePolicy = Open77.npcs.damage.immortal,
     health = 100,
     maxHealth = 100,
     streamingRadius = 180,
@@ -90,9 +90,9 @@ local npcId, reason = CyberM.npcs.create({
 
 if not npcId then error(reason) end
 
-local npc = CyberM.npcs.get(npcId)
-local owned = CyberM.npcs.all()       -- this resource only
-local inBucket = CyberM.npcs.all(12)  -- optional bucket filter
+local npc = Open77.npcs.get(npcId)
+local owned = Open77.npcs.all()       -- this resource only
+local inBucket = Open77.npcs.all(12)  -- optional bucket filter
 ```
 
 `get` returns the template, appearance, loadout JSON, position, bucket, streaming values, health,
@@ -104,28 +104,32 @@ Limits are enforced server-side: 4096 NPCs globally, 512 per resource and 64 tas
 
 All functions in this table require `world.npcs`. IDs are opaque 64-bit Lua integers. Mutation
 functions return `true` only when the NPC exists and belongs to the calling resource. Invalid
-definitions, task parameters, IDs or enum values raise a Lua error; callers should treat these as
-resource bugs rather than normal gameplay failures.
+task parameters, IDs or enum values raise a Lua error; callers should treat these as resource
+bugs rather than normal gameplay failures.
+
+`create` is the exception: an unknown template or an out-of-range field is a **normal
+rejection**, not an error. It returns `nil, reason` — for example
+`nil, "npc_template_not_found"` — so always check both return values.
 
 | Function | Parameters | Return |
 |---|---|---|
-| `CyberM.npcs.create` | `definition` | `npcId`, or `nil, reason` when the subsystem/permission is unavailable |
-| `CyberM.npcs.get` | `npcId` | owned NPC snapshot or `nil` |
-| `CyberM.npcs.all` | optional `bucket` | array of owned NPC snapshots |
-| `CyberM.npcs.templates` | none | array of approved template snapshots |
-| `CyberM.npcs.update` | `npcId, fields` | boolean |
-| `CyberM.npcs.setTransform` | `npcId, transform` | boolean |
-| `CyberM.npcs.setBucket` | `npcId, bucket` | boolean |
-| `CyberM.npcs.setAppearance` | `npcId, appearance` | boolean |
-| `CyberM.npcs.setLoadout` | `npcId, loadout` | boolean |
-| `CyberM.npcs.setHealth` | `npcId, health, optional maxHealth` | boolean |
-| `CyberM.npcs.setDamagePolicy` | `npcId, policy` | boolean |
-| `CyberM.npcs.setAiMode` | `npcId, mode` | boolean |
-| `CyberM.npcs.setRagdoll` | `npcId, enabled` | boolean |
-| `CyberM.npcs.applyDamage` | `npcId, amount, optional source, optional cause` | boolean |
-| `CyberM.npcs.kill` | `npcId, optional reason` | boolean |
-| `CyberM.npcs.revive` | `npcId, optional health` | boolean |
-| `CyberM.npcs.remove` | `npcId` | boolean |
+| `Open77.npcs.create` | `definition` | `npcId`, or `nil, reason` when the subsystem/permission is unavailable |
+| `Open77.npcs.get` | `npcId` | owned NPC snapshot or `nil` |
+| `Open77.npcs.all` | optional `bucket` | array of owned NPC snapshots |
+| `Open77.npcs.templates` | none | array of approved template snapshots |
+| `Open77.npcs.update` | `npcId, fields` | boolean |
+| `Open77.npcs.setTransform` | `npcId, transform` | boolean |
+| `Open77.npcs.setBucket` | `npcId, bucket` | boolean |
+| `Open77.npcs.setAppearance` | `npcId, appearance` | boolean |
+| `Open77.npcs.setLoadout` | `npcId, loadout` | boolean |
+| `Open77.npcs.setHealth` | `npcId, health, optional maxHealth` | boolean |
+| `Open77.npcs.setDamagePolicy` | `npcId, policy` | boolean |
+| `Open77.npcs.setAiMode` | `npcId, mode` | boolean |
+| `Open77.npcs.setRagdoll` | `npcId, enabled` | boolean |
+| `Open77.npcs.applyDamage` | `npcId, amount, optional source, optional cause` | boolean |
+| `Open77.npcs.kill` | `npcId, optional reason` | boolean |
+| `Open77.npcs.revive` | `npcId, optional health` | boolean |
+| `Open77.npcs.remove` | `npcId` | boolean |
 
 An NPC snapshot contains:
 
@@ -149,18 +153,18 @@ A template snapshot contains `name`, `record`, `observerRecord`, `defaultAppeara
 ## State mutation
 
 ```lua
-CyberM.npcs.setTransform(npcId, { position = { x = 1, y = 2, z = 3 }, yaw = 180 })
-CyberM.npcs.setBucket(npcId, 7)
-CyberM.npcs.setAppearance(npcId, "appearance_name")
-CyberM.npcs.setLoadout(npcId, { weapon = "Items.Preset_Lexington_Default" })
-CyberM.npcs.setHealth(npcId, 80, 100)
-CyberM.npcs.setDamagePolicy(npcId, CyberM.npcs.damage.mortal)
-CyberM.npcs.setAiMode(npcId, CyberM.npcs.ai.tasks)
-CyberM.npcs.setRagdoll(npcId, true)
-CyberM.npcs.remove(npcId)
+Open77.npcs.setTransform(npcId, { position = { x = 1, y = 2, z = 3 }, yaw = 180 })
+Open77.npcs.setBucket(npcId, 7)
+Open77.npcs.setAppearance(npcId, "appearance_name")
+Open77.npcs.setLoadout(npcId, { weapon = "Items.Preset_Lexington_Default" })
+Open77.npcs.setHealth(npcId, 80, 100)
+Open77.npcs.setDamagePolicy(npcId, Open77.npcs.damage.mortal)
+Open77.npcs.setAiMode(npcId, Open77.npcs.ai.tasks)
+Open77.npcs.setRagdoll(npcId, true)
+Open77.npcs.remove(npcId)
 ```
 
-`CyberM.npcs.update(id, fields)` can atomically change appearance, loadout, AI mode, damage policy,
+`Open77.npcs.update(id, fields)` can atomically change appearance, loadout, AI mode, damage policy,
 health, maximum health and ragdoll. The named setters above are convenience wrappers.
 
 Moving an NPC between buckets or teleporting it revokes the current simulation lease before the
@@ -169,16 +173,16 @@ new state is broadcast.
 ### Constants
 
 ```lua
-CyberM.npcs.flags.alive
-CyberM.npcs.flags.ragdoll
-CyberM.npcs.flags.despawnWhenUnobserved
-CyberM.npcs.flags.persistent
-CyberM.npcs.ai.tasks
-CyberM.npcs.ai.frozen
-CyberM.npcs.ai.native
-CyberM.npcs.damage.mortal
-CyberM.npcs.damage.immortal
-CyberM.npcs.damage.invulnerable
+Open77.npcs.flags.alive
+Open77.npcs.flags.ragdoll
+Open77.npcs.flags.despawnWhenUnobserved
+Open77.npcs.flags.persistent
+Open77.npcs.ai.tasks
+Open77.npcs.ai.frozen
+Open77.npcs.ai.native
+Open77.npcs.damage.mortal
+Open77.npcs.damage.immortal
+Open77.npcs.damage.invulnerable
 ```
 
 `tasks` is the stable default. `frozen` immediately revokes the simulation lease and suspends every
@@ -209,21 +213,21 @@ to any channel and blocks only that channel.
 ### Move, follow and patrol
 
 ```lua
-local move = CyberM.npcs.tasks.moveTo(npcId, { x = 10, y = 20, z = 30 }, {
+local move = Open77.npcs.tasks.moveTo(npcId, { x = 10, y = 20, z = 30 }, {
     speed = "walk", acceptanceRadius = 1.0, timeoutMs = 30000,
 })
 
-local follow = CyberM.npcs.tasks.follow(npcId, { type = "player", id = playerId }, {
+local follow = Open77.npcs.tasks.follow(npcId, { type = "player", id = playerId }, {
     speed = "run", distance = 2.0, onTargetLost = "wait",
 })
-local followNpc = CyberM.npcs.tasks.follow(npcId, { type = "npc", id = otherNpcId })
+local followNpc = Open77.npcs.tasks.follow(npcId, { type = "npc", id = otherNpcId })
 
-local patrol = CyberM.npcs.tasks.patrol(npcId, {
+local patrol = Open77.npcs.tasks.patrol(npcId, {
     { x = 10, y = 20, z = 30, waitMs = 500 },
     { x = 16, y = 20, z = 30, waitMs = 1000 },
 }, { speed = "walk", loop = true, backAndForth = false })
 
-local wander = CyberM.npcs.tasks.wander(npcId, {
+local wander = Open77.npcs.tasks.wander(npcId, {
     x = 10, y = 20, z = 30, radius = 15, speed = "walk", seed = 42,
 })
 ```
@@ -234,13 +238,13 @@ current `onTargetLost` policy waits for the target to become available again.
 ### Look, hold and animation
 
 ```lua
-CyberM.npcs.tasks.face(npcId, { x = 1, y = 2, z = 3 }, {
+Open77.npcs.tasks.face(npcId, { x = 1, y = 2, z = 3 }, {
     tolerance = 3, speed = 180, timeoutMs = 5000,
 })
-CyberM.npcs.tasks.lookAt(npcId, { type = "player", id = playerId })
-CyberM.npcs.tasks.wait(npcId, 1500)
-CyberM.npcs.tasks.hold(npcId, { durationMs = 5000 })
-CyberM.npcs.tasks.playAnimation(npcId, "emote_smoke", { loop = false })
+Open77.npcs.tasks.lookAt(npcId, { type = "player", id = playerId })
+Open77.npcs.tasks.wait(npcId, 1500)
+Open77.npcs.tasks.hold(npcId, { durationMs = 5000 })
+Open77.npcs.tasks.playAnimation(npcId, "emote_smoke", { loop = false })
 ```
 
 Named full-body animations remain active until they are cancelled, preempted, timed out or the NPC
@@ -250,14 +254,14 @@ streams out. REDengine does not expose a reliable completion signal for every wo
 ### Generic queue and cancellation
 
 ```lua
-local taskId = CyberM.npcs.tasks.enqueue(npcId, "moveTo", {
+local taskId = Open77.npcs.tasks.enqueue(npcId, "moveTo", {
     x = 1, y = 2, z = 3, speed = "walk",
-}, { channel = CyberM.npcs.channels.movement, priority = 10, timeoutMs = 30000 })
+}, { channel = Open77.npcs.channels.movement, priority = 10, timeoutMs = 30000 })
 
-local task = CyberM.npcs.tasks.get(npcId, taskId)
-local tasks = CyberM.npcs.tasks.all(npcId)
-CyberM.npcs.tasks.cancel(npcId, taskId, "script_cancel")
-CyberM.npcs.tasks.clear(npcId, CyberM.npcs.channels.movement, "new_route")
+local task = Open77.npcs.tasks.get(npcId, taskId)
+local tasks = Open77.npcs.tasks.all(npcId)
+Open77.npcs.tasks.cancel(npcId, taskId, "script_cancel")
+Open77.npcs.tasks.clear(npcId, Open77.npcs.channels.movement, "new_route")
 ```
 
 Only the task names listed above are accepted. Unsupported types and malformed targets, paths,
@@ -267,20 +271,20 @@ durations or animation names are rejected before replication.
 
 | Function | Parameters | Return |
 |---|---|---|
-| `CyberM.npcs.tasks.enqueue` | `npcId, type, parameters, optional options` | task ID |
-| `CyberM.npcs.tasks.moveTo` | `npcId, position, optional options` | task ID |
-| `CyberM.npcs.tasks.follow` | `npcId, target, optional options` | task ID |
-| `CyberM.npcs.tasks.patrol` | `npcId, points, optional options` | task ID |
-| `CyberM.npcs.tasks.wander` | `npcId, optional options` | task ID |
-| `CyberM.npcs.tasks.face` | `npcId, target, optional options` | task ID |
-| `CyberM.npcs.tasks.lookAt` | `npcId, target, optional options` | task ID |
-| `CyberM.npcs.tasks.wait` | `npcId, durationMs, optional options` | task ID |
-| `CyberM.npcs.tasks.hold` | `npcId, optional options` | task ID |
-| `CyberM.npcs.tasks.playAnimation` | `npcId, animation, optional options` | task ID |
-| `CyberM.npcs.tasks.get` | `npcId, taskId` | task snapshot or `nil` |
-| `CyberM.npcs.tasks.all` | `npcId` | array of task snapshots |
-| `CyberM.npcs.tasks.cancel` | `npcId, taskId, optional reason` | boolean |
-| `CyberM.npcs.tasks.clear` | `npcId, optional channel, optional reason` | number cancelled |
+| `Open77.npcs.tasks.enqueue` | `npcId, type, parameters, optional options` | task ID |
+| `Open77.npcs.tasks.moveTo` | `npcId, position, optional options` | task ID |
+| `Open77.npcs.tasks.follow` | `npcId, target, optional options` | task ID |
+| `Open77.npcs.tasks.patrol` | `npcId, points, optional options` | task ID |
+| `Open77.npcs.tasks.wander` | `npcId, optional options` | task ID |
+| `Open77.npcs.tasks.face` | `npcId, target, optional options` | task ID |
+| `Open77.npcs.tasks.lookAt` | `npcId, target, optional options` | task ID |
+| `Open77.npcs.tasks.wait` | `npcId, durationMs, optional options` | task ID |
+| `Open77.npcs.tasks.hold` | `npcId, optional options` | task ID |
+| `Open77.npcs.tasks.playAnimation` | `npcId, animation, optional options` | task ID |
+| `Open77.npcs.tasks.get` | `npcId, taskId` | task snapshot or `nil` |
+| `Open77.npcs.tasks.all` | `npcId` | array of task snapshots |
+| `Open77.npcs.tasks.cancel` | `npcId, taskId, optional reason` | boolean |
+| `Open77.npcs.tasks.clear` | `npcId, optional channel, optional reason` | number cancelled |
 
 Common options are `priority` (signed integer) and `timeoutMs` (`0` disables the timeout). Generic
 `enqueue` also accepts `channel`. A task snapshot contains `npcId`, `id`, `resource`, `type`, the
@@ -291,9 +295,9 @@ Statuses are `queued`, `suspended`, `executing`, `success`, `failure`, `cancelle
 ## Health, damage and death
 
 ```lua
-CyberM.npcs.applyDamage(npcId, 25, "resource:arena", "firearm")
-CyberM.npcs.kill(npcId, "admin")
-CyberM.npcs.revive(npcId, 100)
+Open77.npcs.applyDamage(npcId, 25, "resource:arena", "firearm")
+Open77.npcs.kill(npcId, "admin")
+Open77.npcs.revive(npcId, 100)
 ```
 
 - `mortal` allows health to reach zero.
@@ -331,11 +335,11 @@ AddEventHandler("onNpcStreamOut", function(npcId, reason) end)
 ## Client read-only API
 
 ```lua
-local npc = CyberM.npcs.get(npcId)
-local visible = CyberM.npcs.all()
-local ready = CyberM.npcs.isStreamedIn(npcId)
-local entity = CyberM.npcs.entity(npcId)       -- local CyberM entity handle or nil
-local taskId = CyberM.npcs.currentTask(npcId) -- canonical current task ID or nil
+local npc = Open77.npcs.get(npcId)
+local visible = Open77.npcs.all()
+local ready = Open77.npcs.isStreamedIn(npcId)
+local entity = Open77.npcs.entity(npcId)       -- local Open77 entity handle or nil
+local taskId = Open77.npcs.currentTask(npcId) -- canonical current task ID or nil
 ```
 
 Snapshots expose `streamed` and `locallyAuthoritative`. The local entity handle is ephemeral: do
@@ -354,6 +358,6 @@ Client snapshots contain `id`, `revision`, `entity`, `template`, `appearance`, `
   unsupported.
 - Native attack/shoot/melee/combat tasks are not in the stable API yet. Use server-authoritative
   scripted damage until animation, targeting and hit validation are proven safe for each rig.
-- Native authored patrol paths (`NodeRef`) are not exposed; CyberM patrols sequence `moveTo` tasks.
+- Native authored patrol paths (`NodeRef`) are not exposed; Open77 patrols sequence `moveTo` tasks.
 - A client authority lease is required for native navigation. With no ready client, tasks suspend
   and resume when authority becomes available.

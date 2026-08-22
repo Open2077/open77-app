@@ -1,6 +1,6 @@
 # WebUI notifications
 
-`cyberm_notifications` is the shared toast service for CyberM resources. It provides a FiveM-style
+`open77_notifications` is the shared toast service for Open77 resources. It provides a FiveM-style
 notification API without coupling gameplay packages to their own browser surface. Notifications can
 originate locally or from an authoritative server resource and are always owned by their caller.
 
@@ -12,7 +12,7 @@ are bounded, and notifications disappear automatically when their owner stops or
 ```lua
 resource "jobs"
 version "1.0.0"
-dependency "cyberm_notifications >=1.0.0"
+dependency "open77_notifications >=1.0.0"
 
 client_script "client/main.lua"
 server_script "server/main.lua"
@@ -24,7 +24,7 @@ Exports cross isolated Lua VMs and therefore return a promise. Call them from a 
 
 ```lua
 CreateThread(function()
-    local promise, callError = CyberM.exports.call("cyberm_notifications", "show", {
+    local promise, callError = Open77.exports.call("open77_notifications", "show", {
         id = "job_started",
         type = "success",
         title = "Mission acceptee",
@@ -51,7 +51,7 @@ Supported types are `info`, `success`, `warning`, and `error`. Each type supplie
 
 ```lua
 local function notifications(name, ...)
-    local promise, reason = CyberM.exports.call("cyberm_notifications", name, ...)
+    local promise, reason = Open77.exports.call("open77_notifications", name, ...)
     assert(promise, reason)
     return promise:await()
 end
@@ -91,7 +91,7 @@ attached by the runtime; scripts cannot impersonate another owner:
 RegisterNetEvent("jobs:completed", function(jobId)
     local playerId = source
     -- Validate the authoritative job state before notifying the player.
-    local id, reason = CyberM.notifications.send(playerId, {
+    local id, reason = Open77.notifications.send(playerId, {
         type = "success",
         title = "Mission terminee",
         message = "Votre paiement a ete transfere.",
@@ -107,11 +107,11 @@ Server methods are:
 
 | Method | Purpose |
 |---|---|
-| `CyberM.notifications.send(playerId, definition)` | Send to one authenticated session ID and return its owner-local ID. |
-| `CyberM.notifications.broadcast(definition)` | Send to every connected player. |
-| `CyberM.notifications.update(id, patch)` | Update a notification previously returned by this server resource. |
-| `CyberM.notifications.dismiss(id)` | Remove one notification owned by this server resource. |
-| `CyberM.notifications.clear([playerId])` | Clear this owner's notifications for one player or everyone. |
+| `Open77.notifications.send(playerId, definition)` | Send to one authenticated session ID and return its owner-local ID. |
+| `Open77.notifications.broadcast(definition)` | Send to every connected player. |
+| `Open77.notifications.update(id, patch)` | Update a notification previously returned by this server resource. |
+| `Open77.notifications.dismiss(id)` | Remove one notification owned by this server resource. |
+| `Open77.notifications.clear([playerId])` | Clear this owner's notifications for one player or everyone. |
 
 Server IDs are owner-scoped. Client resources never receive an API that can forge a server-owned
 toast. Server records expire with timed notifications and are cleared when their owner stops.
@@ -137,7 +137,7 @@ position evicts its oldest toast. Only the notification owner can mutate its ent
 
 ## Events and test command
 
-`cyberm:notificationRemoved` is emitted locally with `handle`, `id`, `owner`, `reason`, and `data`.
+`open77:notificationRemoved` is emitted locally with `handle`, `id`, `owner`, `reason`, and `data`.
 Removal reasons include `expired`, `dismissed`, `queue_limit`, `owner_stopped`, and server cleanup.
 
 Authenticated administrators can validate the complete server-to-client route with:

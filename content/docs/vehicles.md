@@ -1,6 +1,6 @@
 # Network vehicles
 
-CyberM vehicles are server entities. A server resource creates a vehicle, owns its durable state, and removes it. Clients only stream a REDengine projection around their player.
+Open77 vehicles are server entities. A server resource creates a vehicle, owns its durable state, and removes it. Clients only stream a REDengine projection around their player.
 
 ## Manifest
 
@@ -18,10 +18,10 @@ The vehicle surface is intentionally asymmetric:
 
 | Runtime | Surface | Count | Mutation |
 |---|---|---:|---|
-| Server | `CyberM.vehicles.*` | 43 methods | Authoritative lifecycle, state, damage, openings, paint, and transform. |
-| Client | `CyberM.vehicles.*` | 6 methods | Read-only state plus guarded remote-occupant presentation. |
-| Client package | `cyberm_vehicles` exports | 2 exports | Read-only compatibility wrappers. |
-| Server low level | FiveM-style globals | 6 functions | Raw implementation surface; prefer `CyberM.vehicles.*`. |
+| Server | `Open77.vehicles.*` | 43 methods | Authoritative lifecycle, state, damage, openings, paint, and transform. |
+| Client | `Open77.vehicles.*` | 6 methods | Read-only state plus guarded remote-occupant presentation. |
+| Client package | `open77_vehicles` exports | 2 exports | Read-only compatibility wrappers. |
+| Server low level | FiveM-style globals | 6 functions | Raw implementation surface; prefer `Open77.vehicles.*`. |
 
 There is deliberately no client API for breaking or repairing glass, tyres, lights, or bodywork.
 A client observes native damage and sends a bounded witness report; the server merges destructive
@@ -33,17 +33,17 @@ Every method in this table requires `world.vehicles`.
 
 | Method | Signature | Return / behavior |
 |---|---|---|
-| `CyberM.vehicles.create` | `(definition)` | Vehicle ID, or `nil, reason`. |
-| `CyberM.vehicles.update` | `(id, patch)` | `boolean`; replaces supplied canonical fields. |
-| `CyberM.vehicles.get` | `(id)` | Server snapshot or `nil`. |
-| `CyberM.vehicles.all` | `(bucket?)` | Array of server snapshots, ordered by ID. |
-| `CyberM.vehicles.remove` | `(id)` | `boolean`; only the creating resource can remove it. |
-| `CyberM.vehicles.setTransform` | `(id, transform)` | `boolean`; position plus yaw, revoking any active physics lease. |
-| `CyberM.vehicles.getDamage` | `(id)` | `{ body, glass, lights, tires }`, or `nil`. |
-| `CyberM.vehicles.setDamage` | `(id, damage)` | `boolean`; combined damage update. |
-| `CyberM.vehicles.repair` | `(id, scope?)` | `boolean`; scope is `glass`, `body`, `lights`, `tires`, `visual`, `mechanical`, or `full`. |
-| `CyberM.vehicles.registerDamageProfile` | `(record, profile)` | `true`; registers names inside the calling resource VM. |
-| `CyberM.vehicles.getDamageProfile` | `(record)` | This resource's profile or `nil`. |
+| `Open77.vehicles.create` | `(definition)` | Vehicle ID, or `nil, reason`. |
+| `Open77.vehicles.update` | `(id, patch)` | `boolean`; replaces supplied canonical fields. |
+| `Open77.vehicles.get` | `(id)` | Server snapshot or `nil`. |
+| `Open77.vehicles.all` | `(bucket?)` | Array of server snapshots, ordered by ID. |
+| `Open77.vehicles.remove` | `(id)` | `boolean`; only the creating resource can remove it. |
+| `Open77.vehicles.setTransform` | `(id, transform)` | `boolean`; position plus yaw, revoking any active physics lease. |
+| `Open77.vehicles.getDamage` | `(id)` | `{ body, glass, lights, tires }`, or `nil`. |
+| `Open77.vehicles.setDamage` | `(id, damage)` | `boolean`; combined damage update. |
+| `Open77.vehicles.repair` | `(id, scope?)` | `boolean`; scope is `glass`, `body`, `lights`, `tires`, `visual`, `mechanical`, or `full`. |
+| `Open77.vehicles.registerDamageProfile` | `(record, profile)` | `true`; registers names inside the calling resource VM. |
+| `Open77.vehicles.getDamageProfile` | `(record)` | This resource's profile or `nil`. |
 
 ### All server body-damage methods
 
@@ -51,15 +51,15 @@ Body cells use Lua indexes **1..30** and normalized finite values **0..1**.
 
 | Method | Signature | Return / behavior |
 |---|---|---|
-| `CyberM.vehicles.setBodyDamage` | `(id, values)` | Replaces the exact 30-value grid. |
-| `CyberM.vehicles.setBodyCell` | `(id, cell, value)` | Sets one normalized cell. |
-| `CyberM.vehicles.damageBodyCell` | `(id, cell, amount)` | Adds damage and clamps the result to 0..1. |
-| `CyberM.vehicles.repairBodyCell` | `(id, cell)` | Sets one cell to zero. |
-| `CyberM.vehicles.setBodyZone` | `(id, zone, value)` | Sets every cell in a named zone or explicit index array. |
-| `CyberM.vehicles.damageBodyZone` | `(id, zone, amount)` | Adds and clamps damage across a zone. |
-| `CyberM.vehicles.repairBodyZone` | `(id, zone)` | Clears a zone. |
+| `Open77.vehicles.setBodyDamage` | `(id, values)` | Replaces the exact 30-value grid. |
+| `Open77.vehicles.setBodyCell` | `(id, cell, value)` | Sets one normalized cell. |
+| `Open77.vehicles.damageBodyCell` | `(id, cell, amount)` | Adds damage and clamps the result to 0..1. |
+| `Open77.vehicles.repairBodyCell` | `(id, cell)` | Sets one cell to zero. |
+| `Open77.vehicles.setBodyZone` | `(id, zone, value)` | Sets every cell in a named zone or explicit index array. |
+| `Open77.vehicles.damageBodyZone` | `(id, zone, amount)` | Adds and clamps damage across a zone. |
+| `Open77.vehicles.repairBodyZone` | `(id, zone)` | Clears a zone. |
 
-`CyberM.vehicles.bodyZones` contains `backLeft`, `back`, `backRight`, `left`, `center`, `right`,
+`Open77.vehicles.bodyZones` contains `backLeft`, `back`, `backRight`, `left`, `center`, `right`,
 `frontLeft`, `front`, `frontRight`, `lower`, `roof`, and `all`. A damage profile can override or
 extend the zone map for one vehicle record.
 
@@ -71,22 +71,22 @@ side-window indexes.
 
 | Method | Signature | Return / behavior |
 |---|---|---|
-| `CyberM.vehicles.setGlassMask` | `(id, mask)` | Replaces the 32-bit broken-glass mask. |
-| `CyberM.vehicles.setGlassBroken` | `(id, glass, broken)` | Sets one numeric or profile-named glass bit. |
-| `CyberM.vehicles.breakGlass` | `(id, glass)` | Sets one glass bit. |
-| `CyberM.vehicles.repairGlass` | `(id, glass)` | Clears one glass bit. |
-| `CyberM.vehicles.breakAllGlass` | `(id, count?)` | Breaks the first `count` bits; default is all 32. |
-| `CyberM.vehicles.repairAllGlass` | `(id)` | Clears the entire glass mask. |
-| `CyberM.vehicles.setLightMask` | `(id, mask)` | Replaces the 32-bit broken-light mask. |
-| `CyberM.vehicles.setLightBroken` | `(id, index, broken)` | Sets or clears one light bit. |
-| `CyberM.vehicles.breakLight` | `(id, index)` | Sets one light bit. |
-| `CyberM.vehicles.repairLight` | `(id, index)` | Clears one light bit. |
-| `CyberM.vehicles.repairAllLights` | `(id)` | Clears the complete light mask. |
-| `CyberM.vehicles.setTireMask` | `(id, mask)` | Replaces the four-bit broken-tyre mask. |
-| `CyberM.vehicles.setTireBroken` | `(id, index, broken)` | Sets or clears one tyre bit. |
-| `CyberM.vehicles.breakTire` | `(id, index)` | Sets one tyre bit. |
-| `CyberM.vehicles.repairTire` | `(id, index)` | Clears one tyre bit. |
-| `CyberM.vehicles.repairAllTires` | `(id)` | Clears the complete tyre mask. |
+| `Open77.vehicles.setGlassMask` | `(id, mask)` | Replaces the 32-bit broken-glass mask. |
+| `Open77.vehicles.setGlassBroken` | `(id, glass, broken)` | Sets one numeric or profile-named glass bit. |
+| `Open77.vehicles.breakGlass` | `(id, glass)` | Sets one glass bit. |
+| `Open77.vehicles.repairGlass` | `(id, glass)` | Clears one glass bit. |
+| `Open77.vehicles.breakAllGlass` | `(id, count?)` | Breaks the first `count` bits; default is all 32. |
+| `Open77.vehicles.repairAllGlass` | `(id)` | Clears the entire glass mask. |
+| `Open77.vehicles.setLightMask` | `(id, mask)` | Replaces the 32-bit broken-light mask. |
+| `Open77.vehicles.setLightBroken` | `(id, index, broken)` | Sets or clears one light bit. |
+| `Open77.vehicles.breakLight` | `(id, index)` | Sets one light bit. |
+| `Open77.vehicles.repairLight` | `(id, index)` | Clears one light bit. |
+| `Open77.vehicles.repairAllLights` | `(id)` | Clears the complete light mask. |
+| `Open77.vehicles.setTireMask` | `(id, mask)` | Replaces the four-bit broken-tyre mask. |
+| `Open77.vehicles.setTireBroken` | `(id, index, broken)` | Sets or clears one tyre bit. |
+| `Open77.vehicles.breakTire` | `(id, index)` | Sets one tyre bit. |
+| `Open77.vehicles.repairTire` | `(id, index)` | Clears one tyre bit. |
+| `Open77.vehicles.repairAllTires` | `(id)` | Clears the complete tyre mask. |
 
 ### All server door and openable-window methods
 
@@ -95,44 +95,44 @@ neither mask represents broken glass.
 
 | Method | Signature | Return / behavior |
 |---|---|---|
-| `CyberM.vehicles.setDoorMask` | `(id, mask)` | Replaces the door/trunk/hood mask; range 0..63. |
-| `CyberM.vehicles.setDoorOpen` | `(id, door, opened)` | Sets one opening bit. |
-| `CyberM.vehicles.openDoor` | `(id, door)` | Opens one door, trunk, or hood. |
-| `CyberM.vehicles.closeDoor` | `(id, door)` | Closes one door, trunk, or hood. |
-| `CyberM.vehicles.isDoorOpen` | `(id, door)` | `boolean`, or `nil` for an unknown vehicle. |
-| `CyberM.vehicles.setWindowOpen` | `(id, window, opened)` | Sets one side-window opening bit. |
-| `CyberM.vehicles.openWindow` | `(id, window)` | Opens one side window. |
-| `CyberM.vehicles.closeWindow` | `(id, window)` | Closes one side window. |
-| `CyberM.vehicles.isWindowOpen` | `(id, window)` | `boolean`, or `nil` for an unknown vehicle. |
+| `Open77.vehicles.setDoorMask` | `(id, mask)` | Replaces the door/trunk/hood mask; range 0..63. |
+| `Open77.vehicles.setDoorOpen` | `(id, door, opened)` | Sets one opening bit. |
+| `Open77.vehicles.openDoor` | `(id, door)` | Opens one door, trunk, or hood. |
+| `Open77.vehicles.closeDoor` | `(id, door)` | Closes one door, trunk, or hood. |
+| `Open77.vehicles.isDoorOpen` | `(id, door)` | `boolean`, or `nil` for an unknown vehicle. |
+| `Open77.vehicles.setWindowOpen` | `(id, window, opened)` | Sets one side-window opening bit. |
+| `Open77.vehicles.openWindow` | `(id, window)` | Opens one side window. |
+| `Open77.vehicles.closeWindow` | `(id, window)` | Closes one side window. |
+| `Open77.vehicles.isWindowOpen` | `(id, window)` | `boolean`, or `nil` for an unknown vehicle. |
 
-The remaining `CyberM.vehicles.update` fields are `health`, `flags`, `primaryColor`,
+The remaining `Open77.vehicles.update` fields are `health`, `flags`, `primaryColor`,
 `secondaryColor`, `doors`, `windows`, `tires`, `bodyDamage`, `brokenGlass`, and `brokenLights`.
 
 ### Exact client methods
 
 | Method | Permission | Signature | Return / behavior |
 |---|---|---|---|
-| `CyberM.vehicles.get` | `vehicles.read` | `(id)` | One streamed client snapshot or `nil`. |
-| `CyberM.vehicles.all` | `vehicles.read` | `()` | All currently streamed snapshots; empty when unavailable or denied. |
-| `CyberM.vehicles.isDoorOpen` | `vehicles.read` | `(id, door)` | Reads the canonical six-bit door state. |
-| `CyberM.vehicles.isWindowOpen` | `vehicles.read` | `(id, window)` | Reads the canonical four-bit opening state, not broken glass. |
-| `CyberM.vehicles.warpPlayerIntoVehicle` | `vehicles.presentation` | `(playerId, vehicleId, seat)` | Instantly presents an already-authorized remote occupant. |
-| `CyberM.vehicles.taskPlayerEnterVehicle` | `vehicles.presentation` | `(playerId, vehicleId, seat)` | Reserved animated path; currently fails closed with `animated_entry_unsupported`. |
+| `Open77.vehicles.get` | `vehicles.read` | `(id)` | One streamed client snapshot or `nil`. |
+| `Open77.vehicles.all` | `vehicles.read` | `()` | All currently streamed snapshots; empty when unavailable or denied. |
+| `Open77.vehicles.isDoorOpen` | `vehicles.read` | `(id, door)` | Reads the canonical six-bit door state. |
+| `Open77.vehicles.isWindowOpen` | `vehicles.read` | `(id, window)` | Reads the canonical four-bit opening state, not broken glass. |
+| `Open77.vehicles.warpPlayerIntoVehicle` | `vehicles.presentation` | `(playerId, vehicleId, seat)` | Instantly presents an already-authorized remote occupant. |
+| `Open77.vehicles.taskPlayerEnterVehicle` | `vehicles.presentation` | `(playerId, vehicleId, seat)` | Reserved animated path; currently fails closed with `animated_entry_unsupported`. |
 
-Client constants are `CyberM.vehicles.doors`, `CyberM.vehicles.windows`, and
-`CyberM.vehicles.seats`. They are tables, not callable methods.
+Client constants are `Open77.vehicles.doors`, `Open77.vehicles.windows`, and
+`Open77.vehicles.seats`. They are tables, not callable methods.
 
 ### Official package exports
 
-The `cyberm_vehicles` client package exposes only:
+The `open77_vehicles` client package exposes only:
 
 | Export | Signature | Result |
 |---|---|---|
-| `get` | `get(id)` | Compatibility wrapper over `CyberM.vehicles.get`. |
-| `all` | `all()` | Compatibility wrapper over `CyberM.vehicles.all`. |
+| `get` | `get(id)` | Compatibility wrapper over `Open77.vehicles.get`. |
+| `all` | `all()` | Compatibility wrapper over `Open77.vehicles.all`. |
 
-Call them with `CyberM.exports.call("cyberm_vehicles", "get", id)` or the FiveM-style export
-proxy. The package intentionally exposes no mutation export.
+Call them with `Open77.exports.call("open77_vehicles", "get", id)`; no
+`exports.<resource>:` proxy exists. The package intentionally exposes no mutation export.
 
 ### Low-level server globals
 
@@ -151,24 +151,24 @@ structured tables, defaults, and helper validation.
 ## Server API
 
 ```lua
-local id, reason = CyberM.vehicles.create({
+local id, reason = Open77.vehicles.create({
     record = "Vehicle.v_standard2_archer_hella_player",
     appearance = "default",
     position = { x = -1607.4, y = 1268.2, z = 18.1 },
     yaw = 90.0,
     bucket = 0,
     health = 1.0,
-    flags = CyberM.vehicles.flags.locked,
+    flags = Open77.vehicles.flags.locked,
     primaryColor = { r = 22, g = 105, b = 180 },
     secondaryColor = { r = 8, g = 15, b = 24 },
 })
 ```
 
-### `CyberM.vehicles.create(definition)`
+### `Open77.vehicles.create(definition)`
 
 Creates a generation-checked 64-bit vehicle id. Required fields are `record` and `position`. Optional fields are `appearance`, `yaw`, `bucket`, `health`, `flags`, `primaryColor`, and `secondaryColor`. Returns `id`, or `nil, reason`.
 
-### `CyberM.vehicles.update(id, patch)`
+### `Open77.vehicles.update(id, patch)`
 
 Updates durable state. Supported fields are `health`, `flags`, `primaryColor`, `secondaryColor`,
 `doors`, `windows`, `tires`, `bodyDamage`, `brokenGlass`, `brokenLights`, and the nested
@@ -177,19 +177,19 @@ separate from `brokenGlass`. Door bits are front-left, front-right, back-left, b
 and hood. Window/tire bits use the first four positions.
 
 ```lua
-local flags = CyberM.vehicles.flags.engineOn | CyberM.vehicles.flags.lightsOn
-CyberM.vehicles.update(id, { flags = flags, health = 0.85 })
+local flags = Open77.vehicles.flags.engineOn | Open77.vehicles.flags.lightsOn
+Open77.vehicles.update(id, { flags = flags, health = 0.85 })
 ```
 
 Available flags:
 
 | Constant | Value | Constant | Value |
 |---|---:|---|---:|
-| `CyberM.vehicles.flags.engineOn` | `1` | `CyberM.vehicles.flags.locked` | `2` |
-| `CyberM.vehicles.flags.destroyed` | `4` | `CyberM.vehicles.flags.exploded` | `8` |
-| `CyberM.vehicles.flags.invulnerable` | `16` | `CyberM.vehicles.flags.immortal` | `32` |
-| `CyberM.vehicles.flags.lightsOn` | `64` | `CyberM.vehicles.flags.highBeams` | `128` |
-| `CyberM.vehicles.flags.sirenOn` | `256` |  |  |
+| `Open77.vehicles.flags.engineOn` | `1` | `Open77.vehicles.flags.locked` | `2` |
+| `Open77.vehicles.flags.destroyed` | `4` | `Open77.vehicles.flags.exploded` | `8` |
+| `Open77.vehicles.flags.invulnerable` | `16` | `Open77.vehicles.flags.immortal` | `32` |
+| `Open77.vehicles.flags.lightsOn` | `64` | `Open77.vehicles.flags.highBeams` | `128` |
+| `Open77.vehicles.flags.sirenOn` | `256` |  |  |
 
 Combine flags with Lua 5.4 bitwise operators (`|`, `&`, `~`). Never replace the complete mask when
 you only intend to toggle one bit without first reading the current canonical value.
@@ -201,16 +201,16 @@ in stream-in/late-join state. Live changes use the vehicle's native animation; t
 state is applied immediately so an already-open trunk does not visibly replay from closed.
 
 ```lua
-CyberM.vehicles.openDoor(id, "trunk")
-CyberM.vehicles.closeDoor(id, "hood")
-CyberM.vehicles.setDoorOpen(id, CyberM.vehicles.doors.frontRight, true)
+Open77.vehicles.openDoor(id, "trunk")
+Open77.vehicles.closeDoor(id, "hood")
+Open77.vehicles.setDoorOpen(id, Open77.vehicles.doors.frontRight, true)
 
-if CyberM.vehicles.isDoorOpen(id, "trunk") then
+if Open77.vehicles.isDoorOpen(id, "trunk") then
     -- Server-side inventory logic can now expose the trunk contents.
 end
 
-CyberM.vehicles.openWindow(id, "frontLeft")
-CyberM.vehicles.closeWindow(id, CyberM.vehicles.windows.frontLeft)
+Open77.vehicles.openWindow(id, "frontLeft")
+Open77.vehicles.closeWindow(id, Open77.vehicles.windows.frontLeft)
 ```
 
 Door names are `frontLeft`, `frontRight`, `backLeft`, `backRight`, `trunk`, and `hood`.
@@ -239,22 +239,22 @@ vehicle can repair it.
 
 ```lua
 -- Glass indices are zero-based indices into this model's Destruction.Glass list.
-CyberM.vehicles.breakGlass(id, 0)
-CyberM.vehicles.repairGlass(id, 0)
-CyberM.vehicles.breakAllGlass(id)       -- all 32 mask bits
-CyberM.vehicles.breakAllGlass(id, 6)    -- first six glass records
-CyberM.vehicles.repairAllGlass(id)
+Open77.vehicles.breakGlass(id, 0)
+Open77.vehicles.repairGlass(id, 0)
+Open77.vehicles.breakAllGlass(id)       -- all 32 mask bits
+Open77.vehicles.breakAllGlass(id, 6)    -- first six glass records
+Open77.vehicles.repairAllGlass(id)
 
-CyberM.vehicles.setTireBroken(id, 0, true)
-CyberM.vehicles.repairTire(id, 0)
-CyberM.vehicles.setLightBroken(id, 2, true)
-CyberM.vehicles.repairLight(id, 2)
+Open77.vehicles.setTireBroken(id, 0, true)
+Open77.vehicles.repairTire(id, 0)
+Open77.vehicles.setLightBroken(id, 2, true)
+Open77.vehicles.repairLight(id, 2)
 
-CyberM.vehicles.damageBodyCell(id, 13, 0.25) -- cells are Lua indices 1..30
-CyberM.vehicles.damageBodyZone(id, "front", 0.40)
-CyberM.vehicles.repairBodyZone(id, "front")
-CyberM.vehicles.repair(id, "visual")
-CyberM.vehicles.repair(id, "full")
+Open77.vehicles.damageBodyCell(id, 13, 0.25) -- cells are Lua indices 1..30
+Open77.vehicles.damageBodyZone(id, "front", 0.40)
+Open77.vehicles.repairBodyZone(id, "front")
+Open77.vehicles.repair(id, "visual")
+Open77.vehicles.repair(id, "full")
 ```
 
 Available body zones are `backLeft`, `back`, `backRight`, `left`, `center`, `right`,
@@ -262,42 +262,42 @@ Available body zones are `backLeft`, `back`, `backRight`, `left`, `center`, `rig
 for custom damage systems:
 
 ```lua
-local damage = CyberM.vehicles.getDamage(id)
+local damage = Open77.vehicles.getDamage(id)
 damage.body[14] = 0.9
 damage.glass = damage.glass | (1 << 3)
-CyberM.vehicles.setDamage(id, damage)
+Open77.vehicles.setDamage(id, damage)
 
-CyberM.vehicles.setBodyDamage(id, thirtyNormalizedValues)
-CyberM.vehicles.setGlassMask(id, 0x15)
-CyberM.vehicles.setLightMask(id, 0x02)
-CyberM.vehicles.setTireMask(id, 0x05)
+Open77.vehicles.setBodyDamage(id, thirtyNormalizedValues)
+Open77.vehicles.setGlassMask(id, 0x15)
+Open77.vehicles.setLightMask(id, 0x02)
+Open77.vehicles.setTireMask(id, 0x05)
 ```
 
 Glass ordering is record-specific. A resource can register readable names instead of spreading
 numeric indices throughout gameplay code:
 
 ```lua
-CyberM.vehicles.registerDamageProfile("Vehicle.v_standard2_archer_hella_player", {
+Open77.vehicles.registerDamageProfile("Vehicle.v_standard2_archer_hella_player", {
     glass = { windshield = 0, rearWindow = 1, frontLeft = 2, frontRight = 3 },
     bodyZones = { engineBay = { 13, 14, 15 } },
 })
 
-CyberM.vehicles.breakGlass(id, "windshield")
-CyberM.vehicles.damageBodyZone(id, "engineBay", 0.5)
+Open77.vehicles.breakGlass(id, "windshield")
+Open77.vehicles.damageBodyZone(id, "engineBay", 0.5)
 ```
 
-CyberM intentionally does not ship guessed glass names: the `Destruction.Glass` order differs by
+Open77 intentionally does not ship guessed glass names: the `Destruction.Glass` order differs by
 vehicle record. Numeric glass/light indices are `0..31`, tyre indices are `0..3`, and all body
 values are finite normalized values in `0..1`.
 
 ### Other server calls
 
 ```lua
-CyberM.vehicles.setTransform(id, { x = 10, y = 20, z = 30, yaw = 180 })
-CyberM.vehicles.get(id)
-CyberM.vehicles.all()
-CyberM.vehicles.all(bucket)
-CyberM.vehicles.remove(id)
+Open77.vehicles.setTransform(id, { x = 10, y = 20, z = 30, yaw = 180 })
+Open77.vehicles.get(id)
+Open77.vehicles.all()
+Open77.vehicles.all(bucket)
+Open77.vehicles.remove(id)
 ```
 
 `setTransform` is server-authoritative: it revokes an active physics lease, advances the
@@ -306,7 +306,7 @@ authority epoch, and publishes the complete canonical transform to every current
 `get` and `all` also return the canonical seat ledger:
 
 ```lua
-local vehicle = CyberM.vehicles.get(id)
+local vehicle = Open77.vehicles.get(id)
 for _, occupant in ipairs(vehicle.occupants) do
     print(occupant.playerId, occupant.seat)
 end
@@ -318,7 +318,7 @@ ledger directly: it is produced by native mount detection and validated by the s
 
 ### Server snapshot fields
 
-`CyberM.vehicles.get` and each entry returned by `all` contain:
+`Open77.vehicles.get` and each entry returned by `all` contain:
 
 | Group | Fields |
 |---|---|
@@ -347,11 +347,11 @@ AddEventHandler("onVehicleUpdated", function(id, revision) end)
 AddEventHandler("onVehicleRemoved", function(id, reason) end)
 AddEventHandler("onVehicleAuthorityChanged", function(id, owner, epoch, reason) end)
 AddEventHandler("onVehicleOccupancyChanged", function(id, revision)
-    local canonical = CyberM.vehicles.get(tonumber(id))
+    local canonical = Open77.vehicles.get(tonumber(id))
 end)
 
 AddEventHandler("onVehicleDamageChanged", function(id, revision)
-    local damage = CyberM.vehicles.getDamage(tonumber(id))
+    local damage = Open77.vehicles.getDamage(tonumber(id))
 end)
 ```
 
@@ -366,10 +366,10 @@ Resources can mutate or remove only their own vehicles. Stopping or reloading a 
 The client state surface is intentionally read-only:
 
 ```lua
-local vehicle = CyberM.vehicles.get(id)
-local streamed = CyberM.vehicles.all()
-local trunkOpen = CyberM.vehicles.isDoorOpen(id, "trunk")
-local hoodOpen = CyberM.vehicles.isDoorOpen(id, CyberM.vehicles.doors.hood)
+local vehicle = Open77.vehicles.get(id)
+local streamed = Open77.vehicles.all()
+local trunkOpen = Open77.vehicles.isDoorOpen(id, "trunk")
+local hoodOpen = Open77.vehicles.isDoorOpen(id, Open77.vehicles.doors.hood)
 ```
 
 Trusted presentation resources can request an entry presentation or use an explicit instant warp:
@@ -377,12 +377,12 @@ Trusted presentation resources can request an entry presentation or use an expli
 ```lua
 -- FiveM-compatible seat numbers: driver=-1, front passenger=0,
 -- rear-left=1, rear-right=2.
-local ok, reason = CyberM.vehicles.taskPlayerEnterVehicle(
-    playerId, vehicleId, CyberM.vehicles.seats.frontPassenger)
+local ok, reason = Open77.vehicles.taskPlayerEnterVehicle(
+    playerId, vehicleId, Open77.vehicles.seats.frontPassenger)
 
 -- Recovery, stream reconstruction, teleport-oriented game modes, or tests.
-ok, reason = CyberM.vehicles.warpPlayerIntoVehicle(
-    playerId, vehicleId, CyberM.vehicles.seats.driver)
+ok, reason = Open77.vehicles.warpPlayerIntoVehicle(
+    playerId, vehicleId, Open77.vehicles.seats.driver)
 ```
 
 Named seats (`driver`, `frontPassenger`, `rearLeft`, `rearRight`, `frontLeft`,
@@ -394,7 +394,7 @@ authority.
 
 `taskPlayerEnterVehicle` is currently fail-closed and returns
 `false, "animated_entry_unsupported"`. The first implementation forwarded the vanilla NPC
-`MountAIEvent` to CyberM's player proxy; a two-client runtime test showed that REDengine can
+`MountAIEvent` to Open77's player proxy; a two-client runtime test showed that REDengine can
 dereference a missing AI/workspot object and crash the observing client. Normal replication and
 `warpPlayerIntoVehicle` therefore use the stable mounting facility until the staged door/workspot
 implementation has passed two-client validation. This keeps the API name stable without exposing
@@ -415,7 +415,7 @@ The client snapshot deliberately differs from the server snapshot:
 | Wheels/suspension | `steering`, `wheelRotation`, `suspensionLongitudinal`, `suspensionTransversal`, `onGround`, `reversing` |
 | Seats | `occupants[] = { playerId, seat }` |
 
-`entity` is an ephemeral, generation-checked CyberM handle for the local projection.
+`entity` is an ephemeral, generation-checked Open77 handle for the local projection.
 `engineEntity` is diagnostic engine identity. Neither is the durable server vehicle ID, and neither
 should be cached after stream-out. Client snapshots do not include server ownership metadata such
 as `resource`, `bucket`, paint channels, or world coordinates.
@@ -423,15 +423,15 @@ as `resource`, `bucket`, paint channels, or world coordinates.
 Client events:
 
 ```lua
-AddEventHandler("cyberm:vehicleCreated", function(id) end)
-AddEventHandler("cyberm:vehicleRemoved", function(id, reason) end)
-AddEventHandler("cyberm:vehicleAuthorityChanged", function(id, ownerPlayerId) end)
-AddEventHandler("cyberm:vehicleOccupancyChanged", function(id, revision) end)
-AddEventHandler("cyberm:vehicleDamageChanged", function(id, revision) end)
+AddEventHandler("open77:vehicleCreated", function(id) end)
+AddEventHandler("open77:vehicleRemoved", function(id, reason) end)
+AddEventHandler("open77:vehicleAuthorityChanged", function(id, ownerPlayerId) end)
+AddEventHandler("open77:vehicleOccupancyChanged", function(id, revision) end)
+AddEventHandler("open77:vehicleDamageChanged", function(id, revision) end)
 ```
 
-The reference resource also emits `cyberm:vehicleOwnerChanged(id, ownerPlayerId)` and
-`cyberm:vehicleSeatsChanged(vehicleSnapshot, revision)`. The latter resolves the fresh snapshot
+The reference resource also emits `open77:vehicleOwnerChanged(id, ownerPlayerId)` and
+`open77:vehicleSeatsChanged(vehicleSnapshot, revision)`. The latter resolves the fresh snapshot
 before dispatch, unlike the lower-level occupancy event.
 
 ## Seat and proxy replication
@@ -444,7 +444,7 @@ before dispatch, unlike the lower-level occupancy event.
 5. Each observing client mounts the corresponding remote player proxy into the streamed
    vehicle and exact seat. A live addition runs the native NPC approach/door/workspot behavior;
    an initial stream snapshot uses the instant warp so it does not replay an old entrance. When
-   the snapshot removes the player, CyberM discards that disposable
+   the snapshot removes the player, Open77 discards that disposable
    native proxy and recreates it from the next authoritative player snapshot. This avoids reusing
    a REDengine puppet whose vehicle workspot left its locomotion representation inactive.
 6. Root player movement is suspended only after the native mount is confirmed, avoiding a
@@ -452,7 +452,7 @@ before dispatch, unlike the lower-level occupancy event.
    pedestrian controller is installed on the replacement proxy after exit.
 
 If a local engine mount disagrees with the server for two seconds (for example a locked seat
-was rejected), CyberM unmounts the player. Disconnect, vehicle removal, seat change, and exit
+was rejected), Open77 unmounts the player. Disconnect, vehicle removal, seat change, and exit
 all clear the server ledger. Leaving the driver seat also revokes physics authority.
 
 ## Damage, electrical state, and horn
@@ -502,9 +502,9 @@ and invulnerability are the scriptable `flags` bits.
   unreliable motion to its sender, this retained sample is the handoff pose when authority is
   released; exiting a vehicle therefore cannot fall back to its original spawn transform.
 - An observer projection uses REDengine's whole-vehicle movement path: simple movement,
-  physics masking, and `ForceMoveTo` with the interpolated pose. CyberM deliberately does not
+  physics masking, and `ForceMoveTo` with the interpolated pose. Open77 deliberately does not
   make streamed vehicles kinematic: runtime tests showed REDengine did not reconstruct a
-  driveable backend when local ownership was later acquired. On local ownership, CyberM clears
+  driveable backend when local ownership was later acquired. On local ownership, Open77 clears
   the observer physics mask explicitly, disables simple movement, restores player control, enables
   transform updates, and wakes native physics.
 - Direct manipulation of a mesh `PhysicalBodyInterface` remains deliberately disabled: that
@@ -522,8 +522,9 @@ load, braking, gear, and lateral load therefore follow the network owner instead
 independently by each client.
 
 Remote engine audio starts when the canonical engine state turns on and stops when it turns off,
-streams out, or authority becomes local. Two switchable strategies exist (debug bridge
-`vehicle.audiomode_<0-3>`; default mechanical): *mechanical* engages the vanilla driver-mix state
+streams out, or authority becomes local. Four switchable modes exist (debug bridge
+`vehicle.audiomode_<0-3>`: `0` off, `1` traffic, `2` mechanical, `3` both; **default both**):
+*mechanical* engages the vanilla driver-mix state
 machine (`vehicleAudioEvent OnPlayerDriving`) and feeds the measured 2.31 RTPC names
 (`paramEngineRPM`, `paramVehicleSpeed`, `paramWheelAngularSpeed`, `veh_speed`, `veh_accel`,
 `veh_engine_throttle_input`) from the replicated motion at 30 Hz, so pitch and load follow the
@@ -538,11 +539,11 @@ then applied through native glass events, so custom/model-specific window compon
 preserved for current viewers and late joiners.
 
 `steering` is normalized to `-1..1` and `wheelRotation` is a wrapped radian phase. REDengine 2.31
-does not expose its live steering input through RTTI, but CyberM's audited 2.31 adapter reads the
+does not expose its live steering input through RTTI, but Open77's audited 2.31 adapter reads the
 native lateral vehicle input at `vehicleBaseObject+0x278`. The owner therefore transmits real
 keyboard/controller steering even while stationary. The authoritative wrapped wheel phase initializes
 the observer and replicated velocity advances it every rendered frame without packet-phase feedback.
-These values remain available in read-only client snapshots. CyberM does not currently write the
+These values remain available in read-only client snapshots. Open77 does not currently write the
 observer's hard-transform wheel bindings: their parent animation graph can be incomplete immediately
 after streamed attachment, and querying that graph caused a reproducible null dereference inside
 REDengine on both clients. The locally driven vehicle keeps its native wheel animation and real
@@ -557,7 +558,7 @@ claim authority directly.
 There is no client-side vehicle creation API. The entire native `vehicle.*` developer-command
 module is absent from the client build; the documented commands below are Lua server commands and
 therefore use command ACLs. During a multiplayer connection, every vehicle spawn notification is checked
-against the live network registry. A REDengine vehicle without a server-issued 64-bit CyberM
+against the live network registry. A REDengine vehicle without a server-issued 64-bit Open77
 vehicle id is removed immediately; merely having a local dynamic-entity handle does not count.
 Entering an unknown vehicle is independently detected and forcibly unmounted.
 
@@ -566,7 +567,7 @@ vehicle producers. It is an identity boundary, not just a traffic-density settin
 
 ## Reference resource and commands
 
-`resources/cyberm_vehicles` is the runnable example. It registers:
+`resources/open77_vehicles` is the runnable example. It registers:
 
 ```text
 vehicle.list [bucket]

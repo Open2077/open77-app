@@ -1,16 +1,16 @@
-# CyberM resource documentation
+# Open77 resource documentation
 
-CyberM turns Cyberpunk 2077 into a server-driven multiplayer platform. Gameplay and UI features are
+Open77 turns Cyberpunk 2077 into a server-driven multiplayer platform. Gameplay and UI features are
 packaged as **resources**: self-contained directories with a manifest, Lua scripts, declared
 permissions, dependencies, and optional web interfaces.
 
 Developers familiar with FiveM will recognize the client/server split, events, exports, commands,
-and manifest-driven lifecycle. CyberM APIs remain independent and reflect REDengine constraints.
+and manifest-driven lifecycle. Open77 APIs remain independent and reflect REDengine constraints.
 
 ## Session model
 
 The server selects the resource set for a session. A connecting client downloads that set, verifies
-its signature and content hashes, and activates it before entering the world. Only CyberM's trusted
+its signature and content hashes, and activates it before entering the world. Only Open77's trusted
 bootstrap resources load outside the server-provided generation.
 
 The server is authoritative. Clients render approved state and submit bounded observations or
@@ -18,7 +18,7 @@ requests; they do not choose canonical loot, life, vehicle, time, weather, or ro
 
 ## Create a resource
 
-A resource lives below the server's configured resource root and contains a `cyberm.lua` manifest:
+A resource lives below the server's configured resource root and contains a `open77.lua` manifest:
 
 ```lua
 resource "hello"
@@ -35,7 +35,7 @@ Client entry point:
 AddEventHandler("onClientResourceStart", function(name)
     if name ~= GetCurrentResourceName() then return end
 
-    local state = CyberM.character.state()
+    local state = Open77.character.state()
     print(("spawned at %.1f, %.1f"):format(state.position.x, state.position.y))
 end)
 ```
@@ -48,14 +48,14 @@ RegisterCommand("hello", function(source, args)
 end, false)
 ```
 
-Start the server, connect a client, and invoke `hello` from the CyberM developer console or chat.
+Start the server, connect a client, and invoke `hello` from the Open77 developer console or chat.
 
 ## Guides
 
 | Guide | Subject |
 |---|---|
 | [Server resources](server-resources.md) | Manifests, runtime separation, signing, download, and reload. |
-| [Complete server Lua API](server-api.md) | Every server global, `CyberM.*` method, permission, constant, and low-level alias. |
+| [Complete server Lua API](server-api.md) | Every server global, `Open77.*` method, permission, constant, and low-level alias. |
 | [Official resource exports](resource-exports.md) | Every client export exposed by the official Lua packages and how to call it safely. |
 | [Game data reference](data-reference.md) | NPC templates, vehicle records, seats, flags, weapons, appearances, VFX, SFX, animations, and sprite catalogues. |
 | [Identity and ACL](server-acl.md) | Authentication, restricted commands, and access control. |
@@ -76,16 +76,16 @@ Start the server, connect a client, and invoke `hello` from the CyberM developer
 
 ## API reference coverage
 
-CyberM has three deliberately separate Lua surfaces. The wiki covers all three without implying
+Open77 has three deliberately separate Lua surfaces. The wiki covers all three without implying
 that a server method exists in a client VM or that a package export is a native:
 
 | Surface | Reference | Coverage |
 |---|---|---|
 | Client native runtime | The **CLIENT** API reference cards in `index.html` | 215 registered functions across 37 namespaces; every signature is reviewed and every card has a detailed description. |
-| Dedicated server runtime | The **SERVER · CyberM.vehicles** cards and [Complete server Lua API](server-api.md) | All 43 authoritative vehicle methods are individually searchable cards; the complete guide covers every server global, `CyberM.*` namespace, constant, permission, and result shape. |
+| Dedicated server runtime | The **SERVER · Open77.vehicles** cards and [Complete server Lua API](server-api.md) | All 43 authoritative vehicle methods are individually searchable cards; the complete guide covers every server global, `Open77.*` namespace, constant, permission, and result shape. |
 | Official client packages | [Official resource exports](resource-exports.md) | Every literal export currently published by the official resource tree: 59 exports across 13 packages. |
 
-Generated cards are separated by runtime, so identical names such as `CyberM.vehicles.get` cannot
+Generated cards are separated by runtime, so identical names such as `Open77.vehicles.get` cannot
 confuse a client projection with server authority. They state whether a call is shared, needs a
 live game instance, or uses the network backend, and document permissions, ownership, generation
 lifetime, and failure values.
@@ -131,5 +131,5 @@ decisions belong exclusively in server code.
 
 ## License
 
-CyberM-owned documentation and code follow the repository [license](../LICENSE). Third-party names,
+Open77-owned documentation and code follow the repository [license](../LICENSE). Third-party names,
 game data, and dependencies remain subject to their respective terms.

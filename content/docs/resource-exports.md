@@ -1,7 +1,7 @@
 # Official resource exports
 
-CyberM's native Lua API and resource exports are two separate surfaces. Native methods such as
-`CyberM.vehicles.get` are registered by the client or server runtime. The exports below are owned by
+Open77's native Lua API and resource exports are two separate surfaces. Native methods such as
+`Open77.vehicles.get` are registered by the client or server runtime. The exports below are owned by
 official Lua resources and add lifecycle isolation, WebUI ownership, or higher-level behavior.
 
 All exports on this page are **client exports**. Server-authoritative mutation remains in server
@@ -13,7 +13,7 @@ interface.
 The portable cross-resource form is asynchronous:
 
 ```lua
-local promise, reason = CyberM.exports.call("cyberm_notifications", "show", {
+local promise, reason = Open77.exports.call("open77_notifications", "show", {
   type = "success",
   title = "Garage",
   message = "Vehicle stored."
@@ -24,18 +24,17 @@ local result = promise:await()
 if not result.ok then print(result.error) end
 ```
 
-The FiveM-style proxy is also available in a client resource:
-
-```lua
-exports.cyberm_chat:addMessage({ author = "SYSTEM", message = "Ready" })
-```
+There is no FiveM-style `exports.<resource>:<name>()` proxy. `exports` is a plain function
+used to *publish* an export; indexing it raises *attempt to index a function value*, because
+the Lua sandbox removes `setmetatable` and `getmetatable`. Always call through
+`Open77.exports.call`.
 
 Handles returned by UI packages are resource-owned. Another resource cannot update or dismiss
 them, and they are cleaned automatically when the owning generation stops or reloads.
 
 ## Export catalogue
 
-### `cyberm_appearance`
+### `open77_appearance`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -45,9 +44,9 @@ them, and they are cleaned automatically when the owning generation stops or rel
 | `revision` | `revision()` | Last canonical appearance revision. |
 | `characterKey` | `characterKey()` | Durable character key associated with the synchronized appearance. |
 
-See the package README at `resources/cyberm_appearance/README.md` for the transaction lifecycle.
+See the package README at `resources/open77_appearance/README.md` for the transaction lifecycle.
 
-### `cyberm_chat`
+### `open77_chat`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -60,7 +59,7 @@ See the package README at `resources/cyberm_appearance/README.md` for the transa
 
 Message and suggestion schemas are documented in [Chat](chat.md).
 
-### `cyberm_death`
+### `open77_death`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -69,7 +68,7 @@ Message and suggestion schemas are documented in [Chat](chat.md).
 | `getLocalDeathContext` | `getLocalDeathContext()` | Local death context, with the last package snapshot as fallback. |
 | `all` | `all()` | All currently known player life states. |
 
-### `cyberm_effects`
+### `open77_effects`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -81,7 +80,7 @@ Message and suggestion schemas are documented in [Chat](chat.md).
 
 See [Visual and audio effects](effects.md) and [Game data reference](data-reference.md).
 
-### `cyberm_elevators`
+### `open77_elevators`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -93,7 +92,7 @@ See [Visual and audio effects](effects.md) and [Game data reference](data-refere
 See [Elevators](elevators.md). Elevator IDs are opaque even though this compatibility package
 currently normalizes them before calling the native API.
 
-### `cyberm_interactions`
+### `open77_interactions`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -110,7 +109,7 @@ currently normalizes them before calling the native API.
 Definitions, marker types, choices, distances, entity attachment, and responses are documented in
 [Contextual interactions](interactions.md).
 
-### `cyberm_loot`
+### `open77_loot`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -120,7 +119,7 @@ Definitions, marker types, choices, distances, entity attachment, and responses 
 
 See [Loot](loot.md). Clients cannot create or award authoritative loot.
 
-### `cyberm_markers`
+### `open77_markers`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -130,9 +129,9 @@ See [Loot](loot.md). Clients cannot create or award authoritative loot.
 | `clear` | `clear()` | Removes resource-owned markers. |
 | `list` | `list()` | Lists current resource-owned markers. |
 
-The lower-level method schema is in the generated `CyberM.markers.*` reference.
+The lower-level method schema is in the generated `Open77.markers.*` reference.
 
-### `cyberm_nameplates`
+### `open77_nameplates`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -142,7 +141,7 @@ The lower-level method schema is in the generated `CyberM.markers.*` reference.
 | `remove` | `remove(playerId)` | Removes one override. |
 | `clear` | `clear()` | Removes every caller-owned override. |
 
-### `cyberm_notifications`
+### `open77_notifications`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -157,7 +156,7 @@ The lower-level method schema is in the generated `CyberM.markers.*` reference.
 See [Notifications](notifications.md) for types, positions, duration, progress, actions, replacement,
 and the server-to-client envelope.
 
-### `cyberm_vehicles`
+### `open77_vehicles`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -166,7 +165,7 @@ and the server-to-client envelope.
 
 See [Vehicles](vehicles.md) for server mutation and native presentation methods.
 
-### `cyberm_weather`
+### `open77_weather`
 
 | Export | Signature | Result |
 |---|---|---|
@@ -176,7 +175,7 @@ See [Vehicles](vehicles.md) for server mutation and native presentation methods.
 
 See [Weather](weather.md). This package intentionally exposes no client mutation command.
 
-### `cyberm_example`
+### `open77_example`
 
 | Export | Signature | Result |
 |---|---|---|

@@ -40,12 +40,12 @@ export type ApiEntry = ApiEntryRaw & {
   anchor: string;
   /** Deep link to the entry's section. */
   href: string;
-  /** Lua call signature, e.g. `CyberM.blips.create(definition)`. */
+  /** Lua call signature, e.g. `Open77.blips.create(definition)`. */
   signature: string;
 };
 
 export type ApiNamespace = {
-  /** Raw namespace as extracted, e.g. `CyberM.blips` or `_G`. */
+  /** Raw namespace as extracted, e.g. `Open77.blips` or `_G`. */
   name: string;
   /** Display label; `_G` reads as "Globals". */
   label: string;

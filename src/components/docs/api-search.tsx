@@ -24,7 +24,7 @@ export type ApiSearchItem = {
  *
  * Matches on the qualified name rank above matches in the summary, and an
  * earlier position in the name ranks above a later one, so `camera` puts
- * `CyberM.camera.*` ahead of a function that merely mentions the camera.
+ * `Open77.camera.*` ahead of a function that merely mentions the camera.
  *
  * Every name offered as an example has to exist in the reference, or the first
  * thing a curious visitor sees is an empty result.

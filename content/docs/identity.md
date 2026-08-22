@@ -1,6 +1,6 @@
 # Player identity and username
 
-CyberM gives every installation a durable cryptographic identity. The username shown in chat, nameplates, presence events, and server scripts belongs to that identity and is verified by the Master.
+Open77 gives every installation a durable cryptographic identity. The username shown in chat, nameplates, presence events, and server scripts belongs to that identity and is verified by the Master.
 
 ## Stable id and display name
 
@@ -37,11 +37,15 @@ During connection, the game server verifies that certificate and a fresh P-256 s
 Server resources receive the verified values through the normal player API:
 
 ```lua
-AddEventHandler("playerJoining", function()
-    local player = source
+AddEventHandler("onPlayerConnected", function(playerId, playerName)
+    local player = tonumber(playerId) or 0
     print(GetPlayerIdentifier(player)) -- durable userId
     print(GetPlayerName(player))       -- Master-verified displayName
 end)
 ```
+
+The connect event is `onPlayerConnected`, and it passes the player ID as its first
+argument. `source` is **not** set here: it is populated only for handlers reached through
+a network event, never for a plain `TriggerEvent` dispatch.
 
 The username-editing Lua bridge is reserved for the trusted local server-browser package. Downloaded server resources cannot rewrite a player's identity.

@@ -290,7 +290,7 @@
 
 /* Identifiers in a table must not break across lines. Inline code wraps
    elsewhere so a long name cannot overflow a narrow paragraph, but applying
-   that here splits `CyberM.vehicles.create` into `CyberM.vehicles.c` and
+   that here splits `Open77.vehicles.create` into `Open77.vehicles.c` and
    `reate` — unreadable, and impossible to find with the browser's own search.
    Refusing to wrap makes the cell claim the width it needs, which is what
    makes `.dx-table-wrap` scroll instead. */

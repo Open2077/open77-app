@@ -1,5 +1,5 @@
 /**
- * Vendors the CyberM wiki into this repository.
+ * Vendors the Open77 wiki into this repository.
  *
  * The documentation is authored in the platform repository (`open77-base`,
  * under `wiki/`) because it has to stay next to the code it documents. This
@@ -63,6 +63,17 @@ async function main() {
   const sourceDir = path.resolve(args.from);
 
   if (!existsSync(sourceDir)) {
+    // The vendored content is committed precisely so a build needs no platform
+    // checkout, so its absence is a normal deployment state rather than an
+    // error. Drift cannot be judged without the reference: skip instead of
+    // failing, so `--check` is safe to wire into a general verification gate.
+    if (args.check) {
+      console.log(
+        `sync-wiki: no wiki source at ${sourceDir} — skipping the drift check.\n` +
+          "  Pass --from <path-to-open77-base/wiki> to check against a checkout elsewhere.",
+      );
+      return;
+    }
     throw new Error(
       `wiki source not found at ${sourceDir}\n` +
         "Pass --from <path-to-open77-base/wiki> if the platform checkout lives elsewhere.",

@@ -1,7 +1,7 @@
 # Contextual world interactions
 
-`cyberm_interactions` is the shared client service for contextual actions attached to a world
-position or a streamed CyberM entity. It projects the target through REDengine's active camera and
+`open77_interactions` is the shared client service for contextual actions attached to a world
+position or a streamed Open77 entity. It projects the target through REDengine's active camera and
 draws a transparent WebUI marker at the corresponding screen position. At `markerDistance` the player
 sees only the world point and its distance; once they enter `distance` and look at the point, the
 marker expands into the custom action card. The service then reads an allowlisted action key and
@@ -20,7 +20,7 @@ custom description, key, short icon, colour, press/hold behavior, and up to four
 ```lua
 resource "jobs"
 version "1.0.0"
-dependency "cyberm_interactions >=0.1.0"
+dependency "open77_interactions >=0.1.0"
 
 client_script "client/main.lua"
 ```
@@ -36,7 +36,7 @@ Exports are asynchronous because every resource has an isolated Lua VM. Call the
 local interaction
 
 CreateThread(function()
-    local promise, callError = CyberM.exports.call("cyberm_interactions", "create", {
+    local promise, callError = Open77.exports.call("open77_interactions", "create", {
         id = "job_center",
         position = { x = -1464.7, y = -124.3, z = 6.2 },
         distance = 2.2,
@@ -71,14 +71,14 @@ Stopped owners are swept automatically.
 
 ## Attach to a player or NPC
 
-`entity` accepts the same opaque CyberM entity handle as `CyberM.character.state`. Keep a 64-bit
+`entity` accepts the same opaque Open77 entity handle as `Open77.character.state`. Keep a 64-bit
 handle as returned; do not pass it through `tonumber`.
 
 ```lua
-local npcEntity = CyberM.npcs.entity(npcId)
+local npcEntity = Open77.npcs.entity(npcId)
 if npcEntity then
     CreateThread(function()
-        local promise = assert(CyberM.exports.call("cyberm_interactions", "create", {
+        local promise = assert(Open77.exports.call("open77_interactions", "create", {
             id = "talk_to_receptionist",
             entity = npcEntity,
             offset = { x = 0.0, y = 0.0, z = 1.85 },
@@ -96,13 +96,13 @@ end
 ```
 
 An entity interaction disappears while its entity is not streamed and follows its rendered world
-position when it returns. Create it after `CyberM.npcs.isStreamedIn(npcId)` becomes true, or update
+position when it returns. Create it after `Open77.npcs.isStreamedIn(npcId)` becomes true, or update
 it with the new local entity handle after a stream-out/stream-in cycle.
 
 ## Multiple custom actions and hold
 
 ```lua
-local promise = CyberM.exports.call("cyberm_interactions", "create", {
+local promise = Open77.exports.call("open77_interactions", "create", {
     id = "apartment_door",
     position = { x = -1448.2, y = 96.1, z = 17.5 },
     distance = 2.0,
@@ -140,7 +140,7 @@ keyboard focus, so typing in chat cannot trigger a world action.
 
 ```lua
 local function call(name, ...)
-    local promise, reason = CyberM.exports.call("cyberm_interactions", name, ...)
+    local promise, reason = Open77.exports.call("open77_interactions", name, ...)
     assert(promise, reason)
     return promise:await()
 end
@@ -170,7 +170,7 @@ resources. `isEnabled()` returns that caller-specific state.
 |---|---|
 | `id` | Stable owner-local ID, maximum 96 characters. Generated when omitted. |
 | `position` | Static `{ x, y, z }` target. Exactly one of `position` or `entity` is required. |
-| `entity` | Streamed CyberM entity handle followed through `CyberM.character.state`. |
+| `entity` | Streamed Open77 entity handle followed through `Open77.character.state`. |
 | `offset` | World offset from the position/entity origin; defaults to zero. |
 | `distance` | Activation radius, 0.25–25 m; defaults to 2.5 m. |
 | `markerDistance` | Maximum marker display distance, from `distance` to 250 m; defaults to at least 12 m. Only the winning interaction is rendered. |
@@ -196,7 +196,7 @@ The arbiter renders one target at a time. An active target wins over a merely vi
 
 ## Event payload and server authority
 
-Every selected choice emits its custom `event` and the common `cyberm:interaction` event with:
+Every selected choice emits its custom `event` and the common `open77:interaction` event with:
 
 ```lua
 {
@@ -223,10 +223,10 @@ end)
 
 -- server/main.lua
 RegisterNetEvent("jobs:requestOpen", function(interactionId)
-    local playerId = source -- authenticated by CyberM; never accept it from the payload
+    local playerId = source -- authenticated by Open77; never accept it from the payload
     if interactionId ~= "job_center" then return end
 
-    local position = CyberM.players.position(playerId)
+    local position = Open77.players.position(playerId)
     if not position then return end
     -- Recheck routing bucket, distance, role/ACL, cooldown, and authoritative
     -- job-centre state here before opening or mutating anything.

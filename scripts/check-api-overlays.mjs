@@ -19,7 +19,7 @@ const api = JSON.parse(
 );
 
 /**
- * A qualified name is not unique: `CyberM.vehicles.get` exists in both
+ * A qualified name is not unique: `Open77.vehicles.get` exists in both
  * runtimes, and the overlays are written per name, so a lookup has to consider
  * every entry that shares it.
  */
@@ -83,7 +83,7 @@ gaps += audit("api-notes.json", await readOverlay("api-notes.json"), (name) =>
 gaps += audit(
   "server-vehicle-api.json",
   await readOverlay("server-vehicle-api.json"),
-  (name) => byQualified.get(`CyberM.vehicles.${name}`) ?? byQualified.get(name),
+  (name) => byQualified.get(`Open77.vehicles.${name}`) ?? byQualified.get(name),
 );
 
 console.log("\nCoverage of the generated fields:");

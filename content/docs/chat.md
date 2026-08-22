@@ -1,6 +1,6 @@
 # Chat, slash commands, and completion
 
-The official `cyberm_chat` package is documented in
+The official `open77_chat` package is documented in
 [`docs/chat.md`](../docs/chat.md). It provides English-only UI text, authenticated slash-command
 dispatch, automatic suggestion discovery, history, and keyboard completion.
 
@@ -14,7 +14,7 @@ Arrow Up/Down     select a suggestion while typing /
 Tab               complete the selected command
 ```
 
-Slash commands use the same server-side `RegisterCommand` and ACL path as the CyberM terminal;
+Slash commands use the same server-side `RegisterCommand` and ACL path as the Open77 terminal;
 they are not chat messages and are never broadcast to other players.
 
 Built-in utility commands include:

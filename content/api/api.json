@@ -27,7 +27,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6490,
+  "source_line": 6619,
   "qualified": "AddEventHandler",
   "route_id": "AddEventHandler"
  },
@@ -53,7 +53,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6489,
+  "source_line": 6618,
   "qualified": "ClearTimeout",
   "route_id": "ClearTimeout"
  },
@@ -75,9 +75,9 @@
   "api_set": "shared",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "CreateThread(function()\n    while true do\n        print(CyberM.character.speed())\n        Wait(1000)\n    end\nend)",
+  "example": "CreateThread(function()\n    while true do\n        print(Open77.character.speed())\n        Wait(1000)\n    end\nend)",
   "inferred": false,
-  "source_line": 6486,
+  "source_line": 6615,
   "qualified": "CreateThread",
   "route_id": "CreateThread"
  },
@@ -85,8 +85,8 @@
   "namespace": "_G",
   "name": "DeleteResourceKvp",
   "handler": "LuaKvpDelete",
-  "summary": "FiveM-style alias for `CyberM.kvp.delete`.",
-  "description": "FiveM-familiar alias for `CyberM.kvp.delete`. It atomically removes only the named key owned by the calling resource and reports whether that key existed.",
+  "summary": "FiveM-style alias for `Open77.kvp.delete`.",
+  "description": "FiveM-familiar alias for `Open77.kvp.delete`. It atomically removes only the named key owned by the calling resource and reports whether that key existed.",
   "params": [
    {
     "name": "key",
@@ -104,7 +104,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6502,
+  "source_line": 6631,
   "qualified": "DeleteResourceKvp",
   "route_id": "DeleteResourceKvp"
  },
@@ -123,7 +123,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6496,
+  "source_line": 6625,
   "qualified": "GetCurrentResourceName",
   "route_id": "GetCurrentResourceName"
  },
@@ -142,7 +142,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6497,
+  "source_line": 6626,
   "qualified": "GetInvokingResource",
   "route_id": "GetInvokingResource"
  },
@@ -161,7 +161,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6498,
+  "source_line": 6627,
   "qualified": "GetInvokingResourceGeneration",
   "route_id": "GetInvokingResourceGeneration"
  },
@@ -169,8 +169,8 @@
   "namespace": "_G",
   "name": "GetResourceKvp",
   "handler": "LuaKvpGet",
-  "summary": "FiveM-style alias for `CyberM.kvp.get`.",
-  "description": "FiveM-familiar alias for `CyberM.kvp.get`. It returns the original stored Lua type or nil when absent and stays inside the active connection-address and calling-resource namespace.",
+  "summary": "FiveM-style alias for `Open77.kvp.get`.",
+  "description": "FiveM-familiar alias for `Open77.kvp.get`. It returns the original stored Lua type or nil when absent and stays inside the active connection-address and calling-resource namespace.",
   "params": [
    {
     "name": "key",
@@ -194,7 +194,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6501,
+  "source_line": 6630,
   "qualified": "GetResourceKvp",
   "route_id": "GetResourceKvp"
  },
@@ -220,7 +220,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6499,
+  "source_line": 6628,
   "qualified": "GetResourceState",
   "route_id": "GetResourceState"
  },
@@ -252,7 +252,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6493,
+  "source_line": 6622,
   "qualified": "RegisterNetEvent",
   "route_id": "RegisterNetEvent"
  },
@@ -284,7 +284,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6491,
+  "source_line": 6620,
   "qualified": "RemoveEventHandler",
   "route_id": "RemoveEventHandler"
  },
@@ -292,8 +292,8 @@
   "namespace": "_G",
   "name": "SetResourceKvp",
   "handler": "LuaKvpSet",
-  "summary": "FiveM-style alias for `CyberM.kvp.set`.",
-  "description": "FiveM-familiar alias for `CyberM.kvp.set`. It stores one typed value in the calling resource's persistent namespace for the active connection address; it cannot select another server or resource.",
+  "summary": "FiveM-style alias for `Open77.kvp.set`.",
+  "description": "FiveM-familiar alias for `Open77.kvp.set`. It stores one typed value in the calling resource's persistent namespace for the active connection address; it cannot select another server or resource.",
   "params": [
    {
     "name": "key",
@@ -317,7 +317,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6500,
+  "source_line": 6629,
   "qualified": "SetResourceKvp",
   "route_id": "SetResourceKvp"
  },
@@ -349,7 +349,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6488,
+  "source_line": 6617,
   "qualified": "SetTimeout",
   "route_id": "SetTimeout"
  },
@@ -381,7 +381,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6492,
+  "source_line": 6621,
   "qualified": "TriggerEvent",
   "route_id": "TriggerEvent"
  },
@@ -413,7 +413,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6494,
+  "source_line": 6623,
   "qualified": "TriggerServerEvent",
   "route_id": "TriggerServerEvent"
  },
@@ -437,7 +437,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6487,
+  "source_line": 6616,
   "qualified": "Wait",
   "route_id": "Wait"
  },
@@ -446,7 +446,7 @@
   "name": "exports",
   "handler": "LuaRegisterExport",
   "summary": "Declares a function callable by other resources.",
-  "description": "Publishes a named function from the current resource so another resource can call it through `CyberM.exports.call`. The registration is tied to the current generation, so stale functions cannot survive a stop or hot reload.",
+  "description": "Publishes a named function from the current resource so another resource can call it through `Open77.exports.call`. The registration is tied to the current generation, so stale functions cannot survive a stop or hot reload.",
   "params": [
    {
     "name": "name",
@@ -469,7 +469,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6495,
+  "source_line": 6624,
   "qualified": "exports",
   "route_id": "exports"
  },
@@ -477,8 +477,8 @@
   "namespace": "_G",
   "name": "print",
   "handler": "LuaPrint",
-  "summary": "Writes to the CyberM log, prefixed with the resource name.",
-  "description": "Writes a resource-prefixed line to the CyberM log. Values are converted with bounded formatting; this does not send a chat message or write into a WebUI page.",
+  "summary": "Writes to the Open77 log, prefixed with the resource name.",
+  "description": "Writes a resource-prefixed line to the Open77 log. Values are converted with bounded formatting; this does not send a chat message or write into a WebUI page.",
   "params": [
    {
     "name": "…",
@@ -493,7 +493,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6484,
+  "source_line": 6613,
   "qualified": "print",
   "route_id": "print"
  },
@@ -519,12 +519,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6485,
+  "source_line": 6614,
   "qualified": "require",
   "route_id": "require"
  },
  {
-  "namespace": "CyberM.Promise",
+  "namespace": "Open77.Promise",
   "name": "await",
   "handler": "LuaPromiseAwait",
   "summary": "Waits for a promise to settle.",
@@ -539,12 +539,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6461,
-  "qualified": "CyberM.Promise.await",
-  "route_id": "CyberM.Promise.await"
+  "source_line": 6590,
+  "qualified": "Open77.Promise.await",
+  "route_id": "Open77.Promise.await"
  },
  {
-  "namespace": "CyberM.Promise",
+  "namespace": "Open77.Promise",
   "name": "status",
   "handler": "LuaPromiseStatus",
   "summary": "State of the promise, without waiting.",
@@ -558,12 +558,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6462,
-  "qualified": "CyberM.Promise.status",
-  "route_id": "CyberM.Promise.status"
+  "source_line": 6591,
+  "qualified": "Open77.Promise.status",
+  "route_id": "Open77.Promise.status"
  },
  {
-  "namespace": "CyberM.animations",
+  "namespace": "Open77.animations",
   "name": "current",
   "handler": "LuaAnimationCurrent",
   "summary": "The clip a body is currently playing.",
@@ -585,16 +585,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6591,
-  "qualified": "CyberM.animations.current",
-  "route_id": "CyberM.animations.current"
+  "source_line": 6720,
+  "qualified": "Open77.animations.current",
+  "route_id": "Open77.animations.current"
  },
  {
-  "namespace": "CyberM.animations",
+  "namespace": "Open77.animations",
   "name": "play",
   "handler": "LuaAnimationPlay",
   "summary": "Plays a named animation on a body.",
-  "description": "Does not work on the local player: their body cannot hold a workspot. Use `CyberM.animations.playSelf` for that, which stands a double in for them.",
+  "description": "Does not work on the local player: their body cannot hold a workspot. Use `Open77.animations.playSelf` for that, which stands a double in for them.",
   "params": [
    {
     "name": "entity",
@@ -616,14 +616,14 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "local ok, reason = CyberM.animations.play(entityId, \"emote_smoke\")\nif not ok then print(\"refused: \" .. reason) end",
+  "example": "local ok, reason = Open77.animations.play(entityId, \"emote_smoke\")\nif not ok then print(\"refused: \" .. reason) end",
   "inferred": false,
-  "source_line": 6587,
-  "qualified": "CyberM.animations.play",
-  "route_id": "CyberM.animations.play"
+  "source_line": 6716,
+  "qualified": "Open77.animations.play",
+  "route_id": "Open77.animations.play"
  },
  {
-  "namespace": "CyberM.animations",
+  "namespace": "Open77.animations",
   "name": "playSelf",
   "handler": "LuaSelfEmotePlay",
   "summary": "Plays an emote on the local player, through a stand-in body.",
@@ -651,16 +651,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6588,
-  "qualified": "CyberM.animations.playSelf",
-  "route_id": "CyberM.animations.playSelf"
+  "source_line": 6717,
+  "qualified": "Open77.animations.playSelf",
+  "route_id": "Open77.animations.playSelf"
  },
  {
-  "namespace": "CyberM.animations",
+  "namespace": "Open77.animations",
   "name": "stop",
   "handler": "LuaAnimationStop",
   "summary": "Stops whatever a body is playing and releases what was set up for it.",
-  "description": "Stops the workspot animation currently managed by CyberM for the selected body and releases its native animation state. It does not claim or stop arbitrary game animations that CyberM does not own.",
+  "description": "Stops the workspot animation currently managed by Open77 for the selected body and releases its native animation state. It does not claim or stop arbitrary game animations that Open77 does not own.",
   "params": [
    {
     "name": "entity",
@@ -678,12 +678,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6590,
-  "qualified": "CyberM.animations.stop",
-  "route_id": "CyberM.animations.stop"
+  "source_line": 6719,
+  "qualified": "Open77.animations.stop",
+  "route_id": "Open77.animations.stop"
  },
  {
-  "namespace": "CyberM.animations",
+  "namespace": "Open77.animations",
   "name": "stopSelf",
   "handler": "LuaSelfEmoteStop",
   "summary": "Stops the local player's emote and removes the stand-in.",
@@ -698,12 +698,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6589,
-  "qualified": "CyberM.animations.stopSelf",
-  "route_id": "CyberM.animations.stopSelf"
+  "source_line": 6718,
+  "qualified": "Open77.animations.stopSelf",
+  "route_id": "Open77.animations.stopSelf"
  },
  {
-  "namespace": "CyberM.appearance",
+  "namespace": "Open77.appearance",
   "name": "apply",
   "handler": "LuaAppearanceApply",
   "summary": "Applies a previously captured appearance snapshot to the local player.",
@@ -725,12 +725,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6635,
-  "qualified": "CyberM.appearance.apply",
-  "route_id": "CyberM.appearance.apply"
+  "source_line": 6770,
+  "qualified": "Open77.appearance.apply",
+  "route_id": "Open77.appearance.apply"
  },
  {
-  "namespace": "CyberM.appearance",
+  "namespace": "Open77.appearance",
   "name": "capture",
   "handler": "LuaAppearanceCapture",
   "summary": "Captures the local player's complete validated appearance snapshot.",
@@ -745,12 +745,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6634,
-  "qualified": "CyberM.appearance.capture",
-  "route_id": "CyberM.appearance.capture"
+  "source_line": 6769,
+  "qualified": "Open77.appearance.capture",
+  "route_id": "Open77.appearance.capture"
  },
  {
-  "namespace": "CyberM.appearance",
+  "namespace": "Open77.appearance",
   "name": "finishCommit",
   "handler": "LuaAppearanceFinish",
   "summary": "Finishes the current appearance commit transaction.",
@@ -765,12 +765,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6636,
-  "qualified": "CyberM.appearance.finishCommit",
-  "route_id": "CyberM.appearance.finishCommit"
+  "source_line": 6771,
+  "qualified": "Open77.appearance.finishCommit",
+  "route_id": "Open77.appearance.finishCommit"
  },
  {
-  "namespace": "CyberM.appearance",
+  "namespace": "Open77.appearance",
   "name": "isOpen",
   "handler": "LuaAppearanceIsOpen",
   "summary": "Whether the local appearance editor is open.",
@@ -784,12 +784,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6633,
-  "qualified": "CyberM.appearance.isOpen",
-  "route_id": "CyberM.appearance.isOpen"
+  "source_line": 6768,
+  "qualified": "Open77.appearance.isOpen",
+  "route_id": "Open77.appearance.isOpen"
  },
  {
-  "namespace": "CyberM.appearance",
+  "namespace": "Open77.appearance",
   "name": "open",
   "handler": "LuaAppearanceOpen",
   "summary": "Opens the local Cyberpunk appearance editor.",
@@ -811,12 +811,56 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6632,
-  "qualified": "CyberM.appearance.open",
-  "route_id": "CyberM.appearance.open"
+  "source_line": 6767,
+  "qualified": "Open77.appearance.open",
+  "route_id": "Open77.appearance.open"
  },
  {
-  "namespace": "CyberM.assets",
+  "namespace": "Open77.appearance",
+  "name": "switchBodyFamily",
+  "handler": "LuaAppearanceSwitchBodyFamily",
+  "summary": "Starts a guarded body-family transition.",
+  "description": "Starts a guarded transition to the requested body family and optionally resumes the native editor afterward. It requires player.appearance.edit; completion is consumed with takeBodyFamilyTransition.",
+  "params": [
+   {
+    "name": "arg2",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 6772,
+  "qualified": "Open77.appearance.switchBodyFamily",
+  "route_id": "Open77.appearance.switchBodyFamily"
+ },
+ {
+  "namespace": "Open77.appearance",
+  "name": "takeBodyFamilyTransition",
+  "handler": "LuaAppearanceTakeBodyFamilyTransition",
+  "summary": "Consumes the pending body-family transition result.",
+  "description": "Consumes the pending body-family transition result once, returning its serialized payload or nil while no result is ready. It requires player.appearance.edit.",
+  "params": [],
+  "returns": [
+   "value",
+   "reason (when the first is nil)"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 6773,
+  "qualified": "Open77.appearance.takeBodyFamilyTransition",
+  "route_id": "Open77.appearance.takeBodyFamilyTransition"
+ },
+ {
+  "namespace": "Open77.assets",
   "name": "list",
   "handler": "LuaAssetList",
   "summary": "Lists generic files declared by the current resource.",
@@ -830,12 +874,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6541,
-  "qualified": "CyberM.assets.list",
-  "route_id": "CyberM.assets.list"
+  "source_line": 6670,
+  "qualified": "Open77.assets.list",
+  "route_id": "Open77.assets.list"
  },
  {
-  "namespace": "CyberM.assets",
+  "namespace": "Open77.assets",
   "name": "texture",
   "handler": "LuaAssetTexture",
   "summary": "Validates a declared PNG texture for resource APIs.",
@@ -857,16 +901,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6540,
-  "qualified": "CyberM.assets.texture",
-  "route_id": "CyberM.assets.texture"
+  "source_line": 6669,
+  "qualified": "Open77.assets.texture",
+  "route_id": "Open77.assets.texture"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "attachToEntity",
   "handler": "LuaBlipAttachToEntity",
-  "summary": "Makes a blip follow a CyberM entity.",
-  "description": "Changes an owned blip from a fixed world position to tracking a streamed CyberM entity. The entity id is ephemeral and the call requires `ui.vanilla.map`; remove or reattach the blip when its gameplay target changes.",
+  "summary": "Makes a blip follow an Open77 entity.",
+  "description": "Changes an owned blip from a fixed world position to tracking a streamed Open77 entity. The entity id is ephemeral and the call requires `ui.vanilla.map`; remove or reattach the blip when its gameplay target changes.",
   "params": [
    {
     "name": "id",
@@ -902,12 +946,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6779,
-  "qualified": "CyberM.blips.attachToEntity",
-  "route_id": "CyberM.blips.attachToEntity"
+  "source_line": 6916,
+  "qualified": "Open77.blips.attachToEntity",
+  "route_id": "Open77.blips.attachToEntity"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "clear",
   "handler": "LuaBlipClear",
   "summary": "Removes every blip owned by the current resource.",
@@ -921,12 +965,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6790,
-  "qualified": "CyberM.blips.clear",
-  "route_id": "CyberM.blips.clear"
+  "source_line": 6927,
+  "qualified": "Open77.blips.clear",
+  "route_id": "Open77.blips.clear"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "create",
   "handler": "LuaBlipCreate",
   "summary": "Creates a resource-owned vanilla map pin.",
@@ -946,14 +990,14 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "local id = assert(CyberM.blips.create({\n  position = { x = 10, y = 20, z = 30 },\n  sprite = \"objective\", label = \"Street race\"\n}))",
+  "example": "local id = assert(Open77.blips.create({\n  position = { x = 10, y = 20, z = 30 },\n  sprite = \"objective\", label = \"Street race\"\n}))",
   "inferred": false,
-  "source_line": 6776,
-  "qualified": "CyberM.blips.create",
-  "route_id": "CyberM.blips.create"
+  "source_line": 6913,
+  "qualified": "Open77.blips.create",
+  "route_id": "Open77.blips.create"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "get",
   "handler": "LuaBlipGet",
   "summary": "Reads one blip owned by the current resource.",
@@ -975,12 +1019,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6791,
-  "qualified": "CyberM.blips.get",
-  "route_id": "CyberM.blips.get"
+  "source_line": 6928,
+  "qualified": "Open77.blips.get",
+  "route_id": "Open77.blips.get"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "list",
   "handler": "LuaBlipList",
   "summary": "Lists blips owned by the current resource.",
@@ -994,12 +1038,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6792,
-  "qualified": "CyberM.blips.list",
-  "route_id": "CyberM.blips.list"
+  "source_line": 6929,
+  "qualified": "Open77.blips.list",
+  "route_id": "Open77.blips.list"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "remove",
   "handler": "LuaBlipRemove",
   "summary": "Removes one owned blip.",
@@ -1021,12 +1065,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6789,
-  "qualified": "CyberM.blips.remove",
-  "route_id": "CyberM.blips.remove"
+  "source_line": 6926,
+  "qualified": "Open77.blips.remove",
+  "route_id": "Open77.blips.remove"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "setActive",
   "handler": "LuaBlipSetActive",
   "summary": "Activates or deactivates a vanilla mappin.",
@@ -1054,16 +1098,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6785,
-  "qualified": "CyberM.blips.setActive",
-  "route_id": "CyberM.blips.setActive"
+  "source_line": 6922,
+  "qualified": "Open77.blips.setActive",
+  "route_id": "Open77.blips.setActive"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "setDescription",
   "handler": "LuaBlipSetDescription",
   "summary": "Sets the custom fullscreen-map description of an owned blip.",
-  "description": "Requires `ui.vanilla.map`. The description is displayed by CyberM's fullscreen-map tooltip for the selected native mappin.",
+  "description": "Requires `ui.vanilla.map`. The description is displayed by Open77's fullscreen-map tooltip for the selected native mappin.",
   "params": [
    {
     "name": "id",
@@ -1087,12 +1131,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6783,
-  "qualified": "CyberM.blips.setDescription",
-  "route_id": "CyberM.blips.setDescription"
+  "source_line": 6920,
+  "qualified": "Open77.blips.setDescription",
+  "route_id": "Open77.blips.setDescription"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "setIcon",
   "handler": "LuaBlipSetIcon",
   "summary": "Sets a declared PNG icon or restores the native sprite.",
@@ -1120,16 +1164,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6784,
-  "qualified": "CyberM.blips.setIcon",
-  "route_id": "CyberM.blips.setIcon"
+  "source_line": 6921,
+  "qualified": "Open77.blips.setIcon",
+  "route_id": "Open77.blips.setIcon"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "setLabel",
   "handler": "LuaBlipSetLabel",
   "summary": "Changes the fullscreen-map tooltip title.",
-  "description": "CyberM keeps the label in private script data, independent from the vanilla variant's generic title.",
+  "description": "Open77 keeps the label in private script data, independent from the vanilla variant's generic title.",
   "params": [
    {
     "name": "id",
@@ -1153,12 +1197,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6782,
-  "qualified": "CyberM.blips.setLabel",
-  "route_id": "CyberM.blips.setLabel"
+  "source_line": 6919,
+  "qualified": "Open77.blips.setLabel",
+  "route_id": "Open77.blips.setLabel"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "setPosition",
   "handler": "LuaBlipSetPosition",
   "summary": "Moves a blip to a world position.",
@@ -1186,12 +1230,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6778,
-  "qualified": "CyberM.blips.setPosition",
-  "route_id": "CyberM.blips.setPosition"
+  "source_line": 6915,
+  "qualified": "Open77.blips.setPosition",
+  "route_id": "Open77.blips.setPosition"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "setSprite",
   "handler": "LuaBlipSetSprite",
   "summary": "Changes the vanilla mappin variant.",
@@ -1219,12 +1263,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6780,
-  "qualified": "CyberM.blips.setSprite",
-  "route_id": "CyberM.blips.setSprite"
+  "source_line": 6917,
+  "qualified": "Open77.blips.setSprite",
+  "route_id": "Open77.blips.setSprite"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "setTitle",
   "handler": "LuaBlipSetTitle",
   "summary": "Sets the custom fullscreen-map title of an owned blip.",
@@ -1252,12 +1296,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6781,
-  "qualified": "CyberM.blips.setTitle",
-  "route_id": "CyberM.blips.setTitle"
+  "source_line": 6918,
+  "qualified": "Open77.blips.setTitle",
+  "route_id": "Open77.blips.setTitle"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "setTrackingAlternative",
   "handler": "LuaBlipSetTrackingAlternative",
   "summary": "Sets another owned blip as the routing alternative.",
@@ -1285,12 +1329,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6787,
-  "qualified": "CyberM.blips.setTrackingAlternative",
-  "route_id": "CyberM.blips.setTrackingAlternative"
+  "source_line": 6924,
+  "qualified": "Open77.blips.setTrackingAlternative",
+  "route_id": "Open77.blips.setTrackingAlternative"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "setVisibleThroughWalls",
   "handler": "LuaBlipSetVisibleThroughWalls",
   "summary": "Changes vanilla through-wall visibility.",
@@ -1318,12 +1362,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6786,
-  "qualified": "CyberM.blips.setVisibleThroughWalls",
-  "route_id": "CyberM.blips.setVisibleThroughWalls"
+  "source_line": 6923,
+  "qualified": "Open77.blips.setVisibleThroughWalls",
+  "route_id": "Open77.blips.setVisibleThroughWalls"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "sprites",
   "handler": "LuaBlipSprites",
   "summary": "Lists every usable mappin variant in the current build.",
@@ -1337,12 +1381,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6793,
-  "qualified": "CyberM.blips.sprites",
-  "route_id": "CyberM.blips.sprites"
+  "source_line": 6930,
+  "qualified": "Open77.blips.sprites",
+  "route_id": "Open77.blips.sprites"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "untrack",
   "handler": "LuaBlipUntrack",
   "summary": "Safely clears manual tracking for this blip.",
@@ -1364,12 +1408,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6788,
-  "qualified": "CyberM.blips.untrack",
-  "route_id": "CyberM.blips.untrack"
+  "source_line": 6925,
+  "qualified": "Open77.blips.untrack",
+  "route_id": "Open77.blips.untrack"
  },
  {
-  "namespace": "CyberM.blips",
+  "namespace": "Open77.blips",
   "name": "update",
   "handler": "LuaBlipUpdate",
   "summary": "Updates several properties of an owned blip.",
@@ -1397,16 +1441,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6777,
-  "qualified": "CyberM.blips.update",
-  "route_id": "CyberM.blips.update"
+  "source_line": 6914,
+  "qualified": "Open77.blips.update",
+  "route_id": "Open77.blips.update"
  },
  {
-  "namespace": "CyberM.camera",
+  "namespace": "Open77.camera",
   "name": "attach",
   "handler": "LuaCameraAttach",
   "summary": "Reattaches the camera to the body.",
-  "description": "Attaches the CyberM camera to a game entity using the supplied local offset and rotation. Camera ownership is local to the resource generation; attaching replaces the resource's previous detached/attached camera state.",
+  "description": "Attaches the Open77 camera to a game entity using the supplied local offset and rotation. Camera ownership is local to the resource generation; attaching replaces the resource's previous detached/attached camera state.",
   "params": [],
   "returns": [
    "true on success, otherwise false",
@@ -1417,16 +1461,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6750,
-  "qualified": "CyberM.camera.attach",
-  "route_id": "CyberM.camera.attach"
+  "source_line": 6887,
+  "qualified": "Open77.camera.attach",
+  "route_id": "Open77.camera.attach"
  },
  {
-  "namespace": "CyberM.camera",
+  "namespace": "Open77.camera",
   "name": "detach",
   "handler": "LuaCameraDetach",
   "summary": "Detaches the camera from the body, with an offset in the body's own space.",
-  "description": "Detaches the CyberM camera from its target while retaining a controllable camera view. It does not synchronize a camera to other players and is automatically restored during resource cleanup.",
+  "description": "Detaches the Open77 camera from its target while retaining a controllable camera view. It does not synchronize a camera to other players and is automatically restored during resource cleanup.",
   "params": [
    {
     "name": "x",
@@ -1456,12 +1500,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6749,
-  "qualified": "CyberM.camera.detach",
-  "route_id": "CyberM.camera.detach"
+  "source_line": 6886,
+  "qualified": "Open77.camera.detach",
+  "route_id": "Open77.camera.detach"
  },
  {
-  "namespace": "CyberM.camera",
+  "namespace": "Open77.camera",
   "name": "project",
   "handler": "LuaCameraProject",
   "summary": "Projects a world point into normalized WebUI viewport coordinates.",
@@ -1483,16 +1527,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6753,
-  "qualified": "CyberM.camera.project",
-  "route_id": "CyberM.camera.project"
+  "source_line": 6890,
+  "qualified": "Open77.camera.project",
+  "route_id": "Open77.camera.project"
  },
  {
-  "namespace": "CyberM.camera",
+  "namespace": "Open77.camera",
   "name": "setFov",
   "handler": "LuaCameraFieldOfView",
   "summary": "Sets the field of view, in degrees.",
-  "description": "Changes the field of view of the camera currently controlled by CyberM. The value is validated by the native backend and applies only to this client's presentation.",
+  "description": "Changes the field of view of the camera currently controlled by Open77. The value is validated by the native backend and applies only to this client's presentation.",
   "params": [
    {
     "name": "degrees",
@@ -1508,14 +1552,14 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "CyberM.camera.setFov(90)",
+  "example": "Open77.camera.setFov(90)",
   "inferred": false,
-  "source_line": 6751,
-  "qualified": "CyberM.camera.setFov",
-  "route_id": "CyberM.camera.setFov"
+  "source_line": 6888,
+  "qualified": "Open77.camera.setFov",
+  "route_id": "Open77.camera.setFov"
  },
  {
-  "namespace": "CyberM.camera",
+  "namespace": "Open77.camera",
   "name": "thirdPerson",
   "handler": "LuaCameraThirdPerson",
   "summary": "Switches the view to third person.",
@@ -1547,14 +1591,14 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "CyberM.camera.thirdPerson(true, 2.5, 1.7)",
+  "example": "Open77.camera.thirdPerson(true, 2.5, 1.7)",
   "inferred": false,
-  "source_line": 6748,
-  "qualified": "CyberM.camera.thirdPerson",
-  "route_id": "CyberM.camera.thirdPerson"
+  "source_line": 6885,
+  "qualified": "Open77.camera.thirdPerson",
+  "route_id": "Open77.camera.thirdPerson"
  },
  {
-  "namespace": "CyberM.camera",
+  "namespace": "Open77.camera",
   "name": "view",
   "handler": "LuaCameraView",
   "summary": "Where the view is: position, forward vector, field of view.",
@@ -1570,12 +1614,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6752,
-  "qualified": "CyberM.camera.view",
-  "route_id": "CyberM.camera.view"
+  "source_line": 6889,
+  "qualified": "Open77.camera.view",
+  "route_id": "Open77.camera.view"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "animation",
   "handler": "LuaCharacterAnimation",
   "summary": "The animation currently playing on this character.",
@@ -1596,12 +1640,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6615,
-  "qualified": "CyberM.character.animation",
-  "route_id": "CyberM.character.animation"
+  "source_line": 6750,
+  "qualified": "Open77.character.animation",
+  "route_id": "Open77.character.animation"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "groundSpeed",
   "handler": "LuaCharacterNumber<&SelectGroundSpeed>",
   "summary": "Speed projected on the ground, without the vertical component.",
@@ -1622,12 +1666,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6617,
-  "qualified": "CyberM.character.groundSpeed",
-  "route_id": "CyberM.character.groundSpeed"
+  "source_line": 6752,
+  "qualified": "Open77.character.groundSpeed",
+  "route_id": "Open77.character.groundSpeed"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "health",
   "handler": "LuaCharacterNumber<&SelectHealth>",
   "summary": "Current health.",
@@ -1648,12 +1692,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6618,
-  "qualified": "CyberM.character.health",
-  "route_id": "CyberM.character.health"
+  "source_line": 6753,
+  "qualified": "Open77.character.health",
+  "route_id": "Open77.character.health"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "isAlive",
   "handler": "LuaCharacterFlag<&SelectAlive>",
   "summary": "Whether the character is alive.",
@@ -1674,12 +1718,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6620,
-  "qualified": "CyberM.character.isAlive",
-  "route_id": "CyberM.character.isAlive"
+  "source_line": 6755,
+  "qualified": "Open77.character.isAlive",
+  "route_id": "Open77.character.isAlive"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "isArmed",
   "handler": "LuaCharacterFlag<&SelectArmed>",
   "summary": "Whether a weapon is drawn.",
@@ -1700,12 +1744,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6625,
-  "qualified": "CyberM.character.isArmed",
-  "route_id": "CyberM.character.isArmed"
+  "source_line": 6760,
+  "qualified": "Open77.character.isArmed",
+  "route_id": "Open77.character.isArmed"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "isCrouched",
   "handler": "LuaCharacterFlag<&SelectCrouched>",
   "summary": "Whether the character is crouching.",
@@ -1726,12 +1770,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6622,
-  "qualified": "CyberM.character.isCrouched",
-  "route_id": "CyberM.character.isCrouched"
+  "source_line": 6757,
+  "qualified": "Open77.character.isCrouched",
+  "route_id": "Open77.character.isCrouched"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "isDriver",
   "handler": "LuaCharacterFlag<&SelectDriverSeat>",
   "summary": "Whether they occupy the driver's seat.",
@@ -1752,16 +1796,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6627,
-  "qualified": "CyberM.character.isDriver",
-  "route_id": "CyberM.character.isDriver"
+  "source_line": 6762,
+  "qualified": "Open77.character.isDriver",
+  "route_id": "Open77.character.isDriver"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "isEmoting",
   "handler": "LuaCharacterFlag<&SelectInWorkspot>",
   "summary": "Whether they hold a workspot (an emote is running).",
-  "description": "Reports whether CyberM currently presents the character in an emote/workspot state. This is a transient local snapshot and is cleared with the owning presentation lifecycle.",
+  "description": "Reports whether Open77 currently presents the character in an emote/workspot state. This is a transient local snapshot and is cleared with the owning presentation lifecycle.",
   "params": [
    {
     "name": "entity",
@@ -1778,12 +1822,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6628,
-  "qualified": "CyberM.character.isEmoting",
-  "route_id": "CyberM.character.isEmoting"
+  "source_line": 6763,
+  "qualified": "Open77.character.isEmoting",
+  "route_id": "Open77.character.isEmoting"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "isGrounded",
   "handler": "LuaCharacterFlag<&SelectGrounded>",
   "summary": "Whether the character is touching the ground.",
@@ -1804,12 +1848,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6621,
-  "qualified": "CyberM.character.isGrounded",
-  "route_id": "CyberM.character.isGrounded"
+  "source_line": 6756,
+  "qualified": "Open77.character.isGrounded",
+  "route_id": "Open77.character.isGrounded"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "isInVehicle",
   "handler": "LuaCharacterFlag<&SelectInVehicle>",
   "summary": "Whether the character is mounted in a vehicle.",
@@ -1830,12 +1874,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6626,
-  "qualified": "CyberM.character.isInVehicle",
-  "route_id": "CyberM.character.isInVehicle"
+  "source_line": 6761,
+  "qualified": "Open77.character.isInVehicle",
+  "route_id": "Open77.character.isInVehicle"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "isSliding",
   "handler": "LuaCharacterFlag<&SelectSliding>",
   "summary": "Whether the character is sliding.",
@@ -1856,12 +1900,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6623,
-  "qualified": "CyberM.character.isSliding",
-  "route_id": "CyberM.character.isSliding"
+  "source_line": 6758,
+  "qualified": "Open77.character.isSliding",
+  "route_id": "Open77.character.isSliding"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "isVaulting",
   "handler": "LuaCharacterFlag<&SelectVaulting>",
   "summary": "Whether the character is vaulting.",
@@ -1882,12 +1926,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6624,
-  "qualified": "CyberM.character.isVaulting",
-  "route_id": "CyberM.character.isVaulting"
+  "source_line": 6759,
+  "qualified": "Open77.character.isVaulting",
+  "route_id": "Open77.character.isVaulting"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "position",
   "handler": "LuaCharacterPosition",
   "summary": "The character's position.",
@@ -1908,12 +1952,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6612,
-  "qualified": "CyberM.character.position",
-  "route_id": "CyberM.character.position"
+  "source_line": 6747,
+  "qualified": "Open77.character.position",
+  "route_id": "Open77.character.position"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "seat",
   "handler": "LuaCharacterSeat",
   "summary": "The seat occupied in a vehicle, if any.",
@@ -1935,12 +1979,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6613,
-  "qualified": "CyberM.character.seat",
-  "route_id": "CyberM.character.seat"
+  "source_line": 6748,
+  "qualified": "Open77.character.seat",
+  "route_id": "Open77.character.seat"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "speed",
   "handler": "LuaCharacterNumber<&SelectSpeed>",
   "summary": "Instantaneous speed, all components.",
@@ -1961,12 +2005,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6616,
-  "qualified": "CyberM.character.speed",
-  "route_id": "CyberM.character.speed"
+  "source_line": 6751,
+  "qualified": "Open77.character.speed",
+  "route_id": "Open77.character.speed"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "state",
   "handler": "LuaCharacterState",
   "summary": "One complete snapshot of a character.",
@@ -1986,14 +2030,14 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "local s = CyberM.character.state()\nif s.inVehicle and s.driver then\n    print(\"driving at \" .. math.floor(s.speed) .. \" u/s\")\nend",
+  "example": "local s = Open77.character.state()\nif s.inVehicle and s.driver then\n    print(\"driving at \" .. math.floor(s.speed) .. \" u/s\")\nend",
   "inferred": false,
-  "source_line": 6611,
-  "qualified": "CyberM.character.state",
-  "route_id": "CyberM.character.state"
+  "source_line": 6746,
+  "qualified": "Open77.character.state",
+  "route_id": "Open77.character.state"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "weapon",
   "handler": "LuaCharacterWeapon",
   "summary": "The equipped weapon and its state.",
@@ -2015,12 +2059,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6614,
-  "qualified": "CyberM.character.weapon",
-  "route_id": "CyberM.character.weapon"
+  "source_line": 6749,
+  "qualified": "Open77.character.weapon",
+  "route_id": "Open77.character.weapon"
  },
  {
-  "namespace": "CyberM.character",
+  "namespace": "Open77.character",
   "name": "yaw",
   "handler": "LuaCharacterNumber<&SelectYaw>",
   "summary": "Horizontal orientation, in degrees.",
@@ -2041,12 +2085,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6619,
-  "qualified": "CyberM.character.yaw",
-  "route_id": "CyberM.character.yaw"
+  "source_line": 6754,
+  "qualified": "Open77.character.yaw",
+  "route_id": "Open77.character.yaw"
  },
  {
-  "namespace": "CyberM.clipboard",
+  "namespace": "Open77.clipboard",
   "name": "setText",
   "handler": "LuaClipboardSetText",
   "summary": "Writes UTF-8 text to the operating-system clipboard.",
@@ -2066,18 +2110,18 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "local ok, reason = CyberM.clipboard.setText(\"position = { x = 1, y = 2, z = 3 }\")",
+  "example": "local ok, reason = Open77.clipboard.setText(\"position = { x = 1, y = 2, z = 3 }\")",
   "inferred": false,
-  "source_line": 6607,
-  "qualified": "CyberM.clipboard.setText",
-  "route_id": "CyberM.clipboard.setText"
+  "source_line": 6742,
+  "qualified": "Open77.clipboard.setText",
+  "route_id": "Open77.clipboard.setText"
  },
  {
-  "namespace": "CyberM.debug",
+  "namespace": "Open77.debug",
   "name": "command",
   "handler": "LuaDebugCommand",
   "summary": "Runs one registered native laboratory command directly.",
-  "description": "Requires `debug.runtime` and the trusted `cyberm_debug` owner. Input is limited to 4096 bytes and unknown commands are not forwarded to the server.",
+  "description": "Requires `debug.runtime` and the trusted `open77_debug` owner. Input is limited to 4096 bytes and unknown commands are not forwarded to the server.",
   "params": [
    {
     "name": "commandLine",
@@ -2095,16 +2139,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6551,
-  "qualified": "CyberM.debug.command",
-  "route_id": "CyberM.debug.command"
+  "source_line": 6680,
+  "qualified": "Open77.debug.command",
+  "route_id": "Open77.debug.command"
  },
  {
-  "namespace": "CyberM.debug",
+  "namespace": "Open77.debug",
   "name": "eval",
   "handler": "LuaDebugEval",
   "summary": "Compiles and executes a bounded text-only Lua chunk in the privileged debug VM.",
-  "description": "Requires `debug.runtime` and the trusted `cyberm_debug` owner. Source is limited to 32 KiB, the optional chunk label to 64 bytes, returned values to 16 and result text to 8 KiB. The ordinary memory, instruction and frame-time quotas remain active.",
+  "description": "Requires `debug.runtime` and the trusted `open77_debug` owner. Source is limited to 32 KiB, the optional chunk label to 64 bytes, returned values to 16 and result text to 8 KiB. The ordinary memory, instruction and frame-time quotas remain active.",
   "params": [
    {
     "name": "source",
@@ -2128,16 +2172,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6550,
-  "qualified": "CyberM.debug.eval",
-  "route_id": "CyberM.debug.eval"
+  "source_line": 6679,
+  "qualified": "Open77.debug.eval",
+  "route_id": "Open77.debug.eval"
  },
  {
-  "namespace": "CyberM.debug",
+  "namespace": "Open77.debug",
   "name": "redscript",
   "handler": "LuaDebugRedscript",
   "summary": "Queues one bounded command through the REDscript debug bridge.",
-  "description": "Requires `debug.runtime` and the trusted `cyberm_debug` owner. The opaque command is limited to 4096 bytes and executes from a genuine REDscript frame.",
+  "description": "Requires `debug.runtime` and the trusted `open77_debug` owner. The opaque command is limited to 4096 bytes and executes from a genuine REDscript frame.",
   "params": [
    {
     "name": "command",
@@ -2155,12 +2199,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6552,
-  "qualified": "CyberM.debug.redscript",
-  "route_id": "CyberM.debug.redscript"
+  "source_line": 6681,
+  "qualified": "Open77.debug.redscript",
+  "route_id": "Open77.debug.redscript"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "aimed",
   "handler": "LuaDoorAimed",
   "summary": "The streamed door currently under the crosshair.",
@@ -2173,14 +2217,14 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "local door, reason = CyberM.doors.aimed()\nif door then\n    print(door.id, door.open, door.locked, door.distance)\nend",
+  "example": "local door, reason = Open77.doors.aimed()\nif door then\n    print(door.id, door.open, door.locked, door.distance)\nend",
   "inferred": false,
-  "source_line": 6647,
-  "qualified": "CyberM.doors.aimed",
-  "route_id": "CyberM.doors.aimed"
+  "source_line": 6784,
+  "qualified": "Open77.doors.aimed",
+  "route_id": "Open77.doors.aimed"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "available",
   "handler": "LuaDoorsAvailable",
   "summary": "Whether the client door backend is available.",
@@ -2194,12 +2238,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6646,
-  "qualified": "CyberM.doors.available",
-  "route_id": "CyberM.doors.available"
+  "source_line": 6783,
+  "qualified": "Open77.doors.available",
+  "route_id": "Open77.doors.available"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "clearInteractionPolicy",
   "handler": "LuaDoorPolicy",
   "summary": "Removes this resource's interaction policy for a door.",
@@ -2221,12 +2265,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6676,
-  "qualified": "CyberM.doors.clearInteractionPolicy",
-  "route_id": "CyberM.doors.clearInteractionPolicy"
+  "source_line": 6813,
+  "qualified": "Open77.doors.clearInteractionPolicy",
+  "route_id": "Open77.doors.clearInteractionPolicy"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "close",
   "handler": "LuaDoorCommand",
   "summary": "Closes a door.",
@@ -2254,12 +2298,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6662,
-  "qualified": "CyberM.doors.close",
-  "route_id": "CyberM.doors.close"
+  "source_line": 6799,
+  "qualified": "Open77.doors.close",
+  "route_id": "Open77.doors.close"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "closest",
   "handler": "LuaDoorClosest",
   "summary": "The closest streamed door around the local player.",
@@ -2281,16 +2325,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6649,
-  "qualified": "CyberM.doors.closest",
-  "route_id": "CyberM.doors.closest"
+  "source_line": 6786,
+  "qualified": "Open77.doors.closest",
+  "route_id": "Open77.doors.closest"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "grantKey",
   "handler": "LuaDoorCommand",
   "summary": "Grants an entity an opening token for a door.",
-  "description": "Requires `world.doors`. Uses the door controller's native token mechanism rather than a parallel CyberM key list. This grants authorization but does not lock or deny an otherwise usable door; access enforcement belongs to `setInteractionAllowed`.",
+  "description": "Requires `world.doors`. Uses the door controller's native token mechanism rather than a parallel Open77 key list. This grants authorization but does not lock or deny an otherwise usable door; access enforcement belongs to `setInteractionAllowed`.",
   "params": [
    {
     "name": "door",
@@ -2314,12 +2358,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6671,
-  "qualified": "CyberM.doors.grantKey",
-  "route_id": "CyberM.doors.grantKey"
+  "source_line": 6808,
+  "qualified": "Open77.doors.grantKey",
+  "route_id": "Open77.doors.grantKey"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "hasKey",
   "handler": "LuaDoorHasKey",
   "summary": "Whether an entity holds an opening token for a door.",
@@ -2347,12 +2391,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6652,
-  "qualified": "CyberM.doors.hasKey",
-  "route_id": "CyberM.doors.hasKey"
+  "source_line": 6789,
+  "qualified": "Open77.doors.hasKey",
+  "route_id": "Open77.doors.hasKey"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "holders",
   "handler": "LuaDoorHolders",
   "summary": "The entities holding an opening token for a door.",
@@ -2374,12 +2418,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6651,
-  "qualified": "CyberM.doors.holders",
-  "route_id": "CyberM.doors.holders"
+  "source_line": 6788,
+  "qualified": "Open77.doors.holders",
+  "route_id": "Open77.doors.holders"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "lock",
   "handler": "LuaDoorCommand",
   "summary": "Locks a door.",
@@ -2407,12 +2451,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6664,
-  "qualified": "CyberM.doors.lock",
-  "route_id": "CyberM.doors.lock"
+  "source_line": 6801,
+  "qualified": "Open77.doors.lock",
+  "route_id": "Open77.doors.lock"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "near",
   "handler": "LuaDoorNear",
   "summary": "All streamed doors around the local player.",
@@ -2434,12 +2478,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6648,
-  "qualified": "CyberM.doors.near",
-  "route_id": "CyberM.doors.near"
+  "source_line": 6785,
+  "qualified": "Open77.doors.near",
+  "route_id": "Open77.doors.near"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "open",
   "handler": "LuaDoorCommand",
   "summary": "Opens a door.",
@@ -2467,12 +2511,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6661,
-  "qualified": "CyberM.doors.open",
-  "route_id": "CyberM.doors.open"
+  "source_line": 6798,
+  "qualified": "Open77.doors.open",
+  "route_id": "Open77.doors.open"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "reset",
   "handler": "LuaDoorCommand",
   "summary": "Resets a door to its configured default state.",
@@ -2494,12 +2538,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6670,
-  "qualified": "CyberM.doors.reset",
-  "route_id": "CyberM.doors.reset"
+  "source_line": 6807,
+  "qualified": "Open77.doors.reset",
+  "route_id": "Open77.doors.reset"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "revokeKey",
   "handler": "LuaDoorCommand",
   "summary": "Revokes an entity's opening token for a door.",
@@ -2527,12 +2571,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6672,
-  "qualified": "CyberM.doors.revokeKey",
-  "route_id": "CyberM.doors.revokeKey"
+  "source_line": 6809,
+  "qualified": "Open77.doors.revokeKey",
+  "route_id": "Open77.doors.revokeKey"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "seal",
   "handler": "LuaDoorCommand",
   "summary": "Seals a door.",
@@ -2560,12 +2604,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6667,
-  "qualified": "CyberM.doors.seal",
-  "route_id": "CyberM.doors.seal"
+  "source_line": 6804,
+  "qualified": "Open77.doors.seal",
+  "route_id": "Open77.doors.seal"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "setAutomaticClose",
   "handler": "LuaDoorCommand",
   "summary": "Enables or disables a door's automatic closing behavior.",
@@ -2593,16 +2637,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6669,
-  "qualified": "CyberM.doors.setAutomaticClose",
-  "route_id": "CyberM.doors.setAutomaticClose"
+  "source_line": 6806,
+  "qualified": "Open77.doors.setAutomaticClose",
+  "route_id": "Open77.doors.setAutomaticClose"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "setInteractionAllowed",
   "handler": "LuaDoorPolicy",
   "summary": "Pre-declares whether vanilla interaction may open a door.",
-  "description": "Requires `world.doors`. The decision is synchronous when the game interacts with the door. Policies are owned by the resource, all active policies must allow, and they are removed automatically on stop/reload. `cyberm:doorInteract` is an observational event with `(doorId, activatorId, \"true\"|\"false\")`; it is too late to change that interaction.",
+  "description": "Requires `world.doors`. The decision is synchronous when the game interacts with the door. Policies are owned by the resource, all active policies must allow, and they are removed automatically on stop/reload. `open77:doorInteract` is an observational event with `(doorId, activatorId, \"true\"|\"false\")`; it is too late to change that interaction.",
   "params": [
    {
     "name": "door",
@@ -2624,14 +2668,14 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "CyberM.doors.setInteractionAllowed(doorId, playerHasAccess)\nAddEventHandler(\"cyberm:doorInteract\", function(door, activator, allowed)\n    print(door, activator, allowed)\nend)",
+  "example": "Open77.doors.setInteractionAllowed(doorId, playerHasAccess)\nAddEventHandler(\"open77:doorInteract\", function(door, activator, allowed)\n    print(door, activator, allowed)\nend)",
   "inferred": false,
-  "source_line": 6674,
-  "qualified": "CyberM.doors.setInteractionAllowed",
-  "route_id": "CyberM.doors.setInteractionAllowed"
+  "source_line": 6811,
+  "qualified": "Open77.doors.setInteractionAllowed",
+  "route_id": "Open77.doors.setInteractionAllowed"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "setLocked",
   "handler": "LuaDoorCommand",
   "summary": "Sets whether a door is locked.",
@@ -2665,12 +2709,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6663,
-  "qualified": "CyberM.doors.setLocked",
-  "route_id": "CyberM.doors.setLocked"
+  "source_line": 6800,
+  "qualified": "Open77.doors.setLocked",
+  "route_id": "Open77.doors.setLocked"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "setOpen",
   "handler": "LuaDoorCommand",
   "summary": "Sets whether a door is open.",
@@ -2704,12 +2748,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6660,
-  "qualified": "CyberM.doors.setOpen",
-  "route_id": "CyberM.doors.setOpen"
+  "source_line": 6797,
+  "qualified": "Open77.doors.setOpen",
+  "route_id": "Open77.doors.setOpen"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "setSealed",
   "handler": "LuaDoorCommand",
   "summary": "Sets whether a door is sealed.",
@@ -2743,12 +2787,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6666,
-  "qualified": "CyberM.doors.setSealed",
-  "route_id": "CyberM.doors.setSealed"
+  "source_line": 6803,
+  "qualified": "Open77.doors.setSealed",
+  "route_id": "Open77.doors.setSealed"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "setState",
   "handler": "LuaDoorSetState",
   "summary": "Sets a door state by name.",
@@ -2782,12 +2826,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6673,
-  "qualified": "CyberM.doors.setState",
-  "route_id": "CyberM.doors.setState"
+  "source_line": 6810,
+  "qualified": "Open77.doors.setState",
+  "route_id": "Open77.doors.setState"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "state",
   "handler": "LuaDoorState",
   "summary": "A live snapshot of a streamed door.",
@@ -2809,12 +2853,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6650,
-  "qualified": "CyberM.doors.state",
-  "route_id": "CyberM.doors.state"
+  "source_line": 6787,
+  "qualified": "Open77.doors.state",
+  "route_id": "Open77.doors.state"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "unlock",
   "handler": "LuaDoorCommand",
   "summary": "Unlocks a door.",
@@ -2842,12 +2886,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6665,
-  "qualified": "CyberM.doors.unlock",
-  "route_id": "CyberM.doors.unlock"
+  "source_line": 6802,
+  "qualified": "Open77.doors.unlock",
+  "route_id": "Open77.doors.unlock"
  },
  {
-  "namespace": "CyberM.doors",
+  "namespace": "Open77.doors",
   "name": "unseal",
   "handler": "LuaDoorCommand",
   "summary": "Unseals a door.",
@@ -2875,12 +2919,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6668,
-  "qualified": "CyberM.doors.unseal",
-  "route_id": "CyberM.doors.unseal"
+  "source_line": 6805,
+  "qualified": "Open77.doors.unseal",
+  "route_id": "Open77.doors.unseal"
  },
  {
-  "namespace": "CyberM.elevators",
+  "namespace": "Open77.elevators",
   "name": "all",
   "handler": "LuaElevatorsAll",
   "summary": "Lists every replicated elevator state visible to the client.",
@@ -2894,15 +2938,15 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6724,
-  "qualified": "CyberM.elevators.all",
-  "route_id": "CyberM.elevators.all"
+  "source_line": 6861,
+  "qualified": "Open77.elevators.all",
+  "route_id": "Open77.elevators.all"
  },
  {
-  "namespace": "CyberM.elevators",
+  "namespace": "Open77.elevators",
   "name": "get",
   "handler": "LuaElevatorGet",
-  "summary": "Reads one replicated elevator by CyberM ID.",
+  "summary": "Reads one replicated elevator by Open77 ID.",
   "description": "Requires `elevators.read`. Elevator IDs are server-assigned and should be kept unchanged.",
   "params": [
    {
@@ -2920,16 +2964,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6723,
-  "qualified": "CyberM.elevators.get",
-  "route_id": "CyberM.elevators.get"
+  "source_line": 6860,
+  "qualified": "Open77.elevators.get",
+  "route_id": "Open77.elevators.get"
  },
  {
-  "namespace": "CyberM.elevators",
+  "namespace": "Open77.elevators",
   "name": "nearby",
   "handler": "LuaElevatorsNearby",
   "summary": "Discovers streamed native elevators around the local player.",
-  "description": "Requires `elevators.read`. Radius must be between 1 and 300 metres. Results distinguish unmanaged engine lifts from elevators already adopted by CyberM.",
+  "description": "Requires `elevators.read`. Radius must be between 1 and 300 metres. Results distinguish unmanaged engine lifts from elevators already adopted by Open77.",
   "params": [
    {
     "name": "radius",
@@ -2946,12 +2990,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6725,
-  "qualified": "CyberM.elevators.nearby",
-  "route_id": "CyberM.elevators.nearby"
+  "source_line": 6862,
+  "qualified": "Open77.elevators.nearby",
+  "route_id": "Open77.elevators.nearby"
  },
  {
-  "namespace": "CyberM.elevators",
+  "namespace": "Open77.elevators",
   "name": "request",
   "handler": "LuaElevatorRequest",
   "summary": "Submits a floor request to the authoritative server.",
@@ -2985,16 +3029,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6726,
-  "qualified": "CyberM.elevators.request",
-  "route_id": "CyberM.elevators.request"
+  "source_line": 6863,
+  "qualified": "Open77.elevators.request",
+  "route_id": "Open77.elevators.request"
  },
  {
-  "namespace": "CyberM.environment",
+  "namespace": "Open77.environment",
   "name": "getTime",
   "handler": "LuaEnvironmentTime",
   "summary": "Lit l'horloge REDengine locale.",
-  "description": "Primitive interne protégée par `world.environment`. Retourne un snapshot atomique de l'heure appliquée et de l'état de pause. Dans une session normale, utilisez l'export `cyberm_weather.getState` plutôt que cette valeur de projection.",
+  "description": "Primitive interne protégée par `world.environment`. Retourne un snapshot atomique de l'heure appliquée et de l'état de pause. Dans une session normale, utilisez l'export `open77_weather.getState` plutôt que cette valeur de projection.",
   "params": [],
   "returns": [
    "table { day, hour, minute, second, totalSeconds, frozen }, ou nil",
@@ -3005,12 +3049,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6739,
-  "qualified": "CyberM.environment.getTime",
-  "route_id": "CyberM.environment.getTime"
+  "source_line": 6876,
+  "qualified": "Open77.environment.getTime",
+  "route_id": "Open77.environment.getTime"
  },
  {
-  "namespace": "CyberM.environment",
+  "namespace": "Open77.environment",
   "name": "isWeatherFrozen",
   "handler": "LuaEnvironmentWeatherFrozen",
   "summary": "Indique si la météo automatique vanilla est neutralisée.",
@@ -3025,16 +3069,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6744,
-  "qualified": "CyberM.environment.isWeatherFrozen",
-  "route_id": "CyberM.environment.isWeatherFrozen"
+  "source_line": 6881,
+  "qualified": "Open77.environment.isWeatherFrozen",
+  "route_id": "Open77.environment.isWeatherFrozen"
  },
  {
-  "namespace": "CyberM.environment",
+  "namespace": "Open77.environment",
   "name": "setTime",
   "handler": "LuaEnvironmentSetTime",
   "summary": "Projette une heure serveur dans REDengine.",
-  "description": "Demande `world.environment`. `cyberm_weather` est normalement le seul propriétaire de cette permission. REDengine choisit la prochaine occurrence de l'heure demandée ; le package officiel filtre donc les petits reculs réseau pour éviter un saut d'un jour.",
+  "description": "Demande `world.environment`. `open77_weather` est normalement le seul propriétaire de cette permission. REDengine choisit la prochaine occurrence de l'heure demandée ; le package officiel filtre donc les petits reculs réseau pour éviter un saut d'un jour.",
   "params": [
    {
     "name": "hour",
@@ -3064,12 +3108,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6740,
-  "qualified": "CyberM.environment.setTime",
-  "route_id": "CyberM.environment.setTime"
+  "source_line": 6877,
+  "qualified": "Open77.environment.setTime",
+  "route_id": "Open77.environment.setTime"
  },
  {
-  "namespace": "CyberM.environment",
+  "namespace": "Open77.environment",
   "name": "setTimeFrozen",
   "handler": "LuaEnvironmentFreezeTime",
   "summary": "Fige ou libère uniquement l'horloge du jeu.",
@@ -3091,12 +3135,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6741,
-  "qualified": "CyberM.environment.setTimeFrozen",
-  "route_id": "CyberM.environment.setTimeFrozen"
+  "source_line": 6878,
+  "qualified": "Open77.environment.setTimeFrozen",
+  "route_id": "Open77.environment.setTimeFrozen"
  },
  {
-  "namespace": "CyberM.environment",
+  "namespace": "Open77.environment",
   "name": "setWeather",
   "handler": "LuaEnvironmentSetWeather",
   "summary": "Applique un preset météo REDengine.",
@@ -3130,12 +3174,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6742,
-  "qualified": "CyberM.environment.setWeather",
-  "route_id": "CyberM.environment.setWeather"
+  "source_line": 6879,
+  "qualified": "Open77.environment.setWeather",
+  "route_id": "Open77.environment.setWeather"
  },
  {
-  "namespace": "CyberM.environment",
+  "namespace": "Open77.environment",
   "name": "setWeatherFrozen",
   "handler": "LuaEnvironmentFreezeWeather",
   "summary": "Désactive ou réactive le contrôleur météo automatique vanilla.",
@@ -3157,12 +3201,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6743,
-  "qualified": "CyberM.environment.setWeatherFrozen",
-  "route_id": "CyberM.environment.setWeatherFrozen"
+  "source_line": 6880,
+  "qualified": "Open77.environment.setWeatherFrozen",
+  "route_id": "Open77.environment.setWeatherFrozen"
  },
  {
-  "namespace": "CyberM.events",
+  "namespace": "Open77.events",
   "name": "emit",
   "handler": "LuaTriggerEvent",
   "summary": "Fires a local event.",
@@ -3189,12 +3233,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6558,
-  "qualified": "CyberM.events.emit",
-  "route_id": "CyberM.events.emit"
+  "source_line": 6687,
+  "qualified": "Open77.events.emit",
+  "route_id": "Open77.events.emit"
  },
  {
-  "namespace": "CyberM.events",
+  "namespace": "Open77.events",
   "name": "off",
   "handler": "LuaRemoveEventHandler",
   "summary": "Removes a handler registered with `on`.",
@@ -3221,16 +3265,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6557,
-  "qualified": "CyberM.events.off",
-  "route_id": "CyberM.events.off"
+  "source_line": 6686,
+  "qualified": "Open77.events.off",
+  "route_id": "Open77.events.off"
  },
  {
-  "namespace": "CyberM.events",
+  "namespace": "Open77.events",
   "name": "on",
   "handler": "LuaAddEventHandler",
   "summary": "Listens for a local event.",
-  "description": "Same as the `AddEventHandler` global. Events emitted by the plugin — `cyberm:pauseKey`, `cyberm:inspector:on` — arrive here.",
+  "description": "Same as the `AddEventHandler` global. Events emitted by the plugin — `open77:pauseKey`, `open77:inspector:on` — arrive here.",
   "params": [
    {
     "name": "event",
@@ -3253,12 +3297,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6556,
-  "qualified": "CyberM.events.on",
-  "route_id": "CyberM.events.on"
+  "source_line": 6685,
+  "qualified": "Open77.events.on",
+  "route_id": "Open77.events.on"
  },
  {
-  "namespace": "CyberM.exports",
+  "namespace": "Open77.exports",
   "name": "call",
   "handler": "LuaCallExport",
   "summary": "Calls a function exported by another resource.",
@@ -3291,12 +3335,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6577,
-  "qualified": "CyberM.exports.call",
-  "route_id": "CyberM.exports.call"
+  "source_line": 6706,
+  "qualified": "Open77.exports.call",
+  "route_id": "Open77.exports.call"
  },
  {
-  "namespace": "CyberM.input",
+  "namespace": "Open77.input",
   "name": "isCaptured",
   "handler": "LuaInputCaptured",
   "summary": "Whether another WebUI currently owns keyboard input.",
@@ -3311,12 +3355,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6758,
-  "qualified": "CyberM.input.isCaptured",
-  "route_id": "CyberM.input.isCaptured"
+  "source_line": 6895,
+  "qualified": "Open77.input.isCaptured",
+  "route_id": "Open77.input.isCaptured"
  },
  {
-  "namespace": "CyberM.input",
+  "namespace": "Open77.input",
   "name": "isDown",
   "handler": "LuaInputKeyDown",
   "summary": "Whether an allowlisted contextual action key is currently held.",
@@ -3338,12 +3382,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6757,
-  "qualified": "CyberM.input.isDown",
-  "route_id": "CyberM.input.isDown"
+  "source_line": 6894,
+  "qualified": "Open77.input.isDown",
+  "route_id": "Open77.input.isDown"
  },
  {
-  "namespace": "CyberM.inspector",
+  "namespace": "Open77.inspector",
   "name": "enable",
   "handler": "LuaInspectorEnable",
   "summary": "Turns the permanent aim ray on or off.",
@@ -3365,12 +3409,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6641,
-  "qualified": "CyberM.inspector.enable",
-  "route_id": "CyberM.inspector.enable"
+  "source_line": 6778,
+  "qualified": "Open77.inspector.enable",
+  "route_id": "Open77.inspector.enable"
  },
  {
-  "namespace": "CyberM.inspector",
+  "namespace": "Open77.inspector",
   "name": "outline",
   "handler": "LuaInspectorOutline",
   "summary": "Outlines the aimed object, independently of the ray.",
@@ -3392,12 +3436,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6642,
-  "qualified": "CyberM.inspector.outline",
-  "route_id": "CyberM.inspector.outline"
+  "source_line": 6779,
+  "qualified": "Open77.inspector.outline",
+  "route_id": "Open77.inspector.outline"
  },
  {
-  "namespace": "CyberM.inspector",
+  "namespace": "Open77.inspector",
   "name": "target",
   "handler": "LuaInspectorTarget",
   "summary": "What the aim ray is currently pointing at.",
@@ -3410,18 +3454,18 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "local t = CyberM.inspector.target()\nif t and t.valid then\n    print(t.kind, t.name, t.distance)   --> door  Door  1.38\nend",
+  "example": "local t = Open77.inspector.target()\nif t and t.valid then\n    print(t.kind, t.name, t.distance)   --> door  Door  1.38\nend",
   "inferred": false,
-  "source_line": 6640,
-  "qualified": "CyberM.inspector.target",
-  "route_id": "CyberM.inspector.target"
+  "source_line": 6777,
+  "qualified": "Open77.inspector.target",
+  "route_id": "Open77.inspector.target"
  },
  {
-  "namespace": "CyberM.json",
+  "namespace": "Open77.json",
   "name": "decode",
   "handler": "LuaJsonDecode",
   "summary": "Parses a JSON string.",
-  "description": "Parses JSON into CyberM's bounded Lua value model. Invalid JSON returns `nil, \"invalid_json\"`; decoded objects and arrays contain only supported scalar/table values.",
+  "description": "Parses JSON into Open77's bounded Lua value model. Invalid JSON returns `nil, \"invalid_json\"`; decoded objects and arrays contain only supported scalar/table values.",
   "params": [
    {
     "name": "text",
@@ -3439,12 +3483,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6830,
-  "qualified": "CyberM.json.decode",
-  "route_id": "CyberM.json.decode"
+  "source_line": 6967,
+  "qualified": "Open77.json.decode",
+  "route_id": "Open77.json.decode"
  },
  {
-  "namespace": "CyberM.json",
+  "namespace": "Open77.json",
   "name": "encode",
   "handler": "LuaJsonEncode",
   "summary": "Serialises a Lua value to JSON.",
@@ -3466,12 +3510,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6829,
-  "qualified": "CyberM.json.encode",
-  "route_id": "CyberM.json.encode"
+  "source_line": 6966,
+  "qualified": "Open77.json.encode",
+  "route_id": "Open77.json.encode"
  },
  {
-  "namespace": "CyberM.kvp",
+  "namespace": "Open77.kvp",
   "name": "clear",
   "handler": "LuaKvpClear",
   "summary": "Clears this resource's keys matching a prefix.",
@@ -3493,12 +3537,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6532,
-  "qualified": "CyberM.kvp.clear",
-  "route_id": "CyberM.kvp.clear"
+  "source_line": 6661,
+  "qualified": "Open77.kvp.clear",
+  "route_id": "Open77.kvp.clear"
  },
  {
-  "namespace": "CyberM.kvp",
+  "namespace": "Open77.kvp",
   "name": "compareAndSet",
   "handler": "LuaKvpCas",
   "summary": "Atomically changes a key when its typed value matches.",
@@ -3532,12 +3576,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6535,
-  "qualified": "CyberM.kvp.compareAndSet",
-  "route_id": "CyberM.kvp.compareAndSet"
+  "source_line": 6664,
+  "qualified": "Open77.kvp.compareAndSet",
+  "route_id": "Open77.kvp.compareAndSet"
  },
  {
-  "namespace": "CyberM.kvp",
+  "namespace": "Open77.kvp",
   "name": "delete",
   "handler": "LuaKvpDelete",
   "summary": "Deletes one persistent key.",
@@ -3559,12 +3603,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6529,
-  "qualified": "CyberM.kvp.delete",
-  "route_id": "CyberM.kvp.delete"
+  "source_line": 6658,
+  "qualified": "Open77.kvp.delete",
+  "route_id": "Open77.kvp.delete"
  },
  {
-  "namespace": "CyberM.kvp",
+  "namespace": "Open77.kvp",
   "name": "find",
   "handler": "LuaKvpFind",
   "summary": "Finds typed entries by sorted key prefix.",
@@ -3592,12 +3636,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6530,
-  "qualified": "CyberM.kvp.find",
-  "route_id": "CyberM.kvp.find"
+  "source_line": 6659,
+  "qualified": "Open77.kvp.find",
+  "route_id": "Open77.kvp.find"
  },
  {
-  "namespace": "CyberM.kvp",
+  "namespace": "Open77.kvp",
   "name": "get",
   "handler": "LuaKvpGet",
   "summary": "Reads one typed persistent value.",
@@ -3625,12 +3669,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6527,
-  "qualified": "CyberM.kvp.get",
-  "route_id": "CyberM.kvp.get"
+  "source_line": 6656,
+  "qualified": "Open77.kvp.get",
+  "route_id": "Open77.kvp.get"
  },
  {
-  "namespace": "CyberM.kvp",
+  "namespace": "Open77.kvp",
   "name": "has",
   "handler": "LuaKvpHas",
   "summary": "Checks whether a persistent key exists.",
@@ -3652,12 +3696,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6528,
-  "qualified": "CyberM.kvp.has",
-  "route_id": "CyberM.kvp.has"
+  "source_line": 6657,
+  "qualified": "Open77.kvp.has",
+  "route_id": "Open77.kvp.has"
  },
  {
-  "namespace": "CyberM.kvp",
+  "namespace": "Open77.kvp",
   "name": "increment",
   "handler": "LuaKvpIncrement",
   "summary": "Atomically increments a numeric key.",
@@ -3685,12 +3729,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6533,
-  "qualified": "CyberM.kvp.increment",
-  "route_id": "CyberM.kvp.increment"
+  "source_line": 6662,
+  "qualified": "Open77.kvp.increment",
+  "route_id": "Open77.kvp.increment"
  },
  {
-  "namespace": "CyberM.kvp",
+  "namespace": "Open77.kvp",
   "name": "keys",
   "handler": "LuaKvpFind",
   "summary": "Lists sorted keys matching a prefix.",
@@ -3718,12 +3762,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6531,
-  "qualified": "CyberM.kvp.keys",
-  "route_id": "CyberM.kvp.keys"
+  "source_line": 6660,
+  "qualified": "Open77.kvp.keys",
+  "route_id": "Open77.kvp.keys"
  },
  {
-  "namespace": "CyberM.kvp",
+  "namespace": "Open77.kvp",
   "name": "set",
   "handler": "LuaKvpSet",
   "summary": "Persists one typed value for this server address and resource.",
@@ -3751,12 +3795,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6526,
-  "qualified": "CyberM.kvp.set",
-  "route_id": "CyberM.kvp.set"
+  "source_line": 6655,
+  "qualified": "Open77.kvp.set",
+  "route_id": "Open77.kvp.set"
  },
  {
-  "namespace": "CyberM.kvp",
+  "namespace": "Open77.kvp",
   "name": "setIfAbsent",
   "handler": "LuaKvpSetNx",
   "summary": "Stores a value only when its key is missing.",
@@ -3784,12 +3828,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6534,
-  "qualified": "CyberM.kvp.setIfAbsent",
-  "route_id": "CyberM.kvp.setIfAbsent"
+  "source_line": 6663,
+  "qualified": "Open77.kvp.setIfAbsent",
+  "route_id": "Open77.kvp.setIfAbsent"
  },
  {
-  "namespace": "CyberM.kvp",
+  "namespace": "Open77.kvp",
   "name": "stats",
   "handler": "LuaKvpStats",
   "summary": "Returns this resource store's usage and quotas.",
@@ -3804,16 +3848,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6536,
-  "qualified": "CyberM.kvp.stats",
-  "route_id": "CyberM.kvp.stats"
+  "source_line": 6665,
+  "qualified": "Open77.kvp.stats",
+  "route_id": "Open77.kvp.stats"
  },
  {
-  "namespace": "CyberM.loot",
+  "namespace": "Open77.loot",
   "name": "acceptPickup",
   "handler": "LuaLootAccept",
   "summary": "Applique localement un pickup déjà accepté par le serveur.",
-  "description": "API interne appelée uniquement après `cyberm:loot:pickupResult`. Elle projette l'objet dans l'inventaire REDengine local; l'inventaire persistant reste une responsabilité serveur.",
+  "description": "API interne appelée uniquement après `open77:loot:pickupResult`. Elle projette l'objet dans l'inventaire REDengine local; l'inventaire persistant reste une responsabilité serveur.",
   "params": [
    {
     "name": "id",
@@ -3843,12 +3887,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6686,
-  "qualified": "CyberM.loot.acceptPickup",
-  "route_id": "CyberM.loot.acceptPickup"
+  "source_line": 6823,
+  "qualified": "Open77.loot.acceptPickup",
+  "route_id": "Open77.loot.acceptPickup"
  },
  {
-  "namespace": "CyberM.loot",
+  "namespace": "Open77.loot",
   "name": "clear",
   "handler": "LuaLootClear",
   "summary": "Supprime toutes les projections locales et leurs prompts.",
@@ -3860,12 +3904,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6684,
-  "qualified": "CyberM.loot.clear",
-  "route_id": "CyberM.loot.clear"
+  "source_line": 6821,
+  "qualified": "Open77.loot.clear",
+  "route_id": "Open77.loot.clear"
  },
  {
-  "namespace": "CyberM.loot",
+  "namespace": "Open77.loot",
   "name": "remove",
   "handler": "LuaLootRemove",
   "summary": "Retire une projection locale de loot.",
@@ -3887,12 +3931,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6683,
-  "qualified": "CyberM.loot.remove",
-  "route_id": "CyberM.loot.remove"
+  "source_line": 6820,
+  "qualified": "Open77.loot.remove",
+  "route_id": "Open77.loot.remove"
  },
  {
-  "namespace": "CyberM.loot",
+  "namespace": "Open77.loot",
   "name": "requestPickup",
   "handler": "LuaLootRequest",
   "summary": "Demande au serveur de ramasser un drop.",
@@ -3914,16 +3958,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6685,
-  "qualified": "CyberM.loot.requestPickup",
-  "route_id": "CyberM.loot.requestPickup"
+  "source_line": 6822,
+  "qualified": "Open77.loot.requestPickup",
+  "route_id": "Open77.loot.requestPickup"
  },
  {
-  "namespace": "CyberM.loot",
+  "namespace": "Open77.loot",
   "name": "setAuthorityEnabled",
   "handler": "LuaLootAuthority",
   "summary": "Active ou désactive la projection de loot autoritaire.",
-  "description": "Réservé à `cyberm_loot`. Quand il est actif, les choix, conteneurs et drops vanilla sont neutralisés et les objets physiques deviennent de simples représentations du registre serveur.",
+  "description": "Réservé à `open77_loot`. Quand il est actif, les choix, conteneurs et drops vanilla sont neutralisés et les objets physiques deviennent de simples représentations du registre serveur.",
   "params": [
    {
     "name": "enabled",
@@ -3941,12 +3985,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6681,
-  "qualified": "CyberM.loot.setAuthorityEnabled",
-  "route_id": "CyberM.loot.setAuthorityEnabled"
+  "source_line": 6818,
+  "qualified": "Open77.loot.setAuthorityEnabled",
+  "route_id": "Open77.loot.setAuthorityEnabled"
  },
  {
-  "namespace": "CyberM.loot",
+  "namespace": "Open77.loot",
   "name": "upsert",
   "handler": "LuaLootUpsert",
   "summary": "Crée ou met à jour la projection locale d'un drop serveur.",
@@ -3968,12 +4012,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6682,
-  "qualified": "CyberM.loot.upsert",
-  "route_id": "CyberM.loot.upsert"
+  "source_line": 6819,
+  "qualified": "Open77.loot.upsert",
+  "route_id": "Open77.loot.upsert"
  },
  {
-  "namespace": "CyberM.markers",
+  "namespace": "Open77.markers",
   "name": "clear",
   "handler": "LuaMarkerClear",
   "summary": "Removes every 3D marker owned by the calling resource.",
@@ -3988,12 +4032,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6800,
-  "qualified": "CyberM.markers.clear",
-  "route_id": "CyberM.markers.clear"
+  "source_line": 6937,
+  "qualified": "Open77.markers.clear",
+  "route_id": "Open77.markers.clear"
  },
  {
-  "namespace": "CyberM.markers",
+  "namespace": "Open77.markers",
   "name": "create",
   "handler": "LuaMarkerCreate",
   "summary": "Creates a resource-owned 3D world marker.",
@@ -4015,12 +4059,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6797,
-  "qualified": "CyberM.markers.create",
-  "route_id": "CyberM.markers.create"
+  "source_line": 6934,
+  "qualified": "Open77.markers.create",
+  "route_id": "Open77.markers.create"
  },
  {
-  "namespace": "CyberM.markers",
+  "namespace": "Open77.markers",
   "name": "list",
   "handler": "LuaMarkerList",
   "summary": "Lists the calling resource's 3D markers.",
@@ -4035,12 +4079,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6801,
-  "qualified": "CyberM.markers.list",
-  "route_id": "CyberM.markers.list"
+  "source_line": 6938,
+  "qualified": "Open77.markers.list",
+  "route_id": "Open77.markers.list"
  },
  {
-  "namespace": "CyberM.markers",
+  "namespace": "Open77.markers",
   "name": "remove",
   "handler": "LuaMarkerRemove",
   "summary": "Removes one resource-owned 3D marker.",
@@ -4062,12 +4106,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6799,
-  "qualified": "CyberM.markers.remove",
-  "route_id": "CyberM.markers.remove"
+  "source_line": 6936,
+  "qualified": "Open77.markers.remove",
+  "route_id": "Open77.markers.remove"
  },
  {
-  "namespace": "CyberM.markers",
+  "namespace": "Open77.markers",
   "name": "update",
   "handler": "LuaMarkerUpdate",
   "summary": "Patches a resource-owned 3D marker.",
@@ -4095,12 +4139,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6798,
-  "qualified": "CyberM.markers.update",
-  "route_id": "CyberM.markers.update"
+  "source_line": 6935,
+  "qualified": "Open77.markers.update",
+  "route_id": "Open77.markers.update"
  },
  {
-  "namespace": "CyberM.nameplates",
+  "namespace": "Open77.nameplates",
   "name": "clear",
   "handler": "LuaNameplateClear",
   "summary": "Removes every nameplate override owned by the calling resource.",
@@ -4114,12 +4158,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6771,
-  "qualified": "CyberM.nameplates.clear",
-  "route_id": "CyberM.nameplates.clear"
+  "source_line": 6908,
+  "qualified": "Open77.nameplates.clear",
+  "route_id": "Open77.nameplates.clear"
  },
  {
-  "namespace": "CyberM.nameplates",
+  "namespace": "Open77.nameplates",
   "name": "remove",
   "handler": "LuaNameplateRemove",
   "summary": "Removes the calling resource's nameplate override for one player.",
@@ -4141,12 +4185,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6770,
-  "qualified": "CyberM.nameplates.remove",
-  "route_id": "CyberM.nameplates.remove"
+  "source_line": 6907,
+  "qualified": "Open77.nameplates.remove",
+  "route_id": "Open77.nameplates.remove"
  },
  {
-  "namespace": "CyberM.nameplates",
+  "namespace": "Open77.nameplates",
   "name": "set",
   "handler": "LuaNameplateSet",
   "summary": "Creates or updates the calling resource's nameplate override for a remote player.",
@@ -4174,12 +4218,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6769,
-  "qualified": "CyberM.nameplates.set",
-  "route_id": "CyberM.nameplates.set"
+  "source_line": 6906,
+  "qualified": "Open77.nameplates.set",
+  "route_id": "Open77.nameplates.set"
  },
  {
-  "namespace": "CyberM.nameplates",
+  "namespace": "Open77.nameplates",
   "name": "snapshot",
   "handler": "LuaNameplateSnapshot",
   "summary": "Returns the currently rendered remote-player nameplates.",
@@ -4194,12 +4238,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6772,
-  "qualified": "CyberM.nameplates.snapshot",
-  "route_id": "CyberM.nameplates.snapshot"
+  "source_line": 6909,
+  "qualified": "Open77.nameplates.snapshot",
+  "route_id": "Open77.nameplates.snapshot"
  },
  {
-  "namespace": "CyberM.net",
+  "namespace": "Open77.net",
   "name": "emitServer",
   "handler": "LuaTriggerServerEvent",
   "summary": "Sends an event to the server.",
@@ -4226,12 +4270,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6563,
-  "qualified": "CyberM.net.emitServer",
-  "route_id": "CyberM.net.emitServer"
+  "source_line": 6692,
+  "qualified": "Open77.net.emitServer",
+  "route_id": "Open77.net.emitServer"
  },
  {
-  "namespace": "CyberM.net",
+  "namespace": "Open77.net",
   "name": "on",
   "handler": "LuaRegisterNetEvent",
   "summary": "Listens for an event coming from the server.",
@@ -4258,12 +4302,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6562,
-  "qualified": "CyberM.net.on",
-  "route_id": "CyberM.net.on"
+  "source_line": 6691,
+  "qualified": "Open77.net.on",
+  "route_id": "Open77.net.on"
  },
  {
-  "namespace": "CyberM.network",
+  "namespace": "Open77.network",
   "name": "catalog",
   "handler": "LuaNetworkCatalog",
   "summary": "The catalog as of the last refresh.",
@@ -4277,16 +4321,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6568,
-  "qualified": "CyberM.network.catalog",
-  "route_id": "CyberM.network.catalog"
+  "source_line": 6697,
+  "qualified": "Open77.network.catalog",
+  "route_id": "Open77.network.catalog"
  },
  {
-  "namespace": "CyberM.network",
+  "namespace": "Open77.network",
   "name": "connect",
   "handler": "LuaNetworkConnect",
-  "summary": "Joins a CyberM server.",
-  "description": "Starts a connection to the supplied CyberM server endpoint using the current identity and resource pipeline. It requires `network.client`; success means the request was accepted, while connection progress and errors are observed through `status()`.",
+  "summary": "Joins an Open77 server.",
+  "description": "Starts a connection to the supplied Open77 server endpoint using the current identity and resource pipeline. It requires `network.client`; success means the request was accepted, while connection progress and errors are observed through `status()`.",
   "params": [
    {
     "name": "endpoint",
@@ -4308,14 +4352,14 @@
   "api_set": "network",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "local ok, reason = CyberM.network.connect(\"127.0.0.1:11778\", \"Player\")",
+  "example": "local ok, reason = Open77.network.connect(\"127.0.0.1:11778\", \"Player\")",
   "inferred": false,
-  "source_line": 6569,
-  "qualified": "CyberM.network.connect",
-  "route_id": "CyberM.network.connect"
+  "source_line": 6698,
+  "qualified": "Open77.network.connect",
+  "route_id": "Open77.network.connect"
  },
  {
-  "namespace": "CyberM.network",
+  "namespace": "Open77.network",
   "name": "disconnect",
   "handler": "LuaNetworkDisconnect",
   "summary": "Leaves the current server.",
@@ -4329,12 +4373,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6570,
-  "qualified": "CyberM.network.disconnect",
-  "route_id": "CyberM.network.disconnect"
+  "source_line": 6699,
+  "qualified": "Open77.network.disconnect",
+  "route_id": "Open77.network.disconnect"
  },
  {
-  "namespace": "CyberM.network",
+  "namespace": "Open77.network",
   "name": "identity",
   "handler": "LuaNetworkIdentity",
   "summary": "Reads the local Master-backed identity profile state.",
@@ -4349,12 +4393,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6573,
-  "qualified": "CyberM.network.identity",
-  "route_id": "CyberM.network.identity"
+  "source_line": 6702,
+  "qualified": "Open77.network.identity",
+  "route_id": "Open77.network.identity"
  },
  {
-  "namespace": "CyberM.network",
+  "namespace": "Open77.network",
   "name": "identityUpdate",
   "handler": "LuaNetworkIdentityUpdate",
   "summary": "Requests a signed username update from the Master.",
@@ -4382,12 +4426,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6572,
-  "qualified": "CyberM.network.identityUpdate",
-  "route_id": "CyberM.network.identityUpdate"
+  "source_line": 6701,
+  "qualified": "Open77.network.identityUpdate",
+  "route_id": "Open77.network.identityUpdate"
  },
  {
-  "namespace": "CyberM.network",
+  "namespace": "Open77.network",
   "name": "refresh",
   "handler": "LuaNetworkRefresh",
   "summary": "Asks the directory for the server catalog again.",
@@ -4409,12 +4453,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6567,
-  "qualified": "CyberM.network.refresh",
-  "route_id": "CyberM.network.refresh"
+  "source_line": 6696,
+  "qualified": "Open77.network.refresh",
+  "route_id": "Open77.network.refresh"
  },
  {
-  "namespace": "CyberM.network",
+  "namespace": "Open77.network",
   "name": "status",
   "handler": "LuaNetworkStatus",
   "summary": "State of the network session.",
@@ -4428,12 +4472,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6571,
-  "qualified": "CyberM.network.status",
-  "route_id": "CyberM.network.status"
+  "source_line": 6700,
+  "qualified": "Open77.network.status",
+  "route_id": "Open77.network.status"
  },
  {
-  "namespace": "CyberM.npcs",
+  "namespace": "Open77.npcs",
   "name": "all",
   "handler": "LuaNpcsAll",
   "summary": "Lists server-owned NPCs currently known by this client.",
@@ -4447,16 +4491,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6716,
-  "qualified": "CyberM.npcs.all",
-  "route_id": "CyberM.npcs.all"
+  "source_line": 6853,
+  "qualified": "Open77.npcs.all",
+  "route_id": "Open77.npcs.all"
  },
  {
-  "namespace": "CyberM.npcs",
+  "namespace": "Open77.npcs",
   "name": "currentTask",
   "handler": "LuaNpcCurrentTask",
   "summary": "Returns the canonical active task ID for an NPC.",
-  "description": "Returns the last CyberM NPC task snapshot currently presented for a network NPC. It requires `npcs.read`; task state is ephemeral and can disappear when the NPC leaves the streaming set.",
+  "description": "Returns the last Open77 NPC task snapshot currently presented for a network NPC. It requires `npcs.read`; task state is ephemeral and can disappear when the NPC leaves the streaming set.",
   "params": [
    {
     "name": "id",
@@ -4473,15 +4517,15 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6719,
-  "qualified": "CyberM.npcs.currentTask",
-  "route_id": "CyberM.npcs.currentTask"
+  "source_line": 6856,
+  "qualified": "Open77.npcs.currentTask",
+  "route_id": "Open77.npcs.currentTask"
  },
  {
-  "namespace": "CyberM.npcs",
+  "namespace": "Open77.npcs",
   "name": "entity",
   "handler": "LuaNpcEntity",
-  "summary": "Returns the ephemeral local CyberM entity handle for an NPC projection.",
+  "summary": "Returns the ephemeral local Open77 entity handle for an NPC projection.",
   "description": "Returns nil before readiness and after stream-out. Never cache this handle across lifecycle changes.",
   "params": [
    {
@@ -4499,12 +4543,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6718,
-  "qualified": "CyberM.npcs.entity",
-  "route_id": "CyberM.npcs.entity"
+  "source_line": 6855,
+  "qualified": "Open77.npcs.entity",
+  "route_id": "Open77.npcs.entity"
  },
  {
-  "namespace": "CyberM.npcs",
+  "namespace": "Open77.npcs",
   "name": "get",
   "handler": "LuaNpcGet",
   "summary": "Reads one server-owned NPC currently known by this client.",
@@ -4525,12 +4569,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6715,
-  "qualified": "CyberM.npcs.get",
-  "route_id": "CyberM.npcs.get"
+  "source_line": 6852,
+  "qualified": "Open77.npcs.get",
+  "route_id": "Open77.npcs.get"
  },
  {
-  "namespace": "CyberM.npcs",
+  "namespace": "Open77.npcs",
   "name": "isStreamedIn",
   "handler": "LuaNpcIsStreamedIn",
   "summary": "Whether an NPC projection is attached and ready locally.",
@@ -4551,12 +4595,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6717,
-  "qualified": "CyberM.npcs.isStreamedIn",
-  "route_id": "CyberM.npcs.isStreamedIn"
+  "source_line": 6854,
+  "qualified": "Open77.npcs.isStreamedIn",
+  "route_id": "Open77.npcs.isStreamedIn"
  },
  {
-  "namespace": "CyberM.players",
+  "namespace": "Open77.players",
   "name": "allHealthStates",
   "handler": "LuaPlayerHealthAll",
   "summary": "Lists all replicated player health snapshots known to the client.",
@@ -4570,12 +4614,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6735,
-  "qualified": "CyberM.players.allHealthStates",
-  "route_id": "CyberM.players.allHealthStates"
+  "source_line": 6872,
+  "qualified": "Open77.players.allHealthStates",
+  "route_id": "Open77.players.allHealthStates"
  },
  {
-  "namespace": "CyberM.players",
+  "namespace": "Open77.players",
   "name": "allLifeStates",
   "handler": "LuaPlayerLifeAll",
   "summary": "Lists all replicated canonical player life states known to the client.",
@@ -4589,12 +4633,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6733,
-  "qualified": "CyberM.players.allLifeStates",
-  "route_id": "CyberM.players.allLifeStates"
+  "source_line": 6870,
+  "qualified": "Open77.players.allLifeStates",
+  "route_id": "Open77.players.allLifeStates"
  },
  {
-  "namespace": "CyberM.players",
+  "namespace": "Open77.players",
   "name": "getHealthState",
   "handler": "LuaPlayerHealthState",
   "summary": "Reads one replicated player health snapshot.",
@@ -4615,12 +4659,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6734,
-  "qualified": "CyberM.players.getHealthState",
-  "route_id": "CyberM.players.getHealthState"
+  "source_line": 6871,
+  "qualified": "Open77.players.getHealthState",
+  "route_id": "Open77.players.getHealthState"
  },
  {
-  "namespace": "CyberM.players",
+  "namespace": "Open77.players",
   "name": "getLifeState",
   "handler": "LuaPlayerLifeState",
   "summary": "Reads the canonical replicated life state of one player.",
@@ -4641,12 +4685,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6730,
-  "qualified": "CyberM.players.getLifeState",
-  "route_id": "CyberM.players.getLifeState"
+  "source_line": 6867,
+  "qualified": "Open77.players.getLifeState",
+  "route_id": "Open77.players.getLifeState"
  },
  {
-  "namespace": "CyberM.players",
+  "namespace": "Open77.players",
   "name": "getLocalDeathContext",
   "handler": "LuaLocalDeathContext",
   "summary": "Reads the local player's replicated death context.",
@@ -4660,12 +4704,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6731,
-  "qualified": "CyberM.players.getLocalDeathContext",
-  "route_id": "CyberM.players.getLocalDeathContext"
+  "source_line": 6868,
+  "qualified": "Open77.players.getLocalDeathContext",
+  "route_id": "Open77.players.getLocalDeathContext"
  },
  {
-  "namespace": "CyberM.players",
+  "namespace": "Open77.players",
   "name": "isDead",
   "handler": "LuaPlayerIsDead",
   "summary": "Whether a player is canonically dead or awaiting revive/respawn.",
@@ -4686,12 +4730,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6732,
-  "qualified": "CyberM.players.isDead",
-  "route_id": "CyberM.players.isDead"
+  "source_line": 6869,
+  "qualified": "Open77.players.isDead",
+  "route_id": "Open77.players.isDead"
  },
  {
-  "namespace": "CyberM.resource",
+  "namespace": "Open77.resource",
   "name": "generation",
   "handler": "LuaResourceGeneration",
   "summary": "Generation number, incremented on every reload.",
@@ -4712,16 +4756,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6518,
-  "qualified": "CyberM.resource.generation",
-  "route_id": "CyberM.resource.generation"
+  "source_line": 6647,
+  "qualified": "Open77.resource.generation",
+  "route_id": "Open77.resource.generation"
  },
  {
-  "namespace": "CyberM.resource",
+  "namespace": "Open77.resource",
   "name": "hasPermission",
   "handler": "LuaHasPermission",
   "summary": "Whether the resource holds this permission.",
-  "description": "Checks whether the current resource manifest grants an exact CyberM capability. It is a read-only convenience check; native APIs still enforce their own permission and must handle refusal results.",
+  "description": "Checks whether the current resource manifest grants an exact Open77 capability. It is a read-only convenience check; native APIs still enforce their own permission and must handle refusal results.",
   "params": [
    {
     "name": "permission",
@@ -4738,12 +4782,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6522,
-  "qualified": "CyberM.resource.hasPermission",
-  "route_id": "CyberM.resource.hasPermission"
+  "source_line": 6651,
+  "qualified": "Open77.resource.hasPermission",
+  "route_id": "Open77.resource.hasPermission"
  },
  {
-  "namespace": "CyberM.resource",
+  "namespace": "Open77.resource",
   "name": "name",
   "handler": "LuaResourceName",
   "summary": "Name of the current resource.",
@@ -4757,12 +4801,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6517,
-  "qualified": "CyberM.resource.name",
-  "route_id": "CyberM.resource.name"
+  "source_line": 6646,
+  "qualified": "Open77.resource.name",
+  "route_id": "Open77.resource.name"
  },
  {
-  "namespace": "CyberM.resource",
+  "namespace": "Open77.resource",
   "name": "readFile",
   "handler": "LuaReadFile",
   "summary": "Reads a file from the resource, within its declared allowlist.",
@@ -4784,12 +4828,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6521,
-  "qualified": "CyberM.resource.readFile",
-  "route_id": "CyberM.resource.readFile"
+  "source_line": 6650,
+  "qualified": "Open77.resource.readFile",
+  "route_id": "Open77.resource.readFile"
  },
  {
-  "namespace": "CyberM.resource",
+  "namespace": "Open77.resource",
   "name": "state",
   "handler": "LuaGetResourceState",
   "summary": "State of a resource.",
@@ -4810,16 +4854,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6520,
-  "qualified": "CyberM.resource.state",
-  "route_id": "CyberM.resource.state"
+  "source_line": 6649,
+  "qualified": "Open77.resource.state",
+  "route_id": "Open77.resource.state"
  },
  {
-  "namespace": "CyberM.resource",
+  "namespace": "Open77.resource",
   "name": "version",
   "handler": "LuaResourceVersion",
-  "summary": "Version declared in `cyberm.lua`.",
-  "description": "Returns the version string declared by the current resource manifest. It is package metadata and is unrelated to the CyberM runtime or Lua interpreter version.",
+  "summary": "Version declared in `open77.lua`.",
+  "description": "Returns the version string declared by the current resource manifest. It is package metadata and is unrelated to the Open77 runtime or Lua interpreter version.",
   "params": [],
   "returns": [
    "string"
@@ -4829,16 +4873,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6519,
-  "qualified": "CyberM.resource.version",
-  "route_id": "CyberM.resource.version"
+  "source_line": 6648,
+  "qualified": "Open77.resource.version",
+  "route_id": "Open77.resource.version"
  },
  {
-  "namespace": "CyberM.runtime",
+  "namespace": "Open77.runtime",
   "name": "luaVersion",
   "handler": "LuaLanguageVersion",
   "summary": "Embedded Lua version.",
-  "description": "Returns the embedded Lua interpreter version used by this resource VM. Use it for diagnostics or compatibility checks, not to infer the CyberM build version.",
+  "description": "Returns the embedded Lua interpreter version used by this resource VM. Use it for diagnostics or compatibility checks, not to infer the Open77 build version.",
   "params": [],
   "returns": [
    "string"
@@ -4848,16 +4892,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6546,
-  "qualified": "CyberM.runtime.luaVersion",
-  "route_id": "CyberM.runtime.luaVersion"
+  "source_line": 6675,
+  "qualified": "Open77.runtime.luaVersion",
+  "route_id": "Open77.runtime.luaVersion"
  },
  {
-  "namespace": "CyberM.runtime",
+  "namespace": "Open77.runtime",
   "name": "version",
   "handler": "LuaRuntimeVersion",
-  "summary": "CyberM version.",
-  "description": "Returns the CyberM scripting runtime version exposed to resources. This describes the host API and is distinct from both the resource manifest version and game build.",
+  "summary": "Open77 version.",
+  "description": "Returns the Open77 scripting runtime version exposed to resources. This describes the host API and is distinct from both the resource manifest version and game build.",
   "params": [],
   "returns": [
    "string"
@@ -4867,15 +4911,59 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6545,
-  "qualified": "CyberM.runtime.version",
-  "route_id": "CyberM.runtime.version"
+  "source_line": 6674,
+  "qualified": "Open77.runtime.version",
+  "route_id": "Open77.runtime.version"
  },
  {
-  "namespace": "CyberM.session",
+  "namespace": "Open77.session",
+  "name": "characterBootstrap",
+  "handler": "LuaSessionCharacterBootstrap",
+  "summary": "Reads the current character-bootstrap state.",
+  "description": "Returns the current client-local character bootstrap projection as phase, body family, error and generation. The table is a snapshot; polling it does not advance the transaction.",
+  "params": [],
+  "returns": [
+   "value",
+   "reason (when the first is nil)"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 6727,
+  "qualified": "Open77.session.characterBootstrap",
+  "route_id": "Open77.session.characterBootstrap"
+ },
+ {
+  "namespace": "Open77.session",
+  "name": "failCharacterBootstrap",
+  "handler": "LuaSessionFailCharacterBootstrap",
+  "summary": "Marks character bootstrap as failed.",
+  "description": "Marks the active client-local character bootstrap as failed with an optional bounded diagnostic reason. It requires player.appearance.edit and does not disconnect the network session.",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "string",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 6730,
+  "qualified": "Open77.session.failCharacterBootstrap",
+  "route_id": "Open77.session.failCharacterBootstrap"
+ },
+ {
+  "namespace": "Open77.session",
   "name": "loadPristine",
   "handler": "LuaSessionLoadPristine",
-  "summary": "Loads the local development world from CyberM's bundled pristine save.",
+  "summary": "Loads the local development world from Open77's bundled pristine save.",
   "description": "No network session is armed by this operation.",
   "params": [],
   "returns": [
@@ -4887,16 +4975,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6596,
-  "qualified": "CyberM.session.loadPristine",
-  "route_id": "CyberM.session.loadPristine"
+  "source_line": 6725,
+  "qualified": "Open77.session.loadPristine",
+  "route_id": "Open77.session.loadPristine"
  },
  {
-  "namespace": "CyberM.session",
+  "namespace": "Open77.session",
   "name": "openSettings",
   "handler": "LuaSessionOpenSettings",
   "summary": "Opens the game's own settings screen without exposing the pause menu.",
-  "description": "Requests the client-side CyberM settings interface. It only changes local presentation and does not modify server configuration or another player's settings.",
+  "description": "Requests the client-side Open77 settings interface. It only changes local presentation and does not modify server configuration or another player's settings.",
   "params": [],
   "returns": [
    "true on success, otherwise false",
@@ -4907,12 +4995,70 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6595,
-  "qualified": "CyberM.session.openSettings",
-  "route_id": "CyberM.session.openSettings"
+  "source_line": 6724,
+  "qualified": "Open77.session.openSettings",
+  "route_id": "Open77.session.openSettings"
  },
  {
-  "namespace": "CyberM.session",
+  "namespace": "Open77.session",
+  "name": "requestCharacterCreator",
+  "handler": "LuaSessionRequestCharacterCreator",
+  "summary": "Requests the native character creator.",
+  "description": "Requests the native character creator for the active bootstrap transaction. It requires player.appearance.edit and returns a stable failure when the game backend cannot accept the request.",
+  "params": [],
+  "returns": [],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 6728,
+  "qualified": "Open77.session.requestCharacterCreator",
+  "route_id": "Open77.session.requestCharacterCreator"
+ },
+ {
+  "namespace": "Open77.session",
+  "name": "resetCharacterBootstrap",
+  "handler": "LuaSessionResetCharacterBootstrap",
+  "summary": "Resets the local character-bootstrap transaction.",
+  "description": "Clears the client-local character bootstrap transaction so a fresh bootstrap can begin. It does not delete a server character or change another player's state.",
+  "params": [],
+  "returns": [],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 6726,
+  "qualified": "Open77.session.resetCharacterBootstrap",
+  "route_id": "Open77.session.resetCharacterBootstrap"
+ },
+ {
+  "namespace": "Open77.session",
+  "name": "resolveCharacterBootstrap",
+  "handler": "LuaSessionResolveCharacterBootstrap",
+  "summary": "Completes bootstrap with a selected body family.",
+  "description": "Completes the active bootstrap with the validated female or male body family. It requires player.appearance.edit and only updates the local bootstrap backend.",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 6729,
+  "qualified": "Open77.session.resolveCharacterBootstrap",
+  "route_id": "Open77.session.resolveCharacterBootstrap"
+ },
+ {
+  "namespace": "Open77.session",
   "name": "setMenuReady",
   "handler": "LuaSessionMenuReady",
   "summary": "Declares that this resource is able to serve the pause menu.",
@@ -4933,12 +5079,32 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6597,
-  "qualified": "CyberM.session.setMenuReady",
-  "route_id": "CyberM.session.setMenuReady"
+  "source_line": 6732,
+  "qualified": "Open77.session.setMenuReady",
+  "route_id": "Open77.session.setMenuReady"
  },
  {
-  "namespace": "CyberM.settings",
+  "namespace": "Open77.session",
+  "name": "takeCharacterCreatorResult",
+  "handler": "LuaSessionTakeCharacterCreatorResult",
+  "summary": "Consumes the pending character-creator result.",
+  "description": "Consumes the pending native character-creator result once and returns its serialized payload, or nil when no result is ready. It requires player.appearance.edit.",
+  "params": [],
+  "returns": [
+   "value",
+   "reason (when the first is nil)"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 6731,
+  "qualified": "Open77.session.takeCharacterCreatorResult",
+  "route_id": "Open77.session.takeCharacterCreatorResult"
+ },
+ {
+  "namespace": "Open77.settings",
   "name": "request",
   "handler": "LuaSettingsRequest",
   "summary": "Asks the script bridge to list the variables of a group.",
@@ -4960,16 +5126,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6601,
-  "qualified": "CyberM.settings.request",
-  "route_id": "CyberM.settings.request"
+  "source_line": 6736,
+  "qualified": "Open77.settings.request",
+  "route_id": "Open77.settings.request"
  },
  {
-  "namespace": "CyberM.settings",
+  "namespace": "Open77.settings",
   "name": "set",
   "handler": "LuaSettingsSet",
   "summary": "Writes a settings variable.",
-  "description": "Submits one local CyberM setting change through the settings backend. The key, value type and published bounds are validated; use `values()` to read the resulting projection.",
+  "description": "Submits one local Open77 setting change through the settings backend. The key, value type and published bounds are validated; use `values()` to read the resulting projection.",
   "params": [
    {
     "name": "group",
@@ -4999,12 +5165,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6603,
-  "qualified": "CyberM.settings.set",
-  "route_id": "CyberM.settings.set"
+  "source_line": 6738,
+  "qualified": "Open77.settings.set",
+  "route_id": "Open77.settings.set"
  },
  {
-  "namespace": "CyberM.settings",
+  "namespace": "Open77.settings",
   "name": "values",
   "handler": "LuaSettingsValues",
   "summary": "The variables as the script last reported them.",
@@ -5018,12 +5184,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6602,
-  "qualified": "CyberM.settings.values",
-  "route_id": "CyberM.settings.values"
+  "source_line": 6737,
+  "qualified": "Open77.settings.values",
+  "route_id": "Open77.settings.values"
  },
  {
-  "namespace": "CyberM.sfx",
+  "namespace": "Open77.sfx",
   "name": "clear",
   "handler": "LuaEffectClear",
   "summary": "Stops every SFX owned by the calling resource.",
@@ -5038,12 +5204,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6821,
-  "qualified": "CyberM.sfx.clear",
-  "route_id": "CyberM.sfx.clear"
+  "source_line": 6958,
+  "qualified": "Open77.sfx.clear",
+  "route_id": "Open77.sfx.clear"
  },
  {
-  "namespace": "CyberM.sfx",
+  "namespace": "Open77.sfx",
   "name": "list",
   "handler": "LuaEffectList",
   "summary": "Lists active SFX owned by the calling resource.",
@@ -5058,12 +5224,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6824,
-  "qualified": "CyberM.sfx.list",
-  "route_id": "CyberM.sfx.list"
+  "source_line": 6961,
+  "qualified": "Open77.sfx.list",
+  "route_id": "Open77.sfx.list"
  },
  {
-  "namespace": "CyberM.sfx",
+  "namespace": "Open77.sfx",
   "name": "play",
   "handler": "LuaSfxPlay",
   "summary": "Starts resource-owned spatial audio on an entity.",
@@ -5091,12 +5257,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6818,
-  "qualified": "CyberM.sfx.play",
-  "route_id": "CyberM.sfx.play"
+  "source_line": 6955,
+  "qualified": "Open77.sfx.play",
+  "route_id": "Open77.sfx.play"
  },
  {
-  "namespace": "CyberM.sfx",
+  "namespace": "Open77.sfx",
   "name": "stop",
   "handler": "LuaEffectStop",
   "summary": "Stops one SFX handle owned by the calling resource.",
@@ -5118,12 +5284,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6819,
-  "qualified": "CyberM.sfx.stop",
-  "route_id": "CyberM.sfx.stop"
+  "source_line": 6956,
+  "qualified": "Open77.sfx.stop",
+  "route_id": "Open77.sfx.stop"
  },
  {
-  "namespace": "CyberM.time",
+  "namespace": "Open77.time",
   "name": "monotonic",
   "handler": "LuaMonotonic",
   "summary": "Monotonic clock, in milliseconds.",
@@ -5137,12 +5303,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6513,
-  "qualified": "CyberM.time.monotonic",
-  "route_id": "CyberM.time.monotonic"
+  "source_line": 6642,
+  "qualified": "Open77.time.monotonic",
+  "route_id": "Open77.time.monotonic"
  },
  {
-  "namespace": "CyberM.travel",
+  "namespace": "Open77.travel",
   "name": "isNoclip",
   "handler": "LuaTravelIsNoclip",
   "summary": "Whether local-player noclip is currently active.",
@@ -5156,12 +5322,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6763,
-  "qualified": "CyberM.travel.isNoclip",
-  "route_id": "CyberM.travel.isNoclip"
+  "source_line": 6900,
+  "qualified": "Open77.travel.isNoclip",
+  "route_id": "Open77.travel.isNoclip"
  },
  {
-  "namespace": "CyberM.travel",
+  "namespace": "Open77.travel",
   "name": "setNoclip",
   "handler": "LuaTravelSetNoclip",
   "summary": "Enables or disables native noclip for the local player.",
@@ -5183,12 +5349,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6762,
-  "qualified": "CyberM.travel.setNoclip",
-  "route_id": "CyberM.travel.setNoclip"
+  "source_line": 6899,
+  "qualified": "Open77.travel.setNoclip",
+  "route_id": "Open77.travel.setNoclip"
  },
  {
-  "namespace": "CyberM.travel",
+  "namespace": "Open77.travel",
   "name": "setNoclipSpeed",
   "handler": "LuaTravelSetNoclipSpeed",
   "summary": "Sets the local noclip movement speed.",
@@ -5210,12 +5376,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6764,
-  "qualified": "CyberM.travel.setNoclipSpeed",
-  "route_id": "CyberM.travel.setNoclipSpeed"
+  "source_line": 6901,
+  "qualified": "Open77.travel.setNoclipSpeed",
+  "route_id": "Open77.travel.setNoclipSpeed"
  },
  {
-  "namespace": "CyberM.travel",
+  "namespace": "Open77.travel",
   "name": "teleport",
   "handler": "LuaTravelTeleport",
   "summary": "Teleports the local player directly to a world transform.",
@@ -5255,16 +5421,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6765,
-  "qualified": "CyberM.travel.teleport",
-  "route_id": "CyberM.travel.teleport"
+  "source_line": 6902,
+  "qualified": "Open77.travel.teleport",
+  "route_id": "Open77.travel.teleport"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "all",
   "handler": "LuaVehiclesAll",
   "summary": "Lists every vehicle currently streamed to this client.",
-  "description": "Requires `vehicles.read`. Returns an empty array when permission or the projection backend is unavailable. Every entry has the exact shape returned by `CyberM.vehicles.get`; server vehicles outside the client's streaming interest set are intentionally absent.",
+  "description": "Requires `vehicles.read`. Returns an empty array when permission or the projection backend is unavailable. Every entry has the exact shape returned by `Open77.vehicles.get`; server vehicles outside the client's streaming interest set are intentionally absent.",
   "params": [],
   "returns": [
    "array of vehicle snapshots"
@@ -5274,12 +5440,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6691,
-  "qualified": "CyberM.vehicles.all",
-  "route_id": "CyberM.vehicles.all"
+  "source_line": 6828,
+  "qualified": "Open77.vehicles.all",
+  "route_id": "Open77.vehicles.all"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "get",
   "handler": "LuaVehicleGet",
   "summary": "Reads one streamed server-owned vehicle.",
@@ -5300,16 +5466,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6690,
-  "qualified": "CyberM.vehicles.get",
-  "route_id": "CyberM.vehicles.get"
+  "source_line": 6827,
+  "qualified": "Open77.vehicles.get",
+  "route_id": "Open77.vehicles.get"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "isDoorOpen",
   "handler": "LuaVehicleIsDoorOpen",
   "summary": "Reads a canonical vehicle door, trunk, or hood state.",
-  "description": "Client read-only API requiring `vehicles.read`. Accepts index 0..5, a standard camelCase/snake_case name, or a `CyberM.vehicles.doors` constant. This reads the replicated reversible opening mask.",
+  "description": "Client read-only API requiring `vehicles.read`. Accepts index 0..5, a standard camelCase/snake_case name, or a `Open77.vehicles.doors` constant. This reads the replicated reversible opening mask.",
   "params": [
    {
     "name": "id",
@@ -5332,12 +5498,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6692,
-  "qualified": "CyberM.vehicles.isDoorOpen",
-  "route_id": "CyberM.vehicles.isDoorOpen"
+  "source_line": 6829,
+  "qualified": "Open77.vehicles.isDoorOpen",
+  "route_id": "Open77.vehicles.isDoorOpen"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "isWindowOpen",
   "handler": "LuaVehicleIsWindowOpen",
   "summary": "Reads a canonical openable side-window state.",
@@ -5364,12 +5530,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6693,
-  "qualified": "CyberM.vehicles.isWindowOpen",
-  "route_id": "CyberM.vehicles.isWindowOpen"
+  "source_line": 6830,
+  "qualified": "Open77.vehicles.isWindowOpen",
+  "route_id": "Open77.vehicles.isWindowOpen"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "taskPlayerEnterVehicle",
   "handler": "LuaVehicleTaskPlayerEnter",
   "summary": "Reserved animated presentation path for a replicated occupant.",
@@ -5403,12 +5569,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6695,
-  "qualified": "CyberM.vehicles.taskPlayerEnterVehicle",
-  "route_id": "CyberM.vehicles.taskPlayerEnterVehicle"
+  "source_line": 6832,
+  "qualified": "Open77.vehicles.taskPlayerEnterVehicle",
+  "route_id": "Open77.vehicles.taskPlayerEnterVehicle"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "warpPlayerIntoVehicle",
   "handler": "LuaVehicleWarpPlayer",
   "summary": "Presents a replicated player instantly in an authoritative vehicle seat.",
@@ -5442,12 +5608,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6694,
-  "qualified": "CyberM.vehicles.warpPlayerIntoVehicle",
-  "route_id": "CyberM.vehicles.warpPlayerIntoVehicle"
+  "source_line": 6831,
+  "qualified": "Open77.vehicles.warpPlayerIntoVehicle",
+  "route_id": "Open77.vehicles.warpPlayerIntoVehicle"
  },
  {
-  "namespace": "CyberM.vfx",
+  "namespace": "Open77.vfx",
   "name": "catalog",
   "handler": "LuaVfxCatalog",
   "summary": "Returns the curated stable world-VFX aliases and cooked paths.",
@@ -5462,12 +5628,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6814,
-  "qualified": "CyberM.vfx.catalog",
-  "route_id": "CyberM.vfx.catalog"
+  "source_line": 6951,
+  "qualified": "Open77.vfx.catalog",
+  "route_id": "Open77.vfx.catalog"
  },
  {
-  "namespace": "CyberM.vfx",
+  "namespace": "Open77.vfx",
   "name": "clear",
   "handler": "LuaEffectClear",
   "summary": "Stops every VFX owned by the calling resource.",
@@ -5482,12 +5648,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6809,
-  "qualified": "CyberM.vfx.clear",
-  "route_id": "CyberM.vfx.clear"
+  "source_line": 6946,
+  "qualified": "Open77.vfx.clear",
+  "route_id": "Open77.vfx.clear"
  },
  {
-  "namespace": "CyberM.vfx",
+  "namespace": "Open77.vfx",
   "name": "list",
   "handler": "LuaEffectList",
   "summary": "Lists active VFX owned by the calling resource.",
@@ -5502,12 +5668,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6812,
-  "qualified": "CyberM.vfx.list",
-  "route_id": "CyberM.vfx.list"
+  "source_line": 6949,
+  "qualified": "Open77.vfx.list",
+  "route_id": "Open77.vfx.list"
  },
  {
-  "namespace": "CyberM.vfx",
+  "namespace": "Open77.vfx",
   "name": "play",
   "handler": "LuaVfxPlay",
   "summary": "Starts a resource-owned world VFX at a fixed transform.",
@@ -5535,12 +5701,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6805,
-  "qualified": "CyberM.vfx.play",
-  "route_id": "CyberM.vfx.play"
+  "source_line": 6942,
+  "qualified": "Open77.vfx.play",
+  "route_id": "Open77.vfx.play"
  },
  {
-  "namespace": "CyberM.vfx",
+  "namespace": "Open77.vfx",
   "name": "playEntity",
   "handler": "LuaVfxPlayEntity",
   "summary": "Starts a resource-owned authored VFX on an entity.",
@@ -5568,12 +5734,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6806,
-  "qualified": "CyberM.vfx.playEntity",
-  "route_id": "CyberM.vfx.playEntity"
+  "source_line": 6943,
+  "qualified": "Open77.vfx.playEntity",
+  "route_id": "Open77.vfx.playEntity"
  },
  {
-  "namespace": "CyberM.vfx",
+  "namespace": "Open77.vfx",
   "name": "stop",
   "handler": "LuaEffectStop",
   "summary": "Stops one VFX handle owned by the calling resource.",
@@ -5595,12 +5761,12 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6807,
-  "qualified": "CyberM.vfx.stop",
-  "route_id": "CyberM.vfx.stop"
+  "source_line": 6944,
+  "qualified": "Open77.vfx.stop",
+  "route_id": "Open77.vfx.stop"
  },
  {
-  "namespace": "CyberM.webui",
+  "namespace": "Open77.webui",
   "name": "create",
   "handler": "LuaWebUiCreate",
   "summary": "Creates a web surface.",
@@ -5622,12 +5788,12 @@
   "source": "ResourceHost.cpp",
   "example": "local overlay = WebUI.create({\n    entry = \"web/index.html\",\n    layer = \"hud\",\n    transparent = true,\n    visible = true          -- never false for a permanent overlay\n})",
   "inferred": false,
-  "source_line": 6581,
-  "qualified": "CyberM.webui.create",
-  "route_id": "CyberM.webui.create"
+  "source_line": 6710,
+  "qualified": "Open77.webui.create",
+  "route_id": "Open77.webui.create"
  },
  {
-  "namespace": "CyberM.webui",
+  "namespace": "Open77.webui",
   "name": "default",
   "handler": "LuaWebUiDefault",
   "summary": "The surface declared by `web_ui_page` in the manifest.",
@@ -5641,9 +5807,9 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6582,
-  "qualified": "CyberM.webui.default",
-  "route_id": "CyberM.webui.default"
+  "source_line": 6711,
+  "qualified": "Open77.webui.default",
+  "route_id": "Open77.webui.default"
  },
  {
   "namespace": "WebUI.Page",
@@ -5660,7 +5826,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6472,
+  "source_line": 6601,
   "qualified": "WebUI.Page.destroy",
   "route_id": "WebUI.Page.destroy"
  },
@@ -5679,7 +5845,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6474,
+  "source_line": 6603,
   "qualified": "WebUI.Page.hide",
   "route_id": "WebUI.Page.hide"
  },
@@ -5698,7 +5864,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6471,
+  "source_line": 6600,
   "qualified": "WebUI.Page.id",
   "route_id": "WebUI.Page.id"
  },
@@ -5730,7 +5896,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6478,
+  "source_line": 6607,
   "qualified": "WebUI.Page.off",
   "route_id": "WebUI.Page.off"
  },
@@ -5738,7 +5904,7 @@
   "namespace": "WebUI.Page",
   "name": "on",
   "handler": "LuaWebPageOn",
-  "summary": "Listens for an event the page raised with `CyberM.emit`.",
+  "summary": "Listens for an event the page raised with `Open77.emit`.",
   "description": "Registers a Lua callback for an event emitted by this page's JavaScript bridge. Event names and handler counts are bounded, and the registration is automatically removed with the page or resource generation.",
   "params": [
    {
@@ -5762,7 +5928,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6477,
+  "source_line": 6606,
   "qualified": "WebUI.Page.on",
   "route_id": "WebUI.Page.on"
  },
@@ -5800,7 +5966,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6479,
+  "source_line": 6608,
   "qualified": "WebUI.Page.reply",
   "route_id": "WebUI.Page.reply"
  },
@@ -5832,7 +5998,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6476,
+  "source_line": 6605,
   "qualified": "WebUI.Page.send",
   "route_id": "WebUI.Page.send"
  },
@@ -5870,7 +6036,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6475,
+  "source_line": 6604,
   "qualified": "WebUI.Page.setFocus",
   "route_id": "WebUI.Page.setFocus"
  },
@@ -5879,7 +6045,7 @@
   "name": "show",
   "handler": "LuaWebPageVisibility",
   "summary": "Shows the surface.",
-  "description": "Avoid calling this right after `create` — see the race described in `CyberM.webui.create`.",
+  "description": "Avoid calling this right after `create` — see the race described in `Open77.webui.create`.",
   "params": [],
   "returns": [
    "boolean"
@@ -5889,16 +6055,16 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 6473,
+  "source_line": 6602,
   "qualified": "WebUI.Page.show",
   "route_id": "WebUI.Page.show"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "all",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Lists authoritative server vehicles.",
-  "description": "Returns snapshots ordered by CyberM ID. An optional routing bucket filters the result; omitting it returns every vehicle visible to the resource.",
+  "description": "Returns snapshots ordered by Open77 ID. An optional routing bucket filters the result; omitting it returns every vehicle visible to the resource.",
   "params": [
    {
     "name": "bucket",
@@ -5915,12 +6081,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2769,
-  "qualified": "CyberM.vehicles.all",
-  "route_id": "server:CyberM.vehicles.all"
+  "source_line": 2806,
+  "qualified": "Open77.vehicles.all",
+  "route_id": "server:Open77.vehicles.all"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "breakAllGlass",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Breaks a range of vehicle glass elements.",
@@ -5947,12 +6113,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2712,
-  "qualified": "CyberM.vehicles.breakAllGlass",
-  "route_id": "server:CyberM.vehicles.breakAllGlass"
+  "source_line": 2749,
+  "qualified": "Open77.vehicles.breakAllGlass",
+  "route_id": "server:Open77.vehicles.breakAllGlass"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "breakGlass",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Breaks one vehicle glass element.",
@@ -5977,14 +6143,14 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "CyberM.vehicles.breakGlass(vehicleId, 0)",
+  "example": "Open77.vehicles.breakGlass(vehicleId, 0)",
   "inferred": false,
-  "source_line": 2710,
-  "qualified": "CyberM.vehicles.breakGlass",
-  "route_id": "server:CyberM.vehicles.breakGlass"
+  "source_line": 2747,
+  "qualified": "Open77.vehicles.breakGlass",
+  "route_id": "server:Open77.vehicles.breakGlass"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "breakLight",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Breaks one vehicle light.",
@@ -6011,12 +6177,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2719,
-  "qualified": "CyberM.vehicles.breakLight",
-  "route_id": "server:CyberM.vehicles.breakLight"
+  "source_line": 2756,
+  "qualified": "Open77.vehicles.breakLight",
+  "route_id": "server:Open77.vehicles.breakLight"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "breakTire",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Breaks one vehicle tire.",
@@ -6041,14 +6207,14 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "CyberM.vehicles.breakTire(vehicleId, 0)",
+  "example": "Open77.vehicles.breakTire(vehicleId, 0)",
   "inferred": false,
-  "source_line": 2724,
-  "qualified": "CyberM.vehicles.breakTire",
-  "route_id": "server:CyberM.vehicles.breakTire"
+  "source_line": 2761,
+  "qualified": "Open77.vehicles.breakTire",
+  "route_id": "server:Open77.vehicles.breakTire"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "closeDoor",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Closes a door, trunk, or hood.",
@@ -6075,12 +6241,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2737,
-  "qualified": "CyberM.vehicles.closeDoor",
-  "route_id": "server:CyberM.vehicles.closeDoor"
+  "source_line": 2774,
+  "qualified": "Open77.vehicles.closeDoor",
+  "route_id": "server:Open77.vehicles.closeDoor"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "closeWindow",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Closes one side window.",
@@ -6107,16 +6273,16 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2747,
-  "qualified": "CyberM.vehicles.closeWindow",
-  "route_id": "server:CyberM.vehicles.closeWindow"
+  "source_line": 2784,
+  "qualified": "Open77.vehicles.closeWindow",
+  "route_id": "server:Open77.vehicles.closeWindow"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "create",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Creates a server-owned network vehicle.",
-  "description": "Requires `world.vehicles`. The definition selects the record, transform, routing bucket, appearance, colors, flags, health, and optional initial damage. The server allocates the CyberM ID and replicates the canonical vehicle to interested clients.",
+  "description": "Requires `world.vehicles`. The definition selects the record, transform, routing bucket, appearance, colors, flags, health, and optional initial damage. The server allocates the Open77 ID and replicates the canonical vehicle to interested clients.",
   "params": [
    {
     "name": "definition",
@@ -6131,14 +6297,14 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "local id, reason = CyberM.vehicles.create({\n  record = \"Vehicle.v_standard2_thorton_galena_player\",\n  position = { x = -1671.2, y = -710.3, z = 49.9 },\n  yaw = 90.0,\n})",
+  "example": "local id, reason = Open77.vehicles.create({\n  record = \"Vehicle.v_standard2_thorton_galena_player\",\n  position = { x = -1671.2, y = -710.3, z = 49.9 },\n  yaw = 90.0,\n})",
   "inferred": false,
-  "source_line": 2677,
-  "qualified": "CyberM.vehicles.create",
-  "route_id": "server:CyberM.vehicles.create"
+  "source_line": 2714,
+  "qualified": "Open77.vehicles.create",
+  "route_id": "server:Open77.vehicles.create"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "damageBodyCell",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Adds damage to one body cell.",
@@ -6171,12 +6337,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2697,
-  "qualified": "CyberM.vehicles.damageBodyCell",
-  "route_id": "server:CyberM.vehicles.damageBodyCell"
+  "source_line": 2734,
+  "qualified": "Open77.vehicles.damageBodyCell",
+  "route_id": "server:Open77.vehicles.damageBodyCell"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "damageBodyZone",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Adds damage across a body zone.",
@@ -6209,12 +6375,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2703,
-  "qualified": "CyberM.vehicles.damageBodyZone",
-  "route_id": "server:CyberM.vehicles.damageBodyZone"
+  "source_line": 2740,
+  "qualified": "Open77.vehicles.damageBodyZone",
+  "route_id": "server:Open77.vehicles.damageBodyZone"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "get",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Returns one authoritative server vehicle snapshot.",
@@ -6235,12 +6401,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2768,
-  "qualified": "CyberM.vehicles.get",
-  "route_id": "server:CyberM.vehicles.get"
+  "source_line": 2805,
+  "qualified": "Open77.vehicles.get",
+  "route_id": "server:Open77.vehicles.get"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "getDamage",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Returns the canonical damage snapshot.",
@@ -6261,12 +6427,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2693,
-  "qualified": "CyberM.vehicles.getDamage",
-  "route_id": "server:CyberM.vehicles.getDamage"
+  "source_line": 2730,
+  "qualified": "Open77.vehicles.getDamage",
+  "route_id": "server:Open77.vehicles.getDamage"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "getDamageProfile",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Returns a resource-local vehicle damage profile.",
@@ -6287,12 +6453,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2758,
-  "qualified": "CyberM.vehicles.getDamageProfile",
-  "route_id": "server:CyberM.vehicles.getDamageProfile"
+  "source_line": 2795,
+  "qualified": "Open77.vehicles.getDamageProfile",
+  "route_id": "server:Open77.vehicles.getDamageProfile"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "isDoorOpen",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Reads one canonical door opening state.",
@@ -6319,12 +6485,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2738,
-  "qualified": "CyberM.vehicles.isDoorOpen",
-  "route_id": "server:CyberM.vehicles.isDoorOpen"
+  "source_line": 2775,
+  "qualified": "Open77.vehicles.isDoorOpen",
+  "route_id": "server:Open77.vehicles.isDoorOpen"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "isWindowOpen",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Reads one canonical side-window opening state.",
@@ -6351,12 +6517,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2748,
-  "qualified": "CyberM.vehicles.isWindowOpen",
-  "route_id": "server:CyberM.vehicles.isWindowOpen"
+  "source_line": 2785,
+  "qualified": "Open77.vehicles.isWindowOpen",
+  "route_id": "server:Open77.vehicles.isWindowOpen"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "openDoor",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Opens a door, trunk, or hood.",
@@ -6381,14 +6547,14 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "CyberM.vehicles.openDoor(vehicleId, CyberM.vehicles.doors.trunk)",
+  "example": "Open77.vehicles.openDoor(vehicleId, Open77.vehicles.doors.trunk)",
   "inferred": false,
-  "source_line": 2736,
-  "qualified": "CyberM.vehicles.openDoor",
-  "route_id": "server:CyberM.vehicles.openDoor"
+  "source_line": 2773,
+  "qualified": "Open77.vehicles.openDoor",
+  "route_id": "server:Open77.vehicles.openDoor"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "openWindow",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Opens one side window.",
@@ -6415,12 +6581,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2746,
-  "qualified": "CyberM.vehicles.openWindow",
-  "route_id": "server:CyberM.vehicles.openWindow"
+  "source_line": 2783,
+  "qualified": "Open77.vehicles.openWindow",
+  "route_id": "server:Open77.vehicles.openWindow"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "registerDamageProfile",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Registers resource-local named damage zones and glass parts.",
@@ -6447,12 +6613,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2753,
-  "qualified": "CyberM.vehicles.registerDamageProfile",
-  "route_id": "server:CyberM.vehicles.registerDamageProfile"
+  "source_line": 2790,
+  "qualified": "Open77.vehicles.registerDamageProfile",
+  "route_id": "server:Open77.vehicles.registerDamageProfile"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "remove",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Removes a server-owned network vehicle.",
@@ -6473,12 +6639,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2767,
-  "qualified": "CyberM.vehicles.remove",
-  "route_id": "server:CyberM.vehicles.remove"
+  "source_line": 2804,
+  "qualified": "Open77.vehicles.remove",
+  "route_id": "server:Open77.vehicles.remove"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "repair",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Repairs a selected vehicle damage scope.",
@@ -6503,14 +6669,14 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "CyberM.vehicles.repair(vehicleId, \"visual\")",
+  "example": "Open77.vehicles.repair(vehicleId, \"visual\")",
   "inferred": false,
-  "source_line": 2752,
-  "qualified": "CyberM.vehicles.repair",
-  "route_id": "server:CyberM.vehicles.repair"
+  "source_line": 2789,
+  "qualified": "Open77.vehicles.repair",
+  "route_id": "server:Open77.vehicles.repair"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "repairAllGlass",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Repairs all vehicle glass.",
@@ -6531,12 +6697,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2716,
-  "qualified": "CyberM.vehicles.repairAllGlass",
-  "route_id": "server:CyberM.vehicles.repairAllGlass"
+  "source_line": 2753,
+  "qualified": "Open77.vehicles.repairAllGlass",
+  "route_id": "server:Open77.vehicles.repairAllGlass"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "repairAllLights",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Repairs every vehicle light.",
@@ -6557,12 +6723,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2721,
-  "qualified": "CyberM.vehicles.repairAllLights",
-  "route_id": "server:CyberM.vehicles.repairAllLights"
+  "source_line": 2758,
+  "qualified": "Open77.vehicles.repairAllLights",
+  "route_id": "server:Open77.vehicles.repairAllLights"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "repairAllTires",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Repairs all four vehicle tires.",
@@ -6583,12 +6749,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2726,
-  "qualified": "CyberM.vehicles.repairAllTires",
-  "route_id": "server:CyberM.vehicles.repairAllTires"
+  "source_line": 2763,
+  "qualified": "Open77.vehicles.repairAllTires",
+  "route_id": "server:Open77.vehicles.repairAllTires"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "repairBodyCell",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Repairs one body cell.",
@@ -6615,12 +6781,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2701,
-  "qualified": "CyberM.vehicles.repairBodyCell",
-  "route_id": "server:CyberM.vehicles.repairBodyCell"
+  "source_line": 2738,
+  "qualified": "Open77.vehicles.repairBodyCell",
+  "route_id": "server:Open77.vehicles.repairBodyCell"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "repairBodyZone",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Repairs every body cell in a zone.",
@@ -6647,12 +6813,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2704,
-  "qualified": "CyberM.vehicles.repairBodyZone",
-  "route_id": "server:CyberM.vehicles.repairBodyZone"
+  "source_line": 2741,
+  "qualified": "Open77.vehicles.repairBodyZone",
+  "route_id": "server:Open77.vehicles.repairBodyZone"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "repairGlass",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Repairs one vehicle glass element.",
@@ -6679,12 +6845,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2711,
-  "qualified": "CyberM.vehicles.repairGlass",
-  "route_id": "server:CyberM.vehicles.repairGlass"
+  "source_line": 2748,
+  "qualified": "Open77.vehicles.repairGlass",
+  "route_id": "server:Open77.vehicles.repairGlass"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "repairLight",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Repairs one vehicle light.",
@@ -6711,12 +6877,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2720,
-  "qualified": "CyberM.vehicles.repairLight",
-  "route_id": "server:CyberM.vehicles.repairLight"
+  "source_line": 2757,
+  "qualified": "Open77.vehicles.repairLight",
+  "route_id": "server:Open77.vehicles.repairLight"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "repairTire",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Repairs one vehicle tire.",
@@ -6743,12 +6909,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2725,
-  "qualified": "CyberM.vehicles.repairTire",
-  "route_id": "server:CyberM.vehicles.repairTire"
+  "source_line": 2762,
+  "qualified": "Open77.vehicles.repairTire",
+  "route_id": "server:Open77.vehicles.repairTire"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setBodyCell",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Sets one body-damage cell.",
@@ -6781,12 +6947,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2696,
-  "qualified": "CyberM.vehicles.setBodyCell",
-  "route_id": "server:CyberM.vehicles.setBodyCell"
+  "source_line": 2733,
+  "qualified": "Open77.vehicles.setBodyCell",
+  "route_id": "server:Open77.vehicles.setBodyCell"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setBodyDamage",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Replaces the complete body-damage grid.",
@@ -6813,12 +6979,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2695,
-  "qualified": "CyberM.vehicles.setBodyDamage",
-  "route_id": "server:CyberM.vehicles.setBodyDamage"
+  "source_line": 2732,
+  "qualified": "Open77.vehicles.setBodyDamage",
+  "route_id": "server:Open77.vehicles.setBodyDamage"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setBodyZone",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Sets all body cells in a zone.",
@@ -6851,12 +7017,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2702,
-  "qualified": "CyberM.vehicles.setBodyZone",
-  "route_id": "server:CyberM.vehicles.setBodyZone"
+  "source_line": 2739,
+  "qualified": "Open77.vehicles.setBodyZone",
+  "route_id": "server:Open77.vehicles.setBodyZone"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setDamage",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Replaces multiple canonical damage components at once.",
@@ -6883,12 +7049,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2694,
-  "qualified": "CyberM.vehicles.setDamage",
-  "route_id": "server:CyberM.vehicles.setDamage"
+  "source_line": 2731,
+  "qualified": "Open77.vehicles.setDamage",
+  "route_id": "server:Open77.vehicles.setDamage"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setDoorMask",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Replaces the vehicle opening mask.",
@@ -6915,16 +7081,16 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2727,
-  "qualified": "CyberM.vehicles.setDoorMask",
-  "route_id": "server:CyberM.vehicles.setDoorMask"
+  "source_line": 2764,
+  "qualified": "Open77.vehicles.setDoorMask",
+  "route_id": "server:Open77.vehicles.setDoorMask"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setDoorOpen",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Sets one door, trunk, or hood opening state.",
-  "description": "Requires `world.vehicles`. `door` is an index 0..5 or one of the constants in `CyberM.vehicles.doors`.",
+  "description": "Requires `world.vehicles`. `door` is an index 0..5 or one of the constants in `Open77.vehicles.doors`.",
   "params": [
    {
     "name": "id",
@@ -6953,12 +7119,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2732,
-  "qualified": "CyberM.vehicles.setDoorOpen",
-  "route_id": "server:CyberM.vehicles.setDoorOpen"
+  "source_line": 2769,
+  "qualified": "Open77.vehicles.setDoorOpen",
+  "route_id": "server:Open77.vehicles.setDoorOpen"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setGlassBroken",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Sets or clears one broken-glass bit.",
@@ -6991,12 +7157,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2706,
-  "qualified": "CyberM.vehicles.setGlassBroken",
-  "route_id": "server:CyberM.vehicles.setGlassBroken"
+  "source_line": 2743,
+  "qualified": "Open77.vehicles.setGlassBroken",
+  "route_id": "server:Open77.vehicles.setGlassBroken"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setGlassMask",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Replaces the broken-glass bit mask.",
@@ -7023,12 +7189,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2705,
-  "qualified": "CyberM.vehicles.setGlassMask",
-  "route_id": "server:CyberM.vehicles.setGlassMask"
+  "source_line": 2742,
+  "qualified": "Open77.vehicles.setGlassMask",
+  "route_id": "server:Open77.vehicles.setGlassMask"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setLightBroken",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Sets or clears one broken-light bit.",
@@ -7061,12 +7227,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2718,
-  "qualified": "CyberM.vehicles.setLightBroken",
-  "route_id": "server:CyberM.vehicles.setLightBroken"
+  "source_line": 2755,
+  "qualified": "Open77.vehicles.setLightBroken",
+  "route_id": "server:Open77.vehicles.setLightBroken"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setLightMask",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Replaces the broken-light bit mask.",
@@ -7093,12 +7259,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2717,
-  "qualified": "CyberM.vehicles.setLightMask",
-  "route_id": "server:CyberM.vehicles.setLightMask"
+  "source_line": 2754,
+  "qualified": "Open77.vehicles.setLightMask",
+  "route_id": "server:Open77.vehicles.setLightMask"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setTireBroken",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Sets or clears one broken tire.",
@@ -7131,12 +7297,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2723,
-  "qualified": "CyberM.vehicles.setTireBroken",
-  "route_id": "server:CyberM.vehicles.setTireBroken"
+  "source_line": 2760,
+  "qualified": "Open77.vehicles.setTireBroken",
+  "route_id": "server:Open77.vehicles.setTireBroken"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setTireMask",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Replaces the broken-tire bit mask.",
@@ -7163,12 +7329,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2722,
-  "qualified": "CyberM.vehicles.setTireMask",
-  "route_id": "server:CyberM.vehicles.setTireMask"
+  "source_line": 2759,
+  "qualified": "Open77.vehicles.setTireMask",
+  "route_id": "server:Open77.vehicles.setTireMask"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setTransform",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Moves a vehicle authoritatively.",
@@ -7195,12 +7361,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2760,
-  "qualified": "CyberM.vehicles.setTransform",
-  "route_id": "server:CyberM.vehicles.setTransform"
+  "source_line": 2797,
+  "qualified": "Open77.vehicles.setTransform",
+  "route_id": "server:Open77.vehicles.setTransform"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "setWindowOpen",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Sets one reversible side-window opening state.",
@@ -7233,12 +7399,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2742,
-  "qualified": "CyberM.vehicles.setWindowOpen",
-  "route_id": "server:CyberM.vehicles.setWindowOpen"
+  "source_line": 2779,
+  "qualified": "Open77.vehicles.setWindowOpen",
+  "route_id": "server:Open77.vehicles.setWindowOpen"
  },
  {
-  "namespace": "CyberM.vehicles",
+  "namespace": "Open77.vehicles",
   "name": "update",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Updates canonical durable vehicle fields.",
@@ -7265,8 +7431,8 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 2692,
-  "qualified": "CyberM.vehicles.update",
-  "route_id": "server:CyberM.vehicles.update"
+  "source_line": 2729,
+  "qualified": "Open77.vehicles.update",
+  "route_id": "server:Open77.vehicles.update"
  }
 ]

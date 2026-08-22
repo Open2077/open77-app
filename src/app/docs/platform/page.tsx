@@ -205,7 +205,7 @@ export default async function PlatformPage() {
             ))}
           </ul>
 
-          <Snippet filename="resources/hello/cyberm.lua" badge="MANIFEST" html={manifestHtml} />
+          <Snippet filename="resources/hello/open77.lua" badge="MANIFEST" html={manifestHtml} />
           <Snippet
             filename="resources/hello/server/main.lua"
             badge="SERVER&nbsp;RUNTIME"

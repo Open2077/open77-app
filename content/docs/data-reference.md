@@ -1,6 +1,6 @@
 # Game data reference
 
-This page is the entry point for identifiers passed to CyberM APIs: NPC templates, vehicle records,
+This page is the entry point for identifiers passed to Open77 APIs: NPC templates, vehicle records,
 seat and damage indexes, weapons, appearances, effects, sounds, animations, and map sprites. The
 catalogues were extracted from Cyberpunk 2077 **2.31** unless another version is stated.
 
@@ -10,20 +10,20 @@ Do not treat every identifier found in the game database as a supported multipla
 
 | Level | Meaning |
 |---|---|
-| **CyberM-supported** | Exposed by a CyberM runtime catalogue or used by an official resource. Intended for normal resources. |
+| **Open77-supported** | Exposed by an Open77 runtime catalogue or used by an official resource. Intended for normal resources. |
 | **Runtime-validated** | Resolved against the live 2.31 TweakDB or archives, but still requires an in-game spawn and cleanup test. |
 | **Extracted candidate** | Found in cooked data. Quest logic, missing dependencies, special rigs, or build drift can make it unsafe. |
 
-Record names and CyberM entity IDs are opaque values. Preserve their spelling and never pass a
+Record names and Open77 entity IDs are opaque values. Preserve their spelling and never pass a
 64-bit entity ID through `tonumber`.
 
 ## NPC templates
 
-`CyberM.npcs.create` currently accepts the following server-approved aliases. Query the active
+`Open77.npcs.create` currently accepts the following server-approved aliases. Query the active
 runtime instead of hard-coding the list when building admin tools:
 
 ```lua
-for _, template in ipairs(CyberM.npcs.templates()) do
+for _, template in ipairs(Open77.npcs.templates()) do
   print(template.name, template.record, template.observerRecord, template.defaultAppearance)
 end
 ```
@@ -57,7 +57,7 @@ Risk values in the NPC catalogue are actionable: prefer `candidate`, audit `spec
 Vehicle creation takes a TweakDB record, not an entity template hash:
 
 ```lua
-local id = CyberM.vehicles.create(
+local id = Open77.vehicles.create(
   {
     record = "Vehicle.v_standard2_archer_hella_player",
     position = { x = 100.0, y = 200.0, z = 30.0 },
@@ -144,12 +144,12 @@ Elevator phases are `idle = 0`, `moving = 1`, and `paused = 2`. Elevator state f
 | [SFX event seed](../docs/generated/sfx-events-wolvenkit-seed.csv) | 17,586 | WolvenKit 1.6 seed data; explicitly requires 2.31 runtime validation. |
 | [Animation names](../docs/data/emote-animations.txt) | 23,044 | Extracted animation name candidates. |
 | [Animation sets](../docs/data/emote-animsets.txt) | 4,690 | Animation-set resource paths. |
-| [Blip sprites](blips.md#complete-sprite-list) | complete CyberM list | Validated native sprite names exposed by the blip API. |
+| [Blip sprites](blips.md#complete-sprite-list-cyberpunk-2077-231) | complete Open77 list | Validated native sprite names exposed by the blip API. |
 
 For effects, prefer the runtime catalogue when available:
 
 ```lua
-local catalog, reason = CyberM.vfx.catalog()
+local catalog, reason = Open77.vfx.catalog()
 if catalog then
   for alias, path in pairs(catalog) do print(alias, path) end
 end
@@ -164,7 +164,7 @@ must always be created through the authoritative server API.
 Before adding an extracted candidate to a production resource:
 
 1. Resolve it on the exact supported game build.
-2. Spawn it through CyberM with one client, then remove it cleanly.
+2. Spawn it through Open77 with one client, then remove it cleanly.
 3. Repeat with two clients and a late joiner in the same routing bucket.
 4. Verify streaming out/in, resource stop, player disconnect, and server restart behavior.
 5. Check animations, collision, audio, damage, and authority transfer where applicable.

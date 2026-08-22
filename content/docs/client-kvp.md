@@ -1,6 +1,6 @@
 # Client persistent KVP
 
-`CyberM.kvp` stores small client-local values persistently. Its namespace is always:
+`Open77.kvp` stores small client-local values persistently. Its namespace is always:
 
 ```text
 connection address -> resource name -> key
@@ -11,12 +11,12 @@ stores, even if both addresses reach the same machine. Resources cannot name or 
 resource's namespace.
 
 ```lua
-local ok, reason = CyberM.kvp.set("character:lastSlot", 2)
+local ok, reason = Open77.kvp.set("character:lastSlot", 2)
 assert(ok, reason)
 
-local slot = CyberM.kvp.get("character:lastSlot", 1)
-local present = CyberM.kvp.has("character:lastSlot")
-local newCount = CyberM.kvp.increment("stats:connections", 1)
+local slot = Open77.kvp.get("character:lastSlot", 1)
+local present = Open77.kvp.has("character:lastSlot")
+local newCount = Open77.kvp.increment("stats:connections", 1)
 ```
 
 ## API
@@ -36,7 +36,7 @@ local newCount = CyberM.kvp.increment("stats:connections", 1)
 | `stats()` | table or `nil, reason` | Entry/byte usage, quotas, address, and resource namespace. |
 
 FiveM-familiar aliases are also available: `SetResourceKvp`, `GetResourceKvp`, and
-`DeleteResourceKvp`. New code should prefer `CyberM.kvp` because it exposes typed results and the
+`DeleteResourceKvp`. New code should prefer `Open77.kvp` because it exposes typed results and the
 atomic/search operations.
 
 ## Limits and persistence guarantees
@@ -49,7 +49,7 @@ atomic/search operations.
   replacing them.
 - Validation/preflight Lua states cannot write KVP data.
 
-Data is stored below `red4ext/plugins/CyberM/storage/kvp`. The connection address is reversibly
+Data is stored below `red4ext/plugins/Open77/storage/kvp`. The connection address is reversibly
 hex-encoded before becoming a directory name, preventing path traversal without changing its
 namespace semantics.
 

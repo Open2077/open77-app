@@ -1,6 +1,6 @@
 # Vanilla blips and mappins
 
-`CyberM.blips` creates real Cyberpunk 2077 mappins. Depending on the vanilla profile attached to the sprite, the same blip can appear in the HUD, the minimap, and the world map. The API requires this permission:
+`Open77.blips` creates real Cyberpunk 2077 mappins. Depending on the vanilla profile attached to the sprite, the same blip can appear in the HUD, the minimap, and the world map. The API requires this permission:
 
 ```lua
 permissions { "ui.vanilla.map" }
@@ -13,7 +13,7 @@ Use this guide to mark a position or an entity on the player's map, minimap, and
 ## A first blip
 
 ```lua
-local blip, reason = CyberM.blips.create({
+local blip, reason = Open77.blips.create({
     position = { x = -1442.2, y = 127.4, z = 18.0 },
     sprite = "objective",
     title = "Vehicle Dealership",
@@ -23,14 +23,14 @@ local blip, reason = CyberM.blips.create({
 })
 
 assert(blip, reason)
-assert(CyberM.blips.setPosition(blip, { x = -1440.0, y = 130.0, z = 18.0 }))
-assert(CyberM.blips.setSprite(blip, "VehicleVariant"))
-assert(CyberM.blips.remove(blip))
+assert(Open77.blips.setPosition(blip, { x = -1440.0, y = 130.0, z = 18.0 }))
+assert(Open77.blips.setSprite(blip, "VehicleVariant"))
+assert(Open77.blips.remove(blip))
 ```
 
 ## Custom PNG icons
 
-Declare every client asset in `cyberm.lua`. Undeclared files cannot be used as textures:
+Declare every client asset in `open77.lua`. Undeclared files cannot be used as textures:
 
 ```lua
 files { "assets/blips/*.png" }
@@ -41,10 +41,10 @@ Then validate the texture and associate it with the blip. The native `sprite` pr
 rendering, selection, filtering, GPS routing, and fullscreen-map tooltip on Cyberpunk 2077 2.31.
 
 ```lua
-local jobIcon, reason = CyberM.assets.texture("assets/blips/job-center.png")
+local jobIcon, reason = Open77.assets.texture("assets/blips/job-center.png")
 assert(jobIcon, reason)
 
-local jobCenter = assert(CyberM.blips.create({
+local jobCenter = assert(Open77.blips.create({
     position = { x = -1442.2, y = 127.4, z = 18.0 },
     sprite = "tech",
     title = "Job Center",
@@ -52,34 +52,34 @@ local jobCenter = assert(CyberM.blips.create({
     icon = { asset = jobIcon.asset, size = 56 }
 }))
 
-assert(CyberM.blips.setIcon(jobCenter, "assets/blips/job-center.png"))
-assert(CyberM.blips.setIcon(jobCenter, false)) -- restore the native sprite
+assert(Open77.blips.setIcon(jobCenter, "assets/blips/job-center.png"))
+assert(Open77.blips.setIcon(jobCenter, false)) -- restore the native sprite
 ```
 
-`icon` accepts a declared asset path, the descriptor returned by `CyberM.assets.texture`, or a
+`icon` accepts a declared asset path, the descriptor returned by `Open77.assets.texture`, or a
 table `{ asset = path, size = pixels }`. Display size is limited to `16..128` pixels. Textures are
 currently PNG only, at most 512 KiB and 512×512. The test asset is 128×128 with transparency.
 
 The downloaded PNG compositor is disabled on Cyberpunk 2077 2.31. REDengine applies mappin
 projection after the normal Ink transform pass: script-visible widget coordinates remain local,
 and reading or forcing fullscreen-map layout while its native tree is being constructed causes an
-engine null dereference. CyberM therefore keeps and validates the `icon` metadata but deliberately
+engine null dereference. Open77 therefore keeps and validates the `icon` metadata but deliberately
 renders the native `sprite`. This is a compatibility fallback, not a promise that the PNG appears.
 
-`CyberM.assets.list()` returns the current resource's declared `files`; `texture(path)` returns
+`Open77.assets.list()` returns the current resource's declared `files`; `texture(path)` returns
 `{ type, asset, mime, width, height, bytes }` without exposing the file contents.
 
-A blip can follow a CyberM entity instead of a position:
+A blip can follow an Open77 entity instead of a position:
 
 ```lua
-local playerBlip = assert(CyberM.blips.create({
+local playerBlip = assert(Open77.blips.create({
     entity = remotePlayerEntityId,
     sprite = "remote_player",
     slot = "poi_mappin",
     offset = { x = 0.0, y = 0.0, z = 2.0 }
 }))
 
-CyberM.blips.attachToEntity(playerBlip, anotherEntityId, "poi_mappin", {
+Open77.blips.attachToEntity(playerBlip, anotherEntityId, "poi_mappin", {
     x = 0.0, y = 0.0, z = 2.0
 })
 ```
@@ -93,7 +93,7 @@ CyberM.blips.attachToEntity(playerBlip, anotherEntityId, "poi_mappin", {
 | `create(options)` | `id`, or `nil, reason` | Creates a positional or attached blip. |
 | `update(id, patch)` | `boolean, reason?` | Changes several properties in one operation. |
 | `setPosition(id, position)` | `boolean, reason?` | Moves the blip and makes it positional. |
-| `attachToEntity(id, entity, slot?, offset?)` | `boolean, reason?` | Attaches the blip to a CyberM entity. |
+| `attachToEntity(id, entity, slot?, offset?)` | `boolean, reason?` | Attaches the blip to an Open77 entity. |
 | `setSprite(id, sprite)` | `boolean, reason?` | Accepts a name, an alias, or an integer `0..146`. |
 | `setTitle(id, title)` | `boolean, reason?` | Changes the fullscreen-map title, 128 bytes maximum. |
 | `setDescription(id, description)` | `boolean, reason?` | Changes the fullscreen-map description, 1024 bytes maximum. An empty string hides it. |
@@ -113,7 +113,7 @@ CyberM.blips.attachToEntity(playerBlip, anotherEntityId, "poi_mappin", {
 
 A resource can neither read, change, nor delete another resource's blip. The TweakDB type is fixed to `Mappins.DefaultStaticMappin`; downloaded packages cannot inject an arbitrary UI profile.
 
-`title` and `description` are resource-owned text. When the player highlights the blip on the fullscreen map, CyberM replaces the variant-specific tooltip with those exact values. Variant-specific fixer progress, threat, journal, price and travel panels are hidden for CyberM blips. HUD-only variants can still be absent from the fullscreen map; use a map-capable sprite such as `objective`, `quest`, `fast_travel`, `vehicle`, or a service-point variant when map selection is required.
+`title` and `description` are resource-owned text. When the player highlights the blip on the fullscreen map, Open77 replaces the variant-specific tooltip with those exact values. Variant-specific fixer progress, threat, journal, price and travel panels are hidden for Open77 blips. HUD-only variants can still be absent from the fullscreen map; use a map-capable sprite such as `objective`, `quest`, `fast_travel`, `vehicle`, or a service-point variant when map selection is required.
 
 ## Stable aliases
 
@@ -198,9 +198,9 @@ A variant existing in the enum does not guarantee its profile renders on every s
 
 `gamemappinsMappinData` carries neither colour nor scale. Those properties belong to the UI/TweakDB profile the game picks. The API therefore offers no fake `color` or `scale` that would do nothing.
 
-`title` and `description` are kept in CyberM's private mappin data. The fullscreen-map tooltip reads those values after vanilla setup, so a highlighted blip can display guaranteed free-form text such as `Job Center` and a multiline description. Limits are 128 and 1024 UTF-8 bytes respectively. The HUD does not permanently draw that text next to the icon.
+`title` and `description` are kept in Open77's private mappin data. The fullscreen-map tooltip reads those values after vanilla setup, so a highlighted blip can display guaranteed free-form text such as `Job Center` and a multiline description. Limits are 128 and 1024 UTF-8 bytes respectively. The HUD does not permanently draw that text next to the icon.
 
-Custom PNG icons are not converted into `gamedataMappinVariant` values. CyberM keeps the native
+Custom PNG icons are not converted into `gamedataMappinVariant` values. Open77 keeps the native
 mappin and its declared icon metadata, but 2.31 renders only the native sprite for stability.
 WebP and runtime REDengine archive mounting are not supported.
 

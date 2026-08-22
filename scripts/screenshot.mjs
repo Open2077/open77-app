@@ -25,7 +25,7 @@ const SHOTS = [
   { path: "/docs/platform", name: "docs-platform", width: 1440, height: 1100 },
   { path: "/docs/api", name: "docs-api", width: 1440, height: 1000 },
   {
-    path: "/docs/api/server/cyberm-vehicles",
+    path: "/docs/api/server/open77-vehicles",
     name: "docs-api-namespace",
     width: 1440,
     height: 1100,

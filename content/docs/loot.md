@@ -1,13 +1,13 @@
 # Server loot and ground drops
 
-In a CyberM session, ground loot is server-authoritative. Vanilla bodies, bags, containers,
+In an Open77 session, ground loot is server-authoritative. Vanilla bodies, bags, containers,
 collectibles, and physical drops never hand an item to the player directly. An item visible on the
 ground is a local projection, presented through Cyberpunk's own interface — contents, rarity, detail
 card, `Take` and `Take All`. Selecting an item there sends a request to the server, which checks the
 drop, the dimension, and the distance before allowing the pickup. The local `TransactionSystem`
 removes nothing until the reply arrives.
 
-The official `cyberm_loot` resource must stay started. Its manifest asks for `network.events` and
+The official `open77_loot` resource must stay started. Its manifest asks for `network.events` and
 `world.loot`, and its client is distributed with the server's resource set.
 
 Use this guide to place items in the world from a server resource, and to credit them to a player's
@@ -15,14 +15,14 @@ inventory when they are picked up.
 
 ## Server API
 
-Server resources that declare `world.loot` get `CyberM.loot`:
+Server resources that declare `world.loot` get `Open77.loot`:
 
 ```lua
 permissions { "network.events", "world.loot" }
 ```
 
 ```lua
-local dropId, reason = CyberM.loot.create({
+local dropId, reason = Open77.loot.create({
     item = "Items.money",             -- TweakDB record
     quantity = 250,
     position = { x = -1450.2, y = 117.8, z = 12.4 },
@@ -35,21 +35,21 @@ local dropId, reason = CyberM.loot.create({
 
 assert(dropId, reason)
 
-CyberM.loot.update(dropId, {
+Open77.loot.update(dropId, {
     quantity = 300,
     position = { x = -1450.0, y = 118.1, z = 12.4 },
     radius = 2.5
 })
 
-local drop = CyberM.loot.get(dropId)
-local bucketDrops = CyberM.loot.all(0)
-CyberM.loot.remove(dropId)
+local drop = Open77.loot.get(dropId)
+local bucketDrops = Open77.loot.all(0)
+Open77.loot.remove(dropId)
 ```
 
 A player's authoritative position is available server-side too:
 
 ```lua
-local position = CyberM.players.position(playerId)
+local position = Open77.players.position(playerId)
 -- { x, y, z, bucket }, or nil when the player or snapshot is unavailable.
 ```
 
@@ -60,7 +60,7 @@ quantities at 1,000,000, and positions at the world bounds the protocol accepts.
 `item` and `visualItem` play distinct roles. `item` is the authoritative content actually granted
 once the pickup is validated. `visualItem` is a TweakDB record that owns a `dropObject` and serves
 only to create the physical `gameItemDropObject`. For a weapon, leaving `visualItem` empty uses the
-weapon's own record directly. Since `Items.money` is abstract currency, CyberM automatically picks
+weapon's own record directly. Since `Items.money` is abstract currency, Open77 automatically picks
 `Items.MoneyShard` (`smallItemDrop`, entity `money`) when no override is supplied.
 
 After an accepted pickup, every server VM receives:
@@ -79,9 +79,9 @@ The pickup is atomic within the registry: two players cannot consume the same id
 `PlayerSnapshot` received less than two seconds ago, requires the same routing bucket, and accepts
 at most `radius + 0.75 m` to absorb network latency.
 
-## Testing from the CyberM terminal
+## Testing from the Open77 terminal
 
-These commands are genuinely declared in `cyberm_loot/server/main.lua` with `RegisterCommand`, just
+These commands are genuinely declared in `open77_loot/server/main.lua` with `RegisterCommand`, just
 as in a FiveM resource:
 
 ```text
@@ -106,17 +106,17 @@ the item falls in front of them. Its full form is
 `loot.create.player <playerId> <item> <quantity> [offsetZ] [radius] [visualItem]`.
 
 The representation is a real native entity produced by `LootManager.SpawnItemDrop`: the record's
-mesh, a `gameItemDropObject` wrapper, placement, physics, highlight, and REDengine UI. CyberM binds
+mesh, a `gameItemDropObject` wrapper, placement, physics, highlight, and REDengine UI. Open77 binds
 the native `EntityID` to the server id when the child object appears, then fills the native inventory
-with `item` and `quantity`. There is no separate CyberM anchor or prompt any more.
+with `item` and `quantity`. There is no separate Open77 anchor or prompt any more.
 
 ## Client API
 
-Gameplay clients read the projection through `cyberm_loot`'s exports:
+Gameplay clients read the projection through `open77_loot`'s exports:
 
 ```lua
 CreateThread(function()
-    local promise, err = CyberM.exports.call("cyberm_loot", "all")
+    local promise, err = Open77.exports.call("open77_loot", "all")
     if not promise then return print(err) end
     local drops = assert(promise:await())
     for _, drop in ipairs(drops) do
@@ -126,7 +126,7 @@ end)
 
 -- The native prompt already performs this. Useful for a custom UI.
 CreateThread(function()
-    local promise = CyberM.exports.call("cyberm_loot", "requestPickup", 42)
+    local promise = Open77.exports.call("open77_loot", "requestPickup", 42)
     if promise then print(promise:await()) end
 end)
 ```
@@ -140,21 +140,21 @@ Available exports:
 This local event lets you show feedback without touching authority:
 
 ```lua
-AddEventHandler("cyberm:loot:result", function(id, accepted, reason, item, quantity)
+AddEventHandler("open77:loot:result", function(id, accepted, reason, item, quantity)
     if not accepted then
         print("Pickup refused: " .. tostring(reason))
     end
 end)
 ```
 
-Do not call `CyberM.loot.upsert`, `acceptPickup`, or `setAuthorityEnabled` directly from a gameplay
+Do not call `Open77.loot.upsert`, `acceptPickup`, or `setAuthorityEnabled` directly from a gameplay
 resource. Those are the internal primitives of the distributed projection, guarded by `world.loot`.
 
 ## The boundary between native UI and server authority
 
 - `Inventory` choices stay visible only for entities bound to a server drop;
 - `Inventory.OnInteractionUsed` is intercepted before its local `RemoveItem` and becomes a
-  `cyberm:loot:pickup` request;
+  `open77:loot:pickup` request;
 - the native pickup condition is re-enabled only for bound `gameItemDropObject`s;
 - legacy placed pickups (`HealthConsumable`, `VirtualItem_TEMP`) and the `Loot` choices of
   inspectable objects;
@@ -168,7 +168,7 @@ empties only the inventory of the entity concerned. Cyberpunk then receives its 
 `OnInventoryEmptyEvent` and cleanly removes the HUD, the interaction, and the visual without
 recreating the other ground items.
 
-CyberM items therefore use the same presentation as vanilla: the physical mesh resolved by the
+Open77 items therefore use the same presentation as vanilla: the physical mesh resolved by the
 TweakDB record falls with the game's physics, and the `Inventory` component builds the list and the
 item card. That entity holds no authority though: removal and granting only happen after the server
 answers positively.
@@ -184,4 +184,4 @@ there. `onLootPickup` is where you credit an account, apply weight, or write a t
 
 **Quest collectibles that bypass `Inventory`** are not intercepted. A handful of highly specialised
 pickups take neither the `Inventory` path nor the standard loot conditions; those still grant
-locally. If you meet one, its class can be identified with the CyberM inspector.
+locally. If you meet one, its class can be identified with the Open77 inspector.

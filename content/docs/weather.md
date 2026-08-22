@@ -1,6 +1,6 @@
 # Synchronised time and weather
 
-`cyberm_weather` is the single authority for a session's time and weather. Every player sees the
+`open77_weather` is the single authority for a session's time and weather. Every player sees the
 same clock and the same sky, and neither drifts: the server holds the canonical state and clients
 project it locally.
 
@@ -30,7 +30,7 @@ its monotonic reference. A mutation broadcast applies immediately; a reply carry
 revision of the same epoch is rejected. A new epoch lets a server hot-reload restart at revision 1
 without leaving clients stuck on the previous incarnation.
 
-CyberM projects the server clock twice a second. It deliberately does not hold REDengine's
+Open77 projects the server clock twice a second. It deliberately does not hold REDengine's
 `SetPausedState`: two-client runtime testing proved that this flag can also slow gameplay and
 vehicle physics. Periodic absolute correction prevents long-term clock drift without changing the
 simulation rate. At midnight,
@@ -40,7 +40,7 @@ which would jump a whole day.
 
 ## Configuration
 
-Edit `resources/cyberm_weather/shared/config.lua`:
+Edit `resources/open77_weather/shared/config.lua`:
 
 - `startupTime` — `12:00:00` by default;
 - `timeScale` — game seconds per real second (`4.0`);
@@ -58,7 +58,7 @@ Presets supplied: `sunny`, `lightclouds`, `cloudy`, `rain`, `heavyclouds`, `fog`
 
 ## Server commands and ACL
 
-From the in-game CyberM terminal or the dedicated console:
+From the in-game Open77 terminal or the dedicated console:
 
 ```text
 weather.status
@@ -90,24 +90,24 @@ snapshot: no client mutation event exists.
 These events are local to the server runtime:
 
 ```lua
-TriggerEvent("cyberm:weather:setTime", 20, 15, 0)
-TriggerEvent("cyberm:weather:setRate", 4)
-TriggerEvent("cyberm:weather:setFrozen", false)
-TriggerEvent("cyberm:weather:setWeather", "rain", 30)
-TriggerEvent("cyberm:weather:setRandomEnabled", true)
+TriggerEvent("open77:weather:setTime", 20, 15, 0)
+TriggerEvent("open77:weather:setRate", 4)
+TriggerEvent("open77:weather:setFrozen", false)
+TriggerEvent("open77:weather:setWeather", "rain", 30)
+TriggerEvent("open77:weather:setRandomEnabled", true)
 ```
 
 To observe the state:
 
 ```lua
-AddEventHandler("cyberm:weather:state", function(state)
+AddEventHandler("open77:weather:state", function(state)
     print(("weather=%s revision=%d"):format(state.weather, state.revision))
 end)
 
-TriggerEvent("cyberm:weather:requestState")
+TriggerEvent("open77:weather:requestState")
 ```
 
-`cyberm:weather:timeChanged` and `cyberm:weather:weatherChanged` report the precise cause. These
+`open77:weather:timeChanged` and `open77:weather:weatherChanged` report the precise cause. These
 APIs are meant for trusted server resources; server scripts are not distributed to players.
 
 ## API for a client resource
@@ -115,7 +115,7 @@ APIs are meant for trusted server resources; server scripts are not distributed 
 Listening, with no dependency:
 
 ```lua
-AddEventHandler("cyberm:weather:updated", function(state)
+AddEventHandler("open77:weather:updated", function(state)
     print(state.weather, state.rate, state.frozen)
 end)
 ```
@@ -124,7 +124,7 @@ A one-off read through an export:
 
 ```lua
 CreateThread(function()
-    local promise, reason = CyberM.exports.call("cyberm_weather", "getState")
+    local promise, reason = Open77.exports.call("open77_weather", "getState")
     assert(promise, reason)
     local state = promise:await()
     print(string.format("%02d:%02d:%02d", state.hour, state.minute, state.second))
@@ -137,7 +137,7 @@ Available exports:
 - `getState()` — time predicted at the moment of the call, and the weather state;
 - `requestSync()` — forces a reliable resynchronisation request.
 
-The native `CyberM.environment` table (`getTime`, `setTime`, `setTimeFrozen`, `setWeather`,
+The native `Open77.environment` table (`getTime`, `setTime`, `setTimeFrozen`, `setWeather`,
 `setWeatherFrozen`, `isWeatherFrozen`) is guarded by the `world.environment` permission. It exists to
 implement the authority, not for ordinary gameplay scripts.
 
@@ -153,5 +153,5 @@ cleanly reschedules the deadline.
 
 The resource sits under the configured `resources.root`. The server watcher prepares its VM,
 rebuilds the signed set, and distributes only the manifest, the client and shared scripts, and this
-README. The new client DLL is required for the `CyberM.environment` primitive; if it is not loaded
+README. The new client DLL is required for the `Open77.environment` primitive; if it is not loaded
 yet, the resource stays inert and explicitly asks for Cyberpunk to be restarted.

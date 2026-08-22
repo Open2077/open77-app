@@ -1,6 +1,6 @@
 # Clipboard API and transform commands
 
-CyberM exposes a write-only client API for copying generated text to the operating-system
+Open77 exposes a write-only client API for copying generated text to the operating-system
 clipboard. It is intended for explicit user actions such as copying coordinates, identifiers, or
 configuration snippets. Lua resources cannot read or inspect the existing clipboard.
 
@@ -22,7 +22,7 @@ write directly to a player's clipboard.
 ## Write text
 
 ```lua
-local copied, reason = CyberM.clipboard.setText(
+local copied, reason = Open77.clipboard.setText(
     "position = { x = 1660.068359, y = -723.649170, z = 50.512436 }"
 )
 
@@ -31,7 +31,7 @@ if not copied then
 end
 ```
 
-`CyberM.clipboard.setText(text)` returns `true` on success. On refusal it returns `false, reason`.
+`Open77.clipboard.setText(text)` returns `true` on success. On refusal it returns `false, reason`.
 The text must be valid UTF-8, cannot contain an embedded NUL, and is limited to 256 KiB.
 
 Possible failure reasons include:
@@ -53,7 +53,8 @@ retry instead of looping every frame.
 
 ## Built-in `/pos` and `/rot` commands
 
-The official chat resource provides two authenticated commands:
+The official debug resource (`open77_debug`) registers these two authenticated commands; the
+clipboard permission that backs them is declared by `open77_chat`:
 
 ```text
 /pos
@@ -73,7 +74,7 @@ orientation = { x = 0.000000, y = 0.000000, z = 0.707107, w = 0.707107 }, yaw = 
 ```
 
 The command is registered on the server, then targets only the authenticated requesting client.
-The downloaded `cyberm_chat` client reads `CyberM.character.state()`, performs the clipboard write,
+The downloaded `open77_chat` client reads `Open77.character.state()`, performs the clipboard write,
 and returns a bounded result. The server never receives the previous clipboard contents. Success or
 failure is shown both in chat and through a middle-left WebUI notification.
 
@@ -87,7 +88,7 @@ The command implementation is only a convenience. A client resource can produce 
 directly:
 
 ```lua
-local state, stateError = CyberM.character.state()
+local state, stateError = Open77.character.state()
 if not state or not state.attached then
     print(stateError or "player_transform_unavailable")
     return
@@ -100,7 +101,7 @@ local text = string.format(
     q.x, q.y, q.z, q.w, p.x, p.y, p.z
 )
 
-local copied, reason = CyberM.clipboard.setText(text)
+local copied, reason = Open77.clipboard.setText(text)
 assert(copied, reason)
 ```
 

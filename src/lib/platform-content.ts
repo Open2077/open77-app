@@ -283,7 +283,7 @@ export function platformToMarkdown(): string {
   lines.push("## Resources and scripting", "", RESOURCES_INTRO, "");
   lines.push("Documented systems:", "");
   for (const item of SCRIPTABLE) lines.push(`- **${item.label}** (${item.href}) — ${item.body}`);
-  lines.push("", "Resource manifest (`resources/hello/cyberm.lua`):", "");
+  lines.push("", "Resource manifest (`resources/hello/open77.lua`):", "");
   lines.push("```lua", MANIFEST_SAMPLE, "```", "");
   lines.push("Server entry point (`resources/hello/server/main.lua`):", "");
   lines.push("```lua", SERVER_SAMPLE, "```", "");

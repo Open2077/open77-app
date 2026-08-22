@@ -77,8 +77,8 @@ console.log("sidebar link:", count(guide, 'class="dx-nav-list"'));
 console.log("wiki .md    :", count(guide, 'href="/docs/'), "internal doc links");
 console.log("raw .md left:", guide.includes(".md#") || / href="[^"]*\.md"/.test(guide));
 
-const api = await get("/docs/api/server/cyberm-vehicles");
-console.log("\n=== /docs/api/server/cyberm-vehicles ===");
+const api = await get("/docs/api/server/open77-vehicles");
+console.log("\n=== /docs/api/server/open77-vehicles ===");
 console.log("canonical   :", canonical(api));
 console.log("json-ld     :", jsonLdTypes(api).join(", "));
 console.log("functions   :", count(api, 'class="dx-fn"'));

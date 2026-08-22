@@ -2,9 +2,10 @@
 
 The server picks the session's resources, builds their client image, and the game downloads them
 before entering Night City — the same model FiveM uses. The local
-`red4ext/plugins/CyberM/bootstrap` folder holds only the trusted bootstrap:
-`cyberm_shell` / `cyberm_pause`, which draw the server browser, the connection flow, and the loading
-screen. Gameplay resources on the player's disk are never auto-discovered.
+`red4ext/plugins/Open77/bootstrap` folder holds only the five trusted bootstrap resources —
+`open77_shell`, `open77_pause`, `open77_blips`, `open77_death` and `open77_debug` — which draw the
+server browser, the connection flow, and the loading screen. These same five are excluded from the
+server-supplied resource layer. Gameplay resources on the player's disk are never auto-discovered.
 
 Use this guide to write a resource, understand what reaches the player, and publish a change to a
 running session.
@@ -15,8 +16,8 @@ running session.
 2. The shell shows a full-screen loading WebUI.
 3. The client verifies the signed set, the CBOR manifests, each chunk, then each file.
 4. The complete generation is committed under
-   `red4ext/plugins/CyberM/cache/server-resources/sets/<digest>/resources`.
-5. Only then does CyberM load the pristine save.
+   `red4ext/plugins/Open77/cache/server-resources/sets/<digest>/resources`.
+5. Only then does Open77 load the pristine save.
 6. The local Lua runtime is replaced by the server's client image.
 
 The screen reports `manifest`, `downloading`, `verifying`, `ready`, or `failed`, along with the
@@ -42,7 +43,7 @@ files { "assets/blips/*.png", "assets/audio/*.wav" }
 permissions { "network.events" }
 ```
 
-The server runs `server_script` and `shared_script`. The downloaded package contains `cyberm.lua`,
+The server runs `server_script` and `shared_script`. The downloaded package contains `open77.lua`,
 the `client` and `shared` files, and the declared assets — never the `server/` files. The client and
 server Lua APIs are documented in the wiki's main reference. The authoritative subsystem for ground
 items is covered in [loot.md](loot.md). The reference time/weather package and its protocol are
@@ -51,21 +52,21 @@ covered in [weather.md](weather.md).
 `files` / `file` declare generic client assets. Globs are expanded by the server, included in the
 signed resource set, downloaded before Lua starts, and recorded in the client allowlist. Use
 `web_files` only for files served to that resource's WebUI. For example,
-`CyberM.assets.texture("assets/blips/job-center.png")` only succeeds when the exact file matched a
+`Open77.assets.texture("assets/blips/job-center.png")` only succeeds when the exact file matched a
 `files` entry. Empty globs, traversal paths, oversized files, and undeclared texture reads fail the
 resource instead of falling back to arbitrary disk access.
 
-A server script can register a command reachable from the CyberM developer terminal or from the
+A server script can register a command reachable from the Open77 developer terminal or from the
 dedicated console:
 
 ```lua
 RegisterCommand("garage.list", function(source, args, rawCommand)
-    -- source = authenticated playerId from the CyberM terminal, 0 from the dedicated console.
+    -- source = authenticated playerId from the Open77 terminal, 0 from the dedicated console.
     print("garages: " .. tostring(#args))
 end, false) -- true puts the command behind the `command.garage.list` ACL
 ```
 
-In the in-game terminal, CyberM runs local native commands first. If no local handler matches, the
+In the in-game terminal, Open77 runs local native commands first. If no local handler matches, the
 tokenised line is sent reliably to the server under the session's identity. The server never trusts
 a `source` supplied by the client. Commands are removed automatically along with their VM when a
 resource stops or reloads.
@@ -110,7 +111,7 @@ resource.status <resource>
 - HTTPS is mandatory for a public URL; HTTP is limited to loopback.
 - HTTP redirects and absolute or traversal paths are refused.
 - The server must keep its signing key file across a migration.
-- The private key and the `.cyberm` cache must never be committed.
+- The private key and the `.open77` cache must never be committed.
 - A server resource is code chosen by the operator: only grant sensitive permissions to resources
   you audit.
 
@@ -125,8 +126,8 @@ Minimum configuration:
     "enabled": true,
     "listenUrl": "http://0.0.0.0:11779",
     "publicBaseUrl": "https://cdn.example.net/",
-    "cacheDirectory": ".cyberm/resource-cache",
-    "signingKeyFile": ".cyberm/resource-signing-key.json",
+    "cacheDirectory": ".open77/resource-cache",
+    "signingKeyFile": ".open77/resource-signing-key.json",
     "chunkSizeBytes": 1048576
   }
 }

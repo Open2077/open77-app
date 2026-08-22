@@ -60,7 +60,7 @@
           "slug": "server-api",
           "kind": "guide",
           "nav": "Complete server Lua API",
-          "description": "Every dedicated-server global, CyberM namespace, permission, constant and result shape: scheduler, events, commands, players, combat, routing buckets, loot, vehicles, NPCs, elevators, database and logging."
+          "description": "Every dedicated-server global, Open77 namespace, permission, constant and result shape: scheduler, events, commands, players, combat, routing buckets, loot, vehicles, NPCs, elevators, database and logging."
         },
         {
           "slug": "resource-exports",

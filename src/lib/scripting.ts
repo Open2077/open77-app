@@ -7,9 +7,9 @@
  * WebUI pages are optional interfaces, not a second gameplay language.
  *
  * The sample is a complete two-file resource built only from documented calls:
- * `RegisterCommand` and `CyberM.players.position` / `CyberM.vehicles.create`
+ * `RegisterCommand` and `Open77.players.position` / `Open77.vehicles.create`
  * (docs/server-api.md, docs/vehicles.md) on the server, and
- * `CyberM.blips.create` (docs/blips.md) plus the `cyberm_notifications`
+ * `Open77.blips.create` (docs/blips.md) plus the `open77_notifications`
  * export (docs/notifications.md) on the client — the landing page does not
  * get to invent an API.
  */
@@ -17,10 +17,10 @@
 export const HOME_SERVER_LUA = `local GALENA = "Vehicle.v_standard2_thorton_galena_player"
 
 RegisterCommand("ride", function(source, args)
-    local spot = CyberM.players.position(source)
+    local spot = Open77.players.position(source)
     if spot == nil then return end
 
-    local id = CyberM.vehicles.create({
+    local id = Open77.vehicles.create({
         record = args[1] or GALENA,
         position = { x = spot.x + 3.0, y = spot.y, z = spot.z },
         bucket = spot.bucket,
@@ -32,13 +32,13 @@ RegisterCommand("ride", function(source, args)
 end)`;
 
 export const HOME_CLIENT_LUA = `RegisterNetEvent("ride:delivered", function(id, spot)
-    CyberM.blips.create({
+    Open77.blips.create({
         position = { x = spot.x + 3.0, y = spot.y, z = spot.z },
         sprite = "objective",
         title = ("Ride #%d"):format(id)
     })
 
-    CyberM.exports.call("cyberm_notifications", "show", {
+    Open77.exports.call("open77_notifications", "show", {
         type = "success",
         title = "Ride delivered",
         message = "Your wheels are waiting outside."
