@@ -1,0 +1,263 @@
+/* ============================================================
+   Admin panel — the operations console.
+   Same OPEN SIGNAL system as everything else, but denser: mono
+   data, hairline tables, status chips. Loads after account.css
+   and reuses its ac-error / ac-loading / ac-iconbtn primitives.
+   ============================================================ */
+
+.adm-main {
+  padding-top: calc(var(--header-h, 76px) + clamp(28px, 4vw, 44px));
+  padding-bottom: var(--section-gap);
+  min-height: 76vh;
+}
+.adm-inner {
+  max-width: var(--max-w-wide);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+
+.adm-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.adm-title {
+  font: 700 clamp(26px, 3.6vw, 36px) / 1.05 var(--font-display);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin: 8px 0 0;
+}
+.adm-operator {
+  font: 500 12px var(--font-mono);
+  color: var(--text-faint);
+  letter-spacing: 0.05em;
+}
+.adm-operator strong { color: var(--text-dim); font-weight: 500; }
+
+/* Signal-coral hairline: the one visual cue that this is staff territory. */
+.adm-rule {
+  height: 2px;
+  background: linear-gradient(90deg, var(--signal), rgba(255, 89, 100, 0) 60%);
+  margin-bottom: 14px;
+}
+
+/* ---------- Sub-navigation ---------- */
+
+.adm-nav {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 22px;
+}
+.adm-nav a {
+  padding: 9px 13px;
+  margin-bottom: -1px;
+  border-bottom: 2px solid transparent;
+  color: var(--text-dim);
+  font: 600 12px var(--font-mono);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+.adm-nav a:hover { color: var(--text); }
+.adm-nav a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ---------- Stat tiles ---------- */
+
+.adm-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.adm-stat {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elev);
+  padding: 14px 16px 12px;
+}
+.adm-stat-value {
+  font: 700 30px/1 var(--font-display);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.adm-stat-label {
+  margin-top: 6px;
+  font: 500 10.5px var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* ---------- Panels & toolbars ---------- */
+
+.adm-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--bg-elev);
+  padding: 16px 18px 18px;
+}
+.adm-panel + .adm-panel { margin-top: 14px; }
+.adm-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.adm-panel-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 700 15px var(--font-display);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.adm-panel-title svg { color: var(--accent); }
+.adm-count {
+  font: 500 11px var(--font-mono);
+  color: var(--text-faint);
+  letter-spacing: 0.06em;
+}
+
+.adm-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 0 11px;
+  color: var(--text-faint);
+  min-width: min(320px, 100%);
+  transition: border-color 0.15s var(--ease);
+}
+.adm-search:focus-within { border-color: var(--accent); }
+.adm-search input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: 0;
+  color: var(--text);
+  font: 13px var(--font-mono);
+  padding: 10px 0;
+}
+.adm-search input:focus { outline: none; }
+.adm-search input::placeholder { color: var(--text-faint); }
+
+/* ---------- Tables ---------- */
+
+.adm-tablewrap { overflow-x: auto; }
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.adm-table th {
+  text-align: left;
+  font: 600 10.5px var(--font-mono);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  border-bottom: 1px solid var(--line-strong);
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+.adm-table td {
+  border-bottom: 1px solid var(--line);
+  padding: 8px 10px;
+  vertical-align: middle;
+}
+.adm-table tr:last-child td { border-bottom: 0; }
+.adm-table tr:hover td { background: rgba(var(--accent-rgb), 0.03); }
+.adm-table .is-muted td { opacity: 0.5; }
+.adm-mono { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.02em; }
+.adm-dim { color: var(--text-dim); }
+.adm-faint { color: var(--text-faint); }
+.adm-num { font-variant-numeric: tabular-nums; text-align: right; }
+.adm-actions-cell { text-align: right; white-space: nowrap; }
+.adm-empty { color: var(--text-dim); font-size: 13.5px; text-align: center; padding: 22px 0; }
+
+/* ---------- Chips ---------- */
+
+.adm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font: 600 10.5px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.adm-chip-ok { background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(var(--accent-rgb), 0.3); }
+.adm-chip-warn { background: rgba(255, 89, 100, 0.1); color: var(--signal); border: 1px solid rgba(255, 89, 100, 0.35); }
+.adm-chip-dim { background: var(--surface); color: var(--text-faint); border: 1px solid var(--line); }
+.adm-chip-role { background: rgba(112, 243, 245, 0.08); color: var(--accent-ice); border: 1px solid rgba(112, 243, 245, 0.3); }
+
+/* ---------- Forms (ban create) ---------- */
+
+.adm-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.adm-form .ac-label { min-width: 0; }
+.adm-form .ac-input { padding: 10px 12px; font-size: 13.5px; }
+.adm-select {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font: 13.5px var(--font-body);
+  padding: 10px 12px;
+}
+.adm-select:focus { outline: none; border-color: var(--accent); }
+.adm-form-span { grid-column: 1 / -1; }
+
+.adm-footnote {
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+.adm-more { display: flex; justify-content: center; margin-top: 12px; }
+
+/* ---------- Denied / gate states ---------- */
+
+.adm-denied {
+  border: 1px solid rgba(255, 89, 100, 0.4);
+  border-radius: var(--radius-md);
+  background: rgba(255, 89, 100, 0.05);
+  padding: clamp(22px, 4vw, 34px);
+  text-align: center;
+}
+.adm-denied h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 700 20px var(--font-display);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+  color: var(--signal);
+}
+.adm-denied p { color: var(--text-dim); margin: 0 auto; max-width: 52ch; }
+
+@media (max-width: 720px) {
+  .adm-stats { grid-template-columns: repeat(2, 1fr); }
+}
