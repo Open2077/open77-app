@@ -299,6 +299,59 @@ export function CodeIcon({ size = 24, className }: IconProps) {
   );
 }
 
+export function KeyIcon(props: IconProps) {
+  return (
+    <svg {...svgProps({ size: 15, ...props })}>
+      <circle cx="5.2" cy="8" r="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <path
+        d="M8.2 8h6M12 8v2.6M14.2 8v1.8"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function CopyIcon(props: IconProps) {
+  return (
+    <svg {...svgProps({ size: 14, ...props })}>
+      <rect x="5.5" y="5.5" width="8" height="8" rx="1" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M10.5 3.5v-1h-8v8h1"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+export function SignOutIcon(props: IconProps) {
+  return (
+    <svg {...svgProps({ size: 14, ...props })}>
+      <path
+        d="M6.5 2.5H3v11h3.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M6.5 8h7M10.5 4.8 13.7 8l-3.2 3.2"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function PeopleIcon({ size = 24, className }: IconProps) {
   return (
     <svg
