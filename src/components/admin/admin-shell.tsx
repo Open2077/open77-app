@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import type { ReactNode } from "react";
 
 import { AuthPanel } from "@/components/account/auth-panel";
 import { Eyebrow } from "@/components/brand";
 import { ShieldIcon } from "@/components/icons";
+import { me, MasterApiError } from "@/lib/account/api";
 import { useSession } from "@/lib/account/session";
 
 const ADMIN_NAV = [
@@ -27,8 +29,36 @@ const ADMIN_NAV = [
  * denial for non-administrators, and the console for staff.
  */
 export function AdminShell({ children }: { children: ReactNode }) {
-  const { session, ready } = useSession();
+  const { session, ready, update, clear } = useSession();
   const pathname = usePathname();
+
+  // The stored role is captured at login; a promotion (or demotion) on the
+  // master won't show until we re-sync. Refresh from /me whenever a session is
+  // present so staff access reflects the current role without a re-login.
+  const token = session?.token;
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
+    me(token)
+      .then((account) => {
+        if (cancelled) return;
+        update({
+          role: account.role,
+          emailVerified: account.emailVerified,
+          email: account.email,
+          displayName: account.displayName,
+        });
+      })
+      .catch((error: unknown) => {
+        // A 401 means the session is gone on the master — drop it locally too.
+        if (!cancelled && error instanceof MasterApiError && error.code === "invalid_session") {
+          clear();
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [token, update, clear]);
 
   const head = (
     <header>
