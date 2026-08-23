@@ -166,3 +166,26 @@ export function createLicense(token: string, label: string): Promise<CreatedLice
 export function revokeLicense(token: string, licenseId: string): Promise<void> {
   return masterCall(`/api/v1/accounts/licenses/${licenseId}/revoke`, { method: "POST", token });
 }
+
+export type LauncherAuthorization = {
+  /** The one-time code to hand back to the launcher's loopback callback. */
+  code: string;
+  expiresAtUtc: string;
+};
+
+/**
+ * Mints a single-use, PKCE-bound authorization code for the desktop launcher.
+ * The launcher opened this page with its `code_challenge`; the master ties the
+ * code to that challenge and to this account, and the launcher later exchanges
+ * it (with its verifier) for its own session — no password crosses the wire.
+ */
+export function authorizeLauncher(
+  token: string,
+  codeChallenge: string,
+): Promise<LauncherAuthorization> {
+  return masterCall("/api/v1/accounts/launcher/authorize", {
+    method: "POST",
+    token,
+    body: { codeChallenge },
+  });
+}
