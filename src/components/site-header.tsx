@@ -84,6 +84,13 @@ export function SiteHeader() {
               <DiscordIcon size={17} />
             </a>
           ) : null}
+          <Link
+            className="btn btn-small btn-ghost header-account"
+            href="/account"
+            {...(isActive(pathname, "/account") ? { "aria-current": "page" as const } : {})}
+          >
+            Account
+          </Link>
           <Link className="btn btn-small btn-primary" href="/community#alpha">
             Join alpha
           </Link>
@@ -114,6 +121,12 @@ export function SiteHeader() {
             {item.label}
           </Link>
         ))}
+        <Link
+          href="/account"
+          {...(isActive(pathname, "/account") ? { "aria-current": "page" as const } : {})}
+        >
+          Account
+        </Link>
         <Link className="btn btn-primary" href="/community#alpha">
           Join alpha
         </Link>
