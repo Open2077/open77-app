@@ -11,7 +11,13 @@
  * human message for anything they don't specifically know.
  */
 
-const DEFAULT_MASTER_URL = "http://127.0.0.1:8090";
+// A production build targets the live master by default so open2077.net never
+// falls back to a developer's loopback. NODE_ENV is inlined into the client
+// bundle by Next at build time; NEXT_PUBLIC_OP77_MASTER_URL still overrides both.
+const DEFAULT_MASTER_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://master.open2077.net"
+    : "http://127.0.0.1:8090";
 
 /** Base URL of the master API, without a trailing slash. */
 export const MASTER_URL = (
