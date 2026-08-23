@@ -131,7 +131,9 @@ export async function masterCall<T>(
     }
     throw new MasterApiError(code, message, response.status);
   }
-  if (response.status === 204) {
+  // 204 has no body by definition; the master's fire-and-forget endpoints
+  // (resend-verification, forgot-password) answer 202 with an empty body too.
+  if (response.status === 204 || response.status === 202) {
     return undefined as T;
   }
   return (await response.json()) as T;
@@ -147,6 +149,37 @@ export function register(input: {
 
 export function verifyEmail(input: { email: string; token: string }): Promise<void> {
   return masterCall("/api/v1/accounts/verify-email", { method: "POST", body: input });
+}
+
+/**
+ * Asks the master to send a fresh verification e-mail. Answers 202 whether or
+ * not the address maps to an unverified account, so nothing here can be used
+ * to probe which e-mails are registered.
+ */
+export function resendVerification(input: { email: string }): Promise<void> {
+  return masterCall("/api/v1/accounts/verify-email/resend", { method: "POST", body: input });
+}
+
+/**
+ * Starts a password reset. Like the resend endpoint this answers 202
+ * unconditionally — the caller must show the same neutral confirmation either
+ * way and never reveal whether the address exists.
+ */
+export function forgotPassword(input: { email: string }): Promise<void> {
+  return masterCall("/api/v1/accounts/password/forgot", { method: "POST", body: input });
+}
+
+/**
+ * Completes a password reset with the token from the e-mail. Fails with
+ * `invalid_reset` / `reset_rejected` when the link is stale or already used,
+ * and `invalid_password` when the new password doesn't meet the policy.
+ */
+export function resetPassword(input: {
+  email: string;
+  token: string;
+  newPassword: string;
+}): Promise<void> {
+  return masterCall("/api/v1/accounts/password/reset", { method: "POST", body: input });
 }
 
 export function login(input: { email: string; password: string }): Promise<LoginResult> {

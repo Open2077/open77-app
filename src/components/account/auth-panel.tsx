@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { type FormEvent, useState } from "react";
 
 import { CheckIcon, InfoIcon } from "@/components/icons";
@@ -240,6 +241,11 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
           <button className="btn btn-primary" type="submit" disabled={busy}>
             {busy ? "Working…" : mode === "login" ? "Sign in" : "Create account"}
           </button>
+          {mode === "login" ? (
+            <Link className="ac-forgot" href="/forgot-password">
+              Forgot your password?
+            </Link>
+          ) : null}
         </div>
       </form>
     </div>

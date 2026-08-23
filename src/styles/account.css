@@ -86,6 +86,8 @@
 .ac-input[aria-invalid="true"] { border-color: var(--danger); }
 .ac-hint { font: 12.5px var(--font-body); color: var(--text-faint); text-transform: none; letter-spacing: 0; }
 .ac-form-actions { display: flex; align-items: center; gap: 12px; margin-top: 4px; flex-wrap: wrap; }
+.ac-forgot { font: 13.5px var(--font-body); color: var(--text-dim); transition: color 0.15s var(--ease); }
+.ac-forgot:hover { color: var(--accent); }
 
 /* ---------- Status strips ---------- */
 
