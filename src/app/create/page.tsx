@@ -60,13 +60,13 @@ const STEPS = [
   },
   {
     num: "02",
-    title: "Shape the world",
-    body: "Configure your slots, rules, language and mode. Add resources for the gameplay you want — community-made or your own.",
+    title: "License it to your account",
+    body: "Create a free account, mint a license key in the keymaster, and put it in your server config. The key ties the server to you and is what the master checks before it lets the server onto the platform.",
   },
   {
     num: "03",
     title: "Open the doors",
-    body: "List your server in the public browser. Players find you by mode, language and region — and their client auto-downloads everything your world needs.",
+    body: "Shape your slots, rules, language and mode, add the resources you want, and your licensed server appears in the public browser — players' clients auto-download everything your world needs.",
   },
 ];
 
@@ -177,6 +177,15 @@ export default function CreatePage() {
             <p className="status-note" role="note">
               <InfoIcon />
               <span>
+                <strong>Licensing.</strong> Every server on the platform belongs to an account. The{" "}
+                <Link href="/docs/server-licensing">server licensing guide</Link> walks through
+                creating an account, getting a license key, and linking it to your server so the
+                master authorises it.
+              </span>
+            </p>
+            <p className="status-note" role="note">
+              <InfoIcon />
+              <span>
                 <strong>Honest status:</strong> the dedicated server software ships in a later
                 pre-alpha milestone — nothing to download yet. This page shows the intended flow so
                 you can start planning your world now. See the{" "}
@@ -205,6 +214,9 @@ export default function CreatePage() {
                 <Link className="btn btn-primary" href="/docs/server-resources">
                   Server docs
                   <ArrowRightIcon />
+                </Link>
+                <Link className="btn btn-ghost" href="/docs/server-licensing">
+                  Server licensing
                 </Link>
                 <Link className="btn btn-ghost" href="/docs/api">
                   Lua API reference
