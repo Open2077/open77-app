@@ -176,6 +176,12 @@
           "kind": "guide",
           "nav": "Privileged debug runtime",
           "description": "The ACL-gated in-game Lua laboratory: client execution, native lab commands, the REDscript bridge, and the limits that keep it out of gameplay code."
+        },
+        {
+          "slug": "agent-testing",
+          "kind": "guide",
+          "nav": "Autonomous agent testing",
+          "description": "The MCP server and Claude Code skill that let an AI agent test OPEN//77 in the running game: the tool list, the human-path connection, repeatable scenarios, installation, and the rules that keep a verdict honest."
         }
       ]
     }

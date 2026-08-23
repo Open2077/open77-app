@@ -70,6 +70,7 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Blips](blips.md) | Vanilla map markers, entity attachment, and sprites. |
 | [Visual and audio effects](effects.md) | Resource-owned world/entity VFX and spatialised SFX. |
 | [Privileged debug runtime](debug-runtime.md) | ACL-targeted client Lua execution, native lab commands, and REDscript bridge probes. |
+| [Autonomous agent testing](agent-testing.md) | The MCP server and skill that let an AI agent drive the real game: stack, connection, tools, scenarios, and safety rules. |
 | [Chat](chat.md) | Messages, slash commands, completion, and resource integration. |
 | [Clipboard](clipboard.md) | Write-only client clipboard API and the `/pos` and `/rot` transform commands. |
 | [Client persistent KVP](client-kvp.md) | Endpoint- and resource-isolated local key/value persistence, search, atomic operations, and quotas. |
