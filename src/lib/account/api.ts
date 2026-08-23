@@ -83,7 +83,8 @@ export type CreatedLicense = {
   createdAtUtc: string;
 };
 
-async function call<T>(
+/** Shared request core, also the base of the admin client in admin-api.ts. */
+export async function masterCall<T>(
   path: string,
   init: { method?: string; token?: string; body?: unknown } = {},
 ): Promise<T> {
@@ -135,33 +136,33 @@ export function register(input: {
   password: string;
   displayName: string;
 }): Promise<RegisterResult> {
-  return call("/api/v1/accounts/register", { method: "POST", body: input });
+  return masterCall("/api/v1/accounts/register", { method: "POST", body: input });
 }
 
 export function verifyEmail(input: { email: string; token: string }): Promise<void> {
-  return call("/api/v1/accounts/verify-email", { method: "POST", body: input });
+  return masterCall("/api/v1/accounts/verify-email", { method: "POST", body: input });
 }
 
 export function login(input: { email: string; password: string }): Promise<LoginResult> {
-  return call("/api/v1/accounts/login", { method: "POST", body: input });
+  return masterCall("/api/v1/accounts/login", { method: "POST", body: input });
 }
 
 export function logout(token: string): Promise<void> {
-  return call("/api/v1/accounts/logout", { method: "POST", token });
+  return masterCall("/api/v1/accounts/logout", { method: "POST", token });
 }
 
 export function me(token: string): Promise<Account> {
-  return call("/api/v1/accounts/me", { token });
+  return masterCall("/api/v1/accounts/me", { token });
 }
 
 export function listLicenses(token: string): Promise<License[]> {
-  return call("/api/v1/accounts/licenses", { token });
+  return masterCall("/api/v1/accounts/licenses", { token });
 }
 
 export function createLicense(token: string, label: string): Promise<CreatedLicense> {
-  return call("/api/v1/accounts/licenses", { method: "POST", token, body: { label } });
+  return masterCall("/api/v1/accounts/licenses", { method: "POST", token, body: { label } });
 }
 
 export function revokeLicense(token: string, licenseId: string): Promise<void> {
-  return call(`/api/v1/accounts/licenses/${licenseId}/revoke`, { method: "POST", token });
+  return masterCall(`/api/v1/accounts/licenses/${licenseId}/revoke`, { method: "POST", token });
 }
