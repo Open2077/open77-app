@@ -748,6 +748,17 @@ body.detail-open { overflow: hidden; }
 .docs-section .faq-list { margin-top: 12px; }
 .faq-item p a { color: var(--accent); }
 
+.doc-inline-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+.doc-inline-link:hover { text-decoration: underline; }
+.docs-section .step .doc-inline-link { margin-top: 12px; font-size: 14px; }
+
 /* ---------- Community ---------- */
 
 .section-community { padding-top: clamp(40px, 5vw, 64px); }

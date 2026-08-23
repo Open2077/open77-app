@@ -27,6 +27,13 @@
       "title": "Getting started",
       "pages": [
         {
+          "slug": "server-licensing",
+          "kind": "page",
+          "nav": "Server licensing",
+          "title": "Server licensing",
+          "description": "How a server joins the OPEN//77 platform: create an account, mint a license key in the keymaster, put the key in your server config, and how the master authorises the server on boot."
+        },
+        {
           "slug": "server-resources",
           "kind": "guide",
           "nav": "Server resources",

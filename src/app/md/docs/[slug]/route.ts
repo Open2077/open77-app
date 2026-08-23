@@ -1,4 +1,5 @@
 import { getDocsPages, getGuideMarkdown } from "@/lib/docs";
+import { licensingToMarkdown } from "@/lib/licensing-content";
 import { markdownResponse } from "@/lib/markdown-response";
 import { platformToMarkdown } from "@/lib/platform-content";
 
@@ -20,6 +21,11 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
   // projected from the same content module the page renders from.
   if (slug === "platform") {
     return markdownResponse(platformToMarkdown(), "/docs/platform");
+  }
+
+  // Also authored in TSX, its Markdown twin projected from the content module.
+  if (slug === "server-licensing") {
+    return markdownResponse(licensingToMarkdown(), "/docs/server-licensing");
   }
 
   return markdownResponse(await getGuideMarkdown(slug), `/docs/${slug}`);
