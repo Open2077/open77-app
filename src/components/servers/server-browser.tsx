@@ -5,6 +5,7 @@ import { useId, useMemo, useState, useSyncExternalStore, type ReactNode } from "
 
 import { useFavorites } from "@/components/favorites";
 import { DiscordIcon, FilterIcon, PlugIcon, SearchIcon, StarIcon } from "@/components/icons";
+import { ServerImage } from "@/components/servers/server-image";
 import { useToast } from "@/components/toast";
 import { site } from "@/lib/site";
 import {
@@ -426,13 +427,14 @@ function ServerRow({
 }) {
   return (
     <li className="sb-row">
-      {/* Presentational card: the live directory has no per-server detail page,
-          so the row itself does not navigate — Connect is the action. */}
-      <div className="sb-row-link">
-        <span
+      {/* The card navigates to the live detail page; the explicit Connect button
+          (in sb-actions, a sibling of this link) fires the deep link instead. */}
+      <Link className="sb-row-link" href={`/servers/${server.id}`}>
+        <ServerImage
+          src={server.icon}
+          kind="icon"
           className="sb-thumb"
-          style={server.banner ? { backgroundImage: `url('${server.banner}')` } : undefined}
-          aria-hidden="true"
+          label={server.name.trim().charAt(0).toUpperCase() || "?"}
         />
         <span className="sb-id">
           <span className="sb-name">
@@ -466,7 +468,7 @@ function ServerRow({
             {server.region} · {server.lang}
           </span>
         </span>
-      </div>
+      </Link>
       <span className="sb-actions">
         <button
           className={`fav-btn${isFavorite ? " is-fav" : ""}`}
