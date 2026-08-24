@@ -11,6 +11,7 @@ import {
   LANGUAGES,
   PRIMARY_MODES,
   REGIONS,
+  formatPing,
   joinServer,
   occupancyPercent,
   pingClass,
@@ -345,17 +346,16 @@ export function ServerBrowser({
       </div>
 
       {servers.length === 0 ? (
-        /* The honest default: the directory is empty until the real API is
-           wired in, and pretending otherwise is exactly what this page must
-           never do. The toolbar above stays — it shows the shape of the
-           product — but the listing area says what is actually true. */
+        /* The live directory answered with no servers online. The toolbar above
+           stays — it shows the shape of the product — but the listing area says
+           what is actually true right now. */
         <div className="sb-offline" role="status">
           <p className="sb-offline-title">
-            <span className="live-dot live-dot-idle" aria-hidden="true" /> NO SERVERS LIVE YET
+            <span className="live-dot live-dot-idle" aria-hidden="true" /> NO SERVERS ONLINE
           </p>
           <p className="sb-offline-body">
-            The public directory opens with the first alpha build. The moment communities bring
-            their worlds online, they show up right here — this browser is already wired for it.
+            No community worlds are online right now. The moment a server comes up it shows up right
+            here — this browser reads the live OPEN//77 directory.
           </p>
           <div className="sb-offline-ctas">
             {site.links.discord ? (
@@ -380,7 +380,7 @@ export function ServerBrowser({
             <div className="sb-col-head">
               <h2>All servers</h2>
               <span className="sb-count">
-                {visible.length} / {servers.length} (demo)
+                {visible.length} / {servers.length}
               </span>
             </div>
             <ul className="sb-list">
@@ -426,14 +426,12 @@ function ServerRow({
 }) {
   return (
     <li className="sb-row">
-      <Link
-        className="sb-row-link"
-        href={`/servers/${server.id}`}
-        aria-label={`${server.name} — server details`}
-      >
+      {/* Presentational card: the live directory has no per-server detail page,
+          so the row itself does not navigate — Connect is the action. */}
+      <div className="sb-row-link">
         <span
           className="sb-thumb"
-          style={{ backgroundImage: `url('${server.banner}')` }}
+          style={server.banner ? { backgroundImage: `url('${server.banner}')` } : undefined}
           aria-hidden="true"
         />
         <span className="sb-id">
@@ -461,12 +459,14 @@ function ServerRow({
           </span>
         </span>
         <span className="sb-net">
-          <span className={`sb-ping ${pingClass(server.ping)}`}>{server.ping} ms</span>
+          <span className={`sb-ping ${server.ping > 0 ? pingClass(server.ping) : ""}`}>
+            {formatPing(server.ping)}
+          </span>
           <span className="sb-loc">
             {server.region} · {server.lang}
           </span>
         </span>
-      </Link>
+      </div>
       <span className="sb-actions">
         <button
           className={`fav-btn${isFavorite ? " is-fav" : ""}`}
