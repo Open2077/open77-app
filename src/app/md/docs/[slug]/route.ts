@@ -1,7 +1,9 @@
 import { getDocsPages, getGuideMarkdown } from "@/lib/docs";
+import { hostingToMarkdown } from "@/lib/hosting-content";
 import { licensingToMarkdown } from "@/lib/licensing-content";
 import { markdownResponse } from "@/lib/markdown-response";
 import { platformToMarkdown } from "@/lib/platform-content";
+import { wardenToMarkdown } from "@/lib/warden-content";
 
 /** `/docs/<slug>.md` — one documentation page as Markdown. */
 export const dynamic = "force-static";
@@ -26,6 +28,14 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
   // Also authored in TSX, its Markdown twin projected from the content module.
   if (slug === "server-licensing") {
     return markdownResponse(licensingToMarkdown(), "/docs/server-licensing");
+  }
+
+  // Likewise authored in TSX; Markdown twins projected from their content modules.
+  if (slug === "host-a-server") {
+    return markdownResponse(hostingToMarkdown(), "/docs/host-a-server");
+  }
+  if (slug === "warden") {
+    return markdownResponse(wardenToMarkdown(), "/docs/warden");
   }
 
   return markdownResponse(await getGuideMarkdown(slug), `/docs/${slug}`);

@@ -167,6 +167,14 @@ export default async function HostPage() {
                   on the server machine.
                 </span>
               </p>
+              <div className="hero-ctas">
+                <Link className="btn btn-ghost" href="/docs/host-a-server">
+                  Full hosting guide
+                </Link>
+                <Link className="btn btn-ghost" href="/docs/warden">
+                  Meet Warden, the admin panel
+                </Link>
+              </div>
             </div>
           </section>
         </HostGate>
