@@ -38,7 +38,9 @@ function parseRequest(params: URLSearchParams): { request?: LauncherRequest; err
     url.protocol === "http:" &&
     (url.hostname === "127.0.0.1" || url.hostname === "localhost") &&
     url.port !== "" &&
-    url.pathname === "/callback" &&
+    // .NET's HttpListener loopback prefix carries a trailing slash, so the
+    // launcher's redirect_uri is /callback/ — accept it with or without.
+    (url.pathname === "/callback" || url.pathname === "/callback/") &&
     url.search === "" &&
     url.hash === "";
   if (!loopback) {
