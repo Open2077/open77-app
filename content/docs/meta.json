@@ -27,11 +27,25 @@
       "title": "Getting started",
       "pages": [
         {
+          "slug": "host-a-server",
+          "kind": "page",
+          "nav": "Host your own server",
+          "title": "Host your own server",
+          "description": "A step-by-step guide to running your own OPEN//77 dedicated server: get the Windows or Linux build, mint a license key, walk the first-run setup, edit server.jsonc, launch it, and watch it appear automatically in the launcher."
+        },
+        {
           "slug": "server-licensing",
           "kind": "page",
           "nav": "Server licensing",
           "title": "Server licensing",
           "description": "How a server joins the OPEN//77 platform: create an account, mint a license key in the keymaster, put the key in your server config, and how the master authorises the server on boot."
+        },
+        {
+          "slug": "warden",
+          "kind": "page",
+          "nav": "Warden admin panel",
+          "title": "Warden",
+          "description": "Warden is the OPEN//77 in-server admin panel: a browser control room for your live server. Stream the console, run commands, hot-reload Lua resources, moderate players, post announcements, edit config and manage admins — without ever restarting."
         },
         {
           "slug": "server-resources",
