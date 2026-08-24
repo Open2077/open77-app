@@ -1,0 +1,265 @@
+/* ============================================================
+   /host — the dedicated-server download surface.
+
+   Marketing-grade like /create, but with an application core: the
+   release card reads live CDN data, and the gate panel fronts the
+   admin-only rollout. Everything leans on the OPEN SIGNAL tokens.
+   ============================================================ */
+
+/* ---- the latest-release card ------------------------------------ */
+
+.host-release {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 330px);
+  gap: clamp(24px, 4vw, 44px);
+  align-items: center;
+  padding: clamp(24px, 4vw, 42px);
+  border: 1px solid var(--line-strong);
+  background:
+    linear-gradient(115deg, rgba(var(--accent-rgb), 0.07), transparent 45%),
+    var(--surface);
+  clip-path: var(--notch-clip);
+}
+
+.host-release-tag {
+  margin: 0 0 6px;
+  font: 600 12.5px var(--font-display);
+  letter-spacing: 0.22em;
+  color: var(--text-dim);
+}
+
+.host-release-version {
+  margin: 0;
+  font: 700 clamp(30px, 4.5vw, 44px) / 1.05 var(--font-display);
+  letter-spacing: 0.01em;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.host-release-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.host-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font: 500 11.5px var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+}
+
+.host-chip-ok {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: rgba(var(--accent-rgb), 0.35);
+}
+
+.host-release-facts {
+  display: grid;
+  gap: 7px;
+  margin: 20px 0 0;
+}
+
+.host-release-facts > div {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+}
+
+.host-release-facts dt {
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.host-release-facts dd {
+  margin: 0;
+  font: 13.5px var(--font-mono);
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+}
+
+.host-release-cta {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  align-self: stretch;
+  align-content: center;
+  padding-left: clamp(20px, 3vw, 36px);
+  border-left: 1px solid var(--line);
+}
+
+.host-release-note {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-faint);
+}
+
+.host-release-note span {
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+}
+
+/* ---- the "nothing published yet" state --------------------------- */
+
+.host-empty {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: clamp(36px, 6vw, 64px) clamp(20px, 4vw, 48px);
+  text-align: center;
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  clip-path: var(--notch-clip);
+}
+
+.host-empty-icon {
+  color: var(--text-faint);
+  margin-bottom: 4px;
+}
+
+.host-empty h3 {
+  margin: 0;
+  font: 600 22px var(--font-display);
+  letter-spacing: 0.02em;
+}
+
+.host-empty p {
+  margin: 0;
+  max-width: 56ch;
+  font-size: 14.5px;
+  color: var(--text-dim);
+}
+
+/* ---- the admin-only gate panel (TODO(go-public): dies with the gate) */
+
+.host-locked {
+  position: relative;
+  padding: clamp(28px, 5vw, 52px);
+  border: 1px solid var(--line-strong);
+  background:
+    linear-gradient(115deg, rgba(var(--accent-rgb), 0.08), transparent 50%),
+    var(--surface);
+  clip-path: var(--notch-clip);
+}
+
+.host-locked-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  font: 600 12.5px var(--font-display);
+  letter-spacing: 0.22em;
+  color: var(--accent);
+}
+
+.host-locked h2 {
+  margin: 0 0 12px;
+  font: 600 clamp(24px, 3.4vw, 32px) / 1.15 var(--font-display);
+  letter-spacing: 0.01em;
+}
+
+.host-locked-body {
+  margin: 0;
+  max-width: 64ch;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-dim);
+}
+
+.host-locked-body a {
+  color: var(--accent);
+}
+
+.host-locked-note {
+  margin: 16px 0 0;
+  font-size: 13.5px;
+  color: var(--text-faint);
+}
+
+.host-locked-note strong {
+  color: var(--text-dim);
+}
+
+.host-locked-auth {
+  max-width: 560px;
+  margin-top: 28px;
+}
+
+.host-locked-auth .ac-notice {
+  margin-bottom: 16px;
+}
+
+/* ---- what's in the zip ------------------------------------------- */
+
+.host-contents {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 40px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.host-content-item {
+  border-left: 2px solid var(--accent);
+  padding: 2px 0 2px 20px;
+}
+
+.host-content-item code {
+  display: block;
+  margin-bottom: 6px;
+  font: 600 14px var(--font-mono);
+  letter-spacing: 0.02em;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.host-content-item p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-dim);
+}
+
+/* ---- responsive --------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .host-release {
+    grid-template-columns: 1fr;
+  }
+
+  .host-release-cta {
+    padding-left: 0;
+    padding-top: 22px;
+    border-left: none;
+    border-top: 1px solid var(--line);
+  }
+
+  .host-release-cta .btn {
+    width: 100%;
+  }
+
+  .host-release-facts > div {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .host-contents {
+    grid-template-columns: 1fr;
+  }
+}
