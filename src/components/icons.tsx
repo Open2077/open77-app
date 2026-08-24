@@ -380,3 +380,37 @@ export function PeopleIcon({ size = 24, className }: IconProps) {
     </svg>
   );
 }
+
+export function WindowsIcon(props: IconProps) {
+  return (
+    <svg {...svgProps({ size: 16, ...props })}>
+      <path
+        d="M2 3.6 7.1 2.9V7.5H2ZM2 8.5H7.1V13.1L2 12.4ZM8 2.75 14 2v5.5H8ZM8 8.5H14V14L8 13.25Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+export function LinuxIcon(props: IconProps) {
+  return (
+    <svg {...svgProps({ size: 16, ...props })}>
+      <path
+        d="M6.4 2.2c1.1-.9 2.7-.6 3.4.6.5.9.4 2.1.6 3.1.2 1 .8 1.8 1.3 2.7.5.9 1.1 1.9.9 2.9-.2.8-1 1.3-1.8 1.3-.6 0-1.2-.2-1.8-.1-.7.1-1.3.5-2 .5s-1.4-.4-2-.6c-.6-.2-1.4-.1-1.8-.6-.5-.6-.2-1.5.2-2.2.5-.9 1.1-1.7 1.3-2.7.2-1 .1-2.1.4-3.1.2-.6.5-1.1 1.1-1.5Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      <circle cx="6.9" cy="5.4" r=".9" fill="currentColor" />
+      <circle cx="9.5" cy="5.4" r=".9" fill="currentColor" />
+      <path
+        d="M6.9 7.4c.4.5 1.9.5 2.4 0"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}

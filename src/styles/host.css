@@ -1,25 +1,31 @@
 /* ============================================================
    /host — the dedicated-server download surface.
 
-   Marketing-grade like /create, but with an application core: the
-   release card reads live CDN data, and the gate panel fronts the
+   The release panel reads live CDN data and lists one download card
+   per platform (Windows, Linux, …). The gate panel fronts the
    admin-only rollout. Everything leans on the OPEN SIGNAL tokens.
    ============================================================ */
 
-/* ---- the latest-release card ------------------------------------ */
+/* ---- the latest-release panel ----------------------------------- */
 
 .host-release {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 330px);
-  gap: clamp(24px, 4vw, 44px);
-  align-items: center;
+  gap: clamp(22px, 3vw, 32px);
   padding: clamp(24px, 4vw, 42px);
   border: 1px solid var(--line-strong);
   background:
     linear-gradient(115deg, rgba(var(--accent-rgb), 0.07), transparent 45%),
     var(--surface);
   clip-path: var(--notch-clip);
+}
+
+.host-release-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: flex-end;
+  justify-content: space-between;
 }
 
 .host-release-tag {
@@ -31,7 +37,7 @@
 
 .host-release-version {
   margin: 0;
-  font: 700 clamp(30px, 4.5vw, 44px) / 1.05 var(--font-display);
+  font: 700 clamp(28px, 4vw, 40px) / 1.05 var(--font-display);
   letter-spacing: 0.01em;
   color: var(--text);
   overflow-wrap: anywhere;
@@ -41,7 +47,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 12px;
 }
 
 .host-chip {
@@ -64,53 +69,147 @@
   border-color: rgba(var(--accent-rgb), 0.35);
 }
 
-.host-release-facts {
+/* ---- the per-platform build cards ------------------------------- */
+
+.host-builds {
   display: grid;
-  gap: 7px;
-  margin: 20px 0 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.host-release-facts > div {
+.host-build {
   display: grid;
-  grid-template-columns: 170px minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  gap: 16px;
+  padding: clamp(18px, 2.4vw, 24px);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elev);
+  border-radius: var(--radius-sm);
+}
+
+.host-build-soon {
+  opacity: 0.72;
+}
+
+.host-build-os {
+  display: flex;
+  align-items: center;
   gap: 12px;
+}
+
+.host-build-os > svg {
+  flex: none;
+  color: var(--accent);
+}
+
+.host-build-label {
+  margin: 0;
+  font: 600 17px var(--font-display);
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+
+.host-build-kind {
+  margin: 2px 0 0;
+  font: 500 11.5px var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.host-build-facts {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.host-build-facts > div {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 10px;
   align-items: baseline;
 }
 
-.host-release-facts dt {
-  font: 500 11px var(--font-mono);
+.host-build-facts dt {
+  font: 500 10.5px var(--font-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-faint);
 }
 
-.host-release-facts dd {
+.host-build-facts dd {
   margin: 0;
-  font: 13.5px var(--font-mono);
+  font: 13px var(--font-mono);
   color: var(--text-dim);
   overflow-wrap: anywhere;
 }
 
-.host-release-cta {
-  display: grid;
+.host-build-cta {
+  display: flex;
+  align-items: center;
   gap: 14px;
-  justify-items: start;
-  align-self: stretch;
-  align-content: center;
-  padding-left: clamp(20px, 3vw, 36px);
-  border-left: 1px solid var(--line);
 }
 
-.host-release-note {
-  margin: 0;
-  font-size: 12.5px;
-  line-height: 1.6;
+.host-build-cta .btn {
+  flex: none;
+}
+
+.host-build-size {
+  font: 12px var(--font-mono);
   color: var(--text-faint);
 }
 
-.host-release-note span {
-  font-family: var(--font-mono);
+.host-build-soon-body {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.host-build-soon-body p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.6;
   color: var(--text-dim);
+}
+
+/* ---- the copyable SHA-256 --------------------------------------- */
+
+.host-hash {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 13px var(--font-mono);
+  color: var(--text-dim);
+}
+
+.host-hash-btn {
+  padding: 2px 6px;
+  margin: -2px 0;
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.host-hash-btn:hover {
+  color: var(--accent);
+  border-color: rgba(var(--accent-rgb), 0.4);
+}
+
+.host-hash-btn svg {
+  flex: none;
+}
+
+.host-hash-none {
+  color: var(--text-faint);
+  font-style: italic;
 }
 
 /* ---- the "nothing published yet" state --------------------------- */
@@ -204,62 +303,14 @@
   margin-bottom: 16px;
 }
 
-/* ---- what's in the zip ------------------------------------------- */
-
-.host-contents {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px 40px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.host-content-item {
-  border-left: 2px solid var(--accent);
-  padding: 2px 0 2px 20px;
-}
-
-.host-content-item code {
-  display: block;
-  margin-bottom: 6px;
-  font: 600 14px var(--font-mono);
-  letter-spacing: 0.02em;
-  color: var(--text);
-  overflow-wrap: anywhere;
-}
-
-.host-content-item p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.65;
-  color: var(--text-dim);
-}
-
 /* ---- responsive --------------------------------------------------- */
 
 @media (max-width: 860px) {
-  .host-release {
+  .host-builds {
     grid-template-columns: 1fr;
   }
 
-  .host-release-cta {
-    padding-left: 0;
-    padding-top: 22px;
-    border-left: none;
-    border-top: 1px solid var(--line);
-  }
-
-  .host-release-cta .btn {
-    width: 100%;
-  }
-
-  .host-release-facts > div {
-    grid-template-columns: 1fr;
-    gap: 2px;
-  }
-
-  .host-contents {
-    grid-template-columns: 1fr;
+  .host-build-cta .btn {
+    flex: 1 1 auto;
   }
 }
