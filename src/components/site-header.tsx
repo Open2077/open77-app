@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Wordmark } from "@/components/brand";
-import { DiscordIcon, MenuIcon } from "@/components/icons";
+import { DiscordIcon, MenuIcon, ShieldIcon } from "@/components/icons";
+import { useSession } from "@/lib/account/session";
 import { mainNav, site } from "@/lib/site";
 
 function isActive(pathname: string, href: string): boolean {
@@ -15,6 +16,8 @@ function isActive(pathname: string, href: string): boolean {
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const { session } = useSession();
+  const isAdmin = session?.role === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -84,6 +87,17 @@ export function SiteHeader() {
               <DiscordIcon size={17} />
             </a>
           ) : null}
+          {isAdmin ? (
+            <Link
+              className="btn btn-small btn-ghost header-admin"
+              href="/admin"
+              title="Operations console"
+              {...(isActive(pathname, "/admin") ? { "aria-current": "page" as const } : {})}
+            >
+              <ShieldIcon size={14} />
+              Admin
+            </Link>
+          ) : null}
           <Link
             className="btn btn-small btn-ghost header-account"
             href="/account"
@@ -121,6 +135,14 @@ export function SiteHeader() {
             {item.label}
           </Link>
         ))}
+        {isAdmin ? (
+          <Link
+            href="/admin"
+            {...(isActive(pathname, "/admin") ? { "aria-current": "page" as const } : {})}
+          >
+            Admin
+          </Link>
+        ) : null}
         <Link
           href="/account"
           {...(isActive(pathname, "/account") ? { "aria-current": "page" as const } : {})}

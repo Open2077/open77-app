@@ -13,6 +13,7 @@ import { useSession } from "@/lib/account/session";
 
 const ADMIN_NAV = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/releases", label: "Releases" },
   { href: "/admin/servers", label: "Servers" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/licenses", label: "Licenses" },

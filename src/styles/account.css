@@ -319,6 +319,7 @@
 /* ---------- Header entry ---------- */
 
 .header-account { white-space: nowrap; }
+.header-admin { white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
 
 @media (max-width: 640px) {
   .ac-key-row { align-items: flex-start; flex-direction: column; }

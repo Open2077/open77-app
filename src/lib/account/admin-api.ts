@@ -57,6 +57,42 @@ export type AdminAuditEntry = {
   detailsJson?: string | null;
 };
 
+export type BuildKind = "client" | "server" | "launcher";
+export type BuildStatus = "active" | "deprecated" | "revoked";
+
+export type AuthorizedBuild = {
+  buildId: string;
+  kind: BuildKind;
+  version: string;
+  sha256: string;
+  gameBuild: number | null;
+  status: BuildStatus;
+  releasedAtUtc: string;
+  notes: string | null;
+};
+
+export type Enforcement = {
+  rejectRevokedBuilds: boolean;
+  rejectUnknownClientBuilds: boolean;
+  rejectUnknownServerBuilds: boolean;
+  requiredGameBuild: string;
+  requiredGameSha256: string;
+  /** Public CDN root, e.g. "https://cdn.open2077.net". */
+  cdnBaseUrl: string;
+  /** Mod CDN base, e.g. "https://cdn.open2077.net/mod". */
+  modCdnBaseUrl: string;
+};
+
+export type ModManifestSummary = {
+  version: string;
+  issuedAtMs: number;
+  fileCount: number;
+  requiredGameBuild: string;
+  baseUrl: string;
+  /** True for the manifest currently served at GET /api/v1/mod/manifest. */
+  current: boolean;
+};
+
 export type BanScope = "global" | "server";
 export type BanSubjectKind = "account" | "identity" | "identity_key" | "license";
 
@@ -106,6 +142,41 @@ export function revokeLicense(
   licenseId: string,
 ): Promise<{ licenseId: string; serversRevoked: number }> {
   return masterCall(`/api/v1/admin/licenses/${licenseId}/revoke`, { method: "POST", token });
+}
+
+/** The anti-crack allowlist: every registered build, newest first. */
+export function builds(token: string, kind?: BuildKind, limit = 100): Promise<AuthorizedBuild[]> {
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (kind) params.set("kind", kind);
+  return masterCall(`/api/v1/admin/builds?${params}`, { token });
+}
+
+/** Flip a build between active / deprecated / revoked. Revoking a client build is the kill switch. */
+export function setBuildStatus(token: string, buildId: string, status: BuildStatus): Promise<void> {
+  return masterCall(`/api/v1/admin/builds/${buildId}/status`, {
+    method: "POST",
+    token,
+    body: { status },
+  });
+}
+
+/** The master's current build-registry enforcement posture and CDN roots. */
+export function enforcement(token: string): Promise<Enforcement> {
+  return masterCall("/api/v1/admin/enforcement", { token });
+}
+
+/** Every published mod manifest (the rollback candidates), newest first, live one flagged. */
+export function modManifests(token: string): Promise<ModManifestSummary[]> {
+  return masterCall("/api/v1/admin/mod/manifests", { token });
+}
+
+/** Re-publish a prior mod manifest as the live one. Returns the re-served signed JSON. */
+export function rollbackMod(token: string, version: string): Promise<unknown> {
+  return masterCall("/api/v1/admin/mod/rollback", {
+    method: "POST",
+    token,
+    body: { version },
+  });
 }
 
 export function audit(
