@@ -11,6 +11,7 @@ import {
   LANGUAGES,
   PRIMARY_MODES,
   REGIONS,
+  joinServer,
   occupancyPercent,
   pingClass,
   popClass,
@@ -389,7 +390,10 @@ export function ServerBrowser({
                   server={server}
                   isFavorite={isFavorite(server.id)}
                   onToggleFavorite={() => toggle(server.id)}
-                  onConnect={() => showToast("Connecting goes live with the first public build.")}
+                  onConnect={() => {
+                    showToast("Opening the OPEN//77 launcher…");
+                    joinServer(server.id);
+                  }}
                 />
               ))}
               {visible.length === 0 ? (

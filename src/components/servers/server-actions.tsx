@@ -3,6 +3,7 @@
 import { useFavorites } from "@/components/favorites";
 import { PlayIcon, StarIcon } from "@/components/icons";
 import { useToast } from "@/components/toast";
+import { joinServer } from "@/lib/servers";
 
 /**
  * The favourite and connect controls on a server page.
@@ -30,7 +31,10 @@ export function ServerActions({ id }: { id: string }) {
         <button
           className="btn btn-primary"
           type="button"
-          onClick={() => showToast("Connecting goes live with the first public build.")}
+          onClick={() => {
+            showToast("Opening the OPEN//77 launcher…");
+            joinServer(id);
+          }}
         >
           <PlayIcon />
           Connect

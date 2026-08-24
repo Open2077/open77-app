@@ -59,6 +59,30 @@ export const serverDirectory = {
   },
 };
 
+/**
+ * The `open77://` deep link that boots Cyberpunk 2077 straight into a server.
+ *
+ * The OS routes it to the installed OPEN//77 launcher, which resolves the id
+ * against the master directory, signs the player in if needed, and starts the
+ * game already connecting to that world (or auto-connects a running client).
+ * If the launcher is not installed the browser shows its usual scheme prompt.
+ *
+ * `<id>` is the same identifier the directory exposes as {@link GameServer.id}.
+ */
+export function serverConnectUrl(id: string): string {
+  return `open77://connect?server=${encodeURIComponent(id)}`;
+}
+
+/**
+ * Best-effort "open the launcher" for a Join/Play click. Navigating to a custom
+ * scheme that has no handler simply does nothing (or shows the OS prompt); it
+ * never unloads the current page, so this is safe to call unconditionally.
+ */
+export function joinServer(id: string): void {
+  if (typeof window === "undefined") return;
+  window.location.href = serverConnectUrl(id);
+}
+
 /** Latency bucket, matching the `.ping-good` / `.ping-mid` / `.ping-far` styles. */
 export function pingClass(ping: number): string {
   if (ping <= 30) return "ping-good";
