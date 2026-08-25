@@ -64,7 +64,7 @@ export const site = {
     discord: "https://discord.open2077.net" as string | null,
     x: "https://x.com/open2077" as string | null,
     tiktok: "https://www.tiktok.com/@open2077_network" as string | null,
-    devlog: null as string | null,
+    devlog: "/devblog" as string | null,
   },
 } as const;
 
@@ -87,6 +87,7 @@ export const mainNav = [
   { href: "/servers", label: "Servers" },
   { href: "/create", label: "Create a Server" },
   { href: "/docs", label: "Docs" },
+  { href: "/devblog", label: "Devblog" },
   { href: "/community", label: "Community" },
 ] as const;
 
@@ -111,6 +112,7 @@ export const footerNav = [
     title: "Project",
     links: [
       { href: "/docs/platform#roadmap", label: "Status & roadmap" },
+      { href: "/devblog", label: "Devblog" },
       { href: "/community", label: "Community" },
       { href: "/docs", label: "Documentation" },
       { href: "/brand", label: "Brand kit" },

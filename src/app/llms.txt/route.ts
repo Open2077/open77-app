@@ -1,4 +1,5 @@
 import { getApiIndex } from "@/lib/api-reference";
+import { blogMarkdownHref, getBlogPosts } from "@/lib/devblog";
 import {
   docHref,
   docMarkdownHref,
@@ -25,11 +26,12 @@ import { absoluteUrl, site } from "@/lib/site";
 export const dynamic = "force-static";
 
 export async function GET() {
-  const [nav, pages, api, manifest] = await Promise.all([
+  const [nav, pages, api, manifest, posts] = await Promise.all([
     getDocsNav(),
     getDocsPages(),
     getApiIndex(),
     getDocsManifest(),
+    getBlogPosts(),
   ]);
 
   const lines: string[] = [
@@ -52,8 +54,19 @@ export async function GET() {
     `- [Create a server](${absoluteUrl("/create")}): what hosting an OPEN//77 world will involve.`,
     `- [Community](${absoluteUrl("/community")}): how to follow the project and join the alpha.`,
     `- [Brand kit](${absoluteUrl("/brand")}): logo, mark, colours and social assets.`,
+    `- [Devblog](${absoluteUrl("/devblog")}): development updates as they ship, one post per working day.`,
     "",
   ];
+
+  if (posts.length > 0) {
+    lines.push("## Devblog", "");
+    for (const post of posts) {
+      lines.push(
+        `- [${post.title}](${absoluteUrl(blogMarkdownHref(post.slug))}): ${post.description}`,
+      );
+    }
+    lines.push("");
+  }
 
   for (const section of nav.sections) {
     lines.push(`## ${section.title}`, "");

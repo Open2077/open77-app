@@ -196,6 +196,49 @@ export function techArticleNode(input: {
   };
 }
 
+/**
+ * The devblog as a whole. Lives on the index page; the posts point back at it
+ * through `isPartOf` so crawlers see one blog, not a scatter of articles.
+ */
+export function blogNode(input: { description: string; path: string }): JsonLdNode {
+  return {
+    "@type": "Blog",
+    "@id": `${absoluteUrl(input.path)}#blog`,
+    name: `${site.name} Devblog`,
+    description: input.description,
+    url: absoluteUrl(input.path),
+    inLanguage: site.lang,
+    isPartOf: { "@id": WEBSITE_ID },
+    publisher: { "@id": ORGANIZATION_ID },
+  };
+}
+
+export function blogPostingNode(input: {
+  headline: string;
+  description: string;
+  path: string;
+  datePublished: string;
+  keywords?: string[];
+  wordCount?: number;
+}): JsonLdNode {
+  return {
+    "@type": "BlogPosting",
+    "@id": `${absoluteUrl(input.path)}#post`,
+    headline: input.headline,
+    description: input.description,
+    url: absoluteUrl(input.path),
+    mainEntityOfPage: absoluteUrl(input.path),
+    inLanguage: site.lang,
+    datePublished: input.datePublished,
+    dateModified: input.datePublished,
+    isPartOf: { "@id": `${absoluteUrl("/devblog")}#blog` },
+    publisher: { "@id": ORGANIZATION_ID },
+    author: { "@id": ORGANIZATION_ID },
+    ...(input.keywords?.length ? { keywords: input.keywords.join(", ") } : {}),
+    ...(input.wordCount ? { wordCount: input.wordCount } : {}),
+  };
+}
+
 export function apiReferenceNode(input: {
   name: string;
   description: string;

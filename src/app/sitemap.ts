@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { getApiIndex } from "@/lib/api-reference";
+import { blogHref, getBlogPosts } from "@/lib/devblog";
 import { docHref, getDocsManifest, getDocsPages } from "@/lib/docs";
 import { serverDirectory } from "@/lib/servers";
 import { absoluteUrl } from "@/lib/site";
@@ -19,11 +20,12 @@ import { absoluteUrl } from "@/lib/site";
  * hand-tuned ladder of numbers is noise.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [pages, api, servers, manifest] = await Promise.all([
+  const [pages, api, servers, manifest, posts] = await Promise.all([
     getDocsPages(),
     getApiIndex(),
     serverDirectory.list(),
     getDocsManifest(),
+    getBlogPosts(),
   ]);
 
   const docsModified = new Date(manifest.syncedAt);
@@ -34,6 +36,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl("/create"), changeFrequency: "monthly" },
     { url: absoluteUrl("/community"), changeFrequency: "monthly" },
     { url: absoluteUrl("/brand"), changeFrequency: "yearly" },
+  ];
+
+  // A post's `lastModified` is its own date: posts are append-only, so the
+  // date in the filename is the real provenance. The index changes daily —
+  // a new post lands with every digest.
+  const newestPost = posts[0];
+  const devblog: MetadataRoute.Sitemap = [
+    {
+      url: absoluteUrl("/devblog"),
+      changeFrequency: "daily",
+      ...(newestPost ? { lastModified: new Date(`${newestPost.date}T18:00:00Z`) } : {}),
+    },
+    ...posts.map((post) => ({
+      url: absoluteUrl(blogHref(post.slug)),
+      lastModified: new Date(`${post.date}T18:00:00Z`),
+      changeFrequency: "monthly" as const,
+    })),
   ];
 
   const docs: MetadataRoute.Sitemap = pages.map((page) => ({
@@ -56,5 +75,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "monthly",
   }));
 
-  return [...marketing, ...docs, ...apiPages, ...serverPages];
+  return [...marketing, ...devblog, ...docs, ...apiPages, ...serverPages];
 }

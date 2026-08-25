@@ -58,6 +58,7 @@ const nextConfig: NextConfig = {
         destination: "/md/api/:runtime/:namespace",
       },
       { source: "/docs/:slug.md", destination: "/md/docs/:slug" },
+      { source: "/devblog/:slug.md", destination: "/md/devblog/:slug" },
     ];
   },
 

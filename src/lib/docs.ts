@@ -216,7 +216,7 @@ function rehypeCollectToc(collected: TocEntry[]) {
  * columns — and without a wrapper the overflow lands on the page, which breaks
  * the sticky sidebar and produces a horizontally scrolling document on a phone.
  */
-function rehypeWrapTables() {
+export function rehypeWrapTables() {
   return (tree: HastRoot) => {
     visit(tree, "element", (node: Element, index, parent) => {
       if (node.tagName !== "table" || !parent || index === undefined) return;
@@ -267,7 +267,7 @@ function mdastText(node: unknown): string {
  */
 let highlighterPromise: ReturnType<typeof createHighlighter> | null = null;
 
-function getHighlighter() {
+export function getHighlighter() {
   if (!highlighterPromise) {
     highlighterPromise = createHighlighter({
       themes: [openSignalSyntaxTheme],
@@ -285,7 +285,7 @@ function getHighlighter() {
  * to a screen reader. The `#` is hidden from assistive technology and given a
  * label instead, and `tabIndex: -1` keeps it out of the tab order.
  */
-const AUTOLINK_OPTIONS: AutolinkOptions = {
+export const AUTOLINK_OPTIONS: AutolinkOptions = {
   behavior: "append",
   properties: { className: ["doc-anchor"], ariaHidden: "true", tabIndex: -1 },
   content: [{ type: "text", value: "#" }],
@@ -347,7 +347,7 @@ async function renderGuide(slug: string): Promise<RenderedGuide | null> {
 }
 
 /** Approximate prose length, with fenced code blocks excluded. */
-function countWords(markdown: string): number {
+export function countWords(markdown: string): number {
   const prose = markdown.replace(/```[\s\S]*?```/g, " ");
   const matches = prose.match(/[A-Za-z0-9][A-Za-z0-9'’_-]*/g);
   return matches ? matches.length : 0;
