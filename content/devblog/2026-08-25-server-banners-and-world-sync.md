@@ -5,7 +5,7 @@ description: "Today in OPEN//77: server banners flow end to end from Warden to t
 tags: ["servers", "world-sync", "vehicles", "warden"]
 ---
 
-Today's work was a mix of identity and stability: server owners got a way to make their world look like theirs, and three long-standing world-sync gremlins got fixed at the root.
+Today's work on OPEN//77 — our **Cyberpunk 2077 multiplayer mod** — was a mix of identity and stability: dedicated server owners got a way to make their world look like theirs, and three long-standing world-sync gremlins got fixed at the root.
 
 ## Server banners, end to end
 
@@ -32,3 +32,16 @@ Weather sync could silently fail its first application and then never retry, lea
 - A batch of internal tooling and build fixes that make development faster but change nothing player-facing — we'll spare you those.
 
 More tomorrow. If you want the short version of these in your Discord feed, it's posted daily in the [community Discord](https://discord.open2077.net).
+
+---
+
+## About OPEN//77
+
+[OPEN//77](https://open2077.net) is a free, in-development **multiplayer mod for
+Cyberpunk 2077**: play online with other players in Night City on
+community-hosted **dedicated servers**, with synced combat, vehicles and world
+state, an account-backed launcher, and Lua-scriptable servers for co-op,
+freeroam and RP. Browse [servers](https://open2077.net/servers), read the
+[docs](https://open2077.net/docs) to host your own, or join the
+[Discord](https://discord.open2077.net) to follow development. This devblog is
+published daily, straight from the work the team shipped that day.

@@ -3,6 +3,13 @@
    ============================================================ */
 
 @media (max-width: 1080px) {
+  /* Five nav items + the signed-in action cluster cannot share one row below
+     ~1080px without wrapping, so the nav hands over to the menu here; the
+     action buttons survive until the 900px block. */
+  .main-nav { display: none; }
+  .nav-toggle { display: inline-flex; }
+  .mobile-nav:not([hidden]) { display: flex; }
+
   .browser-features { grid-template-columns: repeat(2, 1fr); }
   .steps { grid-template-columns: repeat(2, 1fr); border-top: 0; }
   .step { border-top: 1px solid var(--line); }
@@ -13,11 +20,15 @@
   .dedicated-diagram { max-width: 480px; }
 }
 
+@media (max-width: 1360px) {
+  /* The stage chip is the least load-bearing header element (it already hides
+     on phones); giving up its width keeps the signed-in admin cluster from
+     colliding with the nav on mid-width windows. */
+  .stage-chip { display: none; }
+}
+
 @media (max-width: 900px) {
-  .main-nav { display: none; }
   .header-actions .btn { display: none; }
-  .nav-toggle { display: inline-flex; }
-  .mobile-nav:not([hidden]) { display: flex; }
 
   .browser-head { flex-direction: column; align-items: flex-start; gap: 20px; }
   .concept-note { max-width: none; }

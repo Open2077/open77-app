@@ -5,7 +5,7 @@ description: "A technical recap of everything OPEN//77 has built: multiplayer re
 tags: ["recap", "multiplayer", "platform", "servers"]
 ---
 
-This is the first post of the OPEN//77 devblog. From today on, a post lands here every working day, summarizing what actually shipped — written for players and server owners, with a bit more technical depth than the daily Discord summaries. Since it's day one, here is the big picture of what already exists.
+This is the first post of the OPEN//77 devblog. From today on, a post lands here every working day, summarizing what actually shipped in our **Cyberpunk 2077 multiplayer mod** — written for players and server owners, with a bit more technical depth than the daily Discord summaries. Since it's day one, here is the big picture of what already exists.
 
 ## The game is real multiplayer
 
@@ -33,7 +33,7 @@ Running a world is meant to be a product experience, not a folder of config file
 
 - **Dedicated servers for Windows and Linux**, shipped as versioned builds with a first-run setup wizard that walks through licensing and configuration.
 - **Warden**, the web admin panel: a config editor with validation, live Lua resource uploads that hot-reload without a restart, announcements, scheduled restarts, multi-user access with custom roles, and a full audit trail.
-- **Lua scripting** — servers are scriptable in Lua against a documented API (browse it under [/docs/api](/docs/api)), with MySQL bindings for persistence and a freeroam gamemode shipped as a reference resource to build on.
+- **Lua scripting** — servers are scriptable in Lua against a documented API (browse it under [/docs/api](/docs/api)), with MySQL bindings for persistence and a freeroam gamemode shipped as a reference resource — the same foundation a co-op world or a Cyberpunk 2077 RP server builds on.
 - **Moderation** — server-issued bans and platform-level enforcement are wired end to end, from the in-game action to the master server's records.
 
 ## Security, in broad strokes
@@ -43,3 +43,16 @@ A serious slice of recent work went into keeping the network fair: signed builds
 ## What's next
 
 The project is pre-alpha: there is no public build yet, and this blog is part of changing that in the open. Follow the daily posts here, or join the [Discord](https://discord.open2077.net) where the same updates land as short summaries — announcements always hit there first.
+
+---
+
+## About OPEN//77
+
+[OPEN//77](https://open2077.net) is a free, in-development **multiplayer mod for
+Cyberpunk 2077**: play online with other players in Night City on
+community-hosted **dedicated servers**, with synced combat, vehicles and world
+state, an account-backed launcher, and Lua-scriptable servers for co-op,
+freeroam and RP. Browse [servers](https://open2077.net/servers), read the
+[docs](https://open2077.net/docs) to host your own, or join the
+[Discord](https://discord.open2077.net) to follow development. This devblog is
+published daily, straight from the work the team shipped that day.

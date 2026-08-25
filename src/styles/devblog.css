@@ -1,141 +1,406 @@
 /*
- * Devblog surfaces: the index card list and the post page frame.
+ * Devblog surfaces: the index (featured card + rows) and the post page frame.
  *
- * The prose body reuses `.dx-prose` from docs.css wholesale — one Markdown
- * look across the site. Only the shells around it live here.
+ * Everything reuses the OPEN SIGNAL vocabulary: notch-cut cards, slash-skewed
+ * chips, mono micro-labels, cyan for platform/active and coral strictly for
+ * "latest". The prose body reuses `.dx-prose` from docs.css wholesale — one
+ * Markdown look across the site; `.blog-prose` only adds article rhythm.
  */
 
-.blog-feed-link {
-  margin-top: 0.75rem;
+/* ---- shared micro-labels ---- */
+
+.blog-date {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.blog-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 1.25rem;
-  max-width: 52rem;
-}
-
-.blog-card {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: var(--bg-elev);
-  padding: 1.5rem 1.75rem;
-  transition: border-color 0.15s ease;
-}
-
-.blog-card:hover {
-  border-color: rgba(var(--accent-rgb), 0.45);
-}
-
-.blog-card-date {
-  margin: 0 0 0.5rem;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent);
+  white-space: nowrap;
 }
 
-.blog-card-title {
-  margin: 0 0 0.5rem;
-  font-family: var(--font-display);
-  font-size: 1.35rem;
-  line-height: 1.25;
-  text-transform: none;
-}
-
-.blog-card-title a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.blog-card-title a:hover {
-  color: var(--accent);
-}
-
-.blog-card-description {
-  margin: 0;
-  opacity: 0.85;
+.blog-read {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+  white-space: nowrap;
 }
 
 .blog-tags {
-  margin: 0.9rem 0 0;
+  margin: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 6px;
 }
 
+/* Slash-skewed like every small label on the site; the inner span counter-
+   skews so the text stays upright (the filter-chip pattern). */
 .blog-tag {
+  display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 0.15rem 0.5rem;
+  padding: 3px 9px;
   border: 1px solid rgba(var(--accent-rgb), 0.35);
   color: var(--accent);
+  transform: skewX(-10deg);
 }
+.blog-tag > span {
+  display: inline-block;
+  transform: skewX(10deg);
+}
+
+/* ---- index: featured latest post ---- */
+
+.blog-index .section-inner {
+  max-width: 62rem;
+}
+
+.blog-feat {
+  --notch: 18px;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--bg-elev);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.09));
+  border-left: 3px solid var(--accent);
+  clip-path: var(--notch-clip);
+  padding: 34px 38px 30px;
+  transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.blog-feat:hover {
+  border-color: rgba(var(--accent-rgb), 0.55);
+  background: rgba(var(--accent-rgb), 0.04);
+}
+
+.blog-feat-flag {
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Coral is the site's "live / featured / new" channel — exactly this case. */
+.blog-latest-chip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  padding: 4px 10px;
+  color: var(--signal);
+  border: 1px solid rgba(255, 89, 100, 0.42);
+  transform: skewX(-10deg);
+}
+.blog-latest-chip > span {
+  display: inline-block;
+  transform: skewX(10deg);
+}
+
+.blog-feat-title {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(24px, 3.2vw, 34px);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+}
+.blog-feat:hover .blog-feat-title {
+  color: var(--accent);
+}
+
+.blog-feat-description {
+  margin: 0;
+  max-width: 46rem;
+  color: var(--text-dim, rgba(255, 255, 255, 0.75));
+  line-height: 1.6;
+}
+
+.blog-feat-foot {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.blog-more {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+
+/* ---- index: earlier posts ---- */
+
+.blog-earlier-title {
+  margin: 44px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+}
+.blog-earlier-rule {
+  width: 26px;
+  height: 11px;
+  border-left: 3px solid var(--slash-1);
+  border-right: 3px solid var(--slash-2);
+  transform: skewX(-32deg);
+}
+
+.blog-rows {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+}
+.blog-rows > li {
+  border-top: 1px solid var(--line, rgba(255, 255, 255, 0.09));
+}
+.blog-rows > li:last-child {
+  border-bottom: 1px solid var(--line, rgba(255, 255, 255, 0.09));
+}
+
+.blog-row {
+  display: grid;
+  grid-template-columns: 118px 1fr auto;
+  align-items: baseline;
+  gap: 10px 26px;
+  padding: 20px 14px;
+  text-decoration: none;
+  color: inherit;
+  border-left: 2px solid transparent;
+  transition: background 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+.blog-row:hover {
+  background: var(--bg-elev);
+  border-left-color: var(--accent);
+}
+
+.blog-row-body {
+  display: block;
+  min-width: 0;
+}
+.blog-row-title {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.25;
+}
+.blog-row:hover .blog-row-title {
+  color: var(--accent);
+}
+.blog-row-description {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-dim, rgba(255, 255, 255, 0.72));
+  line-height: 1.55;
+}
+
+.blog-row-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* ---- post page ---- */
 
 .blog-post-inner {
   max-width: 52rem;
 }
 
 .blog-post-head {
-  margin-bottom: 2.5rem;
+  margin-bottom: 40px;
 }
 
-.blog-post-head .dx-crumbs {
-  margin-bottom: 1.25rem;
+.blog-back {
+  margin: 0 0 18px;
+}
+.blog-back a {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  color: var(--text-faint);
+  transition: color 0.15s var(--ease);
+}
+.blog-back a:hover {
+  color: var(--accent);
 }
 
 .blog-post-title {
-  margin-top: 0.5rem;
+  margin-top: 6px;
+}
+
+.blog-post-meta {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line, rgba(255, 255, 255, 0.09));
+  border-bottom: 1px solid var(--line, rgba(255, 255, 255, 0.09));
+}
+
+.blog-md-link {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--text-faint);
+  text-decoration: none;
+}
+.blog-md-link:hover {
+  color: var(--accent);
+}
+
+/* Article rhythm on top of the shared dx-prose look. */
+.blog-prose {
+  font-size: 1.02rem;
+  line-height: 1.75;
+}
+.blog-prose h2 {
+  margin-top: 2.4em;
+}
+.blog-prose h2::before {
+  content: "// ";
+  color: var(--accent);
+  font-weight: 700;
+}
+.blog-prose ul li,
+.blog-prose ol li {
+  margin-bottom: 0.45em;
+}
+
+/* The dual-signal divider, centered — the same mark the titles carry. */
+.blog-prose hr {
+  border: 0;
+  width: 13px;
+  height: 13px;
+  margin: 3em auto;
+  border-left: 3px solid var(--slash-1);
+  border-right: 3px solid var(--slash-2);
+  transform: skewX(-32deg);
+}
+
+/* The generator appends a fixed "About OPEN//77" outro after the article's
+   final rule; render everything after that LAST rule as a quieter footer
+   block so it reads as boilerplate, not as part of the day's story. */
+.blog-prose hr:last-of-type ~ * {
+  font-size: 0.92em;
+  color: var(--text-dim, rgba(255, 255, 255, 0.72));
+}
+.blog-prose hr:last-of-type ~ h2 {
+  font-size: 1.05em;
+  color: inherit;
+}
+
+/* ---- post page: follow CTA + pager ---- */
+
+.blog-cta {
+  --notch: 14px;
+  margin-top: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  background: var(--bg-elev);
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.09));
+  border-left: 3px solid var(--accent);
+  clip-path: var(--notch-clip);
+  padding: 24px 28px;
+}
+.blog-cta-kicker {
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+.blog-cta-text {
+  margin: 0;
+  max-width: 34rem;
+  color: var(--text-dim, rgba(255, 255, 255, 0.75));
+  line-height: 1.55;
+}
+.blog-cta-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .blog-pager {
-  margin-top: 3.5rem;
+  margin-top: 26px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 14px;
 }
 
 .blog-pager-link {
   display: block;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--line, rgba(255, 255, 255, 0.09));
+  padding: 16px 18px;
   text-decoration: none;
   color: inherit;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.35;
+  transition: border-color 0.15s var(--ease), color 0.15s var(--ease);
 }
-
 .blog-pager-link:hover {
-  border-color: rgba(var(--accent-rgb), 0.45);
+  border-color: rgba(var(--accent-rgb), 0.5);
   color: var(--accent);
 }
-
 .blog-pager-next {
   text-align: right;
 }
-
 .blog-pager-label {
   display: block;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 0.25rem;
+  font-weight: 500;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  color: var(--text-faint);
+  margin-bottom: 6px;
 }
 
-@media (max-width: 640px) {
+/* ---- narrow widths ---- */
+
+@media (max-width: 720px) {
+  .blog-feat {
+    padding: 24px 22px;
+  }
+
+  .blog-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 18px 10px;
+  }
+  .blog-row-side {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .blog-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .blog-pager {
     grid-template-columns: 1fr;
   }
-
   .blog-pager-next {
     text-align: left;
   }

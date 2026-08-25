@@ -36,7 +36,7 @@
   padding: 14px var(--pad-x);
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 20px;
 }
 
 .wordmark {
@@ -57,15 +57,19 @@
 
 .main-nav {
   display: flex;
-  gap: 10px;
+  gap: 4px;
   margin-left: auto;
 }
 .main-nav a {
-  padding: 8px 13px;
+  /* nowrap is load-bearing: without it a long label ("CREATE SERVER") wraps
+     inside its own box when the nav runs out of slack, doubling the header's
+     height. The nav collapses to the menu instead (see responsive.css). */
+  white-space: nowrap;
+  padding: 8px 10px;
   font-family: var(--font-display);
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text);
   text-decoration: none;

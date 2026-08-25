@@ -52,13 +52,13 @@ export type BlogPostMeta = {
   date: string;
   description: string;
   tags: string[];
+  readingMinutes: number;
 };
 
 export type BlogPost = BlogPostMeta & {
   html: string;
   markdown: string;
   wordCount: number;
-  readingMinutes: number;
 };
 
 export function blogHref(slug: string): string {
@@ -112,7 +112,12 @@ function parseFrontmatter(raw: string, filename: string): {
   return { meta, body: raw.slice(match[0].length) };
 }
 
-function toMeta(slug: string, meta: Record<string, unknown>, filename: string): BlogPostMeta {
+function toMeta(
+  slug: string,
+  meta: Record<string, unknown>,
+  body: string,
+  filename: string,
+): BlogPostMeta {
   const { title, date, description, tags } = meta;
   if (typeof title !== "string" || typeof date !== "string" || typeof description !== "string") {
     throw new Error(`${filename}: frontmatter must have string title, date and description`);
@@ -123,6 +128,7 @@ function toMeta(slug: string, meta: Record<string, unknown>, filename: string): 
     date,
     description,
     tags: Array.isArray(tags) ? tags.filter((tag): tag is string => typeof tag === "string") : [],
+    readingMinutes: Math.max(1, Math.round(countWords(body) / 220)),
   };
 }
 
@@ -147,8 +153,8 @@ async function listPosts(): Promise<BlogPostMeta[]> {
       .filter((name) => FILENAME.test(name))
       .map(async (name) => {
         const raw = await readFile(path.join(CONTENT_DIR, name), "utf8");
-        const { meta } = parseFrontmatter(raw, name);
-        return toMeta(name.slice(0, -3), meta, name);
+        const { meta, body } = parseFrontmatter(raw, name);
+        return toMeta(name.slice(0, -3), meta, body, name);
       }),
   );
 
@@ -203,14 +209,11 @@ async function renderPost(slug: string): Promise<BlogPost | null> {
     .use(rehypeStringify)
     .process(body);
 
-  const wordCount = countWords(body);
-
   return {
-    ...toMeta(slug, meta, filename),
+    ...toMeta(slug, meta, body, filename),
     html: String(file),
     markdown: raw,
-    wordCount,
-    readingMinutes: Math.max(1, Math.round(wordCount / 220)),
+    wordCount: countWords(body),
   };
 }
 

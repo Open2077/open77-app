@@ -85,7 +85,7 @@ export function absoluteUrl(pathname: string): string {
 /** Primary navigation, shared by the header, the mobile menu and the sitemap. */
 export const mainNav = [
   { href: "/servers", label: "Servers" },
-  { href: "/create", label: "Create a Server" },
+  { href: "/create", label: "Create Server" },
   { href: "/docs", label: "Docs" },
   { href: "/devblog", label: "Devblog" },
   { href: "/community", label: "Community" },
