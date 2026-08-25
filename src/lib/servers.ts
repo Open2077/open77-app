@@ -25,7 +25,10 @@ export type GameServer = {
   ping: number;
   featured?: boolean;
   addedDaysAgo: number;
-  /** Site-relative cover image (demo data), or the icon URL for live rows. */
+  /**
+   * Cover image for the row/hero: the master's wide `bannerUrl` when the server
+   * set one, otherwise its square icon, otherwise a site-relative demo cover.
+   */
   banner: string;
   /** Square server icon URL from the master catalog, if any. */
   icon?: string;
@@ -170,7 +173,7 @@ export function catalogToGameServer(server: CatalogServer): GameServer {
     ping: 0,
     featured: false,
     addedDaysAgo: daysSince(server.startedAtUtc),
-    banner: server.iconUrl ?? "",
+    banner: server.bannerUrl ?? server.iconUrl ?? "",
     icon: server.iconUrl ?? undefined,
     links: website || discord ? { website, discord } : null,
   };
