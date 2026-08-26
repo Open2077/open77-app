@@ -1,4 +1,4 @@
-import { MasterApiError, masterCall } from "@/lib/account/api";
+import { MASTER_URL, MasterApiError, masterCall } from "@/lib/account/api";
 import { DEMO_HANDLES } from "@/lib/servers-demo";
 
 export type ServerRegion = "EU" | "NA" | "SA" | "AS" | "OC";
@@ -141,6 +141,33 @@ function deriveMode(tags: readonly string[]): string {
   return "Custom";
 }
 
+/**
+ * The master returns image URLs **relative to itself** — `iconUrl` and
+ * `bannerUrl` are built as `/api/v1/icons/{sha256}` and `/api/v1/banners/{sha256}`
+ * (MasterDatabase.cs). Dropped straight into an `<img src>` on open2077.net they
+ * resolve against *this* origin and 404, so the conformance guard silently falls
+ * back to the placeholder — which is exactly what the first server to actually
+ * set an icon revealed. Absolutise against {@link MASTER_URL} at the fetch
+ * boundary so every consumer downstream (browser rows, detail hero, and anything
+ * added later) holds a URL it can render.
+ *
+ * Left untouched if the master ever starts returning absolute URLs, or if it is
+ * some other absolute/data URL.
+ */
+function absolutiseMasterUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  return url.startsWith("/") ? `${MASTER_URL}${url}` : url;
+}
+
+/** {@link absolutiseMasterUrl} applied to a catalog row's two image slots. */
+export function withAbsoluteImageUrls(server: CatalogServer): CatalogServer {
+  return {
+    ...server,
+    iconUrl: absolutiseMasterUrl(server.iconUrl),
+    bannerUrl: absolutiseMasterUrl(server.bannerUrl),
+  };
+}
+
 function daysSince(iso: string): number {
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return 0;
@@ -191,7 +218,7 @@ export function catalogToGameServer(server: CatalogServer): GameServer {
  */
 export async function fetchServers(): Promise<GameServer[]> {
   const page = await masterCall<CatalogPage>("/api/v1/servers?pageSize=100");
-  return (page.items ?? []).map(catalogToGameServer);
+  return (page.items ?? []).map((item) => catalogToGameServer(withAbsoluteImageUrls(item)));
 }
 
 /**
@@ -209,7 +236,9 @@ export async function fetchServers(): Promise<GameServer[]> {
  */
 export async function fetchServer(id: string): Promise<CatalogServer | null> {
   try {
-    return await masterCall<CatalogServer>(`/api/v1/servers/${encodeURIComponent(id)}`);
+    return withAbsoluteImageUrls(
+      await masterCall<CatalogServer>(`/api/v1/servers/${encodeURIComponent(id)}`),
+    );
   } catch (error) {
     if (error instanceof MasterApiError && error.status === 404) return null;
     throw error;
