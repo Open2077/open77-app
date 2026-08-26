@@ -17,16 +17,20 @@ export const metadata = pageMetadata({
   path: "/devblog",
 });
 
+/**
+ * The tag strip. A `span` rather than a `p` because rows render it inside the
+ * inline body of the row link, where a paragraph is not valid content.
+ */
 function Tags({ tags }: { tags: readonly string[] }) {
   if (tags.length === 0) return null;
   return (
-    <p className="blog-tags">
+    <span className="blog-tags">
       {tags.map((tag) => (
         <span key={tag} className="blog-tag">
           <span>{tag}</span>
         </span>
       ))}
-    </p>
+    </span>
   );
 }
 
@@ -115,9 +119,9 @@ export default async function DevblogIndexPage() {
                             <span className="blog-row-body">
                               <span className="blog-row-title">{post.title}</span>
                               <span className="blog-row-description">{post.description}</span>
+                              <Tags tags={post.tags} />
                             </span>
                             <span className="blog-row-side">
-                              <Tags tags={post.tags} />
                               <span className="blog-read">{post.readingMinutes} MIN</span>
                             </span>
                           </Link>

@@ -37,6 +37,8 @@
    skews so the text stays upright (the filter-chip pattern). */
 .blog-tag {
   display: inline-block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   font-family: var(--font-mono);
   font-size: 10.5px;
   letter-spacing: 0.1em;
@@ -166,9 +168,14 @@
   border-bottom: 1px solid var(--line, rgba(255, 255, 255, 0.09));
 }
 
+/* The tag strip lives in the body column, not on the side: keyword tags from
+   the digest generator run long ("cyberpunk-2077-dedicated-server"), and an
+   `auto` side track sized to them collapsed the title column to one word per
+   line. `minmax(0, 1fr)` keeps the body shrinkable; the side track now only
+   ever holds the reading time. */
 .blog-row {
   display: grid;
-  grid-template-columns: 118px 1fr auto;
+  grid-template-columns: 118px minmax(0, 1fr) auto;
   align-items: baseline;
   gap: 10px 26px;
   padding: 20px 14px;
@@ -201,6 +208,9 @@
   margin-top: 4px;
   color: var(--text-dim, rgba(255, 255, 255, 0.72));
   line-height: 1.55;
+}
+.blog-row-body .blog-tags {
+  margin-top: 12px;
 }
 
 .blog-row-side {
