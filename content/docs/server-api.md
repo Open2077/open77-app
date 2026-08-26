@@ -59,6 +59,26 @@ are isolated per calling server resource.
 
 See [notifications](notifications.md) for every definition field and queue limit.
 
+## Player clothing
+
+These asynchronous methods target the official `open77_clothing` client relay. The calling server
+resource must declare `network.events`. Request IDs are prefixed with the resource name, and only
+that resource VM can match the completion.
+
+| Function | Signature | Result |
+|---|---|---|
+| `Open77.clothing.equip` | `(playerId, record, options?)` | Request ID, or `nil, reason`. |
+| `Open77.clothing.unequip` | `(playerId, slot)` | Request ID, or `nil, reason`. |
+| `Open77.clothing.set` | `(playerId, wardrobe, options?)` | Request ID, or `nil, reason`. |
+| `Open77.clothing.clear` | `(playerId)` | Request ID, or `nil, reason`. |
+| `Open77.clothing.requestSnapshot` | `(playerId)` | Request ID, or `nil, reason`. |
+
+Listen for the resource-local `open77:clothing:completed` event. Its arguments are
+`playerId, requestId, operation, accepted, reason, result`. Dispatch failures are returned
+immediately; unanswered requests complete with `request_timeout` after 10 seconds. Full record,
+slot, result, rollback, and replication semantics are in
+[Clothing Lua API](../docs/clothing.md).
+
 ## Players and authoritative life
 
 | Function | Permission | Signature | Result / purpose |
@@ -68,8 +88,9 @@ See [notifications](notifications.md) for every definition field and queue limit
 | `Open77.players.position` | None | `(playerId)` | `{ x, y, z, bucket }` or `nil`. |
 | `Open77.players.disconnect` | `players.disconnect` | `(playerId, reason?)` | Queue a reasoned disconnect; `boolean, reason?`. |
 | `Open77.players.kick` | `players.disconnect` | `(playerId, reason?)` | Alias of `disconnect`. |
-| `Open77.players.getLifeState` | `players.life.read` | `(playerId)` | Canonical life snapshot or `nil`. |
-| `Open77.players.isDead` | `players.life.read` | `(playerId)` | Whether phase is dead/revive-pending/respawn-pending. |
+| `Open77.players.ban` | `players.ban` | `(playerId, reason?, durationSeconds?)` | Persist a server-scoped device ban through the master and disconnect now. |
+| `Open77.players.getLifeState` | `players.life.read` | `(playerId)` | Canonical life snapshot or `nil`. `phase` is `alive`, `dead`, `revivepending`, `respawnpending`, `recovering` — **no underscore**, unlike the client. |
+| `Open77.players.isDead` | `players.life.read` | `(playerId)` | Whether phase is dead/revive-pending/respawn-pending. Resolved from the enum, so it is immune to the spelling split — prefer it over comparing `phase`. |
 | `Open77.players.kill` | `players.life.kill` | `(playerId, options?)` | `boolean, reason?` |
 | `Open77.players.revive` | `players.life.revive` | `(playerId, options?)` | `boolean, reason?` |
 | `Open77.players.respawn` | `players.life.respawn` | `(playerId, options)` | `boolean, reason?` |
@@ -96,6 +117,7 @@ Declare the capability explicitly in the server resource manifest:
 
 ```lua
 permission "players.disconnect"
+permission "players.ban"
 ```
 
 Then disconnect an authenticated session ID with a reason shown to that client:
@@ -109,6 +131,11 @@ end
 -- FiveM-style low-level spelling and short namespaced alias:
 DropPlayer(playerId, "Kicked by an administrator")
 Open77.players.kick(playerId, "Server maintenance")
+
+-- Permanent when durationSeconds is omitted; otherwise temporary.
+local banned, banError = Open77.players.ban(playerId, "Cheating", 86400)
+-- FiveM-style low-level spelling:
+BanPlayer(playerId, "Cheating", 86400)
 ```
 
 The reason is trimmed, must contain no control characters, and is limited to 127 UTF-8 bytes so
@@ -116,16 +143,21 @@ the GNS transport can deliver it without truncation. Omitting it uses `Disconnec
 The closure is deferred until the current server Lua callback has returned; repeated calls for the
 same player in one tick are idempotent and the first reason wins.
 
+`Open77.players.ban` and `BanPlayer` resolve the player's authenticated device identity, submit a
+server-scoped ban to the master, and queue the immediate disconnect. The optional duration is a
+strictly positive number of seconds; omitting it creates a permanent ban. Ban reasons accept up to
+512 UTF-8 bytes. Central publication is best-effort and asynchronous, while the local kick is
+queued immediately.
+
 Normal failures return `false, reason`, where `reason` is one of
 `permission_denied:players.disconnect`, `invalid_player_id`, `invalid_reason`,
 `player_not_found`, or `server_unavailable`.
 
-This API closes the current session; it does not create a persistent ban by itself. A ban resource
-must first persist the authenticated value returned by `Open77.players.identifier(playerId)`, reject
-that identity during its connection policy, then call `disconnect` with the user-facing reason.
+Ban failures return `permission_denied:players.ban`, `invalid_player_id`, `invalid_reason`,
+`invalid_duration`, `server_unavailable`, or `ban_failed`.
 
 Low-level aliases are `GetPlayerName`, `GetPlayerIdentifier`, `GetPlayerPosition`,
-`DropPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,
+`DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,
 `RequestPlayerLifeResync`, `GetPlayerHealth`, `DamagePlayer`, `HealPlayer`, `SetPlayerHealth`,
 `SetPlayerMaxHealth`, `SetPlayerArmor`, `SetPlayerGodMode`, and `SetPlayerRegen`. Prefer the
 namespaced wrappers because they accept structured option tables.
@@ -184,7 +216,7 @@ and `ttlMs`. Low-level aliases are `CreateLootDrop`, `UpdateLootDrop`, `RemoveLo
 Every method in this section requires `world.vehicles`. IDs are server-assigned Open77 IDs; do not
 substitute REDengine entity pointers or local spawn handles.
 
-The [vehicle guide](vehicles.md#complete-lua-api-inventory) lists all 43 server methods individually,
+The [vehicle guide](vehicles.md#complete-lua-api-inventory) lists all 47 server methods individually,
 the six client methods, the two package exports, exact snapshot fields, bit indexes, and examples.
 
 ### Lifecycle and state
@@ -192,12 +224,12 @@ the six client methods, the two package exports, exact snapshot fields, bit inde
 | Function | Signature | Purpose |
 |---|---|---|
 | `Open77.vehicles.create` | `(definition)` | Create and return an authoritative vehicle ID. |
-| `Open77.vehicles.update` | `(id, patch)` | Patch health, flags, colours, doors, windows, tires, body, glass, and lights. |
+| `Open77.vehicles.update` | `(id, patch)` | Patch health, flags, colours, openings and all durable damage channels. |
 | `Open77.vehicles.get` | `(id)` | Full canonical vehicle snapshot or `nil`. |
 | `Open77.vehicles.all` | `(bucket?)` | All canonical vehicles, optionally filtered by bucket. |
 | `Open77.vehicles.setTransform` | `(id, transform)` | Set authoritative position and yaw. |
 | `Open77.vehicles.remove` | `(id)` | Remove the authoritative vehicle. |
-| `Open77.vehicles.getDamage` | `(id)` | `{ body, glass, lights, tires }` or `nil`. |
+| `Open77.vehicles.getDamage` | `(id)` | `{ body, glass, lights, tires, detachedParts }` or `nil`. |
 | `Open77.vehicles.setDamage` | `(id, damage)` | Replace combined damage fields. |
 | `Open77.vehicles.repair` | `(id, scope?)` | Scope: `glass`, `body`, `lights`, `tires`, `visual`, `mechanical`, or `full`. |
 
@@ -243,6 +275,18 @@ Door names are `frontLeft`, `frontRight`, `backLeft`, `backRight`, `trunk`, and 
 use the four side names. Constants live in `Open77.vehicles.doors` and `.windows`. State flags live
 in `.flags`: `engineOn`, `locked`, `destroyed`, `exploded`, `invulnerable`, `immortal`, `lightsOn`,
 `highBeams`, and `sirenOn`.
+
+### Detached panels
+
+| Function | Signature | Purpose |
+|---|---|---|
+| `setDetachedPartMask` | `(id, mask)` | Add a monotonic 16-bit detached-part mask. |
+| `setPartDetached` | `(id, part, true)` | Detach one standard named/indexed panel. |
+| `detachPart` | `(id, part)` | Convenience detachment method. |
+| `isPartDetached` | `(id, part)` | Read one canonical detachment bit. |
+
+Names are exposed in `Open77.vehicles.detachedParts`. Live reattachment is deliberately rejected
+because REDengine 2.31 has no validated safe inverse of `DetachPart`; respawn the vehicle instead.
 
 Low-level aliases are `CreateVehicle`, `UpdateVehicleState`, `SetVehicleTransform`, `RemoveVehicle`,
 `GetVehicle`, and `GetVehicles`. The namespaced API supplies validation and damage helpers and is

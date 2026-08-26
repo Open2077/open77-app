@@ -29,3 +29,11 @@ desktop.ini
 *.swp
 .idea/
 .vscode/
+
+# Windows junk: a redirect to `NUL` from a POSIX shell creates a real file
+# here instead of hitting the null device, and it captures whatever was on the
+# console at the time.
+NUL
+
+# Scratch renders from the brand/design passes, kept out of the repo.
+tmp-inspect/

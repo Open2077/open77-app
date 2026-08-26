@@ -60,11 +60,15 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Game data reference](data-reference.md) | NPC templates, vehicle records, seats, flags, weapons, appearances, VFX, SFX, animations, and sprite catalogues. |
 | [Identity and ACL](server-acl.md) | Authentication, restricted commands, and access control. |
 | [Player identity](identity.md) | Durable identifiers, display names, and rename flow. |
+| [Clothing Lua API](../docs/clothing.md) | Validated wardrobe catalogue, local/server APIs, permissions, errors, and appearance replication. |
 | [Loot](loot.md) | Authoritative ground drops and pickup integration. |
 | [Weather](weather.md) | Session time, weather presets, synchronization, and events. |
 | [Vehicles](vehicles.md) | Identity, streaming, authority leases, seats, and Lua APIs. |
 | [NPCs](npcs.md) | Implemented server-owned NPCs, templates, streaming, task queues, authority leases, life, events, and Lua APIs. |
 | [Contextual interactions](interactions.md) | Custom world/NPC prompts, action keys, projection, ownership, and server-safe integration. |
+| [Proximity zones](zones.md) | Client-side enter/exit hysteresis and the server-side re-validation every caller must apply. |
+| [World-anchored POIs](worldui.md) | The marker-plus-prompt facade: one owned handle, transactional creation and cleanup. |
+| [The gamemode kernel](gamemode-kernel.md) | Why there is no shared server-side gamemode resource, and the roster/state-machine conventions every mode's server implements instead. |
 | [Notifications](notifications.md) | Reusable WebUI toasts, client/server exports, queues, positions, progress, and ownership. |
 | [Elevators](elevators.md) | Implemented server-authoritative native lifts, bucket/chunk streaming, late join, ACL commands, and Lua APIs. |
 | [Blips](blips.md) | Vanilla map markers, entity attachment, and sprites. |
@@ -82,9 +86,9 @@ that a server method exists in a client VM or that a package export is a native:
 
 | Surface | Reference | Coverage |
 |---|---|---|
-| Client native runtime | The **CLIENT** API reference cards in `index.html` | 215 registered functions across 37 namespaces; every signature is reviewed and every card has a detailed description. |
-| Dedicated server runtime | The **SERVER · Open77.vehicles** cards and [Complete server Lua API](server-api.md) | All 43 authoritative vehicle methods are individually searchable cards; the complete guide covers every server global, `Open77.*` namespace, constant, permission, and result shape. |
-| Official client packages | [Official resource exports](resource-exports.md) | Every literal export currently published by the official resource tree: 59 exports across 13 packages. |
+| Client native runtime | The **CLIENT** API reference cards in `index.html` | 242 registered functions across 39 namespaces; every signature is reviewed and every card has a detailed description. |
+| Dedicated server runtime | The **SERVER · Open77.vehicles** cards and [Complete server Lua API](server-api.md) | All 47 authoritative vehicle methods are individually searchable cards, alongside the `detachedParts` constant table; the complete guide covers every server global, `Open77.*` namespace, constant, permission, and result shape. |
+| Official client packages | [Official resource exports](resource-exports.md) | Every literal export currently published by the official resource tree: 80 exports across 17 packages. |
 
 Generated cards are separated by runtime, so identical names such as `Open77.vehicles.get` cannot
 confuse a client projection with server authority. They state whether a call is shared, needs a
@@ -99,7 +103,7 @@ python wiki/tools/audit-api.py
 ```
 
 The generator fails when a registered client function has no verifiable handler body or detailed
-description. It also compares the 43 server vehicle cards with the real embedded Lua bootstrap, so
+description. It also compares the 48 server vehicle cards with the real embedded Lua bootstrap, so
 adding or removing a method cannot silently leave the searchable reference incomplete.
 
 ## API conventions

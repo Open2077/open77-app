@@ -18,14 +18,14 @@ The vehicle surface is intentionally asymmetric:
 
 | Runtime | Surface | Count | Mutation |
 |---|---|---:|---|
-| Server | `Open77.vehicles.*` | 43 methods | Authoritative lifecycle, state, damage, openings, paint, and transform. |
+| Server | `Open77.vehicles.*` | 47 methods | Authoritative lifecycle, state, damage, detached parts, openings, paint, and transform. |
 | Client | `Open77.vehicles.*` | 6 methods | Read-only state plus guarded remote-occupant presentation. |
 | Client package | `open77_vehicles` exports | 2 exports | Read-only compatibility wrappers. |
 | Server low level | FiveM-style globals | 6 functions | Raw implementation surface; prefer `Open77.vehicles.*`. |
 
-There is deliberately no client API for breaking or repairing glass, tyres, lights, or bodywork.
-A client observes native damage and sends a bounded witness report; the server merges destructive
-state monotonically. Scripted mutation uses the server methods below.
+There is deliberately no client API for breaking or repairing glass, tyres, lights, bodywork, or
+detached panels. Only the current physics owner may publish native destructive state; other clients
+are protected render projections. Scripted mutation uses the authoritative server methods below.
 
 ### All server lifecycle and state methods
 
@@ -39,7 +39,7 @@ Every method in this table requires `world.vehicles`.
 | `Open77.vehicles.all` | `(bucket?)` | Array of server snapshots, ordered by ID. |
 | `Open77.vehicles.remove` | `(id)` | `boolean`; only the creating resource can remove it. |
 | `Open77.vehicles.setTransform` | `(id, transform)` | `boolean`; position plus yaw, revoking any active physics lease. |
-| `Open77.vehicles.getDamage` | `(id)` | `{ body, glass, lights, tires }`, or `nil`. |
+| `Open77.vehicles.getDamage` | `(id)` | `{ body, glass, lights, tires, detachedParts }`, or `nil`. |
 | `Open77.vehicles.setDamage` | `(id, damage)` | `boolean`; combined damage update. |
 | `Open77.vehicles.repair` | `(id, scope?)` | `boolean`; scope is `glass`, `body`, `lights`, `tires`, `visual`, `mechanical`, or `full`. |
 | `Open77.vehicles.registerDamageProfile` | `(record, profile)` | `true`; registers names inside the calling resource VM. |
@@ -105,8 +105,27 @@ neither mask represents broken glass.
 | `Open77.vehicles.closeWindow` | `(id, window)` | Closes one side window. |
 | `Open77.vehicles.isWindowOpen` | `(id, window)` | `boolean`, or `nil` for an unknown vehicle. |
 
+### Detached vehicle parts
+
+Detached parts are a separate, monotonic 16-bit damage channel. They are reported by the native
+`VehicleOnPartDetachedEvent`, retained by the server, replayed to streamed observers, and included
+in late join. REDengine 2.31 exposes no proven safe reattachment primitive for a live vehicle, so
+clearing a detached bit is rejected; respawn the vehicle to restore its panels.
+
+| Method | Signature | Return / behavior |
+|---|---|---|
+| `Open77.vehicles.setDetachedPartMask` | `(id, mask)` | Adds a canonical mask in range 0..65535; rejects bit removal. |
+| `Open77.vehicles.setPartDetached` | `(id, part, true)` | Detaches a named/indexed part; `false` is rejected. |
+| `Open77.vehicles.detachPart` | `(id, part)` | Convenience form of `setPartDetached(..., true)`. |
+| `Open77.vehicles.isPartDetached` | `(id, part)` | `boolean`, or `nil` for an unknown vehicle. |
+
+`Open77.vehicles.detachedParts` maps `trunk`, `hood`, `hoodLeft`, `hoodRight`, the front-door
+variants `doorFrontLeft[A-C]` / `doorFrontRight[A-C]`, `doorBackLeft`, `doorBackRight`,
+`bumperFront`, and `bumperBack` to bit indexes 0..15.
+
 The remaining `Open77.vehicles.update` fields are `health`, `flags`, `primaryColor`,
-`secondaryColor`, `doors`, `windows`, `tires`, `bodyDamage`, `brokenGlass`, and `brokenLights`.
+`secondaryColor`, `doors`, `windows`, `tires`, `bodyDamage`, `brokenGlass`, `brokenLights`, and
+`detachedParts`.
 
 ### Exact client methods
 
@@ -121,6 +140,14 @@ The remaining `Open77.vehicles.update` fields are `health`, `flags`, `primaryCol
 
 Client constants are `Open77.vehicles.doors`, `Open77.vehicles.windows`, and
 `Open77.vehicles.seats`. They are tables, not callable methods.
+
+Vehicle snapshots include the durable fields above plus live read-only drivetrain and network
+telemetry. `speed`, `rpm`, `rpmMax`, `throttle`, `brake`, `steering`, `wheelRotation`,
+`suspensionLongitudinal`, `suspensionTransversal`, `burnout`, `gear`, `onGround`, and `reversing`
+describe the latest authoritative motion. The derived normalized fields `longitudinalSlip`,
+`lateralSlip`, and `totalSlip` drive remote tire audio and skid effects. Network diagnostics are
+`bufferedSamples`, `interpolationDelayMs`, `packetAgeMs`, and `extrapolating`; they are intended for
+telemetry and debugging, not gameplay authority.
 
 ### Official package exports
 
@@ -142,7 +169,7 @@ structured tables, defaults, and helper validation.
 | Global | Signature |
 |---|---|
 | `CreateVehicle` | `(record, x, y, z, yaw, bucket, appearance, health, flags, primaryR, primaryG, primaryB, secondaryR, secondaryG, secondaryB)` |
-| `UpdateVehicleState` | `(id, health, flags, primaryR, primaryG, primaryB, secondaryR, secondaryG, secondaryB, doors, windows, tires, bodyDamage30, brokenGlass, brokenLights)` |
+| `UpdateVehicleState` | `(id, health, flags, primaryR, primaryG, primaryB, secondaryR, secondaryG, secondaryB, doors, windows, tires, bodyDamage30, brokenGlass, brokenLights, detachedParts)` |
 | `SetVehicleTransform` | `(id, x, y, z, yaw)` |
 | `RemoveVehicle` | `(id)` |
 | `GetVehicle` | `(id)` |
@@ -171,8 +198,8 @@ Creates a generation-checked 64-bit vehicle id. Required fields are `record` and
 ### `Open77.vehicles.update(id, patch)`
 
 Updates durable state. Supported fields are `health`, `flags`, `primaryColor`, `secondaryColor`,
-`doors`, `windows`, `tires`, `bodyDamage`, `brokenGlass`, `brokenLights`, and the nested
-`damage = { body, glass, lights, tires }` form. `windows` means opened windows; it is deliberately
+`doors`, `windows`, `tires`, `bodyDamage`, `brokenGlass`, `brokenLights`, `detachedParts`, and the nested
+`damage = { body, glass, lights, tires, detachedParts }` form. `windows` means opened windows; it is deliberately
 separate from `brokenGlass`. Door bits are front-left, front-right, back-left, back-right, trunk,
 and hood. Window/tire bits use the first four positions.
 
@@ -325,10 +352,10 @@ ledger directly: it is produced by native mount detection and validated by the s
 | Identity | `id`, `resource`, `record`, `appearance`, `revision` |
 | World | `bucket`, `x`, `y`, `z` |
 | Authority | `physicsOwner`, `authorityEpoch` |
-| Durable state | `health`, `flags`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights` |
+| Durable state | `health`, `flags`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights`, `detachedParts` |
 | Paint | `primaryR`, `primaryG`, `primaryB`, `secondaryR`, `secondaryG`, `secondaryB` |
 | Body | `bodyDamage[1..30]` |
-| Damage view | `damage = { body, glass, lights, tires }` |
+| Damage view | `damage = { body, glass, lights, tires, detachedParts }` |
 | Seats | `occupants[] = { playerId, seat }` |
 
 The current server Lua snapshot does not expose orientation. Pass an explicit `yaw` to
@@ -409,8 +436,8 @@ The client snapshot deliberately differs from the server snapshot:
 | Identity | `id`, `record`, `revision` |
 | Local projection | `entity`, `engineEntity`, `streamed`, `locallyOwned` |
 | Authority | `physicsOwner`, `authorityEpoch` |
-| Durable state | `health`, `flags`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights` |
-| Body and damage | `bodyDamage[1..30]`, `damage = { body, glass, lights, tires }` |
+| Durable state | `health`, `flags`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights`, `detachedParts` |
+| Body and damage | `bodyDamage[1..30]`, `damage = { body, glass, lights, tires, detachedParts }` |
 | Drivetrain | `speed`, `rpm`, `rpmMax`, `throttle`, `brake`, `gear`, `burnout` |
 | Wheels/suspension | `steering`, `wheelRotation`, `suspensionLongitudinal`, `suspensionTransversal`, `onGround`, `reversing` |
 | Seats | `occupants[] = { playerId, seat }` |
@@ -497,7 +524,11 @@ and invulnerability are the scriptable `flags` bits.
 - Exit, timeout, disconnect, stale epoch, or an implausible jump revokes it.
 - Create/remove/state/authority use reliable ordered delivery.
 - Motion uses unreliable sequenced delivery and is coalesced client-side.
-- Observers interpolate and briefly extrapolate the latest accepted transform.
+- Observers render through an adaptive jitter buffer. It targets 75-180 ms from the measured
+  packet interval and jitter, uses cubic Hermite position interpolation plus shortest-path
+  quaternion slerp, and predicts linear/angular motion for at most 180 ms after the newest sample.
+- Duplicate/stale ticks are rejected and every authority-epoch change resets history. Throttle,
+  brake, burnout, and tire-slip transients decay after 350 ms without fresh owner motion.
 - The owner also retains every outgoing motion sample locally. Because the server does not echo
   unreliable motion to its sender, this retained sample is the handoff pose when authority is
   released; exiting a vehicle therefore cannot fall back to its original spawn transform.
@@ -521,17 +552,36 @@ vehicle's blackboard, and update entity-scoped mechanical audio parameters at 30
 load, braking, gear, and lateral load therefore follow the network owner instead of being inferred
 independently by each client.
 
-Remote engine audio starts when the canonical engine state turns on and stops when it turns off,
-streams out, or authority becomes local. Four switchable modes exist (debug bridge
-`vehicle.audiomode_<0-3>`: `0` off, `1` traffic, `2` mechanical, `3` both; **default both**):
+Remote engine audio starts when the canonical engine state, a remote driver, or fresh drivetrain
+activity proves the engine active. It stops when the engine and driver are inactive, the vehicle
+streams out, or authority becomes local. This avoids initial silence while the durable engine bit
+lags the realtime motion. Two switchable strategies exist (debug bridge
+`vehicle.audiomode_<0-3>`: `0` off, `1` traffic, `2` mechanical, `3` both; **default mechanical**):
 *mechanical* engages the vanilla driver-mix state
 machine (`vehicleAudioEvent OnPlayerDriving`) and feeds the measured 2.31 RTPC names
 (`paramEngineRPM`, `paramVehicleSpeed`, `paramWheelAngularSpeed`, `veh_speed`, `veh_accel`,
-`veh_engine_throttle_input`) from the replicated motion at 30 Hz, so pitch and load follow the
-network owner; *traffic* plays the model's discrete `<audioResourceName>_traffic_engine_loop`
-Wwise pair resolved from the live TweakDB record. Replicated gear transitions additionally play
-the model's `_gear_up`/`_gear_down` one-shots. See
-`docs/research/vehicle-audio-and-wheel-fx-replication.md` for the evidence and validation plan.
+`veh_engine_throttle_input`, `paramLongSLip`, `paramLatSlip`, and `paramTotalSlip`) from the
+replicated motion at 30 Hz, so pitch, load, and tire stress follow the
+network owner. Each engine value is published to the vehicle entity scope consumed by its
+model-specific `gameaudioVehicleAudioComponent`, plus the authored engine and general emitters for
+spatial voices. *Traffic* is a diagnostic-only mode: it plays the discrete
+`<audioResourceName>_traffic_engine_loop` Wwise pair resolved from the live TweakDB record, but
+that simplified traffic voice cannot reproduce the local vehicle's complete mechanical timbre.
+Four global tyre loops target the template's named wheel emitters and receive
+their RTPC slip values independently, which preserves spatial tyre roll and squeal. Replicated
+gear transitions additionally play the model's `_gear_up`/`_gear_down` one-shots.
+
+Observer tire smoke uses
+`base\fx\vehicles\_skid_marks\skid_fx.effect`; the asphalt trail is a separate native
+`base\fx\vehicles\_wheels\skid_marks\sport\v_skid_mark_s_m_01.effect` backed by
+`trail_decal.mt`. A deterministic slip signal is derived from
+chassis-relative velocity, brake, throttle, and burnout. Hysteresis prevents VFX flicker; one
+pair of emitters per rear wheel (one centered pair on bikes) follows safe chassis-relative contact
+points. When slip stops, the native effect loop is broken instead of killed: smoke fades for about
+2.5 seconds and trail decals remain for their roughly 31-second authored lifetime. Stream-out,
+despawn, or authority handoff still performs an immediate cleanup. Exact
+surface-material particles are outside the v1 contract. See
+`docs/research/vehicle-audio-and-wheel-fx-replication.md` for the evidence and limits.
 
 Body damage is replayed only after the streamed vehicle's authored components have attached.
 Broken-glass bits are resolved against that exact vehicle record's destruction-glass list and

@@ -36,8 +36,10 @@ npm run dev     # http://localhost:3000
 ## Layout
 
 ```
-content/          Documentation source, synced — not edited here
-  docs/           Markdown guides + meta.json, which drives the navigation
+content/
+  docs/           Markdown guides synced from the wiki — not edited here
+                  + meta.json, which drives the navigation and IS edited here
+  guides/         Markdown guides authored in this repository
   api/api.json    The Lua API, extracted from the platform's resource host
 public/           Static files served as-is: assets/, brand/, favicons
 scripts/          Sync and verification tooling, plain Node, no build step
@@ -50,19 +52,52 @@ src/
 
 ## Documentation pipeline
 
-The guides are **not** authored in this repository. They live in the platform repository's `wiki/`
-directory next to the code they describe, and `npm run sync:wiki` copies them into `content/`.
-Editing `content/` directly means the next sync overwrites the change.
+Most guides are **not** authored in this repository. They live in the platform repository's
+`wiki/` directory next to the code they describe, and `npm run sync:wiki` copies them into
+`content/docs/`. Editing `content/docs/*.md` directly means the next sync overwrites the change —
+and deletes the file outright if the wiki has no such guide.
 
 ```
 platform wiki/*.md   ──sync:wiki──>  content/docs/*.md   ──remark/rehype/Shiki──>  /docs/<slug>
 platform api.json    ──sync:wiki──>  content/api/api.json ──api-reference.ts────>  /docs/api/...
+content/guides/*.md  ─────────────────────────────────── ──remark/rehype/Shiki──>  /docs/<slug>
 ```
 
-`content/docs/meta.json` is the one file that is maintained here. It defines the sections, the
-order, the navigation labels and the per-page descriptions, and it feeds the sidebar, the sitemap,
-the previous/next pager and the Markdown endpoints at once. A guide that is synced but missing from
-it has no route — `node scripts/check-coverage.mjs` fails on exactly that.
+`content/docs/meta.json` is the one file in `content/docs` that is maintained here. It defines the
+sections, the order, the navigation labels and the per-page descriptions, and it feeds the sidebar,
+the sitemap, the previous/next pager and the Markdown endpoints at once. A guide that is synced but
+missing from it has no route — `node scripts/check-coverage.mjs` fails on exactly that.
+
+### Guides authored here
+
+`content/guides/` holds Markdown written in this repository. It exists for documentation that
+genuinely belongs to the website rather than to the platform checkout: a guide assembled from
+several internal documents, or one written for a reader who has no repository to look at. Such a
+page could not live in `content/docs`, because the sync would delete it.
+
+An authored guide is registered in `meta.json` exactly like a synced one, plus one field:
+
+```json
+{
+  "slug": "world-drawing",
+  "kind": "guide",
+  "source": "authored",
+  "nav": "Drawing in the world",
+  "title": "Drawing in the world",
+  "description": "…"
+}
+```
+
+It then gets the same rendering, table of contents, `/docs/<slug>.md` twin, `llms.txt` entry,
+sitemap entry and pager position as a synced guide, with no per-page code. `check-coverage.mjs`
+checks the same two directions for it — a file with no navigation entry, and an entry with no file
+— and refuses a name that collides with a synced guide.
+
+The alternative for site-owned documentation is `kind: "page"`, a hand-built route under
+`src/app/docs/`. That is the right shape for a designed page with step cards and diagrams, and it
+costs a content module, a Markdown projection registered in `src/app/md/docs/[slug]/route.ts`, and
+an entry in `llms-full.txt`. Prefer an authored guide for reference material that is mostly prose,
+tables and code.
 
 Markdown is rendered at build time through unified: `remark-gfm` for tables, `rehype-slug` and
 `rehype-autolink-headings` for anchors, and Shiki with a theme derived from the site's own palette

@@ -19,7 +19,21 @@ import { visit } from "unist-util-visit";
 import { openSignalSyntaxTheme, syntaxLanguages } from "@/lib/shiki-theme";
 import { site } from "@/lib/site";
 
+/** Guides vendored from the platform wiki by `scripts/sync-wiki.mjs`. */
 const CONTENT_DIR = path.join(process.cwd(), "content", "docs");
+
+/**
+ * Guides authored in this repository.
+ *
+ * The wiki is the source of truth for everything that lives next to the code it
+ * documents, and `sync-wiki.mjs` deletes anything in `content/docs` the wiki no
+ * longer has — so a page written here could not survive there. Some
+ * documentation genuinely belongs to the website rather than to the platform
+ * checkout: guides assembled from several internal documents, or written for a
+ * reader who has no repository to look at. Those live here, are rendered by the
+ * same pipeline, and are declared in `meta.json` with `"source": "authored"`.
+ */
+const AUTHORED_DIR = path.join(process.cwd(), "content", "guides");
 
 /* -------------------------------------------------------------------------- */
 /* Navigation metadata                                                        */
@@ -27,15 +41,26 @@ const CONTENT_DIR = path.join(process.cwd(), "content", "docs");
 
 export type DocPageKind = "guide" | "page";
 
+/** Which directory a `kind: "guide"` page reads its Markdown from. */
+export type DocPageSource = "wiki" | "authored";
+
 export type DocNavPage = {
   slug: string;
   kind: DocPageKind;
   /** Source filename, when it differs from `<slug>.md`. */
   file?: string;
+  /** Defaults to `"wiki"`: `content/docs`, written by the sync. */
+  source?: DocPageSource;
   nav: string;
   title?: string;
   description: string;
 };
+
+/** Absolute path to a guide's Markdown, whichever tree it belongs to. */
+function guideFile(page: Pick<DocNavPage, "slug" | "file" | "source">): string {
+  const filename = page.file ?? `${page.slug}.md`;
+  return path.join(page.source === "authored" ? AUTHORED_DIR : CONTENT_DIR, filename);
+}
 
 export type DocNavSection = {
   id: string;
@@ -133,7 +158,11 @@ function remarkRewriteWikiLinks() {
   return (tree: MdastRoot) => {
     visit(tree, "link", (node, index, parent) => {
       const url = node.url;
-      if (!url || /^(https?:|mailto:|#)/.test(url)) return;
+      // `/docs/api` is already a site URL. Without this it would fall through
+      // to the repository-reference branch below and be rewritten to the
+      // nonsense path `wiki//docs/api`, because that branch assumes anything
+      // not ending in `.md` is a file inside the wiki directory.
+      if (!url || /^(https?:|mailto:|#|\/)/.test(url)) return;
 
       const [targetRaw, hash] = splitHash(url);
       const suffix = hash ? `#${hash}` : "";
@@ -305,8 +334,7 @@ async function renderGuide(slug: string): Promise<RenderedGuide | null> {
   const meta = await findDocPage(slug);
   if (!meta || meta.kind !== "guide") return null;
 
-  const filename = meta.file ?? `${slug}.md`;
-  const markdown = await readFile(path.join(CONTENT_DIR, filename), "utf8");
+  const markdown = await readFile(guideFile(meta), "utf8");
 
   const toc: TocEntry[] = [];
   const captured: { title?: string } = {};
@@ -357,7 +385,7 @@ export function countWords(markdown: string): number {
 export async function getGuideMarkdown(slug: string): Promise<string | null> {
   const meta = await findDocPage(slug);
   if (!meta || meta.kind !== "guide") return null;
-  return readFile(path.join(CONTENT_DIR, meta.file ?? `${slug}.md`), "utf8");
+  return readFile(guideFile(meta), "utf8");
 }
 
 /**

@@ -1,5 +1,5 @@
 {
-  "$comment": "Documentation navigation. Hand-maintained: the wiki has no ordering of its own, so this file is the single source of truth for sidebar structure, short nav labels and search-engine descriptions. `kind: \"guide\"` resolves to content/docs/<slug>.md; `kind: \"page\"` is a route implemented in src/app.",
+  "$comment": "Documentation navigation. Hand-maintained: the wiki has no ordering of its own, so this file is the single source of truth for sidebar structure, short nav labels and search-engine descriptions. `kind: \"guide\"` resolves to content/docs/<slug>.md, which the wiki sync owns; adding `\"source\": \"authored\"` reads content/guides/<slug>.md instead, which is authored in this repository and never touched by the sync. `kind: \"page\"` is a route implemented in src/app.",
   "sections": [
     {
       "id": "introduction",
@@ -52,6 +52,14 @@
           "kind": "guide",
           "nav": "Server resources",
           "description": "Resource manifests, the client and server runtime split, signing and download, hot reload, and the security model around resources the server hands to connecting players."
+        },
+        {
+          "slug": "resource-runtime",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "The Lua runtime",
+          "title": "The Lua resource runtime",
+          "description": "What a resource actually gets: the complete manifest reference, the scheduler and lifecycle events, local and network events, modules and cross-resource exports, the core Open77 namespaces, WebUI surfaces, and every sandbox quota."
         }
       ]
     },
@@ -132,6 +140,14 @@
       "title": "Client and interface",
       "pages": [
         {
+          "slug": "world-drawing",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Drawing in the world",
+          "title": "Drawing in the world",
+          "description": "Every way a Lua resource puts something at a point in Night City: native ground markers, per-frame world anchors and the native card, ring and dot overlays, the marker-plus-prompt POI facade, proximity zones and nameplates — with lifecycle and cleanup for each."
+        },
+        {
           "slug": "blips",
           "kind": "guide",
           "nav": "Blips and map pins",
@@ -142,6 +158,18 @@
           "kind": "guide",
           "nav": "Contextual interactions",
           "description": "Custom world and NPC prompts: attaching interactions to players or NPCs, multiple actions and hold keys, the definition reference, and keeping server authority intact."
+        },
+        {
+          "slug": "worldui",
+          "kind": "guide",
+          "nav": "World-anchored POIs",
+          "description": "The open77_worldui facade: a ground marker and its interaction prompt created and destroyed as one owned handle, the definition reference, and the invisible-ring trap it exists to avoid."
+        },
+        {
+          "slug": "zones",
+          "kind": "guide",
+          "nav": "Proximity zones",
+          "description": "The open77_zones service: enter and exit events with hysteresis, the definition reference, the polling model and quotas, and why every containment rule must still be re-derived on the server."
         },
         {
           "slug": "notifications",
@@ -172,6 +200,26 @@
           "kind": "guide",
           "nav": "Client persistent KVP",
           "description": "Endpoint- and resource-isolated local key/value persistence: CRUD, search, atomic operations, quotas, and why it must never hold secrets."
+        }
+      ]
+    },
+    {
+      "id": "gamemodes",
+      "title": "Gamemodes",
+      "pages": [
+        {
+          "slug": "writing-a-gamemode",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Writing a gamemode",
+          "title": "Writing a gamemode",
+          "description": "The shape of an OPEN//77 gamemode: why the server is exactly one resource and the client is several, the platform behaviours that bite every author, moving players safely, isolating a round in a routing bucket, and what to test first."
+        },
+        {
+          "slug": "gamemode-kernel",
+          "kind": "guide",
+          "nav": "The gamemode kernel",
+          "description": "Why there is no shared server-side gamemode resource on OPEN//77, what a mode's server gets instead, and the eight conventions two shipped gamemodes both implement."
         }
       ]
     },
