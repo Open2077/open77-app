@@ -29,6 +29,9 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  // Default on: keep the session for the long "remember me" window so casual
+  // users are not signed out every week. Unchecking uses the shorter default.
+  const [remember, setRemember] = useState(true);
 
   // Set after a successful register: the verify step replaces the form.
   const [pendingVerify, setPendingVerify] = useState<{
@@ -45,7 +48,7 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
   }
 
   async function signIn(credentials: { email: string; password: string }) {
-    const result = await master.login(credentials);
+    const result = await master.login({ ...credentials, rememberMe: remember });
     start({
       token: result.token,
       expiresAtUtc: result.expiresAtUtc,
@@ -237,6 +240,17 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
             <span className="ac-hint">At least 8 characters. A passphrase works best.</span>
           ) : null}
         </label>
+        {mode === "login" ? (
+          <label className="ac-remember">
+            <input
+              type="checkbox"
+              name="remember"
+              checked={remember}
+              onChange={(event) => setRemember(event.target.checked)}
+            />
+            <span>Keep me signed in</span>
+          </label>
+        ) : null}
         <div className="ac-form-actions">
           <button className="btn btn-primary" type="submit" disabled={busy}>
             {busy ? "Working…" : mode === "login" ? "Sign in" : "Create account"}

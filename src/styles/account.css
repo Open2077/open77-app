@@ -88,6 +88,26 @@
 .ac-form-actions { display: flex; align-items: center; gap: 12px; margin-top: 4px; flex-wrap: wrap; }
 .ac-forgot { font: 13.5px var(--font-body); color: var(--text-dim); transition: color 0.15s var(--ease); }
 .ac-forgot:hover { color: var(--accent); }
+.ac-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 13.5px var(--font-body);
+  color: var(--text-dim);
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s var(--ease);
+}
+.ac-remember:hover { color: var(--text); }
+.ac-remember input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
 
 /* ---------- Status strips ---------- */
 

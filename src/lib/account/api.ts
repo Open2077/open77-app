@@ -182,7 +182,11 @@ export function resetPassword(input: {
   return masterCall("/api/v1/accounts/password/reset", { method: "POST", body: input });
 }
 
-export function login(input: { email: string; password: string }): Promise<LoginResult> {
+export function login(input: {
+  email: string;
+  password: string;
+  rememberMe?: boolean;
+}): Promise<LoginResult> {
   return masterCall("/api/v1/accounts/login", { method: "POST", body: input });
 }
 
