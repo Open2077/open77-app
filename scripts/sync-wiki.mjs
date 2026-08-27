@@ -21,12 +21,12 @@ import { createHash } from "node:crypto";
 import path from "node:path";
 import process from "node:process";
 
+import { EXCLUDED_GUIDES, isExcluded } from "./wiki-exclusions.mjs";
+
 const DEFAULT_SOURCE = path.join("..", "base", "wiki");
 const DOCS_OUT = path.join("content", "docs");
 const API_OUT = path.join("content", "api");
 
-/** Wiki files that are tooling or build output rather than publishable content. */
-const EXCLUDED_MARKDOWN = new Set(["tools/README.md"]);
 
 function parseArgs(argv) {
   const args = { from: DEFAULT_SOURCE, check: false };
@@ -52,7 +52,7 @@ async function collectMarkdown(sourceDir) {
   const files = [];
   for (const entry of entries) {
     if (!entry.isFile() || !entry.name.endsWith(".md")) continue;
-    if (EXCLUDED_MARKDOWN.has(entry.name)) continue;
+    if (isExcluded(entry.name)) continue;
     files.push(entry.name);
   }
   return files.sort();
@@ -176,6 +176,9 @@ async function main() {
   );
 
   console.log(`synced ${manifest.guides} guides and ${manifest.apiEntries} API entries`);
+  for (const [name, reason] of EXCLUDED_GUIDES) {
+    console.log(`  held back: ${name} — ${reason}`);
+  }
   console.log(`  from ${sourceDir}`);
   const totalKb = (
     records.reduce((sum, record) => sum + record.bytes, 0) / 1024

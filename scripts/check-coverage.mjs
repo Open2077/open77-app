@@ -12,6 +12,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
+import { isExcluded } from "./wiki-exclusions.mjs";
+
 const CONTENT_DIR = path.join(process.cwd(), "content", "docs");
 const AUTHORED_DIR = path.join(process.cwd(), "content", "guides");
 const sourceWiki = process.argv[2] ?? path.join(process.cwd(), "..", "base", "wiki");
@@ -58,6 +60,9 @@ for (const file of navFiles.keys()) {
   if (!syncedFiles.includes(file)) problems.push(`in meta.json but not synced: ${file}`);
 }
 for (const file of sourceFiles) {
+  // A deliberately held-back guide is a decision, not a gap. `wiki-exclusions.mjs`
+  // carries the reason and the condition for publishing it.
+  if (isExcluded(file)) continue;
   if (!syncedFiles.includes(file)) problems.push(`in source wiki but not synced: ${file}`);
 }
 

@@ -101,7 +101,7 @@ Split on these, in order:
 4. **Reuse.** Anything not specific to your mode belongs in a shared
    resource.
 
-## Seven things that will bite you
+## Eight things that will bite you
 
 ### 1. `client/**/*.lua` matches nothing
 
@@ -271,6 +271,57 @@ end
 single word, so it agrees on both hosts. Phase is the only field that
 diverges.
 
+### 8. Do not touch a player until the readiness gate has opened
+
+**The rule: do not teleport, spawn, kill or force a respawn on a player until
+`Open77.ready` says they are ready.** Everything else — reading their state,
+adding them to your roster, sending them a HUD payload — is unaffected.
+
+A player who has just connected is not necessarily a player anybody may act
+upon. Another resource may be about to open the character creator for someone
+with no saved character. Your join path, meanwhile, fires a kill → respawn the
+instant the client says its world is up — and both come from the *same* client
+announcement.
+
+This is not hypothetical: enabling the database for a ranked ladder also
+switched on persistence for the appearance package, which began opening a
+character creator on join while the gamemode teleported the same players to its
+lobby. Both resources were individually correct and the server was unusable.
+They could not have negotiated it between themselves — server resources cannot
+call each other — so the barrier lives in the host.
+
+```lua
+RegisterNetEvent("<mode>:ready", function()
+    local playerId = source
+    local record = ensurePlayer(playerId)
+    if not Open77.ready.isReady(playerId) then
+        record.awaitingReady = true          -- resume on onPlayerReady
+        return
+    end
+    joinPlacement(playerId, record)
+end)
+
+AddEventHandler("onPlayerReady", function(playerIdStr, detail)
+    local playerId = tonumber(playerIdStr)   -- host events carry strings (§3)
+    local record = players[playerId]
+    if record == nil or record.awaitingReady ~= true then return end
+    record.awaitingReady = nil
+    joinPlacement(playerId, record)
+end)
+```
+
+`onPlayerReady` is a barrier lifting, not a trigger — keep your own readiness
+signal and ask the gate for permission. A gate can also open on a **timeout**,
+with the player still in a modal and no puppet at all, and placing an
+unincarnated player crashes their client: check
+`Open77.players.getLifeState(playerId)` and, if it is `nil`, leave the flag set
+and let their next announce do it.
+
+If your mode is the one that needs the player — a rules acceptance, a class
+pick, a spawn choice — you *hold* the gate instead. Holds, timeouts, the session
+number that survives a reconnect and the `ready` console command are all in
+[The join-time readiness gate](readiness-gate.md).
+
 ## Client-side patterns
 
 ### Rebuild on start, not only on `worldReady`
@@ -390,6 +441,29 @@ A single guarded `transition(playerId, target, detail)` that checks an
 explicit table of allowed edges — and logs a refusal instead of corrupting
 state — is worth writing on day one.
 
+## Settings the server owner can retune
+
+Every number in `shared/config.lua` is a decision you made once. Some of them
+the owner of a server running your mode will want to make differently, tonight,
+between rounds, without a restart.
+
+Declare those and Warden's Tuning tab renders them as a form. Three decisions
+are yours to get right:
+
+- **Declare, do not expose.** The declaration table is data and belongs in
+  `shared/config.lua`; the `Open77.tunables.declare` call is server-only. Put
+  `declare` in a `shared_script` and every connecting player fails the resource
+  set.
+- **Read at the point of use.** The proxy reads through to the host on every
+  access, so a value hoisted into a *file-scope* local is frozen at load and
+  live tuning silently does nothing.
+- **Decide when a change may land.** `live`, `next_round`/`next_match` with
+  `promote()`, or `capture()` per match. If two rounds can run at once,
+  `capture()` is the only correct answer — `promote()` is per-resource, so
+  promoting at one match's creation moves the other's finish line too.
+
+The full reference is in [Operator tunables](tunables.md).
+
 ## Testing
 
 Test in the real game. Two habits pay for themselves.
@@ -435,6 +509,9 @@ generated starting point is for.
 
 - [The gamemode kernel](gamemode-kernel.md) — why there is no shared
   server-side gamemode resource, and what you get instead.
+- [The join-time readiness gate](readiness-gate.md) — holds, timeouts and
+  the session number.
+- [Operator tunables](tunables.md) — declaring what an owner may retune.
 - [Drawing in the world](world-drawing.md) — markers, anchors, POIs, zones
   and nameplates.
 - [The Lua resource runtime](resource-runtime.md) — manifests, the

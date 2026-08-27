@@ -92,6 +92,22 @@
           "description": "Every dedicated-server global, Open77 namespace, permission, constant and result shape: scheduler, events, commands, players, combat, routing buckets, loot, vehicles, NPCs, elevators, database and logging."
         },
         {
+          "slug": "readiness-gate",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Join-time readiness gate",
+          "title": "The join-time readiness gate",
+          "description": "Open77.ready: the host-owned barrier that stops one resource teleporting, spawning or killing a player another resource is not finished with. Holds, timeouts, the session number, and the rule every gamemode must follow."
+        },
+        {
+          "slug": "tunables",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Operator tunables",
+          "title": "Operator tunables",
+          "description": "Open77.tunables: declaring the numbers a server owner may retune live from the admin panel, the file-scope local that silently defeats it, and choosing between live, promote and per-match capture."
+        },
+        {
           "slug": "resource-exports",
           "kind": "guide",
           "nav": "Official resource exports",

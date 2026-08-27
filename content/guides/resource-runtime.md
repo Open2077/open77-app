@@ -327,6 +327,78 @@ expiry or resource stop. Add `dependency "open77_notifications >=1.0.0"` so
 the client renderer is part of the session resource set. Full definition
 fields are in [Notifications](notifications.md).
 
+### Carrying state across a reload
+
+A hot reload gives a server resource a brand-new Lua VM with an empty roster
+while the server is still full. `Open77.state` is a small bag the **host** keeps
+on the resource's behalf, so a few authoritative fields can survive that.
+
+```lua
+Open77.state.save({ round = 4, scores = scores })   -- true, or false, reason
+local carried = Open77.state.load()                 -- the table, or nil
+Open77.state.clear()
+```
+
+The value is JSON-encoded, so it must be a plain acyclic table — the same codec
+every other boundary uses. It is capped at **64 KiB**: this is a handful of
+authoritative fields that must survive a reload, not a database. A value that
+cannot be serialised answers `false, "unserialisable_state"`.
+
+**A reload carries the bag; a stop drops it.** That asymmetry is deliberate — it
+leaves an operator a "come up as at boot" lever that a reload does not take
+away. It is the opposite of the rule for [operator tunables](tunables.md), whose
+values survive both, because stopping a resource for an evening must not quietly
+undo an afternoon of tuning.
+
+This is per-resource and server-side only.
+
+### The database bridge is per-server, not per-resource
+
+There is **one** database connection for the whole server, built once from a
+single `database.connectionString`. The `database.access` permission is a
+boolean gate on reaching it — not an allocation of a private database.
+
+The consequences are worth stating plainly, because nothing in the API hints at
+them:
+
+- Every resource holding `database.access` talks to the **same** database, with
+  the same credential.
+- There is no per-resource schema, table prefix or statement filter. A resource
+  can read and write another resource's tables.
+- Turning the database on turns it on for **every** resource that asked for the
+  permission, not just the one you had in mind. That is not theoretical: it is
+  exactly how enabling persistence for a ranked ladder also switched on a
+  character creator on join and took a live server down. See
+  [the readiness gate](readiness-gate.md#why-this-exists).
+
+**Prefix your tables** with your resource name, grant `database.access` only to
+resources that genuinely persist state, and treat the shared database as shared.
+
+#### `?` is only a placeholder outside strings and comments
+
+Positional parameters are rewritten before the statement is sent, and the
+scanner understands `'…'`, `"…"` and `` `…` `` quoted spans, `--` and `#` line
+comments, and `/* … */` blocks. A `?` inside any of them is **not** counted as a
+bind parameter, and an apostrophe inside a comment does not open a string.
+
+Two failures name themselves:
+
+- `parameter_count_mismatch` — reports both counts and an excerpt of the
+  statement.
+- `unterminated_sql_literal` — reports the offset where the literal or comment
+  opened, instead of silently swallowing the rest of the statement.
+
+Two cases are deliberately unsupported: `NO_BACKSLASH_ESCAPES` (the scan runs
+before there is a connection to ask about `sql_mode`), and a placeholder inside
+a version-gated `/*! … */` comment, which is not rewritten.
+
+> **Version note.** Until this landed, a question mark in a comment *was*
+> counted as a placeholder, and an odd apostrophe in a comment swallowed the
+> rest of the statement. A single rhetorical question mark in a `CREATE TABLE`
+> comment was enough to make a schema-creation statement fail as
+> `parameter_count_mismatch`. If you are on an older server and see that error
+> on a statement whose placeholders plainly match, check the comments.
+
 ## Client game namespaces
 
 Game namespaces exist on the client host. Calling one on a host without a
@@ -516,6 +588,52 @@ rather than a different version that could pass or reject the wrong things.
 declarative DSL parsed by a bespoke reader, never by the Lua compiler, so
 its call sugar (`auto_start true`) is intentionally not valid standalone Lua.
 
+## Boot commands: `startup.commands`
+
+A server can pin its own world state at boot with a list of console commands in
+`server.jsonc`. This is how a server sets its weather, or anything else that is
+a one-off command rather than a config field.
+
+```jsonc
+"startup": {
+  "commands": [
+    "weather.time.set 20:30:00",
+    "weather.set lightclouds",
+    "weather.random off"
+  ]
+}
+```
+
+At most 64 entries, each 1–512 characters and free of control characters.
+
+**When they run.** After every `auto_start` resource has reached Running — so
+the commands they register exist — and after those resources have had one
+scheduler slice, so anything they initialise lazily on their first tick has
+happened. They run before the console and the admin panel are drained on that
+tick, so the configured list wins over anything typed at the same moment. Once
+per process.
+
+They run with **console authority**: the same path as typing at the server
+console, `source = 0`, restricted resource commands allowed, and never a player
+identity. Keep the list credential-free — it is plain text in the config.
+
+**A refused line is reported, never fatal.** Every line is dispatched; a refusal
+is logged with its line number, and a closing summary names the refused lines
+and says the server started anyway. Boot is not aborted.
+
+One subtlety: a command registered by a Lua resource is only *queued* onto that
+resource's scheduler, so the immediate reply is "queued by resource X". A bad
+*argument* surfaces a line or two later, prefixed with the resource name.
+
+**Restart re-asserts; reload does not need to.** A resource that reloads carries
+its authoritative state across the new VM, so the pin survives and nothing is
+replayed — which also preserves anything an operator changed at the console
+since boot. A resource that went down and came back carries nothing, so the host
+re-dispatches exactly the boot lines that resource owned and that did not fail
+the first time. Lines owned by another resource, or by nobody, are untouched.
+
+Changing the list itself still requires a server restart.
+
 ## API conventions
 
 **Engine IDs are opaque.** REDengine identifiers are 64-bit values and may
@@ -558,4 +676,7 @@ signed set; `shared_script` files execute in both.
   by the official packages.
 - [Drawing in the world](world-drawing.md) — markers, anchors, POIs and
   zones.
+- [The join-time readiness gate](readiness-gate.md) — the rule before you
+  act on a joining player.
+- [Operator tunables](tunables.md) — settings a server owner moves live.
 - [Writing a gamemode](writing-a-gamemode.md) — putting it together.
