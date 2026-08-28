@@ -94,7 +94,7 @@ export const CAPABILITIES = [
   {
     icon: "config",
     title: "Config & identity",
-    body: "Edit the server's configuration and identity — its name, visibility and public presentation — from the panel, so tuning the server does not mean editing files over SSH and restarting. This is also where the server's icon and banner will be managed.",
+    body: "Edit the server's configuration and identity — its name, visibility and public presentation — from the panel, so tuning the server does not mean editing files over SSH and restarting. Upload the server's icon and banner here too: the panel checks the size and shape before it accepts them, and a new image goes live without a restart.",
   },
   {
     icon: "roles",
