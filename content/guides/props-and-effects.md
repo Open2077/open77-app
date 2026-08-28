@@ -154,25 +154,59 @@ gains it. It is a change of audience, not a removal.
 
 An alias is the supported surface. Each one resolves to a host entity built
 at asset-build time carrying that object's mesh, which is what makes it
-render reliably. There are 32, and **28 of them resolve to a host**:
+render reliably. There are **183, in 28 families**, named
+`family.thing.variant`:
 
-| Aliases | |
-|---|---|
-| Furniture | `furniture.chair.metal`, `furniture.stool.metal`, `furniture.bench.wood`, `furniture.bench.metal`, `furniture.table.industrial`, `furniture.table.lab` |
-| Crates and containers | `crate.small`, `crate.valuable`, `crate.delivery`, `container.barrel`, `container.locker`, `container.safe`, `container.toolbox`, `container.ammo_case` |
-| Barriers | `barrier.concrete`, `barrier.blockade.wide`, `barrier.hesco` |
-| Industrial | `pallet.wood`, `industrial.pallet_truck`, `industrial.fire_extinguisher` |
-| Bins | `bin.dumpster.large`, `bin.dumpster.small` |
-| Signs | `sign.rect.blank`, `sign.rect.keep_out`, `sign.arrow.left`, `sign.street` |
-| Electronics | `electronics.monitor`, `electronics.vending_machine` |
+| Family | n | What is in it |
+|---|---|---|
+| `furniture.*` | 18 | chairs, stools, benches, tables, counters, a sofa, a bed, shelving, cabinets |
+| `office.*` | 6 | desks, office chairs, a file cabinet, a lobby reception desk |
+| `kitchen.*` | 5 | counter, fridges, stove, coffee machine |
+| `bathroom.*` | 3 | toilet, shower, mirror |
+| `crate.*` | 7 | loot crates, delivery and cargo crates, cardboard, ammo box |
+| `container.*` | 12 | barrel, locker, safe, toolbox, keg, gas tanks, jugs, bucket, freight, shipping container |
+| `barrier.*` | 10 | blockades, hesco, jersey and pedestrian barriers, a swing gate, tire blocker |
+| `fence.*` | 4 | railings and a wire-fence reinforcement |
+| `sign.*` | 6 | generic plates, a direction arrow, a street sign, a homeless sign, a kiosk frame |
+| `street.*` | 11 | lamp posts, hydrant, parking meter, traffic light, poles, junction boxes, awning, AC unit |
+| `bin.*` | 5 | dumpsters and trash cans |
+| `garbage.*` | 5 | bags, cardboard, street and industrial trash, a mattress |
+| `debris.*` | 5 | rubble, corrugated sheet, construction and sand piles, rebar |
+| `pallet.*` | 3 | cargo pallets |
+| `industrial.*` | 12 | forklift, pallet truck, trolleys, generator, gas pump, racks, machinery, crane, vents |
+| `pipe.*` | 4 | pipe runs by gauge, plus a waste pipe |
+| `electronics.*` | 12 | monitors, vending machines, arcade cabinet, jukebox, server, register, fuse box, camera |
+| `light.*` | 9 | lanterns, ceiling and fluorescent fixtures, spotlight, desk and hanging lamps, candle, disco ball |
+| `vegetation.*` | 5 | planters, flower pots, a palm attachment |
+| `market.*` | 5 | market stands, a kiosk, shop shelving |
+| `food.*` | 6 | street food, cans, packaged drink and snacks, a bottle, a beer tap |
+| `medical.*` | 7 | cart, IV stand, monitor arm, devices, container, morgue table, body bag |
+| `military.*` | 5 | cases, weapon rack, checkpoint, security gate |
+| `door.*` | 4 | swing gate, elevator doors, a glass door, a shuttle door |
+| `recreation.*` | 5 | billiard and roulette tables, gym equipment, tent, sleeping bag |
+| `music.*` | 3 | electric guitar, amplifier, piano |
+| `decor.*` | 4 | sculptures, a painting, a vase |
+| `tool.*` | 3 | shovel, welder, fire axe |
 
-**Four aliases have no host and will not draw**:
-`furniture.cabinet.industrial`, `barrier.gate.swinging`,
-`light.lantern.japanese` and `industrial.forklift`. They are still in the
-catalogue because they name the right object, but the asset build could not
-resolve a renderable mesh out of their source, so there is nothing to hang on
-a host entity. Treat them as unavailable until that changes; do not build a
-scene around one.
+The exact alias strings are not reproduced here, because 183 rows is a wall
+and the list moves. Two places always have the current one: `admin.props.catalog`
+in the terminal, or the **Props** tab of the admin panel, where the alias
+buttons are grouped by family and clicking one fills the model box without
+spawning anything. (`prop.catalog`, from the bundled `open77_props` resource,
+answers client-side only — see below.)
+
+**Not every alias is guaranteed to draw.** An alias whose target the asset
+build cannot resolve to a renderable mesh gets no host entity, and the prop
+falls back to a plain marker cylinder — silently, with no error. Four aliases
+used to fail this way (`furniture.cabinet.industrial`,
+`barrier.gate.swinging`, `light.lantern.japanese`, `industrial.forklift`) and
+now resolve. The failure mode has not gone away, so place a prop and look at
+it before you build a scene around it.
+
+**No alias is individually validated in game.** Every entry was checked
+against the cooked archive listing, which proves the file exists — never that
+the object is the right size, sits on its origin, or looks like anything
+useful where you put it. Place one and look at it before you commit to it.
 
 A **raw `.mesh` path** — `base\environment\...\thing_a.mesh` — also works, and
 it is how you reach the several thousand objects nobody has curated. It is
@@ -191,8 +225,9 @@ The alias list lives on the client, next to the host entities it resolves,
 and the server keeps no copy. The bundled `prop.catalog` command says so
 rather than printing `empty` — "empty" reads as "there are no models", which
 sends you looking for a catalogue that is not missing, just not on that side.
-The table above is the list, and the admin console's `admin.props.catalog`
-carries its own copy.
+The families above are the shape of it; the admin console's
+`admin.props.catalog` carries its own copy of the names and is the one to
+reach for from the server side.
 
 ## Changing a prop that already exists
 
@@ -373,11 +408,26 @@ different name is a different VFX resource, so remove and create.
 
 `Open77.effects.all(bucket?)` and `.get(id)` read the registry the way the
 prop calls do. `Open77.effects.catalog()`, like the prop one, answers with an
-empty table on the server — the alias list lives on the client. The curated
-effect aliases are `explosion.frag`, `fire.small`, `smoke.steam`,
-`smoke.ambient`, `electric.destruction`, `impact.default` and
-`impact.concrete`; a raw cooked `.effect` depot path also works, with the
-same build-dependent caveat as a raw mesh.
+empty table on the server — the alias list lives on the client.
+
+The curated set is **49 aliases in 14 families**, on the same
+`family.thing.variant` naming as the props: `blood.*` (1), `electric.*` (5),
+`explosion.*` (6), `fire.*` (5), `glass.*` (1), `impact.*` (4), `laser.*` (1),
+`neon.*` (2), `smoke.*` (6), `sparks.*` (4), `steam.*` (2), `vehicle.*` (6),
+`water.*` (3), `weather.*` (3). `fx.catalog` in the terminal prints the exact
+strings, and the admin panel's **Props** tab lists them grouped by family. A
+raw cooked `.effect` depot path also works, with the same build-dependent
+caveat as a raw mesh.
+
+An effect needs no host entity, which is why this list is cheap to grow and
+the prop list is not.
+
+Two quirks worth knowing before you reach for them. `explosion.frag` names the
+**barrel** blast — the grenade's own blast is baked into the projectile attack
+rather than shipped as a depot effect, so `explosion.grenade` is the separate
+indicator effect. And `vehicle.skid` and `vehicle.skid.smoke` deliberately
+point at the same resource; the second is kept only so older scripts keep
+working.
 
 ### On an entity
 
@@ -639,7 +689,7 @@ fx.here fire.small
 | `prop.drop` | — | restricted |
 | `prop.list` | `[bucket]` | public |
 | `prop.near` | `[radius]` — default 15 m, your bucket, sorted by distance | public |
-| `prop.catalog` | — currently prints nothing; see [Models](#models) | public |
+| `prop.catalog` | — client-side only; from a server it points you at `admin.props.catalog`. See [Models](#models) | public |
 | `light.here` | `[intensity] [radius] [r] [g] [b]` | restricted |
 | `light.create` | `<x> <y> <z> [intensity] [radius] [r] [g] [b]` | restricted |
 | `light.toggle` | `<id> <on\|off>` | restricted |
@@ -648,7 +698,7 @@ fx.here fire.small
 | `fx.loop` | `<effect> <x> <y> <z> [bucket]` | restricted |
 | `fx.stop` | `<id>` | restricted |
 | `fx.list` | `[bucket]` | public |
-| `fx.catalog` | — currently prints nothing | public |
+| `fx.catalog` | — client-side only; use `admin.props.catalog` from a server | public |
 
 A restricted command is gated by the [access control
 list](server-acl.md) as `command.<name>`; a public one anybody can run.
