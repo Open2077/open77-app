@@ -48,6 +48,14 @@
           "description": "Warden is the OPEN//77 in-server admin panel: a browser control room for your live server. Stream the console, run commands, hot-reload Lua resources, moderate players, post announcements, edit config and manage admins — without ever restarting."
         },
         {
+          "slug": "server-branding",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Branding your server",
+          "title": "Branding your server",
+          "description": "Give your server an icon and a banner from the Warden panel, with no SSH and no restart: what the two images are, the real size and shape limits (including the combined budget that decides whether your server is listed at all), and what to check when an image does not appear."
+        },
+        {
           "slug": "server-resources",
           "kind": "guide",
           "nav": "Server resources",
@@ -142,6 +150,14 @@
           "kind": "guide",
           "nav": "Loot",
           "description": "Authoritative ground drops: creating and projecting item drops, validating pickups, the onLootPickup hook, and where native UI ends and server authority begins."
+        },
+        {
+          "slug": "props-and-effects",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Props and effects",
+          "title": "Props and effects",
+          "description": "Placing server-owned objects, lights and replicated effects from Lua: the create definition, the curated model catalogue, the bucket and ground-height traps that make a prop invisible, lights and what respawns them, carrying, quotas and removal reasons, with the admin commands and two worked scenes."
         },
         {
           "slug": "weather",
