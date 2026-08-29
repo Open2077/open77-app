@@ -84,6 +84,7 @@ export function absoluteUrl(pathname: string): string {
 
 /** Primary navigation, shared by the header, the mobile menu and the sitemap. */
 export const mainNav = [
+  { href: "/download", label: "Download" },
   { href: "/servers", label: "Servers" },
   { href: "/create", label: "Create Server" },
   { href: "/docs", label: "Docs" },
@@ -95,6 +96,7 @@ export const footerNav = [
   {
     title: "Play",
     links: [
+      { href: "/download", label: "Download the launcher" },
       { href: "/servers", label: "Server browser" },
       { href: "/docs/platform#how-it-works", label: "How it works" },
       { href: "/docs/platform#faq", label: "FAQ" },

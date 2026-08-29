@@ -32,6 +32,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const marketing: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), changeFrequency: "monthly" },
+    // The launcher page's content is a live CDN pointer, so it genuinely
+    // changes whenever a build ships.
+    { url: absoluteUrl("/download"), changeFrequency: "weekly" },
     { url: absoluteUrl("/servers"), changeFrequency: "daily" },
     { url: absoluteUrl("/create"), changeFrequency: "monthly" },
     { url: absoluteUrl("/community"), changeFrequency: "monthly" },

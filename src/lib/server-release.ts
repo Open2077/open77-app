@@ -34,10 +34,7 @@
  * has been cut yet, and callers render an empty state.
  */
 
-/** Public CDN root, without a trailing slash. */
-export const CDN_URL = (
-  process.env.NEXT_PUBLIC_OP77_CDN_URL ?? "https://cdn.open2077.net"
-).replace(/\/$/, "");
+import { asString, basename, CDN_URL, fetchArtefactMeta, parseDate } from "@/lib/cdn";
 
 /** The platform keys the pipeline publishes, in the order we present them. */
 export type PlatformKey = "windows-x64" | "linux-x64";
@@ -102,38 +99,6 @@ export type ServerRelease = {
 };
 
 const REVALIDATE_SECONDS = 300;
-
-function asString(value: unknown): string | null {
-  return typeof value === "string" && value.length > 0 ? value : null;
-}
-
-function parseDate(value: string | null): string | null {
-  if (!value) return null;
-  const ms = Date.parse(value);
-  return Number.isFinite(ms) ? new Date(ms).toISOString() : null;
-}
-
-function basename(url: string): string {
-  const name = url.slice(url.lastIndexOf("/") + 1);
-  try {
-    return decodeURIComponent(name);
-  } catch {
-    // A malformed escape keeps the raw basename.
-    return name;
-  }
-}
-
-/** HEAD an archive for its size. Best-effort: any failure just hides the size. */
-async function fetchArchiveSize(url: string): Promise<number | null> {
-  try {
-    const head = await fetch(url, { method: "HEAD" });
-    if (!head.ok) return null;
-    const bytes = Number(head.headers.get("content-length"));
-    return Number.isFinite(bytes) && bytes > 0 ? bytes : null;
-  } catch {
-    return null;
-  }
-}
 
 /** Pull one platform's `{ url, archiveSha256 }` out of a `builds` map. */
 function readBuildEntry(builds: Record<string, unknown>, key: PlatformKey) {
@@ -211,7 +176,7 @@ export async function fetchLatestServerRelease(): Promise<ServerRelease | null> 
   // Fill in sizes for the available builds in parallel; missing ones stay null.
   await Promise.all(
     resolved.map(async (build) => {
-      if (build.url) build.sizeBytes = await fetchArchiveSize(build.url);
+      if (build.url) build.sizeBytes = (await fetchArtefactMeta(build.url)).sizeBytes;
     }),
   );
 
@@ -223,22 +188,4 @@ export async function fetchLatestServerRelease(): Promise<ServerRelease | null> 
       parseDate(asString(raw.publishedAtUtc)) ??
       parseDate(response.headers.get("last-modified")),
   };
-}
-
-/** `123456789` → `"117.7 MB"`. Binary-adjacent but decimal units, like browsers show. */
-export function formatBytes(bytes: number): string {
-  if (bytes >= 1_000_000_000) return `${(bytes / 1_000_000_000).toFixed(2)} GB`;
-  if (bytes >= 1_000_000) return `${(bytes / 1_000_000).toFixed(1)} MB`;
-  if (bytes >= 1_000) return `${(bytes / 1_000).toFixed(0)} KB`;
-  return `${bytes} B`;
-}
-
-/** ISO string → `"Aug 24, 2026"`, pinned to UTC so prerender and client agree. */
-export function formatReleaseDate(iso: string): string {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(iso));
 }
