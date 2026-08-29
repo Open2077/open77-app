@@ -19,6 +19,14 @@
           "nav": "How the platform works",
           "title": "How OPEN//77 works",
           "description": "What OPEN//77 is and is not, how players connect, why it is built on dedicated servers rather than peer-to-peer sessions, the project roadmap, and answers to the questions people ask most."
+        },
+        {
+          "slug": "launcher",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "The launcher",
+          "title": "The OPEN//77 launcher",
+          "description": "The player's guide to the OPEN//77 launcher: installing it, the SmartScreen warning on an unsigned executable and what it actually means, signing in, how it verifies your game build, the mod menu and everything it refuses to do silently, joining a world, direct-connect links, how it updates itself, and where its log is."
         }
       ]
     },
@@ -46,6 +54,14 @@
           "nav": "Warden admin panel",
           "title": "Warden",
           "description": "Warden is the OPEN//77 in-server admin panel: a browser control room for your live server. Stream the console, run commands, hot-reload Lua resources, moderate players, post announcements, edit config and manage admins — without ever restarting."
+        },
+        {
+          "slug": "launcher-for-server-owners",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Your server in the launcher",
+          "title": "Your server in the launcher",
+          "description": "How the OPEN//77 launcher reaches your world: how a server appears in the browser at all, what a catalogue row actually carries, the open77:// deep-link contract for your own Join buttons, what a connecting player must have, and why required mods are not something a server can ask for yet."
         },
         {
           "slug": "server-branding",
