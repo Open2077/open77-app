@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+import { formatBytes } from "@/lib/cdn";
+import type { LauncherRelease } from "@/lib/launcher-release";
 import { GAME_BUILD, GAME_EXPANSION } from "@/lib/requirements";
 import { IS_PRODUCTION_DEPLOY, SITE_URL, absoluteUrl, site } from "@/lib/site";
 
@@ -127,8 +129,10 @@ export function websiteNode(): JsonLdNode {
 
 /**
  * The platform itself. `SoftwareApplication` is honest here as long as it makes
- * no claim about availability: there is no download, no price and no rating, so
- * none of those properties are emitted.
+ * no claim about availability: this node describes OPEN//77 as a whole, which
+ * has no single artefact, no price and no rating, so none of those properties
+ * are emitted. The one thing that *is* downloadable — the launcher — gets its
+ * own node below, with the real version and URL attached.
  */
 export function softwareApplicationNode(): JsonLdNode {
   return {
@@ -146,6 +150,40 @@ export function softwareApplicationNode(): JsonLdNode {
     author: { "@id": ORGANIZATION_ID },
     isAccessibleForFree: true,
     requirements: `A legally owned copy of Cyberpunk 2077 ${GAME_BUILD} with ${GAME_EXPANSION}, on 64-bit Windows`,
+  };
+}
+
+/**
+ * The player launcher, as an actual downloadable artefact.
+ *
+ * Every field here is read from the CDN's release pointer at build time rather
+ * than written down, because structured data that names a stale version is
+ * worse than structured data that names none. The node is only emitted when a
+ * release was resolved, so the page never claims a download it cannot serve.
+ */
+export function launcherApplicationNode(release: LauncherRelease): JsonLdNode {
+  return {
+    "@type": "SoftwareApplication",
+    "@id": `${SITE_URL}/#launcher`,
+    name: `${site.name} Launcher`,
+    applicationCategory: "GameApplication",
+    applicationSubCategory: "Game launcher and mod manager",
+    operatingSystem: "Windows 10, Windows 11 (64-bit)",
+    softwareVersion: release.version,
+    url: absoluteUrl("/download"),
+    installUrl: absoluteUrl("/download"),
+    downloadUrl: release.url,
+    description:
+      "The OPEN//77 launcher signs you in, verifies your Cyberpunk 2077 build, installs and " +
+      "updates the OPEN//77 client, manages which mods load, and connects you to community servers.",
+    author: { "@id": ORGANIZATION_ID },
+    publisher: { "@id": ORGANIZATION_ID },
+    isPartOf: { "@id": WEBSITE_ID },
+    isAccessibleForFree: true,
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    requirements: `A legally owned copy of Cyberpunk 2077 ${GAME_BUILD} with ${GAME_EXPANSION}, on 64-bit Windows`,
+    ...(release.sizeBytes !== null ? { fileSize: formatBytes(release.sizeBytes) } : {}),
+    ...(release.publishedAtUtc ? { datePublished: release.publishedAtUtc } : {}),
   };
 }
 

@@ -161,7 +161,7 @@ export const RESOURCES_OUTRO =
   "That is the real API, not a sketch — every registered function is listed in the Lua API reference at /docs/api, separated by runtime so a client projection is never mistaken for server authority. The surface will still change while the project is in pre-alpha.";
 
 export const ROADMAP_INTRO =
-  "OPEN//77 is in pre-alpha. There is no public build, no live server list, and no release date — and we will not invent any. Here is the honest shape of the road.";
+  "OPEN//77 is in pre-alpha. The public alpha has not opened, there is no live server list, and there is no release date — and we will not invent any. Here is the honest shape of the road.";
 
 export const ROADMAP = [
   {
@@ -228,7 +228,7 @@ export const FAQ = [
   {
     question: "Can I play it right now?",
     answer:
-      "Not yet. The project is in pre-alpha and there is no public build. We publish development progress openly rather than promising dates — when a build is ready for testing, it will be announced through the project's channels.",
+      "Not yet. The project is in pre-alpha and the public alpha has not opened, so there are no public servers to join and nothing to play on. We publish development progress openly rather than promising dates — when the alpha opens, it will be announced through the project's channels.",
   },
   {
     question: "Will I be able to host my own server?",

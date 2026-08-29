@@ -14,12 +14,11 @@ import {
 } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
+import { formatBytes, formatReleaseDate } from "@/lib/cdn";
 import { cssBackgrounds } from "@/lib/images";
 import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
 import {
   fetchLatestServerRelease,
-  formatBytes,
-  formatReleaseDate,
   type ServerBuild,
   type ServerRelease,
 } from "@/lib/server-release";

@@ -15,6 +15,7 @@ const DEBUG_PORT = 9334;
 
 const SHOTS = [
   { path: "/", name: "home", width: 1440, height: 1000 },
+  { path: "/download", name: "download", width: 1440, height: 1000 },
   { path: "/servers", name: "servers", width: 1440, height: 1100 },
   { path: "/servers/nc-roleplay", name: "server-detail", width: 1440, height: 1000 },
   { path: "/create", name: "create", width: 1440, height: 1000 },
@@ -30,6 +31,7 @@ const SHOTS = [
     width: 1440,
     height: 1100,
   },
+  { path: "/download", name: "download-mobile", width: 420, height: 900, mobile: true },
   { path: "/servers", name: "servers-mobile", width: 420, height: 900, mobile: true },
   { path: "/docs/vehicles", name: "docs-mobile", width: 420, height: 900, mobile: true },
 ];

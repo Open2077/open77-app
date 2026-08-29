@@ -2,8 +2,8 @@ import type { GameServer } from "@/lib/servers";
 
 /**
  * INVENTED DATA. None of these servers, communities, owners, player counts or
- * pings are real, and none of them can be: OPEN//77 is pre-alpha and no public
- * build exists, so there is nothing to host a server with yet.
+ * pings are real, and none of them can be: OPEN//77 is pre-alpha and the public
+ * alpha has not opened, so no community is running a world yet.
  *
  * They exist so the server browser — the product experience the whole platform
  * is for — can be shown rather than described.

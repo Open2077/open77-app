@@ -257,7 +257,7 @@ export default function BrandPage() {
         </section>
       </main>
 
-      <SiteFooter fineprint="Pre-alpha. No public build exists yet." />
+      <SiteFooter />
 
       <JsonLd
         data={jsonLdGraph(

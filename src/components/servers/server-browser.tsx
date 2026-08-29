@@ -297,13 +297,13 @@ export function ServerBrowser({
         <button
           className="btn btn-primary btn-small"
           type="button"
-          onClick={() => showToast("Direct connect goes live with the first public build.")}
+          onClick={() => showToast("Direct connect goes live when the alpha opens.")}
         >
           Connect
         </button>
         <p className="sb-panel-note">
           Joins a server by address or invite code without using the public directory — available
-          with the first public build.
+          when the alpha opens.
         </p>
       </div>
 

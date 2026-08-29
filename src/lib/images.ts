@@ -50,6 +50,7 @@ export const cssBackgrounds = {
   hero: "/assets/hero-cinematic.jpg",
   finale: "/assets/city-finale.jpg",
   createHero: "/assets/create-server.jpg",
+  playTogether: "/assets/play-together.jpg",
 } as const;
 
 /** Card art referenced through the `--exp-img` custom property. */
