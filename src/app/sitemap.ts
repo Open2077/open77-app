@@ -32,9 +32,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const marketing: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), changeFrequency: "monthly" },
-    // The launcher page's content is a live CDN pointer, so it genuinely
-    // changes whenever a build ships.
-    { url: absoluteUrl("/download"), changeFrequency: "weekly" },
+    // `/download` is absent on purpose, exactly like `/host`: both serve a real
+    // build to anyone holding the link, and both are unlisted until the alpha
+    // opens. A sitemap entry is a request to index, and a page Google surfaces
+    // is not unlisted in any sense a reader would recognise. The page also
+    // carries `robots: index: false`; the two must be added back together.
     { url: absoluteUrl("/servers"), changeFrequency: "daily" },
     { url: absoluteUrl("/create"), changeFrequency: "monthly" },
     { url: absoluteUrl("/community"), changeFrequency: "monthly" },

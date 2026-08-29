@@ -76,10 +76,11 @@ export default function CommunityPage() {
                 <Eyebrow>ALPHA ACCESS</Eyebrow>
                 <h2 className="browser-cta-title">The alpha isn&apos;t open yet.</h2>
                 <p>
-                  OPEN//77 is in pre-alpha and there is no public build — so there&apos;s no signup
-                  form to fill in, and we won&apos;t pretend otherwise. When the first alpha opens
-                  its doors, it will be announced on the official Discord first. Being there is the
-                  closest thing to a waiting list this project will ever have.
+                  OPEN//77 is in pre-alpha and the alpha has not opened — there are no public
+                  servers to join, so there&apos;s no signup form to fill in, and we won&apos;t
+                  pretend otherwise. When the first alpha opens its doors, it will be announced on
+                  the official Discord first. Being there is the closest thing to a waiting list
+                  this project will ever have.
                 </p>
               </div>
               <div className="alpha-side">
@@ -105,9 +106,9 @@ export default function CommunityPage() {
               <div className="follow-card">
                 <h3>Players</h3>
                 <p>
-                  Nothing to install yet. When a test build exists, the Discord hears it first and
-                  this page follows — and the <Link href="/servers">server browser</Link> goes live
-                  with it.
+                  Nowhere to play yet — no public servers are live, so there is nothing to connect
+                  to. When the alpha opens, the Discord hears it first and this page follows — and
+                  the <Link href="/servers">server browser</Link> goes live with it.
                 </p>
               </div>
               <div className="follow-card">
@@ -136,7 +137,7 @@ export default function CommunityPage() {
                   ) : (
                     // No dead link: the platform repository is still private, and this
                     // page's own promise is that there are no fake buttons.
-                    <>The platform repository opens up alongside the first public build.</>
+                    <>The platform repository opens up alongside the first public alpha.</>
                   )}
                 </p>
               </div>
@@ -145,7 +146,7 @@ export default function CommunityPage() {
         </section>
       </main>
 
-      <SiteFooter fineprint="Pre-alpha. No public build exists yet." />
+      <SiteFooter />
 
       <JsonLd
         data={jsonLdGraph(

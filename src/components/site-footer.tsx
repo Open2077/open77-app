@@ -58,8 +58,13 @@ export function SiteFooter({ fineprint }: { fineprint?: string }) {
       </div>
       <div className="footer-legal">
         <p>{site.disclaimer}</p>
+        {/* The default says what is actually true of a visitor's evening: the
+            alpha has not opened, so there is nowhere to play. It deliberately
+            no longer claims that no build exists — one does, it is simply not
+            advertised yet, and a footer repeated on every page is the worst
+            possible place to keep a stale absolute. */}
         <p className="footer-fine">
-          {fineprint ?? "Pre-alpha. No public build exists yet."}
+          {fineprint ?? "Pre-alpha. The public alpha has not opened yet — there are no servers to join."}
         </p>
       </div>
     </footer>

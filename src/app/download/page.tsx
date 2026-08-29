@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Eyebrow, SlashMark } from "@/components/brand";
@@ -24,12 +25,25 @@ import {
 } from "@/lib/seo";
 import { site } from "@/lib/site";
 
-export const metadata = pageMetadata({
-  title: "Download the Launcher",
-  description:
-    "Download the OPEN//77 launcher for Windows. It signs you in, checks your Cyberpunk 2077 build, installs and updates the mod, and takes you to the server browser. Free; requires your own copy of the game.",
-  path: "/download",
-});
+export const metadata: Metadata = {
+  ...pageMetadata({
+    title: "Download the Launcher",
+    description:
+      "Download the OPEN//77 launcher for Windows. It signs you in, checks your Cyberpunk 2077 build, installs and updates the mod, and takes you to the server browser. Free; requires your own copy of the game.",
+    path: "/download",
+  }),
+  // TODO(go-public): remove this override, restore the `/download` entries in
+  // `mainNav`/`footerNav` and the sitemap when the alpha opens — pageMetadata
+  // already handles production indexing correctly.
+  //
+  // The page is unlisted rather than gated: it renders and serves the build to
+  // anyone with the link. Search is the one channel that would undo that, since
+  // "cyberpunk 2077 multiplayer download" is exactly the query this page would
+  // win, and the person who ran it would install a launcher and find no server
+  // to join. `follow` stays true — the page's outbound links go to indexable
+  // documentation and there is no reason to strand them.
+  robots: { index: false, follow: true },
+};
 
 /**
  * Everything factual on this page — version, digest, size, publish date — comes
@@ -156,6 +170,20 @@ export default async function DownloadPage() {
                 What you need
               </a>
             </div>
+            {/* Above the fold, next to the download button, and not buried at
+                the bottom of the page: the launcher installs and runs today,
+                but the alpha has not opened. Anyone who reads only the hero
+                still learns the one thing that would otherwise make them feel
+                tricked an hour after installing. */}
+            <p className="status-note" role="note">
+              <InfoIcon size={18} />
+              <span>
+                <strong>There is nothing to play on yet.</strong> The launcher installs, signs you
+                in and updates the client today — but the public alpha has not opened, so the{" "}
+                <Link href="/servers">server browser</Link> is empty and stays that way until the
+                first community worlds go live. Download it to be ready, not to play tonight.
+              </span>
+            </p>
           </div>
         </section>
 

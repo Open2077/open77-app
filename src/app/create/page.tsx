@@ -186,9 +186,9 @@ export default function CreatePage() {
             <p className="status-note" role="note">
               <InfoIcon />
               <span>
-                <strong>Honest status:</strong> the dedicated server software ships in a later
-                pre-alpha milestone — nothing to download yet. This page shows the intended flow so
-                you can start planning your world now. See the{" "}
+                <strong>Honest status:</strong> the dedicated server download opens to owners in a
+                later pre-alpha milestone — you cannot host a public world yet. This page shows the
+                intended flow so you can start planning your world now. See the{" "}
                 <Link href="/docs/platform#roadmap">roadmap</Link>.
               </span>
             </p>
@@ -227,7 +227,7 @@ export default function CreatePage() {
         </section>
       </main>
 
-      <SiteFooter fineprint="Pre-alpha. No public build exists yet." />
+      <SiteFooter />
 
       <JsonLd
         data={jsonLdGraph(

@@ -41,8 +41,9 @@ export async function GET() {
     "",
     "## Status",
     "",
-    "- Stage: pre-alpha. The Windows launcher is downloadable at /download; the public alpha has",
-    "  not opened and there is no release date.",
+    "- Stage: pre-alpha. The public alpha has not opened: there are no public servers to join, and",
+    "  no release date. Player and server builds exist but are not being advertised for download",
+    "  yet, so do not point anyone at a download URL.",
     "- The server browser at /servers is populated with clearly labelled demo data, not live servers.",
     "- The documentation describes software under construction; APIs can change.",
     "- Unaffiliated with CD PROJEKT RED. Playing requires your own legal copy of Cyberpunk 2077.",
@@ -51,7 +52,9 @@ export async function GET() {
     "## Site",
     "",
     `- [Home](${absoluteUrl("/")}): what the platform is, for players and for server owners.`,
-    `- [Download](${absoluteUrl("/download")}): the Windows launcher — current version, SHA-256, requirements and first run.`,
+    // The launcher page is unlisted until the alpha opens, so it is not indexed
+    // and not named here either. Listing it would be advertising it through the
+    // one channel most likely to reach a player who cannot yet use it.
     `- [Server browser](${absoluteUrl("/servers")}): directory UI, currently demo listings.`,
     `- [Create a server](${absoluteUrl("/create")}): what hosting an OPEN//77 world will involve.`,
     `- [Community](${absoluteUrl("/community")}): how to follow the project and join the alpha.`,

@@ -38,7 +38,8 @@ export function DemoDataNotice({ scope = "listings" }: { scope?: "listings" | "p
         </button>
       </p>
       <p className="sb-status-note" id={noteId} hidden={!expanded}>
-        OPEN//77 is in pre-alpha and there is no public build, so no live public servers exist yet.
+        OPEN//77 is in pre-alpha and the public alpha has not opened, so no live public servers
+        exist yet.
         Every listing here is illustrative demo data showing how the live browser will work — player
         counts, pings and communities are not real. Live listings replace this the moment the first
         public alpha ships. <Link href="/docs/platform#roadmap">See the roadmap</Link>.
