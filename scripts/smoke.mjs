@@ -28,7 +28,10 @@ const CHECKS = [
   { path: "/", expect: 200, contains: "Develop in Lua" },
   // The launcher page's version and digest come from the CDN at build time, so
   // the assertions are on the copy that is always there, not on a build number.
-  { path: "/download", expect: 200, contains: "Get the launcher", type: "text/html" },
+  // The headline rather than the button: the button reads "Download for Windows"
+  // when a release resolves and "Get the launcher" when none does, and this has
+  // to hold in both states.
+  { path: "/download", expect: 200, contains: "OPEN//77 launcher.", type: "text/html" },
   { path: "/download", expect: 200, contains: "SHA-256" },
   { path: "/servers", expect: 200, contains: "Night City Roleplay", type: "text/html" },
   { path: "/servers/nc-roleplay", expect: 200, contains: "Online now" },

@@ -80,7 +80,8 @@ export default function CommunityPage() {
                   servers to join, so there&apos;s no signup form to fill in, and we won&apos;t
                   pretend otherwise. When the first alpha opens its doors, it will be announced on
                   the official Discord first. Being there is the closest thing to a waiting list
-                  this project will ever have.
+                  this project will ever have — and <Link href="/download">the launcher</Link> is
+                  already downloadable, so you can be installed and signed in before the doors open.
                 </p>
               </div>
               <div className="alpha-side">
@@ -107,8 +108,9 @@ export default function CommunityPage() {
                 <h3>Players</h3>
                 <p>
                   Nowhere to play yet — no public servers are live, so there is nothing to connect
-                  to. When the alpha opens, the Discord hears it first and this page follows — and
-                  the <Link href="/servers">server browser</Link> goes live with it.
+                  to. <Link href="/download">Download the launcher</Link> anyway and you are set up
+                  in advance. When the alpha opens, the Discord hears it first and this page follows
+                  — and the <Link href="/servers">server browser</Link> goes live with it.
                 </p>
               </div>
               <div className="follow-card">

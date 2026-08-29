@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Eyebrow, SlashMark } from "@/components/brand";
@@ -25,25 +24,12 @@ import {
 } from "@/lib/seo";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
-  ...pageMetadata({
-    title: "Download the Launcher",
-    description:
-      "Download the OPEN//77 launcher for Windows. It signs you in, checks your Cyberpunk 2077 build, installs and updates the mod, and takes you to the server browser. Free; requires your own copy of the game.",
-    path: "/download",
-  }),
-  // TODO(go-public): remove this override, restore the `/download` entries in
-  // `mainNav`/`footerNav` and the sitemap when the alpha opens — pageMetadata
-  // already handles production indexing correctly.
-  //
-  // The page is unlisted rather than gated: it renders and serves the build to
-  // anyone with the link. Search is the one channel that would undo that, since
-  // "cyberpunk 2077 multiplayer download" is exactly the query this page would
-  // win, and the person who ran it would install a launcher and find no server
-  // to join. `follow` stays true — the page's outbound links go to indexable
-  // documentation and there is no reason to strand them.
-  robots: { index: false, follow: true },
-};
+export const metadata = pageMetadata({
+  title: "Download the Launcher",
+  description:
+    "Download the OPEN//77 launcher for Windows. It signs you in, checks your Cyberpunk 2077 build, installs and updates the mod, and takes you to the server browser. Free; requires your own copy of the game.",
+  path: "/download",
+});
 
 /**
  * Everything factual on this page — version, digest, size, publish date — comes
@@ -71,7 +57,7 @@ const LAUNCHER_DOES = [
   },
   {
     title: "Checks your game",
-    body: `It verifies that your Cyberpunk 2077 install is build ${GAME_BUILD} with ${GAME_EXPANSION}, because the client hooks the engine at addresses fixed for exactly that build.`,
+    body: `It makes sure your Cyberpunk 2077 install is build ${GAME_BUILD} with ${GAME_EXPANSION} before it installs anything. The client is built against that exact version, so you hear about a mismatch up front rather than halfway into a session.`,
   },
   {
     title: "Installs and updates the mod",
@@ -79,7 +65,7 @@ const LAUNCHER_DOES = [
   },
   {
     title: "Manages what loads",
-    body: "Choose which mods are active for a session. Servers can require a clean load-out, so this is how you keep your own setup and still connect.",
+    body: "Choose which mods are active for a session. Some servers ask for a clean load-out, so this is how you keep your own setup and still connect.",
   },
   {
     title: "Finds you a world",
@@ -94,25 +80,26 @@ const REQUIREMENTS = [
   },
   {
     title: "The WebView2 runtime",
-    body: "The launcher renders its interface with Microsoft Edge WebView2. Windows 11 already ships it; on Windows 10 it installs itself the first time it is needed.",
+    body: "The launcher renders its interface with Microsoft Edge WebView2. Windows 11 already ships it; on Windows 10 it installs itself the first time it is needed — so this is one to know about, not one to do.",
   },
   {
     title: `Your own copy of Cyberpunk 2077 ${GAME_BUILD}`,
-    body: `Bought, not pirated. ${GAME_EXPANSION} is required, not recommended — the world you load when you connect is an EP1 save. OPEN//77 never distributes the game or any of its assets.`,
+    body: `Your own legal copy — OPEN//77 never distributes the game or any of its assets. ${GAME_EXPANSION} is required rather than optional: the world you land in when you connect is an EP1 save. The build has to be ${GAME_BUILD} exactly, and the launcher checks that for you.`,
   },
 ];
 
 const FIRST_RUN = [
   {
     num: "01",
-    title: "Windows will warn you",
+    title: "Windows will show a warning",
     body: (
       <>
-        The executable is not code-signed yet, so SmartScreen shows{" "}
-        <em>“Windows protected your PC”</em> with a <strong>Don&apos;t run</strong> button. Choose{" "}
-        <strong>More info</strong>, then <strong>Run anyway</strong>. That warning means “nobody
-        paid for a certificate”, not “this file is malicious” — which is exactly why the SHA-256
-        above is published: check it and you do not have to take our word for either.
+        The launcher is not code-signed yet, so the first launch brings up SmartScreen&apos;s{" "}
+        <em>“Windows protected your PC”</em> screen. Choose <strong>More info</strong>, then{" "}
+        <strong>Run anyway</strong>, and you are through. Windows shows that message for every
+        unsigned application — plenty of indie launchers included — and it says nothing about the
+        file itself. <Link href="/docs/launcher">The launcher guide</Link> spells out exactly what
+        that dialog does and does not mean.
       </>
     ),
   },
@@ -161,15 +148,33 @@ export default async function DownloadPage() {
               mod, and drops you into the server browser. Free, and no account needed to download
               it — you bring {PLAYER_REQUIREMENT_SHORT}.
             </p>
+            {/* The actual download, above the fold. Someone who came here to get
+                the launcher should not have to find a panel first; the panel
+                further down is for whoever wants the version, the date and the
+                rest of the detail. */}
             <div className="hero-ctas">
-              <a className="btn btn-primary" href="#get">
-                Get the launcher
-                <ArrowDownIcon />
-              </a>
+              {release ? (
+                <a className="btn btn-primary btn-lg" href={release.url}>
+                  Download for Windows
+                  <DownloadIcon size={16} />
+                </a>
+              ) : (
+                <a className="btn btn-primary btn-lg" href="#get">
+                  Get the launcher
+                  <ArrowDownIcon />
+                </a>
+              )}
               <a className="btn btn-ghost" href="#requirements">
                 What you need
               </a>
             </div>
+            {release ? (
+              <p className="dl-hero-meta">
+                {release.version}
+                {release.sizeBytes !== null ? ` · ${formatBytes(release.sizeBytes)}` : ""} · Windows
+                10 / 11, 64-bit
+              </p>
+            ) : null}
             {/* Above the fold, next to the download button, and not buried at
                 the bottom of the page: the launcher installs and runs today,
                 but the alpha has not opened. Anyone who reads only the hero
@@ -178,10 +183,10 @@ export default async function DownloadPage() {
             <p className="status-note" role="note">
               <InfoIcon size={18} />
               <span>
-                <strong>There is nothing to play on yet.</strong> The launcher installs, signs you
-                in and updates the client today — but the public alpha has not opened, so the{" "}
-                <Link href="/servers">server browser</Link> is empty and stays that way until the
-                first community worlds go live. Download it to be ready, not to play tonight.
+                <strong>Nothing to play on just yet.</strong> The launcher installs, signs you in
+                and keeps the client updated today — but the public alpha has not opened, so the{" "}
+                <Link href="/servers">server browser</Link> stays empty until the first community
+                worlds go live. Grab it now and you are ready the moment they do.
               </span>
             </p>
           </div>
@@ -195,10 +200,9 @@ export default async function DownloadPage() {
             <p className="status-note" role="note">
               <ShieldIcon size={18} />
               <span>
-                <strong>Official builds only.</strong> Download the launcher from this page or the
-                official CDN — nowhere else. Every build carries its SHA-256 so you can verify what
-                you run, and the same digest is registered with the master server as an authorized
-                build.
+                <strong>This page is the official source.</strong> The build comes straight from the
+                OPEN//77 CDN, and this is the only place we publish it — bookmark this page and you
+                always land on the current version.
               </span>
             </p>
           </div>
@@ -262,9 +266,9 @@ export default async function DownloadPage() {
             <p className="status-note" role="note">
               <DiscordIcon size={18} />
               <span>
-                <strong>Pre-alpha, and it shows.</strong> OPEN//77 is being built in the open: the
-                launcher works, the public alpha has not opened, and the server browser is still
-                mostly quiet. If something breaks, the{" "}
+                <strong>It is pre-alpha, and it shows.</strong> OPEN//77 is being built in the open:
+                the launcher works today, the public alpha has not opened, and the server browser is
+                still quiet. The{" "}
                 {site.links.discord ? (
                   <a href={site.links.discord} target="_blank" rel="noreferrer noopener">
                     Discord
@@ -272,7 +276,7 @@ export default async function DownloadPage() {
                 ) : (
                   "Discord"
                 )}{" "}
-                is where it gets fixed.
+                is where things get fixed — and where the alpha gets announced first.
               </span>
             </p>
           </div>
@@ -324,46 +328,34 @@ function ReleasePanel({ release }: { release: LauncherRelease }) {
       <div className="dl-release-body">
         <div className="dl-cta">
           <a className="btn btn-primary btn-lg" href={release.url}>
-            Download {release.fileName}
+            Download for Windows
             <DownloadIcon size={16} />
           </a>
           <p className="dl-cta-meta">
-            {release.sizeBytes !== null ? `${formatBytes(release.sizeBytes)} · ` : ""}
-            no account required
+            {release.fileName}
+            {release.sizeBytes !== null ? ` · ${formatBytes(release.sizeBytes)}` : ""} · no account
+            required
           </p>
         </div>
 
-        <dl className="dl-facts">
-          <div>
-            <dt>File</dt>
-            <dd>{release.fileName}</dd>
-          </div>
-          <div>
-            <dt>SHA-256</dt>
-            <dd>
-              {release.sha256 ? (
-                <CopyLine value={release.sha256} label="Copy the SHA-256 of this build" />
-              ) : (
-                <span className="dl-none">unpublished</span>
-              )}
-            </dd>
-          </div>
-          <div>
-            <dt>Verify</dt>
-            <dd>
-              <CopyLine
-                value={verifyCommand(release.fileName)}
-                label="Copy the PowerShell command that hashes the download"
-              />
-            </dd>
-          </div>
-        </dl>
-
-        <p className="dl-verify-note">
-          Run that in PowerShell in the folder you downloaded to. If the hash it prints matches the
-          one above, the file is byte-for-byte the build we published. If it does not, delete it —
-          it did not come from us.
-        </p>
+        {/* The digest stays published — it is the same digest the master
+            registers as an authorized build, and /host publishes its own for
+            the same reason — but it is no longer a step the player is asked to
+            perform. Folded away it is one click for someone who verifies
+            downloads, and invisible to everyone who just wants the launcher. */}
+        {release.sha256 ? (
+          <details className="dl-verify">
+            <summary>SHA-256 checksum (optional)</summary>
+            <div className="dl-verify-body">
+              <CopyLine value={release.sha256} label="Copy the SHA-256 of this build" />
+              <p>
+                Published because it costs nothing to publish. If you verify your downloads,{" "}
+                <code>{verifyCommand(release.fileName)}</code> in PowerShell prints this same
+                string. Nothing you have to do.
+              </p>
+            </div>
+          </details>
+        ) : null}
       </div>
     </div>
   );

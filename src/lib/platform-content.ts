@@ -228,7 +228,7 @@ export const FAQ = [
   {
     question: "Can I play it right now?",
     answer:
-      "Not yet. The project is in pre-alpha and the public alpha has not opened, so there are no public servers to join and nothing to play on. We publish development progress openly rather than promising dates — when the alpha opens, it will be announced through the project's channels.",
+      "Not yet. The project is in pre-alpha and the public alpha has not opened, so there are no public servers to join and nothing to play on. The Windows launcher is published, so you can download and install it now to be ready — it simply has no world to connect you to yet. We publish development progress openly rather than promising dates; when the alpha opens, it will be announced through the project's channels.",
   },
   {
     question: "Will I be able to host my own server?",

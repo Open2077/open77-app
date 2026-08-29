@@ -85,15 +85,15 @@ export function absoluteUrl(pathname: string): string {
 /**
  * Primary navigation, shared by the header, the mobile menu and the sitemap.
  *
- * `/download` is deliberately absent, and so is any other entry point to it.
- * A launcher build is published and the page serves it to anyone who has the
- * link, but the public alpha has not opened: there are no servers to join, so
- * advertising the download would send people to install something they cannot
- * use tonight. The page is unlisted, not hidden — see the `robots` override in
- * `src/app/download/page.tsx`, which keeps it out of search for the same
- * reason. Both come back together when the alpha opens.
+ * `/download` leads, because the launcher is now the thing we want a visitor to
+ * take away: it is published, it installs, and downloading it ahead of the
+ * alpha is the whole ask. It was unlisted while the page itself was the only
+ * place saying the alpha had not opened — that caveat is now on the page above
+ * the fold, so pointing people at it no longer sets anyone up for a
+ * disappointment.
  */
 export const mainNav = [
+  { href: "/download", label: "Download" },
   { href: "/servers", label: "Servers" },
   { href: "/create", label: "Create Server" },
   { href: "/docs", label: "Docs" },
@@ -105,7 +105,7 @@ export const footerNav = [
   {
     title: "Play",
     links: [
-      // No launcher link here either, for the reason given on `mainNav`.
+      { href: "/download", label: "Download the launcher" },
       { href: "/servers", label: "Server browser" },
       { href: "/docs/platform#how-it-works", label: "How it works" },
       { href: "/docs/platform#faq", label: "FAQ" },

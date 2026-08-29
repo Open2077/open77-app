@@ -1,14 +1,25 @@
 /* ============================================================
    /download — the player launcher download surface.
 
-   One artefact, not a matrix: a single panel carrying the version,
-   the button, the SHA-256 and the command that checks it. The hash
-   is shown in full rather than abbreviated, because on this page it
-   is the whole trust story and it is meant to be compared by eye.
+   A download page, so the button is the page: one in the hero and
+   one on the release panel, with the version and the size beside
+   them. The SHA-256 is still published — it is the digest the master
+   registers as an authorized build — but it lives folded inside a
+   disclosure, because verifying a checksum is something a player may
+   do, never something the page should ask of them.
    ============================================================ */
 
 .page-hero-download .page-hero-bg::before {
   background-image: url("/assets/play-together.jpg");
+}
+
+/* Version, weight and platform under the hero button — the three things
+   a download button is normally captioned with, and nothing else. */
+.dl-hero-meta {
+  margin: 14px 0 0;
+  font: 13px var(--font-mono);
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
 }
 
 /* ---- the release panel ------------------------------------------ */
@@ -99,50 +110,72 @@
   color: var(--text-faint);
 }
 
-/* ---- the facts table -------------------------------------------- */
+/* ---- the checksum, folded away ----------------------------------- */
+/* Quiet by construction: a hairline rule, a faint mono summary and no
+   emphasis of any kind, so it reads as a footnote on the panel rather
+   than as a step between the player and the button. */
 
-.dl-facts {
-  display: grid;
-  gap: 12px;
-  margin: 0;
-  padding-top: 4px;
+.dl-verify {
+  padding-top: 14px;
   border-top: 1px solid var(--line);
 }
 
-.dl-facts > div {
-  display: grid;
-  grid-template-columns: 78px minmax(0, 1fr);
-  gap: 12px;
+.dl-verify summary {
+  cursor: pointer;
+  list-style: none;
+  display: inline-flex;
   align-items: center;
-  padding-top: 8px;
-}
-
-.dl-facts dt {
-  font: 500 10.5px var(--font-mono);
-  letter-spacing: 0.08em;
+  gap: 8px;
+  padding: 4px 0;
+  font: 500 12px var(--font-mono);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-faint);
+  transition: color 0.15s ease;
 }
 
-.dl-facts dd {
-  margin: 0;
-  min-width: 0;
-  font: 13px var(--font-mono);
+.dl-verify summary::-webkit-details-marker {
+  display: none;
+}
+
+.dl-verify summary::after {
+  content: "";
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-right: 1.5px solid currentcolor;
+  border-bottom: 1.5px solid currentcolor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.dl-verify summary:hover,
+.dl-verify[open] summary {
   color: var(--text-dim);
-  overflow-wrap: anywhere;
 }
 
-.dl-none {
-  color: var(--text-faint);
-  font-style: italic;
+.dl-verify[open] summary::after {
+  transform: translateY(1px) rotate(-135deg);
 }
 
-.dl-verify-note {
+.dl-verify-body {
+  display: grid;
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.dl-verify-body p {
   margin: 0;
   max-width: 72ch;
   font-size: 13.5px;
   line-height: 1.7;
+  color: var(--text-faint);
+}
+
+.dl-verify-body code {
+  font: 12.5px var(--font-mono);
   color: var(--text-dim);
+  overflow-wrap: anywhere;
 }
 
 /* ---- the "nothing published" state ------------------------------- */
@@ -230,11 +263,6 @@
 /* ---- responsive --------------------------------------------------- */
 
 @media (max-width: 640px) {
-  .dl-facts > div {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-
   .dl-cta .btn {
     flex: 1 1 auto;
     justify-content: center;
