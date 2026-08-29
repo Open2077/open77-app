@@ -237,6 +237,53 @@
 }
 .adm-more { display: flex; justify-content: center; margin-top: 12px; }
 
+/* ---------- Alpha access: gate banner, filters, pager ---------- */
+
+/* The banner that says whether the entitlement is enforced at all. Coral when
+   the gate is off, because a grant made then changes nothing today. */
+.adm-gate { margin-bottom: 12px; }
+.adm-gate strong { color: var(--text); font-weight: 600; }
+.adm-gate.is-on svg { color: var(--accent); }
+.adm-gate.is-off {
+  border-color: rgba(255, 89, 100, 0.4);
+  background: rgba(255, 89, 100, 0.06);
+}
+.adm-gate.is-off svg { color: var(--signal); }
+
+.adm-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.adm-filters { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+
+/* Access cell: the chip, plus the reason when it is not a plain grant. */
+.adm-access { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.adm-access-note {
+  font: 500 10px var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.adm-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.adm-pager-range {
+  font: 500 11.5px var(--font-mono);
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+.adm-pager-controls { display: inline-flex; gap: 8px; }
+
 /* ---------- Denied / gate states ---------- */
 
 .adm-denied {

@@ -93,6 +93,41 @@ export type ModManifestSummary = {
   current: boolean;
 };
 
+/**
+ * One account as the closed-alpha whitelist lists it.
+ *
+ * `alphaAccess` is the *effective* answer the connect-ticket path enforces;
+ * `alphaAccessImplicit` says it comes from `role = "admin"` rather than from a
+ * grant, which is why an administrator legitimately shows access with no
+ * granter and no timestamp. The two are not exclusive — an administrator who
+ * was also granted explicitly carries both, and that explicit grant is what
+ * survives a later demotion.
+ */
+export type AlphaAccessRow = {
+  accountId: string;
+  email: string;
+  displayName: string;
+  role: string;
+  status: string;
+  emailVerified: boolean;
+  alphaAccess: boolean;
+  alphaAccessImplicit: boolean;
+  grantedAtUtc: string | null;
+  grantedByAccountId: string | null;
+  grantedByEmail: string | null;
+  createdAtUtc: string;
+};
+
+/** A page of the whitelist. `alphaAccessRequired` mirrors GET /enforcement. */
+export type AlphaAccessPage = {
+  /** False when the gate is off: grants are recorded but decide nothing today. */
+  alphaAccessRequired: boolean;
+  page: number;
+  pageSize: number;
+  total: number;
+  items: AlphaAccessRow[];
+};
+
 export type BanScope = "global" | "server";
 export type BanSubjectKind = "account" | "identity" | "identity_key" | "license";
 
@@ -142,6 +177,39 @@ export function revokeLicense(
   licenseId: string,
 ): Promise<{ licenseId: string; serversRevoked: number }> {
   return masterCall(`/api/v1/admin/licenses/${licenseId}/revoke`, { method: "POST", token });
+}
+
+/**
+ * A page of the closed-alpha whitelist, newest account first. `query` matches
+ * e-mail, display name or an exact account ID; `granted` filters on effective
+ * access, so administrators count as granted.
+ */
+export function alphaAccess(
+  token: string,
+  options: { query?: string; granted?: boolean; page?: number; pageSize?: number } = {},
+): Promise<AlphaAccessPage> {
+  const params = new URLSearchParams();
+  if (options.query) params.set("query", options.query);
+  if (options.granted !== undefined) params.set("granted", String(options.granted));
+  if (options.page !== undefined) params.set("page", String(options.page));
+  if (options.pageSize !== undefined) params.set("pageSize", String(options.pageSize));
+  const search = params.toString();
+  const suffix = search ? `?${search}` : "";
+  return masterCall(`/api/v1/admin/alpha-access${suffix}`, { token });
+}
+
+/**
+ * Grants alpha access. Idempotent — re-granting answers 200 and keeps the
+ * original granter and timestamp. Returns the resulting row, so one line can be
+ * redrawn without refetching the page.
+ */
+export function grantAlphaAccess(token: string, accountId: string): Promise<AlphaAccessRow> {
+  return masterCall(`/api/v1/admin/alpha-access/${accountId}/grant`, { method: "POST", token });
+}
+
+/** Revokes the explicit grant. Also idempotent, and also returns the row. */
+export function revokeAlphaAccess(token: string, accountId: string): Promise<AlphaAccessRow> {
+  return masterCall(`/api/v1/admin/alpha-access/${accountId}/revoke`, { method: "POST", token });
 }
 
 /** The anti-crack allowlist: every registered build, newest first. */
