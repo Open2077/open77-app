@@ -17,6 +17,7 @@ const ADMIN_NAV = [
   { href: "/host", label: "Host a server" },
   { href: "/admin/servers", label: "Servers" },
   { href: "/admin/users", label: "Users" },
+  { href: "/admin/alpha-access", label: "Alpha access" },
   { href: "/admin/licenses", label: "Licenses" },
   { href: "/admin/bans", label: "Bans" },
   { href: "/admin/audit", label: "Audit log" },
