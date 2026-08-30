@@ -71,9 +71,19 @@ function launcherUrl(cdnBaseUrl: string, version: string): string {
   return `${cdnBaseUrl}/launcher/${encodeURIComponent(version)}/Open77Launcher.exe`;
 }
 
-function serverUrl(cdnBaseUrl: string, version: string): string {
+// The server ships one archive PER PLATFORM, and has since the multi-platform
+// release: `-win-x64.zip` and `-linux-x64.tar.gz`. The old single
+// `open77-server-<version>.zip` name has not existed on the CDN since, so
+// building it here handed an operator a link that 404s. This panel only knows
+// the version (it reads the build allowlist, not the CDN's latest.json), so it
+// offers both real names rather than guessing which one the reader wants.
+function serverUrls(cdnBaseUrl: string, version: string): { href: string; label: string }[] {
   const v = encodeURIComponent(version);
-  return `${cdnBaseUrl}/server/${v}/open77-server-${v}.zip`;
+  const base = `${cdnBaseUrl}/server/${v}/open77-server-${v}`;
+  return [
+    { href: `${base}-win-x64.zip`, label: "windows zip" },
+    { href: `${base}-linux-x64.tar.gz`, label: "linux tar.gz" },
+  ];
 }
 
 function DownloadLink({ href, label }: { href: string; label: string }) {
@@ -211,7 +221,7 @@ export function ReleasesPanel() {
             version={server?.version ?? null}
             published={server ? formatDateTime(server.releasedAtUtc) : null}
             meta={server ? `sha ${server.sha256.slice(0, 12)}…` : null}
-            links={server && cdn ? [{ href: serverUrl(cdn, server.version), label: "server zip" }] : []}
+            links={server && cdn ? serverUrls(cdn, server.version) : []}
             empty="No active server build registered."
             source="latest active server build"
           />
