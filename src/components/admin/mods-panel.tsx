@@ -110,7 +110,7 @@ export function ModsPanel() {
         ...(note.trim() ? { note: note.trim() } : {}),
       });
       setNotice(
-        `“${created.displayName}” recorded as ${created.safety}, redistribution ${created.redistribution}. Launchers pick it up on their next attest call.`,
+        `“${displayName.trim()}” recorded as ${created.safety}, redistribution ${created.redistribution}. Launchers pick it up on their next attest call.`,
       );
       setFormOpen(false);
       resetForm();

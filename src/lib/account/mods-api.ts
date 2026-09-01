@@ -147,10 +147,16 @@ export function modAttestations(
 }
 
 /** Whitelists one hash. Returns the stored row, so the table can redraw without a refetch. */
+/** What POST /admin/mods/attestations echoes back — the decision, not the row. */
+export type ModAttestationAck = Pick<ModAttestation, "sha256" | "safety" | "redistribution">;
+
 export function createModAttestation(
   token: string,
   input: ModAttestationInput,
-): Promise<ModAttestation> {
+): Promise<ModAttestationAck> {
+  // A minimal acknowledgement, NOT the stored row: the master echoes back only the
+  // three fields it decided. Anything else the caller wants to show, it already has
+  // — it just submitted it.
   return masterCall("/api/v1/admin/mods/attestations", { method: "POST", token, body: input });
 }
 
