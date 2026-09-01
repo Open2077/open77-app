@@ -44,6 +44,65 @@ The namespaced equivalents are:
 | `Open77.events.on` / `off` / `emit` | Same as `AddEventHandler`, `RemoveEventHandler`, `TriggerEvent` |
 | `Open77.net.on` / `emitClient` | Same as `RegisterNetEvent`, `TriggerClientEvent` |
 
+## Join-time readiness gate
+
+The barrier that stops one resource acting on a player another resource is not finished with.
+Server resources cannot call each other, so the host owns this; it is the only place the two
+sides can meet. Full rationale and worked example in
+[docs/lua-resources.md](../docs/lua-resources.md#the-join-time-readiness-gate).
+
+**The rule: do not teleport, spawn, kill or force a respawn on a player until their gate has
+opened.** Reading state, rosters and HUD payloads are unaffected.
+
+| Function | Signature | Result / purpose |
+|---|---|---|
+| `Open77.ready.isReady` | `(playerId)` | Whether anything is still holding this player. A player the host does not know is ready. |
+| `Open77.ready.participate` | `({ timeoutMs?, reason? })` | Declare once, at load: every player who connects from now on arrives with one hold in this resource's name. |
+| `Open77.ready.hold` | `(playerId, reason?)` | Take or refresh this resource's hold. Returns the player's `session`, or `nil, reason`. |
+| `Open77.ready.release` | `(playerId, session?, note?)` | Clear this resource's hold. A `session` that no longer matches is dropped. |
+| `Open77.ready.status` | `(playerId)` | `{ known, ready, session, ageMs, holds = { { resource, reason, ageMs, remainingMs } } }`. |
+
+`onPlayerReady(playerId, detail)` is emitted into **every** running resource when the last hold
+clears. `playerId` arrives as a string like every host event. `detail` is `cleared`, `no_holds`,
+`resource_reloaded`, `resource_stopped`, or `timeout:<resource>`.
+
+It is a barrier lifting, not a trigger: it says nothing about whether the player's world is up, so
+keep your own readiness signal and ask the gate for permission. Every hold carries a deadline, so a
+resource that never releases costs one degraded join and one `WRN` naming it, never a stuck server.
+`ready` at the console lists who is holding whom. No permission is required.
+
+## Operator-tunable settings
+
+Settings a server owner may retune from the Warden admin panel while the server runs, without a
+restart. The resource declares what is tunable; the panel can only move values inside that
+declaration, and never edits Lua. Server-side only.
+
+| Function | Signature | Result / purpose |
+|---|---|---|
+| `Open77.tunables.declare` | `(table)` | Declare this resource's tunables and return a live proxy. Raises if the declaration is malformed. |
+| `Open77.tunables.get` | `(key)` | The current value, or `nil, reason` for an undeclared key. |
+| `Open77.tunables.set` | `(key, value)` | Write one. Returns `ok, message, pending`. Same validation and persistence as a panel write. |
+| `Open77.tunables.capture` | `()` | A frozen plain table of every current value, to pin onto one match. |
+| `Open77.tunables.pending` | `()` | Key → value for changes waiting on a boundary. |
+| `Open77.tunables.promote` | `()` | Adopt everything waiting; returns the list of keys that moved. |
+
+Declaration fields: `value` (required default), `type` (`number`, `integer`, `boolean`, `string`,
+`enum`), `min`, `max`, `step`, `choices`, `unit`, `apply` (`live`, `next_round`, `next_match`),
+`label`, `description`, `group`, `order`. `min`/`max`/`type`/`choices` are enforced on every write;
+`step` and `unit` are presentation only. Limits: 128 tunables per resource, 64 KiB of declaration,
+32 choices, 256-character strings.
+
+**The proxy returned by `declare` reads through to the host on every access.** Read it at the point
+of use; a value hoisted into a file-scope local is captured at load time and never updates, while
+the panel goes on reporting the new number. An undeclared key raises rather than returning `nil`.
+
+Values are owned by the host, so they survive a reload **and** a stop, and come back after a
+restart from `tunables.json` next to `server.jsonc`. A key declared `next_round` or `next_match` is
+stored and persisted immediately but does not reach `Open77.tunables.get` until the resource calls
+`promote()`; for a mode running several rounds at once, `capture()` per match is the only correct
+form. The owning resource — and no other — receives `onTunableChanged(key, value, pending)` after
+every accepted write.
+
 ## Notifications
 
 These methods route to the official `open77_notifications` client package. IDs and mutation rights
@@ -58,6 +117,32 @@ are isolated per calling server resource.
 | `Open77.notifications.clear` | `(playerId?)` | Clear this owner's notifications for one player or everyone. |
 
 See [notifications](notifications.md) for every definition field and queue limit.
+
+## Perspective policy
+
+Whether players on this server may use third person. The calling server resource must declare
+`network.events`; the policy is broadcast to every client and answered again to anyone who joins
+later.
+
+| Function | Signature | Result |
+|---|---|---|
+| `Open77.perspective.setPolicy` | `(policy, perspective?)` | `true`, or `false, reason`. |
+| `Open77.perspective.policy` | `()` | `policy, perspective, declared` — what **this** resource set. |
+
+`policy` is `disabled`, `allowed`, `default` or `forced`; `perspective` is `fpp` or `tps` and is
+required for `forced`, because a pin with nothing pinned would quietly become first person.
+
+The client arbiter ranks a server policy above the player's own preference and every world state
+above both. A `forced` policy does not erase what the player asked for: lifting the pin returns
+them to it.
+
+Call `setPolicy` from the resource's **start path** — a reload replaces the VM, and the policy
+lives in it. A server on which no resource ever calls this sends nothing and every client keeps the
+platform default `allowed`. If two resources declare a policy, both answer a joining client and the
+last write wins; one owner, normally the gamemode, is the remedy.
+
+See [perspective](../docs/perspective.md) for the priority table, the player-facing key and
+preference, and the measured limitations.
 
 ## Player clothing
 
@@ -78,6 +163,27 @@ Listen for the resource-local `open77:clothing:completed` event. Its arguments a
 immediately; unanswered requests complete with `request_timeout` after 10 seconds. Full record,
 slot, result, rollback, and replication semantics are in
 [Clothing Lua API](../docs/clothing.md).
+
+## Player weapons
+
+These asynchronous methods target the official `open77_weapons` client relay.
+The calling resource declares `network.events` and depends on
+`open77_weapons >=0.1.0`.
+
+| Function | Signature | Result |
+|---|---|---|
+| `Open77.weapons.assign` | `(playerId, record, slot, options?)` | Request ID, or `nil, reason`. |
+| `Open77.weapons.setActive` / `activate` | `(playerId, slot)` or `(playerId, record, options?)` | Request ID, or `nil, reason`. |
+| `Open77.weapons.remove` / `unequip` | `(playerId, slot)` | Request ID, or `nil, reason`. |
+| `Open77.weapons.holster` | `(playerId)` | Request ID, or `nil, reason`. |
+| `Open77.weapons.requestSnapshot` | `(playerId)` | Request ID, or `nil, reason`. |
+
+Listen for `open77:weapons:completed` with
+`playerId, requestId, operation, accepted, reason, result`. Replies are matched
+to the authenticated target and calling resource; unanswered requests complete
+with `request_timeout` after 10 seconds. See
+[Weapon Lua API](weapons-api.md) for options, result schemas, permissions,
+errors, and inventory-authority rules.
 
 ## Players and authoritative life
 
@@ -364,6 +470,101 @@ All methods require `world.elevators`.
 `GoToElevator`, `TeleportElevator`, `PauseElevator`, `ResumeElevator`, `SetElevatorFlags`,
 `RemoveElevator`, `GetElevator`, and `GetElevators`. See [elevators](elevators.md).
 
+## Voice topology and policy
+
+All methods require `voice.manage`. The dedicated server owns reachability: a client's requested
+scope never bypasses routing buckets, proximity, membership, mute/deaf, rate, or quality checks.
+
+| Method | Purpose |
+|---|---|
+| `Open77.voice.status` | Global quality/profile, default proximity, and relay/rejection counters. |
+| `channels` / `getChannel` | List/read canonical radio, phone, party, admin, and spatial channels. |
+| `participants` / `getParticipant` | Read proximity, server mute/deaf, and channel memberships. |
+| `createChannel` / `updateChannel` / `removeChannel` | Resource-owned topology and effect control. |
+| `addPlayer` / `removePlayer` | Change channel membership. |
+| `setChannelPlayerMuted` | Mute one player in one channel. |
+| `setChannelPlayerPermissions` | Set independent speak/listen permission. |
+| `setPlayerMuted` / `setPlayerDeaf` | Server-wide send/receive policy. |
+| `setProximity` | Enable/disable and tune one player's server-side reach. |
+| `setDefaultProximityDistance` | Change the default, optionally for existing participants. |
+| `setQuality` / `setEnabled` | Set global codec policy or disable voice. |
+
+Channel effects include `gain`, `lowPassHz`, `highPassHz`, `distortion`, `radioNoise`,
+`spatialBlend`, and the reverb controls `reverbWet`, `reverbRoomSize`, `reverbDecay`,
+`reverbDamping`, and `reverbPreDelayMs`. Non-persistent channels are released automatically with
+their owning resource.
+See [Integrated voice chat](voice.md) for complete signatures, examples, client APIs, settings, and
+the security/bandwidth model.
+
+## World props
+
+Every method requires `world.props`. Props are authoritative, owned by their creating resource,
+and streamed per player rather than broadcast to a bucket. IDs are decimal strings; do not pass
+them through `tonumber`.
+
+| Function | Signature | Result |
+|---|---|---|
+| `Open77.props.create` | `(definition)` | Open77 prop ID, or `nil, reason`. |
+| `Open77.props.update` | `(id, patch)` | `boolean, reason?` |
+| `Open77.props.setTransform` | `(id, { position?, yaw?, scale? })` | `boolean, reason?` |
+| `Open77.props.setBucket` | `(id, bucket)` | `boolean, reason?` |
+| `Open77.props.remove` | `(id)` | `boolean, reason?` |
+| `Open77.props.get` | `(id)` | Prop snapshot, or `nil`. |
+| `Open77.props.all` | `(bucket?)` | Array of prop snapshots, optionally filtered to one bucket. |
+| `Open77.props.catalog` | `()` | Curated model aliases and the models they resolve to. |
+| `Open77.props.clear` | `()` | Remove every prop this resource owns; returns how many. |
+
+Definitions accept `model`, `position`, `yaw`, `scale`, `appearance`, `bucket`, `physics`
+(`static`, `kinematic`, `dynamic`, `none`), `collision`, `visible`, `kind` (`prop`, `light`,
+`effect`), `light`, `streamingRadius` (10–2000), `streamingHysteresis` (0 to the radius), and
+`ttlMs` (0 for no expiry, seven days maximum). `update` is sparse and does not accept `model` or
+`kind`; changing either is a remove and a create. The registry holds 8,192 props, of which one
+resource may own 2,048. A resource may read every prop but may only mutate or remove its own.
+
+Failures are `permission_denied:world.props`, `quota_exceeded`, `not_found`,
+`owned_by_another_resource`, `invalid_position`, `invalid_model`, `unknown_alias`,
+`record_provisioning_failed`, `entity_spawn_failed`, and `world_unavailable`.
+
+Low-level aliases are `CreateProp`, `UpdateProp`, `SetPropTransform`, `SetPropBucket`,
+`RemoveProp`, `GetProp`, `GetProps`, and `ClearProps`. The namespaced API supplies validation and structured
+option tables and is the recommended surface. See [props](props.md) for the model catalogue,
+streaming rules, lights, the client projection API, and the current limitations.
+
+## World effects
+
+Every method requires `world.effects`. A one-shot is broadcast to the players in range and never
+stored; a looping effect is a registry entry with the same identity, ownership, revisioning and
+streaming semantics as a prop, in a registry of its own.
+
+| Function | Signature | Result |
+|---|---|---|
+| `Open77.effects.play` | `(name, opts)` | `boolean, reason?` — one-shot, no handle. |
+| `Open77.effects.create` | `(definition)` | Open77 effect ID, or `nil, reason`. |
+| `Open77.effects.update` | `(id, patch)` | `boolean, reason?` |
+| `Open77.effects.remove` | `(id)` | `boolean, reason?` |
+| `Open77.effects.all` | `(bucket?)` | Array of looping-effect snapshots, optionally filtered to one bucket. |
+| `Open77.effects.catalog` | `()` | Curated effect aliases. |
+| `Open77.effects.playOn` | `(entityOrPlayerId, name, opts)` | `boolean, reason?` — entity-authored VFX. |
+| `Open77.effects.sound` | `(entityOrPlayerId, event, opts)` | `boolean, reason?` — entity-bound Wwise event. |
+
+`play` options are `position`, `orientation`, `bucket`, `range` (1–500, default 150), and
+`sound`. `create` definitions accept `effect`, `position`, `orientation`, `bucket`, `visible`,
+`streamingRadius` (10–2000, default 90), `streamingHysteresis` (default 20), and `ttlMs`. The
+effect name is not patchable. The registry holds 2,048 looping effects, of which one resource may
+own 512.
+
+Low-level aliases are `PlayEffect`, `CreateEffect`, `UpdateEffect`, `RemoveEffect`,
+`GetEffect`, `GetEffects`, `PlayEntityEffect`, and `PlayEntitySound`. The namespaced API
+supplies validation and structured option tables and is the recommended surface.
+
+Failures use the same vocabulary as props with `permission_denied:world.effects` in place of the
+props permission.
+
+There are no low-level aliases for `Open77.effects`; the namespaced table is the whole surface.
+The client-local `Open77.vfx` and `Open77.sfx` tables are a **different API in a different
+runtime** and are not replicated — see [effects](effects.md) for the distinction, which is the
+easiest thing to get wrong here.
+
 ## Database
 
 Database access requires `database.access`. `Open77.database` and `MySQL` refer to the same
@@ -396,6 +597,8 @@ resource-prefixed server logger. Their common signature is `(...)`; no return va
 | `world.vehicles` | `Open77.vehicles` |
 | `world.npcs` | `Open77.npcs` |
 | `world.elevators` | `Open77.elevators` |
+| `world.props` | `Open77.props` |
+| `world.effects` | `Open77.effects` |
 | `players.life.read` | Player life reads |
 | `players.life.kill` | `Open77.players.kill` |
 | `players.life.revive` | `Open77.players.revive` |
@@ -404,6 +607,7 @@ resource-prefixed server logger. Their common signature is `(...)`; no return va
 | `players.damage.read` | `Open77.players.getHealth` |
 | `players.damage.apply` | Player health/damage mutations |
 | `combat.config` | `Open77.combat` and damage arbiters |
+| `voice.manage` | `Open77.voice` authoritative topology and policy |
 | `database.access` | `Open77.database` / `MySQL` |
 
 Request only the capabilities a resource actually uses. A manifest permission grants access to a
@@ -417,3 +621,13 @@ low-level bindings, and every namespaced helper and constant installed by the se
 `wiki/tools/audit-api.py` compares public globals with this page and fails when a new binding is not
 documented. The higher-level tables are kept beside their validation and permission rules above so
 their authoritative semantics remain explicit instead of being confused with the client runtime.
+
+**Two sections run ahead of the audit.** [World props](#world-props) and
+[World effects](#world-effects) document a surface that is specified and being built: the
+authoritative registries exist (`PropAuthorityService`, `EffectAuthorityService`) and the bounds
+quoted are read from them, but the `Open77.props` and `Open77.effects` Lua bindings are not yet
+installed by `LuaResourceRuntime`, and no part of either has been proven in a running session.
+The audit only fails on a global that exists and is undocumented, so documenting them early
+costs nothing — but the seven prop aliases (`CreateProp`, `UpdateProp`, `SetPropTransform`,
+`SetPropBucket`, `RemoveProp`, `GetProp`, `GetProps`) will raise the low-level binding count
+above 70 when they land, and the two guides carry the same caveat where it matters.

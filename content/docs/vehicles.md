@@ -137,6 +137,12 @@ The remaining `Open77.vehicles.update` fields are `health`, `flags`, `primaryCol
 | `Open77.vehicles.isWindowOpen` | `vehicles.read` | `(id, window)` | Reads the canonical four-bit opening state, not broken glass. |
 | `Open77.vehicles.warpPlayerIntoVehicle` | `vehicles.presentation` | `(playerId, vehicleId, seat)` | Instantly presents an already-authorized remote occupant. |
 | `Open77.vehicles.taskPlayerEnterVehicle` | `vehicles.presentation` | `(playerId, vehicleId, seat)` | Reserved animated path; currently fails closed with `animated_entry_unsupported`. |
+| `Open77.vehicles.setPerformance` | `vehicles.performance` | `(id, profile)` | Caps one vehicle's top speed and pickup. |
+| `Open77.vehicles.clearPerformance` | `vehicles.performance` | `(id)` | Removes that vehicle's cap. |
+| `Open77.vehicles.setPerformanceClass` | `vehicles.performance` | `(record, profile)` | Caps every present and future vehicle of one TweakDB record. |
+| `Open77.vehicles.clearPerformanceClass` | `vehicles.performance` | `(record)` | Removes that record's cap. |
+| `Open77.vehicles.clearAllPerformance` | `vehicles.performance` | `()` | Drops every cap, instance and class. |
+| `Open77.vehicles.ratedTopSpeed` | `vehicles.read` | `(id)` | Gearing rating of the vehicle's record in km/h, or `nil`. |
 
 Client constants are `Open77.vehicles.doors`, `Open77.vehicles.windows`, and
 `Open77.vehicles.seats`. They are tables, not callable methods.
@@ -399,6 +405,59 @@ local trunkOpen = Open77.vehicles.isDoorOpen(id, "trunk")
 local hoodOpen = Open77.vehicles.isDoorOpen(id, Open77.vehicles.doors.hood)
 ```
 
+### Performance ceilings
+
+A roster of cars is only a real choice when no single car simply wins. Cyberpunk 2077 2.31 exposes
+no speed setter, no writable drive model and no writable input system, so Open77 applies a ceiling
+the way an engine control unit does: it withdraws driver throttle as the ceiling approaches, at the
+exact point in the drive update where REDengine reads it. The car still accelerates normally, then
+the top of its acceleration curve flattens. Nothing fights the physics solver, so there is no
+judder and no rubber-banding.
+
+```lua
+-- Every Archer Hella in this gamemode tops out at 140 km/h.
+Open77.vehicles.setPerformanceClass("Vehicle.v_standard2_archer_hella_player", {
+  topSpeedKph = 140,
+})
+
+-- Same ceiling, and half the pickup, for one specific spawned car.
+Open77.vehicles.setPerformance(vehicleId, {
+  topSpeedKph = 140,
+  taperKph = 15,
+  accelerationScale = 0.5,
+})
+
+Open77.vehicles.clearPerformanceClass("Vehicle.v_standard2_archer_hella_player")
+Open77.vehicles.clearAllPerformance()
+```
+
+| Field | Default | Meaning |
+|---|---|---|
+| `topSpeedKph` | `0` | The ceiling. Zero leaves the top end alone, so a profile can cap pickup only. |
+| `taperKph` | `12` | How wide the roll-off below the ceiling is. Wider is softer. Values under `3` are refused, because a band that narrow makes the limiter hunt and the hunting reads as lag. |
+| `accelerationScale` | `1` | Throttle authority at every speed, in `(0, 1]`. This is how a car is made to *pick up* more slowly rather than only to top out lower. |
+
+Precedence is instance, then record class, then a default set by `setDefaultPerformance` on the
+native API. A car matched by nothing is untouched. Caps are dropped automatically when the vehicle
+despawns, and they do not survive a client restart.
+
+`Open77.vehicles.ratedTopSpeed(id)` returns the gearing rating of the vehicle's TweakDB record: the
+speed at which top gear reaches its rated maximum engine RPM. It is the right number for *ranking* a
+roster and for picking a ceiling that no car in the roster has to be slowed much to meet. It is not
+the measured terminal velocity — torque and aerodynamic drag carry real top speed above it.
+
+> **This is balance, not anti-cheat.** The ceiling is applied by the client that simulates the
+> vehicle, and a modified client can decline to apply it. It equalises a roster among players who
+> are running the stock client; it enforces nothing against a determined one. The server currently
+> cannot corroborate it either — the server-side vehicle snapshot carries no velocity, so there is
+> nothing to check a reported speed against. Treat a speed ceiling as a game-design tool, on the
+> same footing as which cars the roster offers at all.
+
+Where the number should live: a gamemode should not hard-code it. Declare it as a resource tunable
+so a server owner can edit it in Warden, and have the resource apply the value it reads. A ceiling
+is a match parameter, so `nextMatch` is the right apply timing — moving it under two people already
+racing is not a live update.
+
 Trusted presentation resources can request an entry presentation or use an explicit instant warp:
 
 ```lua
@@ -514,6 +573,10 @@ There is no `setHorn`, `setRpm`, `setSteering`, `setWheelRotation`, or seat-assi
 Those values describe native driver input, physics, or the validated occupancy ledger and cannot be
 authored as durable script state. Engine, lights, high beams, siren, locks, destruction, immortality,
 and invulnerability are the scriptable `flags` bits.
+
+Top speed is the one performance value that *is* scriptable, and it is scriptable in a different
+way: not as durable server state but as a client-side ceiling. See
+[Performance ceilings](#performance-ceilings).
 
 ## Authority and streaming
 

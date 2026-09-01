@@ -19,6 +19,10 @@ const ADMIN_NAV = [
   { href: "/admin/users", label: "Users" },
   { href: "/admin/alpha-access", label: "Alpha access" },
   { href: "/admin/licenses", label: "Licenses" },
+  { href: "/admin/mods", label: "Mods" },
+  // The queue is a peer page rather than a tab inside the whitelist, and gets
+  // its own entry so `aria-current` still names the page you are on.
+  { href: "/admin/mods/requests", label: "Mod queue" },
   { href: "/admin/bans", label: "Bans" },
   { href: "/admin/audit", label: "Audit log" },
 ] as const;

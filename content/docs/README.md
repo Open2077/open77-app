@@ -61,6 +61,8 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Identity and ACL](server-acl.md) | Authentication, restricted commands, and access control. |
 | [Player identity](identity.md) | Durable identifiers, display names, and rename flow. |
 | [Clothing Lua API](../docs/clothing.md) | Validated wardrobe catalogue, local/server APIs, permissions, errors, and appearance replication. |
+| [Perspective](../docs/perspective.md) | First and third person: the ownership arbiter, the server policy, the player's key and persisted preference. |
+| [Weapon Lua API](weapons-api.md) | Assign standard weapons by TweakDB template, select slots, holster, snapshot, and target a player from the server. |
 | [Loot](loot.md) | Authoritative ground drops and pickup integration. |
 | [Weather](weather.md) | Session time, weather presets, synchronization, and events. |
 | [Vehicles](vehicles.md) | Identity, streaming, authority leases, seats, and Lua APIs. |
@@ -72,12 +74,15 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Notifications](notifications.md) | Reusable WebUI toasts, client/server exports, queues, positions, progress, and ownership. |
 | [Elevators](elevators.md) | Implemented server-authoritative native lifts, bucket/chunk streaming, late join, ACL commands, and Lua APIs. |
 | [Blips](blips.md) | Vanilla map markers, entity attachment, and sprites. |
-| [Visual and audio effects](effects.md) | Resource-owned world/entity VFX and spatialised SFX. |
+| [Third person](perspective.md) | The playable third-person view: the player's key, server policy, the states that hand the view back, and the measured limitations. |
+| [World props](props.md) | Server-authoritative props and lights: models, streaming, buckets, ownership, and the client projection. |
+| [Visual and audio effects](effects.md) | Client-local world/entity VFX and spatialised SFX, and the server-replicated effect registry. |
 | [Privileged debug runtime](debug-runtime.md) | ACL-targeted client Lua execution, native lab commands, and REDscript bridge probes. |
 | [Autonomous agent testing](agent-testing.md) | The MCP server and skill that let an AI agent drive the real game: stack, connection, tools, scenarios, and safety rules. |
 | [Chat](chat.md) | Messages, slash commands, completion, and resource integration. |
 | [Clipboard](clipboard.md) | Write-only client clipboard API and the `/pos` and `/rot` transform commands. |
 | [Client persistent KVP](client-kvp.md) | Endpoint- and resource-isolated local key/value persistence, search, atomic operations, and quotas. |
+| [Integrated voice chat](voice.md) | Native Opus VOIP, proximity/radio/phone channels, Lua APIs, pause settings, lipsync state, and speaker nameplates. |
 
 ## API reference coverage
 
@@ -86,9 +91,9 @@ that a server method exists in a client VM or that a package export is a native:
 
 | Surface | Reference | Coverage |
 |---|---|---|
-| Client native runtime | The **CLIENT** API reference cards in `index.html` | 242 registered functions across 39 namespaces; every signature is reviewed and every card has a detailed description. |
-| Dedicated server runtime | The **SERVER · Open77.vehicles** cards and [Complete server Lua API](server-api.md) | All 47 authoritative vehicle methods are individually searchable cards, alongside the `detachedParts` constant table; the complete guide covers every server global, `Open77.*` namespace, constant, permission, and result shape. |
-| Official client packages | [Official resource exports](resource-exports.md) | Every literal export currently published by the official resource tree: 80 exports across 17 packages. |
+| Client native runtime | The **CLIENT** API reference cards in `index.html` | 266 registered functions across 41 namespaces; every signature is reviewed and every card has a detailed description. |
+| Dedicated server runtime | The **SERVER · Open77.vehicles** cards and [Complete server Lua API](server-api.md) | All 48 authoritative vehicle methods are individually searchable cards, while the complete guide covers all 71 low-level globals plus every `Open77.*` namespace, including voice policy. |
+| Official client packages | [Official resource exports](resource-exports.md) | Every literal client export currently published by the official resource tree: 105 exports across 20 packages. |
 
 Generated cards are separated by runtime, so identical names such as `Open77.vehicles.get` cannot
 confuse a client projection with server authority. They state whether a call is shared, needs a

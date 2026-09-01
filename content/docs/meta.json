@@ -61,7 +61,7 @@
           "source": "authored",
           "nav": "Your server in the launcher",
           "title": "Your server in the launcher",
-          "description": "How the OPEN//77 launcher reaches your world: how a server appears in the browser at all, what a catalogue row actually carries, the open77:// deep-link contract for your own Join buttons, what a connecting player must have, and why required mods are not something a server can ask for yet."
+          "description": "How the OPEN//77 launcher reaches your world: how a server appears in the browser at all, what a catalogue row actually carries, the open77:// deep-link contract for your own Join buttons, what a connecting player must have, and how a world declares the mods every player must load."
         },
         {
           "slug": "server-branding",
@@ -76,6 +76,13 @@
           "kind": "guide",
           "nav": "Server resources",
           "description": "Resource manifests, the client and server runtime split, signing and download, hot reload, and the security model around resources the server hands to connecting players."
+        },
+        {
+          "slug": "server-mods",
+          "kind": "guide",
+          "nav": "Required mods",
+          "title": "Mods your server requires",
+          "description": "Requiring a mod for your world: whether the content needs a mod at all or is really a Lua resource, the trust verdicts and the capability cap that lets unverified packages carry inert data only, importing from the Warden Mods tab, who hosts the bytes, requesting a review, bandwidth, and removing a mod without stranding players."
         },
         {
           "slug": "resource-runtime",

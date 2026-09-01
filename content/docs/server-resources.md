@@ -26,7 +26,8 @@ disconnects the client.
 
 ## Writing a resource
 
-The resource lives in the folder configured by the server's `resources.root`:
+The resource lives in a directory selected by the server's `resources.load` rules. Bare names and
+relative paths use `resources.root` as their base:
 
 ```lua
 resource "garage"
@@ -75,6 +76,84 @@ Commands declared with `restricted=true` require the ACL permission
 `command.<lowercase-name>`. The `*` permission and namespace wildcards such as `command.garage.*`
 are accepted. See [server-acl.md](server-acl.md).
 
+## Selecting which resources load
+
+The dedicated server does not have to load every directory below `resources.root`. The
+`resources.load` array is an ordered set of directory rules:
+
+```jsonc
+"resources": {
+  "enabled": true,
+  "root": "../resources",
+  "load": [
+    "open77_shell",
+    "open77_chat",
+    "open77_vehicles",
+    "freeroam",
+    "open77_freeroam"
+  ],
+  "autoStart": true
+}
+```
+
+An exact list is recommended for production and gamemode profiles. Adding a new development
+resource to the library then cannot silently add it to a live server.
+
+### Rule syntax
+
+| Rule | Result |
+|---|---|
+| `"freeroam"` | Selects `<root>/freeroam`. |
+| `"open77_*"` | Selects matching immediate child directories. |
+| `"packs/*"` | Selects matching resources one level below `<root>/packs`. |
+| `"packs/**"` | Recursively selects resources anywhere below `<root>/packs`. `**` must be a complete path segment. |
+| `"garage/open77.lua"` | Selects the resource containing that exact manifest; the final `open77.lua` is optional. |
+| `"D:/Open77/shared/**"` | Selects from an absolute path outside `resources.root`. Forward slashes avoid JSON escaping on Windows. |
+| `"!open77_debug"` | Removes matches selected by an earlier rule. |
+
+Relative names and paths are resolved from `resources.root`. The root itself is resolved from the
+directory containing `server.jsonc`, not from the shell's current directory. `*` and `?` never cross
+a directory separator. A complete `**` segment crosses any number of directories.
+
+Rules run from left to right, so later rules can remove or re-add a resource:
+
+```jsonc
+"load": [
+  "open77_*",          // add every immediate open77_ resource
+  "!open77_debug",     // remove debug
+  "!open77_example",   // remove the example package
+  "open77_debug"       // re-add debug deliberately
+]
+```
+
+Useful special cases:
+
+- Omitting `load` is equivalent to `"load": ["*"]` and preserves the old load-everything behavior.
+- `"load": []` selects no resources.
+- A rule matching no current directory selects nothing; the watcher will pick it up if a matching
+  resource appears later.
+- Two selected directories declaring the same resource name are both rejected as ambiguous.
+
+### Selection, startup, dependencies, and client delivery
+
+Selection and startup are separate gates. `load` decides which resources the host knows about.
+`resources.autoStart` decides whether the host starts selected manifests whose own `auto_start` is
+true. A selected manifest with `auto_start false` remains available to `ensure <resource>`; an
+unselected resource is unknown to `ensure`.
+
+Manifest dependencies are not silently added. Every dependency must also match `load`, otherwise
+starting the dependent resource fails and names the missing dependency. This keeps the configured
+set authoritative: an excluded gamemode cannot return indirectly through another manifest.
+
+Only selected resources that reach `Running` are packaged and signed for clients. Removing a
+resource from `load` therefore stops it server-side and removes its client scripts, WebUI, and
+declared files from the next resource generation.
+
+Filesystem matches are recalculated at every `watchIntervalMilliseconds` scan. Editing a resource,
+creating a matching directory, or deleting one is noticed automatically. Editing `server.jsonc`
+itself is not hot-reloaded: restart the dedicated server after changing `root` or `load`. Run
+`resources` at the server console or in Warden to verify the final discovered set.
+
 ## Publishing and reloading
 
 With `autoStart=true`, the server notices any valid change. It prepares a new server VM, publishes a
@@ -121,6 +200,7 @@ Minimum configuration:
 "resources": {
   "enabled": true,
   "root": "../resources",
+  "load": ["open77_*", "garage", "!open77_debug", "../shared/**"],
   "autoStart": true,
   "download": {
     "enabled": true,
@@ -132,3 +212,6 @@ Minimum configuration:
   }
 }
 ```
+
+See [Selecting which resources load](#selecting-which-resources-load) for exact names, wildcard and
+exclusion semantics, absolute path examples, dependencies, and restart behavior.

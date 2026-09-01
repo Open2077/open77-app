@@ -284,6 +284,57 @@
 }
 .adm-pager-controls { display: inline-flex; gap: 8px; }
 
+/* ---------- Mods: the whitelist and its two axes ---------- */
+
+/* Hash cell: shortened for the eye, complete on the clipboard. */
+.adm-hash { display: inline-flex; align-items: center; gap: 6px; }
+.adm-hash code { font-size: 12px; letter-spacing: 0.02em; white-space: nowrap; }
+.adm-hash .ac-iconbtn { padding: 4px 6px; min-height: 0; gap: 0; }
+
+/* Safety wears the ordinary filled chip. Redistribution wears this: a
+   bar-marked mono token, a different SHAPE and not merely a different colour,
+   because "verified" and "granted" answer two different questions and must
+   never scan as one merged status. */
+.adm-perm {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-left: 2px solid var(--line-strong);
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.07em;
+  text-transform: lowercase;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+.adm-perm-yes { border-left-color: var(--accent-ice); color: var(--accent-ice); }
+.adm-perm-maybe { border-left-color: var(--line-strong); color: var(--text-faint); }
+.adm-perm-no { border-left-color: var(--signal); color: var(--signal); }
+
+/* Stacked cell: a chip over its provenance lines. */
+.adm-stack { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+.adm-stack-note {
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.03em;
+  color: var(--text-faint);
+  max-width: 34ch;
+}
+
+/* Source page: an operator-supplied link, so only http(s) ever becomes an <a>;
+   anything else renders as the faint plain text beside it. */
+.adm-source a { color: var(--accent); text-decoration: none; font-family: var(--font-mono); font-size: 12.5px; }
+.adm-source a:hover { text-decoration: underline; }
+.adm-source span { word-break: break-all; }
+
+/* The row whose decision form is open, so the pairing is visible. */
+.adm-table tr.is-active td { background: rgba(var(--accent-rgb), 0.06); }
+
+/* A hint line may host a live preview of the token it explains. */
+.ac-hint .adm-perm { margin-right: 6px; }
+
+/* The row button shape is also used for the link between the two mod pages;
+   only the default anchor underline has to be taken back off. */
+a.ac-iconbtn { text-decoration: none; }
+
 /* ---------- Denied / gate states ---------- */
 
 .adm-denied {

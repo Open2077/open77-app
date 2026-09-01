@@ -66,6 +66,21 @@ they are not client package exports. They target a player and complete through
 `open77:clothing:completed`. The complete schemas, permissions, failure values, and replication
 behavior are documented in [Clothing Lua API](../docs/clothing.md).
 
+### `open77_weapons`
+
+| Export | Signature | Result |
+|---|---|---|
+| `slots` | `slots()` | `{ 1, 2, 3 }`. |
+| `assign` | `assign(record, slot, options?)` | Native asynchronous request ID. |
+| `setActive` / `activate` | `setActive(slot)` or `setActive(record, options?)` | Native asynchronous request ID. |
+| `remove` / `unequip` | `remove(slot)` | Native asynchronous request ID. |
+| `holster` | `holster()` | Native asynchronous request ID. |
+| `snapshot` / `all` | `snapshot()` | Native asynchronous request ID. |
+
+The package also owns the authenticated target-client relay used by server
+`Open77.weapons.*` calls. Completion, slot-state fields, permissions, errors,
+and authority rules are documented in [Weapon Lua API](weapons-api.md).
+
 ### `open77_chat`
 
 | Export | Signature | Result |
@@ -97,8 +112,23 @@ Message and suggestion schemas are documented in [Chat](chat.md).
 | `playSfx` | `playSfx(event, options?)` | Starts an SFX event, optionally spatialized or attached. |
 | `stop` | `stop(handle)` | Stops a caller-owned effect handle. |
 | `catalog` | `catalog()` | Returns the runtime effect catalogue. |
+| `looping` | `looping()` | Server-owned looping effects this client is currently projecting. |
 
 See [Visual and audio effects](effects.md) and [Game data reference](data-reference.md).
+
+### `open77_props`
+
+| Export | Signature | Result |
+|---|---|---|
+| `get` | `get(id)` | One projected server prop record, by its server ID. |
+| `all` | `all()` | Every server prop this client is currently projecting, ordered by ID. |
+
+Read-only by design. Creating or mutating a replicated prop exists only on the dedicated-server
+`Open77.props` API — a client cannot mint a prop anybody else can see. There is deliberately no
+`handle` export: the projection layer is keyed by the server's own ID, so a second identity could
+only ever get out of step with it.
+
+See [Server-owned world props](props.md).
 
 ### `open77_elevators`
 
@@ -211,6 +241,39 @@ and the server-to-client envelope.
 
 See [Vehicles](vehicles.md) for server mutation and native presentation methods.
 
+### `open-voice`
+
+| Export | Signature | Result |
+|---|---|---|
+| `getState` | `getState()` | Current canonical mode, distance, cycle key and HUD visibility. |
+| `getModes` | `getModes()` | Server-published reach presets. |
+| `requestCycle` | `requestCycle()` | Requests the next server-owned mode; no distance is sent by the client. |
+| `setHudVisible` | `setHudVisible(visible)` | Locally shows or hides the passive voice HUD. |
+
+See [Integrated voice chat](voice.md). Mode changes remain authoritative on the
+server; these client exports cannot submit arbitrary reach.
+
+### `open77_voice`
+
+| Export | Signature | Result |
+|---|---|---|
+| `status` | `status()` | Native capture/render/device and packet snapshot. |
+| `getPushToTalkKey` | `getPushToTalkKey()` | Current local PTT binding. |
+| `setPushToTalkKey` | `setPushToTalkKey(key)` | Applies a supported PTT binding without restarting. |
+| `devices` | `devices(flow?)` | Input/output endpoint catalogue. |
+| `getProximityDistance` | `getProximityDistance()` | Canonical reach plus the full native status snapshot. |
+| `setProximityDistance` | `setProximityDistance(distance)` | Request a custom reach; server policy clamps it. |
+| `getProximityMode` | `getProximityMode()` | Current `whisper`, `normal`, `shout`, or `custom` mode and distance. |
+| `setProximityMode` | `setProximityMode(name, notify?)` | Request a configured reach preset. |
+| `cycleProximityMode` | `cycleProximityMode(notify?)` | Select the next configured preset. |
+| `setPlayerVolume` | `setPlayerVolume(playerId, gain)` | Local per-talker gain. |
+| `setPlayerBlocked` | `setPlayerBlocked(playerId, blocked)` | Local per-talker block. |
+| `setChannelVolume` | `setChannelVolume(channelId, gain)` | Local current/future channel-route gain. |
+
+Server scripts in the same package additionally publish helpers for radio/phone channel creation,
+membership, authoritative mute/deaf, and proximity. Those helpers execute only in the dedicated
+runtime; use [Integrated voice chat](voice.md) for both surfaces and the server-authority rules.
+
 ### `open77_weather`
 
 | Export | Signature | Result |
@@ -256,7 +319,7 @@ This export is instructional and should not be used as a production dependency.
 ## Audit status
 
 This catalogue is generated from every literal `exports("name", ...)` declaration under the
-official `resources/` tree. It currently covers **80 exports across 17 packages**. Dynamic exports
+official `resources/` tree. It currently covers **96 client exports across 19 packages**. Dynamic exports
 are intentionally discouraged because they cannot be audited or completed reliably by tooling.
 
 `resources/race` is intentionally absent from this catalogue: it declares no `exports("name", ...)`

@@ -191,25 +191,30 @@ preflight that refuses to launch a set that does not compile.
 [The OPEN//77 launcher](launcher.md#the-mod-menu) documents it from the player's
 side.
 
-**What does not exist:** a way for *your server* to add to that set. There is no
-per-server required-mod list in the catalogue entry, no field for it, and no
-mechanism by which a player connecting to you is asked to enable a package they
-did not already have. The mod index is a **platform-wide** artefact published by
-OPEN//77, not a per-world one.
+**What your server can add to it:** a `requiredMods` list. A world declares the packages
+every player must load, **hosts those bytes itself**, and the launcher resolves the whole set
+on the Connect click — before the game process exists, so a normal join needs no restart.
+OPEN//77 never holds a third-party mod: the master vouches for a SHA-256, not for a file.
 
-So today:
+Three things bound what you can ask for, and they are not negotiable from your side:
 
-- Every player arrives with the same mandatory floor, whichever world they join.
-- Optional packages are the player's choice, made in the launcher, and identical
-  across every server they connect to.
-- You cannot require a mod, cannot detect which optional ones a connecting player
-  enabled, and cannot refuse them for the answer.
+- **Verified / unverified / blocked.** An unreviewed package is not blocked — the player is
+  told plainly that your world supplied it and OPEN//77 has not checked it, and they decide.
+- **The capability cap.** An unverified package may carry inert data only (`.archive`,
+  `.tweak`, `.xl`, `engine/config` INIs). Anything the game or the OS would execute —
+  `.dll`, `.reds`, CET Lua, `.asi` — is refused until those exact bytes are reviewed. There
+  is no player toggle that lifts this.
+- **Redistribution is a separate question from safety.** A mod can be perfectly sound and
+  still be one its author never licensed you to hand out. Where that is the case the
+  launcher asks the player to fetch it from the author's own page instead.
 
-If your world depends on content beyond the base game, the supported route is
-**[server resources](/docs/server-resources)** — signed Lua and assets your
-server hands to clients on connect, versioned by you, with no launcher
-involvement at all. That mechanism is built, documented and in use. The mod stack
-is not a substitute for it and does not overlap with it.
+[Mods your server requires](/docs/server-mods) is the full guide: importing from the Warden
+panel, who hosts what, bandwidth, and removing a mod without stranding players.
+
+For content the base game can already render — props, markers, zones, a course built from
+existing assets — **[server resources](/docs/server-resources)** remain the better route:
+signed Lua and assets your server hands to clients on connect, no download of anything else
+and no restart. Reach for a required mod only when the content genuinely is not in the game.
 
 ## Things that will bite you
 

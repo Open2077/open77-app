@@ -1,4 +1,4 @@
-/** Time formatting shared by the admin tables. */
+/** Formatting and link-safety helpers shared by the admin tables. */
 
 export function formatDateTime(iso: string): string {
   const date = new Date(iso);
@@ -30,4 +30,32 @@ export function formatAge(iso: string, now = Date.now()): string {
 /** First 8 chars of a GUID — enough to eyeball, short enough for a cell. */
 export function shortId(id: string): string {
   return id.length > 8 ? id.slice(0, 8) : id;
+}
+
+/**
+ * An operator-supplied link, or null when it is not one we will render as a
+ * link. Mod source URLs are typed in by staff and submitted by server owners,
+ * so they are untrusted input: only absolute http(s) survives, which is what
+ * refuses `javascript:`, `data:` and every other scheme-based trick. Callers
+ * render the raw string as plain text when this answers null — an unlinkable
+ * URL must still be *readable*, or the reviewer cannot judge the entry.
+ */
+export function safeHttpUrl(value: string | null | undefined): string | null {
+  if (!value) return null;
+  let parsed: URL;
+  try {
+    parsed = new URL(value);
+  } catch {
+    return null;
+  }
+  return parsed.protocol === "http:" || parsed.protocol === "https:" ? parsed.href : null;
+}
+
+/** Host only, so a long source URL cannot blow a table column open. */
+export function hostOf(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return url;
+  }
 }
