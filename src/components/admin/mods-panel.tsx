@@ -25,10 +25,6 @@ const SAFETY_OPTIONS: { value: ModSafety; label: string }[] = [
   { value: "blocked", label: "Blocked — never install these bytes" },
 ];
 
-function replaceRow(rows: ModAttestation[], row: ModAttestation): ModAttestation[] {
-  return rows.map((existing) => (existing.sha256 === row.sha256 ? row : existing));
-}
-
 /**
  * The mod whitelist: one row per exact set of bytes we have an opinion about.
  *
@@ -78,7 +74,7 @@ export function ModsPanel() {
     (token: string) => mods.modAttestations(token, query ? { query } : {}),
     [query],
   );
-  const { token, data, setData, error, setError, loading, reload } = useAdminData(load);
+  const { token, data, error, setError, loading, reload } = useAdminData(load);
 
   const normalizedHash = mods.normalizeSha256(sha256);
   const hashLooksRight = normalizedHash.length === 0 || mods.isSha256(normalizedHash);
@@ -134,8 +130,9 @@ export function ModsPanel() {
     setError(null);
     setNotice(null);
     try {
-      const updated = await mods.revokeModAttestation(token, target.sha256, revokeReason.trim());
-      setData((current) => (current ? replaceRow(current, updated) : current));
+      await mods.revokeModAttestation(token, target.sha256, revokeReason.trim());
+      // The revoke answers 204, so there is no row to splice back — reload the list.
+      reload();
       setNotice(
         `“${target.displayName}” is now blocked. No launcher release is needed — the verdict flips on the next attest call.`,
       );

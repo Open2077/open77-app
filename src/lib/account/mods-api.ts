@@ -143,7 +143,7 @@ export function modAttestations(
 ): Promise<ModAttestation[]> {
   const params = new URLSearchParams({ limit: String(options.limit ?? 100) });
   if (options.query) params.set("query", options.query);
-  return masterCall(`/api/v1/admin/mods?${params}`, { token });
+  return masterCall(`/api/v1/admin/mods/attestations?${params}`, { token });
 }
 
 /** Whitelists one hash. Returns the stored row, so the table can redraw without a refetch. */
@@ -151,7 +151,7 @@ export function createModAttestation(
   token: string,
   input: ModAttestationInput,
 ): Promise<ModAttestation> {
-  return masterCall("/api/v1/admin/mods", { method: "POST", token, body: input });
+  return masterCall("/api/v1/admin/mods/attestations", { method: "POST", token, body: input });
 }
 
 /**
@@ -163,8 +163,10 @@ export function revokeModAttestation(
   token: string,
   sha256: string,
   reason: string,
-): Promise<ModAttestation> {
-  return masterCall(`/api/v1/admin/mods/${encodeURIComponent(sha256)}/revoke`, {
+): Promise<void> {
+  // 204 No Content — masterCall yields undefined, so callers must refetch rather
+  // than splice a returned row into the table.
+  return masterCall(`/api/v1/admin/mods/attestations/${encodeURIComponent(sha256)}/revoke`, {
     method: "POST",
     token,
     body: { reason },
