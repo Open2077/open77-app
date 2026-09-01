@@ -9,6 +9,27 @@ Use this guide to decide whether your world needs a mod at all, import one from 
 hosts the bytes, read the trust badge your players will see before they join, request a review, and
 remove a mod later without stranding anyone.
 
+## Quick start: add a mod in five steps
+
+If you already have the archive and just want it required, this is the whole flow. Each step is
+explained in full under [Add a mod from the Warden panel](#add-a-mod-from-the-warden-panel).
+
+1. **Open Warden → Mods.** Under *Platform* in the sidebar. Needs the `mods.manage` permission.
+2. **Drop the archive in.** Zip, 7z or RAR. Nothing is written yet — you get a plan back.
+3. **Read the plan.** Every file, where it lands, whether it *runs*, and whether it **adds** or
+   **replaces**. Refuse anything you did not expect; this is the only moment you see it before your
+   players do.
+4. **Commit.** Now it is written: the bytes are stored under their own hash and `requiredMods` is
+   updated in `server.jsonc` for you.
+5. **Restart the server.** The set digest changed, and that is what every launcher compares.
+
+That is it. You never hand-edit `server.jsonc`, and you never upload anything to Open77 — the bytes
+stay on your server.
+
+> **Before you reach for a mod at all:** if the content can be built from assets the game already
+> has — props, markers, zones, a course — it is a [server resource](/docs/server-resources), not a
+> mod. No download, no restart, hot-reloadable. See [Is it a mod at all?](#is-it-a-mod-at-all)
+
 ## What happens when a player presses Connect
 
 1. The launcher reads your catalogue row, which carries the required list and a set digest announced
@@ -100,7 +121,7 @@ local store. Nobody rehosts anything.
 
 Check the author's terms before you import. "It is only a small file" is not a licence.
 
-## Importing a mod from Warden
+## Add a mod from the Warden panel
 
 You do not hand-edit `server.jsonc` for this. The panel has a **Mods** tab under Platform, gated by
 the `mods.manage` permission, and every action there is written to the audit log like any other.
@@ -141,21 +162,29 @@ settings verbatim. What it writes looks like this:
   "enabled": true,
   "note": "Shared vehicle handling — keeps physics identical across clients.",
   "packages": [
-    // Indexed: a package the platform already distributes, pinned by id and minimum version.
+    // Indexed: a package the platform already distributes. "source" defaults to
+    // "indexed", so it can be left out.
     { "id": "archivexl", "minVersion": "1.27.1" },
 
-    // Hosted: your bytes, served from your own endpoint.
+    // Hosted: your bytes, served from your own endpoint. sizeBytes is the size of
+    // the ARCHIVE, not of the files inside it.
     {
-      "name": "vehiclehandling",
+      "id": "vehiclehandling",
+      "source": "hosted",
+      "displayName": "Vehicle Handling v1.3",
       "version": "1.3",
-      "file": "vehiclehandling_v1.3.7z",
       "sha256": "34bb0c3d55a2b4b1c2137f7fa45030ad7f6685bd191952a55644c28b7d37a931",
-      "size": 655,
-      "roots": ["engine/config"]
+      "sizeBytes": 598
     }
   ]
 }
 ```
+
+The two shapes do not mix. An indexed entry may carry `minVersion` and must not carry `sha256` or a
+pinned `version`; a hosted entry must carry `sha256`, `version` and `sizeBytes`, and must not carry
+`minVersion` — it pins one exact build. A half-filled entry is refused at startup rather than being
+read as one custody model or the other, because guessing would mean fetching bytes from a place you
+did not mean.
 
 An absent `requiredMods` block means "this world requires nothing", which is what every server means
 today. The configuration is validated at startup, not at connect time: bad ids, unparseable
