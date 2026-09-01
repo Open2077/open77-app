@@ -5,9 +5,11 @@ import { useEffect, useState } from "react";
 
 import { SlashMark } from "@/components/brand";
 import { DiscordIcon, GlobeIcon, PlayIcon, PlugIcon } from "@/components/icons";
+import { FlaggedCountry } from "@/components/servers/country-flag";
 import { ServerActions } from "@/components/servers/server-actions";
 import { ServerImage } from "@/components/servers/server-image";
 import { MasterApiError } from "@/lib/account/api";
+import { formatLocaleTag } from "@/lib/locale";
 import {
   catalogToGameServer,
   fetchServer,
@@ -149,7 +151,8 @@ function ServerCard({ server }: { server: CatalogServer }) {
                 </p>
                 <h1 className="sv-name">{server.name}</h1>
                 <p className="sv-sub">
-                  {view.mode} · {view.region} region · {view.lang}
+                  {view.mode} · <FlaggedCountry className="sv-country" code={view.country} /> ·{" "}
+                  {view.region} region · {view.lang}
                 </p>
               </div>
             </div>
@@ -171,6 +174,12 @@ function ServerCard({ server }: { server: CatalogServer }) {
         <div className="sv-stat">
           <span className="sv-stat-k">Status</span>
           <span className="sv-stat-v">{live ? "Live" : "Offline"}</span>
+        </div>
+        <div className="sv-stat">
+          <span className="sv-stat-k">Country</span>
+          <span className="sv-stat-v">
+            <FlaggedCountry className="sv-country" code={view.country} />
+          </span>
         </div>
         <div className="sv-stat">
           <span className="sv-stat-k">Region</span>
@@ -270,7 +279,7 @@ function ServerCard({ server }: { server: CatalogServer }) {
               <InfoRow k="Version" v={server.serverVersion || "—"} />
               <InfoRow k="Protocol" v={formatProtocol(server.protocol)} />
               <InfoRow k="Game build" v={server.expectedGameBuild ? String(server.expectedGameBuild) : "—"} />
-              <InfoRow k="Locale" v={server.locale || "—"} />
+              <InfoRow k="Locale" v={formatLocaleTag(server.locale)} />
               <InfoRow k="Last heartbeat" v={formatRelative(server.lastHeartbeatAtUtc)} />
             </dl>
           </section>

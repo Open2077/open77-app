@@ -1,4 +1,5 @@
 import { MASTER_URL, MasterApiError, masterCall } from "@/lib/account/api";
+import { parseLocaleTag } from "@/lib/locale";
 import { DEMO_HANDLES } from "@/lib/servers-demo";
 
 export type ServerRegion = "EU" | "NA" | "SA" | "AS" | "OC";
@@ -19,6 +20,19 @@ export type GameServer = {
   tags: string[];
   lang: ServerLanguage;
   region: ServerRegion;
+  /**
+   * The raw BCP-47 tag the operator set on the server, untouched. Untrusted
+   * input: render it through the helpers in `lib/locale`, never directly.
+   * Optional because rows that predate the master directory (the demo set) do
+   * not carry one.
+   */
+  locale?: string;
+  /**
+   * The region subtag of {@link locale}, normalised — `"FR"` for `fr-FR`, or a
+   * UN M.49 code such as `"419"`. Null when the operator gave a bare language
+   * like `en`, which the browser shows as an unknown region rather than a guess.
+   */
+  country?: string | null;
   players: number;
   max: number;
   /** Round-trip latency in milliseconds. */
@@ -108,7 +122,7 @@ export type CatalogPage = {
 
 /** BCP-47 primary subtag → the browser's language chip. Anything else reads as EN. */
 function localeToLang(locale: string): ServerLanguage {
-  const primary = locale.split(/[-_]/)[0]?.toLowerCase();
+  const primary = parseLocaleTag(locale).language;
   if (primary === "fr") return "FR";
   if (primary === "de") return "DE";
   if (primary === "es") return "ES";
@@ -121,7 +135,7 @@ function localeToLang(locale: string): ServerLanguage {
  * EU when the tag is missing or unrecognised.
  */
 function localeToRegion(locale: string): ServerRegion {
-  const region = locale.split(/[-_]/)[1]?.toUpperCase();
+  const region = parseLocaleTag(locale).region;
   if (!region) return "EU";
   if (["US", "CA", "MX"].includes(region)) return "NA";
   if (["BR", "AR", "CL", "CO", "PE", "UY"].includes(region)) return "SA";
@@ -193,6 +207,8 @@ export function catalogToGameServer(server: CatalogServer): GameServer {
     tags,
     lang: localeToLang(server.locale),
     region: localeToRegion(server.locale),
+    locale: server.locale ?? "",
+    country: parseLocaleTag(server.locale).region,
     players: server.connectedPlayers,
     max: server.maximumPlayers,
     // The master directory reports no latency; ping is measured client-side, so

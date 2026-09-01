@@ -5,8 +5,10 @@ import { useId, useMemo, useState, useSyncExternalStore, type ReactNode } from "
 
 import { useFavorites } from "@/components/favorites";
 import { DiscordIcon, FilterIcon, PlugIcon, SearchIcon, StarIcon } from "@/components/icons";
+import { ServerLocale } from "@/components/servers/country-flag";
 import { ServerImage } from "@/components/servers/server-image";
 import { useToast } from "@/components/toast";
+import { regionCode, regionDisplayName } from "@/lib/locale";
 import { site } from "@/lib/site";
 import {
   LANGUAGES,
@@ -46,9 +48,13 @@ const SORTS = [
 
 type Sort = (typeof SORTS)[number]["value"];
 
+/** Sentinel for "listings whose operator gave no region subtag at all". */
+const NO_COUNTRY = "none";
+
 const DEFAULT_FILTERS = {
   region: "all",
   lang: "all",
+  country: "all",
   minPlayers: 0,
   maxPing: 999,
 };
@@ -67,6 +73,27 @@ function sortServers(list: GameServer[], sort: Sort): GameServer[] {
   return out;
 }
 
+/**
+ * The values a `<select>` should offer: those actually present in the listing on
+ * screen, plus the current selection when the directory has shifted under it, so
+ * an active filter never disappears from its own control and leaves it blank.
+ */
+function presentOptions(
+  all: readonly string[],
+  present: ReadonlySet<string>,
+  selected: string,
+): string[] {
+  const offered = all.filter((value) => present.has(value));
+  if (selected !== "all" && !offered.includes(selected)) offered.push(selected);
+  return offered;
+}
+
+/** Both the code and the readable name, so "France" finds an `fr-FR` listing. */
+function localeHaystack(country: string | null | undefined): string {
+  const region = regionCode(country);
+  return region ? `${region} ${regionDisplayName(region)}` : "";
+}
+
 function haystack(server: GameServer): string {
   return [
     server.name,
@@ -75,6 +102,8 @@ function haystack(server: GameServer): string {
     server.lang,
     server.region,
     server.mode,
+    // Searching "France" should find fr-FR, not only "FR".
+    localeHaystack(server.country),
     server.owner ?? "",
   ]
     .join(" ")
@@ -145,6 +174,34 @@ export function ServerBrowser({
   const filterPanelId = useId();
   const directPanelId = useId();
 
+  /**
+   * Which region, country and language values the listing on screen actually
+   * contains. Filter controls are built from this rather than from the full
+   * static vocabularies: offering a continent or a country that no live server
+   * is in only produces empty results.
+   */
+  const facets = useMemo(() => {
+    const regions = new Set<string>();
+    const langs = new Set<string>();
+    const countries = new Set<string>();
+    let unlocated = false;
+    for (const server of servers) {
+      regions.add(server.region);
+      langs.add(server.lang);
+      const country = regionCode(server.country);
+      if (country) countries.add(country);
+      else unlocated = true;
+    }
+    return {
+      regions,
+      langs,
+      countries: [...countries]
+        .map((code) => ({ code, name: regionDisplayName(code) }))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+      unlocated,
+    };
+  }, [servers]);
+
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
     const matched = servers.filter((server) => {
@@ -156,6 +213,12 @@ export function ServerBrowser({
       }
       if (filters.region !== "all" && server.region !== filters.region) return false;
       if (filters.lang !== "all" && server.lang !== filters.lang) return false;
+      if (filters.country !== "all") {
+        const country = regionCode(server.country);
+        const matches =
+          filters.country === NO_COUNTRY ? country === null : country === filters.country;
+        if (!matches) return false;
+      }
       if (server.players < filters.minPlayers) return false;
       if (server.ping > filters.maxPing) return false;
       if (needle && !haystack(server).includes(needle)) return false;
@@ -164,9 +227,20 @@ export function ServerBrowser({
     return sortServers(matched, sort);
   }, [servers, query, mode, filters, sort, favsOnly, isFavorite]);
 
+  const regionOptions = presentOptions(REGIONS, facets.regions, filters.region);
+  const langOptions = presentOptions(LANGUAGES, facets.langs, filters.lang);
+  const countryOptions =
+    filters.country === "all" ||
+    filters.country === NO_COUNTRY ||
+    facets.countries.some((entry) => entry.code === filters.country)
+      ? facets.countries
+      : [...facets.countries, { code: filters.country, name: regionDisplayName(filters.country) }];
+  const offerNoCountry = facets.unlocated || filters.country === NO_COUNTRY;
+
   const activeFilterCount =
     (filters.region !== "all" ? 1 : 0) +
     (filters.lang !== "all" ? 1 : 0) +
+    (filters.country !== "all" ? 1 : 0) +
     (filters.minPlayers > 0 ? 1 : 0) +
     (filters.maxPing < 999 ? 1 : 0);
 
@@ -219,7 +293,7 @@ export function ServerBrowser({
             }
           >
             <option value="all">All</option>
-            {REGIONS.map((region) => (
+            {regionOptions.map((region) => (
               <option key={region} value={region}>
                 {region}
               </option>
@@ -234,11 +308,29 @@ export function ServerBrowser({
             onChange={(event) => setFilters((current) => ({ ...current, lang: event.target.value }))}
           >
             <option value="all">All</option>
-            {LANGUAGES.map((lang) => (
+            {langOptions.map((lang) => (
               <option key={lang} value={lang}>
                 {lang}
               </option>
             ))}
+          </select>
+        </label>
+        <label className="select-wrap">
+          <span className="select-label">Country</span>
+          <select
+            aria-label="Filter by country"
+            value={filters.country}
+            onChange={(event) =>
+              setFilters((current) => ({ ...current, country: event.target.value }))
+            }
+          >
+            <option value="all">All</option>
+            {countryOptions.map((entry) => (
+              <option key={entry.code} value={entry.code}>
+                {entry.name} ({entry.code})
+              </option>
+            ))}
+            {offerNoCountry ? <option value={NO_COUNTRY}>Not specified</option> : null}
           </select>
         </label>
         <label className="select-wrap">
@@ -464,9 +556,7 @@ function ServerRow({
           <span className={`sb-ping ${server.ping > 0 ? pingClass(server.ping) : ""}`}>
             {formatPing(server.ping)}
           </span>
-          <span className="sb-loc">
-            {server.region} · {server.lang}
-          </span>
+          <ServerLocale className="sb-loc" country={server.country} lang={server.lang} />
         </span>
       </Link>
       <span className="sb-actions">

@@ -352,7 +352,35 @@
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
-.sb-loc { color: var(--text-faint); font-size: 11px; }
+.sb-loc {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-faint);
+  font-size: 11px;
+  min-width: 0;
+}
+.sb-loc .flag-sep { color: var(--line-strong); }
+.sb-loc .flag-lang { color: var(--text-dim); }
+
+/* ---------- Country flags ----------
+   Inline SVG, not emoji: Windows ships no flag glyphs, so an emoji flag renders
+   as bare letters in Chrome and Edge and as a bundled picture in Firefox. The
+   hairline keeps a white-heavy flag (JP, PL) from dissolving into the row. */
+
+.flag {
+  flex: none;
+  display: block;
+  border: 1px solid var(--line-strong);
+  border-radius: 1px;
+  background: var(--surface);
+}
+/* The "no region given" marker is a line drawing, not a flag: no plate. */
+.flag-none {
+  border-color: transparent;
+  background: none;
+  color: var(--text-faint);
+}
 
 .sb-actions {
   display: flex;
@@ -520,6 +548,13 @@
   color: rgba(var(--text-rgb), 0.8);
 }
 .sv-sub strong { color: var(--text); font-weight: 500; }
+.sv-country {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  vertical-align: -3px;
+}
+.sv-stat-v .sv-country { font-size: 15px; }
 .sv-cover-actions { display: flex; align-items: center; gap: 12px; }
 .sv-fav {
   width: 46px;
@@ -861,7 +896,9 @@ a.sv-link-chip:hover { border-color: var(--accent); color: var(--text); }
   .sb-players-num { white-space: nowrap; }
   .sb-players .players-bar { display: none; }
   .sb-players-label { font-size: 10px; }
-  .sb-net { grid-area: net; flex-direction: row; align-items: baseline; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+  /* Centred rather than baseline-aligned: the locale cell now leads with a flag,
+     and an inline-flex box holding a replaced element has no useful baseline. */
+  .sb-net { grid-area: net; flex-direction: row; align-items: center; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
   .sb-actions { padding: 0 14px 14px; }
   .sb-actions .fav-btn {
     position: absolute;
