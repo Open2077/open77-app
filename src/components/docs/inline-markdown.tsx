@@ -34,7 +34,7 @@ export function renderInlineMarkdown(text: string): ReactNode[] {
 
     const [, code, bold] = match;
     if (code !== undefined) nodes.push(<code key={key++}>{code}</code>);
-    else nodes.push(<strong key={key++}>{bold}</strong>);
+    else if (bold !== undefined) nodes.push(<strong key={key++}>{renderInlineMarkdown(bold)}</strong>);
 
     cursor = start + match[0].length;
   }

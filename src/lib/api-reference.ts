@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { getDocumentedServerApi } from "@/lib/server-api-docs";
 
 const API_FILE = path.join(process.cwd(), "content", "api", "api.json");
 
@@ -28,6 +29,9 @@ export type ApiEntryRaw = {
   source_line?: number;
   qualified: string;
   route_id: string;
+  documentedSignature?: string;
+  signatureKnown?: boolean;
+  guideHref?: string;
 };
 
 export type ApiRuntime = "client" | "server";
@@ -100,6 +104,7 @@ function slugify(value: string): string {
 }
 
 function buildSignature(entry: ApiEntryRaw): string {
+  if (entry.documentedSignature) return `${entry.qualified}${entry.documentedSignature}`;
   const params = entry.params
     .map((param) => (param.optional ? `[${param.name}]` : param.name))
     .join(", ");
@@ -137,6 +142,8 @@ export function apiSetLabel(apiSet: string): { label: string; hint: string } {
       return { label: "SHARED", hint: "Available without a live game instance." };
     case "client":
       return { label: "CLIENT", hint: "Client-only surface." };
+    case "server":
+      return { label: "SERVER", hint: "Available in server resources only." };
     default:
       return { label: apiSet.toUpperCase(), hint: "" };
   }
@@ -145,6 +152,8 @@ export function apiSetLabel(apiSet: string): { label: string; hint: string } {
 let indexCache: Promise<ApiIndex> | null = null;
 
 export function getApiIndex(): Promise<ApiIndex> {
+  // Wiki syncs can change files without changing this module during next dev.
+  if (process.env.NODE_ENV === "development") return loadApiIndex();
   if (!indexCache) indexCache = loadApiIndex();
   return indexCache;
 }
@@ -160,7 +169,8 @@ export function getApiIndex(): Promise<ApiIndex> {
  */
 async function loadApiIndex(): Promise<ApiIndex> {
   const raw = await readFile(API_FILE, "utf8");
-  const parsed = JSON.parse(raw) as ApiEntryRaw[];
+  const generated = JSON.parse(raw) as ApiEntryRaw[];
+  const parsed = [...generated, ...await getDocumentedServerApi(generated)];
 
   const namespaceKeys = new Map<string, string>();
   const anchorKeys = new Map<string, string>();
@@ -308,7 +318,7 @@ export function apiEntryToMarkdown(entry: ApiEntry, headingLevel = 2): string {
   }
 
   const line = entry.source_line ? ` (line ${entry.source_line})` : "";
-  lines.push(`Registered in \`${entry.source}\`${line} as \`${entry.handler}\`.`);
+  lines.push(entry.guideHref ? `Documented in [${entry.source}](${entry.guideHref})${line}.` : `Registered in \`${entry.source}\`${line} as \`${entry.handler}\`.`);
   if (entry.inferred) {
     lines.push("", "_This signature was inferred from the handler body._");
   }

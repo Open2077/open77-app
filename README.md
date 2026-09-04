@@ -104,8 +104,23 @@ Markdown is rendered at build time through unified: `remark-gfm` for tables, `re
 so Lua samples match the design instead of shipping a second one. Wiki-relative links
 (`vehicles.md#seats`) are rewritten to site routes.
 
-The API reference is generated from `api.json`, one page per namespace with an anchor per function,
-so all 258 signatures are in static HTML and every function still has a deep link.
+The API reference at `/docs/api` is a two-pane explorer with category, namespace and
+client/server filters. The generated `api.json` supplies native cards; explicit function
+tables in the synced `server-api.md` and the server section of `voice.md` supply the remaining
+documented server methods. Generated cards take precedence. Wiki-derived entries retain their
+literal signatures and source-guide links; missing parameter types are not inferred.
+
+Namespace pages and their Markdown twins remain available, with an anchor per function.
+Explorer links use `/docs/api#server/open77-players/disconnect`; filters live in the query
+string, so selections survive reload and browser Back. The documentation has a light/dark
+switch (saved locally), its own search and collapsible guide navigation below the main site
+header. Guide content remains authored in the platform wiki.
+
+On this workstation, sync with `npm run sync:wiki -- --from ../CyberM/wiki`.
+The sync also discovers sibling `CyberM`, `open77-base` and `base` checkouts automatically.
+Run `node scripts/check-hydration.mjs http://127.0.0.1:3000 --docs` for the focused browser
+checks: filters, deep links, Back, clipboard, themes, sticky navigation and mobile layout.
+This writes review screenshots under `.shots/` (ignored by Git).
 
 ### References to the platform repository
 

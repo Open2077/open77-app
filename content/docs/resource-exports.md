@@ -44,7 +44,7 @@ them, and they are cleaned automatically when the owning generation stops or rel
 | `revision` | `revision()` | Last canonical appearance revision. |
 | `characterKey` | `characterKey()` | Durable character key associated with the synchronized appearance. |
 
-See the package README at `resources/open77_appearance/README.md` for the transaction lifecycle.
+See the package README at `resources/system/open77_appearance/README.md` for the transaction lifecycle.
 
 ### `open77_clothing`
 
@@ -262,6 +262,8 @@ and the server-to-client envelope.
 |---|---|---|
 | `get` | `get(id)` | One streamed canonical vehicle snapshot. |
 | `all` | `all()` | All streamed canonical vehicle snapshots. |
+| `getPlayerSeat` | `getPlayerSeat(playerId?)` | One replicated seat assignment; omitted ID selects the local player. |
+| `isPlayerExitLocked` | `isPlayerExitLocked(playerId?)` | Replicated exit-lock boolean, or `nil` without an assignment. |
 
 See [Vehicles](vehicles.md) for server mutation and native presentation methods.
 
@@ -317,7 +319,7 @@ See [Weather](weather.md). This package intentionally exposes no client mutation
 | `list` | `list()` | Snapshots of every POI owned by the caller. |
 | `dump` | `dump()` | Diagnostic: logs and returns the native marker registry, including `rendered`. |
 
-Mode-agnostic; both official consumers (`resources/pursuit`, `resources/race`) call it
+Mode-agnostic; both official consumers (`resources/gamemodes/pursuit`, `resources/gamemodes/race`) call it
 unmodified. See [World-anchored POIs](worldui.md).
 
 ### `open77_zones`
@@ -346,6 +348,6 @@ This catalogue is generated from every literal `exports("name", ...)` declaratio
 official `resources/` tree. It currently covers **96 client exports across 19 packages**. Dynamic exports
 are intentionally discouraged because they cannot be audited or completed reliably by tooling.
 
-`resources/race` is intentionally absent from this catalogue: it declares no `exports("name", ...)`
+`resources/gamemodes/race` is intentionally absent from this catalogue: it declares no `exports("name", ...)`
 of its own and only calls the two entries above, so `wiki/tools/audit-api.py`'s
 `resources/*/client/*.lua` scan has nothing new to require here.

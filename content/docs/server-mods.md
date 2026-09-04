@@ -1,5 +1,9 @@
 # Mods your server requires
 
+> The end-to-end picture — layers, the launcher's store and journal, a worked Nexus example and
+> the troubleshooting table — lives in [Mods: the complete guide](mods.md). This page is the
+> operator's reference for trust, hosting, Warden and review.
+
 A server declares the mods its world needs, hosts the bytes itself, and the launcher installs them
 when the player presses Connect — before the game process exists. The master vouches for hashes,
 never for files: no third-party mod transits Open77 infrastructure. Because the install happens
@@ -217,6 +221,101 @@ content is yours or the licence is clear. Player-fetch is not a fallback you sel
 whitelist record forces when redistribution is refused, and the launcher still recognises the
 downloaded file by its pinned hash, so the player only ever does it once across every world that
 requires it.
+
+### Packages owned by a Lua resource
+
+A selected resource can declare `preload_mod "dist/package.zip"` for inert assets that must exist
+before REDengine and Lua start. The server inspects and stages the package automatically, then
+merges it into the same required-mod set described above. This avoids duplicating a resource-owned
+world/texture package in `server.jsonc`, while preserving the same launcher consent, hashing,
+hosting and world-profile isolation.
+
+The declaration is intentionally stricter than Warden: executable content is refused rather than
+automatically requesting trust, and disabling `requiredMods` while a selected resource declares a
+preload is a startup error. Changes take effect after a server restart and a fresh launcher boot,
+not after a Lua resource reload. See [Server resources](server-resources.md#pre-boot-redengine-assets)
+and the [sky hologram walkthrough](sky-advertising.md).
+
+The Warden **Mods** page lists these entries alongside the ones written in `server.jsonc`, with a
+`resource <name>` badge and no remove button: the manifest owns them, so the only way to drop one
+is to delete the `preload_mod` line and restart. The digest shown at the top covers both halves and
+therefore matches the "Required mods: N declared" line in the server log and what the master
+announces.
+
+## Unsecured mode
+
+Everything above assumes the platform stands between the operator and the player: executable
+content needs a verified attestation, indexed packages come from Open77's signed index, and a
+resource preload refuses anything that would run. `requiredMods.unsecured` switches that review
+off for one server, deliberately and visibly:
+
+```jsonc
+"requiredMods": {
+  "enabled": true,
+  "unsecured": true,
+  "packages": []
+}
+```
+
+With the flag on:
+
+- A resource may `preload_mod` a package that contains executable content (a RED4ext plugin such
+  as ArchiveXL, a script bundle). The boot log prints an `UNSECURED` warning for each one instead
+  of refusing the manifest.
+- The launcher installs the server's executable packages without a verified verdict once the
+  player has accepted the warning. A **blocked** verdict, a hash mismatch, an indexed id that is
+  not in the index and content outside the known mod roots are still refused: unsecured lifts the
+  "nobody reviewed this code" cap, nothing else.
+- The master lists the server with `unsecured: true`. The launcher and the in-game server browser
+  show an **UNSECURED** badge on the row, a red note in the detail pane, and a confirmation dialog
+  the first time a player joins in a session. A double-click cannot skip it, and the shell refuses
+  a join that did not carry the confirmation.
+- Warden's Mods page shows a red `unsecured` chip next to the set digest.
+
+The loaders themselves are resources, so several worlds can share them. `resources/assets/loaders/archivexl` and
+`resources/assets/loaders/tweakxl` each wrap the official release zip in a `preload_mod` and carry the upstream
+version in their manifest; a world declares what it needs and the server starts the loaders first:
+
+```lua
+resource "kujira_world"
+version "1.0.0"
+dependency "archivexl >=1.27.1"
+dependency "tweakxl >=1.11.4"
+preload_mod "dist/kujira.zip"
+```
+
+Selecting the world then declares three required mods (`archivexl-assets`, `tweakxl-assets`,
+`kujira_world-assets`); the launcher installs them into the world profile before the game boots, and
+RED4ext initialises the plugins before the depot mounts any archive, so there is no load order to
+manage. A dependency must itself be in `resources.load` (or matched by its wildcard). Because the
+loader packages are executable, a wildcard selection such as `load: ["*"]` only boots on an unsecured
+server: exclude them with `"!archivexl", "!tweakxl"` on a secured one.
+
+Use it for a private or trusted community that needs mods the index does not carry yet. A public
+server that turns it on is asking strangers to run its code on their machines; the badge exists so
+they know that before they click.
+
+## Joining from the in-game server browser
+
+A player who is already in the game and picks a world that requires mods cannot receive them
+mid-session: REDengine mounts archives at boot and the loaders register at depot initialisation.
+The in-game browser handles this without sending anyone to the desktop:
+
+1. The shell compares the world's `requiredModsDigest` (relayed by the master) with the digest the
+   launcher installed for this boot (`Open77.session.launcherContext().modsDigest`). Equal means
+   this boot was prepared for exactly that world and the connection proceeds as usual.
+2. Otherwise a **Restart required** prompt names the world and its packages and counts down ten
+   seconds. On accept (or when the countdown ends) the shell calls
+   `Open77.session.relaunchViaLauncher(serverId, endpoint)`, which opens
+   `open77://connect?server=…&endpoint=…&relaunch=<pid>` through the launcher's registered
+   protocol handler, then quits the game.
+3. The launcher, already running or started by Windows for the link, waits for the game process
+   to exit, runs the normal consent flow (unsecured warning, packages to fetch), installs the
+   world's mods into its profile and starts the game with an auto-connect. The next boot lands in
+   the world.
+
+Without the launcher installed the prompt says so and the player stays in the browser; a world
+that requires nothing never shows the prompt. An unsecured world shows its warning first.
 
 ## What your players see before they join
 

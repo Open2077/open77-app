@@ -73,7 +73,7 @@ export type DocsNav = { sections: DocNavSection[] };
 let navCache: DocsNav | null = null;
 
 export async function getDocsNav(): Promise<DocsNav> {
-  if (navCache) return navCache;
+  if (navCache && process.env.NODE_ENV !== "development") return navCache;
   const raw = await readFile(path.join(CONTENT_DIR, "meta.json"), "utf8");
   const parsed = JSON.parse(raw) as DocsNav;
   navCache = { sections: parsed.sections };
@@ -119,7 +119,7 @@ export type DocsManifest = {
 let manifestCache: DocsManifest | null = null;
 
 export async function getDocsManifest(): Promise<DocsManifest> {
-  if (manifestCache) return manifestCache;
+  if (manifestCache && process.env.NODE_ENV !== "development") return manifestCache;
   const raw = await readFile(path.join(CONTENT_DIR, "_manifest.json"), "utf8");
   manifestCache = JSON.parse(raw) as DocsManifest;
   return manifestCache;
@@ -324,7 +324,7 @@ const guideCache = new Map<string, Promise<RenderedGuide | null>>();
 
 export function getGuide(slug: string): Promise<RenderedGuide | null> {
   const cached = guideCache.get(slug);
-  if (cached) return cached;
+  if (cached && process.env.NODE_ENV !== "development") return cached;
   const promise = renderGuide(slug);
   guideCache.set(slug, promise);
   return promise;

@@ -184,7 +184,7 @@ Three differences from the commands above are worth knowing before choosing one:
 * **`auto` picks the slot** from a verified snapshot: the first empty one, and
   the *active* one only when all three are full.
 
-`resources/open77_admin/README.md` carries the whole argument, including the
+`resources/system/open77_admin/README.md` carries the whole argument, including the
 measured per-ammo-type carried ceiling — asking for more than it answers
 `ammo_update_rejected` even though the weapon is equipped and loaded to the cap.
 

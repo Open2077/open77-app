@@ -43,7 +43,7 @@ assert(Open77.vfx.stop(smoke))
 
 The first argument accepts a curated alias returned by `Open77.vfx.catalog()` or a cooked `base\\...\\name.effect`/`dlc\\...\\name.effect` path. A raw path is advanced and build-dependent: the file being present does not guarantee that the effect is safe, visible, looped, or meaningful outside its original quest/entity context.
 
-The curated set is **49 aliases in 14 families**, named `family.thing.variant`: `blood.*` (1), `electric.*` (5), `explosion.*` (6), `fire.*` (5), `glass.*` (1), `impact.*` (4), `laser.*` (1), `neon.*` (2), `smoke.*` (6), `sparks.*` (4), `steam.*` (2), `vehicle.*` (6), `water.*` (3), `weather.*` (3). `Open77.vfx.catalog()` returns the live list on the **client**; `admin.props.catalog` and the **Props** tab of the admin panel both print the mirror, the panel grouped by family. `fx.catalog` from `open77_effects` answers client-side only. The source of truth is `kVfxCatalog` in `client/src/api/Effects.cpp`, mirrored by name into `resources/open77_admin/shared/config.lua`.
+The curated set is **49 aliases in 14 families**, named `family.thing.variant`: `blood.*` (1), `electric.*` (5), `explosion.*` (6), `fire.*` (5), `glass.*` (1), `impact.*` (4), `laser.*` (1), `neon.*` (2), `smoke.*` (6), `sparks.*` (4), `steam.*` (2), `vehicle.*` (6), `water.*` (3), `weather.*` (3). `Open77.vfx.catalog()` returns the live list on the **client**; `admin.props.catalog` and the **Props** tab of the admin panel both print the mirror, the panel grouped by family. `fx.catalog` from `open77_effects` answers client-side only. The source of truth is `kVfxCatalog` in `client/src/api/Effects.cpp`, mirrored by name into `resources/system/open77_admin/shared/config.lua`.
 
 Two quirks worth knowing. `explosion.frag` names the *barrel* blast — the grenade's own blast is authored into the projectile attack rather than a depot effect, so `explosion.grenade` is the separate indicator effect. And `vehicle.skid` and `vehicle.skid.smoke` deliberately share one path, for API compatibility with the original alias.
 
@@ -226,7 +226,7 @@ Failures are values: `nil, reason` or `false, reason`, never a raise.
 
 ### Reference resource and terminal commands
 
-The bundled [`open77_effects`](../resources/open77_effects/) resource carries both halves: the client exports documented above, and a server half that owns the admin commands. Type these into the developer terminal opened with `²` in Cyberpunk.
+The bundled [`open77_effects`](../resources/system/open77_effects/) resource carries both halves: the client exports documented above, and a server half that owns the admin commands. Type these into the developer terminal opened with `²` in Cyberpunk.
 
 ```text
 fx.play explosion.frag -1448.2 96.1 17.5 0

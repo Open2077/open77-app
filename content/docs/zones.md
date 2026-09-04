@@ -122,8 +122,8 @@ the server before treating the client's report as fact. Two worked examples
 already in the tree:
 
 ```lua
--- resources/pursuit/server/main.lua -- containsPlayer(playerId, centre, radius, bucket)
--- resources/race/server/main.lua    -- checkpointReached(playerId, checkpointId)
+-- resources/gamemodes/pursuit/server/main.lua -- containsPlayer(playerId, centre, radius, bucket)
+-- resources/gamemodes/race/server/main.lua    -- checkpointReached(playerId, checkpointId)
 ```
 
 Both follow the same shape: read `Open77.players.position(playerId)`,

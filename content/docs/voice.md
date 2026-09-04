@@ -78,14 +78,18 @@ PCM or Opus payloads.
 
 `open-voice` is the pma-voice-style gameplay layer and auto-starts after
 `open77_voice`. The native resource remains the only capture/PTT/VAD/codec
-driver. `open-voice` adds a retained HUD and an authoritative reach-mode policy:
+driver. `open-voice` adds a retained bottom-right HUD and an authoritative reach-mode policy. The
+CyberM/Open77 panel renders the real normalized native input level, encoder transmission state,
+canonical distance, server-defined presets, cycle key, PTT/VAD policy and active remote-talker
+count. Its five states are `LISTENING`, `SIGNAL DETECTED`, `TRANSMITTING`, `MIC DISABLED`, and
+`VOICE OFFLINE`; it never fabricates audio activity in JavaScript:
 
 - `WHISPER` — 3 m;
 - `NORMAL` — 20 m;
 - `SHOUT` — 40 m;
 - `F11` cycles to the next mode by sending a request to the server.
 
-All values are configured in `resources/open-voice/server/config.lua`. The
+All values are configured in `resources/system/open-voice/server/config.lua`. The
 client request contains no distance or target mode: the server rate-limits the
 request, advances its own stored mode, calls `Open77.voice.setProximity`, then
 returns the canonical state. A player therefore cannot select an arbitrary
@@ -97,10 +101,11 @@ Trusted server resources may emit `open-voice:setPlayerMode(playerId, mode)` or
 local server events and are deliberately not registered as client network
 events.
 
-The HUD shows `MIC` and `TX` separately. `MIC` means that the normalized native
-meter currently detects speech; `TX` means that the native encoder is really
-inside a transmitted talkspurt. This distinction provides useful feedback in
-both PTT and voice-activation modes.
+The HUD keeps microphone activity and transmission distinct. The segmented
+meter follows normalized native capture activity; the `TRANSMITTING` state is
+shown only while the native encoder is inside a real authorized talkspurt.
+This distinction provides useful feedback in both PTT and voice-activation
+modes.
 
 ## Server Lua API
 

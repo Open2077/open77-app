@@ -40,7 +40,7 @@ which would jump a whole day.
 
 ## Configuration
 
-Edit `resources/open77_weather/shared/config.lua`:
+Edit `resources/system/open77_weather/shared/config.lua`:
 
 - `startupTime` — `12:00:00` by default;
 - `timeScale` — game seconds per real second (`4.0`);

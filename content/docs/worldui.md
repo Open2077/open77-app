@@ -9,7 +9,7 @@ transactionally, and removes both halves together.
 
 It is mode-agnostic: nothing in its API names a role, a match, a team, or
 any other gamemode-shaped concept, and both official consumers
-(`resources/pursuit` and `resources/race`) call it through the same three
+(`resources/gamemodes/pursuit` and `resources/gamemodes/race`) call it through the same three
 functions below with no special-casing on either side.
 
 ## Add the dependency
@@ -63,7 +63,7 @@ end)
 `label` is optional. Omitting it creates a **marker with no interaction
 prompt** -- a pure ground/waypoint ring with nothing to press E on. This is
 the right shape for a checkpoint or a waypoint a player only needs to see,
-not act on; `resources/race`'s course markers use exactly this form.
+not act on; `resources/gamemodes/race`'s course markers use exactly this form.
 
 ## Definition reference
 

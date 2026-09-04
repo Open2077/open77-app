@@ -34,6 +34,8 @@ const SHOTS = [
   { path: "/download", name: "download-mobile", width: 420, height: 900, mobile: true },
   { path: "/servers", name: "servers-mobile", width: 420, height: 900, mobile: true },
   { path: "/docs/vehicles", name: "docs-mobile", width: 420, height: 900, mobile: true },
+  { path: "/docs/api#server/open77-vehicles/create", name: "docs-api-selected", width: 1440, height: 1000 },
+  { path: "/docs/api", name: "docs-api-mobile", width: 390, height: 844, mobile: true },
 ];
 
 const CHROME_CANDIDATES = [
@@ -119,7 +121,7 @@ const child = spawn(
     "--hide-scrollbars",
     "about:blank",
   ],
-  { stdio: "ignore" },
+  { stdio: "ignore", windowsHide: true },
 );
 
 const session = await connect(await waitForDevTools());
@@ -135,7 +137,7 @@ try {
   await session.send("Page.enable");
   await session.send("Runtime.enable");
 
-  for (const shot of SHOTS) {
+  for (const shot of SHOTS.filter((shot) => !process.argv.includes("--docs") || shot.path.startsWith("/docs"))) {
     await session.send("Emulation.setDeviceMetricsOverride", {
       width: shot.width,
       height: shot.height,

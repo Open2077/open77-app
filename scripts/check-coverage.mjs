@@ -10,13 +10,16 @@
  */
 
 import fs from "node:fs/promises";
+import { existsSync } from "node:fs";
 import path from "node:path";
 
 import { isExcluded } from "./wiki-exclusions.mjs";
 
 const CONTENT_DIR = path.join(process.cwd(), "content", "docs");
 const AUTHORED_DIR = path.join(process.cwd(), "content", "guides");
-const sourceWiki = process.argv[2] ?? path.join(process.cwd(), "..", "base", "wiki");
+const sourceWiki = process.argv[2] ?? ["CyberM", "open77-base", "base"]
+  .map((directory) => path.join(process.cwd(), "..", directory, "wiki"))
+  .find(existsSync) ?? path.join(process.cwd(), "..", "base", "wiki");
 
 const meta = JSON.parse(await fs.readFile(path.join(CONTENT_DIR, "meta.json"), "utf8"));
 

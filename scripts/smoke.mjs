@@ -42,7 +42,7 @@ const CHECKS = [
   // a guaranteed 404.
   { path: "/community", expect: 200, absent: "open77-base" },
   { path: "/brand", expect: 200 },
-  { path: "/docs", expect: 200, contains: "Filter pages", absent: "open77-base" },
+  { path: "/docs", expect: 200, contains: "Welcome to OPEN//77", absent: "open77-base" },
   { path: "/docs/vehicles", expect: 200, contains: "authority", absent: "open77-base" },
   { path: "/docs/npcs", expect: 200, absent: "open77-base" },
   { path: "/docs/data-reference", expect: 200, absent: "open77-base" },

@@ -4,7 +4,7 @@ Open77 NPCs are canonical server entities projected into REDengine only for near
 resource creates and owns the canonical NPC; the server controls identity, routing bucket, health,
 tasks and simulation authority. Clients cannot create or mutate canonical NPCs.
 
-The reference implementation is [`resources/open77_npcs`](../resources/open77_npcs/README.md).
+The reference implementation is [`resources/system/open77_npcs`](../resources/system/open77_npcs/README.md).
 
 ## Manifest permissions
 
@@ -63,7 +63,7 @@ record runs full vanilla combat AI on every client that streams it in — Open77
 enables that nor can disable it, and `aiMode` does not change it. So whether two NPCs fight
 is a question the engine's own attitude matrix answers about their two records: one faction
 is one side, and one side does not fight. A gamemode that wants NPCs to fight each other
-picks records from different gangs. `resources/open77_deathmatch` round-robins all three for
+picks records from different gangs. `resources/gamemodes/open77_deathmatch` round-robins all three for
 exactly this reason.
 
 ### Complete 2.31 research catalogue

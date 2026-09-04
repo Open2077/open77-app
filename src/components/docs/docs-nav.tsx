@@ -2,60 +2,51 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
-export type DocsNavItem = {
-  href: string;
-  label: string;
-  /** Rendered nested and collapsed unless the reader is inside this branch. */
-  children?: { href: string; label: string }[];
-};
-
+export type DocsNavItem = { href: string; label: string; children?: { href: string; label: string }[] };
 export type DocsNavGroup = { id: string; title: string; items: DocsNavItem[] };
 
-/**
- * The documentation sidebar.
- *
- * A client component purely so the active entry can be derived from the current
- * path; the markup is still part of the prerendered HTML, so the full set of
- * documentation links is crawlable from every docs page.
- */
 export function DocsNav({ groups }: { groups: DocsNavGroup[] }) {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [overrides, setOverrides] = useState<Record<string, boolean>>({});
+  const [previousPath, setPreviousPath] = useState(pathname);
+  if (previousPath !== pathname) {
+    setPreviousPath(pathname);
+    setMobileOpen(false);
+    setOverrides({});
+  }
 
   return (
     <nav className="dx-nav" aria-label="Documentation">
-      {groups.map((group) => (
-        <div className="dx-nav-group" key={group.id}>
-          <p className="dx-nav-title">{group.title}</p>
-          <ul className="dx-nav-list">
-            {group.items.map((item) => {
-              const active = pathname === item.href;
-              const inBranch = active || pathname.startsWith(`${item.href}/`);
-              return (
-                <li key={item.href}>
-                  <Link href={item.href} {...(active ? { "aria-current": "page" } : {})}>
-                    {item.label}
-                  </Link>
-                  {inBranch && item.children && item.children.length > 0 ? (
-                    <ul className="dx-nav-sub">
-                      {item.children.map((child) => (
-                        <li key={child.href}>
-                          <Link
-                            href={child.href}
-                            {...(pathname === child.href ? { "aria-current": "page" } : {})}
-                          >
-                            {child.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
+      <button className="docs-mobile-nav" aria-expanded={mobileOpen} aria-controls="docs-guide-navigation" onClick={() => setMobileOpen(!mobileOpen)}>
+        <span>☰ &nbsp; Browse documentation</span><span>{mobileOpen ? "−" : "+"}</span>
+      </button>
+      <div className={`docs-guide-navigation${mobileOpen ? " is-open" : ""}`} id="docs-guide-navigation">
+        <Link className="docs-nav-home" href="/docs" aria-current={pathname === "/docs" ? "page" : undefined}>
+          <span aria-hidden="true">⌂</span> Documentation home
+        </Link>
+        {groups.map((group) => {
+          const active = group.items.some((item) => pathname === item.href && item.href !== "/docs");
+          const expanded = overrides[group.id] ?? (active || group.id === "introduction" || group.id === "scripting");
+          return (
+            <section className="dx-nav-group" key={group.id}>
+              <button className="docs-group-toggle" aria-expanded={expanded} aria-controls={`nav-${group.id}`}
+                onClick={() => setOverrides({ ...overrides, [group.id]: !expanded })}>
+                {group.title}<span aria-hidden="true">{expanded ? "−" : "+"}</span>
+              </button>
+              <ul className="dx-nav-list" id={`nav-${group.id}`} hidden={!expanded}>
+                {group.items.filter((item) => item.href !== "/docs").map((item) => (
+                  <li key={item.href}><Link href={item.href} aria-current={pathname === item.href ? "page" : undefined}>{item.label}</Link></li>
+                ))}
+              </ul>
+            </section>
+          );
+        })}
+        <Link className="docs-nav-api" href="/docs/api"><span>⌘ &nbsp; API Reference</span><span>↗</span></Link>
+        <p className="docs-nav-note">Cyberpunk 2077 · Lua 5.4<br />OPEN//77 <span>PRE-ALPHA</span></p>
+      </div>
     </nav>
   );
 }

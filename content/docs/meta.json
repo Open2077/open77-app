@@ -3,13 +3,13 @@
   "sections": [
     {
       "id": "introduction",
-      "title": "Introduction",
+      "title": "Getting started",
       "pages": [
         {
           "slug": "index",
           "kind": "guide",
           "file": "README.md",
-          "nav": "Overview",
+          "nav": "Home",
           "title": "OPEN//77 documentation",
           "description": "How OPEN//77 packages gameplay as resources: the session model, the authoritative server, a hello-world manifest, and the conventions shared by every Lua API."
         },
@@ -31,8 +31,8 @@
       ]
     },
     {
-      "id": "getting-started",
-      "title": "Getting started",
+      "id": "server",
+      "title": "Server manual",
       "pages": [
         {
           "slug": "host-a-server",
@@ -72,17 +72,34 @@
           "description": "Give your server an icon and a banner from the Warden panel, with no SSH and no restart: what the two images are, the real size and shape limits (including the combined budget that decides whether your server is listed at all), and what to check when an image does not appear."
         },
         {
+          "slug": "server-acl",
+          "kind": "guide",
+          "nav": "Commands and ACL",
+          "description": "Exporting a public identity, whitelisting a player, and declaring restricted server commands behind the access control list."
+        },
+        {
+          "slug": "identity",
+          "kind": "guide",
+          "nav": "Player identity",
+          "description": "Durable player identifiers, session-scoped ids, display names, the rename flow, and what a game server can actually verify about a connecting player."
+        },
+        {
+          "slug": "connection-control",
+          "kind": "guide",
+          "nav": "Connection control",
+          "description": "Connect events, admission deferrals, whitelists, bans and disconnect reasons."
+        }
+      ]
+    },
+    {
+      "id": "scripting",
+      "title": "Scripting guides",
+      "pages": [
+        {
           "slug": "server-resources",
           "kind": "guide",
           "nav": "Server resources",
           "description": "Resource manifests, the client and server runtime split, signing and download, hot reload, and the security model around resources the server hands to connecting players."
-        },
-        {
-          "slug": "server-mods",
-          "kind": "guide",
-          "nav": "Required mods",
-          "title": "Mods your server requires",
-          "description": "Requiring a mod for your world: whether the content needs a mod at all or is really a Lua resource, the trust verdicts and the capability cap that lets unverified packages carry inert data only, importing from the Warden Mods tab, who hosts the bytes, requesting a review, bandwidth, and removing a mod without stranding players."
         },
         {
           "slug": "resource-runtime",
@@ -91,36 +108,18 @@
           "nav": "The Lua runtime",
           "title": "The Lua resource runtime",
           "description": "What a resource actually gets: the complete manifest reference, the scheduler and lifecycle events, local and network events, modules and cross-resource exports, the core Open77 namespaces, WebUI surfaces, and every sandbox quota."
-        }
-      ]
-    },
-    {
-      "id": "identity",
-      "title": "Identity and access control",
-      "pages": [
-        {
-          "slug": "identity",
-          "kind": "guide",
-          "nav": "Player identity",
-          "description": "Durable player identifiers, session-scoped ids, display names, the rename flow, and what a game server can actually verify about a connecting player."
         },
-        {
-          "slug": "server-acl",
-          "kind": "guide",
-          "nav": "Commands and ACL",
-          "description": "Exporting a public identity, whitelisting a player, and declaring restricted server commands behind the access control list."
-        }
-      ]
-    },
-    {
-      "id": "server-api",
-      "title": "Server API",
-      "pages": [
         {
           "slug": "server-api",
           "kind": "guide",
           "nav": "Complete server Lua API",
           "description": "Every dedicated-server global, Open77 namespace, permission, constant and result shape: scheduler, events, commands, players, combat, routing buckets, loot, vehicles, NPCs, elevators, database and logging."
+        },
+        {
+          "slug": "resource-exports",
+          "kind": "guide",
+          "nav": "Official resource exports",
+          "description": "Every client export published by the official OPEN//77 resource packages, with signatures per package and how to call them safely across resources."
         },
         {
           "slug": "readiness-gate",
@@ -139,22 +138,28 @@
           "description": "Open77.tunables: declaring the numbers a server owner may retune live from the admin panel, the file-scope local that silently defeats it, and choosing between live, promote and per-match capture."
         },
         {
-          "slug": "resource-exports",
+          "slug": "client-kvp",
           "kind": "guide",
-          "nav": "Official resource exports",
-          "description": "Every client export published by the official OPEN//77 resource packages, with signatures per package and how to call them safely across resources."
+          "nav": "Client persistent KVP",
+          "description": "Endpoint- and resource-isolated local key/value persistence: CRUD, search, atomic operations, quotas, and why it must never hold secrets."
         }
       ]
     },
     {
-      "id": "world",
-      "title": "World systems",
+      "id": "players",
+      "title": "Players & gameplay",
       "pages": [
         {
-          "slug": "vehicles",
+          "slug": "player-stats",
           "kind": "guide",
-          "nav": "Vehicles",
-          "description": "Network vehicle identity, streaming, authority leases, seats and proxy replication, doors and glass, damage profiles, and the full asymmetric server and client Lua API."
+          "nav": "Health and stamina",
+          "description": "Read player statistics and control health, stamina and regeneration."
+        },
+        {
+          "slug": "weapons-api",
+          "kind": "guide",
+          "nav": "Weapons",
+          "description": "Weapon templates, slots, holstering and server assignments."
         },
         {
           "slug": "npcs",
@@ -163,16 +168,58 @@
           "description": "Server-owned NPCs: templates, streaming, authority leases, the task queue, health and damage, events, the read-only client API, and the current limitations."
         },
         {
+          "slug": "loot",
+          "kind": "guide",
+          "nav": "Loot",
+          "description": "Authoritative ground drops: creating and projecting item drops, validating pickups, the onLootPickup hook, and where native UI ends and server authority begins."
+        },
+        {
+          "slug": "perspective",
+          "kind": "guide",
+          "nav": "First and third person",
+          "description": "Player preferences, server policy and camera ownership."
+        },
+        {
+          "slug": "photo-mode",
+          "kind": "guide",
+          "nav": "Photo mode",
+          "description": "Control photo mode from a client resource, with exclusive ownership and cleanup."
+        }
+      ]
+    },
+    {
+      "id": "world",
+      "title": "World & vehicles",
+      "pages": [
+        {
+          "slug": "vehicles",
+          "kind": "guide",
+          "nav": "Vehicles",
+          "description": "Network vehicle identity, streaming, authority leases, seats and proxy replication, doors and glass, damage profiles, and the full asymmetric server and client Lua API."
+        },
+        {
+          "slug": "vehicle-paint",
+          "kind": "guide",
+          "nav": "Vehicle paint",
+          "description": "Server-controlled RGB paint, replication and change events."
+        },
+        {
+          "slug": "weather",
+          "kind": "guide",
+          "nav": "Time and weather",
+          "description": "Synchronised session time and weather: the network model, shared configuration, ACL-gated commands, random weather events, and the server and client APIs."
+        },
+        {
           "slug": "elevators",
           "kind": "guide",
           "nav": "Elevators",
           "description": "Server-authoritative native lifts: adopting a LiftDevice, bucket and chunk streaming, movement and pause control, late-join catch-up, and the reference resource commands."
         },
         {
-          "slug": "loot",
+          "slug": "props",
           "kind": "guide",
-          "nav": "Loot",
-          "description": "Authoritative ground drops: creating and projecting item drops, validating pickups, the onLootPickup hook, and where native UI ends and server authority begins."
+          "nav": "World props",
+          "description": "Server-owned world props and lights: creation, streaming and cleanup."
         },
         {
           "slug": "props-and-effects",
@@ -183,16 +230,16 @@
           "description": "Placing server-owned objects, lights and replicated effects from Lua: the create definition, the curated model catalogue, the bucket and ground-height traps that make a prop invisible, lights and what respawns them, carrying, quotas and removal reasons, with the admin commands and two worked scenes."
         },
         {
-          "slug": "weather",
+          "slug": "world-queries",
           "kind": "guide",
-          "nav": "Time and weather",
-          "description": "Synchronised session time and weather: the network model, shared configuration, ACL-gated commands, random weather events, and the server and client APIs."
+          "nav": "World queries",
+          "description": "Raycasts, ground height, aim rays and nearby object queries."
         }
       ]
     },
     {
-      "id": "client",
-      "title": "Client and interface",
+      "id": "interfaces",
+      "title": "Interfaces & input",
       "pages": [
         {
           "slug": "world-drawing",
@@ -233,6 +280,18 @@
           "description": "Reusable WebUI toasts: local client notifications, server-targeted delivery, updating and dismissing, queue limits, positions and progress."
         },
         {
+          "slug": "hud-visibility",
+          "kind": "guide",
+          "nav": "HUD visibility",
+          "description": "Show and hide the game's HUD elements from a client resource."
+        },
+        {
+          "slug": "keybindings",
+          "kind": "guide",
+          "nav": "Key bindings",
+          "description": "Register rebindable actions and handle press and hold callbacks."
+        },
+        {
           "slug": "effects",
           "kind": "guide",
           "nav": "Visual and audio effects",
@@ -245,16 +304,41 @@
           "description": "Chat messages, slash commands, completion, and the built-in developer commands available to every player."
         },
         {
+          "slug": "voice",
+          "kind": "guide",
+          "nav": "Voice chat",
+          "description": "Proximity voice, radio and phone channels, Lua APIs and settings."
+        },
+        {
           "slug": "clipboard",
           "kind": "guide",
           "nav": "Clipboard",
           "description": "The write-only client clipboard API, the clipboard.write permission, failure reasons, and the built-in /pos and /rot transform commands."
+        }
+      ]
+    },
+    {
+      "id": "assets",
+      "title": "Mods & assets",
+      "pages": [
+        {
+          "slug": "mods",
+          "kind": "guide",
+          "nav": "Mods and custom assets",
+          "description": "Install and declare stack, world and personal mods."
         },
         {
-          "slug": "client-kvp",
+          "slug": "server-mods",
           "kind": "guide",
-          "nav": "Client persistent KVP",
-          "description": "Endpoint- and resource-isolated local key/value persistence: CRUD, search, atomic operations, quotas, and why it must never hold secrets."
+          "nav": "Required mods",
+          "title": "Mods your server requires",
+          "description": "Requiring a mod for your world: whether the content needs a mod at all or is really a Lua resource, the trust verdicts and the capability cap that lets unverified packages carry inert data only, importing from the Warden Mods tab, who hosts the bytes, requesting a review, bandwidth, and removing a mod without stranding players."
+        },
+        {
+          "slug": "sky-advertising",
+          "kind": "guide",
+          "nav": "Sky advertisements",
+          "description": "Create and preload custom sky hologram advertisements."
         }
       ]
     },
@@ -275,12 +359,24 @@
           "kind": "guide",
           "nav": "The gamemode kernel",
           "description": "Why there is no shared server-side gamemode resource on OPEN//77, what a mode's server gets instead, and the eight conventions two shipped gamemodes both implement."
+        },
+        {
+          "slug": "deathmatch",
+          "kind": "guide",
+          "nav": "Deathmatch",
+          "description": "Free-for-all and arena modes, loadouts, bots, scoring and configuration."
+        },
+        {
+          "slug": "cordon",
+          "kind": "guide",
+          "nav": "Cordon: battle royale",
+          "description": "Squads, the closing cordon, loot, revives and configuration."
         }
       ]
     },
     {
       "id": "reference",
-      "title": "Reference",
+      "title": "Reference & tools",
       "pages": [
         {
           "slug": "api",

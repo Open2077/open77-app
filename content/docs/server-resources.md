@@ -10,6 +10,31 @@ server-supplied resource layer. Gameplay resources on the player's disk are neve
 Use this guide to write a resource, understand what reaches the player, and publish a change to a
 running session.
 
+## Layout of the resources folder
+
+The library is grouped in category folders. A folder without an `open77.lua` is a category, not a
+resource; the server's load rules, the wizard and the tooling look through categories, so a
+`resources.load` written as bare names (`"open77_shell"`, `"freeroam"`) or as `"*"` keeps working.
+
+```text
+resources/
+  system/       official platform resources: open77_shell, open77_chat, open77_props, open-voice, ...
+  gamemodes/    playable modes and their HUDs: freeroam, race, pursuit, open77_deathmatch, open77_cordon, ...
+  dev/          examples and harnesses: open77_example, open77_dbtest
+  assets/
+    loaders/    archivexl, tweakxl (tracked: the platform redistributes them)
+    maps/       world packages such as kujira_world (ignored by git)
+    vehicles/   vehicle packages (ignored by git)
+    mods/       other third-party packages (ignored by git)
+```
+
+Rules: the last segment of a load rule (`*`, `open77_*`, a bare name) matches through up to two
+levels of category folders; earlier segments stay literal, so `gamemodes/race` is exact and
+`assets/**` is the explicit recursive form. Third-party content under `assets/maps`, `assets/vehicles`
+and `assets/mods` is never committed; only its manifests are yours to write. `scripts/new-resource.ps1`
+takes `-Category` (default `gamemodes`), and `scripts/check-lua.ps1` resolves a bare name in any
+category.
+
 ## Connection flow
 
 1. The GNS handshake announces a generation, a SHA-256 digest, an Ed25519 key, and an HTTPS URL.
@@ -41,6 +66,7 @@ client_script "client/main.lua"
 web_ui_page "web/index.html"
 web_files { "web/**" }
 files { "assets/blips/*.png", "assets/audio/*.wav" }
+preload_mod "dist/world-assets.zip"
 permissions { "network.events" }
 ```
 
@@ -56,6 +82,39 @@ signed resource set, downloaded before Lua starts, and recorded in the client al
 `Open77.assets.texture("assets/blips/job-center.png")` only succeeds when the exact file matched a
 `files` entry. Empty globs, traversal paths, oversized files, and undeclared texture reads fail the
 resource instead of falling back to arbitrary disk access.
+
+### Pre-boot REDengine assets
+
+`preload_mod` / `preload_mods` attach inert game assets to a selected resource when REDengine must
+see those files before Lua starts. Typical examples are `.archive` packages containing XBM texture
+replacers or custom world data:
+
+```lua
+resource "open77_sky_ads"
+version "1.0.0"
+
+server_script "server/main.lua"
+preload_mod "dist/Open77SkyAds.zip"
+```
+
+The ZIP or 7z is inspected at dedicated-server startup, staged in the server's content-addressed
+mod store, and promoted to the required-mod set announced to the master. The launcher downloads
+and projects it before it starts Cyberpunk. A preload is deliberately excluded from the signed Lua
+resource package, including when a broad `files { "dist/**" }` pattern also matches it.
+
+This is a boot contract, not a hot-reload API:
+
+- the resource must be selected by `resources.load`;
+- `requiredMods.enabled` must be `true`, or server startup fails with the responsible directive;
+- only inert packages are accepted automatically; executable DLL/REDscript/CET content still goes
+  through Warden review;
+- a resource may declare at most eight `.zip`/`.7z` packages, each from 1 byte through 64 MiB;
+- every declared path or glob must match an existing package;
+- rebuilding or changing one requires a dedicated-server restart, then a fresh launcher boot of
+  the game; restarting only the Lua resource cannot remount the REDengine depot.
+
+See [Sky hologram advertisements](sky-advertising.md) for the complete PNG/DDS-to-XBM example and
+[Server-required mods](server-mods.md) for storage, consent, trust, and removal semantics.
 
 A server script can register a command reachable from the Open77 developer terminal or from the
 dedicated console:
@@ -148,6 +207,10 @@ set authoritative: an excluded gamemode cannot return indirectly through another
 Only selected resources that reach `Running` are packaged and signed for clients. Removing a
 resource from `load` therefore stops it server-side and removes its client scripts, WebUI, and
 declared files from the next resource generation.
+
+Selected `preload_mod` declarations are resolved earlier, during dedicated-server boot, because
+the launcher needs their digest before it can start the game. They are not silently pulled in from
+an excluded resource and they are not added by a dependency that `load` omitted.
 
 Filesystem matches are recalculated at every `watchIntervalMilliseconds` scan. Editing a resource,
 creating a matching directory, or deleting one is noticed automatically. Editing `server.jsonc`

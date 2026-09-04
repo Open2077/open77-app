@@ -11,9 +11,12 @@
  */
 
 import fs from "node:fs/promises";
+import { existsSync } from "node:fs";
 import path from "node:path";
 
-const wiki = process.argv[2] ?? path.join(process.cwd(), "..", "base", "wiki");
+const wiki = process.argv[2] ?? ["CyberM", "open77-base", "base"]
+  .map((directory) => path.join(process.cwd(), "..", directory, "wiki"))
+  .find(existsSync) ?? path.join(process.cwd(), "..", "base", "wiki");
 const api = JSON.parse(
   await fs.readFile(path.join(process.cwd(), "content", "api", "api.json"), "utf8"),
 );

@@ -20,15 +20,9 @@
  * would otherwise report them as an unpublished guide).
  */
 
-export const EXCLUDED_GUIDES = new Map([
-  [
-    "props.md",
-    "Server-owned world props. The guide describes itself as the specification " +
-      "the Props & Effects build is written against, published ahead of that " +
-      "build; the server-side `Open77.props` Lua binding is not registered in " +
-      "the dedicated server runtime. Publish it once that binding ships.",
-  ],
-]);
+// Publish the current wiki in full. The props guide now documents implemented
+// server-owned props; the older, pre-implementation exclusion is obsolete.
+export const EXCLUDED_GUIDES = new Map();
 
 /** Wiki files that are tooling or build output rather than publishable content. */
 export const EXCLUDED_TOOLING = new Set(["tools/README.md"]);

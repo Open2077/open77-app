@@ -2,25 +2,16 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { DocsNav, type DocsNavGroup } from "@/components/docs/docs-nav";
-import { getApiIndex } from "@/lib/api-reference";
 import { docHref, getDocsNav } from "@/lib/docs";
 
 /**
  * Builds the sidebar tree.
  *
- * `meta.json` is the source of truth for guides; the API namespaces are
- * generated, so they are attached as children of the reference entry rather
- * than hand-listed, and they only expand while the reader is inside `/docs/api`.
+ * `meta.json` is the source of truth for guide categories. The dedicated API
+ * explorer owns its namespace and runtime navigation.
  */
 async function buildNavGroups(): Promise<DocsNavGroup[]> {
-  const [nav, api] = await Promise.all([getDocsNav(), getApiIndex()]);
-
-  const apiChildren = api.runtimes.flatMap((group) =>
-    group.namespaces.map((namespace) => ({
-      href: namespace.href,
-      label: `${group.label.toLowerCase()} · ${namespace.label}`,
-    })),
-  );
+  const nav = await getDocsNav();
 
   return nav.sections.map((section) => ({
     id: section.id,
@@ -28,7 +19,6 @@ async function buildNavGroups(): Promise<DocsNavGroup[]> {
     items: section.pages.map((page) => ({
       href: docHref(page.slug),
       label: page.nav,
-      ...(page.slug === "api" ? { children: apiChildren } : {}),
     })),
   }));
 }

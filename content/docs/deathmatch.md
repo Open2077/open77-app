@@ -15,7 +15,7 @@ The mode is two resources: `open77_deathmatch` (authoritative) and
 > [`docs/gamemode-pvp-arena-plan.md`](../docs/gamemode-pvp-arena-plan.md), and the
 > measurements the design rests on are in
 > [`docs/research/pvp-arena-and-bots.md`](../docs/research/pvp-arena-and-bots.md).
-> Where this page and `resources/open77_deathmatch/shared/config.lua` disagree,
+> Where this page and `resources/gamemodes/open77_deathmatch/shared/config.lua` disagree,
 > the config is right: it is what the server reads.
 
 ## What players get
@@ -91,7 +91,7 @@ The four in the middle are the way into the mode, and each one is load-bearing:
 |---|---|
 | [`open77_worldui`](worldui.md) | No station at all. It owns the ring, the prompt card and the action key. |
 | [`open77_interactions`](interactions.md) | `open77_deathmatch` declares it as a hard dependency, so the gamemode is refused outright with `missing_dependency:open77_interactions`. Left out of a set that still lists `open77_worldui`, the failure is worse than a refusal: `open77_worldui` declares the same dependency, the server does not start the set partially and does not stop retrying, and it logs `Automatic resource start failed: Resource 'open77_interactions' was not found` **once a second, indefinitely** (measured 2026-08-31). If your log is scrolling one line per second, this is why. |
-| [`open77_groundcircle`](../resources/open77_groundcircle/README.md) | The station works and is invisible. On 2.31 the native 3D interaction ring **does not draw at all**; the ground circle is the entire visual, and it follows real ground per vertex. |
+| [`open77_groundcircle`](../resources/system/open77_groundcircle/README.md) | The station works and is invisible. On 2.31 the native 3D interaction ring **does not draw at all**; the ground circle is the entire visual, and it follows real ground per vertex. |
 | [`open77_zones`](zones.md) | No client-side boundary hysteresis. The server still re-derives every containment claim, so this is a smoothness loss rather than an authority one. |
 
 Two more rules about the set:
@@ -142,7 +142,7 @@ spare the first joiner no longer exists.
 
 ## Tunables
 
-Declared in `resources/open77_deathmatch/shared/config.lua` and rendered by the
+Declared in `resources/gamemodes/open77_deathmatch/shared/config.lua` and rendered by the
 Warden **Tuning** tab, so retuning a running server never means editing Lua and
 never means an SSH session. Bounds are enforced on every write — from the panel,
 from the console, and from the mode's own code — so a value the panel accepts is

@@ -23,7 +23,7 @@ not be asked for anything -- not "define a state machine," not "allocate a
 bucket," nothing. This was discovered building Pursuit and is recorded in
 [`docs/gamemode-pursuit-plan.md`](../docs/gamemode-pursuit-plan.md) section
 7b, and it is why **a gamemode's entire server side is one resource**:
-`resources/pursuit/server/*.lua` and `resources/race/server/main.lua` each
+`resources/gamemodes/pursuit/server/*.lua` and `resources/gamemodes/race/server/main.lua` each
 share one Lua state across their own files and reach each other through a
 plain global (`Pursuit`, in Pursuit's case), never through anything that
 could be called from outside.
@@ -40,8 +40,8 @@ Since the kernel cannot be a resource another resource calls, Open77's
 answer is code generation: `scripts/new-resource.ps1 -Kind gamemode` emits
 a correct-by-construction starting point directly into the new resource --
 a guarded state machine, roster tracking with the reload-safe adoption
-pattern below, and a `<name>.status` command. Both `resources/pursuit` and
-`resources/race` began this way and then diverged, because that is what a
+pattern below, and a `<name>.status` command. Both `resources/gamemodes/pursuit` and
+`resources/gamemodes/race` began this way and then diverged, because that is what a
 generated starting point is for.
 
 This is documented explicitly as the sharing mechanism in
@@ -60,7 +60,7 @@ short version, with the two working examples.
 
 | Convention | Why | Where it lives |
 |---|---|---|
-| **Lazy roster adoption.** No `Open77.players` enumeration exists, and a reload empties the roster while the server is still full. Repopulate a player's record from the *next* event they produce, at every entry point that carries a player ID. | A reload must not lose track of connected players. | `ensurePlayer` in `resources/pursuit/server/main.lua` and `resources/race/server/main.lua` |
+| **Lazy roster adoption.** No `Open77.players` enumeration exists, and a reload empties the roster while the server is still full. Repopulate a player's record from the *next* event they produce, at every entry point that carries a player ID. | A reload must not lose track of connected players. | `ensurePlayer` in `resources/gamemodes/pursuit/server/main.lua` and `resources/gamemodes/race/server/main.lua` |
 | **`tonumber` every player ID.** IDs arrive from net events and lifecycle handlers as strings. | A raw string key silently diverges from the numeric IDs used everywhere else. | Every `AddEventHandler("onPlayer...", ...)` in both resources |
 | **Guarded state transitions, one function.** A single `transition(playerId, target, detail)` that checks an explicit table of allowed edges and logs a refusal instead of corrupting state. | An invalid transition is more useful as a log line than as silent corruption. | `transition` in both resources |
 | **Move players only through kill -> respawn.** Never a raw transform write; the transaction carries the fade and the streaming preload a direct teleport skips. | A direct teleport over distance drops the player into unstreamed world. Every placement is therefore a death, which its own life-state checks must account for. | `placeAt` in both resources |

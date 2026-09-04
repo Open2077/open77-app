@@ -153,7 +153,7 @@ const child = spawn(
     "--window-size=1280,900",
     "about:blank",
   ],
-  { stdio: "ignore" },
+  { stdio: "ignore", windowsHide: true },
 );
 
 let failures = 0;
@@ -241,6 +241,7 @@ try {
 
   /* ---------------------------------------------------------------- home --- */
 
+  if (!process.argv.includes("--docs")) {
   await visit("/");
   reportConsole("/");
   check(
@@ -374,70 +375,150 @@ try {
     `${racingLinked.rows} rows: ${racingLinked.names.join(", ")}`,
   );
 
-  /* ---------------------------------------------------------------- docs --- */
+  }
 
+  /* Documentation: run independently with --docs during local development. */
+  await session.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
   await visit("/docs");
   reportConsole("/docs");
-  const docsFilter = await session.evaluate(`
-    const input = document.querySelector('.dx-search input');
-    if (!input) return { error: 'no docs filter input' };
-    const total = document.querySelectorAll('.dx-card').length;
-    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
-    const type = async (value) => {
-      setter.call(input, value);
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      await new Promise(r => setTimeout(r, 250));
-      return [...document.querySelectorAll('.dx-card-title')].map(n => n.textContent.trim());
-    };
-
-    const titles = await type('vehicle');
-    const suggestions = parseSuggestions(input.placeholder);
-    const results = {};
-    for (const suggestion of suggestions) results[suggestion] = (await type(suggestion)).length;
-    return { total, titles, suggestions, results };
+  check("main site navigation and official logo remain available", await session.evaluate(`
+    return !!document.querySelector('.site-header a[href="/servers"]') &&
+      !!document.querySelector('.site-header img[src="/brand/logo/open77-logo-light.png"]');
+  `));
+  const theme = await session.evaluate(`
+    document.querySelector('.docs-theme-toggle').click();
+    await new Promise(r => setTimeout(r, 150));
+    return document.querySelector('.docs-site').dataset.theme;
   `);
-  check(
-    "/docs filter narrows and ranks",
-    !docsFilter.error && docsFilter.titles?.length > 0 && docsFilter.titles[0] === "Vehicles",
-    docsFilter.error ?? `total ${docsFilter.total}, matches: ${docsFilter.titles?.join(", ")}`,
-  );
-  const emptyDocsSuggestions = Object.entries(docsFilter.results ?? {}).filter(
-    ([, hits]) => hits === 0,
-  );
-  check(
-    "/docs every suggested filter matches something",
-    docsFilter.suggestions?.length > 0 && emptyDocsSuggestions.length === 0,
-    `no results for: ${emptyDocsSuggestions.map(([name]) => name).join(", ")}`,
-  );
+  check("theme switches to dark", theme === "dark", theme);
+  await visit("/docs");
+  check("theme survives reload", await session.evaluate("return document.querySelector('.docs-site').dataset.theme === 'dark';"));
+  if (process.argv.includes("--docs")) {
+    await fs.mkdir(".shots", { recursive: true });
+    const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+    await fs.writeFile(".shots/docs-dark.png", Buffer.from(data, "base64"));
+  }
+  const sticky = await session.evaluate(`
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo(0, 900);
+    await new Promise(r => setTimeout(r, 200));
+    const site = document.querySelector('.site-header').getBoundingClientRect();
+    const docs = document.querySelector('.docs-header').getBoundingClientRect();
+    const nav = document.querySelector('.dx-nav').getBoundingClientRect();
+    return { y: scrollY, site: site.top, docs: docs.top, siteBottom: site.bottom, nav: nav.top, docsBottom: docs.bottom };
+  `);
+  check("site header stays at viewport top when scrolled", sticky.y > 0 && Math.abs(sticky.site) < 2, JSON.stringify(sticky));
+  check("docs header stays below site navigation", Math.abs(sticky.docs - sticky.siteBottom) < 2, JSON.stringify(sticky));
+  check("sidebar stays below both headers", Math.abs(sticky.nav - sticky.docsBottom) < 2, JSON.stringify(sticky));
+  await session.evaluate("window.scrollTo(0, 0); document.querySelector('.docs-theme-toggle').click();");
+  const docsSearch = await session.evaluate(`
+    const input = document.querySelector('.docs-global-search input');
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+    setter.call(input, 'vehicles');
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await new Promise(r => setTimeout(r, 200));
+    return [...document.querySelectorAll('.docs-search-results a')].map(a => a.textContent);
+  `);
+  check("global search returns guides and API functions", docsSearch.some(text => /Vehicles/i.test(text)) && docsSearch.some(text => /API/.test(text)), JSON.stringify(docsSearch));
+  const expanded = await session.evaluate(`
+    const toggle = document.querySelector('[aria-controls="nav-server"]');
+    toggle.click();
+    await new Promise(r => setTimeout(r, 100));
+    return !document.getElementById('nav-server').hidden;
+  `);
+  check("guide categories expand", expanded);
 
   await visit("/docs/api");
   reportConsole("/docs/api");
-  // Typed from the placeholder's own suggestions: if one of those comes up
-  // empty, the search is advertising a function that does not exist.
-  const apiFilter = await session.evaluate(`
-    const input = document.querySelector('.dx-search input');
-    if (!input) return { error: 'no api filter input' };
-    const suggestions = parseSuggestions(input.placeholder);
-    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
-    const results = {};
-    for (const suggestion of suggestions) {
-      setter.call(input, suggestion);
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      await new Promise(r => setTimeout(r, 250));
-      results[suggestion] = document.querySelectorAll('.dx-hit-name').length;
-    }
-    return { suggestions, results };
+  const total = await session.evaluate("return document.querySelectorAll('.api-function-row').length;");
+  check("API includes native cards and the server guide", total > 600, String(total));
+  const serverOnly = await session.evaluate(`
+    document.querySelectorAll('.api-runtime-filter button')[1].click();
+    await new Promise(r => setTimeout(r, 150));
+    return { count: document.querySelectorAll('.api-function-row').length,
+      sides: [...document.querySelectorAll('.api-function-row .api-side')].map(n => n.textContent) };
   `);
-  const emptySuggestions = Object.entries(apiFilter.results ?? {}).filter(
-    ([, hits]) => hits === 0,
-  );
-  check(
-    "/docs/api every suggested filter matches something",
-    !apiFilter.error && apiFilter.suggestions.length > 0 && emptySuggestions.length === 0,
-    apiFilter.error ??
-      `no results for: ${emptySuggestions.map(([name]) => name).join(", ")}`,
-  );
-
+  check("server filter shows only server functions", serverOnly.count > 200 && serverOnly.sides.every(side => side === 'server'), JSON.stringify({ count: serverOnly.count }));
+  const category = await session.evaluate(`
+    const select = document.querySelector('[aria-label="API category"]');
+    select.value = 'players';
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+    await new Promise(r => setTimeout(r, 150));
+    const target = [...document.querySelectorAll('.api-function-row')].find(a => a.textContent.includes('Open77.players.disconnect'));
+    target?.click();
+    await new Promise(r => setTimeout(r, 150));
+    return { hash: location.hash, title: document.querySelector('.api-detail h2').textContent,
+      source: document.querySelector('.api-source').textContent, groups: document.querySelectorAll('.api-function-group').length };
+  `);
+  check("category filter selects a documented server function", category.title === "disconnect" && category.groups === 1 && category.source.includes("server-api.md"), JSON.stringify(category));
+  await visit("/docs/api?side=server&category=players#server/open77-players/disconnect");
+  check("filters and selection survive a direct visit", await session.evaluate(`
+    return document.querySelector('.api-detail h2').textContent === 'disconnect' &&
+      document.querySelector('[aria-label="API category"]').value === 'players';
+  `));
+  const back = await session.evaluate(`
+    const target = [...document.querySelectorAll('.api-function-row')].find(a => a.textContent.includes('Open77.players.ban('));
+    target.click();
+    await new Promise(r => setTimeout(r, 150));
+    const changed = document.querySelector('.api-detail h2').textContent;
+    history.back();
+    await new Promise(r => setTimeout(r, 300));
+    return { changed, restored: document.querySelector('.api-detail h2').textContent };
+  `);
+  check("browser Back restores the selected function", back.changed === "ban" && back.restored === "disconnect", JSON.stringify(back));
+  const empty = await session.evaluate(`
+    const input = document.querySelector('[aria-label="Search API functions"]');
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'no_such_function_97531');
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await new Promise(r => setTimeout(r, 150));
+    const absent = !!document.querySelector('.api-no-results');
+    document.querySelector('.api-no-results button').click();
+    await new Promise(r => setTimeout(r, 150));
+    return { absent, restored: document.querySelectorAll('.api-function-row').length };
+  `);
+  check("empty search can reset all filters", empty.absent && empty.restored === total, JSON.stringify(empty));
+  await visit("/docs/api#server/open77-vehicles/create");
+  check("generated vehicle deep links select server version", await session.evaluate(`
+    return document.querySelector('.api-detail h2').textContent === 'create' &&
+      document.querySelector('.api-detail-meta .api-side').textContent === 'server';
+  `));
+  await session.send("Browser.grantPermissions", { origin, permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"] }, false);
+  const copied = await session.evaluate(`
+    document.querySelector('.api-detail-links [aria-label="Copy link"]').click();
+    await new Promise(r => setTimeout(r, 200));
+    return await navigator.clipboard.readText();
+  `);
+  check("copy link retains runtime and function", copied.endsWith("/docs/api#server/open77-vehicles/create"), copied);
+  await session.evaluate("document.querySelector('.docs-theme-toggle').click();");
+  if (process.argv.includes("--docs")) {
+    const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+    await fs.writeFile(".shots/api-dark.png", Buffer.from(data, "base64"));
+  }
+  reportConsole("API interactions");
+  await session.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  await visit("/docs/api#server/open77-vehicles/create");
+  check("mobile deep link opens function details", await session.evaluate(`
+    return getComputedStyle(document.querySelector('.api-detail')).display !== 'none' &&
+      document.documentElement.scrollWidth <= innerWidth;
+  `));
+  await session.evaluate("document.querySelectorAll('.api-mobile-switch button')[0].click();");
+  check("mobile can switch back to functions", await session.evaluate("return getComputedStyle(document.querySelector('.api-function-list')).display !== 'none';"));
+  await visit("/docs/vehicles");
+  check("mobile documentation has no horizontal page overflow", await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
+  const mobile = await session.evaluate(`
+    document.querySelector('.docs-mobile-nav').click();
+    await new Promise(r => setTimeout(r, 150));
+    return getComputedStyle(document.querySelector('.docs-guide-navigation')).display !== 'none';
+  `);
+  check("mobile guide navigation opens", mobile);
+  await session.evaluate("document.querySelector('.docs-mobile-nav').click();");
+  if (process.argv.includes("--docs")) {
+    const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+    await fs.writeFile(".shots/docs-mobile-dark.png", Buffer.from(data, "base64"));
+  }
+  reportConsole("mobile docs");
+  await session.evaluate("document.querySelector('.docs-theme-toggle').click();");
+  if (!process.argv.includes("--docs")) {
   /* -------------------------------------------------------- mobile menu --- */
 
   await session.send("Emulation.setDeviceMetricsOverride", {
@@ -480,6 +561,7 @@ try {
     JSON.stringify(menu.afterNav),
   );
   reportConsole("client navigation to /create");
+  }
 } finally {
   child.kill();
   await fs.rm(profile, { recursive: true, force: true }).catch(() => {});

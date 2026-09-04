@@ -1,27 +1,31 @@
 # Network vehicles
 
-Open77 vehicles are server entities. A server resource creates a vehicle, owns its durable state, and removes it. Clients only stream a REDengine projection around their player.
+Open77 vehicles are server entities. A server resource creates a vehicle, while any resource granted
+`world.vehicles` may control its canonical state and lifecycle. Clients only stream a REDengine
+projection around their player.
 
 ## Manifest
 
 ```lua
-permissions { "world.vehicles", "vehicles.read", "vehicles.presentation" }
+permissions { "world.vehicles", "vehicles.read", "vehicles.presentation", "vehicles.control" }
 ```
 
 `world.vehicles` is a server permission. `vehicles.read` exposes the read-only client projection.
 `vehicles.presentation` is optional and permits a client resource to select the visual entry path
 for an occupant whose exact player, vehicle, and seat were already validated by the server.
+`vehicles.control` is optional and lets a client resource sound the horn of a vehicle currently
+simulated by that client; it never grants authority over another player's vehicle.
 
 ## Complete Lua API inventory
 
 The vehicle surface is intentionally asymmetric:
 
-| Runtime | Surface | Count | Mutation |
-|---|---|---:|---|
-| Server | `Open77.vehicles.*` | 47 methods | Authoritative lifecycle, state, damage, detached parts, openings, paint, and transform. |
-| Client | `Open77.vehicles.*` | 6 methods | Read-only state plus guarded remote-occupant presentation. |
-| Client package | `open77_vehicles` exports | 2 exports | Read-only compatibility wrappers. |
-| Server low level | FiveM-style globals | 6 functions | Raw implementation surface; prefer `Open77.vehicles.*`. |
+| Runtime | Surface | Mutation |
+|---|---|---|
+| Server | `Open77.vehicles.*` | Authoritative lifecycle, seats, lock state, horn routing, damage, detached parts, openings, paint, and transform. |
+| Client | `Open77.vehicles.*` | Read-only state, locally-owned horn control, and guarded remote-occupant presentation. |
+| Client package | `open77_vehicles` exports | Read-only compatibility wrappers. |
+| Server low level | FiveM-style globals | Raw implementation surface; prefer `Open77.vehicles.*`. |
 
 There is deliberately no client API for breaking or repairing glass, tyres, lights, bodywork, or
 detached panels. Only the current physics owner may publish native destructive state; other clients
@@ -37,13 +41,29 @@ Every method in this table requires `world.vehicles`.
 | `Open77.vehicles.update` | `(id, patch)` | `boolean`; replaces supplied canonical fields. |
 | `Open77.vehicles.get` | `(id)` | Server snapshot or `nil`. |
 | `Open77.vehicles.all` | `(bucket?)` | Array of server snapshots, ordered by ID. |
-| `Open77.vehicles.remove` | `(id)` | `boolean`; only the creating resource can remove it. |
+| `Open77.vehicles.remove` | `(id)` | `boolean`; removes any canonical vehicle. |
 | `Open77.vehicles.setTransform` | `(id, transform)` | `boolean`; position plus yaw, revoking any active physics lease. |
 | `Open77.vehicles.getDamage` | `(id)` | `{ body, glass, lights, tires, detachedParts }`, or `nil`. |
 | `Open77.vehicles.setDamage` | `(id, damage)` | `boolean`; combined damage update. |
 | `Open77.vehicles.repair` | `(id, scope?)` | `boolean`; scope is `glass`, `body`, `lights`, `tires`, `visual`, `mechanical`, or `full`. |
+| `Open77.vehicles.setPaint` | `(id, paint)` | `boolean`; publishes canonical primary/secondary paint. |
+| `Open77.vehicles.getPaint` | `(id)` | `{ applied, primary, secondary }`, or `nil`. |
+| `Open77.vehicles.resetPaint` | `(id)` | `boolean`; restores the model's original paint. |
+| `Open77.vehicles.setLocked` | `(id, locked)` | `boolean`; atomically changes the durable entry lock. |
+| `Open77.vehicles.lock` | `(id)` | Convenience alias for `setLocked(id, true)`. |
+| `Open77.vehicles.unlock` | `(id)` | Convenience alias for `setLocked(id, false)`. |
+| `Open77.vehicles.isLocked` | `(id)` | Canonical entry-lock boolean, or `nil` for an unknown vehicle. |
+| `Open77.vehicles.triggerHorn` | `(id, durationMs?)` | Routes a reliable synchronized horn command to the owner or parked viewers. |
+| `Open77.vehicles.honk` | `(id, durationMs?)` | Alias of `triggerHorn`; default duration is 250 ms. |
 | `Open77.vehicles.registerDamageProfile` | `(record, profile)` | `true`; registers names inside the calling resource VM. |
 | `Open77.vehicles.getDamageProfile` | `(record)` | This resource's profile or `nil`. |
+| `Open77.vehicles.warpPlayerIntoVehicle` | `(playerId, vehicleId, seat, options?)` | Authoritatively assigns and eventually warps a player into any canonical vehicle. |
+| `Open77.vehicles.setPlayerIntoVehicle` | `(playerId, vehicleId, seat, options?)` | Alias of `warpPlayerIntoVehicle`. |
+| `Open77.vehicles.forcePlayerOutOfVehicle` | `(playerId, vehicleId?)` | Forces native exit and retains the seat until confirmation/timeout. |
+| `Open77.vehicles.removePlayerFromVehicle` | `(playerId, vehicleId?)` | Alias of `forcePlayerOutOfVehicle`. |
+| `Open77.vehicles.setPlayerExitLocked` | `(playerId, locked, vehicleId?)` | Sets the durable no-exit policy. |
+| `Open77.vehicles.getPlayerSeat` | `(playerId)` | Canonical server seat assignment or `nil`. |
+| `Open77.vehicles.isPlayerExitLocked` | `(playerId)` | Whether the canonical assignment is exit-locked. |
 
 ### All server body-damage methods
 
@@ -133,22 +153,28 @@ The remaining `Open77.vehicles.update` fields are `health`, `flags`, `primaryCol
 |---|---|---|---|
 | `Open77.vehicles.get` | `vehicles.read` | `(id)` | One streamed client snapshot or `nil`. |
 | `Open77.vehicles.all` | `vehicles.read` | `()` | All currently streamed snapshots; empty when unavailable or denied. |
+| `Open77.vehicles.getPaint` | `vehicles.read` | `(id)` | Read-only `{ applied, primary, secondary }`, or `nil`. |
+| `Open77.vehicles.isLocked` | `vehicles.read` | `(id)` | Reads the replicated durable entry lock, or `nil`. |
+| `Open77.vehicles.triggerHorn` / `honk` | `vehicles.control` | `(id, durationMs?)` | Sounds a streamed vehicle only when this client is its current physics owner. |
+| `Open77.vehicles.getPlayerSeat` | `vehicles.read` | `(playerId?)` | Replicated seat assignment; omitted ID selects the local player. |
+| `Open77.vehicles.isPlayerExitLocked` | `vehicles.read` | `(playerId?)` | Replicated exit-lock state, or `nil` without an assignment. |
 | `Open77.vehicles.isDoorOpen` | `vehicles.read` | `(id, door)` | Reads the canonical six-bit door state. |
 | `Open77.vehicles.isWindowOpen` | `vehicles.read` | `(id, window)` | Reads the canonical four-bit opening state, not broken glass. |
 | `Open77.vehicles.warpPlayerIntoVehicle` | `vehicles.presentation` | `(playerId, vehicleId, seat)` | Instantly presents an already-authorized remote occupant. |
-| `Open77.vehicles.taskPlayerEnterVehicle` | `vehicles.presentation` | `(playerId, vehicleId, seat)` | Reserved animated path; currently fails closed with `animated_entry_unsupported`. |
+| `Open77.vehicles.taskPlayerEnterVehicle` | `vehicles.presentation` | `(playerId, vehicleId, seat)` | Guarded staged entry presentation for an already-authorized remote occupant. |
 | `Open77.vehicles.setPerformance` | `vehicles.performance` | `(id, profile)` | Caps one vehicle's top speed and pickup. |
 | `Open77.vehicles.clearPerformance` | `vehicles.performance` | `(id)` | Removes that vehicle's cap. |
 | `Open77.vehicles.setPerformanceClass` | `vehicles.performance` | `(record, profile)` | Caps every present and future vehicle of one TweakDB record. |
 | `Open77.vehicles.clearPerformanceClass` | `vehicles.performance` | `(record)` | Removes that record's cap. |
 | `Open77.vehicles.clearAllPerformance` | `vehicles.performance` | `()` | Drops every cap, instance and class. |
 | `Open77.vehicles.setControlLock` | `vehicles.performance` | `(id, locked)` | Suppresses or restores acceleration and brake/reverse input for a stationary vehicle. |
+| `Open77.vehicles.setFrozen` | `vehicles.performance` | `(id, frozen)` | Disables or restores the native chassis physics mask without changing ownership or the mounted workspot. |
 | `Open77.vehicles.ratedTopSpeed` | `vehicles.read` | `(id)` | Gearing rating of the vehicle's record in km/h, or `nil`. |
 
 Client constants are `Open77.vehicles.doors`, `Open77.vehicles.windows`, and
 `Open77.vehicles.seats`. They are tables, not callable methods.
 
-Vehicle snapshots include the durable fields above plus live read-only drivetrain and network
+Vehicle snapshots include the durable fields above, including the derived `locked` boolean, plus live read-only drivetrain and network
 telemetry. `speed`, `rpm`, `rpmMax`, `throttle`, `brake`, `steering`, `wheelRotation`,
 `suspensionLongitudinal`, `suspensionTransversal`, `burnout`, `gear`, `onGround`, and `reversing`
 describe the latest authoritative motion. The derived normalized fields `longitudinalSlip`,
@@ -158,19 +184,21 @@ telemetry and debugging, not gameplay authority.
 
 ### Official package exports
 
-The `open77_vehicles` client package exposes only:
+The `open77_vehicles` client package exposes these read-only wrappers:
 
 | Export | Signature | Result |
 |---|---|---|
 | `get` | `get(id)` | Compatibility wrapper over `Open77.vehicles.get`. |
 | `all` | `all()` | Compatibility wrapper over `Open77.vehicles.all`. |
+| `getPlayerSeat` | `getPlayerSeat(playerId?)` | Compatibility wrapper over `Open77.vehicles.getPlayerSeat`. |
+| `isPlayerExitLocked` | `isPlayerExitLocked(playerId?)` | Compatibility wrapper over `Open77.vehicles.isPlayerExitLocked`. |
 
 Call them with `Open77.exports.call("open77_vehicles", "get", id)`; no
 `exports.<resource>:` proxy exists. The package intentionally exposes no mutation export.
 
 ### Low-level server globals
 
-These six globals are public for framework compatibility, but the namespaced API above supplies
+These globals are public for framework compatibility, but the namespaced API above supplies
 structured tables, defaults, and helper validation.
 
 | Global | Signature |
@@ -181,6 +209,12 @@ structured tables, defaults, and helper validation.
 | `RemoveVehicle` | `(id)` |
 | `GetVehicle` | `(id)` |
 | `GetVehicles` | `(bucket?)` |
+| `SetVehicleLocked` | `(id, locked)` |
+| `TriggerVehicleHorn` | `(id, durationMs?)` |
+| `SetPlayerIntoVehicle` | `(playerId, vehicleId, seat, moveBucket, exitLocked)` |
+| `ForcePlayerOutOfVehicle` | `(playerId, vehicleId?)` |
+| `SetPlayerVehicleExitLocked` | `(playerId, locked, vehicleId?)` |
+| `GetPlayerVehicleSeat` | `(playerId)` |
 
 ## Server API
 
@@ -200,7 +234,9 @@ local id, reason = Open77.vehicles.create({
 
 ### `Open77.vehicles.create(definition)`
 
-Creates a generation-checked 64-bit vehicle id. Required fields are `record` and `position`. Optional fields are `appearance`, `yaw`, `bucket`, `health`, `flags`, `primaryColor`, and `secondaryColor`. Returns `id`, or `nil, reason`.
+Creates a generation-checked 64-bit vehicle id. Required fields are `record` and `position`.
+Optional fields are `appearance`, `yaw`, `bucket`, `health`, `flags`, `primaryColor`,
+`secondaryColor`, and `paint = { primary, secondary }`. Returns `id`, or `nil, reason`.
 
 ### `Open77.vehicles.update(id, patch)`
 
@@ -215,6 +251,73 @@ local flags = Open77.vehicles.flags.engineOn | Open77.vehicles.flags.lightsOn
 Open77.vehicles.update(id, { flags = flags, health = 0.85 })
 ```
 
+### Authoritative paint
+
+See the dedicated [vehicle paint guide](vehicle-paint.md) for the runtime split, supported color
+formats, initial paint, events, synchronization semantics, and native model limitations.
+
+```lua
+assert(Open77.vehicles.setPaint(id, {
+    primary = "#000000",
+    secondary = { r = 20, g = 40, b = 60 },
+}))
+
+local paint = Open77.vehicles.getPaint(id)
+print(paint.applied, paint.primary.r, paint.secondary.b)
+
+assert(Open77.vehicles.resetPaint(id))
+```
+
+Colors accept `"#RRGGBB"`, keyed `{ r, g, b }`, or positional `{ r, g, b }` tables. Supplying only
+`primary` uses the same color for both channels. Paint has a dedicated `paintApplied` state, so pure
+black is not confused with reset. Current viewers, stream-in projections, and late joiners converge
+on the same server state. Paint is a cross-resource control API: a resource holding `world.vehicles`
+may style a canonical vehicle created by another resource. The same cross-resource rule applies to
+all server vehicle mutations; the creator field is never consulted as an authorization check.
+The stock CrystalCoat/TWINTONE interaction and popup are suppressed during
+an authenticated Open77 session, so a client cannot keep a private local paint override.
+
+Arbitrary RGB display still requires the REDengine vehicle model to expose its generic paint
+component. Unsupported records keep their authored appearance; the client retries after attachment
+without turning a model limitation into divergent canonical state.
+
+### Entry lock and synchronized horn
+
+Use the dedicated lock methods instead of reading, changing, and replacing the complete flags mask:
+
+```lua
+-- Server: durable, authoritative entry policy.
+assert(Open77.vehicles.lock(vehicleId))
+assert(Open77.vehicles.isLocked(vehicleId) == true)
+assert(Open77.vehicles.unlock(vehicleId))
+
+-- Server: delivered reliably to the client currently simulating the vehicle.
+local ok, reason = Open77.vehicles.triggerHorn(vehicleId, 400)
+assert(ok, reason)
+```
+
+`setLocked(id, locked)`, `lock(id)`, and `unlock(id)` update only the `locked` bit. The server sends
+the resulting canonical state to current viewers and includes it in stream-in and late-join state.
+On each client, the replicated bit synchronously removes every mount choice from the vehicle and is
+checked again at the mounting boundary, so stale interaction UI cannot start an animation that the
+server would later reject. Ordinary entry and seat claims are rejected while locked. An explicit server
+`warpPlayerIntoVehicle` remains an administrative/gamemode override and may bypass the entry lock.
+This vehicle entry lock is separate from `setPlayerExitLocked`, which keeps one existing occupant
+inside, and from the client-only `setControlLock`/`setFrozen` grid controls.
+
+`triggerHorn(id, durationMs?)` and its `honk` alias accept 100..2000 ms and default to 250 ms. A
+server call is a reliable one-shot command bound to the vehicle's current authority epoch. With a
+physics owner, only that owner injects the native horn event and the normal motion stream mirrors
+the edge to observers. An unoccupied parked vehicle intentionally has no physics lease; in that
+case the server addresses every current streamed projection directly instead of rejecting the
+request or manufacturing a bystander owner. The event is transient and is not replayed to a late
+joiner.
+
+A client resource with `vehicles.control` may call the same `triggerHorn`/`honk` API directly, but
+only for a streamed vehicle whose snapshot has `locallyOwned == true`. Remote attempts fail with
+`not_physics_owner`; use the server API when gameplay code needs to sound an arbitrary canonical
+vehicle. `Open77.vehicles.isLocked(id)` is available client-side with `vehicles.read`.
+
 Available flags:
 
 | Constant | Value | Constant | Value |
@@ -223,7 +326,7 @@ Available flags:
 | `Open77.vehicles.flags.destroyed` | `4` | `Open77.vehicles.flags.exploded` | `8` |
 | `Open77.vehicles.flags.invulnerable` | `16` | `Open77.vehicles.flags.immortal` | `32` |
 | `Open77.vehicles.flags.lightsOn` | `64` | `Open77.vehicles.flags.highBeams` | `128` |
-| `Open77.vehicles.flags.sirenOn` | `256` |  |  |
+| `Open77.vehicles.flags.sirenOn` | `256` | `Open77.vehicles.flags.paintApplied` | `512` |
 
 Combine flags with Lua 5.4 bitwise operators (`|`, `&`, `~`). Never replace the complete mask when
 you only intend to toggle one bit without first reading the current canonical value.
@@ -347,8 +450,85 @@ end
 ```
 
 Seat names are `seat_front_left`, `seat_front_right`, `seat_back_left`, and
-`seat_back_right`. `seat_front_left` is the only driver seat. Scripts cannot write this
-ledger directly: it is produced by native mount detection and validated by the server.
+`seat_back_right`. `seat_front_left` is the only driver seat. Ordinary player entry still comes
+from native mount detection and server validation; an owning server resource can also write the
+ledger through the forced-seat API below.
+
+### Authoritative player seats
+
+Use the server version of `warpPlayerIntoVehicle` when a gamemode must put a player directly into
+a vehicle rather than waiting for a local enter interaction:
+
+```lua
+local ok, reason = Open77.vehicles.warpPlayerIntoVehicle(
+    playerId,
+    vehicleId,
+    Open77.vehicles.seats.driver,
+    {
+        moveBucket = true, -- default: move the player into the vehicle bucket
+        exitLocked = true, -- optional: block manual exit until the server releases it
+    })
+assert(ok, reason)
+```
+
+Accepted seats are the FiveM-compatible numbers `-1` (driver), `0` (front passenger), `1`
+(rear-left), and `2` (rear-right), the values in `Open77.vehicles.seats`, or these names:
+`driver`, `frontPassenger`, `rearLeft`, `rearRight`, `frontLeft`, `frontRight`, `backLeft`,
+`backRight`, and the canonical `seat_*` strings.
+
+The assignment is durable network state, not a one-shot client event. The server reserves the
+seat first and carries `forcedEntry` in every occupancy snapshot until the affected client confirms
+the native mount. If the vehicle is not streamed yet, streams after a routing-bucket move, streams
+out and back in, or its local projection is replaced, the client retries against the current
+generation-checked vehicle entity. Occupancy pins the target vehicle into that player's interest
+set during convergence, so a stale or temporarily missing player-position snapshot cannot strand
+the instruction.
+
+Forced assignment intentionally bypasses distance and the vehicle's `locked` flag. It still
+rejects unknown players, destroyed/exploded vehicles, and occupied seats. Seat operations are
+deliberately cross-resource: any server resource granted `world.vehicles` may assign, eject, or
+lock a player in any canonical vehicle, including one created by another resource. By default the
+player moves into the vehicle routing bucket; pass
+`{ moveBucket = false }` to fail with `wrong_bucket` instead. Dead and pending revive/respawn
+players are rejected as `player_unavailable`.
+
+```lua
+-- Unlock later without changing the seat.
+assert(Open77.vehicles.setPlayerExitLocked(playerId, false, vehicleId))
+
+-- Or force an exit even while the exit lock is enabled.
+assert(Open77.vehicles.forcePlayerOutOfVehicle(playerId, vehicleId))
+```
+
+While `exitLocked` is active, the local vanilla unmount callback is rejected and reconciliation
+remounts divergent state. A manual seat switch is rejected too because REDengine begins it by
+unmounting the current workspot. `forcePlayerOutOfVehicle` overrides that policy and keeps the
+canonical seat reserved until native unmount confirmation; an eight-second transition timeout
+cleans up a disconnected or non-cooperating client. Passing the optional `vehicleId` to exit/lock
+operations is recommended: it prevents stale gamemode code from modifying a newer assignment.
+
+Read the same assignment through either namespace:
+
+```lua
+local seat = Open77.vehicles.getPlayerSeat(playerId)
+-- Equivalent player-oriented alias:
+seat = Open77.players.getVehicleSeat(playerId)
+
+if seat then
+    print(seat.vehicleId, seat.seat, seat.exitLocked)
+end
+```
+
+The seat table contains `playerId`, `vehicleId`, `seat`, `flags`, `entering`, `exiting`,
+`forcedEntry`, `exitLocked`, and `forcedExit`. `Open77.vehicles.isPlayerExitLocked(playerId)` is a
+boolean convenience query. Server aliases are `Open77.players.warpIntoVehicle`,
+`forceOutOfVehicle`, and `setVehicleExitLocked`.
+
+Normal failures return `false, reason`. Stable reasons are `permission_denied:world.vehicles`,
+`vehicles_unavailable`, `invalid_player_id`, `invalid_vehicle_id`, `invalid_seat`,
+`invalid_argument`, `player_not_found`, `player_unavailable`, `vehicle_not_found`, `wrong_bucket`,
+`seat_occupied`, `not_occupant`, `vehicle_unavailable`, `exit_locked`, and
+`seat_operation_failed`.
 
 ### Server snapshot fields
 
@@ -359,18 +539,18 @@ ledger directly: it is produced by native mount detection and validated by the s
 | Identity | `id`, `resource`, `record`, `appearance`, `revision` |
 | World | `bucket`, `x`, `y`, `z` |
 | Authority | `physicsOwner`, `authorityEpoch` |
-| Durable state | `health`, `flags`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights`, `detachedParts` |
+| Durable state | `health`, `flags`, `locked`, `paintApplied`, `primaryColor`, `secondaryColor`, `paint`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights`, `detachedParts` |
 | Paint | `primaryR`, `primaryG`, `primaryB`, `secondaryR`, `secondaryG`, `secondaryB` |
 | Body | `bodyDamage[1..30]` |
 | Damage view | `damage = { body, glass, lights, tires, detachedParts }` |
-| Seats | `occupants[] = { playerId, seat }` |
+| Seats | `occupants[] = { playerId, seat, flags, entering, exiting, forcedEntry, exitLocked, forcedExit }` |
 
 The current server Lua snapshot does not expose orientation. Pass an explicit `yaw` to
 `setTransform`; omitting it uses `0` rather than preserving an unreadable heading.
 
 Validation constraints are `health = 0..1`, RGB channels `0..255`, finite world coordinates with
 an absolute maximum of 1,000,000, a record length up to 256 characters, an appearance length up to
-128, flags limited to the documented nine bits, exactly 30 normalized body values, doors `0..63`,
+128, flags limited to the documented ten bits, exactly 30 normalized body values, doors `0..63`,
 and windows/tyres `0..15`.
 
 ### Server events
@@ -387,13 +567,20 @@ end)
 AddEventHandler("onVehicleDamageChanged", function(id, revision)
     local damage = Open77.vehicles.getDamage(tonumber(id))
 end)
+
+AddEventHandler("onVehiclePaintChanged", function(id, revision)
+    local paint = Open77.vehicles.getPaint(tonumber(id))
+end)
 ```
 
 Server runtime event arguments arrive as strings. Preserve the ID as an opaque value unless the
 called binding explicitly requires an integer. `onVehicleUpdated` fires for every canonical state
-update; `onVehicleDamageChanged` is the narrower damage-specific signal.
+update; `onVehicleDamageChanged` and `onVehiclePaintChanged` are narrower channel-specific signals.
 
-Resources can mutate or remove only their own vehicles. Stopping or reloading a resource removes every vehicle it owns.
+Every resource granted `world.vehicles` can mutate, move, seat players in, or remove every canonical
+vehicle. The `resource` snapshot field is provenance, not an access-control boundary. Stopping or
+reloading the creating resource still removes the vehicles it created and clears their assignments,
+so temporary entities retain deterministic lifecycle cleanup.
 
 ## Client API
 
@@ -404,6 +591,13 @@ local vehicle = Open77.vehicles.get(id)
 local streamed = Open77.vehicles.all()
 local trunkOpen = Open77.vehicles.isDoorOpen(id, "trunk")
 local hoodOpen = Open77.vehicles.isDoorOpen(id, Open77.vehicles.doors.hood)
+local entryLocked = Open77.vehicles.isLocked(id)
+local mySeat = Open77.vehicles.getPlayerSeat()
+local remoteSeat = Open77.players.getVehicleSeat(remotePlayerId)
+local cannotExit = Open77.vehicles.isPlayerExitLocked()
+
+-- Requires vehicles.control and local physics ownership.
+local ok, reason = Open77.vehicles.triggerHorn(id, 300)
 ```
 
 ### Performance ceilings
@@ -433,6 +627,8 @@ Open77.vehicles.clearAllPerformance()
 
 -- Hold a stopped car on a starting grid, then release it on authoritative GO.
 assert(Open77.vehicles.setControlLock(vehicleId, true))
+assert(Open77.vehicles.setFrozen(vehicleId, true))
+assert(Open77.vehicles.setFrozen(vehicleId, false)) -- wake chassis first
 assert(Open77.vehicles.setControlLock(vehicleId, false))
 ```
 
@@ -466,6 +662,15 @@ there is no rubber-banding. Engage it only after placing a stopped vehicle. The
 same client-side trust boundary applies: it is a gamemode start lock, not an
 anti-cheat primitive.
 
+`setFrozen` is the physical half of a real starting-grid hold. It calls the
+verified REDengine `vehicleBaseObject::EnablePhysics` path for the complete
+chassis group, while preserving the local physics-owner lease, driver workspot
+and player-controlled state. This stops inertia, gravity and external impulses;
+the API does not repeatedly teleport the vehicle. On release it restores the
+mask and wakes the rigid body. Pair it with `setControlLock`: freeze after inputs
+are locked, then thaw before restoring inputs on GO. Calls are idempotent and an
+unknown or not-yet-streamed vehicle fails closed so a resource can retry.
+
 Where the number should live: a gamemode should not hard-code it. Declare it as a resource tunable
 so a server owner can edit it in Warden, and have the resource apply the value it reads. A ceiling
 is a match parameter, so `nextMatch` is the right apply timing — moving it under two people already
@@ -489,15 +694,18 @@ Named seats (`driver`, `frontPassenger`, `rearLeft`, `rearRight`, `frontLeft`,
 These functions operate only on remote player proxies. They return
 `false, "occupancy_mismatch"` unless the replicated server ledger already contains that exact
 tuple. They cannot grant a seat, move the local player, steal a vehicle, or change physics
-authority.
+authority. This is the **client** meaning of `warpPlayerIntoVehicle`; the identically named server
+method creates the authoritative assignment. Client and server resources run in separate Lua
+states, so the same name cannot accidentally cross that boundary.
 
-`taskPlayerEnterVehicle` is currently fail-closed and returns
-`false, "animated_entry_unsupported"`. The first implementation forwarded the vanilla NPC
-`MountAIEvent` to Open77's player proxy; a two-client runtime test showed that REDengine can
-dereference a missing AI/workspot object and crash the observing client. Normal replication and
-`warpPlayerIntoVehicle` therefore use the stable mounting facility until the staged door/workspot
-implementation has passed two-client validation. This keeps the API name stable without exposing
-the unsafe engine path.
+`taskPlayerEnterVehicle` uses Open77's guarded staged door/workspot path for a live remote entry,
+with a bounded instant-warp fallback. It remains presentation-only.
+
+`getPlayerSeat(playerId?)` and its `Open77.players.getVehicleSeat` alias return the replicated
+assignment. Omit the ID to query the local player. In addition to the server fields, a client result
+contains `streamed` and `entity`; `entity` is the current ephemeral local projection handle and must
+not be cached across stream-out. `isPlayerExitLocked(playerId?)` returns `nil` when no assignment is
+replicated, otherwise the canonical boolean.
 
 ### Client snapshot fields
 
@@ -508,16 +716,17 @@ The client snapshot deliberately differs from the server snapshot:
 | Identity | `id`, `record`, `revision` |
 | Local projection | `entity`, `engineEntity`, `streamed`, `locallyOwned` |
 | Authority | `physicsOwner`, `authorityEpoch` |
-| Durable state | `health`, `flags`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights`, `detachedParts` |
+| Durable state | `health`, `flags`, `locked`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights`, `detachedParts` |
 | Body and damage | `bodyDamage[1..30]`, `damage = { body, glass, lights, tires, detachedParts }` |
 | Drivetrain | `speed`, `rpm`, `rpmMax`, `throttle`, `brake`, `gear`, `burnout` |
 | Wheels/suspension | `steering`, `wheelRotation`, `suspensionLongitudinal`, `suspensionTransversal`, `onGround`, `reversing` |
-| Seats | `occupants[] = { playerId, seat }` |
+| Seats | `occupants[] = { playerId, seat, flags, entering, exiting, forcedEntry, exitLocked, forcedExit }` |
 
 `entity` is an ephemeral, generation-checked Open77 handle for the local projection.
 `engineEntity` is diagnostic engine identity. Neither is the durable server vehicle ID, and neither
 should be cached after stream-out. Client snapshots do not include server ownership metadata such
-as `resource`, `bucket`, paint channels, or world coordinates.
+as `resource`, `bucket`, or world coordinates. Paint is available both in the snapshot and through
+`Open77.vehicles.getPaint(id)`.
 
 Client events:
 
@@ -527,6 +736,7 @@ AddEventHandler("open77:vehicleRemoved", function(id, reason) end)
 AddEventHandler("open77:vehicleAuthorityChanged", function(id, ownerPlayerId) end)
 AddEventHandler("open77:vehicleOccupancyChanged", function(id, revision) end)
 AddEventHandler("open77:vehicleDamageChanged", function(id, revision) end)
+AddEventHandler("open77:vehiclePaintChanged", function(id, revision) end)
 ```
 
 The reference resource also emits `open77:vehicleOwnerChanged(id, ownerPlayerId)` and
@@ -536,10 +746,13 @@ before dispatch, unlike the lower-level occupancy event.
 ## Seat and proxy replication
 
 1. REDengine reports the local player's real mount and slot.
-2. The client requests that seat; it never assigns itself locally in the network ledger.
+2. The client requests that seat; it never assigns itself locally in the network ledger. A server
+   resource may instead create a forced assignment for teleport-oriented gameplay.
 3. The server checks vehicle id, routing bucket, 15-metre proximity, lock/destruction state,
    one-seat-per-player, and one-player-per-seat.
-4. A reliable ordered occupancy snapshot is sent to every vehicle viewer.
+4. A reliable ordered occupancy snapshot is sent to every vehicle viewer. Durable forced-entry,
+   exit-lock, and forced-exit flags remain present until native confirmation, so late stream-in and
+   projection replacement replay the policy rather than losing a one-shot command.
 5. Each observing client mounts the corresponding remote player proxy into the streamed
    vehicle and exact seat. A live addition runs the native NPC approach/door/workspot behavior;
    an initial stream snapshot uses the instant warp so it does not replay an old entrance. When
@@ -550,9 +763,10 @@ before dispatch, unlike the lower-level occupancy event.
    transform fight between pedestrian interpolation and the vehicle mounting system. A fresh
    pedestrian controller is installed on the replacement proxy after exit.
 
-If a local engine mount disagrees with the server for two seconds (for example a locked seat
-was rejected), Open77 unmounts the player. Disconnect, vehicle removal, seat change, and exit
-all clear the server ledger. Leaving the driver seat also revokes physics authority.
+If an ordinary local engine mount disagrees with the server for two seconds (for example a locked
+seat was rejected), Open77 unmounts the player. A forced entry or exit-lock mismatch is reconciled
+immediately whenever the target projection exists. Disconnect, vehicle removal, seat change, and
+confirmed exit clear the server ledger. Leaving the driver seat also revokes physics authority.
 
 ## Damage, electrical state, and horn
 
@@ -582,10 +796,11 @@ horn latch is sampled in the realtime motion stream and observers call `ToggleHo
 edges. Receivers force it off after 350 ms without a fresh owner packet and on every authority
 change, so packet loss can never leave a remote horn stuck on.
 
-There is no `setHorn`, `setRpm`, `setSteering`, `setWheelRotation`, or seat-assignment Lua method.
-Those values describe native driver input, physics, or the validated occupancy ledger and cannot be
-authored as durable script state. Engine, lights, high beams, siren, locks, destruction, immortality,
-and invulnerability are the scriptable `flags` bits.
+There is no `setHorn`, `setRpm`, `setSteering`, or `setWheelRotation` Lua method. Those values
+describe native driver input or physics and cannot be authored as durable script state. Seat
+assignment is server-only and uses the explicit forced-seat API; client scripts can only read the
+ledger or present a tuple the server already authorized. Engine, lights, high beams, siren, locks,
+destruction, immortality, and invulnerability are the scriptable vehicle `flags` bits.
 
 Top speed is the one performance value that *is* scriptable, and it is scriptable in a different
 way: not as durable server state but as a client-side ceiling. See
@@ -693,7 +908,7 @@ vehicle producers. It is an identity boundary, not just a traffic-density settin
 
 ## Reference resource and commands
 
-`resources/open77_vehicles` is the runnable example. It registers:
+`resources/system/open77_vehicles` is the runnable example. It registers:
 
 ```text
 vehicle.list [bucket]
@@ -708,6 +923,7 @@ vehicle.glass.break <id> <glassIndex>
 vehicle.glass.repair <id> <glassIndex|all>
 vehicle.repair <id> [glass|body|lights|tires|visual|mechanical|full]
 vehicle.paint <id> <r> <g> <b> [r2 g2 b2]
+vehicle.paint.reset <id>
 ```
 
 `vehicle.list` and `vehicle.damage.dump` are read-only. Mutation commands are restricted. Grant

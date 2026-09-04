@@ -162,7 +162,7 @@ AddEventHandler("open77:elevator:streamedOut", function(id) end)
 
 ## Reference resource and commands
 
-`resources/open77_elevators` is auto-started and is both a working package and an example for other
+`resources/system/open77_elevators` is auto-started and is both a working package and an example for other
 developers. Server resources use the native `Open77.elevators` namespace directly; client-side
 convenience exports are also provided. Its restricted commands use the normal Open77 ACL:
 

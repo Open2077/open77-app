@@ -39,6 +39,8 @@ The namespaced equivalents are:
 |---|---|
 | `Open77.runtime.luaVersion` | `()` |
 | `Open77.time.monotonic` | `()` — monotonic seconds |
+| `Open77.time.unix` / `GetUnixTime` | `()` — wall-clock seconds since 1970 UTC, fractional |
+| `Open77.time.utc` / `GetUtcTimestamp` | `()` — the same instant as an ISO 8601 string |
 | `Open77.resource.name` | `()` |
 | `Open77.resource.state` | `(resourceName)` |
 | `Open77.events.on` / `off` / `emit` | Same as `AddEventHandler`, `RemoveEventHandler`, `TriggerEvent` |
@@ -106,6 +108,31 @@ It is a barrier lifting, not a trigger: it says nothing about whether the player
 keep your own readiness signal and ask the gate for permission. Every hold carries a deadline, so a
 resource that never releases costs one degraded join and one `WRN` naming it, never a stuck server.
 `ready` at the console lists who is holding whom. No permission is required.
+
+## Connection control
+
+Who gets in, decided in Lua. The guide, with a whitelist and a ban list to copy, is
+[Connection control](connection-control.md).
+
+| Event / function | Permission | Signature | Purpose |
+|---|---|---|---|
+| `onPlayerConnecting` | `players.gate` | `(player, deferrals)` | Emitted for every hello that passed the platform checks, before a player id exists. `player = { userId, name, publicKey, fingerprint, ticket }`. Return to accept; `deferrals.defer()` to hold, `deferrals.update(message)` to log progress, `deferrals.done()` to release, `deferrals.done(message)` to refuse with that text on the player's screen (127 bytes of UTF-8). One refusal wins; every participating resource must release to admit. |
+| `onPlayerRejected` | None | `(userId, name, code, message)` | Every refused connection, platform or gate. `code` is the lowercased reject reason (`protocolmismatch`, `gamebuildmismatch`, `invalidhello`, `serverfull`, `duplicatehello`, `refused`); `message` the machine token (`server_full`, `identity_proof_invalid`, `connect_ticket_required`, `connection_gate_timeout`, ...) or the gate's own text. `userId` and `name` are empty when the hello could not be read. |
+| `onPlayerDisconnected` | None | `(playerId, reason)` | `reason` is `connection_closed`, or the text given to `disconnect`, `kick` or `ban`. |
+| `Open77.players.identity` / `GetPlayerIdentity` | None | `(playerId)` | `{ userId, name, publicKey, fingerprint, joinedAt }` for an admitted player, or `nil`. |
+| `Open77.time.unix` / `GetUnixTime` | None | `()` | Wall-clock seconds since 1970 UTC, fractional. For expiring bans; the sandbox has no `os`. |
+| `Open77.time.utc` / `GetUtcTimestamp` | None | `()` | The same instant as an ISO 8601 string. |
+| `Open77.access.status` | `players.access` | `()` | The server's built-in door list, shared with Warden and the console: `{ whitelistEnabled, whitelist = { { userId, label, addedAt, addedBy } }, bans = { { userId, name, reason, bannedAt, expiresAt?, bannedBy } } }`. |
+| `Open77.access.setWhitelist` | `players.access` | `(enabled)` | Switch the built-in whitelist. `true`, or `false, reason`. |
+| `Open77.access.allow` / `disallow` | `players.access` | `(userId, label?)` / `(userId)` | Add an identity to the built-in whitelist, or take it off. |
+| `Open77.access.isAllowed` / `isBanned` | `players.access` | `(userId)` | Read the built-in list. |
+| `Open77.access.ban` | `players.access` | `(userId, reason?, seconds?, name?)` | Ban an identity on the built-in list (`seconds` nil or 0 = permanent) and disconnect them if online. |
+| `Open77.access.unban` | `players.access` | `(userId)` | Lift a built-in ban. |
+
+The gate answers within `simulation.connectGateTimeoutSeconds` (default 8, allowed 0.5 to 9); a
+gate that never answers refuses the player with `connection_gate_timeout`. A handler error is
+logged and counts as an acceptance. A resource with a handler but without `players.gate` is
+ignored with one `WRN`.
 
 ## Operator-tunable settings
 
@@ -227,7 +254,15 @@ errors, and inventory-authority rules.
 |---|---|---|---|
 | `Open77.players.name` | None | `(playerId)` | Display name or `nil`. |
 | `Open77.players.identifier` | None | `(playerId)` | Durable authenticated identifier or `nil`. |
+| `Open77.players.identity` / `GetPlayerIdentity` | None | `(playerId)` | `{ userId, name, publicKey, fingerprint, joinedAt }` or `nil`; the fingerprint matches the client's `identity.dump`. |
 | `Open77.players.position` | None | `(playerId)` | `{ x, y, z, bucket }` or `nil`. |
+| `Open77.players.all` / `GetPlayers` | None | `()` | Array of every authenticated player id, ascending. The host's roster, so a gamemode no longer needs its own copy built from join/leave events. |
+| `Open77.players.inBucket` / `GetPlayersInBucket` | None | `(bucket)` | Ids of the authenticated players whose routing bucket is `bucket`, ascending. `false, invalid_bucket` for a negative or oversized bucket. |
+| `Open77.players.positions` / `GetPlayersPositions` | None | `()` | `{ [playerId] = { x, y, z, bucket } }` for every player with a snapshot younger than two seconds. Players without one are absent, not `nil` entries. One call replaces a loop of `position` over the roster. |
+| `Open77.players.getVehicleSeat` | `world.vehicles` | `(playerId)` | Canonical seat assignment or `nil`. |
+| `Open77.players.warpIntoVehicle` | `world.vehicles` | `(playerId, vehicleId, seat, options?)` | Authoritatively assign a seat; alias of the vehicle API. |
+| `Open77.players.forceOutOfVehicle` | `world.vehicles` | `(playerId, vehicleId?)` | Force native exit, overriding exit lock. |
+| `Open77.players.setVehicleExitLocked` | `world.vehicles` | `(playerId, locked, vehicleId?)` | Set or clear the durable no-exit policy. |
 | `Open77.players.disconnect` | `players.disconnect` | `(playerId, reason?)` | Queue a reasoned disconnect; `boolean, reason?`. |
 | `Open77.players.kick` | `players.disconnect` | `(playerId, reason?)` | Alias of `disconnect`. |
 | `Open77.players.ban` | `players.ban` | `(playerId, reason?, durationSeconds?)` | Persist a server-scoped device ban through the master and disconnect now. |
@@ -329,11 +364,15 @@ Normal failures return `false, reason`, where `reason` is one of
 Ban failures return `permission_denied:players.ban`, `invalid_player_id`, `invalid_reason`,
 `invalid_duration`, `server_unavailable`, or `ban_failed`.
 
-Low-level aliases are `GetPlayerName`, `GetPlayerIdentifier`, `GetPlayerPosition`,
-`DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,
+Low-level aliases are `GetPlayerName`, `GetPlayerIdentifier`, `GetPlayerPosition`, `GetPlayers`,
+`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,
 `RequestPlayerLifeResync`, `GetPlayerHealth`, `DamagePlayer`, `HealPlayer`, `SetPlayerHealth`,
 `SetPlayerMaxHealth`, `SetPlayerArmor`, `SetPlayerGodMode`, and `SetPlayerRegen`. Prefer the
 namespaced wrappers because they accept structured option tables.
+
+Vehicle-seat low-level aliases are `SetPlayerIntoVehicle`, `ForcePlayerOutOfVehicle`,
+`SetPlayerVehicleExitLocked`, and `GetPlayerVehicleSeat`; their full contract is documented under
+[Vehicles](#player-seats).
 
 ## Combat policy
 
@@ -389,8 +428,8 @@ and `ttlMs`. Low-level aliases are `CreateLootDrop`, `UpdateLootDrop`, `RemoveLo
 Every method in this section requires `world.vehicles`. IDs are server-assigned Open77 IDs; do not
 substitute REDengine entity pointers or local spawn handles.
 
-The [vehicle guide](vehicles.md#complete-lua-api-inventory) lists all 47 server methods individually,
-the six client methods, the two package exports, exact snapshot fields, bit indexes, and examples.
+The [vehicle guide](vehicles.md#complete-lua-api-inventory) lists the complete server and client
+surfaces, the package exports, exact snapshot fields, bit indexes, and examples.
 
 ### Lifecycle and state
 
@@ -405,9 +444,67 @@ the six client methods, the two package exports, exact snapshot fields, bit inde
 | `Open77.vehicles.getDamage` | `(id)` | `{ body, glass, lights, tires, detachedParts }` or `nil`. |
 | `Open77.vehicles.setDamage` | `(id, damage)` | Replace combined damage fields. |
 | `Open77.vehicles.repair` | `(id, scope?)` | Scope: `glass`, `body`, `lights`, `tires`, `visual`, `mechanical`, or `full`. |
+| `Open77.vehicles.setPaint` | `(id, paint)` | Set authoritative primary/secondary RGB paint. |
+| `Open77.vehicles.getPaint` | `(id)` | `{ applied, primary, secondary }` or `nil`. |
+| `Open77.vehicles.resetPaint` | `(id)` | Restore the vehicle's original paint. |
+| `Open77.vehicles.setLocked` | `(id, locked)` | Atomically set or clear the durable entry lock. |
+| `Open77.vehicles.lock` / `unlock` | `(id)` | Entry-lock convenience methods. |
+| `Open77.vehicles.isLocked` | `(id)` | Canonical entry-lock boolean or `nil`. |
+| `Open77.vehicles.triggerHorn` / `honk` | `(id, durationMs?)` | Reliably sound the horn through the owner or every parked-vehicle viewer. |
+
+### Player seats
+
+| Function | Signature | Purpose |
+|---|---|---|
+| `Open77.vehicles.warpPlayerIntoVehicle` | `(playerId, vehicleId, seat, options?)` | Reserve a canonical vehicle seat and durably force the client mount, including late stream-in. |
+| `Open77.vehicles.setPlayerIntoVehicle` | `(playerId, vehicleId, seat, options?)` | Alias of `warpPlayerIntoVehicle`. |
+| `Open77.vehicles.forcePlayerOutOfVehicle` | `(playerId, vehicleId?)` | Force native unmount, overriding exit lock. |
+| `Open77.vehicles.removePlayerFromVehicle` | `(playerId, vehicleId?)` | Alias of `forcePlayerOutOfVehicle`. |
+| `Open77.vehicles.setPlayerExitLocked` | `(playerId, locked, vehicleId?)` | Set or clear the durable no-exit policy. |
+| `Open77.vehicles.getPlayerSeat` | `(playerId)` | Canonical assignment or `nil`. |
+| `Open77.vehicles.isPlayerExitLocked` | `(playerId)` | Canonical exit-lock boolean. |
+
+`options.moveBucket` defaults to `true`; when false, a bucket mismatch returns `wrong_bucket`.
+`options.exitLocked` (alias `lockExit`) defaults to false. Seats accept FiveM indexes `-1..2`,
+the `Open77.vehicles.seats` constants, aliases such as `driver`/`frontPassenger`, and canonical
+`seat_*` names. Seat coordination is cross-resource: `world.vehicles` permits assignment, ejection,
+and exit locking in any canonical vehicle. A forced entry bypasses proximity and the vehicle locked
+flag but rejects destroyed/exploded targets and occupied seats. Durable vehicle state and lifecycle
+mutations follow the same cross-resource contract.
+
+The forced order remains in reliable occupancy state until native confirmation, so it survives a
+target that has not streamed yet, a bucket transition, stream-out/stream-in, and local projection
+replacement. Exit lock blocks ordinary unmount and manual seat switching; a forced exit overrides
+it and retains the seat until confirmation or the bounded transition timeout.
+
+Player-oriented aliases are `Open77.players.getVehicleSeat`, `warpIntoVehicle`,
+`forceOutOfVehicle`, and `setVehicleExitLocked`. See
+[authoritative player seats](vehicles.md#authoritative-player-seats) for assignment fields,
+failure reasons, client read APIs, and examples.
 
 `create` accepts `record`, `position`, `yaw`, `bucket`, `appearance`, `health`, `flags`,
-`primaryColor`, `secondaryColor`, and the same initial damage/opening fields accepted by `update`.
+`primaryColor`, `secondaryColor`, the nested `paint = { primary, secondary }` form, and the same
+initial damage/opening fields accepted by `update`. Paint colors accept `"#RRGGBB"`, `{ r, g, b }`,
+or positional `{ r, g, b }` tables. Supplying only a primary color mirrors it to secondary.
+`setPaint` and `resetPaint` publish reliable canonical state to current viewers and late joiners;
+pure black is valid because `paintApplied` is a separate flag. See the dedicated
+[vehicle paint guide](vehicle-paint.md) for complete examples, events, and native limitations.
+
+`setLocked`, `lock`, and `unlock` change only the `locked` flag and publish durable state to current
+viewers and late joiners. The entry lock blocks ordinary seat claims; it is distinct from the
+per-occupant `setPlayerExitLocked` policy and from client-side grid freeze/control locks. Forced
+server assignment may deliberately bypass it. The client consumes the replicated lock before
+publishing its mount interaction and checks it again before the mounting request, so a rejected
+entry does not briefly put the player inside. `triggerHorn` accepts 100..2000 milliseconds
+(default 250) and sends a reliable authority-epoch-bound command to the current physics owner.
+Parked vehicles deliberately retain owner 0, so their command is sent directly to every current
+viewer without granting a physics lease. Horn state is transient and is mirrored to observers by
+the regular vehicle motion stream rather than persisted.
+
+The server vehicle registry is shared across resources. Any resource granted `world.vehicles` may
+read, mutate, repair, paint, move, seat players in, or remove any canonical vehicle, regardless of
+which resource created it. The snapshot `resource` field is provenance and automatic cleanup scope,
+not an authorization boundary.
 
 ### Body, glass, lights, and tires
 
@@ -447,7 +544,8 @@ Default `Open77.vehicles.bodyZones` are `backLeft`, `back`, `backRight`, `left`,
 Door names are `frontLeft`, `frontRight`, `backLeft`, `backRight`, `trunk`, and `hood`; windows
 use the four side names. Constants live in `Open77.vehicles.doors` and `.windows`. State flags live
 in `.flags`: `engineOn`, `locked`, `destroyed`, `exploded`, `invulnerable`, `immortal`, `lightsOn`,
-`highBeams`, and `sirenOn`.
+`highBeams`, `sirenOn`, and `paintApplied`. Prefer `setPaint`/`resetPaint` over changing the paint bit
+directly.
 
 ### Detached panels
 
@@ -461,9 +559,12 @@ in `.flags`: `engineOn`, `locked`, `destroyed`, `exploded`, `invulnerable`, `imm
 Names are exposed in `Open77.vehicles.detachedParts`. Live reattachment is deliberately rejected
 because REDengine 2.31 has no validated safe inverse of `DetachPart`; respawn the vehicle instead.
 
-Low-level aliases are `CreateVehicle`, `UpdateVehicleState`, `SetVehicleTransform`, `RemoveVehicle`,
-`GetVehicle`, and `GetVehicles`. The namespaced API supplies validation and damage helpers and is
-the recommended surface. See [vehicles](vehicles.md) for snapshots, streaming, authority and seats.
+Low-level aliases are `CreateVehicle`, `UpdateVehicleState`, `SetVehiclePaint`,
+`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,
+`SetPlayerIntoVehicle`, `ForcePlayerOutOfVehicle`,
+`SetPlayerVehicleExitLocked`, and `GetPlayerVehicleSeat`. The namespaced API supplies validation,
+options, aliases, and damage helpers and is the recommended surface. See [vehicles](vehicles.md) for
+snapshots, streaming, authority and seats.
 
 ## NPCs and tasks
 
@@ -650,6 +751,51 @@ Callbacks and `.await` continuations resume on the owning resource's scheduler, 
 database worker. See the database guide in `docs/database.md` for parameter forms, limits,
 transactions, configuration, and migrations.
 
+## Outbound HTTP
+
+`PerformHttpRequest` (alias `Open77.http.request`) requires the `http.request` permission **and**
+a server that enabled the bridge with an allow-list. Same shape as the database bridge: the
+request leaves the tick thread at once, the exchange runs on the thread pool, and the callback
+runs on the owning resource's own tick.
+
+```lua
+PerformHttpRequest("https://discord.com/api/webhooks/…", function(status, body, headers, err)
+    if status == 0 then print("webhook failed: " .. tostring(err)) return end
+    print(("webhook answered %d"):format(status))
+end, "POST", { content = "Race heat finished" }, { ["Content-Type"] = "application/json" })
+```
+
+| Argument | Meaning |
+|---|---|
+| `url` | Absolute `http://` or `https://` URL, no credentials, host on the server's allow-list. |
+| `callback` | `(status, body, headers, err)`. `status` is the HTTP status code, or `0` when the exchange did not complete; `err` then names the reason. Optional. |
+| `method` | `GET` (default), `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`. |
+| `body` | A string, or a table that is JSON-encoded for you. At most 256 KiB. |
+| `headers` | `{ name = value }`, at most 32; no CR/LF. |
+
+Returns `true` when the request was accepted, else `false, reason`; a refused request still
+invokes the callback with `status = 0` and the reason, so a script never waits on it.
+
+Reasons: `permission_denied:http.request`, `http_unavailable` (bridge off on this server),
+`invalid_url`, `host_not_allowed`, `invalid_method`, `body_too_large`, `too_many_headers`,
+`invalid_header`, `too_many_requests` (16 in flight per resource); completion errors `timeout`,
+`response_too_large`, `request_failed`.
+
+Operator side (`server.jsonc`):
+
+```jsonc
+"http": {
+  "enabled": true,
+  "allowedHosts": ["discord.com", "*.example.com"],
+  "timeoutSeconds": 10,
+  "maxResponseBytes": 1048576
+}
+```
+
+An exact entry matches that host only; `*.example.com` matches one level of subdomain and the
+bare host. An empty list reaches nothing. Redirects are never followed, so the list is the whole
+reachable surface.
+
 ## Logging
 
 `Open77.log.debug`, `.info`, `.warn`, and `.error` currently forward their arguments to the
@@ -675,11 +821,16 @@ resource-prefixed server logger. Their common signature is `(...)`; no return va
 | `players.damage.apply` | Player health/damage mutations |
 | `players.stats.read` | Shared `Open77.stats` reads for health and stamina |
 | `players.stats.apply` | Server-only health/stamina values, maximums and regeneration |
+| `players.gate` | `onPlayerConnecting` handlers: hold, admit or refuse a connecting player |
+| `players.access` | `Open77.access`: the server's built-in whitelist and ban list |
+| `players.disconnect` | `Open77.players.disconnect` / `kick` |
+| `players.ban` | `Open77.players.ban` |
 | `combat.config` | `Open77.combat` and damage arbiters |
 | `voice.manage` | `Open77.voice` authoritative topology and policy |
 | `filesystem.read` | `Open77.io.read`, `readJson`, `exists`, `list`, `stat`, and the source side of `copy` |
 | `filesystem.write` | `Open77.io.write`, `writeJson`, `append`, `makeDirectory`, `remove`, `move`, and the destination side of `copy` |
 | `database.access` | `Open77.database` / `MySQL` |
+| `http.request` | `PerformHttpRequest` / `Open77.http.request`, within the server's `http.allowedHosts` |
 
 Request only the capabilities a resource actually uses. A manifest permission grants access to a
 binding; it does not replace validation of player identity, distance, ownership, revision, bucket,
