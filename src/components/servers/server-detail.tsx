@@ -17,9 +17,11 @@ import {
   formatUptime,
   isServerLive,
   joinServer,
+  normaliseRoster,
   occupancyPercent,
   popClass,
   type CatalogServer,
+  type ServerRoster,
 } from "@/lib/servers";
 
 type State =
@@ -268,6 +270,8 @@ function ServerCard({ server }: { server: CatalogServer }) {
         </div>
 
         <aside className="sv-side">
+          <PlayersOnline server={server} />
+
           <section className="sv-section">
             <h2 className="sv-h2">
               <SlashMark /> Server info
@@ -286,6 +290,103 @@ function ServerCard({ server }: { server: CatalogServer }) {
         </aside>
       </div>
     </article>
+  );
+}
+
+/**
+ * Rows the list shows before it scrolls instead of growing the sidebar. Ten
+ * fills the column beside "Server info" without pushing it off the fold.
+ *
+ * `.sv-playerlist-box` sizes itself to exactly this many rows; the two are one
+ * decision written in two places, and they have to move together — a box that
+ * fits nine rows while this says ten leaves the tenth unreachable from the
+ * keyboard, because the box is only made focusable once this number is passed.
+ */
+const ROSTER_VISIBLE_ROWS = 10;
+
+/**
+ * Who is on this server right now, when the server is willing to say.
+ *
+ * The count in the heading is the part that always holds: it comes from the
+ * heartbeat and has been on this page since it existed. The roster beneath it is
+ * optional, and its absence is an answer rather than a failure — an older server
+ * build, or an owner who turned it off — so that case gets a sentence of its own
+ * instead of an empty box or a spinner that never resolves.
+ */
+function PlayersOnline({ server }: { server: CatalogServer }) {
+  const roster = normaliseRoster(server.players);
+
+  return (
+    <section className="sv-section">
+      <h2 className="sv-h2">
+        <SlashMark /> Online now
+        <span className="mini-chip">
+          {server.connectedPlayers} / {server.maximumPlayers}
+        </span>
+      </h2>
+      {roster ? (
+        <PlayerRoster roster={roster} />
+      ) : (
+        <p className="sv-links-empty">This server does not publish its player list.</p>
+      )}
+    </section>
+  );
+}
+
+/**
+ * The roster itself, once {@link normaliseRoster} has vetted it.
+ *
+ * A full server is 32 rows and the cap allows 200, which is far too little to be
+ * worth virtualising: the whole list is in the DOM, so find-in-page works and a
+ * screen reader can walk it as one list. What it gets instead is a fixed-height
+ * scroll box, because a sidebar that grows with the population would push
+ * everything else a screen and a half down the page.
+ */
+function PlayerRoster({ roster }: { roster: ServerRoster }) {
+  const stamp = roster.sampledAtUtc ? `as of ${formatRelative(roster.sampledAtUtc)}` : null;
+  const hidden = roster.total - roster.entries.length;
+
+  if (roster.entries.length === 0) {
+    return (
+      <>
+        <p className="sv-links-empty">Nobody is online right now.</p>
+        {stamp ? <p className="sv-playerlist-more">Roster {stamp}</p> : null}
+      </>
+    );
+  }
+
+  // Focusable only when it can actually scroll: overflow that cannot be reached
+  // from the keyboard is unreadable without a mouse, but a four-player server
+  // should not pay for that with a dead tab stop.
+  const scrolls = roster.entries.length > ROSTER_VISIBLE_ROWS;
+
+  return (
+    <>
+      <div
+        className="sv-playerlist-box"
+        tabIndex={scrolls ? 0 : undefined}
+        role={scrolls ? "group" : undefined}
+        aria-label={scrolls ? "Players online" : undefined}
+      >
+        <ul className="sv-playerlist">
+          {roster.entries.map((entry, index) => (
+            // Two players can carry the same name, and two long names can clip to
+            // the same string, so the position is what makes the key unique.
+            <li key={`${index}-${entry.name}`}>
+              <span className="live-dot" aria-hidden="true" />
+              <span className="sv-player-name">{entry.name}</span>
+              {entry.joinedAtUtc ? (
+                <span className="sv-player-since">{formatUptime(entry.joinedAtUtc) ?? "—"}</span>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <p className="sv-playerlist-more">
+        {hidden > 0 ? `+ ${hidden} more not shown · ` : ""}
+        Time played{stamp ? ` · ${stamp}` : ""}
+      </p>
+    </>
   );
 }
 

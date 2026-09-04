@@ -343,3 +343,19 @@ export const DEMO_HANDLES = [
   "chrome_carl",
   "biotech_bo",
 ] as const;
+
+/**
+ * Names that exist to be mangled.
+ *
+ * Every handle above is well behaved, so a preview built only from them proves
+ * nothing about the roster's defences. These three make the guard visible on
+ * screen: one far past the 32-character cap, one carrying a right-to-left
+ * override that would otherwise render mirrored and impersonate another player,
+ * and one that is nothing but whitespace and should vanish from the list
+ * entirely rather than leave a gap in it.
+ */
+export const DEMO_ROSTER_PROBES = [
+  "a_handle_far_longer_than_any_account_name_could_ever_be",
+  "netrunner\u202Ekcatta_idib",
+  "   ",
+] as const;

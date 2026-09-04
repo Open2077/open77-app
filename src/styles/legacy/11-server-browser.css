@@ -653,6 +653,24 @@
   font-size: 11px;
 }
 
+/* Ten rows, then scroll. A full 32-slot server is 32 <li> and the roster cap
+   allows 200 — nothing worth virtualising — but a sidebar that grew with the
+   population would push the server-info panel a screen and a half down.
+
+   The height is ten row boxes plus their nine gaps, spelled out rather than
+   eyeballed: ROSTER_VISIBLE_ROWS in server-detail.tsx decides when this box
+   becomes keyboard-focusable, and a box that actually fits nine and a half rows
+   would leave the tenth unreachable without a mouse. Change one, change both.
+   The scrollbar is drawn in the hairline colour instead of the near-invisible
+   surface tint, because here it is the only thing that says the list continues. */
+.sv-playerlist-box {
+  max-height: calc(10 * 20px + 9 * 8px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.sv-playerlist-box:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
+
 .sv-playerlist {
   list-style: none;
   padding: 0;
@@ -666,7 +684,29 @@
   gap: 10px;
   font-family: var(--font-mono);
   font-size: 12.5px;
+  /* Fixed, so the scroll box's ten-row height is arithmetic and not a guess
+     that shifts with the fallback font. */
+  line-height: 20px;
   color: var(--text-dim);
+}
+/* The dot is a bullet here, not a status light: thirty-two of them breathing in
+   unison is noise, and the heading already says these players are online. */
+.sv-playerlist .live-dot { animation: none; box-shadow: none; }
+/* The name is operator-supplied and the actual content of the row, so it reads
+   at full contrast. It is clipped to 32 characters upstream, but the ellipsis is
+   what guarantees one long name cannot widen a 260px column. */
+.sv-player-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+}
+.sv-player-since {
+  margin-left: auto;
+  flex: none;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
 }
 .sv-playerlist-more {
   margin-top: 12px;
