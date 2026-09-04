@@ -44,6 +44,42 @@ The namespaced equivalents are:
 | `Open77.events.on` / `off` / `emit` | Same as `AddEventHandler`, `RemoveEventHandler`, `TriggerEvent` |
 | `Open77.net.on` / `emitClient` | Same as `RegisterNetEvent`, `TriggerClientEvent` |
 
+## Resource-local file IO
+
+`Open77.io` is server-only persistent text storage rooted at the calling resource's
+`data/` directory. Paths are relative to that directory; absolute paths, `..` escapes and
+reparse-point traversal are rejected. The Lua standard `io` library remains removed from the
+sandbox. This API cannot read another resource, the server configuration, or rewrite its own
+manifest and scripts.
+
+| Function | Permission | Result / purpose |
+|---|---|---|
+| `Open77.io.read` | `filesystem.read` | `(path) -> contents` or `nil, reason`. |
+| `Open77.io.readJson` | `filesystem.read` | `(path) -> value` or `nil, reason`; decodes with the bounded Open77 JSON codec. |
+| `Open77.io.exists` | `filesystem.read` | `(path) -> boolean` or `nil, reason`. |
+| `Open77.io.list` | `filesystem.read` | `(directory?) -> { { name, type, size? }, ... }` or `nil, reason`; non-recursive and sorted. |
+| `Open77.io.stat` | `filesystem.read` | `(path) -> { name, type, size?, modifiedUtc }` or `nil, reason`. |
+| `Open77.io.write` | `filesystem.write` | `(path, contents) -> boolean, reason?`; atomically replaces a UTF-8 text file. |
+| `Open77.io.writeJson` | `filesystem.write` | `(path, value) -> boolean, reason?`; encodes then writes atomically. |
+| `Open77.io.append` | `filesystem.write` | `(path, contents) -> boolean, reason?`. |
+| `Open77.io.makeDirectory` | `filesystem.write` | `(path) -> boolean, reason?`; creates missing parents. |
+| `Open77.io.remove` | `filesystem.write` | `(path) -> boolean, reason?`; removes one file, never a directory tree. |
+| `Open77.io.move` | `filesystem.write` | `(source, destination, overwrite?) -> boolean, reason?`. |
+| `Open77.io.copy` | `filesystem.read` + `filesystem.write` | `(source, destination, overwrite?) -> boolean, reason?`. |
+
+Each file is limited to 4 MiB, a directory listing to 2,048 entries, and a relative path to
+512 UTF-8 bytes. `readJson` / `writeJson` additionally inherit the JSON codec's 48 KiB and depth
+limits. Stable refusals include `permission_denied:filesystem.read`,
+`permission_denied:filesystem.write`, `invalid_path`, `path_outside_resource`,
+`reparse_point_denied`, `not_found`, `not_a_file`, `not_a_directory`, `already_exists`,
+`file_too_large`, `too_many_entries`, and `io_error`.
+
+```lua
+local course = assert(Open77.io.readJson("courses/watson-loop.json"))
+course.revision = (course.revision or 0) + 1
+assert(Open77.io.writeJson("courses/watson-loop.json", course))
+```
+
 ## Join-time readiness gate
 
 The barrier that stops one resource acting on a player another resource is not finished with.
@@ -201,6 +237,8 @@ errors, and inventory-authority rules.
 | `Open77.players.revive` | `players.life.revive` | `(playerId, options?)` | `boolean, reason?` |
 | `Open77.players.respawn` | `players.life.respawn` | `(playerId, options)` | `boolean, reason?` |
 | `Open77.players.requestLifeResync` | `players.life.resync` | `(playerId)` | `boolean, reason?` |
+| `Open77.players.setGhosted` / `SetPlayerGhosted` | `players.life.ghost` | `(playerId, ghosted, options?)` | Toggle the server-owned non-solid spawn state and its optional automatic clear policy. |
+| `Open77.players.isGhosted` / `IsPlayerGhosted` | `players.life.read` | `(playerId)` | Whether the canonical life state is currently ghosted. |
 | `Open77.players.getHealth` | `players.damage.read` | `(playerId)` | Health/armor/god-mode snapshot or `nil`. |
 | `Open77.players.damage` | `players.damage.apply` | `(playerId, amount, options?)` | Apply authoritative damage. |
 | `Open77.players.heal` | `players.damage.apply` | `(playerId, amount)` | Apply authoritative healing. |
@@ -209,6 +247,35 @@ errors, and inventory-authority rules.
 | `Open77.players.setArmor` | `players.damage.apply` | `(playerId, armor)` | Update canonical armor. |
 | `Open77.players.setGodMode` | `players.damage.apply` | `(playerId, enabled)` | Toggle canonical damage immunity. |
 | `Open77.players.setRegen` | `players.damage.apply` | `(playerId, pointsPerSecond)` | Set authoritative regeneration. |
+
+### Unified health and stamina API
+
+New resources should use `players.stats.read` and `players.stats.apply`. The
+legacy `players.damage.*` permissions and `Open77.players` health methods remain
+accepted aliases. The client exposes the same read names and the same
+nested pool shape, but no setters. See [Player health and stamina](player-stats.md)
+for the full synchronization model.
+
+| Function | Permission | Signature | Result / purpose |
+|---|---|---|---|
+| `Open77.stats.get` / `GetPlayerStats` | `players.stats.read` | `(playerId)` | Combined canonical health/stamina snapshot or `nil`. |
+| `Open77.stats.getHealth` / `health` | `players.stats.read` | `(playerId)` | Health pool `{ value, current, maximum, max, fraction, percentage, regenEnabled, regenPerSecond, regenerating }`. |
+| `Open77.stats.getStamina` / `stamina` | `players.stats.read` | `(playerId)` | Stamina pool with the same shape. |
+| `Open77.stats.set` | `players.stats.apply` | `(playerId, pool, value)` | Set `health` or `stamina` in points. |
+| `Open77.stats.setMax` | `players.stats.apply` | `(playerId, pool, maximum)` | Set a canonical maximum and clamp the current value. |
+| `Open77.stats.restore` | `players.stats.apply` | `(playerId, pool)` | Fill the selected pool. |
+| `Open77.stats.setRegenEnabled` | `players.stats.apply` | `(playerId, pool, enabled)` | Toggle authoritative regeneration. |
+| `Open77.stats.setRegenRate` | `players.stats.apply` | `(playerId, pool, pointsPerSecond)` | Set the rate; zero disables regeneration. |
+| `Open77.stats.setHealth` / `SetPlayerHealth` | `players.stats.apply` | `(playerId, value)` | Explicit health setter; zero routes through life authority. |
+| `Open77.stats.setHealthMax` / `SetPlayerMaxHealth` | `players.stats.apply` | `(playerId, maximum)` | Explicit health maximum setter. |
+| `Open77.stats.restoreHealth` / `RestorePlayerHealth` | `players.stats.apply` | `(playerId)` | Fill health. |
+| `Open77.stats.setHealthRegenEnabled` / `SetPlayerRegenEnabled` | `players.stats.apply` | `(playerId, enabled)` | Toggle health regeneration. |
+| `Open77.stats.setHealthRegenRate` / `SetPlayerRegen` | `players.stats.apply` | `(playerId, rate)` | Set health regeneration rate. |
+| `Open77.stats.setStamina` / `SetPlayerStamina` | `players.stats.apply` | `(playerId, value)` | Explicit stamina setter. |
+| `Open77.stats.setStaminaMax` / `SetPlayerMaxStamina` | `players.stats.apply` | `(playerId, maximum)` | Explicit stamina maximum setter. |
+| `Open77.stats.restoreStamina` / `RestorePlayerStamina` | `players.stats.apply` | `(playerId)` | Fill stamina. |
+| `Open77.stats.setStaminaRegenEnabled` / `SetPlayerStaminaRegenEnabled` | `players.stats.apply` | `(playerId, enabled)` | Toggle stamina regeneration. |
+| `Open77.stats.setStaminaRegenRate` / `SetPlayerStaminaRegen` | `players.stats.apply` | `(playerId, rate)` | Set stamina regeneration rate. |
 
 Life option fields are:
 
@@ -606,8 +673,12 @@ resource-prefixed server logger. Their common signature is `(...)`; no return va
 | `players.life.resync` | `Open77.players.requestLifeResync` |
 | `players.damage.read` | `Open77.players.getHealth` |
 | `players.damage.apply` | Player health/damage mutations |
+| `players.stats.read` | Shared `Open77.stats` reads for health and stamina |
+| `players.stats.apply` | Server-only health/stamina values, maximums and regeneration |
 | `combat.config` | `Open77.combat` and damage arbiters |
 | `voice.manage` | `Open77.voice` authoritative topology and policy |
+| `filesystem.read` | `Open77.io.read`, `readJson`, `exists`, `list`, `stat`, and the source side of `copy` |
+| `filesystem.write` | `Open77.io.write`, `writeJson`, `append`, `makeDirectory`, `remove`, `move`, and the destination side of `copy` |
 | `database.access` | `Open77.database` / `MySQL` |
 
 Request only the capabilities a resource actually uses. A manifest permission grants access to a
@@ -616,7 +687,7 @@ or gameplay state.
 
 ## Audit status
 
-This page covers every public global installed by `LuaResourceRuntime.Sandbox`, including all 70
+This page covers every public global installed by `LuaResourceRuntime.Sandbox`, including all 97
 low-level bindings, and every namespaced helper and constant installed by the server bootstrap.
 `wiki/tools/audit-api.py` compares public globals with this page and fails when a new binding is not
 documented. The higher-level tables are kept beside their validation and permission rules above so

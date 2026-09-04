@@ -40,13 +40,31 @@ for _, template in ipairs(Open77.npcs.templates()) do
 end
 ```
 
-| Alias | Intended use |
-|---|---|
-| `civilian_female_relaxed_01` | Relaxed civilian projection and scripted locomotion. |
-| `hostile_female_ranged_lab` | Ranged laboratory template; native combat remains experimental. |
+| Alias | Faction | Intended use |
+|---|---|---|
+| `civilian_female_relaxed_01` | Aldecaldos | Relaxed civilian projection and scripted locomotion. **Not shootable** — see the warning below. |
+| `hostile_female_ranged_lab` | Maelstrom | Ranged gang combatant. |
+| `gang_valentinos_ranged_01` | Valentinos | Ranged gang combatant. |
+| `gang_tygerclaws_ranged_01` | Tyger Claws | Ranged gang combatant. |
 
 An alias contains its server-approved record, observer record and capability list. An advertised
 capability describes the underlying rig/template; it does not make an unstable task public.
+
+**`civilian_female_relaxed_01` cannot be shot, and this is not a bug to work around.** It
+resolves to `Character.Panam`, which carries the TweakDB tag `Invulnerable` — vanilla quest
+protection that no attitude change, no `damagePolicy` and no Lua call can lift. Measured in
+game on 2026-08-03: *impossible à viser/frapper*. It is also unsafe to arm — driving the
+weapon path against her native graph corrupts a component vtable
+(`NpcReplication.cpp`, `Cyberpunk2077.exe+0x336376`). Use it for a passive background body
+and nothing else.
+
+**The three gang aliases are mutually hostile, and that is deliberate.** A spawned hostile
+record runs full vanilla combat AI on every client that streams it in — Open77 neither
+enables that nor can disable it, and `aiMode` does not change it. So whether two NPCs fight
+is a question the engine's own attitude matrix answers about their two records: one faction
+is one side, and one side does not fight. A gamemode that wants NPCs to fight each other
+picks records from different gangs. `resources/open77_deathmatch` round-robins all three for
+exactly this reason.
 
 ### Complete 2.31 research catalogue
 

@@ -142,6 +142,7 @@ The remaining `Open77.vehicles.update` fields are `health`, `flags`, `primaryCol
 | `Open77.vehicles.setPerformanceClass` | `vehicles.performance` | `(record, profile)` | Caps every present and future vehicle of one TweakDB record. |
 | `Open77.vehicles.clearPerformanceClass` | `vehicles.performance` | `(record)` | Removes that record's cap. |
 | `Open77.vehicles.clearAllPerformance` | `vehicles.performance` | `()` | Drops every cap, instance and class. |
+| `Open77.vehicles.setControlLock` | `vehicles.performance` | `(id, locked)` | Suppresses or restores acceleration and brake/reverse input for a stationary vehicle. |
 | `Open77.vehicles.ratedTopSpeed` | `vehicles.read` | `(id)` | Gearing rating of the vehicle's record in km/h, or `nil`. |
 
 Client constants are `Open77.vehicles.doors`, `Open77.vehicles.windows`, and
@@ -429,6 +430,10 @@ Open77.vehicles.setPerformance(vehicleId, {
 
 Open77.vehicles.clearPerformanceClass("Vehicle.v_standard2_archer_hella_player")
 Open77.vehicles.clearAllPerformance()
+
+-- Hold a stopped car on a starting grid, then release it on authoritative GO.
+assert(Open77.vehicles.setControlLock(vehicleId, true))
+assert(Open77.vehicles.setControlLock(vehicleId, false))
 ```
 
 | Field | Default | Meaning |
@@ -452,6 +457,14 @@ the measured terminal velocity — torque and aerodynamic drag carry real top sp
 > cannot corroborate it either — the server-side vehicle snapshot carries no velocity, so there is
 > nothing to check a reported speed against. Treat a speed ceiling as a game-design tool, on the
 > same footing as which cars the roster offers at all.
+
+`setControlLock` is the hard stationary counterpart to the soft performance
+governor. While locked, the native drive update consumes zero acceleration and
+zero brake/reverse input and clears burnout. Releasing the lock restores the
+input snapshot on the next frame; no velocity or transform is overwritten, so
+there is no rubber-banding. Engage it only after placing a stopped vehicle. The
+same client-side trust boundary applies: it is a gamemode start lock, not an
+anti-cheat primitive.
 
 Where the number should live: a gamemode should not hard-code it. Declare it as a resource tunable
 so a server owner can edit it in Warden, and have the resource apply the value it reads. A ceiling

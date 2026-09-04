@@ -63,11 +63,13 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Clothing Lua API](../docs/clothing.md) | Validated wardrobe catalogue, local/server APIs, permissions, errors, and appearance replication. |
 | [Perspective](../docs/perspective.md) | First and third person: the ownership arbiter, the server policy, the player's key and persisted preference. |
 | [Weapon Lua API](weapons-api.md) | Assign standard weapons by TweakDB template, select slots, holster, snapshot, and target a player from the server. |
+| [Player health and stamina](player-stats.md) | Shared client/server reads, server-only setters, maximums, regeneration, and synchronization semantics. |
 | [Loot](loot.md) | Authoritative ground drops and pickup integration. |
 | [Weather](weather.md) | Session time, weather presets, synchronization, and events. |
 | [Vehicles](vehicles.md) | Identity, streaming, authority leases, seats, and Lua APIs. |
 | [NPCs](npcs.md) | Implemented server-owned NPCs, templates, streaming, task queues, authority leases, life, events, and Lua APIs. |
 | [Contextual interactions](interactions.md) | Custom world/NPC prompts, action keys, projection, ownership, and server-safe integration. |
+| [Key mappings](keybindings.md) | The `RegisterKeyMapping` engine primitive: named rebindable actions, press/hold callbacks, the pause KEY BINDINGS tab, and machine-global persistence. |
 | [Proximity zones](zones.md) | Client-side enter/exit hysteresis and the server-side re-validation every caller must apply. |
 | [World-anchored POIs](worldui.md) | The marker-plus-prompt facade: one owned handle, transactional creation and cleanup. |
 | [The gamemode kernel](gamemode-kernel.md) | Why there is no shared server-side gamemode resource, and the roster/state-machine conventions every mode's server implements instead. |
@@ -91,9 +93,9 @@ that a server method exists in a client VM or that a package export is a native:
 
 | Surface | Reference | Coverage |
 |---|---|---|
-| Client native runtime | The **CLIENT** API reference cards in `index.html` | 266 registered functions across 41 namespaces; every signature is reviewed and every card has a detailed description. |
-| Dedicated server runtime | The **SERVER · Open77.vehicles** cards and [Complete server Lua API](server-api.md) | All 48 authoritative vehicle methods are individually searchable cards, while the complete guide covers all 71 low-level globals plus every `Open77.*` namespace, including voice policy. |
-| Official client packages | [Official resource exports](resource-exports.md) | Every literal client export currently published by the official resource tree: 105 exports across 20 packages. |
+| Client native runtime | The **CLIENT** API reference cards in `index.html` | 294 registered functions across 44 namespaces; every signature is reviewed and every card has a detailed description. |
+| Dedicated server runtime | The **SERVER · Open77.vehicles** cards and [Complete server Lua API](server-api.md) | All 48 authoritative vehicle methods are individually searchable cards, while the complete guide covers all 97 low-level globals plus every `Open77.*` namespace, including player stats and voice policy. |
+| Official client packages | [Official resource exports](resource-exports.md) | Every literal client export currently published by the official resource tree: 120 exports across 23 packages. |
 
 Generated cards are separated by runtime, so identical names such as `Open77.vehicles.get` cannot
 confuse a client projection with server authority. They state whether a call is shared, needs a

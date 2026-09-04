@@ -27,7 +27,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8757,
+  "source_line": 9607,
   "qualified": "AddEventHandler",
   "route_id": "AddEventHandler"
  },
@@ -53,7 +53,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8756,
+  "source_line": 9606,
   "qualified": "ClearTimeout",
   "route_id": "ClearTimeout"
  },
@@ -77,7 +77,7 @@
   "source": "ResourceHost.cpp",
   "example": "CreateThread(function()\n    while true do\n        print(Open77.character.speed())\n        Wait(1000)\n    end\nend)",
   "inferred": false,
-  "source_line": 8753,
+  "source_line": 9603,
   "qualified": "CreateThread",
   "route_id": "CreateThread"
  },
@@ -104,7 +104,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8769,
+  "source_line": 9619,
   "qualified": "DeleteResourceKvp",
   "route_id": "DeleteResourceKvp"
  },
@@ -123,7 +123,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8763,
+  "source_line": 9613,
   "qualified": "GetCurrentResourceName",
   "route_id": "GetCurrentResourceName"
  },
@@ -142,7 +142,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8764,
+  "source_line": 9614,
   "qualified": "GetInvokingResource",
   "route_id": "GetInvokingResource"
  },
@@ -161,7 +161,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8765,
+  "source_line": 9615,
   "qualified": "GetInvokingResourceGeneration",
   "route_id": "GetInvokingResourceGeneration"
  },
@@ -194,7 +194,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8768,
+  "source_line": 9618,
   "qualified": "GetResourceKvp",
   "route_id": "GetResourceKvp"
  },
@@ -220,9 +220,60 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8766,
+  "source_line": 9616,
   "qualified": "GetResourceState",
   "route_id": "GetResourceState"
+ },
+ {
+  "namespace": "_G",
+  "name": "RegisterKeyMapping",
+  "handler": "LuaRegisterKeyMapping",
+  "summary": "Declares a named, rebindable action bound to a key.",
+  "description": "Declares a named, rebindable action bound to a key, as an engine primitive. Requires `input.actions`. Accepts a spec table `{ id, name, key, hold, onPressed, onReleased }` or the positional form `(id, name, key, onPressed [, onReleased])`; the callback receives the mapping id, fires on the key-down edge (and key-up in hold mode), and never fires while a page owns the keyboard. Returns the effective key (the player's saved rebind, else the default). The player rebinds it from Pause -> Settings -> KEY BINDINGS, and the choice persists machine-globally across servers and relaunches. Mirrored as `Open77.input.registerKeyMapping`.",
+  "params": [
+   {
+    "name": "id",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "name",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "key",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "onPressed",
+    "type": "function",
+    "optional": true,
+    "default": null
+   },
+   {
+    "name": "onReleased",
+    "type": "function",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "the effective key",
+   "reason for the refusal"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9622,
+  "qualified": "RegisterKeyMapping",
+  "route_id": "RegisterKeyMapping"
  },
  {
   "namespace": "_G",
@@ -252,7 +303,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8760,
+  "source_line": 9610,
   "qualified": "RegisterNetEvent",
   "route_id": "RegisterNetEvent"
  },
@@ -284,7 +335,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8758,
+  "source_line": 9608,
   "qualified": "RemoveEventHandler",
   "route_id": "RemoveEventHandler"
  },
@@ -317,7 +368,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8767,
+  "source_line": 9617,
   "qualified": "SetResourceKvp",
   "route_id": "SetResourceKvp"
  },
@@ -349,7 +400,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8755,
+  "source_line": 9605,
   "qualified": "SetTimeout",
   "route_id": "SetTimeout"
  },
@@ -381,7 +432,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8759,
+  "source_line": 9609,
   "qualified": "TriggerEvent",
   "route_id": "TriggerEvent"
  },
@@ -413,7 +464,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8761,
+  "source_line": 9611,
   "qualified": "TriggerServerEvent",
   "route_id": "TriggerServerEvent"
  },
@@ -437,7 +488,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8754,
+  "source_line": 9604,
   "qualified": "Wait",
   "route_id": "Wait"
  },
@@ -469,7 +520,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8762,
+  "source_line": 9612,
   "qualified": "exports",
   "route_id": "exports"
  },
@@ -493,7 +544,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8751,
+  "source_line": 9601,
   "qualified": "print",
   "route_id": "print"
  },
@@ -519,7 +570,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8752,
+  "source_line": 9602,
   "qualified": "require",
   "route_id": "require"
  },
@@ -539,7 +590,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8728,
+  "source_line": 9578,
   "qualified": "Open77.Promise.await",
   "route_id": "Open77.Promise.await"
  },
@@ -558,7 +609,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8729,
+  "source_line": 9579,
   "qualified": "Open77.Promise.status",
   "route_id": "Open77.Promise.status"
  },
@@ -578,7 +629,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9158,
+  "source_line": 10035,
   "qualified": "Open77.anchors.clear",
   "route_id": "Open77.anchors.clear"
  },
@@ -605,7 +656,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9155,
+  "source_line": 10032,
   "qualified": "Open77.anchors.create",
   "route_id": "Open77.anchors.create"
  },
@@ -625,7 +676,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9159,
+  "source_line": 10036,
   "qualified": "Open77.anchors.list",
   "route_id": "Open77.anchors.list"
  },
@@ -652,7 +703,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9157,
+  "source_line": 10034,
   "qualified": "Open77.anchors.remove",
   "route_id": "Open77.anchors.remove"
  },
@@ -685,7 +736,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9156,
+  "source_line": 10033,
   "qualified": "Open77.anchors.update",
   "route_id": "Open77.anchors.update"
  },
@@ -712,7 +763,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8875,
+  "source_line": 9728,
   "qualified": "Open77.animations.current",
   "route_id": "Open77.animations.current"
  },
@@ -745,7 +796,7 @@
   "source": "ResourceHost.cpp",
   "example": "local ok, reason = Open77.animations.play(entityId, \"emote_smoke\")\nif not ok then print(\"refused: \" .. reason) end",
   "inferred": false,
-  "source_line": 8871,
+  "source_line": 9724,
   "qualified": "Open77.animations.play",
   "route_id": "Open77.animations.play"
  },
@@ -778,7 +829,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8872,
+  "source_line": 9725,
   "qualified": "Open77.animations.playSelf",
   "route_id": "Open77.animations.playSelf"
  },
@@ -805,7 +856,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8874,
+  "source_line": 9727,
   "qualified": "Open77.animations.stop",
   "route_id": "Open77.animations.stop"
  },
@@ -825,7 +876,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8873,
+  "source_line": 9726,
   "qualified": "Open77.animations.stopSelf",
   "route_id": "Open77.animations.stopSelf"
  },
@@ -852,7 +903,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8926,
+  "source_line": 9792,
   "qualified": "Open77.appearance.apply",
   "route_id": "Open77.appearance.apply"
  },
@@ -872,7 +923,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8925,
+  "source_line": 9791,
   "qualified": "Open77.appearance.capture",
   "route_id": "Open77.appearance.capture"
  },
@@ -892,7 +943,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8927,
+  "source_line": 9793,
   "qualified": "Open77.appearance.finishCommit",
   "route_id": "Open77.appearance.finishCommit"
  },
@@ -911,7 +962,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8924,
+  "source_line": 9790,
   "qualified": "Open77.appearance.isOpen",
   "route_id": "Open77.appearance.isOpen"
  },
@@ -938,7 +989,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8923,
+  "source_line": 9789,
   "qualified": "Open77.appearance.open",
   "route_id": "Open77.appearance.open"
  },
@@ -962,7 +1013,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8928,
+  "source_line": 9794,
   "qualified": "Open77.appearance.switchBodyFamily",
   "route_id": "Open77.appearance.switchBodyFamily"
  },
@@ -982,7 +1033,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8929,
+  "source_line": 9795,
   "qualified": "Open77.appearance.takeBodyFamilyTransition",
   "route_id": "Open77.appearance.takeBodyFamilyTransition"
  },
@@ -1001,7 +1052,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8808,
+  "source_line": 9661,
   "qualified": "Open77.assets.list",
   "route_id": "Open77.assets.list"
  },
@@ -1028,7 +1079,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8807,
+  "source_line": 9660,
   "qualified": "Open77.assets.texture",
   "route_id": "Open77.assets.texture"
  },
@@ -1073,7 +1124,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9116,
+  "source_line": 9992,
   "qualified": "Open77.blips.attachToEntity",
   "route_id": "Open77.blips.attachToEntity"
  },
@@ -1092,7 +1143,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9127,
+  "source_line": 10004,
   "qualified": "Open77.blips.clear",
   "route_id": "Open77.blips.clear"
  },
@@ -1101,11 +1152,11 @@
   "name": "create",
   "handler": "LuaBlipCreate",
   "summary": "Creates a resource-owned vanilla map pin.",
-  "description": "Requires `ui.vanilla.map`. Provide exactly one of `position` or `entity`. The returned 64-bit generation handle is a decimal string and is cleaned up automatically when the resource stops.",
+  "description": "Requires `ui.vanilla.map`. Provide exactly one of `position` or `entity`. Set `routable = true` on a positional blip to use Cyberpunk's trusted custom-waypoint definition; its sprite becomes `CustomPositionVariant` and `track(id)` can then start native GPS routing. The returned 64-bit generation handle is a decimal string and is cleaned up automatically when the resource stops.",
   "params": [
    {
     "name": "options",
-    "type": "table { position|entity, sprite?, label?, icon?, active?, visibleThroughWalls?, slot?, offset? }",
+    "type": "table { position|entity, sprite?, label?, icon?, active?, visibleThroughWalls?, routable?, slot?, offset? }",
     "optional": false,
     "default": null
    }
@@ -1117,9 +1168,9 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "local id = assert(Open77.blips.create({\n  position = { x = 10, y = 20, z = 30 },\n  sprite = \"objective\", label = \"Street race\"\n}))",
+  "example": "local id = assert(Open77.blips.create({\n  position = { x = 10, y = 20, z = 30 },\n  routable = true, label = \"Street race\"\n}))\nassert(Open77.blips.track(id))",
   "inferred": false,
-  "source_line": 9113,
+  "source_line": 9989,
   "qualified": "Open77.blips.create",
   "route_id": "Open77.blips.create"
  },
@@ -1146,7 +1197,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9128,
+  "source_line": 10005,
   "qualified": "Open77.blips.get",
   "route_id": "Open77.blips.get"
  },
@@ -1165,7 +1216,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9129,
+  "source_line": 10006,
   "qualified": "Open77.blips.list",
   "route_id": "Open77.blips.list"
  },
@@ -1192,7 +1243,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9126,
+  "source_line": 10003,
   "qualified": "Open77.blips.remove",
   "route_id": "Open77.blips.remove"
  },
@@ -1225,7 +1276,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9122,
+  "source_line": 9998,
   "qualified": "Open77.blips.setActive",
   "route_id": "Open77.blips.setActive"
  },
@@ -1258,7 +1309,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9120,
+  "source_line": 9996,
   "qualified": "Open77.blips.setDescription",
   "route_id": "Open77.blips.setDescription"
  },
@@ -1291,7 +1342,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9121,
+  "source_line": 9997,
   "qualified": "Open77.blips.setIcon",
   "route_id": "Open77.blips.setIcon"
  },
@@ -1324,7 +1375,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9119,
+  "source_line": 9995,
   "qualified": "Open77.blips.setLabel",
   "route_id": "Open77.blips.setLabel"
  },
@@ -1357,7 +1408,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9115,
+  "source_line": 9991,
   "qualified": "Open77.blips.setPosition",
   "route_id": "Open77.blips.setPosition"
  },
@@ -1390,7 +1441,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9117,
+  "source_line": 9993,
   "qualified": "Open77.blips.setSprite",
   "route_id": "Open77.blips.setSprite"
  },
@@ -1423,7 +1474,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9118,
+  "source_line": 9994,
   "qualified": "Open77.blips.setTitle",
   "route_id": "Open77.blips.setTitle"
  },
@@ -1456,7 +1507,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9124,
+  "source_line": 10000,
   "qualified": "Open77.blips.setTrackingAlternative",
   "route_id": "Open77.blips.setTrackingAlternative"
  },
@@ -1489,7 +1540,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9123,
+  "source_line": 9999,
   "qualified": "Open77.blips.setVisibleThroughWalls",
   "route_id": "Open77.blips.setVisibleThroughWalls"
  },
@@ -1508,9 +1559,37 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9130,
+  "source_line": 10007,
   "qualified": "Open77.blips.sprites",
   "route_id": "Open77.blips.sprites"
+ },
+ {
+  "namespace": "Open77.blips",
+  "name": "track",
+  "handler": "LuaBlipTrack",
+  "summary": "Selects this blip as the vanilla manually tracked destination.",
+  "description": "Follows the same internal `MappinSystem` operation as selecting a pin on the fullscreen map. This changes the tracked id; native road calculation additionally requires the blip to have been created with `routable = true`. Returns `changed = false` when this blip is already tracked.",
+  "params": [
+   {
+    "name": "id",
+    "type": "decimal string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true",
+   "whether tracking changed",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 10001,
+  "qualified": "Open77.blips.track",
+  "route_id": "Open77.blips.track"
  },
  {
   "namespace": "Open77.blips",
@@ -1535,7 +1614,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9125,
+  "source_line": 10002,
   "qualified": "Open77.blips.untrack",
   "route_id": "Open77.blips.untrack"
  },
@@ -1568,7 +1647,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9114,
+  "source_line": 9990,
   "qualified": "Open77.blips.update",
   "route_id": "Open77.blips.update"
  },
@@ -1588,7 +1667,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9075,
+  "source_line": 9942,
   "qualified": "Open77.camera.attach",
   "route_id": "Open77.camera.attach"
  },
@@ -1627,7 +1706,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9074,
+  "source_line": 9941,
   "qualified": "Open77.camera.detach",
   "route_id": "Open77.camera.detach"
  },
@@ -1654,7 +1733,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9078,
+  "source_line": 9945,
   "qualified": "Open77.camera.project",
   "route_id": "Open77.camera.project"
  },
@@ -1681,7 +1760,7 @@
   "source": "ResourceHost.cpp",
   "example": "Open77.camera.setFov(90)",
   "inferred": false,
-  "source_line": 9076,
+  "source_line": 9943,
   "qualified": "Open77.camera.setFov",
   "route_id": "Open77.camera.setFov"
  },
@@ -1720,7 +1799,7 @@
   "source": "ResourceHost.cpp",
   "example": "Open77.camera.thirdPerson(true, 2.5, 1.7)",
   "inferred": false,
-  "source_line": 9073,
+  "source_line": 9940,
   "qualified": "Open77.camera.thirdPerson",
   "route_id": "Open77.camera.thirdPerson"
  },
@@ -1741,7 +1820,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9077,
+  "source_line": 9944,
   "qualified": "Open77.camera.view",
   "route_id": "Open77.camera.view"
  },
@@ -1767,7 +1846,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8906,
+  "source_line": 9760,
   "qualified": "Open77.character.animation",
   "route_id": "Open77.character.animation"
  },
@@ -1793,7 +1872,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8908,
+  "source_line": 9762,
   "qualified": "Open77.character.groundSpeed",
   "route_id": "Open77.character.groundSpeed"
  },
@@ -1819,7 +1898,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8909,
+  "source_line": 9763,
   "qualified": "Open77.character.health",
   "route_id": "Open77.character.health"
  },
@@ -1845,7 +1924,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8911,
+  "source_line": 9765,
   "qualified": "Open77.character.isAlive",
   "route_id": "Open77.character.isAlive"
  },
@@ -1871,7 +1950,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8916,
+  "source_line": 9770,
   "qualified": "Open77.character.isArmed",
   "route_id": "Open77.character.isArmed"
  },
@@ -1897,7 +1976,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8913,
+  "source_line": 9767,
   "qualified": "Open77.character.isCrouched",
   "route_id": "Open77.character.isCrouched"
  },
@@ -1923,7 +2002,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8918,
+  "source_line": 9772,
   "qualified": "Open77.character.isDriver",
   "route_id": "Open77.character.isDriver"
  },
@@ -1949,7 +2028,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8919,
+  "source_line": 9773,
   "qualified": "Open77.character.isEmoting",
   "route_id": "Open77.character.isEmoting"
  },
@@ -1975,7 +2054,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8912,
+  "source_line": 9766,
   "qualified": "Open77.character.isGrounded",
   "route_id": "Open77.character.isGrounded"
  },
@@ -2001,7 +2080,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8917,
+  "source_line": 9771,
   "qualified": "Open77.character.isInVehicle",
   "route_id": "Open77.character.isInVehicle"
  },
@@ -2027,7 +2106,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8914,
+  "source_line": 9768,
   "qualified": "Open77.character.isSliding",
   "route_id": "Open77.character.isSliding"
  },
@@ -2053,7 +2132,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8915,
+  "source_line": 9769,
   "qualified": "Open77.character.isVaulting",
   "route_id": "Open77.character.isVaulting"
  },
@@ -2079,7 +2158,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8903,
+  "source_line": 9757,
   "qualified": "Open77.character.position",
   "route_id": "Open77.character.position"
  },
@@ -2106,7 +2185,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8904,
+  "source_line": 9758,
   "qualified": "Open77.character.seat",
   "route_id": "Open77.character.seat"
  },
@@ -2132,7 +2211,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8907,
+  "source_line": 9761,
   "qualified": "Open77.character.speed",
   "route_id": "Open77.character.speed"
  },
@@ -2159,7 +2238,7 @@
   "source": "ResourceHost.cpp",
   "example": "local s = Open77.character.state()\nif s.inVehicle and s.driver then\n    print(\"driving at \" .. math.floor(s.speed) .. \" u/s\")\nend",
   "inferred": false,
-  "source_line": 8902,
+  "source_line": 9756,
   "qualified": "Open77.character.state",
   "route_id": "Open77.character.state"
  },
@@ -2186,7 +2265,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8905,
+  "source_line": 9759,
   "qualified": "Open77.character.weapon",
   "route_id": "Open77.character.weapon"
  },
@@ -2212,7 +2291,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8910,
+  "source_line": 9764,
   "qualified": "Open77.character.yaw",
   "route_id": "Open77.character.yaw"
  },
@@ -2239,7 +2318,7 @@
   "source": "ResourceHost.cpp",
   "example": "local ok, reason = Open77.clipboard.setText(\"position = { x = 1, y = 2, z = 3 }\")",
   "inferred": false,
-  "source_line": 8898,
+  "source_line": 9752,
   "qualified": "Open77.clipboard.setText",
   "route_id": "Open77.clipboard.setText"
  },
@@ -2258,7 +2337,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8938,
+  "source_line": 9804,
   "qualified": "Open77.clothing.all",
   "route_id": "Open77.clothing.all"
  },
@@ -2277,7 +2356,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8934,
+  "source_line": 9800,
   "qualified": "Open77.clothing.bodyFamily",
   "route_id": "Open77.clothing.bodyFamily"
  },
@@ -2296,7 +2375,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8936,
+  "source_line": 9802,
   "qualified": "Open77.clothing.catalog",
   "route_id": "Open77.clothing.catalog"
  },
@@ -2313,7 +2392,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8942,
+  "source_line": 9808,
   "qualified": "Open77.clothing.clear",
   "route_id": "Open77.clothing.clear"
  },
@@ -2332,7 +2411,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8939,
+  "source_line": 9805,
   "qualified": "Open77.clothing.equip",
   "route_id": "Open77.clothing.equip"
  },
@@ -2351,7 +2430,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8937,
+  "source_line": 9803,
   "qualified": "Open77.clothing.get",
   "route_id": "Open77.clothing.get"
  },
@@ -2370,7 +2449,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8935,
+  "source_line": 9801,
   "qualified": "Open77.clothing.info",
   "route_id": "Open77.clothing.info"
  },
@@ -2389,7 +2468,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8941,
+  "source_line": 9807,
   "qualified": "Open77.clothing.set",
   "route_id": "Open77.clothing.set"
  },
@@ -2408,7 +2487,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8933,
+  "source_line": 9799,
   "qualified": "Open77.clothing.slots",
   "route_id": "Open77.clothing.slots"
  },
@@ -2427,7 +2506,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8940,
+  "source_line": 9806,
   "qualified": "Open77.clothing.unequip",
   "route_id": "Open77.clothing.unequip"
  },
@@ -2454,7 +2533,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8818,
+  "source_line": 9671,
   "qualified": "Open77.debug.command",
   "route_id": "Open77.debug.command"
  },
@@ -2487,7 +2566,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8817,
+  "source_line": 9670,
   "qualified": "Open77.debug.eval",
   "route_id": "Open77.debug.eval"
  },
@@ -2514,7 +2593,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8819,
+  "source_line": 9672,
   "qualified": "Open77.debug.redscript",
   "route_id": "Open77.debug.redscript"
  },
@@ -2534,7 +2613,7 @@
   "source": "ResourceHost.cpp",
   "example": "local door, reason = Open77.doors.aimed()\nif door then\n    print(door.id, door.open, door.locked, door.distance)\nend",
   "inferred": false,
-  "source_line": 8966,
+  "source_line": 9832,
   "qualified": "Open77.doors.aimed",
   "route_id": "Open77.doors.aimed"
  },
@@ -2553,7 +2632,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8965,
+  "source_line": 9831,
   "qualified": "Open77.doors.available",
   "route_id": "Open77.doors.available"
  },
@@ -2580,7 +2659,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8995,
+  "source_line": 9861,
   "qualified": "Open77.doors.clearInteractionPolicy",
   "route_id": "Open77.doors.clearInteractionPolicy"
  },
@@ -2613,7 +2692,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8981,
+  "source_line": 9847,
   "qualified": "Open77.doors.close",
   "route_id": "Open77.doors.close"
  },
@@ -2640,7 +2719,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8968,
+  "source_line": 9834,
   "qualified": "Open77.doors.closest",
   "route_id": "Open77.doors.closest"
  },
@@ -2673,7 +2752,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8990,
+  "source_line": 9856,
   "qualified": "Open77.doors.grantKey",
   "route_id": "Open77.doors.grantKey"
  },
@@ -2706,7 +2785,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8971,
+  "source_line": 9837,
   "qualified": "Open77.doors.hasKey",
   "route_id": "Open77.doors.hasKey"
  },
@@ -2733,7 +2812,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8970,
+  "source_line": 9836,
   "qualified": "Open77.doors.holders",
   "route_id": "Open77.doors.holders"
  },
@@ -2766,7 +2845,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8983,
+  "source_line": 9849,
   "qualified": "Open77.doors.lock",
   "route_id": "Open77.doors.lock"
  },
@@ -2793,7 +2872,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8967,
+  "source_line": 9833,
   "qualified": "Open77.doors.near",
   "route_id": "Open77.doors.near"
  },
@@ -2826,7 +2905,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8980,
+  "source_line": 9846,
   "qualified": "Open77.doors.open",
   "route_id": "Open77.doors.open"
  },
@@ -2853,7 +2932,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8989,
+  "source_line": 9855,
   "qualified": "Open77.doors.reset",
   "route_id": "Open77.doors.reset"
  },
@@ -2886,7 +2965,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8991,
+  "source_line": 9857,
   "qualified": "Open77.doors.revokeKey",
   "route_id": "Open77.doors.revokeKey"
  },
@@ -2919,7 +2998,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8986,
+  "source_line": 9852,
   "qualified": "Open77.doors.seal",
   "route_id": "Open77.doors.seal"
  },
@@ -2952,7 +3031,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8988,
+  "source_line": 9854,
   "qualified": "Open77.doors.setAutomaticClose",
   "route_id": "Open77.doors.setAutomaticClose"
  },
@@ -2985,7 +3064,7 @@
   "source": "ResourceHost.cpp",
   "example": "Open77.doors.setInteractionAllowed(doorId, playerHasAccess)\nAddEventHandler(\"open77:doorInteract\", function(door, activator, allowed)\n    print(door, activator, allowed)\nend)",
   "inferred": false,
-  "source_line": 8993,
+  "source_line": 9859,
   "qualified": "Open77.doors.setInteractionAllowed",
   "route_id": "Open77.doors.setInteractionAllowed"
  },
@@ -3024,7 +3103,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8982,
+  "source_line": 9848,
   "qualified": "Open77.doors.setLocked",
   "route_id": "Open77.doors.setLocked"
  },
@@ -3063,7 +3142,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8979,
+  "source_line": 9845,
   "qualified": "Open77.doors.setOpen",
   "route_id": "Open77.doors.setOpen"
  },
@@ -3102,7 +3181,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8985,
+  "source_line": 9851,
   "qualified": "Open77.doors.setSealed",
   "route_id": "Open77.doors.setSealed"
  },
@@ -3141,7 +3220,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8992,
+  "source_line": 9858,
   "qualified": "Open77.doors.setState",
   "route_id": "Open77.doors.setState"
  },
@@ -3168,7 +3247,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8969,
+  "source_line": 9835,
   "qualified": "Open77.doors.state",
   "route_id": "Open77.doors.state"
  },
@@ -3201,7 +3280,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8984,
+  "source_line": 9850,
   "qualified": "Open77.doors.unlock",
   "route_id": "Open77.doors.unlock"
  },
@@ -3234,7 +3313,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8987,
+  "source_line": 9853,
   "qualified": "Open77.doors.unseal",
   "route_id": "Open77.doors.unseal"
  },
@@ -3253,7 +3332,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9049,
+  "source_line": 9916,
   "qualified": "Open77.elevators.all",
   "route_id": "Open77.elevators.all"
  },
@@ -3279,7 +3358,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9048,
+  "source_line": 9915,
   "qualified": "Open77.elevators.get",
   "route_id": "Open77.elevators.get"
  },
@@ -3305,7 +3384,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9050,
+  "source_line": 9917,
   "qualified": "Open77.elevators.nearby",
   "route_id": "Open77.elevators.nearby"
  },
@@ -3344,7 +3423,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9051,
+  "source_line": 9918,
   "qualified": "Open77.elevators.request",
   "route_id": "Open77.elevators.request"
  },
@@ -3364,7 +3443,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9064,
+  "source_line": 9931,
   "qualified": "Open77.environment.getTime",
   "route_id": "Open77.environment.getTime"
  },
@@ -3384,7 +3463,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9069,
+  "source_line": 9936,
   "qualified": "Open77.environment.isWeatherFrozen",
   "route_id": "Open77.environment.isWeatherFrozen"
  },
@@ -3423,7 +3502,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9065,
+  "source_line": 9932,
   "qualified": "Open77.environment.setTime",
   "route_id": "Open77.environment.setTime"
  },
@@ -3450,7 +3529,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9066,
+  "source_line": 9933,
   "qualified": "Open77.environment.setTimeFrozen",
   "route_id": "Open77.environment.setTimeFrozen"
  },
@@ -3489,7 +3568,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9067,
+  "source_line": 9934,
   "qualified": "Open77.environment.setWeather",
   "route_id": "Open77.environment.setWeather"
  },
@@ -3516,7 +3595,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9068,
+  "source_line": 9935,
   "qualified": "Open77.environment.setWeatherFrozen",
   "route_id": "Open77.environment.setWeatherFrozen"
  },
@@ -3548,7 +3627,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8825,
+  "source_line": 9678,
   "qualified": "Open77.events.emit",
   "route_id": "Open77.events.emit"
  },
@@ -3574,7 +3653,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8824,
+  "source_line": 9677,
   "qualified": "Open77.events.off",
   "route_id": "Open77.events.off"
  },
@@ -3606,7 +3685,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8823,
+  "source_line": 9676,
   "qualified": "Open77.events.on",
   "route_id": "Open77.events.on"
  },
@@ -3644,7 +3723,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8861,
+  "source_line": 9714,
   "qualified": "Open77.exports.call",
   "route_id": "Open77.exports.call"
  },
@@ -3664,7 +3743,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9091,
+  "source_line": 9958,
   "qualified": "Open77.input.isCaptured",
   "route_id": "Open77.input.isCaptured"
  },
@@ -3691,9 +3770,179 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9090,
+  "source_line": 9957,
   "qualified": "Open77.input.isDown",
   "route_id": "Open77.input.isDown"
+ },
+ {
+  "namespace": "Open77.input",
+  "name": "keyFor",
+  "handler": "LuaInputKeyFor",
+  "summary": "The effective key of one of this resource's own mappings.",
+  "description": "Requires `input.actions`. Returns the effective key (the player's rebind if any, otherwise the registered default) for a mapping id owned by the calling resource, or nil when no such mapping exists.",
+  "params": [
+   {
+    "name": "id",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "key string, or nil when the id is not registered by this resource"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9964,
+  "qualified": "Open77.input.keyFor",
+  "route_id": "Open77.input.keyFor"
+ },
+ {
+  "namespace": "Open77.input",
+  "name": "mappings",
+  "handler": "LuaInputMappings",
+  "summary": "Every registered key mapping across all running resources.",
+  "description": "Requires `input.actions`. Returns an array of `{ resource, id, name, key, defaultKey, hold, rebound }` records for the rebinding UI. Only serialisable metadata is exposed; the callbacks stay in their owning resource.",
+  "params": [],
+  "returns": [
+   "array of mapping records"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9965,
+  "qualified": "Open77.input.mappings",
+  "route_id": "Open77.input.mappings"
+ },
+ {
+  "namespace": "Open77.input",
+  "name": "rebind",
+  "handler": "LuaInputRebind",
+  "summary": "Sets and persists a new key for any mapping.",
+  "description": "Requires `input.actions`. Rebinds the mapping identified by `resource` and `id` to `key` (same key vocabulary as `Open77.input.isDown`), persists it machine-globally, and raises `open77:keybinds:changed`. Used by the pause KEY BINDINGS tab.",
+  "params": [
+   {
+    "name": "resource",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "id",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "key",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "the applied key",
+   "reason for the refusal"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9966,
+  "qualified": "Open77.input.rebind",
+  "route_id": "Open77.input.rebind"
+ },
+ {
+  "namespace": "Open77.input",
+  "name": "registerKeyMapping",
+  "handler": "LuaRegisterKeyMapping",
+  "summary": "Declares a named, rebindable action bound to a key (twin of the RegisterKeyMapping global).",
+  "description": "Requires `input.actions`. Accepts a spec table `{ id, name, key (or defaultKey), hold, onPressed, onReleased }` or the positional form `(id, name, key, onPressed [, onReleased])`. The engine owns the registry and the per-frame dispatch; the callback receives the mapping id and never fires while a page owns the keyboard. `onPressed` fires on the key-down edge; with `hold` (or a positional release callback) `onReleased` fires on key-up. Re-registering an id replaces the entry but keeps the player's saved rebind. Ids are letters/numbers/`_.:-`, up to 64 chars; names up to 96. Up to 64 mappings per resource.",
+  "params": [
+   {
+    "name": "spec",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "effective key (the saved rebind, else the default)",
+   "reason for the refusal"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9962,
+  "qualified": "Open77.input.registerKeyMapping",
+  "route_id": "Open77.input.registerKeyMapping"
+ },
+ {
+  "namespace": "Open77.input",
+  "name": "reset",
+  "handler": "LuaInputReset",
+  "summary": "Restores a mapping to its registered default key.",
+  "description": "Requires `input.actions`. Drops any saved override for the mapping identified by `resource` and `id`, restores the default key, persists the change, and raises `open77:keybinds:changed`.",
+  "params": [
+   {
+    "name": "resource",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "id",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "the default key",
+   "reason for the refusal"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9967,
+  "qualified": "Open77.input.reset",
+  "route_id": "Open77.input.reset"
+ },
+ {
+  "namespace": "Open77.input",
+  "name": "unregisterKeyMapping",
+  "handler": "LuaUnregisterKeyMapping",
+  "summary": "Removes a key mapping this resource declared.",
+  "description": "Requires `input.actions`. Frees the mapping's callbacks and raises `open77:keybinds:changed`. Only affects mappings owned by the calling resource.",
+  "params": [
+   {
+    "name": "id",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean: true when a mapping was removed"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9963,
+  "qualified": "Open77.input.unregisterKeyMapping",
+  "route_id": "Open77.input.unregisterKeyMapping"
  },
  {
   "namespace": "Open77.inspector",
@@ -3718,7 +3967,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8960,
+  "source_line": 9826,
   "qualified": "Open77.inspector.enable",
   "route_id": "Open77.inspector.enable"
  },
@@ -3745,7 +3994,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8961,
+  "source_line": 9827,
   "qualified": "Open77.inspector.outline",
   "route_id": "Open77.inspector.outline"
  },
@@ -3765,7 +4014,7 @@
   "source": "ResourceHost.cpp",
   "example": "local t = Open77.inspector.target()\nif t and t.valid then\n    print(t.kind, t.name, t.distance)   --> door  Door  1.38\nend",
   "inferred": false,
-  "source_line": 8959,
+  "source_line": 9825,
   "qualified": "Open77.inspector.target",
   "route_id": "Open77.inspector.target"
  },
@@ -3792,7 +4041,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9188,
+  "source_line": 10065,
   "qualified": "Open77.json.decode",
   "route_id": "Open77.json.decode"
  },
@@ -3819,7 +4068,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9187,
+  "source_line": 10064,
   "qualified": "Open77.json.encode",
   "route_id": "Open77.json.encode"
  },
@@ -3846,7 +4095,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8799,
+  "source_line": 9652,
   "qualified": "Open77.kvp.clear",
   "route_id": "Open77.kvp.clear"
  },
@@ -3885,7 +4134,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8802,
+  "source_line": 9655,
   "qualified": "Open77.kvp.compareAndSet",
   "route_id": "Open77.kvp.compareAndSet"
  },
@@ -3912,7 +4161,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8796,
+  "source_line": 9649,
   "qualified": "Open77.kvp.delete",
   "route_id": "Open77.kvp.delete"
  },
@@ -3945,7 +4194,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8797,
+  "source_line": 9650,
   "qualified": "Open77.kvp.find",
   "route_id": "Open77.kvp.find"
  },
@@ -3978,7 +4227,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8794,
+  "source_line": 9647,
   "qualified": "Open77.kvp.get",
   "route_id": "Open77.kvp.get"
  },
@@ -4005,7 +4254,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8795,
+  "source_line": 9648,
   "qualified": "Open77.kvp.has",
   "route_id": "Open77.kvp.has"
  },
@@ -4038,7 +4287,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8800,
+  "source_line": 9653,
   "qualified": "Open77.kvp.increment",
   "route_id": "Open77.kvp.increment"
  },
@@ -4071,7 +4320,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8798,
+  "source_line": 9651,
   "qualified": "Open77.kvp.keys",
   "route_id": "Open77.kvp.keys"
  },
@@ -4104,7 +4353,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8793,
+  "source_line": 9646,
   "qualified": "Open77.kvp.set",
   "route_id": "Open77.kvp.set"
  },
@@ -4137,7 +4386,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8801,
+  "source_line": 9654,
   "qualified": "Open77.kvp.setIfAbsent",
   "route_id": "Open77.kvp.setIfAbsent"
  },
@@ -4157,7 +4406,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8803,
+  "source_line": 9656,
   "qualified": "Open77.kvp.stats",
   "route_id": "Open77.kvp.stats"
  },
@@ -4196,7 +4445,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9005,
+  "source_line": 9871,
   "qualified": "Open77.loot.acceptPickup",
   "route_id": "Open77.loot.acceptPickup"
  },
@@ -4213,7 +4462,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9003,
+  "source_line": 9869,
   "qualified": "Open77.loot.clear",
   "route_id": "Open77.loot.clear"
  },
@@ -4240,7 +4489,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9002,
+  "source_line": 9868,
   "qualified": "Open77.loot.remove",
   "route_id": "Open77.loot.remove"
  },
@@ -4267,7 +4516,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9004,
+  "source_line": 9870,
   "qualified": "Open77.loot.requestPickup",
   "route_id": "Open77.loot.requestPickup"
  },
@@ -4294,7 +4543,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9000,
+  "source_line": 9866,
   "qualified": "Open77.loot.setAuthorityEnabled",
   "route_id": "Open77.loot.setAuthorityEnabled"
  },
@@ -4321,7 +4570,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9001,
+  "source_line": 9867,
   "qualified": "Open77.loot.upsert",
   "route_id": "Open77.loot.upsert"
  },
@@ -4341,7 +4590,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9137,
+  "source_line": 10014,
   "qualified": "Open77.markers.clear",
   "route_id": "Open77.markers.clear"
  },
@@ -4368,7 +4617,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9134,
+  "source_line": 10011,
   "qualified": "Open77.markers.create",
   "route_id": "Open77.markers.create"
  },
@@ -4388,7 +4637,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9138,
+  "source_line": 10015,
   "qualified": "Open77.markers.list",
   "route_id": "Open77.markers.list"
  },
@@ -4415,7 +4664,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9136,
+  "source_line": 10013,
   "qualified": "Open77.markers.remove",
   "route_id": "Open77.markers.remove"
  },
@@ -4448,7 +4697,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9135,
+  "source_line": 10012,
   "qualified": "Open77.markers.update",
   "route_id": "Open77.markers.update"
  },
@@ -4467,7 +4716,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9104,
+  "source_line": 9980,
   "qualified": "Open77.nameplates.clear",
   "route_id": "Open77.nameplates.clear"
  },
@@ -4494,7 +4743,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9103,
+  "source_line": 9979,
   "qualified": "Open77.nameplates.remove",
   "route_id": "Open77.nameplates.remove"
  },
@@ -4521,7 +4770,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9108,
+  "source_line": 9984,
   "qualified": "Open77.nameplates.render",
   "route_id": "Open77.nameplates.render"
  },
@@ -4554,7 +4803,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9102,
+  "source_line": 9978,
   "qualified": "Open77.nameplates.set",
   "route_id": "Open77.nameplates.set"
  },
@@ -4587,7 +4836,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9109,
+  "source_line": 9985,
   "qualified": "Open77.nameplates.setTalking",
   "route_id": "Open77.nameplates.setTalking"
  },
@@ -4607,7 +4856,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9105,
+  "source_line": 9981,
   "qualified": "Open77.nameplates.snapshot",
   "route_id": "Open77.nameplates.snapshot"
  },
@@ -4627,7 +4876,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9107,
+  "source_line": 9983,
   "qualified": "Open77.nameplates.stopStream",
   "route_id": "Open77.nameplates.stopStream"
  },
@@ -4654,7 +4903,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9106,
+  "source_line": 9982,
   "qualified": "Open77.nameplates.stream",
   "route_id": "Open77.nameplates.stream"
  },
@@ -4686,7 +4935,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8830,
+  "source_line": 9683,
   "qualified": "Open77.net.emitServer",
   "route_id": "Open77.net.emitServer"
  },
@@ -4718,7 +4967,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8829,
+  "source_line": 9682,
   "qualified": "Open77.net.on",
   "route_id": "Open77.net.on"
  },
@@ -4737,7 +4986,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8835,
+  "source_line": 9688,
   "qualified": "Open77.network.catalog",
   "route_id": "Open77.network.catalog"
  },
@@ -4770,7 +5019,7 @@
   "source": "ResourceHost.cpp",
   "example": "local ok, reason = Open77.network.connect(\"127.0.0.1:11778\", \"Player\")",
   "inferred": false,
-  "source_line": 8836,
+  "source_line": 9689,
   "qualified": "Open77.network.connect",
   "route_id": "Open77.network.connect"
  },
@@ -4789,7 +5038,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8837,
+  "source_line": 9690,
   "qualified": "Open77.network.disconnect",
   "route_id": "Open77.network.disconnect"
  },
@@ -4809,7 +5058,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8840,
+  "source_line": 9693,
   "qualified": "Open77.network.identity",
   "route_id": "Open77.network.identity"
  },
@@ -4842,7 +5091,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8839,
+  "source_line": 9692,
   "qualified": "Open77.network.identityUpdate",
   "route_id": "Open77.network.identityUpdate"
  },
@@ -4869,7 +5118,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8834,
+  "source_line": 9687,
   "qualified": "Open77.network.refresh",
   "route_id": "Open77.network.refresh"
  },
@@ -4888,7 +5137,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8838,
+  "source_line": 9691,
   "qualified": "Open77.network.status",
   "route_id": "Open77.network.status"
  },
@@ -4907,7 +5156,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9041,
+  "source_line": 9908,
   "qualified": "Open77.npcs.all",
   "route_id": "Open77.npcs.all"
  },
@@ -4933,7 +5182,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9044,
+  "source_line": 9911,
   "qualified": "Open77.npcs.currentTask",
   "route_id": "Open77.npcs.currentTask"
  },
@@ -4959,7 +5208,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9043,
+  "source_line": 9910,
   "qualified": "Open77.npcs.entity",
   "route_id": "Open77.npcs.entity"
  },
@@ -4985,7 +5234,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9040,
+  "source_line": 9907,
   "qualified": "Open77.npcs.get",
   "route_id": "Open77.npcs.get"
  },
@@ -5011,7 +5260,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9042,
+  "source_line": 9909,
   "qualified": "Open77.npcs.isStreamedIn",
   "route_id": "Open77.npcs.isStreamedIn"
  },
@@ -5044,7 +5293,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9086,
+  "source_line": 9953,
   "qualified": "Open77.perspective.applyPolicy",
   "route_id": "Open77.perspective.applyPolicy"
  },
@@ -5064,7 +5313,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9083,
+  "source_line": 9950,
   "qualified": "Open77.perspective.get",
   "route_id": "Open77.perspective.get"
  },
@@ -5091,7 +5340,7 @@
   "source": "ResourceHost.cpp",
   "example": "Open77.perspective.set(\"tps\")",
   "inferred": false,
-  "source_line": 9082,
+  "source_line": 9949,
   "qualified": "Open77.perspective.set",
   "route_id": "Open77.perspective.set"
  },
@@ -5111,7 +5360,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9085,
+  "source_line": 9952,
   "qualified": "Open77.perspective.state",
   "route_id": "Open77.perspective.state"
  },
@@ -5131,7 +5380,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9084,
+  "source_line": 9951,
   "qualified": "Open77.perspective.toggle",
   "route_id": "Open77.perspective.toggle"
  },
@@ -5150,7 +5399,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9060,
+  "source_line": 9927,
   "qualified": "Open77.players.allHealthStates",
   "route_id": "Open77.players.allHealthStates"
  },
@@ -5169,7 +5418,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9058,
+  "source_line": 9925,
   "qualified": "Open77.players.allLifeStates",
   "route_id": "Open77.players.allLifeStates"
  },
@@ -5195,7 +5444,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9059,
+  "source_line": 9926,
   "qualified": "Open77.players.getHealthState",
   "route_id": "Open77.players.getHealthState"
  },
@@ -5221,7 +5470,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9055,
+  "source_line": 9922,
   "qualified": "Open77.players.getLifeState",
   "route_id": "Open77.players.getLifeState"
  },
@@ -5240,7 +5489,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9056,
+  "source_line": 9923,
   "qualified": "Open77.players.getLocalDeathContext",
   "route_id": "Open77.players.getLocalDeathContext"
  },
@@ -5266,7 +5515,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9057,
+  "source_line": 9924,
   "qualified": "Open77.players.isDead",
   "route_id": "Open77.players.isDead"
  },
@@ -5285,7 +5534,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9146,
+  "source_line": 10023,
   "qualified": "Open77.props.clear",
   "route_id": "Open77.props.clear"
  },
@@ -5312,7 +5561,7 @@
   "source": "ResourceHost.cpp",
   "example": "local ghost = assert(Open77.props.create({\n  model = \"crate.small\",\n  position = { x = -1442.2, y = 127.4, z = 18.0 },\n  collision = false\n}))",
   "inferred": false,
-  "source_line": 9142,
+  "source_line": 10019,
   "qualified": "Open77.props.create",
   "route_id": "Open77.props.create"
  },
@@ -5331,7 +5580,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9147,
+  "source_line": 10024,
   "qualified": "Open77.props.list",
   "route_id": "Open77.props.list"
  },
@@ -5339,19 +5588,32 @@
   "namespace": "Open77.props",
   "name": "nearest",
   "handler": "LuaPropNearest",
-  "summary": "`Open77.props.nearest(position [, radius])`",
-  "description": "The prop closest to `position`, or `nil` when nothing is in range. Scoped\nto the calling resource's own props, exactly like `list` -- a resource\nshould not learn about props it cannot otherwise see, and the two\nfunctions returning different sets would be a trap.\n\n`radius` defaults to 10 m. A non-positive radius is an error rather than\nan unbounded search: \"everything\" is what `list` is for.",
-  "params": [],
+  "summary": "Finds the nearest local prop owned by this resource.",
+  "description": "Requires `world.props`. Searches only the calling resource's local prop set, using a 10 metre default radius. A non-positive or non-finite radius is rejected; use `list` when an unbounded set is intended.",
+  "params": [
+   {
+    "name": "position",
+    "type": "table { x, y, z }",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "radius",
+    "type": "number",
+    "optional": true,
+    "default": "10"
+   }
+  ],
   "returns": [
-   "value",
-   "reason (when the first is nil)"
+   "prop snapshot and distance, or nil",
+   "reason on validation failure"
   ],
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
   "example": "",
-  "inferred": true,
-  "source_line": 9148,
+  "inferred": false,
+  "source_line": 10025,
   "qualified": "Open77.props.nearest",
   "route_id": "Open77.props.nearest"
  },
@@ -5384,7 +5646,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9149,
+  "source_line": 10026,
   "qualified": "Open77.props.project",
   "route_id": "Open77.props.project"
  },
@@ -5411,7 +5673,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9145,
+  "source_line": 10022,
   "qualified": "Open77.props.remove",
   "route_id": "Open77.props.remove"
  },
@@ -5444,7 +5706,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9144,
+  "source_line": 10021,
   "qualified": "Open77.props.setTransform",
   "route_id": "Open77.props.setTransform"
  },
@@ -5471,7 +5733,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9150,
+  "source_line": 10027,
   "qualified": "Open77.props.unproject",
   "route_id": "Open77.props.unproject"
  },
@@ -5490,7 +5752,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9151,
+  "source_line": 10028,
   "qualified": "Open77.props.unprojectAll",
   "route_id": "Open77.props.unprojectAll"
  },
@@ -5523,7 +5785,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9143,
+  "source_line": 10020,
   "qualified": "Open77.props.update",
   "route_id": "Open77.props.update"
  },
@@ -5549,7 +5811,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8785,
+  "source_line": 9638,
   "qualified": "Open77.resource.generation",
   "route_id": "Open77.resource.generation"
  },
@@ -5575,7 +5837,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8789,
+  "source_line": 9642,
   "qualified": "Open77.resource.hasPermission",
   "route_id": "Open77.resource.hasPermission"
  },
@@ -5594,7 +5856,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8784,
+  "source_line": 9637,
   "qualified": "Open77.resource.name",
   "route_id": "Open77.resource.name"
  },
@@ -5621,7 +5883,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8788,
+  "source_line": 9641,
   "qualified": "Open77.resource.readFile",
   "route_id": "Open77.resource.readFile"
  },
@@ -5647,7 +5909,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8787,
+  "source_line": 9640,
   "qualified": "Open77.resource.state",
   "route_id": "Open77.resource.state"
  },
@@ -5666,7 +5928,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8786,
+  "source_line": 9639,
   "qualified": "Open77.resource.version",
   "route_id": "Open77.resource.version"
  },
@@ -5685,7 +5947,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8813,
+  "source_line": 9666,
   "qualified": "Open77.runtime.luaVersion",
   "route_id": "Open77.runtime.luaVersion"
  },
@@ -5704,7 +5966,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8812,
+  "source_line": 9665,
   "qualified": "Open77.runtime.version",
   "route_id": "Open77.runtime.version"
  },
@@ -5724,7 +5986,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8882,
+  "source_line": 9735,
   "qualified": "Open77.session.characterBootstrap",
   "route_id": "Open77.session.characterBootstrap"
  },
@@ -5748,7 +6010,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8885,
+  "source_line": 9739,
   "qualified": "Open77.session.failCharacterBootstrap",
   "route_id": "Open77.session.failCharacterBootstrap"
  },
@@ -5768,9 +6030,28 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8880,
+  "source_line": 9733,
   "qualified": "Open77.session.loadPristine",
   "route_id": "Open77.session.loadPristine"
+ },
+ {
+  "namespace": "Open77.session",
+  "name": "loadScreen",
+  "handler": "LuaSessionLoadScreen",
+  "summary": "Describes the connected server's declared loading screen.",
+  "description": "Returns availability and the server name so the trusted shell can choose the verified server page or its built-in fallback. This function does not create the WebUI surface; the shell uses `WebUI.create({ loadScreen = true })` for that.",
+  "params": [],
+  "returns": [
+   "table { available, server? }"
+  ],
+  "api_set": "shared",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9736,
+  "qualified": "Open77.session.loadScreen",
+  "route_id": "Open77.session.loadScreen"
  },
  {
   "namespace": "Open77.session",
@@ -5788,7 +6069,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8879,
+  "source_line": 9732,
   "qualified": "Open77.session.openSettings",
   "route_id": "Open77.session.openSettings"
  },
@@ -5808,7 +6089,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8888,
+  "source_line": 9742,
   "qualified": "Open77.session.quitGame",
   "route_id": "Open77.session.quitGame"
  },
@@ -5825,7 +6106,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8883,
+  "source_line": 9737,
   "qualified": "Open77.session.requestCharacterCreator",
   "route_id": "Open77.session.requestCharacterCreator"
  },
@@ -5842,7 +6123,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8881,
+  "source_line": 9734,
   "qualified": "Open77.session.resetCharacterBootstrap",
   "route_id": "Open77.session.resetCharacterBootstrap"
  },
@@ -5866,7 +6147,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8884,
+  "source_line": 9738,
   "qualified": "Open77.session.resolveCharacterBootstrap",
   "route_id": "Open77.session.resolveCharacterBootstrap"
  },
@@ -5892,7 +6173,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8887,
+  "source_line": 9741,
   "qualified": "Open77.session.setMenuReady",
   "route_id": "Open77.session.setMenuReady"
  },
@@ -5912,7 +6193,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8886,
+  "source_line": 9740,
   "qualified": "Open77.session.takeCharacterCreatorResult",
   "route_id": "Open77.session.takeCharacterCreatorResult"
  },
@@ -5939,7 +6220,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8892,
+  "source_line": 9746,
   "qualified": "Open77.settings.request",
   "route_id": "Open77.settings.request"
  },
@@ -5978,7 +6259,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8894,
+  "source_line": 9748,
   "qualified": "Open77.settings.set",
   "route_id": "Open77.settings.set"
  },
@@ -5997,7 +6278,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8893,
+  "source_line": 9747,
   "qualified": "Open77.settings.values",
   "route_id": "Open77.settings.values"
  },
@@ -6017,7 +6298,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9179,
+  "source_line": 10056,
   "qualified": "Open77.sfx.clear",
   "route_id": "Open77.sfx.clear"
  },
@@ -6037,7 +6318,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9182,
+  "source_line": 10059,
   "qualified": "Open77.sfx.list",
   "route_id": "Open77.sfx.list"
  },
@@ -6070,7 +6351,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9176,
+  "source_line": 10053,
   "qualified": "Open77.sfx.play",
   "route_id": "Open77.sfx.play"
  },
@@ -6097,9 +6378,139 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9177,
+  "source_line": 10054,
   "qualified": "Open77.sfx.stop",
   "route_id": "Open77.sfx.stop"
+ },
+ {
+  "namespace": "Open77.stats",
+  "name": "get",
+  "handler": "LuaStatsGet",
+  "summary": "Reads the canonical health and stamina state for one player.",
+  "description": "Requires `players.stats.read` (or the legacy `players.life.read`). Omit `playerId` for the local player. Returns the same combined shape as the server API, including both point pools, maximums, fractions, regeneration flags/rates, armor, god mode, damage attribution and revisions. Client resources cannot mutate these server-owned values.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "combined stats table, or nil"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9777,
+  "qualified": "Open77.stats.get",
+  "route_id": "Open77.stats.get"
+ },
+ {
+  "namespace": "Open77.stats",
+  "name": "getHealth",
+  "handler": "LuaStatsPool",
+  "summary": "Reads one player's canonical health pool.",
+  "description": "Requires `players.stats.read` (or `players.life.read`). Omit `playerId` for the local player. The table contains `value/current`, `maximum/max`, `fraction`, `percentage`, `regenEnabled`, `regenPerSecond` and `regenerating`.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "health pool table, or nil"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9779,
+  "qualified": "Open77.stats.getHealth",
+  "route_id": "Open77.stats.getHealth"
+ },
+ {
+  "namespace": "Open77.stats",
+  "name": "getStamina",
+  "handler": "LuaStatsPool",
+  "summary": "Reads one player's canonical stamina pool.",
+  "description": "Requires `players.stats.read` (or `players.life.read`). Omit `playerId` for the local player. The table contains `value/current`, `maximum/max`, `fraction`, `percentage`, `regenEnabled`, `regenPerSecond` and `regenerating`.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "stamina pool table, or nil"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9783,
+  "qualified": "Open77.stats.getStamina",
+  "route_id": "Open77.stats.getStamina"
+ },
+ {
+  "namespace": "Open77.stats",
+  "name": "health",
+  "handler": "LuaStatsPool",
+  "summary": "Alias of `Open77.stats.getHealth`.",
+  "description": "Reads the replicated server-owned health pool. This alias has exactly the same permission, optional player id and return shape as `getHealth`.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "health pool table, or nil"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9781,
+  "qualified": "Open77.stats.health",
+  "route_id": "Open77.stats.health"
+ },
+ {
+  "namespace": "Open77.stats",
+  "name": "stamina",
+  "handler": "LuaStatsPool",
+  "summary": "Alias of `Open77.stats.getStamina`.",
+  "description": "Reads the replicated server-owned stamina pool. This alias has exactly the same permission, optional player id and return shape as `getStamina`.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "stamina pool table, or nil"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9785,
+  "qualified": "Open77.stats.stamina",
+  "route_id": "Open77.stats.stamina"
  },
  {
   "namespace": "Open77.time",
@@ -6116,7 +6527,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8780,
+  "source_line": 9633,
   "qualified": "Open77.time.monotonic",
   "route_id": "Open77.time.monotonic"
  },
@@ -6135,7 +6546,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9096,
+  "source_line": 9972,
   "qualified": "Open77.travel.isNoclip",
   "route_id": "Open77.travel.isNoclip"
  },
@@ -6162,7 +6573,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9095,
+  "source_line": 9971,
   "qualified": "Open77.travel.setNoclip",
   "route_id": "Open77.travel.setNoclip"
  },
@@ -6189,7 +6600,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9097,
+  "source_line": 9973,
   "qualified": "Open77.travel.setNoclipSpeed",
   "route_id": "Open77.travel.setNoclipSpeed"
  },
@@ -6234,7 +6645,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9098,
+  "source_line": 9974,
   "qualified": "Open77.travel.teleport",
   "route_id": "Open77.travel.teleport"
  },
@@ -6253,7 +6664,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9010,
+  "source_line": 9876,
   "qualified": "Open77.vehicles.all",
   "route_id": "Open77.vehicles.all"
  },
@@ -6273,7 +6684,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9019,
+  "source_line": 9885,
   "qualified": "Open77.vehicles.clearAllPerformance",
   "route_id": "Open77.vehicles.clearAllPerformance"
  },
@@ -6300,7 +6711,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9016,
+  "source_line": 9882,
   "qualified": "Open77.vehicles.clearPerformance",
   "route_id": "Open77.vehicles.clearPerformance"
  },
@@ -6327,7 +6738,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9018,
+  "source_line": 9884,
   "qualified": "Open77.vehicles.clearPerformanceClass",
   "route_id": "Open77.vehicles.clearPerformanceClass"
  },
@@ -6353,7 +6764,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9009,
+  "source_line": 9875,
   "qualified": "Open77.vehicles.get",
   "route_id": "Open77.vehicles.get"
  },
@@ -6385,7 +6796,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9011,
+  "source_line": 9877,
   "qualified": "Open77.vehicles.isDoorOpen",
   "route_id": "Open77.vehicles.isDoorOpen"
  },
@@ -6417,7 +6828,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9012,
+  "source_line": 9878,
   "qualified": "Open77.vehicles.isWindowOpen",
   "route_id": "Open77.vehicles.isWindowOpen"
  },
@@ -6443,9 +6854,42 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9020,
+  "source_line": 9887,
   "qualified": "Open77.vehicles.ratedTopSpeed",
   "route_id": "Open77.vehicles.ratedTopSpeed"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "setControlLock",
+  "handler": "LuaVehicleSetControlLock",
+  "summary": "Locks or releases a stopped vehicle's driving inputs.",
+  "description": "Requires `vehicles.performance`. While locked, the native drive update consumes zero acceleration, zero brake/reverse and no burnout. Releasing restores REDengine's current input snapshot on the next frame; the API never teleports or clamps velocity. Use it for authoritative starting grids after the vehicle is stationary. Like the performance governor, this is client-side gamemode enforcement, not an anti-cheat boundary.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer|string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "locked",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true on success, otherwise false",
+   "reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 9886,
+  "qualified": "Open77.vehicles.setControlLock",
+  "route_id": "Open77.vehicles.setControlLock"
  },
  {
   "namespace": "Open77.vehicles",
@@ -6476,7 +6920,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9015,
+  "source_line": 9881,
   "qualified": "Open77.vehicles.setPerformance",
   "route_id": "Open77.vehicles.setPerformance"
  },
@@ -6509,7 +6953,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9017,
+  "source_line": 9883,
   "qualified": "Open77.vehicles.setPerformanceClass",
   "route_id": "Open77.vehicles.setPerformanceClass"
  },
@@ -6548,7 +6992,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9014,
+  "source_line": 9880,
   "qualified": "Open77.vehicles.taskPlayerEnterVehicle",
   "route_id": "Open77.vehicles.taskPlayerEnterVehicle"
  },
@@ -6587,7 +7031,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9013,
+  "source_line": 9879,
   "qualified": "Open77.vehicles.warpPlayerIntoVehicle",
   "route_id": "Open77.vehicles.warpPlayerIntoVehicle"
  },
@@ -6607,7 +7051,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9172,
+  "source_line": 10049,
   "qualified": "Open77.vfx.catalog",
   "route_id": "Open77.vfx.catalog"
  },
@@ -6627,7 +7071,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9167,
+  "source_line": 10044,
   "qualified": "Open77.vfx.clear",
   "route_id": "Open77.vfx.clear"
  },
@@ -6647,7 +7091,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9170,
+  "source_line": 10047,
   "qualified": "Open77.vfx.list",
   "route_id": "Open77.vfx.list"
  },
@@ -6680,7 +7124,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9163,
+  "source_line": 10040,
   "qualified": "Open77.vfx.play",
   "route_id": "Open77.vfx.play"
  },
@@ -6713,7 +7157,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9164,
+  "source_line": 10041,
   "qualified": "Open77.vfx.playEntity",
   "route_id": "Open77.vfx.playEntity"
  },
@@ -6740,7 +7184,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 9165,
+  "source_line": 10042,
   "qualified": "Open77.vfx.stop",
   "route_id": "Open77.vfx.stop"
  },
@@ -6767,7 +7211,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8844,
+  "source_line": 9697,
   "qualified": "Open77.voice.devices",
   "route_id": "Open77.voice.devices"
  },
@@ -6800,7 +7244,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8847,
+  "source_line": 9700,
   "qualified": "Open77.voice.selectDevice",
   "route_id": "Open77.voice.selectDevice"
  },
@@ -6827,7 +7271,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8848,
+  "source_line": 9701,
   "qualified": "Open77.voice.setCaptureEnabled",
   "route_id": "Open77.voice.setCaptureEnabled"
  },
@@ -6860,7 +7304,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8857,
+  "source_line": 9710,
   "qualified": "Open77.voice.setChannelVolume",
   "route_id": "Open77.voice.setChannelVolume"
  },
@@ -6887,7 +7331,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8851,
+  "source_line": 9704,
   "qualified": "Open77.voice.setInputVolume",
   "route_id": "Open77.voice.setInputVolume"
  },
@@ -6914,7 +7358,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8850,
+  "source_line": 9703,
   "qualified": "Open77.voice.setMicrophoneTest",
   "route_id": "Open77.voice.setMicrophoneTest"
  },
@@ -6941,7 +7385,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8852,
+  "source_line": 9705,
   "qualified": "Open77.voice.setOutputVolume",
   "route_id": "Open77.voice.setOutputVolume"
  },
@@ -6974,7 +7418,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8856,
+  "source_line": 9709,
   "qualified": "Open77.voice.setPlayerBlocked",
   "route_id": "Open77.voice.setPlayerBlocked"
  },
@@ -7007,7 +7451,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8855,
+  "source_line": 9708,
   "qualified": "Open77.voice.setPlayerVolume",
   "route_id": "Open77.voice.setPlayerVolume"
  },
@@ -7034,7 +7478,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8854,
+  "source_line": 9707,
   "qualified": "Open77.voice.setProximityDistance",
   "route_id": "Open77.voice.setProximityDistance"
  },
@@ -7067,7 +7511,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8849,
+  "source_line": 9702,
   "qualified": "Open77.voice.setTransmitting",
   "route_id": "Open77.voice.setTransmitting"
  },
@@ -7100,7 +7544,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8853,
+  "source_line": 9706,
   "qualified": "Open77.voice.setVoiceActivation",
   "route_id": "Open77.voice.setVoiceActivation"
  },
@@ -7120,7 +7564,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8845,
+  "source_line": 9698,
   "qualified": "Open77.voice.status",
   "route_id": "Open77.voice.status"
  },
@@ -7140,7 +7584,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8846,
+  "source_line": 9699,
   "qualified": "Open77.voice.talkers",
   "route_id": "Open77.voice.talkers"
  },
@@ -7173,7 +7617,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8949,
+  "source_line": 9815,
   "qualified": "Open77.weapons.activate",
   "route_id": "Open77.weapons.activate"
  },
@@ -7193,7 +7637,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8955,
+  "source_line": 9821,
   "qualified": "Open77.weapons.all",
   "route_id": "Open77.weapons.all"
  },
@@ -7232,7 +7676,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8947,
+  "source_line": 9813,
   "qualified": "Open77.weapons.assign",
   "route_id": "Open77.weapons.assign"
  },
@@ -7252,7 +7696,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8952,
+  "source_line": 9818,
   "qualified": "Open77.weapons.holster",
   "route_id": "Open77.weapons.holster"
  },
@@ -7279,7 +7723,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8950,
+  "source_line": 9816,
   "qualified": "Open77.weapons.remove",
   "route_id": "Open77.weapons.remove"
  },
@@ -7312,7 +7756,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8948,
+  "source_line": 9814,
   "qualified": "Open77.weapons.setActive",
   "route_id": "Open77.weapons.setActive"
  },
@@ -7345,7 +7789,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8953,
+  "source_line": 9819,
   "qualified": "Open77.weapons.setAmmo",
   "route_id": "Open77.weapons.setAmmo"
  },
@@ -7365,7 +7809,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8946,
+  "source_line": 9812,
   "qualified": "Open77.weapons.slots",
   "route_id": "Open77.weapons.slots"
  },
@@ -7385,7 +7829,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8954,
+  "source_line": 9820,
   "qualified": "Open77.weapons.snapshot",
   "route_id": "Open77.weapons.snapshot"
  },
@@ -7412,7 +7856,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8951,
+  "source_line": 9817,
   "qualified": "Open77.weapons.unequip",
   "route_id": "Open77.weapons.unequip"
  },
@@ -7439,7 +7883,7 @@
   "source": "ResourceHost.cpp",
   "example": "local overlay = WebUI.create({\n    entry = \"web/index.html\",\n    layer = \"hud\",\n    transparent = true,\n    visible = true          -- never false for a permanent overlay\n})",
   "inferred": false,
-  "source_line": 8865,
+  "source_line": 9718,
   "qualified": "Open77.webui.create",
   "route_id": "Open77.webui.create"
  },
@@ -7458,7 +7902,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8866,
+  "source_line": 9719,
   "qualified": "Open77.webui.default",
   "route_id": "Open77.webui.default"
  },
@@ -7477,7 +7921,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8739,
+  "source_line": 9589,
   "qualified": "WebUI.Page.destroy",
   "route_id": "WebUI.Page.destroy"
  },
@@ -7496,7 +7940,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8741,
+  "source_line": 9591,
   "qualified": "WebUI.Page.hide",
   "route_id": "WebUI.Page.hide"
  },
@@ -7515,7 +7959,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8738,
+  "source_line": 9588,
   "qualified": "WebUI.Page.id",
   "route_id": "WebUI.Page.id"
  },
@@ -7541,7 +7985,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8745,
+  "source_line": 9595,
   "qualified": "WebUI.Page.off",
   "route_id": "WebUI.Page.off"
  },
@@ -7573,7 +8017,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8744,
+  "source_line": 9594,
   "qualified": "WebUI.Page.on",
   "route_id": "WebUI.Page.on"
  },
@@ -7611,7 +8055,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8746,
+  "source_line": 9596,
   "qualified": "WebUI.Page.reply",
   "route_id": "WebUI.Page.reply"
  },
@@ -7643,7 +8087,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8743,
+  "source_line": 9593,
   "qualified": "WebUI.Page.send",
   "route_id": "WebUI.Page.send"
  },
@@ -7681,7 +8125,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8742,
+  "source_line": 9592,
   "qualified": "WebUI.Page.setFocus",
   "route_id": "WebUI.Page.setFocus"
  },
@@ -7700,7 +8144,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 8740,
+  "source_line": 9590,
   "qualified": "WebUI.Page.show",
   "route_id": "WebUI.Page.show"
  },
@@ -7726,7 +8170,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4613,
+  "source_line": 4879,
   "qualified": "Open77.vehicles.all",
   "route_id": "server:Open77.vehicles.all"
  },
@@ -7758,7 +8202,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4534,
+  "source_line": 4800,
   "qualified": "Open77.vehicles.breakAllGlass",
   "route_id": "server:Open77.vehicles.breakAllGlass"
  },
@@ -7790,7 +8234,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "Open77.vehicles.breakGlass(vehicleId, 0)",
   "inferred": false,
-  "source_line": 4532,
+  "source_line": 4798,
   "qualified": "Open77.vehicles.breakGlass",
   "route_id": "server:Open77.vehicles.breakGlass"
  },
@@ -7822,7 +8266,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4541,
+  "source_line": 4807,
   "qualified": "Open77.vehicles.breakLight",
   "route_id": "server:Open77.vehicles.breakLight"
  },
@@ -7854,7 +8298,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "Open77.vehicles.breakTire(vehicleId, 0)",
   "inferred": false,
-  "source_line": 4546,
+  "source_line": 4812,
   "qualified": "Open77.vehicles.breakTire",
   "route_id": "server:Open77.vehicles.breakTire"
  },
@@ -7886,7 +8330,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4581,
+  "source_line": 4847,
   "qualified": "Open77.vehicles.closeDoor",
   "route_id": "server:Open77.vehicles.closeDoor"
  },
@@ -7918,7 +8362,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4591,
+  "source_line": 4857,
   "qualified": "Open77.vehicles.closeWindow",
   "route_id": "server:Open77.vehicles.closeWindow"
  },
@@ -7944,7 +8388,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "local id, reason = Open77.vehicles.create({\n  record = \"Vehicle.v_standard2_thorton_galena_player\",\n  position = { x = -1671.2, y = -710.3, z = 49.9 },\n  yaw = 90.0,\n})",
   "inferred": false,
-  "source_line": 4498,
+  "source_line": 4764,
   "qualified": "Open77.vehicles.create",
   "route_id": "server:Open77.vehicles.create"
  },
@@ -7982,7 +8426,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4519,
+  "source_line": 4785,
   "qualified": "Open77.vehicles.damageBodyCell",
   "route_id": "server:Open77.vehicles.damageBodyCell"
  },
@@ -8020,7 +8464,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4525,
+  "source_line": 4791,
   "qualified": "Open77.vehicles.damageBodyZone",
   "route_id": "server:Open77.vehicles.damageBodyZone"
  },
@@ -8052,7 +8496,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "Open77.vehicles.detachPart(vehicleId, \"bumperFront\")",
   "inferred": false,
-  "source_line": 4564,
+  "source_line": 4830,
   "qualified": "Open77.vehicles.detachPart",
   "route_id": "server:Open77.vehicles.detachPart"
  },
@@ -8071,7 +8515,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4497,
+  "source_line": 4763,
   "qualified": "Open77.vehicles.detachedParts",
   "route_id": "server:Open77.vehicles.detachedParts"
  },
@@ -8097,7 +8541,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4612,
+  "source_line": 4878,
   "qualified": "Open77.vehicles.get",
   "route_id": "server:Open77.vehicles.get"
  },
@@ -8123,7 +8567,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4515,
+  "source_line": 4781,
   "qualified": "Open77.vehicles.getDamage",
   "route_id": "server:Open77.vehicles.getDamage"
  },
@@ -8149,7 +8593,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4602,
+  "source_line": 4868,
   "qualified": "Open77.vehicles.getDamageProfile",
   "route_id": "server:Open77.vehicles.getDamageProfile"
  },
@@ -8181,7 +8625,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4582,
+  "source_line": 4848,
   "qualified": "Open77.vehicles.isDoorOpen",
   "route_id": "server:Open77.vehicles.isDoorOpen"
  },
@@ -8213,7 +8657,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4567,
+  "source_line": 4833,
   "qualified": "Open77.vehicles.isPartDetached",
   "route_id": "server:Open77.vehicles.isPartDetached"
  },
@@ -8245,7 +8689,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4592,
+  "source_line": 4858,
   "qualified": "Open77.vehicles.isWindowOpen",
   "route_id": "server:Open77.vehicles.isWindowOpen"
  },
@@ -8277,7 +8721,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "Open77.vehicles.openDoor(vehicleId, Open77.vehicles.doors.trunk)",
   "inferred": false,
-  "source_line": 4580,
+  "source_line": 4846,
   "qualified": "Open77.vehicles.openDoor",
   "route_id": "server:Open77.vehicles.openDoor"
  },
@@ -8309,7 +8753,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4590,
+  "source_line": 4856,
   "qualified": "Open77.vehicles.openWindow",
   "route_id": "server:Open77.vehicles.openWindow"
  },
@@ -8341,7 +8785,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4597,
+  "source_line": 4863,
   "qualified": "Open77.vehicles.registerDamageProfile",
   "route_id": "server:Open77.vehicles.registerDamageProfile"
  },
@@ -8367,7 +8811,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4611,
+  "source_line": 4877,
   "qualified": "Open77.vehicles.remove",
   "route_id": "server:Open77.vehicles.remove"
  },
@@ -8399,7 +8843,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "Open77.vehicles.repair(vehicleId, \"visual\")",
   "inferred": false,
-  "source_line": 4596,
+  "source_line": 4862,
   "qualified": "Open77.vehicles.repair",
   "route_id": "server:Open77.vehicles.repair"
  },
@@ -8425,7 +8869,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4538,
+  "source_line": 4804,
   "qualified": "Open77.vehicles.repairAllGlass",
   "route_id": "server:Open77.vehicles.repairAllGlass"
  },
@@ -8451,7 +8895,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4543,
+  "source_line": 4809,
   "qualified": "Open77.vehicles.repairAllLights",
   "route_id": "server:Open77.vehicles.repairAllLights"
  },
@@ -8477,7 +8921,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4548,
+  "source_line": 4814,
   "qualified": "Open77.vehicles.repairAllTires",
   "route_id": "server:Open77.vehicles.repairAllTires"
  },
@@ -8509,7 +8953,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4523,
+  "source_line": 4789,
   "qualified": "Open77.vehicles.repairBodyCell",
   "route_id": "server:Open77.vehicles.repairBodyCell"
  },
@@ -8541,7 +8985,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4526,
+  "source_line": 4792,
   "qualified": "Open77.vehicles.repairBodyZone",
   "route_id": "server:Open77.vehicles.repairBodyZone"
  },
@@ -8573,7 +9017,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4533,
+  "source_line": 4799,
   "qualified": "Open77.vehicles.repairGlass",
   "route_id": "server:Open77.vehicles.repairGlass"
  },
@@ -8605,7 +9049,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4542,
+  "source_line": 4808,
   "qualified": "Open77.vehicles.repairLight",
   "route_id": "server:Open77.vehicles.repairLight"
  },
@@ -8637,7 +9081,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4547,
+  "source_line": 4813,
   "qualified": "Open77.vehicles.repairTire",
   "route_id": "server:Open77.vehicles.repairTire"
  },
@@ -8675,7 +9119,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4518,
+  "source_line": 4784,
   "qualified": "Open77.vehicles.setBodyCell",
   "route_id": "server:Open77.vehicles.setBodyCell"
  },
@@ -8707,7 +9151,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4517,
+  "source_line": 4783,
   "qualified": "Open77.vehicles.setBodyDamage",
   "route_id": "server:Open77.vehicles.setBodyDamage"
  },
@@ -8745,7 +9189,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4524,
+  "source_line": 4790,
   "qualified": "Open77.vehicles.setBodyZone",
   "route_id": "server:Open77.vehicles.setBodyZone"
  },
@@ -8777,7 +9221,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4516,
+  "source_line": 4782,
   "qualified": "Open77.vehicles.setDamage",
   "route_id": "server:Open77.vehicles.setDamage"
  },
@@ -8809,7 +9253,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4549,
+  "source_line": 4815,
   "qualified": "Open77.vehicles.setDetachedPartMask",
   "route_id": "server:Open77.vehicles.setDetachedPartMask"
  },
@@ -8841,7 +9285,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4571,
+  "source_line": 4837,
   "qualified": "Open77.vehicles.setDoorMask",
   "route_id": "server:Open77.vehicles.setDoorMask"
  },
@@ -8879,7 +9323,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4576,
+  "source_line": 4842,
   "qualified": "Open77.vehicles.setDoorOpen",
   "route_id": "server:Open77.vehicles.setDoorOpen"
  },
@@ -8917,7 +9361,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4528,
+  "source_line": 4794,
   "qualified": "Open77.vehicles.setGlassBroken",
   "route_id": "server:Open77.vehicles.setGlassBroken"
  },
@@ -8949,7 +9393,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4527,
+  "source_line": 4793,
   "qualified": "Open77.vehicles.setGlassMask",
   "route_id": "server:Open77.vehicles.setGlassMask"
  },
@@ -8987,7 +9431,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4540,
+  "source_line": 4806,
   "qualified": "Open77.vehicles.setLightBroken",
   "route_id": "server:Open77.vehicles.setLightBroken"
  },
@@ -9019,7 +9463,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4539,
+  "source_line": 4805,
   "qualified": "Open77.vehicles.setLightMask",
   "route_id": "server:Open77.vehicles.setLightMask"
  },
@@ -9057,7 +9501,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4557,
+  "source_line": 4823,
   "qualified": "Open77.vehicles.setPartDetached",
   "route_id": "server:Open77.vehicles.setPartDetached"
  },
@@ -9095,7 +9539,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4545,
+  "source_line": 4811,
   "qualified": "Open77.vehicles.setTireBroken",
   "route_id": "server:Open77.vehicles.setTireBroken"
  },
@@ -9127,7 +9571,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4544,
+  "source_line": 4810,
   "qualified": "Open77.vehicles.setTireMask",
   "route_id": "server:Open77.vehicles.setTireMask"
  },
@@ -9159,7 +9603,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4604,
+  "source_line": 4870,
   "qualified": "Open77.vehicles.setTransform",
   "route_id": "server:Open77.vehicles.setTransform"
  },
@@ -9197,7 +9641,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4586,
+  "source_line": 4852,
   "qualified": "Open77.vehicles.setWindowOpen",
   "route_id": "server:Open77.vehicles.setWindowOpen"
  },
@@ -9229,7 +9673,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 4514,
+  "source_line": 4780,
   "qualified": "Open77.vehicles.update",
   "route_id": "server:Open77.vehicles.update"
  }

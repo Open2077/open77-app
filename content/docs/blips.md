@@ -38,7 +38,7 @@ permissions { "ui.vanilla.map" }
 ```
 
 Then validate the texture and associate it with the blip. The native `sprite` provides the actual
-rendering, selection, filtering, GPS routing, and fullscreen-map tooltip on Cyberpunk 2077 2.31.
+rendering, selection, filtering, and fullscreen-map tooltip on Cyberpunk 2077 2.31.
 
 ```lua
 local jobIcon, reason = Open77.assets.texture("assets/blips/job-center.png")
@@ -86,6 +86,29 @@ Open77.blips.attachToEntity(playerBlip, anotherEntityId, "poi_mappin", {
 
 `position` and `entity` are mutually exclusive at creation. `setPosition` turns an attached blip into a positional one. In `update`, `entity = false` only detaches when a new `position` is supplied.
 
+## A calculated GPS route
+
+Tracking a normal static point selects its mappin but does not make REDengine calculate a road
+path. Create a positional blip with `routable = true`, then track it:
+
+```lua
+local destination = assert(Open77.blips.create({
+    position = { x = -1442.2, y = 127.4, z = 18.0 },
+    routable = true,
+    title = "Next checkpoint"
+}))
+
+local ok, changed = Open77.blips.track(destination)
+assert(ok, changed)
+```
+
+The routable form uses the trusted `Mappins.CustomPositionMappinDefinition` and
+`CustomPositionVariant` pair used by a right-click waypoint. Its sprite is therefore fixed to the
+custom-waypoint variant. It cannot follow an entity. REDengine owns the road calculation and the
+minimap/HUD path. A generic waypoint does **not** automatically create the orange 3D chevrons used
+by the authored `sq024` street race; those are separate world entities. `update` can move the
+destination but cannot change `routable`; remove and recreate it to change kind.
+
 ## Full API
 
 | Function | Result | Role |
@@ -102,6 +125,7 @@ Open77.blips.attachToEntity(playerBlip, anotherEntityId, "poi_mappin", {
 | `setActive(id, active)` | `boolean, reason?` | Enables or disables the vanilla mappin. |
 | `setVisibleThroughWalls(id, visible)` | `boolean, reason?` | Changes visibility through walls. |
 | `setTrackingAlternative(id, targetIdOrNil)` | `boolean, reason?` | Sets or clears the alternative routing blip. |
+| `track(id)` | `true, changed`, or `false, reason` | Selects this blip as the vanilla GPS destination. |
 | `untrack(id)` | `true, wasTracked`, or `false, reason` | Removes tracking only if this blip is the tracked one. |
 | `get(id)` | `snapshot`, or `nil, reason` | Reads a blip owned by the current resource. |
 | `list()` | `snapshots`, or `nil, reason` | Lists only the current resource's blips. |
@@ -109,9 +133,9 @@ Open77.blips.attachToEntity(playerBlip, anotherEntityId, "poi_mappin", {
 | `remove(id)` | `boolean, reason?` | Deletes a blip. |
 | `clear()` | `true` | Deletes every blip owned by the resource. |
 
-`create` options: `position` or `entity`, `sprite`, `title`, `description`, `icon`, `active`, `visibleThroughWalls`, plus `slot` and `offset` for an entity. `label` remains an alias for `title`; do not provide both. `update` accepts the same fields, and the dedicated setters can change text at runtime. The quotas are 128 blips per resource and 512 per client. Stopping, reloading, and leaving the world clean up blips automatically.
+`create` options: `position` or `entity`, `sprite`, `title`, `description`, `icon`, `active`, `visibleThroughWalls`, `routable`, plus `slot` and `offset` for an entity. `label` remains an alias for `title`; do not provide both. `update` accepts the mutable fields (not `routable`), and the dedicated setters can change text at runtime. The quotas are 128 blips per resource and 512 per client. Stopping, reloading, and leaving the world clean up blips automatically.
 
-A resource can neither read, change, nor delete another resource's blip. The TweakDB type is fixed to `Mappins.DefaultStaticMappin`; downloaded packages cannot inject an arbitrary UI profile.
+A resource can neither read, change, nor delete another resource's blip. The TweakDB type is fixed to `Mappins.DefaultStaticMappin`, or to the single trusted custom-position definition when `routable = true`; downloaded packages cannot inject an arbitrary UI profile.
 
 `title` and `description` are resource-owned text. When the player highlights the blip on the fullscreen map, Open77 replaces the variant-specific tooltip with those exact values. Variant-specific fixer progress, threat, journal, price and travel panels are hidden for Open77 blips. HUD-only variants can still be absent from the fullscreen map; use a map-capable sprite such as `objective`, `quest`, `fast_travel`, `vehicle`, or a service-point variant when map selection is required.
 
@@ -204,4 +228,8 @@ Custom PNG icons are not converted into `gamedataMappinVariant` values. Open77 k
 mappin and its declared icon metadata, but 2.31 renders only the native sprite for stability.
 WebP and runtime REDengine archive mounting are not supported.
 
-The native system can clear the current tracking and set an alternative, but offers no safe `TrackMappin(id)`. The world map tracks a UI controller, not a raw id. `untrack(id)` therefore checks that the requested mappin really is the tracked one before doing anything; it cannot remove a vanilla objective.
+`track(id)` follows the same internal `MappinSystem` operation as selecting a pin on the fullscreen
+map: it changes the manually tracked id. Route calculation is a second condition and only starts
+for a blip created with `routable = true`. It returns `changed = false` when that blip is already
+tracked. `untrack(id)` first checks that the requested mappin really is the tracked one, so it cannot
+remove a vanilla objective or another resource's destination.

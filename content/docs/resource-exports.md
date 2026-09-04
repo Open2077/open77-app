@@ -75,11 +75,35 @@ behavior are documented in [Clothing Lua API](../docs/clothing.md).
 | `setActive` / `activate` | `setActive(slot)` or `setActive(record, options?)` | Native asynchronous request ID. |
 | `remove` / `unequip` | `remove(slot)` | Native asynchronous request ID. |
 | `holster` | `holster()` | Native asynchronous request ID. |
+| `setAmmo` | `setAmmo(slot, amounts)` | Sets bounded reserve/magazine amounts through the native asynchronous request path. |
 | `snapshot` / `all` | `snapshot()` | Native asynchronous request ID. |
 
 The package also owns the authenticated target-client relay used by server
 `Open77.weapons.*` calls. Completion, slot-state fields, permissions, errors,
 and authority rules are documented in [Weapon Lua API](weapons-api.md).
+
+### `open77_perspective`
+
+| Export | Signature | Result |
+|---|---|---|
+| `get` | `get()` | Current preferred perspective mode. |
+| `set` | `set(mode)` | Requests `first` or `third` person through the ownership arbiter. |
+| `toggle` | `toggle()` | Toggles the preferred mode. |
+| `state` | `state()` | Current preference, effective mode, ownership and availability. |
+| `key` | `key()` | Current local toggle key. |
+| `setKey` | `setKey(key)` | Validates and persists the local toggle key. |
+
+See [Perspective](perspective.md).
+
+### `open77_vehiclepicker`
+
+| Export | Signature | Result |
+|---|---|---|
+| `open` | `open(options?)` | Opens the picker for a declared roster/list. |
+| `close` | `close()` | Closes it and releases UI focus. |
+| `selection` | `selection(listId)` | Current persisted key for a known list. |
+| `roster` | `roster(listId)` | Read-only roster data for a custom gamemode UI. |
+| `isOpen` | `isOpen()` | Whether the picker currently owns its surface. |
 
 ### `open77_chat`
 
