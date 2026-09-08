@@ -3,8 +3,8 @@ import Link from "next/link";
 
 import { Eyebrow, SlashMark } from "@/components/brand";
 import { JsonLd } from "@/components/json-ld";
+import { DeveloperAlpha } from "@/components/developer-alpha";
 import {
-  ArrowDownIcon,
   ArrowRightIcon,
   CodeIcon,
   InfoIcon,
@@ -19,7 +19,7 @@ import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Create a Server",
-  description: `Run your own Cyberpunk 2077 multiplayer server with OPEN//77. Players need ${PLAYER_REQUIREMENT_SHORT}. The dedicated server does not need the game installed.`,
+  description: `Build an RP server or custom Cyberpunk 2077 multiplayer experience. Apply for the OPEN//77 Developer Alpha Preview. Players need ${PLAYER_REQUIREMENT_SHORT}.`,
   path: "/create",
 });
 
@@ -90,14 +90,20 @@ export default function CreatePage() {
               your rules, your identity, and gameplay you design. {CREATE_REQUIREMENTS_NOTE}
             </p>
             <div className="hero-ctas">
-              <a className="btn btn-primary" href="#how">
-                How it works
-                <ArrowDownIcon />
+              <a className="btn btn-primary" href="#developer-alpha">
+                Apply for developer alpha
+                <ArrowRightIcon />
               </a>
               <Link className="btn btn-ghost" href="/docs/platform#dedicated-servers">
                 Technical docs
               </Link>
             </div>
+          </div>
+        </section>
+
+        <section className="section" aria-label="Developer alpha applications">
+          <div className="section-inner">
+            <DeveloperAlpha />
           </div>
         </section>
 
@@ -186,9 +192,10 @@ export default function CreatePage() {
             <p className="status-note" role="note">
               <InfoIcon />
               <span>
-                <strong>Honest status:</strong> the dedicated server download opens to owners in a
-                later pre-alpha milestone — you cannot host a public world yet. This page shows the
-                intended flow so you can start planning your world now. See the{" "}
+                <strong>Developer preview coming soon.</strong> Applications are open for a limited
+                number of server owners and developers. <a href="#developer-alpha">Apply for access</a>.
+                The steps above describe the hosting flow; applying does not grant immediate access.
+                See the{" "}
                 <Link href="/docs/platform#roadmap">roadmap</Link>.
               </span>
             </p>

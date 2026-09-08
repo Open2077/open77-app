@@ -52,6 +52,7 @@ export const site = {
    */
   ogImage: `/brand/social/og-card-1200x630.png?v=${brandAssets.ogCard}`,
   links: {
+    developerAlpha: "https://form.typeform.com/to/rJZ9YcSp",
     /**
      * The platform repository is not public yet, so this is `null` rather than
      * a URL that returns 404. Several wiki guides reference files that live

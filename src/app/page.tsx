@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Eyebrow, EyebrowSpan, SlashMark } from "@/components/brand";
 import { JsonLd } from "@/components/json-ld";
+import { DeveloperAlpha } from "@/components/developer-alpha";
 import { ArrowRightIcon, CodeIcon, DiscordIcon, GlobeIcon, PlugIcon } from "@/components/icons";
 import { SiteFooter } from "@/components/site-footer";
 import { highlightCode } from "@/lib/docs";
@@ -112,8 +113,8 @@ export default async function HomePage() {
                 Join alpha
                 <ArrowRightIcon />
               </Link>
-              <Link className="btn btn-light btn-lg" href="/create">
-                Create a server
+              <Link className="btn btn-light btn-lg" href="/create#developer-alpha">
+                Build a server · Dev alpha
               </Link>
             </div>
             <ul className="hero-facts" aria-label="Platform facts">
@@ -219,15 +220,7 @@ export default async function HomePage() {
                     </li>
                   ))}
                 </ul>
-                <div className="hero-ctas">
-                  <Link className="btn btn-primary" href="/create">
-                    Start a server
-                    <ArrowRightIcon />
-                  </Link>
-                  <Link className="btn btn-ghost" href="/docs">
-                    Read the docs
-                  </Link>
-                </div>
+                <DeveloperAlpha compact />
               </div>
               <figure className="create-visual">
                 <span className="hud-corners" aria-hidden="true" />
