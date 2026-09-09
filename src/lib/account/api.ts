@@ -70,6 +70,9 @@ export type Account = {
   displayName: string;
   role: string;
   identities: LinkedIdentity[];
+  /** Effective preview entitlement returned by the master, not the stored role. */
+  alphaAccess?: boolean;
+  alphaGateActive?: boolean;
 };
 
 export type License = {
