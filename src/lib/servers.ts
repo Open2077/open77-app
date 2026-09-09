@@ -60,11 +60,9 @@ export const LANGUAGES: ServerLanguage[] = ["EN", "FR", "DE", "ES"];
 /**
  * The server directory.
  *
- * Empty on purpose: no public servers exist during pre-alpha, and the browser
- * renders its honest "no servers live yet" state from an empty list. Pointing
- * `list`/`get` at the real directory API and flipping `isLive` is the entire
- * migration; `servers-demo.ts` is kept for previewing the populated browser
- * locally.
+ * Legacy empty data source for the old demo browser. Production uses the live
+ * master catalog API below; this placeholder says nothing about preview access
+ * or the availability of actual servers. Demo fixtures remain separate.
  */
 export const serverDirectory = {
   isLive: false as boolean,

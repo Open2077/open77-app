@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/json-ld";
 import { getApiIndex } from "@/lib/api-reference";
 import { docHref, getDocsNav, getDocsManifest } from "@/lib/docs";
 import { breadcrumbNode, collectionPageNode, itemListNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
+import { site } from "@/lib/site";
 
 const DESCRIPTION = "Build your world in Night City. Guides for players, server owners and resource developers, plus the complete OPEN//77 Lua API reference.";
 export const metadata = pageMetadata({ title: "Documentation", description: DESCRIPTION, path: "/docs", markdownPath: "/docs.md" });
@@ -24,7 +25,7 @@ export default async function DocsHomePage() {
         toc={<DocToc entries={sections} />}>
         <div className="docs-home">
           <p className="docs-home-intro">OPEN//77 is a multiplayer platform for Cyberpunk 2077. Start with a guide, explore the built-in systems, or look up a function in the API reference.</p>
-          <div className="docs-notice"><span className="docs-notice-icon" aria-hidden="true">i</span><p><strong>A work in progress.</strong> OPEN//77 is in pre-alpha. These guides describe the current platform; APIs and supported features may change.</p></div>
+          <div className="docs-notice"><span className="docs-notice-icon" aria-hidden="true">i</span><p>{site.previewNotice} <Link href="/docs/developer-preview">Read the preview guide →</Link></p></div>
           <section id="start-here">
             <h2>Start here</h2>
             <div className="docs-start-grid">

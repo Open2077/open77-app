@@ -30,9 +30,8 @@ export const metadata: Metadata = {
       "Download the official OPEN//77 dedicated server for Windows or Linux and host your own Cyberpunk 2077 multiplayer world. No game install required on the host.",
     path: "/host",
   }),
-  // TODO(go-public): remove this override (and the HostGate wrapper below) when
-  // the server download opens to every owner — pageMetadata already handles
-  // production indexing correctly.
+  // Preview downloads are exposed to approved accounts and staff. Keep this
+  // account-gated page out of search results until access is unrestricted.
   robots: { index: false, follow: false },
 };
 
@@ -45,8 +44,8 @@ export const revalidate = 300;
 
 /** How you launch the server on each platform, once it is unpacked. */
 const RUN_COMMANDS: Record<ServerBuild["os"], string> = {
-  windows: "Open77.Server.exe  (or  dotnet Open77.Server.dll)",
-  linux: "./Open77.Server",
+  windows: "Start.cmd",
+  linux: "./start.sh",
 };
 
 const SETUP_STEPS = [
@@ -65,19 +64,19 @@ const SETUP_STEPS = [
     title: "Unpack and configure",
     body: (
       <>
-        Unzip (Windows) or untar (Linux), then open <code>server.jsonc</code> and set{" "}
-        <code>masterServer.enabled = true</code>, <code>identity.visibility = &quot;public&quot;</code>
-        , and <code>network.publicEndpoint</code> to your public address.
+        Extract into a new folder and run <code>Start.cmd</code> on Windows or{" "}
+        <code>./start.sh</code> on Linux. Warden&apos;s first-run wizard creates{" "}
+        <code>server.jsonc</code> with your server name, visibility and public endpoints.
       </>
     ),
   },
   {
     num: "03",
-    title: "Set the license env var",
+    title: "Configure your license",
     body: (
       <>
-        Export <code>OP77_LICENSE_KEY</code> with the key from step one, so the server can present
-        it to the master on start-up.
+        Supply your license in setup, or keep it in <code>OP77_LICENSE_KEY</code> when configuring
+        the server manually. The master URL defaults to <code>https://master.open2077.net/</code>.
       </>
     ),
   },
@@ -86,8 +85,8 @@ const SETUP_STEPS = [
     title: "Run it",
     body: (
       <>
-        Start <code>Open77.Server.exe</code> on Windows or <code>./Open77.Server</code> on Linux. It
-        connects, and appears automatically in the launcher for players to join.
+        Open the game and resource-download ports, then start the configured server. Public
+        servers register with the master so approved preview accounts can discover and join them.
       </>
     ),
   },
@@ -126,8 +125,7 @@ export default async function HostPage() {
           </div>
         </section>
 
-        {/* TODO(go-public): delete the <HostGate> wrapper (keep its children) to
-            open this page to every server owner. See components/host/host-gate.tsx. */}
+        {/* Preview approval or staff role is checked against the current account. */}
         <HostGate>
           <section className="section" id="download">
             <div className="section-inner">
@@ -161,9 +159,9 @@ export default async function HostPage() {
               <p className="status-note" role="note">
                 <ServerRackIcon size={18} />
                 <span>
-                  <strong>What the host needs.</strong> The .NET 10 runtime and a public address
-                  players can reach. That is all — no Cyberpunk 2077, no REDengine, no game content
-                  on the server machine.
+                  <strong>Self-contained downloads.</strong> Both platforms include the .NET runtime,
+                  Freeroam and its system resources. Configure your license and reachable endpoints;
+                  no Cyberpunk 2077 installation is needed on the server machine.
                 </span>
               </p>
               <div className="hero-ctas">

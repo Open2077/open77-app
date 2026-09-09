@@ -19,7 +19,7 @@ import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Create a Server",
-  description: `Build an RP server or custom Cyberpunk 2077 multiplayer experience. Apply for the OPEN//77 Developer Alpha Preview. Players need ${PLAYER_REQUIREMENT_SHORT}.`,
+  description: `Build an RP server or custom Cyberpunk 2077 multiplayer experience in the active OPEN//77 Developer Preview. Access requires account approval. Players need ${PLAYER_REQUIREMENT_SHORT}.`,
   path: "/create",
 });
 
@@ -91,7 +91,7 @@ export default function CreatePage() {
             </p>
             <div className="hero-ctas">
               <a className="btn btn-primary" href="#developer-alpha">
-                Apply for developer alpha
+                Apply for preview access
                 <ArrowRightIcon />
               </a>
               <Link className="btn btn-ghost" href="/docs/platform#dedicated-servers">
@@ -101,7 +101,7 @@ export default function CreatePage() {
           </div>
         </section>
 
-        <section className="section" aria-label="Developer alpha applications">
+        <section className="section" aria-label="Developer Preview applications">
           <div className="section-inner">
             <DeveloperAlpha />
           </div>
@@ -192,9 +192,9 @@ export default function CreatePage() {
             <p className="status-note" role="note">
               <InfoIcon />
               <span>
-                <strong>Developer preview coming soon.</strong> Applications are open for a limited
+                <strong>Developer Preview is active.</strong> Applications are open for a limited
                 number of server owners and developers. <a href="#developer-alpha">Apply for access</a>.
-                The steps above describe the hosting flow; applying does not grant immediate access.
+                Approved accounts can download and run the server now; applying does not grant immediate access.
                 See the{" "}
                 <Link href="/docs/platform#roadmap">roadmap</Link>.
               </span>

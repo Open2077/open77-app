@@ -389,13 +389,13 @@ export function ServerBrowser({
         <button
           className="btn btn-primary btn-small"
           type="button"
-          onClick={() => showToast("Direct connect goes live when the alpha opens.")}
+          onClick={() => showToast("Use Direct Connect in the OPEN//77 launcher to join by address.")}
         >
           Connect
         </button>
         <p className="sb-panel-note">
-          Joins a server by address or invite code without using the public directory — available
-          when the alpha opens.
+          Address-based connections are available through Direct Connect in the OPEN//77 launcher.
+          This demo control does not initiate a connection.
         </p>
       </div>
 

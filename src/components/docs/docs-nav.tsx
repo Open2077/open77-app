@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { site } from "@/lib/site";
 
 export type DocsNavItem = { href: string; label: string; children?: { href: string; label: string }[] };
 export type DocsNavGroup = { id: string; title: string; items: DocsNavItem[] };
@@ -45,7 +46,7 @@ export function DocsNav({ groups }: { groups: DocsNavGroup[] }) {
           );
         })}
         <Link className="docs-nav-api" href="/docs/api"><span>⌘ &nbsp; API Reference</span><span>↗</span></Link>
-        <p className="docs-nav-note">Cyberpunk 2077 · Lua 5.4<br />OPEN//77 <span>PRE-ALPHA</span></p>
+        <p className="docs-nav-note">Cyberpunk 2077 · Lua 5.4<br />OPEN//77 <span>{site.stage}</span></p>
       </div>
     </nav>
   );

@@ -19,9 +19,8 @@ import { absoluteUrl, site } from "@/lib/site";
  *
  * Every entry points at the Markdown twin rather than the HTML page, because a
  * model that follows one of these links should get the text, not a parsed DOM.
- * The pre-alpha status and the demo-data caveat are stated up front: an answer
- * engine summarising this site should not tell someone they can download and
- * play it tonight.
+ * Preview availability and account approval are stated together. Downloads,
+ * directory visibility and permission to join a world are different things.
  */
 export const dynamic = "force-static";
 
@@ -41,22 +40,22 @@ export async function GET() {
     "",
     "## Status",
     "",
-    "- Stage: pre-alpha. The Windows player launcher is published and downloadable at /download.",
-    "  The public alpha has not opened: there are no public servers to join, and no release date.",
-    "  Downloading the launcher now means being ready when the alpha opens, not playing tonight —",
-    "  the two belong in the same sentence. The dedicated server build is not public yet.",
-    "- The server browser at /servers is populated with clearly labelled demo data, not live servers.",
-    "- The documentation describes software under construction; APIs can change.",
+    `- ${site.previewNotice}`,
+    "- The Windows player launcher is available at /download. Approved preview accounts and staff",
+    "  can access Windows/Linux dedicated-server downloads at /host, with Freeroam and system resources.",
+    "- /servers reads the live master directory. Any explicitly labelled demo view is illustrative only.",
+    "- Account registration or downloading the launcher does not grant approval to join worlds.",
     "- Unaffiliated with CD PROJEKT RED. Playing requires your own legal copy of Cyberpunk 2077.",
     `- Documentation synced from the platform wiki on ${manifest.syncedAt.slice(0, 10)}.`,
     "",
     "## Site",
     "",
     `- [Home](${absoluteUrl("/")}): what the platform is, for players and for server owners.`,
-    `- [Download](${absoluteUrl("/download")}): the Windows launcher — current version, size, requirements and first run. Downloadable now; the alpha it connects to has not opened.`,
-    `- [Server browser](${absoluteUrl("/servers")}): directory UI, currently demo listings.`,
-    `- [Create a server](${absoluteUrl("/create")}): what hosting an OPEN//77 world will involve.`,
-    `- [Community](${absoluteUrl("/community")}): how to follow the project and join the alpha.`,
+    `- [Download](${absoluteUrl("/download")}): the current Windows launcher, requirements and first run; joining requires account approval.`,
+    `- [Server browser](${absoluteUrl("/servers")}): live master directory.`,
+    `- [Create a server](${absoluteUrl("/create")}): Developer Preview applications and hosting.`,
+    `- [Host a server](${absoluteUrl("/host")}): Windows/Linux server downloads for approved preview accounts and staff.`,
+    `- [Community](${absoluteUrl("/community")}): preview access, updates and feedback.`,
     `- [Brand kit](${absoluteUrl("/brand")}): logo, mark, colours and social assets.`,
     `- [Devblog](${absoluteUrl("/devblog")}): development updates as they ship, one post per working day.`,
     "",

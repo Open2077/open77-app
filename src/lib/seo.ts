@@ -142,7 +142,7 @@ export function softwareApplicationNode(): JsonLdNode {
     applicationCategory: "GameApplication",
     applicationSubCategory: "Multiplayer game modification",
     operatingSystem: "Windows",
-    softwareVersion: "pre-alpha",
+    softwareVersion: site.stageLabel,
     description:
       "A multiplayer platform for Cyberpunk 2077 built around a native client, community-operated " +
       "dedicated servers, and scriptable Lua resources. Requires a legally owned copy of Cyberpunk 2077.",
@@ -292,7 +292,7 @@ export function apiReferenceNode(input: {
     url: absoluteUrl(input.path),
     inLanguage: site.lang,
     programmingLanguage: "Lua",
-    assemblyVersion: "pre-alpha",
+    assemblyVersion: site.stageLabel,
     executableLibraryName: input.namespace,
     targetPlatform: `OPEN//77 ${input.runtime} runtime`,
     isPartOf: { "@id": WEBSITE_ID },

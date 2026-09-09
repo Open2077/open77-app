@@ -17,7 +17,7 @@ export const HOSTING_DESCRIPTION =
   "A step-by-step guide to running your own OPEN//77 dedicated server: get the Windows or Linux build, mint a license key, walk the first-run setup, edit server.jsonc, launch it, and watch it appear automatically in the launcher.";
 
 export const HOSTING_LEDE =
-  "Running your own Night City is a download, a license key and one config file away. The host machine never needs Cyberpunk 2077 installed — just the server build and a public address players can reach.";
+  "Host your own Night City in the active Developer Preview. Download the server, configure your license and reachable endpoints, and invite approved preview accounts. The host does not need Cyberpunk 2077 installed.";
 
 export const HOSTING_OVERVIEW =
   "An OPEN//77 server is a small, self-contained program you run on any Windows or Linux box. You point it at a license key so the platform knows it is yours, tell it its name and public address, and start it. From there it enrols with the master, registers itself, and shows up in every player's launcher within a heartbeat — no manual listing, no ticket, no waiting for approval. This guide walks the whole path, from an empty folder to open doors.";
@@ -72,8 +72,8 @@ export const NEED_INTRO =
 
 export const NEED_POINTS = [
   {
-    label: "The .NET 10 runtime",
-    body: "The Windows build can run against an installed .NET 10 runtime with dotnet Open77.Server.dll, or you can use the bundled Open77.Server.exe. The Linux build is self-contained — it carries its own runtime, so nothing extra is required.",
+    label: "The self-contained server package",
+    body: "Both Windows x64 and Linux x64 downloads include the .NET runtime, native dependencies, Freeroam and its system resources. Extract the archive and use Start.cmd on Windows or ./start.sh on Linux; no separate .NET installation is needed.",
   },
   {
     label: "A public address",

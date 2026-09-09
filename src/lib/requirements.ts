@@ -54,8 +54,8 @@ export const SERVER_REQUIREMENTS = [
     body: "A dedicated server runs independently of Cyberpunk 2077, REDengine and the client plugin. It never loads game content and never needs a copy installed.",
   },
   {
-    label: "Windows x64 and .NET 10",
-    body: "The server is a standalone .NET process with a native networking layer. It is the machine you keep online, not the machine you play on.",
+    label: "Windows x64 or Linux x64",
+    body: "Both official server packages include the .NET runtime and native networking dependencies. No separate .NET installation or copy of the game is needed on the host.",
   },
   {
     label: "Your players still need all of the above",

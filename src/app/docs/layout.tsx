@@ -5,6 +5,7 @@ import { DocsHeader } from "@/components/docs/docs-header";
 import { DocsTheme } from "@/components/docs/docs-theme";
 import { getDocsSearchIndex } from "@/lib/docs";
 import { getApiIndex, stripInlineMarkdown } from "@/lib/api-reference";
+import { site } from "@/lib/site";
 
 export default async function DocsLayout({ children }: { children: ReactNode }) {
   const [guides, api] = await Promise.all([getDocsSearchIndex(), getApiIndex()]);
@@ -20,7 +21,7 @@ export default async function DocsLayout({ children }: { children: ReactNode }) 
       </main>
       <footer className="docs-footer">
         <span>OPEN//77 documentation <span aria-hidden="true">·</span> Built for creators.</span>
-        <div><Link href="/">Back to website ↗</Link><a href="/docs.md">Markdown</a><span>Pre-alpha</span></div>
+        <div><Link href="/">Back to website ↗</Link><a href="/docs.md">Markdown</a><Link href="/docs/developer-preview">{site.stageLabel}</Link></div>
       </footer>
     </DocsTheme>
   );

@@ -29,7 +29,7 @@ const HERO_FACTS = [
   { key: "Model", value: "Community-run dedicated servers" },
   { key: "Requires", value: PLAYER_REQUIREMENT_SHORT },
   { key: "Game modes", value: "Whatever creators build" },
-  { key: "Stage", value: "Pre-alpha, developed in the open" },
+  { key: "Stage", value: "Developer Preview · Active" },
 ];
 
 const PILLAR_ICONS = {
@@ -97,7 +97,7 @@ export default async function HomePage() {
             <i className="amb-scan" />
           </div>
           <div className="hero-inner">
-            <Eyebrow>PRE-ALPHA</Eyebrow>
+            <Eyebrow>{site.stage} · ACTIVE</Eyebrow>
             <h1 className="hero-title">
               Multiplayer for
               <br />
@@ -110,11 +110,11 @@ export default async function HomePage() {
             </p>
             <div className="hero-ctas">
               <Link className="btn btn-primary btn-lg" href="/community#alpha">
-                Join alpha
+                Join preview
                 <ArrowRightIcon />
               </Link>
               <Link className="btn btn-light btn-lg" href="/create#developer-alpha">
-                Build a server · Dev alpha
+                Build a server · Dev preview
               </Link>
             </div>
             <ul className="hero-facts" aria-label="Platform facts">
@@ -327,7 +327,7 @@ export default async function HomePage() {
             </h2>
             <div className="hero-ctas finale-ctas">
               <Link className="btn btn-primary btn-lg" href="/community#alpha">
-                Join alpha
+                Join preview
               </Link>
               {site.links.discord ? (
                 <a
@@ -351,7 +351,7 @@ export default async function HomePage() {
         </section>
       </main>
 
-      <SiteFooter fineprint="Pre-alpha. The public alpha has not opened yet; the server directory opens with it." />
+      <SiteFooter />
 
       <JsonLd
         data={jsonLdGraph(

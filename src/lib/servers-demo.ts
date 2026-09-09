@@ -2,8 +2,8 @@ import type { GameServer } from "@/lib/servers";
 
 /**
  * INVENTED DATA. None of these servers, communities, owners, player counts or
- * pings are real, and none of them can be: OPEN//77 is pre-alpha and the public
- * alpha has not opened, so no community is running a world yet.
+ * pings are real. These fixtures are separate from the active Developer Preview
+ * and its live master directory.
  *
  * They exist so the server browser — the product experience the whole platform
  * is for — can be shown rather than described.
@@ -11,8 +11,7 @@ import type { GameServer } from "@/lib/servers";
  * Rules for this module:
  *   - any surface that renders it must also render `<DemoDataNotice />`;
  *   - never aggregate these numbers into a claim about the project;
- *   - when a real directory API appears, delete this file and point
- *     `serverDirectory` at the endpoint.
+ *   - production listings come from the live master, never these fixtures.
  */
 export const DEMO_SERVERS: GameServer[] = [
   {

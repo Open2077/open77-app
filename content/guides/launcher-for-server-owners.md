@@ -1,7 +1,8 @@
 # Your server in the launcher
 
-Players do not type an IP address into OPEN//77. They open the launcher, pick a
-world from a list, and press connect. Everything between "my server is running"
+Players can open the launcher, pick a world from the directory or their History,
+and press connect. Direct Connect also accepts a hostname/IP and port, including
+local development endpoints. Everything between "my server is running"
 and "a stranger is standing in Night City on it" happens through the launcher,
 and almost none of it is something you configure — it is a contract you either
 satisfy or you do not appear.
@@ -9,11 +10,11 @@ satisfy or you do not appear.
 This page is the operator's half of that contract. The player's half is
 [The OPEN//77 launcher](launcher.md).
 
-> **Where this sits today.** There are no public servers yet, so nothing
-> described here has been exercised at scale by real players. The launcher
-> fetches the directory it is pointed at, and the pieces below are the ones that
-> exist in the code; the parts that are not built yet are called out as such
-> rather than described as if they shipped.
+> **Developer Preview is active.** Server packages and the live directory are
+> available; joining requires approved preview accounts. Local/private endpoints
+> are excluded from the launcher's normal list but remain usable through History
+> and Direct Connect. This is not a claim of large-scale validation. Read the
+> [preview guide](/docs/developer-preview) for scope and known limitations.
 
 ## How a world reaches a player
 

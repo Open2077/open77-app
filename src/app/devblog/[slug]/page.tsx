@@ -88,7 +88,7 @@ export default async function DevblogPostPage({ params }: { params: Promise<{ sl
                 <p className="blog-cta-kicker">FOLLOW THE BUILD</p>
                 <p className="blog-cta-text">
                   A post like this lands every working day. The short versions hit Discord first —
-                  and when the alpha opens its doors, that&apos;s where it will be announced.
+                  and share Developer Preview feedback with the team.
                 </p>
               </div>
               <div className="blog-cta-actions">
@@ -135,7 +135,7 @@ export default async function DevblogPostPage({ params }: { params: Promise<{ sl
         </article>
       </main>
 
-      <SiteFooter fineprint="Pre-alpha. Development is documented as it happens." />
+      <SiteFooter fineprint="Developer Preview is active. Posts are dated records; older entries describe the project at that time." />
 
       <JsonLd
         data={jsonLdGraph(

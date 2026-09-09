@@ -175,18 +175,14 @@ export default async function DownloadPage() {
                 10 / 11, 64-bit
               </p>
             ) : null}
-            {/* Above the fold, next to the download button, and not buried at
-                the bottom of the page: the launcher installs and runs today,
-                but the alpha has not opened. Anyone who reads only the hero
-                still learns the one thing that would otherwise make them feel
-                tricked an hour after installing. */}
+            {/* Downloads are public; approval to join is a separate account gate. */}
             <p className="status-note" role="note">
               <InfoIcon size={18} />
               <span>
-                <strong>Nothing to play on just yet.</strong> The launcher installs, signs you in
-                and keeps the client updated today — but the public alpha has not opened, so the{" "}
-                <Link href="/servers">server browser</Link> stays empty until the first community
-                worlds go live. Grab it now and you are ready the moment they do.
+                <strong>Developer Preview is active.</strong> Install the launcher and browse{" "}
+                <Link href="/servers">live servers</Link>. Joining requires an approved OPEN//77
+                account; downloading does not grant access. Read the{" "}
+                <Link href="/docs/developer-preview">preview guide</Link> before your first connection.
               </span>
             </p>
           </div>
@@ -266,9 +262,8 @@ export default async function DownloadPage() {
             <p className="status-note" role="note">
               <DiscordIcon size={18} />
               <span>
-                <strong>It is pre-alpha, and it shows.</strong> OPEN//77 is being built in the open:
-                the launcher works today, the public alpha has not opened, and the server browser is
-                still quiet. The{" "}
+                <strong>This is a Developer Preview, not a stable release.</strong> Expect bugs,
+                crashes, incomplete features and updates that change APIs. The{" "}
                 {site.links.discord ? (
                   <a href={site.links.discord} target="_blank" rel="noreferrer noopener">
                     Discord
@@ -276,7 +271,7 @@ export default async function DownloadPage() {
                 ) : (
                   "Discord"
                 )}{" "}
-                is where things get fixed — and where the alpha gets announced first.
+                is where you can report reproducible issues and follow preview updates.
               </span>
             </p>
           </div>

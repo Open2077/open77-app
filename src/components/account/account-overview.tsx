@@ -219,8 +219,8 @@ export function AccountOverview({ session }: { session: StoredSession }) {
             </div>
             {account.identities.length === 0 ? (
               <p className="ac-lead" style={{ fontSize: 14.5 }}>
-                No game client is linked to this account yet. Linking happens from the game client
-                and proves possession of its identity key — it ships in a later milestone.
+                No game client is linked to this account yet. Sign into the launcher with this
+                account and follow its game setup; linking proves possession of the client identity key.
               </p>
             ) : (
               <ul className="ac-keys">

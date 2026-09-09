@@ -73,21 +73,20 @@ export default function CommunityPage() {
           <div className="section-inner">
             <div className="alpha-band">
               <div>
-                <Eyebrow>ALPHA ACCESS</Eyebrow>
-                <h2 className="browser-cta-title">The alpha isn&apos;t open yet.</h2>
+                <Eyebrow>DEVELOPER PREVIEW ACCESS</Eyebrow>
+                <h2 className="browser-cta-title">Developer Preview is live.</h2>
                 <p>
-                  OPEN//77 is in pre-alpha and the alpha has not opened — there are no public
-                  servers to join, so there&apos;s no signup form to fill in, and we won&apos;t
-                  pretend otherwise. When the first alpha opens its doors, it will be announced on
-                  the official Discord first. Being there is the closest thing to a waiting list
-                  this project will ever have — and <Link href="/download">the launcher</Link> is
-                  already downloadable, so you can be installed and signed in before the doors open.
+                  The launcher, dedicated server packages and live directory are available now.
+                  Joining a world requires an approved OPEN//77 account. Server owners and resource
+                  developers can <Link href="/create#developer-alpha">apply for preview access</Link>,
+                  then <Link href="/download">install the launcher</Link> and sign in with their
+                  approved account. Read the <Link href="/docs/developer-preview">preview guide</Link>
+                  {" "}for requirements, hosting and known limitations.
                 </p>
               </div>
               <div className="alpha-side">
                 <p className="alpha-status">
-                  <span className="live-dot" aria-hidden="true" /> STATUS: {site.stage} — IN
-                  DEVELOPMENT
+                  <span className="live-dot" aria-hidden="true" /> STATUS: {site.stage} — ACTIVE
                 </p>
                 {site.links.discord ? (
                   <a
@@ -107,18 +106,19 @@ export default function CommunityPage() {
               <div className="follow-card">
                 <h3>Players</h3>
                 <p>
-                  Nowhere to play yet — no public servers are live, so there is nothing to connect
-                  to. <Link href="/download">Download the launcher</Link> anyway and you are set up
-                  in advance. When the alpha opens, the Discord hears it first and this page follows
-                  — and the <Link href="/servers">server browser</Link> goes live with it.
+                  Approved testers can <Link href="/download">download the launcher</Link> and
+                  join worlds from the <Link href="/servers">live server browser</Link>. Downloading
+                  or creating an account alone does not grant access. This preview can contain bugs
+                  and crashes; keep backups and report reproducible issues.
                 </p>
               </div>
               <div className="follow-card">
                 <h3>Server owners</h3>
                 <p>
-                  Start thinking about the world you&apos;d run. The dedicated server ships in a
-                  later milestone — the <Link href="/create">Create a Server</Link> page shows the
-                  intended flow.
+                  <Link href="/host">Download the Windows or Linux server</Link> with Freeroam and
+                  its system resources, then follow the <Link href="/docs/host-a-server">hosting guide</Link>
+                  {" "}to configure your license and public endpoints. Your players need approved
+                  preview accounts too.
                 </p>
               </div>
               <div className="follow-card">
@@ -139,7 +139,7 @@ export default function CommunityPage() {
                   ) : (
                     // No dead link: the platform repository is still private, and this
                     // page's own promise is that there are no fake buttons.
-                    <>The platform repository opens up alongside the first public alpha.</>
+                    <>The platform repository remains private; the published guides and API reference are available now.</>
                   )}
                 </p>
               </div>

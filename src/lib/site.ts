@@ -26,7 +26,10 @@ export const site = {
   locale: "en_US",
   lang: "en",
   themeColor: "#080E19",
-  stage: "PRE-ALPHA",
+  stage: "DEVELOPER PREVIEW",
+  stageLabel: "Developer Preview",
+  previewNotice:
+    "Developer Preview is active. Joining servers requires an approved account. Expect bugs, crashes and API changes; this is not a stable release.",
   tagline: "Cyberpunk 2077 multiplayer. Find a world to play in — or build your own.",
   description:
     "OPEN//77 lets you play Cyberpunk 2077 online on community servers — or create your own server and multiplayer experience. Roleplay, racing, combat, freeroam: pick a world, press connect.",
@@ -38,7 +41,8 @@ export const site = {
     "OPEN//77 is an open, community-run multiplayer platform for Cyberpunk 2077. It is not a single " +
     "server: it is the client, dedicated server and scripting layer that lets communities host and " +
     "script their own persistent Night City worlds. This site documents the platform and its Lua API, " +
-    "and hosts the server browser. The project is pre-alpha and unaffiliated with CD PROJEKT RED.",
+    "and hosts the live server browser. Developer Preview is active with approved-account access; " +
+    "APIs and features may change. The project is unaffiliated with CD PROJEKT RED.",
   disclaimer:
     "OPEN//77 is an unofficial, independent community project. It is not affiliated with, endorsed by, " +
     "or sponsored by CD PROJEKT S.A. “Cyberpunk”, “Cyberpunk 2077” and related marks are trademarks of " +
@@ -86,12 +90,9 @@ export function absoluteUrl(pathname: string): string {
 /**
  * Primary navigation, shared by the header, the mobile menu and the sitemap.
  *
- * `/download` leads, because the launcher is now the thing we want a visitor to
- * take away: it is published, it installs, and downloading it ahead of the
- * alpha is the whole ask. It was unlisted while the page itself was the only
- * place saying the alpha had not opened — that caveat is now on the page above
- * the fold, so pointing people at it no longer sets anyone up for a
- * disappointment.
+ * `/download` leads to the current launcher. Download availability is separate
+ * from permission to join a server: Developer Preview access remains approved
+ * per account, and the download page makes that distinction explicit.
  */
 export const mainNav = [
   { href: "/download", label: "Download" },

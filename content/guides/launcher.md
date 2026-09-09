@@ -12,9 +12,10 @@ absent; and your identity has to reach the game from something the game cannot
 forge. The launcher exists because those are four separate ways to end up with a
 game that starts and then quietly does nothing.
 
-> **The alpha is not open yet.** There are no public servers to join, and the
-> mod index the launcher installs from is not published to production. This page
-> documents what the launcher does, not an invitation to go and do it.
+> **Developer Preview is active.** The launcher, multiplayer updates and live
+> server directory are available now. Joining requires an approved OPEN//77
+> account; downloading alone does not grant access. Start with the
+> [Developer Preview guide](/docs/developer-preview) for access and known limitations.
 
 ## What you need
 
@@ -321,8 +322,21 @@ comes up already joining that world instead of dropping you on the server browse
 If a client is already running, it joins in place rather than launching a second
 one.
 
-There are **no public servers yet**, so the list is empty by design. Nothing is
-broken.
+The directory is live during Developer Preview. Joining requires an approved
+account. If the list is empty, clear filters, refresh it and check the selected
+master and your connection; an empty list is not a statement that the preview
+has not launched. Local/private addresses are deliberately hidden from this list.
+
+### History and Direct Connect
+
+**History** lists confirmed connections, most recent first, including localhost
+and private development servers. Entries show availability from the current
+directory when known; an unlisted raw address can remain **Unknown** rather than
+being declared offline. Failed connection attempts do not create history entries.
+
+Use **Direct Connect** in the launcher to enter `IP:port`, `hostname:port` or
+`[IPv6]:port`. It uses the normal connection flow, including authentication and
+any required mod/security confirmations. It is not an access bypass.
 
 ## Direct connect links
 
@@ -419,7 +433,8 @@ launcher found and what it hashed to, without touching the network or your files
 | "Another mod manager owns files OPEN//77 needs" | Vortex or MO2 has its own copy of a shared loader file — RED4ext's or redscript's. The launcher refuses to overwrite it rather than start a restore war. Let one manager own those files |
 | You were signed in yesterday and are signed out today | Sessions expire. An expired one is treated as signed out rather than half-working; sign in again |
 | The game starts but there is no OPEN//77 in it | Almost always a failed redscript compile reverting to vanilla scripts. The preflight exists to stop this, so check whether anything was installed outside the launcher |
-| The server list is empty | There are no public servers yet |
+| The server list is empty | Clear filters, refresh and check the selected master/network; use History or Direct Connect for local servers |
+| Preview access is required | Sign in with the approved account; downloading the launcher alone does not grant access |
 
 ## See also
 

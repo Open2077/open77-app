@@ -21,7 +21,7 @@ export const PLATFORM_DESCRIPTION =
   "What OPEN//77 is and is not, how players connect, why it is built on dedicated servers rather than peer-to-peer sessions, what server creators can change, the project roadmap, and answers to the questions people ask most.";
 
 export const PLATFORM_LEDE =
-  "The platform, the architecture, and the creator toolkit — documented in the open as the pre-alpha evolves. Design intent, not shipped software.";
+  "The active OPEN//77 Developer Preview: the platform, dedicated servers and creator toolkit available today, with current requirements and preview limitations.";
 
 export const PLATFORM_OVERVIEW =
   "OPEN//77 is an open platform that brings community-run multiplayer servers to Cyberpunk 2077 — the way FiveM opened GTA V. Not one server: an ecosystem of them, each with its own game mode, rules and community.";
@@ -76,7 +76,7 @@ export const SERVER_POINTS = [
   },
   {
     title: "Operated by communities",
-    body: "Anyone will be able to run the server software — on their own hardware or a rented machine — and set their world's rules, resources and moderation.",
+    body: "Server owners can download the Windows or Linux build, configure their platform license, and run their own worlds. Joining worlds during Developer Preview requires an approved player account.",
   },
 ];
 
@@ -158,27 +158,27 @@ export const SERVER_SAMPLE = `RegisterCommand("hello", function(source, args)
 end, false)`;
 
 export const RESOURCES_OUTRO =
-  "That is the real API, not a sketch — every registered function is listed in the Lua API reference at /docs/api, separated by runtime so a client projection is never mistaken for server authority. The surface will still change while the project is in pre-alpha.";
+  "Every registered function is listed in the Lua API reference at /docs/api, separated by runtime so a client projection is never mistaken for server authority. APIs can change during Developer Preview; read each guide's limitations before depending on a feature.";
 
 export const ROADMAP_INTRO =
-  "OPEN//77 is in pre-alpha. The public alpha has not opened, there is no live server list, and there is no release date — and we will not invent any. Here is the honest shape of the road.";
+  "Developer Preview is active. The launcher, Windows/Linux dedicated server, live directory and Lua documentation are available now. Joining requires an approved account. The next milestones focus on reliability and feedback, not a promise of a stable release date.";
 
 export const ROADMAP = [
   {
     stage: "NOW",
-    chip: "PRE-ALPHA",
-    title: "Core multiplayer foundations",
-    body: "Client/server architecture, session handling, and synchronizing players inside the same world — the unglamorous groundwork everything else depends on.",
+    chip: "DEVELOPER PREVIEW",
+    title: "Build and test today",
+    body: "Published launcher and server packages, Freeroam with integrated activities, a live server browser, WebUI and documented client/server Lua APIs. Access is approved per account.",
   },
   {
     stage: "NEXT",
-    title: "Dedicated server & resource system",
-    body: "The self-hostable server build, the resource format, and automatic resource delivery to connecting clients.",
+    title: "Reliability and developer feedback",
+    body: "Broader fresh-install and multiplayer validation, reconnect and animation fixes, clearer diagnostics and improved hosting workflows.",
   },
   {
     stage: "THEN",
-    title: "Server browser & creator SDK",
-    body: "Public server discovery, server pages, and a documented scripting API so the first community worlds can open their doors.",
+    title: "Compatibility and capacity",
+    body: "Measure representative server workloads and hardware, reduce breaking changes, and document supported combinations as they are validated.",
   },
   {
     stage: "BEYOND",
@@ -218,7 +218,7 @@ export const FAQ = [
   {
     question: "Do I need Cyberpunk 2077 to host a server?",
     answer:
-      `No. A dedicated server runs independently of Cyberpunk 2077, REDengine and the client plugin — it is a standalone .NET process on 64-bit Windows and never loads game content. Everyone who connects to it still needs their own Cyberpunk 2077 ${GAME_BUILD} installation with ${GAME_EXPANSION}.`,
+      `No. The dedicated server runs independently of Cyberpunk 2077 on Windows x64 or Linux x64. Both published packages include the .NET runtime. Everyone who connects still needs their own Cyberpunk 2077 ${GAME_BUILD} installation with ${GAME_EXPANSION}.`,
   },
   {
     question: "So is this one big multiplayer server?",
@@ -228,12 +228,12 @@ export const FAQ = [
   {
     question: "Can I play it right now?",
     answer:
-      "Not yet. The project is in pre-alpha and the public alpha has not opened, so there are no public servers to join and nothing to play on. The Windows launcher is published, so you can download and install it now to be ready — it simply has no world to connect you to yet. We publish development progress openly rather than promising dates; when the alpha opens, it will be announced through the project's channels.",
+      "Developer Preview is active. You can download the launcher and browse live servers now; joining requires approval for your OPEN//77 account. Apply through the creator page, then sign into the launcher with your approved account. Expect bugs, crashes and incomplete features — this is not a stable release.",
   },
   {
-    question: "Will I be able to host my own server?",
+    question: "Can I host my own server?",
     answer:
-      "That is the whole design. The dedicated server software will be self-hostable, so you can run your world on your own hardware or a rented machine, moderate it your way, and list it in the public browser.",
+      "Yes. Windows and Linux server packages are available now, with the Freeroam template and system resources included. Follow the hosting guide, configure your server license and reachable endpoints, and connect through the production master. Your players still need approved Developer Preview accounts.",
   },
   {
     question: "What can server creators actually customize?",

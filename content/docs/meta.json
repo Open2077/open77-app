@@ -14,6 +14,14 @@
           "description": "How OPEN//77 packages gameplay as resources: the session model, the authoritative server, a hello-world manifest, and the conventions shared by every Lua API."
         },
         {
+          "slug": "developer-preview",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Developer Preview",
+          "title": "Developer Preview is live",
+          "description": "Start using the active OPEN//77 Developer Preview: account approval, downloads, hosting, the Lua API, experimental features and reporting bugs."
+        },
+        {
           "slug": "platform",
           "kind": "page",
           "nav": "How the platform works",
