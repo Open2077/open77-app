@@ -381,8 +381,8 @@ exist only in that shape.
 
 ## See also
 
-- [The gamemode kernel](gamemode-kernel.md) — why there is no shared server-side
-  gamemode resource, and the conventions every mode's server implements instead.
+- [The gamemode kernel](gamemode-kernel.md) — modular server services and the
+  conventions every mode's state machine implements.
 - [World-anchored POIs](worldui.md) and [Proximity zones](zones.md) — the two
   shared client services this mode's entry station is built from.
 - [NPCs](npcs.md) — the API the bots are built on, including what is not yet in it.

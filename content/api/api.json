@@ -742,6 +742,33 @@
  },
  {
   "namespace": "Open77.animations",
+  "name": "cancel",
+  "handler": "LuaAnimationServiceExport",
+  "summary": "Cancel the local player's RP action and pending requests.",
+  "description": "Stops local presentation and queues a reliable self-cancellation request. Omitting playbackId also abandons pending starts; late acceptances are cancelled. Supply the ID from request() or sequence() in delayed callbacks so they cannot stop a replacement action. A mismatched active ID rejects with stale_playback. Resolving true means cancellation was queued (or nothing was active), not that the server has acknowledged the stop; observe onPlayerAnimationChanged for authoritative state. A player may cancel their own server-started action, never another player's action. Declare dependency 'open77_animations' in your resource manifest. This asynchronous facade requires the service in the same downloaded resource host, not a separate bootstrap host. Await from a managed coroutine/event handler. No animations.presentation capability is required by the caller; underscore hooks are internal.",
+  "params": [
+   {
+    "name": "playbackId",
+    "type": "string",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to true when cancellation is queued or already inactive",
+   "nil, reason if dispatch fails; await() returns nil, reason if rejected"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.animations.cancel()\n    if not pending then print(err); return end\n    local cancelled, rejected = pending:await()\n    if not cancelled then print(rejected) end\nend)",
+  "inferred": false,
+  "source_line": 11070,
+  "qualified": "Open77.animations.cancel",
+  "route_id": "Open77.animations.cancel"
+ },
+ {
+  "namespace": "Open77.animations",
   "name": "current",
   "handler": "LuaAnimationCurrent",
   "summary": "The clip a body is currently playing.",
@@ -763,9 +790,63 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10630,
+  "source_line": 11083,
   "qualified": "Open77.animations.current",
   "route_id": "Open77.animations.current"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "get",
+  "handler": "LuaAnimationServiceExport",
+  "summary": "Look up one RP profile without starting playback.",
+  "description": "Resolves to a copy of the profile, including its default clip and exact allowed variants. Profile IDs are case-sensitive. An unknown ID resolves to nil without an error; check the second await result to distinguish a failed request from a missing profile. Declare dependency 'open77_animations' in your resource manifest. This asynchronous facade requires the service in the same downloaded resource host, not a separate bootstrap host. Await from a managed coroutine/event handler. No animations.presentation capability is required by the caller; underscore hooks are internal.",
+  "params": [
+   {
+    "name": "profileId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to a profile table, or nil when absent",
+   "nil, reason if dispatch fails; await() returns nil, reason if rejected"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.animations.get('smoke')\n    if not pending then print(err); return end\n    local profile, rejected = pending:await()\n    if rejected then print(rejected); return end\n    if profile then print(profile.clip, #profile.clips) end\nend)",
+  "inferred": false,
+  "source_line": 11070,
+  "qualified": "Open77.animations.get",
+  "route_id": "Open77.animations.get"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "list",
+  "handler": "LuaAnimationServiceExport",
+  "summary": "Find synchronized RP animation profiles in the local catalogue.",
+  "description": "Resolves to copied profile definitions containing id, label, category, default clip and allowed clips. The optional query is a case-insensitive substring across ID, label and category, up to 128 characters. An empty query returns all 12 profiles; no match returns an empty array. Catalogue membership and male/female rig bindings are not proof of native playback validation. Declare dependency 'open77_animations' in your resource manifest. This asynchronous facade requires the service in the same downloaded resource host, not a separate bootstrap host. Await from a managed coroutine/event handler. No animations.presentation capability is required by the caller; underscore hooks are internal.",
+  "params": [
+   {
+    "name": "query",
+    "type": "string",
+    "optional": true,
+    "default": "\"\""
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to a profile array",
+   "nil, reason if dispatch fails; await() returns nil, reason if rejected"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.animations.list('social')\n    if not pending then print(err); return end\n    local profiles, rejected = pending:await()\n    if not profiles then print(rejected); return end\n    for _, profile in ipairs(profiles) do print(profile.id, profile.label) end\nend)",
+  "inferred": false,
+  "source_line": 11070,
+  "qualified": "Open77.animations.list",
+  "route_id": "Open77.animations.list"
  },
  {
   "namespace": "Open77.animations",
@@ -796,7 +877,7 @@
   "source": "ResourceHost.cpp",
   "example": "local ok, reason = Open77.animations.play(entityId, \"emote_smoke\")\nif not ok then print(\"refused: \" .. reason) end",
   "inferred": false,
-  "source_line": 10626,
+  "source_line": 11079,
   "qualified": "Open77.animations.play",
   "route_id": "Open77.animations.play"
  },
@@ -829,9 +910,102 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10627,
+  "source_line": 11080,
   "qualified": "Open77.animations.playSelf",
   "route_id": "Open77.animations.playSelf"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "request",
+  "handler": "LuaAnimationServiceExport",
+  "summary": "Request a synchronized RP action for the local player.",
+  "description": "The server validates the named profile and returns a playback state and playbackId; acceptance does not mean the native workspot has mounted. Options are clip, durationMs and loop only. The clip must belong to the profile. loop defaults to true; omitted or zero duration is indefinite when looping. With loop=false the default is 5000 ms. A nonzero duration must be an integer from 1000 to 600000 ms. Playback temporarily uses the F7 third-person body without changing the saved camera preference. Moving, combat and unsafe player states interrupt it. Use cancel(), not the legacy local stop(entity), for synchronized actions. Declare dependency 'open77_animations' in your resource manifest. This asynchronous facade requires the service in the same downloaded resource host, not a separate bootstrap host. Await from a managed coroutine/event handler. No animations.presentation capability is required by the caller; underscore hooks are internal.",
+  "params": [
+   {
+    "name": "profileId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": "{}"
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to the server-accepted playback state",
+   "nil, reason if dispatch fails; await() returns nil, reason if rejected or timed out"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.animations.request('smoke', { loop = false, durationMs = 15000 })\n    if not pending then print(err); return end\n    local playback, rejected = pending:await()\n    if not playback then print(rejected); return end\n    print('Accepted action: ' .. playback.playbackId)\nend)",
+  "inferred": false,
+  "source_line": 11070,
+  "qualified": "Open77.animations.request",
+  "route_id": "Open77.animations.request"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "sequence",
+  "handler": "LuaAnimationServiceExport",
+  "summary": "Request an ordered RP sequence for the local player.",
+  "description": "Accepts 1–16 steps with profile, optional clip and durationMs. Each step defaults to 5000 ms, must last 1000–600000 ms, and the total cannot exceed 600000 ms. The only sequence option is loop, default false. These are server scheduling durations, not measured clip lengths. Profile changes use asynchronous workspot exit/re-entry, not guaranteed seamless blends. The result is authoritative acceptance, not a native rendering acknowledgement. Unlike the server method, this call takes no playerId. Declare dependency 'open77_animations' in your resource manifest. This asynchronous facade requires the service in the same downloaded resource host, not a separate bootstrap host. Await from a managed coroutine/event handler. No animations.presentation capability is required by the caller; underscore hooks are internal.",
+  "params": [
+   {
+    "name": "steps",
+    "type": "table[]",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": "{ loop = false }"
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to the server-accepted playback state",
+   "nil, reason if dispatch fails; await() returns nil, reason if rejected"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.animations.sequence({\n        { profile = 'handsup', durationMs = 4000 },\n        { profile = 'clap', durationMs = 6000 },\n    }, { loop = false })\n    if not pending then print(err); return end\n    local playback, rejected = pending:await()\n    if not playback then print(rejected); return end\n    print(playback.playbackId)\nend)",
+  "inferred": false,
+  "source_line": 11070,
+  "qualified": "Open77.animations.sequence",
+  "route_id": "Open77.animations.sequence"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "state",
+  "handler": "LuaAnimationServiceExport",
+  "summary": "Read the last active RP state visible to this client.",
+  "description": "Defaults to the local player, or accepts a visible player's network ID. Resolves to a copied canonical state, or nil when inactive or unavailable. It does not query arbitrary players outside the routing bucket or verify native rendering. Fields include playerId, playbackId, epoch, revision, active, steps, loop and step timing. On the client, onPlayerAnimationChanged receives this state as a Lua table; the server event instead passes JSON. Do not use a client observation to grant authoritative rewards. Declare dependency 'open77_animations' in your resource manifest. This asynchronous facade requires the service in the same downloaded resource host, not a separate bootstrap host. Await from a managed coroutine/event handler. No animations.presentation capability is required by the caller; underscore hooks are internal.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": "local player"
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to active playback state, or nil when unavailable",
+   "nil, reason if dispatch fails; await() returns nil, reason if rejected"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.animations.state()\n    if not pending then print(err); return end\n    local state, rejected = pending:await()\n    if rejected then print(rejected); return end\n    if state then print(state.playbackId, state.active) end\nend)",
+  "inferred": false,
+  "source_line": 11070,
+  "qualified": "Open77.animations.state",
+  "route_id": "Open77.animations.state"
  },
  {
   "namespace": "Open77.animations",
@@ -856,7 +1030,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10629,
+  "source_line": 11082,
   "qualified": "Open77.animations.stop",
   "route_id": "Open77.animations.stop"
  },
@@ -876,7 +1050,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10628,
+  "source_line": 11081,
   "qualified": "Open77.animations.stopSelf",
   "route_id": "Open77.animations.stopSelf"
  },
@@ -8939,6 +9113,198 @@
   "source_line": 10492,
   "qualified": "WebUI.Page.show",
   "route_id": "WebUI.Page.show"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "current",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Read a player's authoritative active RP playback state.",
+  "description": "Requires players.animations.read. Returns the active state synchronously, or nil without an error when inactive. Fields include epoch, revision, playerId, playbackId, active, bucket, steps, loop, startedAtMs, serverTimeMs, cycle, step, elapsedMs and remainingMs. Timestamps are monotonic server time and step/cycle indices are zero-based. clientRequestId is internal correlation, not a cancellation token. State proves scheduling, not that a native clip rendered. Unlike client current(entity), this does not return a raw clip name. Provided directly by the server runtime; no animation resource export dependency is needed for this server call.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Active playback state, or nil when inactive",
+   "nil, error on failure"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local state, err = Open77.animations.current(playerId)\nif err then print(err); return end\nif state then print(state.playbackId, state.step, state.elapsedMs) end",
+  "inferred": false,
+  "source_line": 5589,
+  "qualified": "Open77.animations.current",
+  "route_id": "server:Open77.animations.current"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "get",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Read the definition and allowed clips of one RP profile.",
+  "description": "No capability is required. Looks up an exact, case-sensitive profile ID such as smoke or phone. Returns nil without an error for an unknown profile. Use the returned clip and clips fields to construct a valid playback request instead of passing arbitrary game animation names. Provided directly by the server runtime; no animation resource export dependency is needed for this server call.",
+  "params": [
+   {
+    "name": "profileId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Profile table, or nil when absent",
+   "nil, error on failure"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local profile, err = Open77.animations.get('smoke')\nif err then print(err); return end\nif profile then print(profile.clip, #profile.clips) end",
+  "inferred": false,
+  "source_line": 5579,
+  "qualified": "Open77.animations.get",
+  "route_id": "server:Open77.animations.get"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "list",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Search the authoritative RP profile catalogue.",
+  "description": "No capability is required. Returns profile definitions synchronously, not a Promise. Search is a case-insensitive substring across ID, label and category; the maximum query length is 128 characters. Empty search returns all 12 profiles and no match returns an empty array. Definitions include clip variants and rig metadata, which must not be mistaken for proof of native rendering. Provided directly by the server runtime; no animation resource export dependency is needed for this server call.",
+  "params": [
+   {
+    "name": "query",
+    "type": "string",
+    "optional": true,
+    "default": "\"\""
+   }
+  ],
+  "returns": [
+   "Profile array on success",
+   "nil, error on failure"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local profiles, err = Open77.animations.list('social')\nif not profiles then print(err); return end\nfor _, profile in ipairs(profiles) do print(profile.id, profile.label) end",
+  "inferred": false,
+  "source_line": 5578,
+  "qualified": "Open77.animations.list",
+  "route_id": "server:Open77.animations.list"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "play",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Start a server-owned, synchronized RP action on a player.",
+  "description": "Requires players.animations.control. The player must be ready, alive, on foot and have a known position. The calling resource VM generation owns the action; another resource cannot replace it. Options are clip, durationMs and loop only. loop defaults to true; omitted/zero duration is indefinite when looping. With loop=false the default is 5000 ms. Nonzero durations are integers from 1000 to 600000 ms; variants must belong to the profile. Returns authoritative acceptance, not proof of native mounting. The local view temporarily uses third person. Unlike the legacy client play(entity, rawClip), this method replicates a curated profile. Provided directly by the server runtime; no animation resource export dependency is needed for this server call.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "profileId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": "{}"
+   }
+  ],
+  "returns": [
+   "Accepted playback state including playbackId",
+   "nil, error on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "-- open77.lua: permission 'players.animations.control'\nlocal playback, err = Open77.animations.play(playerId, 'smoke', {\n    durationMs = 15000, loop = false,\n})\nif not playback then print(err); return end\nprint(playback.playbackId)",
+  "inferred": false,
+  "source_line": 5580,
+  "qualified": "Open77.animations.play",
+  "route_id": "server:Open77.animations.play"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "sequence",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Schedule a server-owned sequence of RP profiles for a player.",
+  "description": "Requires players.animations.control and the same readiness and ownership checks as play(). Accepts 1–16 steps with profile, optional clip and durationMs. Each step defaults to 5000 ms and must last at least 1000 ms; the total cannot exceed 600000 ms. The only sequence option is loop, default false. Durations schedule server transitions and are not measured native clip lengths. Profile switches require workspot exit/re-entry and may not blend seamlessly. Server resource stop, player death, vehicle entry, movement or bucket changes cancel the action. Provided directly by the server runtime; no animation resource export dependency is needed for this server call.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "steps",
+    "type": "table[]",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": "{ loop = false }"
+   }
+  ],
+  "returns": [
+   "Accepted playback state including playbackId",
+   "nil, error on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local playback, err = Open77.animations.sequence(playerId, {\n    { profile = 'handsup', durationMs = 4000 },\n    { profile = 'clap', durationMs = 6000 },\n}, { loop = false })\nif not playback then print(err); return end\nprint(playback.playbackId)",
+  "inferred": false,
+  "source_line": 5583,
+  "qualified": "Open77.animations.sequence",
+  "route_id": "server:Open77.animations.sequence"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "stop",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Stop an RP action owned by the calling server resource.",
+  "description": "Requires players.animations.control. Omitting playbackId stops the current action owned by this VM generation; an action owned by another resource is refused. Pass the recorded ID in delayed callbacks so an old timer cannot stop a newer action: stale IDs return stale_playback. Stopping an already inactive player succeeds. The authoritative onPlayerAnimationChanged event carries the player ID string and JSON state string; native detachment may finish asynchronously on clients. This is not the client-local stop(entity) method. Provided directly by the server runtime; no animation resource export dependency is needed for this server call.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "playbackId",
+    "type": "string",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true on success, including already inactive",
+   "nil, error on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local playback, err = Open77.animations.play(playerId, 'smoke')\nif not playback then print(err); return end\nSetTimeout(10000, function()\n    local stopped, reason = Open77.animations.stop(playerId, playback.playbackId)\n    if not stopped then print(reason) end\nend)",
+  "inferred": false,
+  "source_line": 5586,
+  "qualified": "Open77.animations.stop",
+  "route_id": "server:Open77.animations.stop"
  },
  {
   "namespace": "Open77.vehicles",

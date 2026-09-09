@@ -46,6 +46,8 @@ export type ApiEntry = ApiEntryRaw & {
   href: string;
   /** Lua call signature, e.g. `Open77.blips.create(definition)`. */
   signature: string;
+  /** Tutorial companion, separate from the registration's source provenance. */
+  usageGuideHref?: string;
 };
 
 export type ApiNamespace = {
@@ -202,6 +204,9 @@ async function loadApiIndex(): Promise<ApiIndex> {
       anchor,
       href: `/docs/api/${runtime}/${namespaceSlug}#${anchor}`,
       signature: buildSignature(raw),
+      usageGuideHref: raw.namespace === "Open77.animations"
+        ? `/docs/rp-animations#${runtime}-lua-api`
+        : undefined,
     };
   });
 

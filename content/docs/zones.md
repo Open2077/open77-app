@@ -7,10 +7,9 @@ with separate enter and exit radii so a player standing on the boundary does
 not chatter between the two.
 
 This is a **local presentation signal only**. The service has no server
-half and cannot have one: Open77's server runtime installs no `exports` and
-no cross-resource event bus, so a "server-side zones" resource could never
-be asked anything by another server resource (see
-[the gamemode kernel](gamemode-kernel.md)). Every rule that depends on
+half. A separate authoritative service can now expose
+[server exports](server-exports.md), but the shipped client zone service does
+not become authoritative as a result. Every rule that depends on
 containment -- a queue accepted, a checkpoint claimed, a leash enforced --
 must be re-derived on the **server** from `Open77.players.position` before
 anything is granted. Treat an `enter`/`exit` event as "the client says it is

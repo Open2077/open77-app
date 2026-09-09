@@ -58,13 +58,38 @@ weapon path against her native graph corrupts a component vtable
 (`NpcReplication.cpp`, `Cyberpunk2077.exe+0x336376`). Use it for a passive background body
 and nothing else.
 
-**The three gang aliases are mutually hostile, and that is deliberate.** A spawned hostile
-record runs full vanilla combat AI on every client that streams it in — Open77 neither
-enables that nor can disable it, and `aiMode` does not change it. So whether two NPCs fight
-is a question the engine's own attitude matrix answers about their two records: one faction
-is one side, and one side does not fight. A gamemode that wants NPCs to fight each other
-picks records from different gangs. `resources/gamemodes/open77_deathmatch` round-robins all three for
-exactly this reason.
+**Native combat relations are explicit.** A native gang record runs engine combat AI on
+every client streaming it. For `aiMode = Open77.npcs.ai.native`, the client makes native
+NPCs hostile to the local player and, by default, to other native NPCs in their bucket.
+Choosing the same gang template does not make a team. Idle NPCs acquire the nearest
+hostile NPC within the existing combat radius; default player acquisition uses engine
+perception.
+
+Resources may opt into a shared team and nearby player acquisition through loadout metadata:
+
+```lua
+loadout = {
+    combat = { group = "my_resource_guards", acquirePlayers = true },
+}
+```
+
+Equal nonempty `combat.group` values make native NPC pairs friendly and exclude them
+from each other's automatic target selection. Groups are case-sensitive, at most 64
+ASCII letters, digits, `_`, `-` or `.`; prefix them with the resource name to avoid
+collisions in a shared bucket. Missing or invalid groups preserve free-for-all behavior.
+This controls engine relations, not a server damage arbiter: a gamemode should enforce
+its friendly-fire rules in damage handling too.
+
+`acquirePlayers` defaults to `false`. When explicitly `true`, an idle NPC can acquire a
+living local player in the same bucket within 30 metres, provided a chest-height
+Static/Dynamic world raycast is clear and no closer hostile NPC was selected. The engine
+still decides movement and firing. This is a perception aid, not an AI task or a damage
+grant; gamemode shields and damage validation remain authoritative.
+
+Metadata without a top-level `weapon` never enters the player-proxy equipment path.
+Gang records retain their native inventory. A nested `combat.weapon` is ignored.
+Deploy a client containing this policy before enabling cooperative camps: older clients
+ignore the metadata and retain the default hostility sweep.
 
 ### Complete 2.31 research catalogue
 

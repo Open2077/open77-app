@@ -75,12 +75,20 @@ function audit(file, overlay, resolve) {
 }
 
 let gaps = 0;
+const descriptions = await readOverlay("api-descriptions.json");
+const notes = await readOverlay("api-notes.json");
 gaps += audit(
   "api-descriptions.json",
-  await readOverlay("api-descriptions.json"),
+  descriptions,
   (name) => byQualified.get(name),
 );
-gaps += audit("api-notes.json", await readOverlay("api-notes.json"), (name) =>
+// The extractor deliberately applies api-descriptions after api-notes. Check
+// their effective merged prose rather than requiring a superseded description
+// to survive as well (e.g. Open77.travel.isMapPick).
+const effectiveNotes = Object.fromEntries(Object.entries(notes).map(([name, value]) =>
+  [name, { ...value, ...descriptions[name] }],
+));
+gaps += audit("api-notes.json (effective)", effectiveNotes, (name) =>
   byQualified.get(name),
 );
 gaps += audit(
@@ -88,6 +96,12 @@ gaps += audit(
   await readOverlay("server-vehicle-api.json"),
   (name) => byQualified.get(`Open77.vehicles.${name}`) ?? byQualified.get(name),
 );
+const animations = await readOverlay("animation-api.json");
+for (const runtime of ["client", "server"]) {
+  gaps += audit(`animation-api.json (${runtime})`, animations[runtime], (name) =>
+    byQualified.get(`Open77.animations.${name}`)?.filter((entry) => entry.runtime === runtime),
+  );
+}
 
 console.log("\nCoverage of the generated fields:");
 const withExample = api.filter((entry) => entry.example).length;

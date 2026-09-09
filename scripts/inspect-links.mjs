@@ -20,6 +20,14 @@ const PAGES = [
   "/docs/resource-exports",
   "/docs/server-resources",
   "/docs/debug-runtime",
+  "/docs/rp-animations",
+  "/docs/rp-animation-catalogue",
+  "/docs/api/client/open77-animations",
+  "/docs/api/server/open77-animations",
+  "/docs/server-exports",
+  "/docs/resource-runtime",
+  "/docs/gamemode-kernel",
+  "/docs/api/server/open77-exports",
 ];
 
 const internal = new Set();

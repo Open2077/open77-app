@@ -600,11 +600,10 @@ on this service.
 
 ### A zone event is never proof
 
-This is a **local presentation signal**. The service has no server half and
-cannot have one: the OPEN//77 server runtime installs no `exports` and no
-cross-resource event bus, so a "server-side zones" resource could never be
-asked anything by another server resource — see
-[the gamemode kernel](gamemode-kernel.md).
+This is a **local presentation signal**. The shipped service has no server half.
+You can now build an authoritative zone service using
+[server exports](server-exports.md), but that does not make the client's zone
+events authoritative — see [the gamemode kernel](gamemode-kernel.md).
 
 Every rule that depends on containment — a queue accepted, a checkpoint
 claimed, a leash enforced — must be re-derived on the **server** from

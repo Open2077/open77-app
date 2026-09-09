@@ -97,8 +97,12 @@ still in place and still running.
 **Third person draws its own.** The vanilla reticle belongs to the weapon's HUD and is anchored to
 the first-person aiming camera, so with a third-person camera it has nothing to anchor to and is
 simply not drawn — which is why aiming with a gun used to leave the screen with no crosshair at
-all. Open77 draws its own instead, centred, whenever a weapon is in hand. It is a passive overlay:
-it takes no clicks and cannot swallow input.
+all. The client bootstrap `open77_reticle` draws a centred overlay while aiming with a
+weapon in third person, including native F7 on servers without `open77_perspective`.
+It follows the game's aiming state, not a hard-coded mouse button. It hides when
+aim is released, the weapon is holstered, a menu captures input, or an engine/first-person
+camera takes over. Vanilla hip-fire and first-person HUD behaviour are unchanged.
+The overlay takes no clicks and cannot swallow input.
 
 ## Limitations
 

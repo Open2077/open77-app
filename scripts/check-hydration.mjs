@@ -428,6 +428,61 @@ try {
   `);
   check("guide categories expand", expanded);
 
+  await visit("/docs/rp-animations");
+  reportConsole("RP animation guide");
+  check("RP tutorial links to both runtime references and the catalogue", await session.evaluate(`
+    return !!document.getElementById('quick-start-your-first-client-action') &&
+      !!document.querySelector('a[href="/docs/api/client/open77-animations"]') &&
+      !!document.querySelector('a[href="/docs/api/server/open77-animations"]') &&
+      !!document.querySelector('.dx-prose a[href="/docs/rp-animation-catalogue"]');
+  `));
+  if (process.argv.includes("--docs")) {
+    const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+    await fs.writeFile(".shots/rp-animation-guide.png", Buffer.from(data, "base64"));
+  }
+  for (const [runtime, method, count, expected] of [
+    ["client", "request", 11, "Open77.Promise"],
+    ["server", "play", 6, "players.animations.control"],
+  ]) {
+    await visit(`/docs/api?side=${runtime}&category=players&namespace=Open77.animations#${runtime}/open77-animations/${method}`);
+    reportConsole(`RP ${runtime} API`);
+    const animation = await session.evaluate(`
+      const detail = document.querySelector('.api-detail');
+      return {
+        title: detail.querySelector('h2').textContent,
+        runtime: detail.querySelector('.api-side').textContent,
+        count: document.querySelectorAll('.api-function-row').length,
+        text: detail.textContent,
+        guide: detail.querySelector('a[href^="/docs/rp-animations#"]')?.getAttribute('href'),
+      };
+    `);
+    check(`RP ${runtime} namespace filters and deep link`, animation.title === method && animation.runtime === runtime && animation.count === count, JSON.stringify(animation));
+    check(`RP ${runtime} contract and tutorial link`, animation.text.includes(expected) && animation.guide === `/docs/rp-animations#${runtime}-lua-api`);
+    if (process.argv.includes("--docs")) {
+      const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await fs.writeFile(`.shots/rp-animation-${runtime}-api.png`, Buffer.from(data, "base64"));
+    }
+  }
+
+  await visit("/docs/server-exports");
+  reportConsole("server export guide");
+  check("server export tutorial links back to the API", await session.evaluate(`
+    return !!document.getElementById('publish-a-service') &&
+      !!document.querySelector('.dx-prose a[href="/docs/server-api#cross-resource-exports"]');
+  `));
+  await visit("/docs/api?side=server&namespace=Open77.exports#server/open77-exports/call");
+  reportConsole("server export reference");
+  check("export explorer separates the server runtime", await session.evaluate(`
+    return document.querySelector('.api-detail h2').textContent === 'call' &&
+      document.querySelector('.api-detail-meta .api-side').textContent === 'server' &&
+      document.querySelectorAll('.api-function-row').length === 1 &&
+      document.querySelector('.api-detail').textContent.includes('Promise');
+  `));
+  if (process.argv.includes("--docs")) {
+    const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+    await fs.writeFile(".shots/server-export-api.png", Buffer.from(data, "base64"));
+  }
+
   await visit("/docs/api");
   reportConsole("/docs/api");
   const total = await session.evaluate("return document.querySelectorAll('.api-function-row').length;");
@@ -503,6 +558,19 @@ try {
   `));
   await session.evaluate("document.querySelectorAll('.api-mobile-switch button')[0].click();");
   check("mobile can switch back to functions", await session.evaluate("return getComputedStyle(document.querySelector('.api-function-list')).display !== 'none';"));
+  await visit("/docs/rp-animations");
+  check("RP tutorial fits a mobile viewport", await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
+  reportConsole("mobile RP guide");
+  await visit("/docs/server-exports");
+  check("server export tutorial fits a mobile viewport", await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
+  reportConsole("mobile server export guide");
+  await visit("/docs/api?side=client&namespace=Open77.animations#client/open77-animations/request");
+  check("mobile RP deep link opens client request", await session.evaluate(`
+    return document.querySelector('.api-detail h2').textContent === 'request' &&
+      getComputedStyle(document.querySelector('.api-detail')).display !== 'none' &&
+      document.documentElement.scrollWidth <= innerWidth;
+  `));
+  reportConsole("mobile RP API");
   await visit("/docs/vehicles");
   check("mobile documentation has no horizontal page overflow", await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
   const mobile = await session.evaluate(`

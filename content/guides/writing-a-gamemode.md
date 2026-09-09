@@ -33,15 +33,17 @@ Plus whatever shared client services you consume:
 [`open77_interactions`](interactions.md),
 [`open77_notifications`](notifications.md).
 
-### Why the server is exactly one resource
+### Files or separate server resources
 
-**Server resources cannot call each other.** The server runtime installs no
-`exports`, no `GetInvokingResource`, and no cross-resource event bus.
-`TriggerEvent` is per-VM; only the host fans events into resources. A second
-server resource could never be asked for anything.
+**Server resources can now call each other's exports.** Publish a service with
+`exports(name, fn)` and use `Open77.exports.call(...):await()` from a consumer.
+See [server exports](server-exports.md) for permissions, ownership and reload
+contracts. `TriggerEvent` remains per-VM; exporting a function does not expose it
+as a network event.
 
-So on the server, split by **file**, not by resource. Files inside one
-resource share a Lua state:
+Keep tightly coupled state-machine code in one resource when shared tables are
+useful, and split reusable services by resource when they need independent
+ownership and lifecycle. Files inside one resource share a Lua state:
 
 ```lua
 -- server/main.lua, at the end
@@ -287,8 +289,8 @@ This is not hypothetical: enabling the database for a ranked ladder also
 switched on persistence for the appearance package, which began opening a
 character creator on join while the gamemode teleported the same players to its
 lobby. Both resources were individually correct and the server was unusable.
-They could not have negotiated it between themselves — server resources cannot
-call each other — so the barrier lives in the host.
+The barrier remains host-owned because it combines every participant and its
+generation across reloads. Server exports do not replace that readiness contract.
 
 ```lua
 RegisterNetEvent("<mode>:ready", function()
@@ -498,17 +500,16 @@ pwsh -File .\scripts\new-resource.ps1 -Name <name>     -Kind service
 
 It produces correct manifests (explicit script lists, minimal permissions),
 the right lifecycle event names, string-safe player IDs, and the service
-ownership guard above. On the server, **code generation is the sharing
-mechanism**: since server resources cannot link to each other at runtime,
-the scaffolder is how a common pattern reaches your resource.
+ownership guard above. Code generation remains useful for local patterns;
+[server exports](server-exports.md) provide runtime sharing between services.
 
 Both `pursuit` and `race` began this way and then diverged, which is what a
 generated starting point is for.
 
 ## See also
 
-- [The gamemode kernel](gamemode-kernel.md) — why there is no shared
-  server-side gamemode resource, and what you get instead.
+- [The gamemode kernel](gamemode-kernel.md) — shared server services and
+  state-machine conventions.
 - [The join-time readiness gate](readiness-gate.md) — holds, timeouts and
   the session number.
 - [Operator tunables](tunables.md) — declaring what an owner may retune.

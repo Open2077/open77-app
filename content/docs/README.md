@@ -61,6 +61,7 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Connection control](connection-control.md) | Connect events and deferrals, refusing a player with a message, rejection and disconnect reasons, the built-in whitelist and ban list (Warden, console, `Open77.access`), and worked custom resources. |
 | [World queries](world-queries.md) | Client raycast, aim ray, ground height and the object search around the player (`world.query`). |
 | [Official resource exports](resource-exports.md) | Every client export exposed by the official Lua packages and how to call it safely. |
+| [Cross-resource server exports](server-exports.md) | Publish and call asynchronous server services with caller identity, isolated data, permissions and safe reload behavior. |
 | [Game data reference](data-reference.md) | NPC templates, vehicle records, seats, flags, weapons, appearances, VFX, SFX, animations, and sprite catalogues. |
 | [Identity and ACL](server-acl.md) | Authentication, restricted commands, and access control. |
 | [Player identity](identity.md) | Durable identifiers, display names, and rename flow. |
@@ -78,7 +79,7 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Key mappings](keybindings.md) | The `RegisterKeyMapping` engine primitive: named rebindable actions, press/hold callbacks, the pause KEY BINDINGS tab, and machine-global persistence. |
 | [Proximity zones](zones.md) | Client-side enter/exit hysteresis and the server-side re-validation every caller must apply. |
 | [World-anchored POIs](worldui.md) | The marker-plus-prompt facade: one owned handle, transactional creation and cleanup. |
-| [The gamemode kernel](gamemode-kernel.md) | Why there is no shared server-side gamemode resource, and the roster/state-machine conventions every mode's server implements instead. |
+| [The gamemode kernel](gamemode-kernel.md) | Shared server services through exports, local state-machine conventions, and why the scaffolder remains useful. |
 | [Deathmatch](deathmatch.md) | The shipped free-for-all and arena mode: instances, loadouts, bots, scoring and the operator surface. |
 | [Cordon](cordon.md) | The 64-player battle royale: the closing block cordon, squads and revive at the body, ground loot, bots as contestants, the tunables and what is measured versus designed. |
 | [Notifications](notifications.md) | Reusable WebUI toasts, client/server exports, queues, positions, progress, and ownership. |
@@ -86,6 +87,8 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Blips](blips.md) | Vanilla map markers, entity attachment, and sprites. |
 | [Vanilla HUD visibility](hud-visibility.md) | Client API for minimap, compass, clock, health, stamina, weapons/ammo, speed, and custom-HUD replacement. |
 | [Third person](perspective.md) | The playable third-person view: the player's key, server policy, the states that hand the view back, and the measured limitations. |
+| [RP animations](rp-animations.md) | Synchronized actions, forced local TPP, client/server Lua APIs, commands, ownership and cancellation. |
+| [RP animation catalogue](rp-animation-catalogue.md) | All 12 profiles and 70 selectable clips, prop/placement requirements and validation status. |
 | [World props](props.md) | Server-authoritative props and lights: models, streaming, buckets, ownership, and the client projection. |
 | [Visual and audio effects](effects.md) | Client-local world/entity VFX and spatialised SFX, and the server-replicated effect registry. |
 | [Privileged debug runtime](debug-runtime.md) | ACL-targeted client Lua execution, native lab commands, and REDscript bridge probes. |

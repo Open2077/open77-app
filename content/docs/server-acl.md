@@ -63,6 +63,26 @@ never take part in authorisation.
 
 ## Declaring a restricted command
 
+### Reading effective rights from a server resource
+
+Declare `permission "acl.read"` in the resource manifest, then use:
+
+```lua
+local allowed, error = Open77.acl.isAllowed(source, "command.admin.moderate.kick")
+local roles, error = Open77.acl.roles(source)
+```
+
+These APIs are server-only and read the compiled ACL for an authenticated active
+session. `isAllowed` accepts a concrete permission, not a wildcard; it returns
+false for an absent resolver/session. Invalid IDs (including 0), invalid names
+and missing manifest capability return `false, reason`. `roles` returns the
+matching role labels, or an empty array for an unknown session. Neither writes
+roles or grants rights. Continue registering privileged commands as restricted.
+
+The standalone `open77_admin` resource uses these bindings for `/admin` and
+rechecks commands at execution. See its README and role examples for deployment.
+Its `/pos` and `/rot` utilities intentionally require no admin ACL.
+
 ```lua
 RegisterCommand("garage.delete", function(source, args, rawCommand)
     -- source is the playerId of the authenticated session, or 0 for the server console.

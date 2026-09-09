@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AgentNote } from "@/components/docs/agent-note";
@@ -68,6 +69,12 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <span>{guide.readingMinutes} min read</span>
             <span>{guide.wordCount.toLocaleString("en-GB")} words</span>
             <a href={docMarkdownHref(slug)}>Markdown</a>
+            {slug === "rp-animations" || slug === "rp-animation-catalogue" ? (
+              <>
+                <Link href="/docs/api/client/open77-animations">Client Lua API</Link>
+                <Link href="/docs/api/server/open77-animations">Server Lua API</Link>
+              </>
+            ) : null}
           </>
         }
         toc={<DocToc entries={guide.toc} />}

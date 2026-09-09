@@ -178,8 +178,9 @@ assert(Open77.voice.addPlayer(dispatch.id, officerId, {
 network retained per talker/channel route, so its tail continues after the source stops speaking.
 Effects are canonical channel metadata; a client only renders effects received from the server.
 
-Server packages call these methods directly. This preserves resource ownership of channel handles;
-the dedicated server does not expose the client-only `exports()` global.
+Server packages call these methods directly, preserving resource ownership of
+channel handles. A package can also wrap them in [server exports](server-exports.md):
+the provider still owns the channel and must authorize its callers.
 
 ## Client Lua API
 

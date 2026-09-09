@@ -4,7 +4,10 @@ Open77's native Lua API and resource exports are two separate surfaces. Native m
 `Open77.vehicles.get` are registered by the client or server runtime. The exports below are owned by
 official Lua resources and add lifecycle isolation, WebUI ownership, or higher-level behavior.
 
-All exports on this page are **client exports**. Server-authoritative mutation remains in server
+The package catalogue on this page lists **client exports**. Server resources can
+also publish and call their own exports using the same asynchronous surface; see
+[Cross-resource server exports](server-exports.md). The two registries are separate.
+Server-authoritative mutation remains in server
 scripts through the [server Lua API](server-api.md), net events, or a package's documented server
 interface.
 
@@ -26,13 +29,29 @@ if not result.ok then print(result.error) end
 
 There is no FiveM-style `exports.<resource>:<name>()` proxy. `exports` is a plain function
 used to *publish* an export; indexing it raises *attempt to index a function value*, because
-the Lua sandbox removes `setmetatable` and `getmetatable`. Always call through
+the client Lua sandbox removes `setmetatable` and `getmetatable`. Always call through
 `Open77.exports.call`.
 
 Handles returned by UI packages are resource-owned. Another resource cannot update or dismiss
 them, and they are cleaned automatically when the owning generation stops or reloads.
 
 ## Export catalogue
+
+### `open77_animations`
+
+| Export | Signature | Result |
+|---|---|---|
+| `list` | `list(query?)` | Matching profile definitions. |
+| `get` | `get(profileId)` | Profile or nil. |
+| `request` | `request(profileId, options?)` | Server-accepted local playback, or nil/error. |
+| `sequence` | `sequence(steps, options?)` | Server-accepted local sequence, or nil/error. |
+| `cancel` | `cancel(playbackId?)` | Queue self-cancellation; omitted ID also abandons pending requests. |
+| `state` | `state(playerId?)` | Active canonical state; local player by default. |
+
+The preferred client facade is `Open77.animations.<method>(...):await()` with the
+same arguments/results. Preserve the initial `nil, error` dispatch check before
+awaiting. See [RP animations](rp-animations.md) for examples, permissions, lifecycle
+and the precise native playback validation limits.
 
 ### `open77_appearance`
 

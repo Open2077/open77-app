@@ -116,6 +116,12 @@
           "description": "Every dedicated-server global, Open77 namespace, permission, constant and result shape: scheduler, events, commands, players, combat, routing buckets, loot, vehicles, NPCs, elevators, database and logging."
         },
         {
+          "slug": "server-exports",
+          "kind": "guide",
+          "nav": "Server exports",
+          "description": "Publish and call asynchronous exports across isolated server resources: complete Lua examples, caller identity, permissions, safe values, timeouts and reload behavior."
+        },
+        {
           "slug": "resource-exports",
           "kind": "guide",
           "nav": "Official resource exports",
@@ -178,6 +184,18 @@
           "kind": "guide",
           "nav": "First and third person",
           "description": "Player preferences, server policy and camera ownership."
+        },
+        {
+          "slug": "rp-animations",
+          "kind": "guide",
+          "nav": "RP animations",
+          "description": "How synchronized role-play animations work: install the service, build your first Lua action, use the /anim menu, manage sequences and cancellation, and understand client/server authority and temporary third person."
+        },
+        {
+          "slug": "rp-animation-catalogue",
+          "kind": "guide",
+          "nav": "Animation catalogue",
+          "description": "Browse 12 RP profiles and 70 exact clip variants, with categories, props, placement, rig bindings and clearly stated experimental playback coverage."
         },
         {
           "slug": "photo-mode",
@@ -352,13 +370,13 @@
           "source": "authored",
           "nav": "Writing a gamemode",
           "title": "Writing a gamemode",
-          "description": "The shape of an OPEN//77 gamemode: why the server is exactly one resource and the client is several, the platform behaviours that bite every author, moving players safely, isolating a round in a routing bucket, and what to test first."
+          "description": "Build an OPEN//77 gamemode with local state-machine files or shared server services, move players safely, isolate rounds in routing buckets, and validate authority and lifecycle."
         },
         {
           "slug": "gamemode-kernel",
           "kind": "guide",
           "nav": "The gamemode kernel",
-          "description": "Why there is no shared server-side gamemode resource on OPEN//77, what a mode's server gets instead, and the eight conventions two shipped gamemodes both implement."
+          "description": "Modular gamemode architecture: shared server services through asynchronous exports, isolated ownership, generated state-machine patterns and gameplay conventions."
         },
         {
           "slug": "deathmatch",

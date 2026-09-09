@@ -46,6 +46,29 @@ The namespaced equivalents are:
 | `Open77.events.on` / `off` / `emit` | Same as `AddEventHandler`, `RemoveEventHandler`, `TriggerEvent` |
 | `Open77.net.on` / `emitClient` | Same as `RegisterNetEvent`, `TriggerClientEvent` |
 
+## Cross-resource exports
+
+Server exports use the same asynchronous publish/call/await surface as client
+exports, but only reach other server VMs in the same host. See
+[Cross-resource server exports](server-exports.md) for the complete two-resource
+example, value limits, permissions, cancellation and reload behavior.
+
+| Function | Signature | Result / purpose |
+|---|---|---|
+| `exports` | `(name, function)` | Publish or replace a server export; true or nil/reason. |
+| `GetInvokingResource` | `()` | Immediate caller resource name inside an exported coroutine; nil outside it. |
+| `GetInvokingResourceGeneration` | `()` | Immediate caller's VM generation inside an exported coroutine; nil outside it. |
+| `GetCurrentResourceGeneration` | `()` | Opaque generation identity of this server VM, changed on restart/reload. |
+| `Open77.resource.generation` | `(resourceName?)` | This VM's generation when omitted; another running server resource's generation, or 0 if unavailable. |
+| `Open77.exports.call` | `(resourceName, exportName, ...)` | Promise for a deferred server export; nil/reason if dispatch is refused. Call only from a running resource, not during preparation. |
+| `Open77.Promise.await` | `()` | Use `promise:await()`: copied return values, or nil/reason on rejection. A pending call requires a managed coroutine. |
+| `Open77.Promise.status` | `()` | Use `promise:status()`: pending, resolved, rejected or cancelled. |
+
+The provider retains its own native permissions and data ownership. Validate
+`GetInvokingResource()` before exposing privileged operations. Arguments never
+supply caller identity, and the exported coroutine does not inherit player
+`source`. `TriggerEvent` still dispatches within one VM, not across resources.
+
 ## Resource-local file IO
 
 `Open77.io` is server-only persistent text storage rooted at the calling resource's
@@ -85,8 +108,9 @@ assert(Open77.io.writeJson("courses/watson-loop.json", course))
 ## Join-time readiness gate
 
 The barrier that stops one resource acting on a player another resource is not finished with.
-Server resources cannot call each other, so the host owns this; it is the only place the two
-sides can meet. Full rationale and worked example in
+The host owns the combined readiness barrier across every participant and VM
+generation; asynchronous server exports do not replace this lifecycle contract.
+Full rationale and worked example in
 [docs/lua-resources.md](../docs/lua-resources.md#the-join-time-readiness-gate).
 
 **The rule: do not teleport, spawn, kill or force a respawn on a player until their gate has
@@ -206,6 +230,25 @@ last write wins; one owner, normally the gamemode, is the remedy.
 
 See [perspective](../docs/perspective.md) for the priority table, the player-facing key and
 preference, and the measured limitations.
+
+## Synchronized RP animations
+
+`Open77.animations` supplies server-owned player actions. See the
+[RP guide](rp-animations.md) and [complete profile/clip catalogue](rp-animation-catalogue.md)
+for ownership, sequence durations, events, local TPP and development validation status.
+
+| Method | Signature | Permission / result |
+|---|---|---|
+| `Open77.animations.list` | `(query?)` | No permission; profile array. |
+| `Open77.animations.get` | `(profileId)` | No permission; profile or nil. |
+| `Open77.animations.play` | `(playerId, profileId, options?)` | `players.animations.control`; accepted state. |
+| `Open77.animations.sequence` | `(playerId, steps, options?)` | `players.animations.control`; accepted state. |
+| `Open77.animations.stop` | `(playerId, playbackId?)` | `players.animations.control`; true or nil/error. |
+| `Open77.animations.current` | `(playerId)` | `players.animations.read`; active state or nil. |
+
+`play` and `sequence` return `nil, error` on rejection. An accepted server action
+does not prove native rendering has started. Client methods are a separate,
+Promise-based self-request API; do not use their signatures on the server.
 
 ## Player clothing
 
@@ -826,6 +869,8 @@ resource-prefixed server logger. Their common signature is `(...)`; no return va
 | `players.disconnect` | `Open77.players.disconnect` / `kick` |
 | `players.ban` | `Open77.players.ban` |
 | `combat.config` | `Open77.combat` and damage arbiters |
+| `players.animations.control` | Start, sequence and stop player RP animations owned by this VM |
+| `players.animations.read` | Query a player's authoritative RP playback |
 | `voice.manage` | `Open77.voice` authoritative topology and policy |
 | `filesystem.read` | `Open77.io.read`, `readJson`, `exists`, `list`, `stat`, and the source side of `copy` |
 | `filesystem.write` | `Open77.io.write`, `writeJson`, `append`, `makeDirectory`, `remove`, `move`, and the destination side of `copy` |

@@ -206,7 +206,9 @@ local helpers, reason = require("shared.helpers")
 `<resource>/shared/helpers.lua`, then `<resource>/shared/helpers/init.lua`.
 Modules are text-only and cached per Lua state.
 
-Exports allow asynchronous calls between isolated **client** resources:
+Exports allow asynchronous calls between isolated resources on **both client and
+server**. The registries are separate: a server call reaches a server resource,
+never a player's client resource.
 
 ```lua
 -- The publishing resource
@@ -232,7 +234,7 @@ end)
 
 There is **no** FiveM-style `exports.<resource>:<name>()` proxy. `exports`
 is a plain function used to *publish* an export; indexing it raises *attempt
-to index a function value*, because the sandbox removes `setmetatable` and
+to index a function value*. The client sandbox also removes `setmetatable` and
 `getmetatable`. Always call through `Open77.exports.call`.
 
 Arguments and results are copied through the bounded value codec. Lua
@@ -247,12 +249,29 @@ would let any caller impersonate another resource** — see
 [Writing a gamemode](writing-a-gamemode.md#services-that-others-call) for the
 guard every service should copy.
 
-### Exports are a client-side mechanism
+### Server-to-server exports
 
-The **server** runtime installs no `exports`, no `GetInvokingResource` and
-no cross-resource event bus. A second server resource cannot be asked for
-anything, which is why a gamemode's entire server side is one resource. The
-reasoning is set out in [The gamemode kernel](gamemode-kernel.md).
+The **server** runtime now installs `exports`, `Open77.exports.call`,
+`GetInvokingResource`, `GetInvokingResourceGeneration` and
+`GetCurrentResourceGeneration`. Use the same publish/call/`:await()` form above
+from `server_script` files. A gamemode can split reusable services into separate
+resources while retaining isolated VMs.
+
+The provider executes with **its own permissions**, not those of the caller.
+Authorize callers with `GetInvokingResource()` and validate every argument.
+Player `source` is not inherited by an exported callback. Register at file scope,
+but make calls only from a running resource: candidate preparation refuses them
+with `resource_preparing`. Await pending calls from a managed thread or handler.
+
+Requests are generation-bound; stopping/reloading a provider rejects its pending
+calls. Server requests have a 30-second timeout and bounded copied arguments and
+results. `TriggerEvent` remains per-VM: exports do not add a global event bus.
+
+See [Cross-resource server exports](server-exports.md) for a complete service and
+consumer example, limits, errors and reload behavior, and
+[The gamemode kernel](gamemode-kernel.md) for modular gamemode design. This needs
+the updated server binary; it is not enabled on an older server by changing Lua
+alone. No client update is required.
 
 ## Core runtime API
 

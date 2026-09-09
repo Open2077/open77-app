@@ -13,10 +13,10 @@ Both resources are correct on their own. Together they are an outage.
 > roster, sending them a HUD payload — all unaffected.
 
 `Open77.ready` is the platform's answer. It is **server-side only**, and it has
-to live in the host: server resources are isolated, with no `exports`, no
-cross-resource event bus and a `TriggerEvent` that walks only its own VM, so the
-resource holding the player and the resource wanting to move them cannot speak
-to each other. Only the host sees both.
+to live in the host so holds from every resource and generation form one barrier.
+Resources can communicate through [server exports](server-exports.md), but those
+calls do not replace readiness aggregation or its reload/timeout cleanup.
+`TriggerEvent` still walks only its own VM.
 
 No permission is required.
 
