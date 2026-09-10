@@ -95,12 +95,14 @@ export type CreatedLicense = {
 /** Shared request core, also the base of the admin client in admin-api.ts. */
 export async function masterCall<T>(
   path: string,
-  init: { method?: string; token?: string; body?: unknown } = {},
+  init: { method?: string; token?: string; body?: unknown; signal?: AbortSignal } = {},
 ): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`${MASTER_URL}${path}`, {
       method: init.method ?? "GET",
+      ...(init.token ? { cache: "no-store" as const, redirect: "error" as const } : {}),
+      ...(init.signal ? { signal: init.signal } : {}),
       headers: {
         ...(init.body !== undefined ? { "Content-Type": "application/json" } : {}),
         ...(init.token ? { Authorization: `Bearer ${init.token}` } : {}),

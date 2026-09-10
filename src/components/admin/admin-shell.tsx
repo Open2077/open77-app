@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 
@@ -10,22 +9,9 @@ import { Eyebrow } from "@/components/brand";
 import { ShieldIcon } from "@/components/icons";
 import { me, MasterApiError } from "@/lib/account/api";
 import { useSession } from "@/lib/account/session";
+import { AdminActivityProvider } from "./admin-activity";
+import { AdminWorkspace } from "./admin-workspace";
 
-const ADMIN_NAV = [
-  { href: "/admin", label: "Overview" },
-  { href: "/admin/releases", label: "Releases" },
-  { href: "/host", label: "Host a server" },
-  { href: "/admin/servers", label: "Servers" },
-  { href: "/admin/users", label: "Users" },
-  { href: "/admin/alpha-access", label: "Alpha access" },
-  { href: "/admin/licenses", label: "Licenses" },
-  { href: "/admin/mods", label: "Mods" },
-  // The queue is a peer page rather than a tab inside the whitelist, and gets
-  // its own entry so `aria-current` still names the page you are on.
-  { href: "/admin/mods/requests", label: "Mod queue" },
-  { href: "/admin/bans", label: "Bans" },
-  { href: "/admin/audit", label: "Audit log" },
-] as const;
 
 /**
  * Chrome and gate of the operations console.
@@ -37,7 +23,6 @@ const ADMIN_NAV = [
  */
 export function AdminShell({ children }: { children: ReactNode }) {
   const { session, ready, update, clear } = useSession();
-  const pathname = usePathname();
 
   // The stored role is captured at login; a promotion (or demotion) on the
   // master won't show until we re-sync. Refresh from /me whenever a session is
@@ -68,7 +53,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }, [token, update, clear]);
 
   const head = (
-    <header>
+    <header className="adm-auth-heading">
       <Eyebrow>OPERATIONS</Eyebrow>
       <div className="adm-head">
         <h1 className="adm-title">Admin console.</h1>
@@ -124,20 +109,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <>
-      {head}
-      <nav className="adm-nav" aria-label="Admin sections">
-        {ADMIN_NAV.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            {...(pathname === item.href ? { "aria-current": "page" as const } : {})}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
-      {children}
-    </>
+    <AdminActivityProvider key={session.token}>
+      <AdminWorkspace operator={session.displayName || session.email || "Administrator"}>{children}</AdminWorkspace>
+    </AdminActivityProvider>
   );
 }

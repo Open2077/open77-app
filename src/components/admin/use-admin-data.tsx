@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { InfoIcon } from "@/components/icons";
 import { MasterApiError } from "@/lib/account/api";
 import { useSession } from "@/lib/account/session";
+import { useAdminActivity } from "./admin-activity";
 
 /**
  * Load-on-mount state for one admin dataset: data, error strip, reload. A 401
@@ -20,15 +21,20 @@ export function useAdminData<T>(load: (token: string) => Promise<T>) {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [generation, setGeneration] = useState(0);
+  const [settled, setSettled] = useState<{ load: typeof load; token: string; generation: number } | null>(null);
+  const { begin } = useAdminActivity();
 
   useEffect(() => {
     if (!token) return;
     let cancelled = false;
+    let success = false;
+    const finish = begin();
     load(token)
       .then((result) => {
         if (cancelled) return;
         setData(result);
         setError(null);
+        success = true;
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -36,12 +42,14 @@ export function useAdminData<T>(load: (token: string) => Promise<T>) {
         else setError(err instanceof MasterApiError ? err.message : "Request failed. Try again.");
       })
       .finally(() => {
-        if (!cancelled) setRefreshing(false);
+        if (!cancelled) { setRefreshing(false); setSettled({ load, token, generation }); }
+        finish(cancelled ? undefined : success);
       });
     return () => {
       cancelled = true;
+      finish();
     };
-  }, [token, load, clear, generation]);
+  }, [token, load, clear, generation, begin]);
 
   /** Refetch; called from event handlers only. */
   const reload = useCallback(() => {
@@ -49,7 +57,12 @@ export function useAdminData<T>(load: (token: string) => Promise<T>) {
     setGeneration((value) => value + 1);
   }, []);
 
-  const loading = (data === null && error === null && token !== null) || refreshing;
+  const loading = token !== null && (refreshing || settled?.load !== load || settled?.token !== token || settled?.generation !== generation);
+
+  useEffect(() => {
+    window.addEventListener("open77:admin-refresh", reload);
+    return () => window.removeEventListener("open77:admin-refresh", reload);
+  }, [reload]);
 
   return { token, data, setData, error, setError, loading, reload };
 }
