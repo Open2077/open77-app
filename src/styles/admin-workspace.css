@@ -1,4 +1,7 @@
 /* OPEN77 operations: a wide, keyboard-accessible application workspace. */
+/* hidden on body computes overflow-y:auto and traps sticky children in a
+   non-scrolling ancestor. Clip only the horizontal paint, not the scrollport. */
+body:has(.adm-main) { overflow-x: clip; }
 .adm-main { padding: 0; min-height: calc(100dvh - var(--header-h,76px)); background: var(--bg); }
 .adm-inner { max-width: none; padding: 0; margin: 0; }
 .adm-auth-heading, .adm-inner > .ac-loading, .adm-inner > .adm-denied { margin: 32px var(--pad-x); }

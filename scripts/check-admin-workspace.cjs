@@ -19,6 +19,19 @@ const settings = { configured: true, enabled: true, destination: 'discord.com / 
   const browser = await chromium.launch({ channel: 'msedge', headless: true });
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true });
   const page = await context.newPage();
+  async function assertStickyNavigation() {
+    await page.evaluate(() => window.scrollTo({ top: 500, behavior: 'instant' }));
+    await page.waitForFunction(() => {
+      const header = document.querySelector('.site-header').getBoundingClientRect();
+      const sidebar = document.querySelector('.adm-sidebar').getBoundingClientRect();
+      return scrollY > 0 && Math.abs(header.top) < 1 && Math.abs(sidebar.top - header.bottom) < 1;
+    }, null, { timeout: 3000 });
+    const documentScroll = await page.evaluate(() => scrollY);
+    await page.locator('.adm-sidebar-body').evaluate(el => { el.scrollTop = el.scrollHeight; });
+    assert.equal(await page.evaluate(() => scrollY), documentScroll, 'Sidebar scrolling must not move the document');
+    await page.locator('.adm-sidebar-body').evaluate(el => { el.scrollTop = 0; });
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  }
   const failures = []; const calls = []; let corrupt = false; let delay = 0; let denied = false; let role = 'admin'; let sends = 0;
   page.on('pageerror', e => failures.push(e.message));
   await context.route('**/api/v1/**', async route => {
@@ -49,6 +62,7 @@ const settings = { configured: true, enabled: true, destination: 'discord.com / 
   await context.addInitScript(value => localStorage.setItem('open77.session', JSON.stringify(value)), session);
   await page.goto(base + '/admin');
   await page.getByText('1248', { exact: true }).waitFor();
+  await assertStickyNavigation();
   const out = path.join(process.cwd(), 'artifacts', 'admin-ui'); fs.mkdirSync(out, { recursive: true });
   await page.screenshot({ path: path.join(out, 'overview-desktop.png'), fullPage: true });
   await page.goto(base + '/admin/incidents?incidentId=' + id);
@@ -81,6 +95,7 @@ const settings = { configured: true, enabled: true, destination: 'discord.com / 
   await page.waitForFunction(() => !document.querySelector('.adm-progress')); delay = 0;
   for (const viewport of [{ width: 1024, height: 800 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);
+    await assertStickyNavigation();
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `viewport overflow at ${viewport.width}`);
     if (viewport.width === 390) {
       await page.getByRole('button', { name: 'Toggle navigation' }).click();
@@ -108,6 +123,6 @@ const settings = { configured: true, enabled: true, destination: 'discord.com / 
   calls.length = 0; await page.goto(base + '/admin/incidents'); await page.getByText('The operations console requires a staff sign-in.').waitFor();
   assert.equal(calls.filter(x => x.p.includes('incidents')).length, 0);
   assert.deepEqual(failures, []);
-  console.log('PASS admin: 11 routes, 3 viewports, responsive navigation, loading/error states, reduced motion, safe evidence, verified download, webhook validation/masking, pagination and role gates.');
+  console.log('PASS admin: 11 routes, 3 viewports, sticky site header/sidebar with independent scrolling, responsive navigation, loading/error states, reduced motion, safe evidence, verified download, webhook validation/masking, pagination and role gates.');
   await browser.close();
 })().catch(error => { console.error(error); process.exit(1); });
