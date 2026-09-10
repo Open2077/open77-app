@@ -4,6 +4,10 @@ Open77 vehicles are server entities. A server resource creates a vehicle, while 
 `world.vehicles` may control its canonical state and lifecycle. Clients only stream a REDengine
 projection around their player.
 
+For weapon-equipped models and their exact spawn IDs, see the [armed vehicle spawn catalogue](armed-vehicles.md). It separates live-tested armament from inherited mount declarations and special-purpose variants.
+
+For weapon replication, release compatibility, damage policy, current limitations and the twelve client-side armament, ammo, heat and selection queries, see the dedicated [armed vehicles and weapon Lua API guide](vehicle-weapons.md).
+
 ## Manifest
 
 ```lua

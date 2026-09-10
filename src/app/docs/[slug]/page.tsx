@@ -75,6 +75,15 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                 <Link href="/docs/api/server/open77-animations">Server Lua API</Link>
               </>
             ) : null}
+            {slug === "vehicle-weapons" || slug === "armed-vehicles" ? (
+              <>
+                <Link href="/docs/api/client/open77-vehicles">Client Lua API</Link>
+                <Link href={slug === "vehicle-weapons" ? "/docs/armed-vehicles" : "/docs/vehicle-weapons"}>
+                  {slug === "vehicle-weapons" ? "Spawn catalogue" : "Weapon sync guide"}
+                </Link>
+                <a href="/data/vehicle-weapons-2.31.json" download>Catalogue JSON</a>
+              </>
+            ) : null}
           </>
         }
         toc={<DocToc entries={guide.toc} />}

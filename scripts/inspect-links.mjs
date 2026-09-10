@@ -14,6 +14,9 @@ const origin = process.argv[2] ?? "http://127.0.0.1:3000";
 const PAGES = [
   "/docs",
   "/docs/vehicles",
+  "/docs/vehicle-weapons",
+  "/docs/armed-vehicles",
+  "/docs/api/client/open77-vehicles",
   "/docs/server-api",
   "/docs/npcs",
   "/docs/data-reference",

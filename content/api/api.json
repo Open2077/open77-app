@@ -7236,7 +7236,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10789,
+  "source_line": 11457,
   "qualified": "Open77.vehicles.all",
   "route_id": "Open77.vehicles.all"
  },
@@ -7256,7 +7256,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10804,
+  "source_line": 11472,
   "qualified": "Open77.vehicles.clearAllPerformance",
   "route_id": "Open77.vehicles.clearAllPerformance"
  },
@@ -7283,7 +7283,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10801,
+  "source_line": 11469,
   "qualified": "Open77.vehicles.clearPerformance",
   "route_id": "Open77.vehicles.clearPerformance"
  },
@@ -7310,7 +7310,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10803,
+  "source_line": 11471,
   "qualified": "Open77.vehicles.clearPerformanceClass",
   "route_id": "Open77.vehicles.clearPerformanceClass"
  },
@@ -7336,10 +7336,36 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10788,
+  "source_line": 11444,
   "qualified": "Open77.vehicles.get",
   "route_id": "Open77.vehicles.get"
  },
+  {
+    "namespace": "Open77.vehicles",
+    "name": "getActiveWeapons",
+    "handler": "LuaVehicleGetActiveWeapons",
+    "summary": "Lists the attached weapons selected by the driver.",
+    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Uses captured selection for the local driver and replicated selection for observers. Unknown selection returns nil, weapon_state_unavailable; a known empty selection returns an empty table.",
+    "params": [
+      {
+        "name": "vehicleId",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      }
+    ],
+    "returns": [
+      "Array of weapon tables, or nil, reason"
+    ],
+    "api_set": "game",
+    "runtime": "client",
+    "source": "ResourceHost.cpp",
+    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons, reason = Open77.vehicles.getActiveWeapons(seat.vehicleId)\nif not weapons then print(reason); return end\nfor _, weapon in ipairs(weapons) do\n    print(\"Selected mount\", weapon.index, weapon.type)\nend\n-- An empty array means known selection with no active attached weapons.",
+    "inferred": false,
+    "source_line": 11450,
+    "qualified": "Open77.vehicles.getActiveWeapons",
+    "route_id": "Open77.vehicles.getActiveWeapons"
+  },
  {
   "namespace": "Open77.vehicles",
   "name": "getPaint",
@@ -7362,7 +7388,7 @@
   "source": "ResourceHost.cpp",
   "example": "local paint = Open77.vehicles.getPaint(vehicleId)\nif paint and paint.applied then print(paint.primary.r, paint.primary.g, paint.primary.b) end",
   "inferred": false,
-  "source_line": 10790,
+  "source_line": 11458,
   "qualified": "Open77.vehicles.getPaint",
   "route_id": "Open77.vehicles.getPaint"
  },
@@ -7388,10 +7414,236 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10791,
+  "source_line": 11459,
   "qualified": "Open77.vehicles.getPlayerSeat",
   "route_id": "Open77.vehicles.getPlayerSeat"
  },
+  {
+    "namespace": "Open77.vehicles",
+    "name": "getWeapon",
+    "handler": "LuaVehicleGetWeapon",
+    "summary": "Reads one weapon mount by its stable one-based index.",
+    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. The index comes from weapon.index, not weaponId or slotId. An unattached declared mount is returned with attached=false; invalid indices are rejected.",
+    "params": [
+      {
+        "name": "vehicleId",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      },
+      {
+        "name": "mountIndex",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      }
+    ],
+    "returns": [
+      "Weapon table, or nil, reason"
+    ],
+    "api_set": "game",
+    "runtime": "client",
+    "source": "ResourceHost.cpp",
+    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal weapon, reason = Open77.vehicles.getWeapon(seat.vehicleId, weapons[1].index)\nif not weapon then print(reason); return end\nprint(weapon.index, weapon.attached, weapon.active)",
+    "inferred": false,
+    "source_line": 11451,
+    "qualified": "Open77.vehicles.getWeapon",
+    "route_id": "Open77.vehicles.getWeapon"
+  },
+  {
+    "namespace": "Open77.vehicles",
+    "name": "getWeaponAim",
+    "handler": "LuaVehicleGetWeaponAim",
+    "summary": "Reads the Basilisk's captured or replicated turret inputs.",
+    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Returns yaw, pitch and source. These are graph angles in degrees relative to the chassis, not a world aim ray. Other models or unavailable state return nil, weapon_aim_unavailable.",
+    "params": [
+      {
+        "name": "vehicleId",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      }
+    ],
+    "returns": [
+      "Aim table, or nil, reason"
+    ],
+    "api_set": "game",
+    "runtime": "client",
+    "source": "ResourceHost.cpp",
+    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal aim, reason = Open77.vehicles.getWeaponAim(seat.vehicleId)\nif not aim then print(reason); return end\nprint(aim.yaw, aim.pitch, aim.source) -- degrees relative to the chassis",
+    "inferred": false,
+    "source_line": 11456,
+    "qualified": "Open77.vehicles.getWeaponAim",
+    "route_id": "Open77.vehicles.getWeaponAim"
+  },
+  {
+    "namespace": "Open77.vehicles",
+    "name": "getWeaponAmmo",
+    "handler": "LuaVehicleGetWeaponAmmo",
+    "summary": "Reads available native ammunition counters for a mounted weapon.",
+    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Returns available, source, optional magazine/capacity/total/reserve. Ammunition is native-local-driver only; observer counters are not replicated and are omitted, never invented as zero. Counters do not establish whether a mounted weapon has infinite ammo or can fire.",
+    "params": [
+      {
+        "name": "vehicleId",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      },
+      {
+        "name": "mountIndex",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      }
+    ],
+    "returns": [
+      "Ammo table, or nil, reason"
+    ],
+    "api_set": "game",
+    "runtime": "client",
+    "source": "ResourceHost.cpp",
+    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal ammo, reason = Open77.vehicles.getWeaponAmmo(seat.vehicleId, weapons[1].index)\nif not ammo then print(reason); return end\nif ammo.available and ammo.magazine ~= nil then\n    print(ammo.magazine, ammo.capacity)\nelse\n    print(\"--\", ammo.source) -- e.g. not_replicated for a passenger\nend",
+    "inferred": false,
+    "source_line": 11452,
+    "qualified": "Open77.vehicles.getWeaponAmmo",
+    "route_id": "Open77.vehicles.getWeaponAmmo"
+  },
+  {
+    "namespace": "Open77.vehicles",
+    "name": "getWeaponCount",
+    "handler": "LuaVehicleGetWeaponCount",
+    "summary": "Counts weapon objects attached to a streamed vehicle.",
+    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Returns actual attached count, not declaredCount or activeCount. Zero means a known streamed vehicle with no resolved weapon objects.",
+    "params": [
+      {
+        "name": "vehicleId",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      }
+    ],
+    "returns": [
+      "integer, or nil, reason"
+    ],
+    "api_set": "game",
+    "runtime": "client",
+    "source": "ResourceHost.cpp",
+    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal count, reason = Open77.vehicles.getWeaponCount(seat.vehicleId)\nif count == nil then print(reason); return end\nprint(\"Attached weapons:\", count) -- zero is valid",
+    "inferred": false,
+    "source_line": 11455,
+    "qualified": "Open77.vehicles.getWeaponCount",
+    "route_id": "Open77.vehicles.getWeaponCount"
+  },
+  {
+    "namespace": "Open77.vehicles",
+    "name": "getWeaponModel",
+    "handler": "LuaVehicleGetWeaponModel",
+    "summary": "Reads the weapon mounts declared by a vehicle model.",
+    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. This is a TweakDB declaration, not proof that all weapons are attached in an appearance. Returns record, hasWeaponMounts, declaredCount and mounts.",
+    "params": [
+      {
+        "name": "record",
+        "type": "string",
+        "optional": false,
+        "default": null
+      }
+    ],
+    "returns": [
+      "Model table, or nil, reason"
+    ],
+    "api_set": "game",
+    "runtime": "client",
+    "source": "ResourceHost.cpp",
+    "example": "local model, reason = Open77.vehicles.getWeaponModel(\"Vehicle.v_militech_basilisk\")\nif not model then print(reason); return end\nprint(model.record, model.declaredCount)\nfor _, mount in ipairs(model.mounts) do\n    print(mount.index, mount.record, mount.slot, mount.type)\nend",
+    "inferred": false,
+    "source_line": 11445,
+    "qualified": "Open77.vehicles.getWeaponModel",
+    "route_id": "Open77.vehicles.getWeaponModel"
+  },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getWeaponState",
+  "handler": "LuaVehicleGetWeaponState",
+  "summary": "Reads one coherent mounted-weapon snapshot.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Uses a canonical network vehicle ID. Includes declared mounts, attached/active counts, selection mask, local-driver flag and available native ammo/heat. Local reads are cached for at most 100 ms.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Snapshot table, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local seat = Open77.vehicles.getPlayerSeat()\nif seat then\n    local state, reason = Open77.vehicles.getWeaponState(seat.vehicleId)\n    if state then print(state.attachedCount, state.activeCount) end\nend",
+  "inferred": false,
+  "source_line": 11447,
+  "qualified": "Open77.vehicles.getWeaponState",
+  "route_id": "Open77.vehicles.getWeaponState"
+ },
+  {
+    "namespace": "Open77.vehicles",
+    "name": "getWeaponType",
+    "handler": "LuaVehicleGetWeaponType",
+    "summary": "Reads a mounted weapon's stable category.",
+    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Categories: machine_gun, cannon, missile, countermeasure, unknown. Native itemType, when available, is a separate field in getWeapon.",
+    "params": [
+      {
+        "name": "vehicleId",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      },
+      {
+        "name": "mountIndex",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      }
+    ],
+    "returns": [
+      "Category string, or nil, reason"
+    ],
+    "api_set": "game",
+    "runtime": "client",
+    "source": "ResourceHost.cpp",
+    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal category, reason = Open77.vehicles.getWeaponType(seat.vehicleId, weapons[1].index)\nif not category then print(reason); return end\nprint(category) -- machine_gun, cannon, missile, countermeasure or unknown",
+    "inferred": false,
+    "source_line": 11453,
+    "qualified": "Open77.vehicles.getWeaponType",
+    "route_id": "Open77.vehicles.getWeaponType"
+  },
+  {
+    "namespace": "Open77.vehicles",
+    "name": "getWeapons",
+    "handler": "LuaVehicleGetWeapons",
+    "summary": "Lists the weapon objects actually attached to a streamed vehicle.",
+    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. The returned array is dense but each weapon.index preserves its one-based position in the model mount list. Do not use the array position as the mount index.",
+    "params": [
+      {
+        "name": "vehicleId",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      }
+    ],
+    "returns": [
+      "Array of weapon tables, or nil, reason"
+    ],
+    "api_set": "game",
+    "runtime": "client",
+    "source": "ResourceHost.cpp",
+    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons, reason = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons then print(reason); return end\nfor _, weapon in ipairs(weapons) do\n    print(weapon.index, weapon.type, weapon.slot)\nend",
+    "inferred": false,
+    "source_line": 11449,
+    "qualified": "Open77.vehicles.getWeapons",
+    "route_id": "Open77.vehicles.getWeapons"
+  },
  {
   "namespace": "Open77.vehicles",
   "name": "honk",
@@ -7421,10 +7673,36 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10795,
+  "source_line": 11463,
   "qualified": "Open77.vehicles.honk",
   "route_id": "Open77.vehicles.honk"
  },
+  {
+    "namespace": "Open77.vehicles",
+    "name": "isArmed",
+    "handler": "LuaVehicleIsArmed",
+    "summary": "Checks whether a streamed vehicle actually has attached weapons.",
+    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Counts resolved weapon objects, not the model's inherited mount declarations. An unstreamed vehicle returns nil, vehicle_not_streamed.",
+    "params": [
+      {
+        "name": "vehicleId",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      }
+    ],
+    "returns": [
+      "boolean, or nil, reason"
+    ],
+    "api_set": "game",
+    "runtime": "client",
+    "source": "ResourceHost.cpp",
+    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal armed, reason = Open77.vehicles.isArmed(seat.vehicleId)\nif armed == nil then print(reason); return end\nprint(armed and \"Attached weapons found\" or \"No attached weapons\")",
+    "inferred": false,
+    "source_line": 11448,
+    "qualified": "Open77.vehicles.isArmed",
+    "route_id": "Open77.vehicles.isArmed"
+  },
  {
   "namespace": "Open77.vehicles",
   "name": "isDoorOpen",
@@ -7453,7 +7731,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10796,
+  "source_line": 11464,
   "qualified": "Open77.vehicles.isDoorOpen",
   "route_id": "Open77.vehicles.isDoorOpen"
  },
@@ -7479,7 +7757,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10793,
+  "source_line": 11461,
   "qualified": "Open77.vehicles.isLocked",
   "route_id": "Open77.vehicles.isLocked"
  },
@@ -7505,10 +7783,42 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10792,
+  "source_line": 11460,
   "qualified": "Open77.vehicles.isPlayerExitLocked",
   "route_id": "Open77.vehicles.isPlayerExitLocked"
  },
+  {
+    "namespace": "Open77.vehicles",
+    "name": "isWeaponActive",
+    "handler": "LuaVehicleIsWeaponActive",
+    "summary": "Checks whether the driver selected a particular attached mount.",
+    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Selection is not a firing event or a guarantee of native mesh deployment. Unknown selection is an explicit error.",
+    "params": [
+      {
+        "name": "vehicleId",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      },
+      {
+        "name": "mountIndex",
+        "type": "integer",
+        "optional": false,
+        "default": null
+      }
+    ],
+    "returns": [
+      "boolean, or nil, reason"
+    ],
+    "api_set": "game",
+    "runtime": "client",
+    "source": "ResourceHost.cpp",
+    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal active, reason = Open77.vehicles.isWeaponActive(seat.vehicleId, weapons[1].index)\nif active == nil then print(reason); return end\nprint(active and \"Selected\" or \"Not selected\") -- not a firing flag",
+    "inferred": false,
+    "source_line": 11454,
+    "qualified": "Open77.vehicles.isWeaponActive",
+    "route_id": "Open77.vehicles.isWeaponActive"
+  },
  {
   "namespace": "Open77.vehicles",
   "name": "isWindowOpen",
@@ -7537,10 +7847,36 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10797,
+  "source_line": 11465,
   "qualified": "Open77.vehicles.isWindowOpen",
   "route_id": "Open77.vehicles.isWindowOpen"
  },
+  {
+    "namespace": "Open77.vehicles",
+    "name": "modelHasWeaponMounts",
+    "handler": "LuaVehicleModelHasWeaponMounts",
+    "summary": "Checks whether a vehicle model declares any weapon mounts.",
+    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. A valid unarmed model returns false; an unknown model returns nil. Inherited mounts do not guarantee a usable armed vehicle.",
+    "params": [
+      {
+        "name": "record",
+        "type": "string",
+        "optional": false,
+        "default": null
+      }
+    ],
+    "returns": [
+      "boolean, or nil, reason"
+    ],
+    "api_set": "game",
+    "runtime": "client",
+    "source": "ResourceHost.cpp",
+    "example": "local declared, reason = Open77.vehicles.modelHasWeaponMounts(\"Vehicle.v_militech_basilisk\")\nif declared == nil then print(reason); return end\nprint(declared and \"Model declares mounts\" or \"No declared mounts\")\n-- Declarations alone do not prove weapons are attached to a live vehicle.",
+    "inferred": false,
+    "source_line": 11446,
+    "qualified": "Open77.vehicles.modelHasWeaponMounts",
+    "route_id": "Open77.vehicles.modelHasWeaponMounts"
+  },
  {
   "namespace": "Open77.vehicles",
   "name": "ratedTopSpeed",
@@ -7563,7 +7899,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10807,
+  "source_line": 11475,
   "qualified": "Open77.vehicles.ratedTopSpeed",
   "route_id": "Open77.vehicles.ratedTopSpeed"
  },
@@ -7596,7 +7932,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10805,
+  "source_line": 11473,
   "qualified": "Open77.vehicles.setControlLock",
   "route_id": "Open77.vehicles.setControlLock"
  },
@@ -7629,7 +7965,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10806,
+  "source_line": 11474,
   "qualified": "Open77.vehicles.setFrozen",
   "route_id": "Open77.vehicles.setFrozen"
  },
@@ -7662,7 +7998,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10800,
+  "source_line": 11468,
   "qualified": "Open77.vehicles.setPerformance",
   "route_id": "Open77.vehicles.setPerformance"
  },
@@ -7695,7 +8031,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10802,
+  "source_line": 11470,
   "qualified": "Open77.vehicles.setPerformanceClass",
   "route_id": "Open77.vehicles.setPerformanceClass"
  },
@@ -7734,7 +8070,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10799,
+  "source_line": 11467,
   "qualified": "Open77.vehicles.taskPlayerEnterVehicle",
   "route_id": "Open77.vehicles.taskPlayerEnterVehicle"
  },
@@ -7767,7 +8103,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10794,
+  "source_line": 11462,
   "qualified": "Open77.vehicles.triggerHorn",
   "route_id": "Open77.vehicles.triggerHorn"
  },
@@ -7806,7 +8142,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10798,
+  "source_line": 11466,
   "qualified": "Open77.vehicles.warpPlayerIntoVehicle",
   "route_id": "Open77.vehicles.warpPlayerIntoVehicle"
  },
@@ -9328,7 +9664,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5864,
+  "source_line": 6159,
   "qualified": "Open77.vehicles.all",
   "route_id": "server:Open77.vehicles.all"
  },
@@ -9360,7 +9696,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5785,
+  "source_line": 6080,
   "qualified": "Open77.vehicles.breakAllGlass",
   "route_id": "server:Open77.vehicles.breakAllGlass"
  },
@@ -9392,7 +9728,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "Open77.vehicles.breakGlass(vehicleId, 0)",
   "inferred": false,
-  "source_line": 5783,
+  "source_line": 6078,
   "qualified": "Open77.vehicles.breakGlass",
   "route_id": "server:Open77.vehicles.breakGlass"
  },
@@ -9424,7 +9760,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5792,
+  "source_line": 6087,
   "qualified": "Open77.vehicles.breakLight",
   "route_id": "server:Open77.vehicles.breakLight"
  },
@@ -9456,7 +9792,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "Open77.vehicles.breakTire(vehicleId, 0)",
   "inferred": false,
-  "source_line": 5797,
+  "source_line": 6092,
   "qualified": "Open77.vehicles.breakTire",
   "route_id": "server:Open77.vehicles.breakTire"
  },
@@ -9488,7 +9824,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5832,
+  "source_line": 6127,
   "qualified": "Open77.vehicles.closeDoor",
   "route_id": "server:Open77.vehicles.closeDoor"
  },
@@ -9520,7 +9856,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5842,
+  "source_line": 6137,
   "qualified": "Open77.vehicles.closeWindow",
   "route_id": "server:Open77.vehicles.closeWindow"
  },
@@ -9546,7 +9882,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "local id, reason = Open77.vehicles.create({\n  record = \"Vehicle.v_standard2_thorton_galena_player\",\n  position = { x = -1671.2, y = -710.3, z = 49.9 },\n  yaw = 90.0,\n})",
   "inferred": false,
-  "source_line": 5728,
+  "source_line": 6023,
   "qualified": "Open77.vehicles.create",
   "route_id": "server:Open77.vehicles.create"
  },
@@ -9584,7 +9920,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5770,
+  "source_line": 6065,
   "qualified": "Open77.vehicles.damageBodyCell",
   "route_id": "server:Open77.vehicles.damageBodyCell"
  },
@@ -9622,7 +9958,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5776,
+  "source_line": 6071,
   "qualified": "Open77.vehicles.damageBodyZone",
   "route_id": "server:Open77.vehicles.damageBodyZone"
  },
@@ -9654,7 +9990,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "Open77.vehicles.detachPart(vehicleId, \"bumperFront\")",
   "inferred": false,
-  "source_line": 5815,
+  "source_line": 6110,
   "qualified": "Open77.vehicles.detachPart",
   "route_id": "server:Open77.vehicles.detachPart"
  },
@@ -9673,7 +10009,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5702,
+  "source_line": 5997,
   "qualified": "Open77.vehicles.detachedParts",
   "route_id": "server:Open77.vehicles.detachedParts"
  },
@@ -9706,7 +10042,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5720,
+  "source_line": 6015,
   "qualified": "Open77.vehicles.forcePlayerOutOfVehicle",
   "route_id": "server:Open77.vehicles.forcePlayerOutOfVehicle"
  },
@@ -9732,7 +10068,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5863,
+  "source_line": 6158,
   "qualified": "Open77.vehicles.get",
   "route_id": "server:Open77.vehicles.get"
  },
@@ -9758,7 +10094,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5766,
+  "source_line": 6061,
   "qualified": "Open77.vehicles.getDamage",
   "route_id": "server:Open77.vehicles.getDamage"
  },
@@ -9784,7 +10120,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5853,
+  "source_line": 6148,
   "qualified": "Open77.vehicles.getDamageProfile",
   "route_id": "server:Open77.vehicles.getDamageProfile"
  },
@@ -9810,7 +10146,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5765,
+  "source_line": 6060,
   "qualified": "Open77.vehicles.getPaint",
   "route_id": "server:Open77.vehicles.getPaint"
  },
@@ -9836,7 +10172,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5723,
+  "source_line": 6018,
   "qualified": "Open77.vehicles.getPlayerSeat",
   "route_id": "server:Open77.vehicles.getPlayerSeat"
  },
@@ -9869,7 +10205,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5762,
+  "source_line": 6057,
   "qualified": "Open77.vehicles.honk",
   "route_id": "server:Open77.vehicles.honk"
  },
@@ -9901,7 +10237,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5833,
+  "source_line": 6128,
   "qualified": "Open77.vehicles.isDoorOpen",
   "route_id": "server:Open77.vehicles.isDoorOpen"
  },
@@ -9927,7 +10263,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5757,
+  "source_line": 6052,
   "qualified": "Open77.vehicles.isLocked",
   "route_id": "server:Open77.vehicles.isLocked"
  },
@@ -9959,7 +10295,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5818,
+  "source_line": 6113,
   "qualified": "Open77.vehicles.isPartDetached",
   "route_id": "server:Open77.vehicles.isPartDetached"
  },
@@ -9985,7 +10321,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5724,
+  "source_line": 6019,
   "qualified": "Open77.vehicles.isPlayerExitLocked",
   "route_id": "server:Open77.vehicles.isPlayerExitLocked"
  },
@@ -10017,7 +10353,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5843,
+  "source_line": 6138,
   "qualified": "Open77.vehicles.isWindowOpen",
   "route_id": "server:Open77.vehicles.isWindowOpen"
  },
@@ -10044,7 +10380,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5755,
+  "source_line": 6050,
   "qualified": "Open77.vehicles.lock",
   "route_id": "server:Open77.vehicles.lock"
  },
@@ -10076,7 +10412,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "Open77.vehicles.openDoor(vehicleId, Open77.vehicles.doors.trunk)",
   "inferred": false,
-  "source_line": 5831,
+  "source_line": 6126,
   "qualified": "Open77.vehicles.openDoor",
   "route_id": "server:Open77.vehicles.openDoor"
  },
@@ -10108,7 +10444,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5841,
+  "source_line": 6136,
   "qualified": "Open77.vehicles.openWindow",
   "route_id": "server:Open77.vehicles.openWindow"
  },
@@ -10140,7 +10476,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5848,
+  "source_line": 6143,
   "qualified": "Open77.vehicles.registerDamageProfile",
   "route_id": "server:Open77.vehicles.registerDamageProfile"
  },
@@ -10166,7 +10502,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5862,
+  "source_line": 6157,
   "qualified": "Open77.vehicles.remove",
   "route_id": "server:Open77.vehicles.remove"
  },
@@ -10199,7 +10535,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5721,
+  "source_line": 6016,
   "qualified": "Open77.vehicles.removePlayerFromVehicle",
   "route_id": "server:Open77.vehicles.removePlayerFromVehicle"
  },
@@ -10231,7 +10567,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "Open77.vehicles.repair(vehicleId, \"visual\")",
   "inferred": false,
-  "source_line": 5847,
+  "source_line": 6142,
   "qualified": "Open77.vehicles.repair",
   "route_id": "server:Open77.vehicles.repair"
  },
@@ -10257,7 +10593,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5789,
+  "source_line": 6084,
   "qualified": "Open77.vehicles.repairAllGlass",
   "route_id": "server:Open77.vehicles.repairAllGlass"
  },
@@ -10283,7 +10619,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5794,
+  "source_line": 6089,
   "qualified": "Open77.vehicles.repairAllLights",
   "route_id": "server:Open77.vehicles.repairAllLights"
  },
@@ -10309,7 +10645,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5799,
+  "source_line": 6094,
   "qualified": "Open77.vehicles.repairAllTires",
   "route_id": "server:Open77.vehicles.repairAllTires"
  },
@@ -10341,7 +10677,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5774,
+  "source_line": 6069,
   "qualified": "Open77.vehicles.repairBodyCell",
   "route_id": "server:Open77.vehicles.repairBodyCell"
  },
@@ -10373,7 +10709,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5777,
+  "source_line": 6072,
   "qualified": "Open77.vehicles.repairBodyZone",
   "route_id": "server:Open77.vehicles.repairBodyZone"
  },
@@ -10405,7 +10741,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5784,
+  "source_line": 6079,
   "qualified": "Open77.vehicles.repairGlass",
   "route_id": "server:Open77.vehicles.repairGlass"
  },
@@ -10437,7 +10773,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5793,
+  "source_line": 6088,
   "qualified": "Open77.vehicles.repairLight",
   "route_id": "server:Open77.vehicles.repairLight"
  },
@@ -10469,7 +10805,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5798,
+  "source_line": 6093,
   "qualified": "Open77.vehicles.repairTire",
   "route_id": "server:Open77.vehicles.repairTire"
  },
@@ -10495,7 +10831,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5764,
+  "source_line": 6059,
   "qualified": "Open77.vehicles.resetPaint",
   "route_id": "server:Open77.vehicles.resetPaint"
  },
@@ -10533,7 +10869,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5769,
+  "source_line": 6064,
   "qualified": "Open77.vehicles.setBodyCell",
   "route_id": "server:Open77.vehicles.setBodyCell"
  },
@@ -10565,7 +10901,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5768,
+  "source_line": 6063,
   "qualified": "Open77.vehicles.setBodyDamage",
   "route_id": "server:Open77.vehicles.setBodyDamage"
  },
@@ -10603,7 +10939,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5775,
+  "source_line": 6070,
   "qualified": "Open77.vehicles.setBodyZone",
   "route_id": "server:Open77.vehicles.setBodyZone"
  },
@@ -10635,7 +10971,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5767,
+  "source_line": 6062,
   "qualified": "Open77.vehicles.setDamage",
   "route_id": "server:Open77.vehicles.setDamage"
  },
@@ -10667,7 +11003,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5800,
+  "source_line": 6095,
   "qualified": "Open77.vehicles.setDetachedPartMask",
   "route_id": "server:Open77.vehicles.setDetachedPartMask"
  },
@@ -10699,7 +11035,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5822,
+  "source_line": 6117,
   "qualified": "Open77.vehicles.setDoorMask",
   "route_id": "server:Open77.vehicles.setDoorMask"
  },
@@ -10737,7 +11073,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5827,
+  "source_line": 6122,
   "qualified": "Open77.vehicles.setDoorOpen",
   "route_id": "server:Open77.vehicles.setDoorOpen"
  },
@@ -10775,7 +11111,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5779,
+  "source_line": 6074,
   "qualified": "Open77.vehicles.setGlassBroken",
   "route_id": "server:Open77.vehicles.setGlassBroken"
  },
@@ -10807,7 +11143,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5778,
+  "source_line": 6073,
   "qualified": "Open77.vehicles.setGlassMask",
   "route_id": "server:Open77.vehicles.setGlassMask"
  },
@@ -10845,7 +11181,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5791,
+  "source_line": 6086,
   "qualified": "Open77.vehicles.setLightBroken",
   "route_id": "server:Open77.vehicles.setLightBroken"
  },
@@ -10877,7 +11213,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5790,
+  "source_line": 6085,
   "qualified": "Open77.vehicles.setLightMask",
   "route_id": "server:Open77.vehicles.setLightMask"
  },
@@ -10910,7 +11246,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5754,
+  "source_line": 6049,
   "qualified": "Open77.vehicles.setLocked",
   "route_id": "server:Open77.vehicles.setLocked"
  },
@@ -10942,7 +11278,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "Open77.vehicles.setPaint(vehicleId, {\n  primary = \"#00d8ff\",\n  secondary = { r = 12, g = 24, b = 36 },\n})",
   "inferred": false,
-  "source_line": 5763,
+  "source_line": 6058,
   "qualified": "Open77.vehicles.setPaint",
   "route_id": "server:Open77.vehicles.setPaint"
  },
@@ -10980,7 +11316,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5808,
+  "source_line": 6103,
   "qualified": "Open77.vehicles.setPartDetached",
   "route_id": "server:Open77.vehicles.setPartDetached"
  },
@@ -11019,7 +11355,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5722,
+  "source_line": 6017,
   "qualified": "Open77.vehicles.setPlayerExitLocked",
   "route_id": "server:Open77.vehicles.setPlayerExitLocked"
  },
@@ -11064,7 +11400,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5717,
+  "source_line": 6012,
   "qualified": "Open77.vehicles.setPlayerIntoVehicle",
   "route_id": "server:Open77.vehicles.setPlayerIntoVehicle"
  },
@@ -11102,7 +11438,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5796,
+  "source_line": 6091,
   "qualified": "Open77.vehicles.setTireBroken",
   "route_id": "server:Open77.vehicles.setTireBroken"
  },
@@ -11134,7 +11470,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5795,
+  "source_line": 6090,
   "qualified": "Open77.vehicles.setTireMask",
   "route_id": "server:Open77.vehicles.setTireMask"
  },
@@ -11166,7 +11502,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5855,
+  "source_line": 6150,
   "qualified": "Open77.vehicles.setTransform",
   "route_id": "server:Open77.vehicles.setTransform"
  },
@@ -11204,7 +11540,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5837,
+  "source_line": 6132,
   "qualified": "Open77.vehicles.setWindowOpen",
   "route_id": "server:Open77.vehicles.setWindowOpen"
  },
@@ -11237,7 +11573,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5761,
+  "source_line": 6056,
   "qualified": "Open77.vehicles.triggerHorn",
   "route_id": "server:Open77.vehicles.triggerHorn"
  },
@@ -11264,7 +11600,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5756,
+  "source_line": 6051,
   "qualified": "Open77.vehicles.unlock",
   "route_id": "server:Open77.vehicles.unlock"
  },
@@ -11296,7 +11632,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "",
   "inferred": false,
-  "source_line": 5753,
+  "source_line": 6048,
   "qualified": "Open77.vehicles.update",
   "route_id": "server:Open77.vehicles.update"
  },
@@ -11341,7 +11677,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "local ok, reason = Open77.vehicles.warpPlayerIntoVehicle(playerId, vehicleId, Open77.vehicles.seats.driver, {\n  moveBucket = true,\n  exitLocked = true,\n})",
   "inferred": false,
-  "source_line": 5703,
+  "source_line": 5998,
   "qualified": "Open77.vehicles.warpPlayerIntoVehicle",
   "route_id": "server:Open77.vehicles.warpPlayerIntoVehicle"
  }

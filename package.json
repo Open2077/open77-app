@@ -16,7 +16,7 @@
     "check": "npm run typecheck && npm run lint",
     "sync:wiki": "node scripts/sync-wiki.mjs",
     "sync:wiki:check": "node scripts/sync-wiki.mjs --check",
-    "verify:content": "node scripts/sync-wiki.mjs --check && node scripts/check-coverage.mjs && node scripts/check-api-overlays.mjs && node scripts/check-api-markup.mjs && node scripts/check-animation-docs.mjs && node scripts/check-server-exports.mjs && node scripts/check-host-access.mjs && node scripts/check-developer-preview.mjs",
+    "verify:content": "node scripts/sync-wiki.mjs --check && node scripts/check-coverage.mjs && node scripts/check-api-overlays.mjs && node scripts/check-api-markup.mjs && node scripts/check-animation-docs.mjs && node scripts/check-vehicle-weapon-docs.mjs && node scripts/check-server-exports.mjs && node scripts/check-host-access.mjs && node scripts/check-developer-preview.mjs",
     "verify:served": "node scripts/smoke.mjs && node scripts/inspect-links.mjs && node scripts/check-hydration.mjs",
     "smoke": "node scripts/smoke.mjs",
     "inspect:output": "node scripts/inspect-output.mjs",

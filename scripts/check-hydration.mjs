@@ -524,6 +524,32 @@ try {
     }
   }
 
+  for (const route of ["/docs/vehicle-weapons", "/docs/armed-vehicles"]) {
+    await visit(route);
+    reportConsole(route);
+    check(`${route} is in the vehicle navigation with working reference links`, await session.evaluate(`
+      return !document.getElementById('nav-world').hidden &&
+        !!document.querySelector('#nav-world a[aria-current="page"]') &&
+        !!document.querySelector('a[href="/docs/api/client/open77-vehicles"]') &&
+        !!document.querySelector('a[href="/data/vehicle-weapons-2.31.json"]') &&
+        document.documentElement.scrollWidth <= innerWidth;
+    `));
+    if (process.argv.includes("--docs")) {
+      const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await fs.writeFile(`.shots/${route.split("/").at(-1)}.png`, Buffer.from(data, "base64"));
+    }
+  }
+  await visit("/docs/api?side=client&namespace=Open77.vehicles#client/open77-vehicles/getweaponammo");
+  reportConsole("mounted weapon client API");
+  check("weapon API has the correct client contract, example and guide label", await session.evaluate(`
+    const detail = document.querySelector('.api-detail');
+    return detail.querySelector('h2').textContent === 'getWeaponAmmo' &&
+      detail.querySelector('.api-side').textContent === 'client' &&
+      detail.textContent.includes('not_replicated') && detail.textContent.includes('weapon') &&
+      detail.querySelector('a[href="/docs/vehicle-weapons#function-reference"]')?.textContent.includes('Armed vehicle guide') &&
+      !detail.textContent.includes('RP animation guide');
+  `));
+
   await visit("/docs/server-exports");
   reportConsole("server export guide");
   check("server export tutorial links back to the API", await session.evaluate(`
@@ -624,6 +650,18 @@ try {
   await visit("/docs/server-exports");
   check("server export tutorial fits a mobile viewport", await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
   reportConsole("mobile server export guide");
+  for (const route of ["/docs/vehicle-weapons", "/docs/armed-vehicles"]) {
+    await visit(route);
+    check(`${route} fits mobile in dark mode`, await session.evaluate(`
+      return document.documentElement.scrollWidth <= innerWidth &&
+        document.querySelector('.docs-site').dataset.theme === 'dark';
+    `));
+    reportConsole(`mobile ${route}`);
+    if (process.argv.includes("--docs")) {
+      const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await fs.writeFile(`.shots/${route.split("/").at(-1)}-mobile.png`, Buffer.from(data, "base64"));
+    }
+  }
   await visit("/docs/api?side=client&namespace=Open77.animations#client/open77-animations/request");
   check("mobile RP deep link opens client request", await session.evaluate(`
     return document.querySelector('.api-detail h2').textContent === 'request' &&

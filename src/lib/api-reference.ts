@@ -48,6 +48,7 @@ export type ApiEntry = ApiEntryRaw & {
   signature: string;
   /** Tutorial companion, separate from the registration's source provenance. */
   usageGuideHref?: string;
+  usageGuideLabel?: string;
 };
 
 export type ApiNamespace = {
@@ -153,6 +154,22 @@ export function apiSetLabel(apiSet: string): { label: string; hint: string } {
 
 let indexCache: Promise<ApiIndex> | null = null;
 
+const VEHICLE_WEAPON_READS = new Set([
+  "getWeaponModel", "modelHasWeaponMounts", "getWeaponState", "isArmed",
+  "getWeapons", "getActiveWeapons", "getWeapon", "getWeaponAmmo",
+  "getWeaponType", "isWeaponActive", "getWeaponCount", "getWeaponAim",
+]);
+
+function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (raw.namespace === "Open77.animations") {
+    return { usageGuideHref: `/docs/rp-animations#${runtime}-lua-api`, usageGuideLabel: "RP animation guide" };
+  }
+  if (runtime === "client" && raw.namespace === "Open77.vehicles" && VEHICLE_WEAPON_READS.has(raw.name)) {
+    return { usageGuideHref: "/docs/vehicle-weapons#function-reference", usageGuideLabel: "Armed vehicle guide" };
+  }
+  return {};
+}
+
 export function getApiIndex(): Promise<ApiIndex> {
   // Wiki syncs can change files without changing this module during next dev.
   if (process.env.NODE_ENV === "development") return loadApiIndex();
@@ -204,9 +221,7 @@ async function loadApiIndex(): Promise<ApiIndex> {
       anchor,
       href: `/docs/api/${runtime}/${namespaceSlug}#${anchor}`,
       signature: buildSignature(raw),
-      usageGuideHref: raw.namespace === "Open77.animations"
-        ? `/docs/rp-animations#${runtime}-lua-api`
-        : undefined,
+      ...usageGuide(raw, runtime),
     };
   });
 
@@ -320,6 +335,10 @@ export function apiEntryToMarkdown(entry: ApiEntry, headingLevel = 2): string {
 
   if (entry.example) {
     lines.push("```lua", entry.example, "```", "");
+  }
+
+  if (entry.usageGuideHref) {
+    lines.push(`[${entry.usageGuideLabel ?? "Usage guide"}](${entry.usageGuideHref})`, "");
   }
 
   const line = entry.source_line ? ` (line ${entry.source_line})` : "";

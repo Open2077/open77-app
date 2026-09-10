@@ -70,6 +70,8 @@ Prefer `*_player` records. The [complete vehicle model catalogue](../docs/vehicl
 1,372 records with a non-zero `entityTemplatePath`, including **89 player/garage variants**. It also
 documents records that resolve structurally but should not be spawned.
 
+For mounted weapons, see the [armed vehicle spawn catalogue](armed-vehicles.md): tested Basilisk, Outlaw and Shion records, player variants, and the full inventory of records declaring weapon mounts, with validation caveats.
+
 The official freeroam resource provides these convenient command aliases. The record in the right
 column is the portable value to store in another resource or database.
 

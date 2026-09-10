@@ -92,7 +92,7 @@ export async function ApiEntryCard({ entry }: { entry: ApiEntry }) {
       ) : null}
 
       <p className="dx-fn-source">
-        {entry.usageGuideHref ? <><a href={entry.usageGuideHref}>RP animation guide</a>{" · "}</> : null}
+        {entry.usageGuideHref ? <><a href={entry.usageGuideHref}>{entry.usageGuideLabel ?? "Usage guide"}</a>{" · "}</> : null}
         {entry.guideHref ? <a href={entry.guideHref}>Documented in {entry.source}</a> : <>Registered in {entry.source} as {entry.handler}</>}
         {entry.source_line ? ` (line ${entry.source_line})` : ""}.
       </p>

@@ -73,6 +73,8 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Loot](loot.md) | Authoritative ground drops and pickup integration. |
 | [Weather](weather.md) | Session time, weather presets, synchronization, and events. |
 | [Vehicles](vehicles.md) | Identity, streaming, authority leases, seats, and Lua APIs. |
+| [Armed vehicle spawn catalogue](armed-vehicles.md) | Exact spawn IDs, mounted-weapon profiles, verified examples, and the complete 2.31 record inventory. |
+| [Vehicle weapon Lua API](vehicle-weapons.md) | Client armament queries: mounted/selected weapons, native ammo, heat, trigger mode and turret aim. |
 | [Vehicle paint](vehicle-paint.md) | Server-authoritative RGB paint, cross-resource controls, replication, events, and native limitations. |
 | [NPCs](npcs.md) | Implemented server-owned NPCs, templates, streaming, task queues, authority leases, life, events, and Lua APIs. |
 | [Contextual interactions](interactions.md) | Custom world/NPC prompts, action keys, projection, ownership, and server-safe integration. |

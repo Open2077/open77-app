@@ -224,6 +224,18 @@
           "description": "Network vehicle identity, streaming, authority leases, seats and proxy replication, doors and glass, damage profiles, and the full asymmetric server and client Lua API."
         },
         {
+          "slug": "vehicle-weapons",
+          "kind": "guide",
+          "nav": "Armed vehicles & Lua API",
+          "description": "Mounted weapons in multiplayer: driver authority, shots and damage, supported models, protocol 1.24, current limitations and twelve read-only client Lua APIs for weapon selection, ammo, heat and turret aim."
+        },
+        {
+          "slug": "armed-vehicles",
+          "kind": "guide",
+          "nav": "Armed vehicle catalogue",
+          "description": "Exact spawn IDs for 172 vehicle records declaring weapon mounts, with live-tested Basilisk, Outlaw and Shion variants, mount profiles, spawn examples and the machine-readable catalogue."
+        },
+        {
           "slug": "vehicle-paint",
           "kind": "guide",
           "nav": "Vehicle paint",
