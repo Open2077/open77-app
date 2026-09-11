@@ -617,8 +617,8 @@ All methods require `world.npcs`.
 
 | Function | Signature | Purpose |
 |---|---|---|
-| `Open77.npcs.create` | `(definition)` | Create an authoritative NPC and return its ID. |
-| `Open77.npcs.update` | `(id, patch)` | Patch appearance, loadout, AI mode, damage policy, health, or ragdoll. |
+| `Open77.npcs.create` | `(definition)` | Create an authoritative NPC from `record = "Character.*"` (no catalogue required), or a legacy `template` alias. Returns ID or `nil, reason`; engine readiness is asynchronous. See [NPCs](npcs.md). |
+| `Open77.npcs.update` | `(id, patch)` | Patch appearance, loadout, behavior, AI mode, damage policy, health, or ragdoll. |
 | `Open77.npcs.setTransform` | `(id, transform)` | Set canonical position and yaw. |
 | `Open77.npcs.setBucket` | `(id, bucket)` | Move NPC visibility scope. |
 | `Open77.npcs.setAppearance` | `(id, appearance)` | Appearance convenience patch. |
@@ -626,13 +626,18 @@ All methods require `world.npcs`.
 | `Open77.npcs.setHealth` | `(id, health, maxHealth?)` | Health convenience patch. |
 | `Open77.npcs.setDamagePolicy` | `(id, policy)` | Set mortal/immortal/invulnerable policy. |
 | `Open77.npcs.setAiMode` | `(id, mode)` | Set tasks/frozen/native mode. |
+| `Open77.npcs.setBehavior` / `getBehavior` | `(id, partialOptions)` / `(id)` | Update/read native AI, combat, perception and voice policy. See [NPC behavior](npc-behavior.md). |
+| `Open77.npcs.setAIEnabled` | `(id, enabled)` | Pause/resume the native AI agent and Open77 scheduler without changing `aiMode`. |
+| `Open77.npcs.setCombatEnabled` | `(id, enabled)` | Suppress/allow combat and hostile acquisition. |
+| `Open77.npcs.setPerceptionEnabled` | `(id, enabled)` | Suppress/allow autonomous sensory acquisition. |
+| `Open77.npcs.setVoiceEnabled` | `(id, enabled)` | Suppress/allow per-NPC voice lines and barks. |
 | `Open77.npcs.setRagdoll` | `(id, enabled)` | Set canonical ragdoll state. |
 | `Open77.npcs.kill` / `revive` / `applyDamage` | `(id, ...)` | Authoritative life mutations. |
 | `Open77.npcs.remove` | `(id)` | Remove the NPC. |
 | `Open77.npcs.get` / `all` | `(id)` / `(bucket?)` | One snapshot or an array. |
-| `Open77.npcs.templates` | `()` | Complete curated template catalogue. |
+| `Open77.npcs.templates` | `()` | Legacy alias catalogue, not a limit on direct Character records. |
 
-Definition fields include `template`, `position`, `yaw`, `bucket`, `appearance`, `loadout`,
+Definition fields include `record`, `template`, `position`, `yaw`, `bucket`, `appearance`, `loadout`, `behavior`,
 `aiMode`, `damagePolicy`, `health`, `maxHealth`, `streamingRadius`, `streamingHysteresis`,
 `despawnWhenUnobserved`, and `persistent`.
 

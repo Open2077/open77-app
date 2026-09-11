@@ -5682,7 +5682,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10828,
+  "source_line": 11599,
   "qualified": "Open77.npcs.all",
   "route_id": "Open77.npcs.all"
  },
@@ -5708,7 +5708,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10831,
+  "source_line": 11602,
   "qualified": "Open77.npcs.currentTask",
   "route_id": "Open77.npcs.currentTask"
  },
@@ -5734,7 +5734,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10830,
+  "source_line": 11601,
   "qualified": "Open77.npcs.entity",
   "route_id": "Open77.npcs.entity"
  },
@@ -5743,7 +5743,7 @@
   "name": "get",
   "handler": "LuaNpcGet",
   "summary": "Reads one server-owned NPC currently known by this client.",
-  "description": "Read-only and guarded by npcs.read. The local entity handle is generation-checked and becomes invalid after stream-out.",
+  "description": "Read-only and guarded by npcs.read. The snapshot includes the exact Character record; template is the legacy alias or 'record' for direct spawns. The local entity handle is generation-checked and becomes invalid after stream-out. Observe onNpcReady/onNpcSpawnFailed for asynchronous projection readiness; see wiki/npcs.md.",
   "params": [
    {
     "name": "id",
@@ -5760,7 +5760,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10827,
+  "source_line": 11598,
   "qualified": "Open77.npcs.get",
   "route_id": "Open77.npcs.get"
  },
@@ -5786,7 +5786,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 10829,
+  "source_line": 11600,
   "qualified": "Open77.npcs.isStreamedIn",
   "route_id": "Open77.npcs.isStreamedIn"
  },
@@ -9807,6 +9807,192 @@
   "source_line": 5586,
   "qualified": "Open77.animations.stop",
   "route_id": "server:Open77.animations.stop"
+ },
+ {
+  "namespace": "Open77.npcs",
+  "name": "getBehavior",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reads the canonical behavior policy of an owned NPC.",
+  "description": "Requires world.npcs. Returns a detached table with aiEnabled, combatEnabled, perceptionEnabled, voiceEnabled. Client inspection uses Open77.npcs.get(id).behavior with npcs.read.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "table behavior, or nil"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6281,
+  "qualified": "Open77.npcs.getBehavior",
+  "route_id": "server:Open77.npcs.getBehavior"
+ },
+ {
+  "namespace": "Open77.npcs",
+  "name": "setAIEnabled",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Pauses or resumes a server-owned NPC's native AI and Open77 tasks.",
+  "description": "Requires world.npcs and ownership. Does not change aiMode or the other behavior options. Disabling revokes the simulation lease; enabling resumes according to the selected mode.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success, optional string reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6282,
+  "qualified": "Open77.npcs.setAIEnabled",
+  "route_id": "server:Open77.npcs.setAIEnabled"
+ },
+ {
+  "namespace": "Open77.npcs",
+  "name": "setBehavior",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Changes a server-owned NPC's native AI, combat, perception and voice policy.",
+  "description": "Requires world.npcs and ownership. Partial boolean options aiEnabled, combatEnabled, perceptionEnabled, voiceEnabled; all default true. Replicated to observers and late joiners. See npc-behavior.md for engine semantics and boundaries.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "behavior",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success, optional string reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6277,
+  "qualified": "Open77.npcs.setBehavior",
+  "route_id": "server:Open77.npcs.setBehavior"
+ },
+ {
+  "namespace": "Open77.npcs",
+  "name": "setCombatEnabled",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Allows or suppresses a server-owned NPC's combat behavior.",
+  "description": "Requires world.npcs and ownership. False clears threats, disables hostile acquisition/reactions and blocks outgoing hit processing without disabling scripted locomotion.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success, optional string reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6286,
+  "qualified": "Open77.npcs.setCombatEnabled",
+  "route_id": "server:Open77.npcs.setCombatEnabled"
+ },
+ {
+  "namespace": "Open77.npcs",
+  "name": "setPerceptionEnabled",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Controls autonomous sensory acquisition for a server-owned NPC.",
+  "description": "Requires world.npcs and ownership. False disables senses, reactions and automatic threat seeding; does not cancel an existing explicit target. Combat or AI disabled takes precedence.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success, optional string reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6290,
+  "qualified": "Open77.npcs.setPerceptionEnabled",
+  "route_id": "server:Open77.npcs.setPerceptionEnabled"
+ },
+ {
+  "namespace": "Open77.npcs",
+  "name": "setVoiceEnabled",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Controls voice lines and barks of a server-owned NPC.",
+  "description": "Requires world.npcs and ownership. Controls native voiceset lines/grunts (including combat/search barks), suppresses scripted voiceovers and filters native dialogue routed through subtitles. Replicated per NPC, not a global sound/SFX mute or a guarantee to stop audio already playing.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success, optional string reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6294,
+  "qualified": "Open77.npcs.setVoiceEnabled",
+  "route_id": "server:Open77.npcs.setVoiceEnabled"
  },
  {
   "namespace": "Open77.vehicles",

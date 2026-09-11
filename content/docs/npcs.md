@@ -6,6 +6,11 @@ tasks and simulation authority. Clients cannot create or mutate canonical NPCs.
 
 The reference implementation is [`resources/system/open77_npcs`](../resources/system/open77_npcs/README.md).
 
+**Developer preview:** spawn directly from `Character.*` record IDs, without registering a
+virtual template. Browse the [NPC record catalogue](npc-catalogue.md) for IDs, appearances
+and compatibility warnings. See [AI, combat and voice control](npc-behavior.md) to make a
+hostile NPC passive, disable its perception or silence combat/search voice lines.
+
 ## Manifest permissions
 
 Server mutation requires `world.npcs`. Client inspection requires `npcs.read`.
@@ -29,10 +34,20 @@ permissions { "world.npcs", "npcs.read" }
 - Stopping a resource removes its non-persistent NPCs. Persistent NPCs must be removed explicitly
   or restored/managed by server code after a resource restart.
 
-## Templates
+## Character records and legacy aliases
 
-Raw `Character.*` records are deliberately not accepted. Use a reviewed alias from
-`Open77.npcs.templates()`:
+Spawn directly with `Open77.npcs.create({ record = "Character.Judy", position = ... })`.
+No catalogue registration is required. Vanilla, DLC and custom `Character.*` records use the
+same authoritative lifecycle and replication path. Their record and required assets must exist
+on every observing client; the headless server cannot inspect a player's TweakDB.
+
+Use exact, case-sensitive textual IDs (not hashes or `.ent` paths): `Character.` followed by
+ASCII letters, digits, `_`, `-` or `.`, at most 255 bytes in total. `record` takes precedence over
+`template`; an invalid explicit record is rejected, never replaced with a default NPC.
+For compatibility, `template = "Character.Judy"` and the first argument of the low-level
+`CreateNpc` (with its existing positional arguments) also accept records. Existing aliases and
+the old default when **both fields are absent** remain available.
+`Open77.npcs.templates()` lists these optional legacy aliases, not all spawnable characters:
 
 ```lua
 for _, template in ipairs(Open77.npcs.templates()) do
@@ -47,7 +62,7 @@ end
 | `gang_valentinos_ranged_01` | Valentinos | Ranged gang combatant. |
 | `gang_tygerclaws_ranged_01` | Tyger Claws | Ranged gang combatant. |
 
-An alias contains its server-approved record, observer record and capability list. An advertised
+An alias contains its predefined record, observer record and capability list. An advertised
 capability describes the underlying rig/template; it does not make an unstable task public.
 
 **`civilian_female_relaxed_01` cannot be shot, and this is not a bug to work around.** It
@@ -93,8 +108,8 @@ ignore the metadata and retain the default hostility sweep.
 
 ### Complete 2.31 research catalogue
 
-The reviewed runtime allowlist above is intentionally small, but the vanilla research catalogue is
-now exhaustive for Cyberpunk 2077 2.31 + Phantom Liberty:
+The research catalogue helps find records and appearances for Cyberpunk 2077 2.31 + Phantom Liberty.
+It does not gate the runtime API:
 
 - [6,668 `Character.*` records](../docs/generated/npc-records-2.31.csv), including template,
   gameplay metadata, crowd appearances and structural risk classification;
@@ -104,10 +119,11 @@ now exhaustive for Cyberpunk 2077 2.31 + Phantom Liberty:
 - [all definitions from the referenced `.app` resources](../docs/generated/npc-appearance-resources-2.31.csv);
 - [detailed machine-readable `.ent`/`.app` graph](../docs/generated/npc-entity-appearances-2.31.json).
 
-The `category` and `risk` columns are research filters, not permission to spawn a raw record. In
+The `category` and `risk` columns are research filters, not a runtime allowlist. In
 particular, `candidate` means only that no obvious quest/player/vendor/special-rig blocker was found
-in the extracted fields. A record becomes available to Lua only after it has been tested and added
-to the server-owned alias registry.
+in the extracted fields. Access to a record does not guarantee that its quest logic, special rig,
+animations, appearance or equipment supports every NPC task. Test the records you ship; prefer
+native inventory over forcing player-proxy equipment onto an unrelated character graph.
 
 See the [methodology, source hashes, limitations and validation backlog](../docs/research/npc-templates-and-appearances-catalog.md).
 
@@ -115,7 +131,7 @@ See the [methodology, source hashes, limitations and validation backlog](../docs
 
 ```lua
 local npcId, reason = Open77.npcs.create({
-    template = "civilian_female_relaxed_01",
+    record = "Character.Judy",
     position = { x = -1378.0, y = 1262.0, z = 123.0 },
     yaw = 90.0,
     bucket = 0,
@@ -150,16 +166,18 @@ functions return `true` only when the NPC exists and belongs to the calling reso
 task parameters, IDs or enum values raise a Lua error; callers should treat these as resource
 bugs rather than normal gameplay failures.
 
-`create` is the exception: an unknown template or an out-of-range field is a **normal
+`create` is the exception: an invalid record ID, unknown alias or out-of-range field is a **normal
 rejection**, not an error. It returns `nil, reason` — for example
-`nil, "npc_template_not_found"` — so always check both return values.
+`nil, "npc_record_invalid"` or `nil, "npc_template_not_found"` — so always check both return values.
+A returned ID confirms canonical server creation, **not** successful engine spawning. Client-side
+record lookup and asynchronous spawning can still fail; use `onNpcReady` and `onNpcSpawnFailed`.
 
 | Function | Parameters | Return |
 |---|---|---|
 | `Open77.npcs.create` | `definition` | `npcId`, or `nil, reason` when the subsystem/permission is unavailable |
 | `Open77.npcs.get` | `npcId` | owned NPC snapshot or `nil` |
 | `Open77.npcs.all` | optional `bucket` | array of owned NPC snapshots |
-| `Open77.npcs.templates` | none | array of approved template snapshots |
+| `Open77.npcs.templates` | none | array of optional legacy alias snapshots (not an exhaustive catalogue) |
 | `Open77.npcs.update` | `npcId, fields` | boolean |
 | `Open77.npcs.setTransform` | `npcId, transform` | boolean |
 | `Open77.npcs.setBucket` | `npcId, bucket` | boolean |
@@ -180,7 +198,7 @@ An NPC snapshot contains:
 |---|---|---|
 | `id`, `revision`, `taskRevision` | integer | Canonical identity and monotonic revisions. |
 | `resource` | string | Owning resource. |
-| `template`, `record`, `observerRecord` | string | Approved alias and resolved REDengine records. |
+| `template`, `record`, `observerRecord` | string | Legacy alias, or `"record"` for direct spawning. Both record fields contain the exact Character ID for direct spawns. |
 | `appearance`, `loadout` | string | Appearance name and canonical loadout JSON. |
 | `x`, `y`, `z`, `yaw` | number | Canonical transform. |
 | `bucket` | integer | Routing bucket. |
@@ -234,6 +252,12 @@ cannot receive a lease, motion report or new task until it is revived. `native` 
 templates whose autonomous REDengine behaviour has been explicitly validated.
 
 ## Tasks
+
+For native AI pause, passive NPCs, sensory acquisition and per-NPC voice suppression, see
+[NPC AI, combat and voice control](npc-behavior.md). These options are set with
+`behavior = {...}` at creation or `Open77.npcs.setBehavior(id, {...})` later; snapshots expose
+the current `behavior` table. They survive loadout changes and stream-out/stream-in.
+
 
 Tasks are server queues partitioned into movement, look, action and full-body channels. Priority is
 evaluated within a channel. One task may execute in each channel at the same time. A timeout of `0`
@@ -369,6 +393,7 @@ Client resource events:
 ```lua
 AddEventHandler("onNpcStreamIn", function(npcId, revision) end)
 AddEventHandler("onNpcReady", function(npcId, entity) end)
+AddEventHandler("onNpcSpawnFailed", function(npcId, record, reason) end)
 AddEventHandler("onNpcChanged", function(npcId, revision) end)
 AddEventHandler("onNpcTaskChanged", function(npcId, taskId) end)
 AddEventHandler("onNpcAuthorityChanged", function(npcId, playerId) end)
@@ -376,6 +401,13 @@ AddEventHandler("onNpcStreamOut", function(npcId, reason) end)
 ```
 
 ## Client read-only API
+
+`onNpcSpawnFailed(npcId, record, reason)` is a **local diagnostic**, not a server-authoritative
+failure. Reasons are `npc_record_invalid`, `npc_record_not_found`, `npc_record_not_character`,
+`npc_spawn_failed` and `npc_spawn_timeout` (30 seconds). A failed projection is not retried every
+frame: it remains failed until a new incarnation (stream-out/in, recreation, record/appearance
+change). Transient spawn-service saturation is retried at most once every two seconds. Never
+trust a client failure notification to delete canonical server state automatically.
 
 ```lua
 local npc = Open77.npcs.get(npcId)
@@ -388,7 +420,7 @@ local taskId = Open77.npcs.currentTask(npcId) -- canonical current task ID or ni
 Snapshots expose `streamed` and `locallyAuthoritative`. The local entity handle is ephemeral: do
 not cache it across stream-out, reconnect or resource reload.
 
-Client snapshots contain `id`, `revision`, `entity`, `template`, `appearance`, `flags`, `bucket`,
+Client snapshots contain `id`, `revision`, `entity`, `template`, `record`, `appearance`, `flags`, `bucket`,
 `aiMode`, `damagePolicy`, `health`, `maxHealth`, `currentTaskId`, `taskRevision`,
 `authorityPlayerId`, `authorityEpoch`, `streamed` and `locallyAuthoritative`. Without `npcs.read`,
 `all()` returns an empty array, `get()`/`entity()`/`currentTask()` return `nil`, and
@@ -397,8 +429,8 @@ Client snapshots contain `id`, `revision`, `entity`, `template`, `appearance`, `
 ## Current limitations
 
 - Server persistence storage is resource-defined; `persistent=true` only changes cleanup policy.
-- Arbitrary records, raw REDengine handles and client-side canonical mutation are intentionally
-  unsupported.
+- Records outside `Character.*`, raw REDengine handles and client-side canonical mutation are
+  unsupported. A valid Character record may still depend on unavailable DLC/assets or quest logic.
 - Native attack/shoot/melee/combat tasks are not in the stable API yet. Use server-authoritative
   scripted damage until animation, targeting and hit validation are proven safe for each rig.
 - Native authored patrol paths (`NodeRef`) are not exposed; Open77 patrols sequence `moveTo` tasks.

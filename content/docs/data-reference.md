@@ -17,10 +17,11 @@ Do not treat every identifier found in the game database as a supported multipla
 Record names and Open77 entity IDs are opaque values. Preserve their spelling and never pass a
 64-bit entity ID through `tonumber`.
 
-## NPC templates
+## NPC records and aliases
 
-`Open77.npcs.create` currently accepts the following server-approved aliases. Query the active
-runtime instead of hard-coding the list when building admin tools:
+`Open77.npcs.create({ record = "Character.Judy", x = ..., y = ..., z = ... })` accepts exact
+`Character.*` record IDs without catalogue registration. Every observing client must have the
+record and its assets installed. Optional legacy aliases remain available for compatibility:
 
 ```lua
 for _, template in ipairs(Open77.npcs.templates()) do
@@ -33,9 +34,9 @@ end
 | `civilian_female_relaxed_01` | `Character.Panam` | `Character.Panam` | Non-hostile human with locomotion, look-at, workspot, and equipment capabilities. |
 | `hostile_female_ranged_lab` | `Character.cpz_maelstrom_grunt1_ranged1_lexington_wa` | same as authoritative record | Ranged hostile test puppet with the combat capability enabled. |
 
-The aliases are deliberately conservative. A raw `.ent` path or arbitrary `Character.*` record
-from the extracted database is **not** accepted by the authoritative NPC service until it has been
-promoted to the supported catalogue.
+Raw `.ent` paths and numeric hashes are not accepted. The extracted database is a discovery tool,
+not an allowlist; custom `Character.*` records work too. See [NPCs](npcs.md) for validation,
+asynchronous spawn failures, appearance/rig caveats and the full API.
 
 ### Complete extracted NPC database
 

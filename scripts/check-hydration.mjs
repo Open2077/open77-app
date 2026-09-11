@@ -239,6 +239,76 @@ try {
     }
   }
 
+  if (process.argv.includes("--npcs")) {
+    await fs.mkdir(".shots", { recursive: true });
+    await session.send("Network.enable");
+    await session.send("Network.setBlockedURLs", { urls: ["*npc-records-2.31.json*"] });
+    await visit("/docs/npc-catalogue");
+    check("NPC catalogue has recoverable download error", await session.evaluate(`
+      return document.querySelector('.npc-catalogue [role="alert"]')?.textContent.includes('Retry download');
+    `));
+    await session.send("Network.setBlockedURLs", { urls: [] });
+    await session.evaluate(`document.querySelector('.npc-catalogue [role="alert"] button').click();`);
+    for (let i = 0; i < 60; i++) {
+      if (await session.evaluate(`return document.querySelectorAll('.npc-catalogue-list > li').length === 40;`)) break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    check("NPC retry loads 40 of 6582 records", await session.evaluate(`
+      return document.querySelectorAll('.npc-catalogue-list > li').length === 40 && document.querySelector('.npc-catalogue-results').textContent.includes('6,582');
+    `));
+    messages = []; // The intentionally blocked fetch above is expected.
+    const pageChanged = await session.evaluate(`
+      const first = document.querySelector('.npc-catalogue-record code').textContent;
+      document.querySelector('.npc-catalogue-pagination button:last-child').click();
+      await new Promise(r => setTimeout(r, 100));
+      return first !== document.querySelector('.npc-catalogue-record code').textContent;
+    `);
+    check("NPC pagination changes records", pageChanged);
+    const search = async (value) => session.evaluate(`
+      const input = document.querySelector('.npc-catalogue input');
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, ${JSON.stringify(value)});
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 100));
+      return document.querySelectorAll('.npc-catalogue-list > li').length;
+    `);
+    check("NPC search finds exact spawn example", await search("Character.cpz_maelstrom_grunt1_ranged1_lexington_wa") === 1);
+    await session.send("Browser.grantPermissions", { origin, permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"] }, false);
+    check("NPC copy uses exact Character ID", await session.evaluate(`
+      document.querySelector('.npc-catalogue-record button').click();
+      await new Promise(r => setTimeout(r, 150));
+      return await navigator.clipboard.readText() === 'Character.cpz_maelstrom_grunt1_ranged1_lexington_wa';
+    `));
+    await session.evaluate(`document.querySelector('.npc-catalogue summary').click();`);
+    check("NPC details expose template and appearance", await session.evaluate(`return document.querySelector('.npc-catalogue details[open] dd').textContent.includes('.ent');`));
+    for (const width of [1440, 900, 390]) {
+      await session.send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width === 390 });
+      for (const theme of ['light', 'dark']) {
+        await session.evaluate(`
+          if (document.querySelector('.docs-site').dataset.theme !== '${theme}') document.querySelector('.docs-theme-toggle').click();
+          document.querySelector('.npc-catalogue').scrollIntoView({ behavior: 'instant', block: 'start' });
+          await new Promise(r => setTimeout(r, 150));
+        `);
+        check(`NPC catalogue ${width}px ${theme} no overflow`, await session.evaluate(`return document.documentElement.scrollWidth <= innerWidth;`));
+        if (width !== 900) {
+          const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+          await fs.writeFile(`.shots/npc-${width}-${theme}.png`, Buffer.from(data, "base64"));
+        }
+      }
+    }
+    check("NPC empty search is explicit", await search("__no_such_character__") === 0);
+    await session.evaluate(`document.querySelector('.npc-catalogue-empty button').click(); await new Promise(r => setTimeout(r, 100));`);
+    check("NPC reset restores catalogue", await session.evaluate(`return document.querySelectorAll('.npc-catalogue-list > li').length === 40;`));
+    check("NPC classification filter works", await session.evaluate(`
+      const select = document.querySelectorAll('.npc-catalogue select')[1];
+      select.value = 'candidate'; select.dispatchEvent(new Event('change', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 100));
+      return [...document.querySelectorAll('.npc-catalogue-tags [data-risk]')].every(el => el.dataset.risk === 'candidate') && document.querySelectorAll('.npc-catalogue-list > li').length === 40;
+    `));
+    reportConsole("NPC interactions");
+    await session.evaluate(`if (document.querySelector('.docs-site').dataset.theme !== 'light') document.querySelector('.docs-theme-toggle').click();`);
+    await session.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
+  }
+
   if (process.argv.includes("--preview")) {
     for (const width of [1440, 1100, 420]) {
       await session.send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });

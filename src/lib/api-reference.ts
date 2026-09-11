@@ -161,6 +161,11 @@ const VEHICLE_WEAPON_READS = new Set([
 ]);
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (raw.namespace === "Open77.npcs") {
+    return runtime === "server"
+      ? { usageGuideHref: "/docs/npc-behavior", usageGuideLabel: "NPC AI, combat & voice guide" }
+      : { usageGuideHref: "/docs/npcs", usageGuideLabel: "NPC lifecycle & read-only client guide" };
+  }
   if (runtime === "client" && raw.namespace === "Open77.map") {
     return { usageGuideHref: "/docs/native-map", usageGuideLabel: "Native map & waypoints guide" };
   }

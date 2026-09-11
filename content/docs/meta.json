@@ -179,7 +179,19 @@
           "slug": "npcs",
           "kind": "guide",
           "nav": "NPCs",
-          "description": "Server-owned NPCs: templates, streaming, authority leases, the task queue, health and damage, events, the read-only client API, and the current limitations."
+          "description": "Spawn Character records directly; manage streaming, authority, tasks, health and replicated behavior."
+        },
+        {
+          "slug": "npc-behavior",
+          "kind": "guide",
+          "nav": "NPC AI & voice control",
+          "description": "Control AI, combat, perception and voice lines per NPC with authoritative server Lua APIs."
+        },
+        {
+          "slug": "npc-catalogue",
+          "kind": "guide",
+          "nav": "NPC catalogue",
+          "description": "Search 6,582 Character records, copy spawn IDs and inspect appearances and compatibility warnings."
         },
         {
           "slug": "loot",
