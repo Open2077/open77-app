@@ -10,9 +10,20 @@ import { CommentModeration } from "./comment-moderation";
 
 export function Discussion({ project, page, focusThread = false }: { project: CommunityProject; page: CommunityPage<CommunityComment>; focusThread?: boolean }) {
   const router = useRouter(); const refresh = () => router.refresh();
+  const { session } = useSession();
+  const [permission, setPermission] = useState<{ token: string; projectId: string; allowed: boolean } | null>(null);
+  useEffect(() => {
+    if (!session?.emailVerified) return;
+    const controller = new AbortController();
+    api.projectState(session.token, [project.projectId], AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]))
+      .then(items => { if (!controller.signal.aborted) setPermission({ token: session.token, projectId: project.projectId, allowed: items[0]?.canManageComments === true }); })
+      .catch(() => { if (!controller.signal.aborted) setPermission(null); });
+    return () => controller.abort();
+  }, [session?.token, session?.emailVerified, project.projectId, page]);
+  const canManage = !!session?.emailVerified && permission?.token === session.token && permission.projectId === project.projectId && permission.allowed;
   return <section aria-label="Community discussion">{project.state === "published" ? <CommentComposer projectId={project.projectId} parentId={null} updated={refresh} /> : <p className="hub-notice">This archived creation is closed to new comments.</p>}
     {page.items.length === 0 && <p className="hub-notice">Start the conversation. Ask a question or share how you’re using this creation.</p>}
-    {page.items.map(comment => <CommentEntry key={`${comment.commentId}-${comment.revision}`} comment={comment} project={project} updated={refresh} initiallyExpanded={focusThread} />)}
+    {page.items.map(comment => <CommentEntry key={`${comment.commentId}-${comment.revision}`} comment={comment} project={project} updated={refresh} initiallyExpanded={focusThread} canManage={canManage} />)}
   </section>;
 }
 
@@ -41,7 +52,7 @@ function CommentComposer({ projectId, parentId, existing, updated }: { projectId
   </form>;
 }
 
-function CommentEntry({ comment, project, updated, initiallyExpanded = false }: { comment: CommunityComment; project: CommunityProject; updated: () => void; initiallyExpanded?: boolean }) {
+function CommentEntry({ comment, project, updated, initiallyExpanded = false, canManage = false }: { comment: CommunityComment; project: CommunityProject; updated: () => void; initiallyExpanded?: boolean; canManage?: boolean }) {
   const { session } = useSession(); const [editing, setEditing] = useState(false); const [deleting, setDeleting] = useState(false);
   const [expanded, setExpanded] = useState(initiallyExpanded); const [busy, setBusy] = useState(false); const [error, setError] = useState("");
   async function act(action: () => Promise<void>) { setBusy(true); setError(""); try { await action(); updated(); } catch (error) { setError(error instanceof Error ? error.message : "Action failed. Refresh before trying again."); } finally { setBusy(false); } }
@@ -53,7 +64,7 @@ function CommentEntry({ comment, project, updated, initiallyExpanded = false }: 
     <div className="hub-actions">{own && comment.state === "visible" && project.state === "published" && <button className="btn btn-ghost" disabled={busy} onClick={() => setEditing(value => !value)}>{editing ? "Cancel edit" : "Edit"}</button>}
       {own && comment.state !== "deleted" && <button className="btn btn-ghost" disabled={busy} onClick={() => setDeleting(value => !value)}>Delete</button>}
       {!comment.parentId && <button className="btn btn-ghost" aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? "Collapse replies" : "View replies / reply"}</button>}
-      {!comment.parentId && comment.state === "visible" && session?.accountId === project.ownerAccountId && <><button className="btn btn-ghost" disabled={busy} onClick={() => void act(() => api.markComment(session.token, comment.commentId, comment.revision, !comment.pinned, comment.resolved))}>{comment.pinned ? "Unpin" : "Pin"}</button>
+      {!comment.parentId && comment.state === "visible" && session?.emailVerified && canManage && <><button className="btn btn-ghost" disabled={busy} onClick={() => void act(() => api.markComment(session.token, comment.commentId, comment.revision, !comment.pinned, comment.resolved))}>{comment.pinned ? "Unpin" : "Pin"}</button>
         <button className="btn btn-ghost" disabled={busy} onClick={() => void act(() => api.markComment(session.token, comment.commentId, comment.revision, comment.pinned, !comment.resolved))}>{comment.resolved ? "Reopen" : "Mark resolved"}</button></>}</div>
     {deleting && session && <div className="hub-notice"><p>Delete your comment? Its text will be removed and existing replies will remain.</p><button className="btn btn-primary" disabled={busy} onClick={() => void act(() => api.deleteComment(session.token, comment.commentId, comment.revision))}>Confirm deletion</button><button className="btn btn-ghost" onClick={() => setDeleting(false)}>Keep comment</button></div>}
     {comment.state === "visible" && <ReportForm targetType="comment" targetId={comment.commentId} />}

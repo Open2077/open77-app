@@ -12,7 +12,9 @@ export type CommunityProject = {
   creatorHandle: string | null;
   upvotes: number;
 };
-export type CommunityProjectState = { projectId: string; voted: boolean; saved: boolean; subscribed: boolean };
+export type CommunityProjectState = { projectId: string; voted: boolean; saved: boolean; subscribed: boolean; canManageComments?: boolean };
+export type CommunityMember = { accountId: string; role: "owner" | "maintainer"; handle: string | null; membershipId: string };
+export type CommunityInvitation = { invitationId: string; projectId: string; senderAccountId: string; recipientAccountId: string; kind: "maintainer" | "ownership"; state: "pending" | "accepted" | "declined" | "revoked" | "expired"; projectTitle: string; senderHandle: string | null; recipientHandle: string | null; createdAtUtc: string; expiresAtUtc: string };
 export type CommunityComment = { commentId: string; projectId: string; parentId: string | null; authorAccountId: string | null; authorHandle: string | null; body: string | null; state: "visible" | "hidden" | "deleted"; revision: number; pinned: boolean; resolved: boolean; createdAtUtc: string; updatedAtUtc: string };
 export type CommunitySavedProject = { projectId: string; savedAtUtc: string; project: CommunityProject | null };
 export type CommunityProfile = { handle: string; bio: string; links: { label: string; url: string }[]; revision: number; createdAtUtc: string; updatedAtUtc: string; avatarMediaId: string | null };

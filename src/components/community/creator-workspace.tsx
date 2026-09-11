@@ -192,6 +192,7 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
     </section>}
     {status && <div className="hub-notice" role="status">{status}</div>}
     {project && <p className="hub-notice">Revision {project.revision} · {project.revisionStatus.replaceAll("_", " ")}{project.publishedAtUtc ? " · Earlier approved content remains public." : " · Not published yet."}</p>}
+    {project && <Link href={`/account/creations/${project.projectId}/members`}>Manage project members →</Link>}
     {project && <ActivityHistory key={`${project.projectId}-${project.revisionStatus}`} token={session.token} kind="project" id={project.projectId} allowAppeals initiallyOpen={project.revisionStatus === "rejected" || project.state === "suspended"} />}
     {project && <ProjectLifecycle session={session} project={project} disabled={busy} unsaved={dirty || releaseDirty || conflict} changed={state => { setProject(current => current ? { ...current, state } : current); setStatus(state === "archived" ? "Project archived. Its approved page and downloads remain available." : "Project reopened."); }} />}
     <nav aria-label="Publishing steps"><ol className="hub-wizard-steps">{steps.map((label, index) => <li key={label}><button type="button" className="btn btn-ghost" aria-current={step === index ? "step" : undefined} onClick={() => navigateStep(index)}>{index + 1}. {label}{index === 2 && content.kind === "showcase" ? " (no package)" : ""}</button></li>)}</ol></nav>

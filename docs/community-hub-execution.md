@@ -17,7 +17,7 @@ All four use branch `feat/community-hub`, created from the existing checkout HEA
 
 - [ ] H00: baseline/environment/contract — worktrees ready; Docker 29.7.2 responds; pinned submodule ready; app dependencies installed; SSR preview path pending.
 - [ ] H01: interface prototype — discovery/directory/detail and creator draft surfaces implemented; responsive CSS present, rendered browser review pending.
-- [ ] H02: schema/domain/permissions/revisions — migration 12 and project revision lifecycle implemented/tested. Profiles, release lifecycle, membership workflows and remaining schema still need implementation.
+- [ ] H02: schema/domain/permissions/revisions — migrations through 27, project/release lifecycle, profiles and accepted membership/ownership workflows implemented/tested. Remaining integrations and final upgrade/load acceptance remain open.
 - [ ] H03: project/profile/release APIs — initial project create/edit/submit/review/public/private listing routes tested over HTTP; broader contracts still pending.
 - [ ] H04: private file gateway/storage/jobs — immutable storage, leased durable queue and scoped upload gateway implemented/tested; inspection integration, delivery and operations remain pending.
 - [ ] H05: package/media inspection
@@ -43,7 +43,7 @@ H16 production rollout is outside authorization.
 
 ## Next work
 
-Build interface components against the initial real project contract, then expand profiles/releases and private uploads. Keep all H00–H15 gates pending until direct evidence satisfies them.
+Finish bounded notification read-all, draft deletion, metrics/discovery and GitHub integration, then Warden/launcher and release validation. Keep all H00–H15 gates pending until direct evidence satisfies them.
 
 ## Foundation checkpoint — 11 September 2026
 
@@ -323,3 +323,11 @@ Remaining: all unchecked acceptance gates, including worker inspection, download
 - Player URLs are built from recognized IDs on fixed provider origins; author-supplied autoplay/origin/background parameters are not forwarded. YouTube watch/short/live/short-link forms and direct Vimeo IDs/unlisted hashes are supported. Other valid provider pages retain a direct link. Unsafe schemes, credentials, spoofed hosts, control characters and nonstandard ports are rejected by the preview parser.
 - Four parser tests passed (`node --test scripts/test-community-video.mjs`); app TypeScript/lint and production build passed with loopback API origins. Implementation references: [YouTube player parameters](https://developers.google.com/youtube/player_parameters), [YouTube privacy-enhanced embeds](https://support.google.com/youtube/answer/171780?hl=en) and [Vimeo player parameters](https://help.vimeo.com/hc/en-us/articles/12426260232977-About-Player-Parameters). These references establish URL/parameter behavior, not browser acceptance for this app.
 - Live provider playback, iframe/host headers, mobile sizing, keyboard focus and provider failure journeys remain unverified under the recorded local Next startup rejection. Member invitations/ownership workflows and all remaining H00–H15 integrations remain required. Goal active; production untouched.
+
+## Accepted membership and ownership checkpoint — 11 September 2026
+
+- Migration 27 adds membership generation IDs and private expiring invitations. Owners invite public handles; no access is granted until the verified recipient accepts. Existing pending requests are deduplicated, daily/project/member quotas are enforced, cursors bind the account/project, and reciprocal requests lock accounts in stable order. Invitations retain the title shared at creation without disclosing later private draft edits.
+- Ownership can be offered only to a current maintainer. Acceptance atomically changes exactly one owner, keeps the former owner as maintainer, rotates both membership generations, advances lifecycle revision, and revokes other pending invitations. Current owners can remove maintainers; maintainers can leave. Stale removal cannot remove a newly rejoined membership. Current private API authorization denies removed members.
+- Added account invitation review with explicit acceptance/decline confirmation and paginated history; dedicated project member management with invite/revoke/remove/leave/ownership controls. Editor navigation uses its existing unsaved-change guard. Generic transactional inbox events link to invitations without embedding private project titles. Discussion pin/resolve controls now use authenticated current membership instead of owner-only UI checks.
+- Initial migration tests rejected a MariaDB generated concatenated CHAR key; replaced it with a nullable numeric pending marker in a composite unique index. Targeted tests then passed. The first HTTP test used PUT for the existing PATCH profile contract; corrected the fixture. Master build passed with zero warnings/errors. Community regression: 109 passed, zero failed/skipped (`community-membership-regression.trx`, 96 seconds), including HTTP acceptance/transfer/removal, quota, expiry, concurrent dedup/reciprocal requests, stale generations, private-title isolation, audit and notification delivery.
+- App TypeScript/lint and production build passed, including both new account routes. Browser confirmation/focus/auth recovery, full cross-service acceptance and remaining H00–H15 gates remain open under the previously recorded local Next startup rejection. No production publication/deployment; goal active.
