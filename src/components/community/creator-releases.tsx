@@ -86,6 +86,8 @@ export function CreatorReleases({ session, project }: { session: StoredSession; 
     installation: project.content.installation, testedBuilds: "", requiredResources: "" });
   const { version, changelog, license, installation, testedBuilds, requiredResources } = draft.content;
   const [creating, setCreating] = useState(false);
+  const [rightsContent, setRightsContent] = useState<typeof draft.content | null>(null);
+  const rights = rightsContent === draft.content;
   function reload() { setRefresh(value => value + 1); }
   useEffect(() => {
     const controller = new AbortController();
@@ -110,12 +112,12 @@ export function CreatorReleases({ session, project }: { session: StoredSession; 
     return () => { controller.abort(); clearTimeout(timer); };
   }, [session.token, project.projectId, releaseCursor, uploadCursor, refresh]);
   async function create(event: FormEvent) {
-    event.preventDefault(); if (creating || !draft.loaded || draft.busy || draft.conflict) return;
+    event.preventDefault(); if (creating || !draft.loaded || draft.busy || draft.conflict || !rights) return;
     setCreating(true); setError("");
     try {
       if (!await draft.save()) return;
       await api.createRelease(session.token, project.projectId, version.trim(), { changelog, license, installation,
-        testedBuilds: lines(testedBuilds), requiredResources: lines(requiredResources) });
+        testedBuilds: lines(testedBuilds), requiredResources: lines(requiredResources) }, rights);
       draft.change("version", ""); draft.change("changelog", ""); setReleaseCursor(undefined); reload();
     } catch (error) { setError(errorText(error)); }
     finally { setCreating(false); }
@@ -142,8 +144,9 @@ export function CreatorReleases({ session, project }: { session: StoredSession; 
         <label>Tested Open77 builds, one per line<textarea maxLength={10000} value={testedBuilds} onChange={event => draft.change("testedBuilds", event.target.value)} /></label>
         <label>Required resources, one per line<textarea maxLength={10000} value={requiredResources} onChange={event => draft.change("requiredResources", event.target.value)} /></label>
         </fieldset>
+        <label className="hub-rights"><input type="checkbox" checked={rights} disabled={creating || !draft.loaded} onChange={event => setRightsContent(event.target.checked ? draft.content : null)} />I have permission to share this creation, its images and all included files under the stated license.</label>
         <button type="button" className="btn btn-ghost" disabled={!draft.loaded || draft.busy || draft.conflict || creating} onClick={() => { void draft.save(); }}>Save release draft</button>
-        <button className="btn btn-primary" disabled={!draft.loaded || draft.busy || draft.conflict || creating}>{creating ? "Creating…" : "Create immutable version"}</button>
+        <button className="btn btn-primary" disabled={!draft.loaded || draft.busy || draft.conflict || creating || !rights}>{creating ? "Creating…" : "Create immutable version"}</button>
       </form></details>
     {!releases && !error && <p role="status">Loading releases…</p>}
     <div className="hub-releases">{releases?.items.map(release => <article className="hub-release" key={release.releaseId}>

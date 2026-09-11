@@ -157,7 +157,7 @@ function Editor({ session, active, id }: { session: StoredSession; active: boole
     saving.current = true;
     setBusy(true); setError(null);
     try {
-      await api.submitProject(session.token, project.projectId, project.revision);
+      await api.submitProject(session.token, project.projectId, project.revision, rights);
       setProject({ ...project, revisionStatus: "submitted" }); setStatus("Submitted for review. Your public page will change only after approval.");
     } catch (error) { setError(message(error)); }
     finally { saving.current = false; setBusy(false); }
