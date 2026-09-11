@@ -94,3 +94,10 @@ Next: upload grants/quota reservations, file gateway and inspection pipeline; fi
 - Base full server suite finished: 909 passed, five environment-dependent skips (native platform module and four database scenarios), one pre-existing `ShippedWebUiUsesCefSafeCustomDropdowns` failure. Failing test/Freeroam HTML unchanged from baseline `f8ae5471`; prior runbook documents this same failure. The full suite is not green; targeted Hub parser validation is green. No test was suppressed or changed to hide this failure.
 
 Remaining: all unchecked acceptance gates, including worker inspection, download authorization, full creator/social/moderation UI, GitHub/Warden/launcher integrations and release validation. No production publication/deployment.
+
+## Shared package parser checkpoint — 11 September 2026
+
+- Base commit `d8b863ca` adds `ParsePackageRoot` without duplicating the parser or relaxing runtime directory validation. Master now pins that local commit. The dependency has not been pushed or published; release preparation must account for publishing compatible commits only when authorized.
+- Started the `Open77.Community.Worker` project with manifest inspection, currently a library rather than a running queue consumer. It accepts root/wrapped resources and explicit bundles, records archive/install roots plus authoritative manifests, preserves distinct runtime versions, and rejects overlapping/missing roots, duplicate install names and unmapped non-documentation files.
+- `open77-hub.json` schemaVersion/version/resourceRoots are checked against the submitted release. Dependency/config-template metadata still needs validation and persistence. Preload contents, forbidden-file/secret checks, image processing, worker lifecycle and atomic inspection-result persistence remain required before any artifact can leave quarantine.
+- Master solution build passes with the new pinned resource dependency. Community selection: 38 passed, zero skipped (`community-package-manifests.trx`), including six new root/wrapper/bundle/parser cases. No public acceptance or runtime installation is inferred from these manifest-only tests.
