@@ -5,6 +5,7 @@ import { useSession } from "@/lib/account/session";
 import * as api from "@/lib/community/client-api";
 import type { CommunityPage, CommunityProject, CommunityRelease, CommunityReviewItem } from "@/lib/community/types";
 import { PrivateMediaPreview } from "@/components/community/private-media-preview";
+import { DownloadButton } from "@/components/community/download-button";
 import { useAdminActivity } from "./admin-activity";
 
 const message = (error: unknown) => error instanceof Error ? error.message : "The request failed. Please try again.";
@@ -90,6 +91,8 @@ function ReviewDetail({ token, item, completed }: { token: string; item: Communi
     {release && <><h3>Release details</h3><pre className="hub-review-text">{release.metadata.changelog}</pre><pre className="hub-review-text">{release.metadata.installation}</pre>
       <p>License: {release.metadata.license}</p><p>Tested builds: {release.metadata.testedBuilds.join(", ") || "None declared"}</p><p>Required resources: {release.metadata.requiredResources.join(", ") || "None declared"}</p>
       <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code> · {release.sizeBytes} bytes</p>
+      <DownloadButton key={`${release.releaseId}-${release.revision}`} releaseId={release.releaseId} version={release.version} review={{ token, revision: release.revision }} />
+      <p className="hub-notice">This private ZIP is for review. Its link expires after five minutes or a release decision. Review downloads do not count toward public popularity.</p>
       <details open><summary>Immutable inspection snapshot and manifests</summary><pre className="hub-review-text">{JSON.stringify(release.inspection, null, 2)}</pre></details></>}
     {project && !current && <p className="hub-notice" role="alert">This submission changed or has already been reviewed. Refresh the queue and inspect the current revision.</p>}
     <form className="hub-form" onSubmit={decide}><label>Decision<select value={approve ? "approve" : "reject"} onChange={event => { setApprove(event.target.value === "approve"); setChecked(false); }}><option value="reject">Request changes / reject</option><option value="approve">Approve</option></select></label>
