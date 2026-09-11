@@ -58,6 +58,15 @@ included in a release evidence bundle.
 
 ## Release implication
 
+Subsequent acceptance preparation: base `1cad4344` adds authored MIT world-placement
+and preload samples. Focused 16/16 tests verify actual Lua prop ownership/cleanup,
+shared ZIP/package/nested inspection and metadata. WolvenKit converted and
+round-tripped the authored CR2W entity; schema checks accept all four examples.
+This closes sample preparation, not client rendering or asset mounting. App
+`b26847c` adds a deterministic real-site guest browser runner with syntax/guard/lint
+validation; it has not executed against a served website. Missing gallery coverage
+is explicit, and the runner does not claim authenticated or complete Hub acceptance.
+
 The implementation is substantially integrated and has meaningful local API,
 filesystem, database, scanner and separate-process evidence. It is still not
 appropriate to check off every H00–H14 gate. The remaining cross-cutting blockers
