@@ -14,6 +14,7 @@ import { ActivityHistory } from "./activity-history";
 import { mergeDraft, type DraftField } from "@/lib/community/draft-merge";
 import { DraftPreview } from "./draft-preview";
 import { CreatorLimits } from "./creator-limits";
+import { DraftDeletion } from "./draft-deletion";
 import { ProjectLifecycle } from "./project-lifecycle";
 
 function message(error: unknown) { return error instanceof Error ? error.message : "Something went wrong. Please try again."; }
@@ -47,7 +48,8 @@ function Dashboard({ session }: { session: StoredSession }) {
   return <div>{projects.map(project => <article className="hub-draft-row" key={project.projectId}><div>
     <p className="hub-kicker">{project.state.replaceAll("_", " ")} · {project.revisionStatus.replaceAll("_", " ")}</p><h2>{project.content.title}</h2><p>{project.content.summary || "Add a short description to introduce your creation."}</p>
   </div><div className="hub-actions"><Link className="btn btn-ghost" href={`/account/creations/${project.projectId}/edit`}>Edit project</Link>
-    {project.publishedAtUtc && project.state !== "suspended" && <Link href={`/resources/${project.slug}`}>View public page ↗</Link>}</div></article>)}
+    {project.publishedAtUtc && project.state !== "suspended" && <Link href={`/resources/${project.slug}`}>View public page ↗</Link>}
+    <DraftDeletion token={session.token} accountId={session.accountId} project={project} deleted={() => { setPage(null); setAttempt(value => value + 1); }} /></div></article>)}
     {!projects.length && <p className="hub-notice">No creations remain on this page. Return to the previous page.</p>}
     <nav className="hub-actions" aria-label="Your creation pages">{trail.length > 0 && <button className="btn btn-ghost" onClick={() => { setCursor(trail[trail.length - 1]); setTrail(value => value.slice(0, -1)); }}>Previous creations</button>}
       {page.data.nextCursor && <button className="btn btn-ghost" onClick={() => { setTrail(value => [...value, cursor]); setCursor(page.data.nextCursor ?? undefined); }}>More creations</button>}</nav></div>;

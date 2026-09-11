@@ -212,3 +212,16 @@ pending invitations. This explicit handover preserves published history.
 Archive a published project when active development stops. Archiving keeps the
 approved page and downloads available, closes new comments and freezes edits;
 the owner can reopen it later. It is not a takedown or artifact deletion tool.
+
+For an unpublished project you no longer need, choose **Delete unpublished draft**
+in [My creations](/account/creations). Only its owner can confirm deletion, and
+the confirmation applies to the displayed revision. If someone has edited it,
+reload and review the latest version first. Projects with any published project
+or release history cannot use draft deletion.
+
+Deletion removes the draft from your workspace and frees its draft allowance.
+It revokes project membership, invitations, creator connections and private
+preview access, and prevents pending uploads or jobs from completing. There is
+no creator restore action. The slug remains reserved, and private audit records
+and artifact references are retained; this action does not immediately erase
+stored files or shared objects.
