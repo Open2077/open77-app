@@ -61,10 +61,19 @@ and metadata tests passed. Schema checks accepted both examples and rejected ten
 invalid boundary fixtures. These diagnostic Lua examples do not prove game asset
 loading.
 
-The final acceptance audit also requires a distributable world-placement sample,
-a supported authored preload-asset sample, and a deterministic served Hub browser
-scenario. Those are being prepared independently of the blocked live journeys;
-the existing diagnostic examples and generic website scripts do not satisfy them.
+Base `1cad4344` adds MIT-licensed world-placement and preload samples. The actual
+Lua runtime test verifies two owned props and cleanup; WolvenKit converted, packed
+and extracted a newly authored 375-byte CR2W entity without copying game assets.
+The 597-byte nested ZIP passes shared package/preload inspection. Clean no-deploy
+build and focused 16/16 tests passed; schema checks accepted four samples and rejected
+ten invalid fixtures. The empty preload entity has no visible mesh; actual game
+mounting and the world-placement sample's client rendering remain unverified.
+
+App `b26847c` supplies the deterministic served Hub guest
+browser scenario described in [browser acceptance](community-hub-browser-acceptance.md).
+Syntax, argument guards and lint pass. It requires an already-running website,
+records actual checks at all three widths, and does not claim authenticated or
+full Hub acceptance. Browser execution remains unperformed.
 
 ## External and execution blockers
 
