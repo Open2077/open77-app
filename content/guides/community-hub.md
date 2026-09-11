@@ -48,6 +48,12 @@ your private configuration without a backup and a deliberate migration.
 
 ## Publish from a ZIP
 
+For a small starting point, use the
+[newly authored MIT resource and bundle examples](https://github.com/Open2077/open77-base/tree/feat/community-hub/examples/community-hub/v1).
+Their README explains ZIP layout, configuration templates and the versioned
+metadata schema. They contain diagnostic Lua only, with no game or community
+assets. These links refer to the Hub development branch until a release is pinned.
+
 Create a project in [My creations](/account/creations). The editor has five steps:
 
 1. **Basics:** choose a stable slug, title, summary, type, category, maturity and
