@@ -1,8 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound, permanentRedirect } from "next/navigation";
 import { HubShell, HubUnavailable } from "@/components/community/hub-shell";
 import { ProjectCard } from "@/components/community/project-card";
-import { CommunityReadError, getCreator } from "@/lib/community/public-api";
+import { CommunityReadError, getCreator, getMedia } from "@/lib/community/public-api";
 import { pageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }) {
@@ -23,7 +24,9 @@ export default async function CreatorPage({ params, searchParams }: {
   if (!result || typeof result !== "object" || !("profile" in result)) return <HubShell><HubUnavailable /></HubShell>;
   const { profile, projects } = result as Awaited<ReturnType<typeof getCreator>>;
   if (profile.handle !== handle) permanentRedirect(`/creators/${profile.handle}${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`);
+  const avatar = profile.avatarMediaId ? (await getMedia(profile.avatarMediaId).catch(() => null))?.derivatives.find(item => item.name === "card") : null;
   return <HubShell><header className="hub-directory-head"><p className="hub-kicker">COMMUNITY CREATOR</p><h1>@{profile.handle}</h1>
+    {avatar && <Image className="hub-avatar" unoptimized src={avatar.url} width={avatar.width} height={avatar.height} alt="" referrerPolicy="no-referrer" />}
     {profile.bio && <p className="hub-creator-bio">{profile.bio}</p>}
     <div className="hub-actions">{profile.links.map(link => <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer nofollow ugc">{link.label} ↗</a>)}</div></header>
     <section aria-label="Published creations"><h2 className="hub-library-title">Creations</h2>

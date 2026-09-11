@@ -11,7 +11,7 @@ export type CommunityProject = {
   createdAtUtc: string; updatedAtUtc: string; publishedAtUtc: string | null;
   creatorHandle: string | null;
 };
-export type CommunityProfile = { handle: string; bio: string; links: { label: string; url: string }[]; revision: number; createdAtUtc: string; updatedAtUtc: string };
+export type CommunityProfile = { handle: string; bio: string; links: { label: string; url: string }[]; revision: number; createdAtUtc: string; updatedAtUtc: string; avatarMediaId: string | null };
 export type CommunityCreatorPage = { profile: CommunityProfile; projects: CommunityPage<CommunityProject> };
 export type CommunityPage<T> = { items: T[]; nextCursor: string | null };
 export type CommunityModerationState = { projectId: string; state: string; moderationRevision: number; suspendedFromState: string | null };
@@ -31,7 +31,7 @@ export type CommunityRelease = {
 export type CommunityDelivery = { deliveryId: string; expiresAtUtc: string; downloadUrl: string };
 export type CommunityMedia = { mediaId: string; derivatives: { name: "card" | "gallery" | "full"; width: number; height: number; sizeBytes: number; url: string }[] };
 export type CommunityUpload = {
-  uploadId: string; projectId: string; releaseId: string | null; kind: "package" | "image";
+  uploadId: string; projectId: string | null; releaseId: string | null; kind: "package" | "image";
   state: string; maximumBytes: number; artifactId: string | null; expiresAtUtc: string;
   mediaId: string | null; inspectionCode: string | null;
 };

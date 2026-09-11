@@ -129,6 +129,7 @@
 .hub-activity-entry h3 { text-transform: capitalize; font: 600 22px var(--font-display); }
 .hub-activity-reason { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.8; }
 .hub-creator-bio { white-space: pre-wrap; overflow-wrap: anywhere; }
+.hub-avatar { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; margin-block: 16px; }
 .hub-creator-byline { font-size: 12px; }
 .hub-profile-fields { display: grid; gap: 24px; border: 0; padding: 0; min-width: 0; }
 .hub-main :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }

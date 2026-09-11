@@ -8,8 +8,9 @@ import { PrivateMediaPreview } from "./private-media-preview";
 
 type References = NonNullable<CommunityContent["media"]>;
 export function CreatorMedia({ token, projectId, media, onChange }: {
-  token: string; projectId: string; media: References; onChange: (value: References) => void;
+  token: string; projectId: string | null; media: References; onChange: (value: References) => void;
 }) {
+  const avatar = projectId === null;
   const [history, setHistory] = useState<CommunityPage<CommunityUploadItem> | null>(null);
   const [cursor, setCursor] = useState<string>();
   const [refresh, setRefresh] = useState(0);
@@ -33,7 +34,8 @@ export function CreatorMedia({ token, projectId, media, onChange }: {
     let count = 0;
     async function load() {
       try {
-        const result = await api.myUploads(token, projectId, cursor, AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]));
+        const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]);
+        const result = await (projectId === null ? api.myAvatarUploads(token, cursor, signal) : api.myUploads(token, projectId, cursor, signal));
         if (controller.signal.aborted) return;
         setHistory(result);
         if (result.items.some(item => item.upload.kind === "image" && ["processing", "receiving"].includes(item.upload.state))) {
@@ -61,13 +63,13 @@ export function CreatorMedia({ token, projectId, media, onChange }: {
       let id = restart?.upload.uploadId;
       if (!finalizeOnly && file) {
         const grant = restart ? await api.restartUpload(token, restart.upload.uploadId, controller.signal) :
-          await api.reserveUpload(token, projectId, null, "image", file, controller.signal);
+          await (projectId === null ? api.reserveAvatarUpload(token, file, controller.signal) : api.reserveUpload(token, projectId, null, "image", file, controller.signal));
         id = grant.uploadId;
         await transferUpload(grant, file, controller.signal, setProgress);
       }
       if (!id) throw new Error("No image upload was reserved.");
       await api.completeUpload(token, id, controller.signal);
-      setNotice("Image queued for processing. Attach it below when processing finishes, then save your draft.");
+      setNotice(avatar ? "Avatar queued for processing. Select it below when processing finishes, then save your public profile." : "Image queued for processing. Attach it below when processing finishes, then save your draft.");
       setFile(null); setRestart(null); setCursor(undefined);
     } catch (error) {
       setNotice(""); setError(controller.signal.aborted ? "Transfer stopped. Refresh upload history before restarting." : error instanceof Error ? error.message : "Image upload failed.");
@@ -78,23 +80,23 @@ export function CreatorMedia({ token, projectId, media, onChange }: {
     if (!current || !target) return;
     const next = [...media]; next[index] = target; next[index + direction] = current; onChange(next);
   }
-  return <section className="hub-section" aria-label="Manage screenshots">
-    <div className="hub-section-head"><div><p className="hub-kicker">SHOW YOUR CREATION</p><h2>Cover and screenshots</h2></div>
+  return <section className="hub-section" aria-label={avatar ? "Manage avatar" : "Manage screenshots"}>
+    <div className="hub-section-head"><div><p className="hub-kicker">{avatar ? "YOUR CREATOR IDENTITY" : "SHOW YOUR CREATION"}</p><h2>{avatar ? "Profile avatar" : "Cover and screenshots"}</h2></div>
       <button type="button" className="btn btn-ghost" onClick={reload}>Refresh images</button></div>
-    <p className="hub-notice">The first image is your cover. Add up to eight more screenshots, describe each image, and save your draft. New images become public after review.</p>
+    <p className="hub-notice">{avatar ? "Upload an image, select it after processing, then save your public profile to make it visible. Use an image you have permission to share." : "The first image is your cover. Add up to eight more screenshots, describe each image, and save your draft. New images become public after review."}</p>
     {error && <p className="hub-notice" role="alert">{error}</p>}{notice && <p className="hub-notice" role="status">{notice}</p>}
     <div className="hub-media-editor">{media.map((reference, index) => <article className="hub-release" key={reference.mediaId}>
-      <p className="hub-kicker">{index === 0 ? "COVER" : `SCREENSHOT ${index}`}</p>
+      <p className="hub-kicker">{avatar ? "SELECTED AVATAR" : index === 0 ? "COVER" : `SCREENSHOT ${index}`}</p>
       <PrivateMediaPreview token={token} mediaId={reference.mediaId} alt={reference.altText} />
-      <div className="hub-form"><label>Image description<input required maxLength={500} value={reference.altText} onChange={event => onChange(media.map((item, i) => i === index ? { ...item, altText: event.target.value } : item))} /></label>
-        <label>Caption<input maxLength={1000} value={reference.caption ?? ""} onChange={event => onChange(media.map((item, i) => i === index ? { ...item, caption: event.target.value } : item))} /></label></div>
-      <div className="hub-actions"><button type="button" className="btn btn-ghost" disabled={index === 0} onClick={() => move(index, -1)}>Move earlier</button>
-        <button type="button" className="btn btn-ghost" disabled={index === media.length - 1} onClick={() => move(index, 1)}>Move later</button>
-        <button type="button" className="btn btn-ghost" onClick={() => onChange(media.filter((_, i) => i !== index))}>Remove from draft</button></div>
+      {!avatar && <div className="hub-form"><label>Image description<input required maxLength={500} value={reference.altText} onChange={event => onChange(media.map((item, i) => i === index ? { ...item, altText: event.target.value } : item))} /></label>
+        <label>Caption<input maxLength={1000} value={reference.caption ?? ""} onChange={event => onChange(media.map((item, i) => i === index ? { ...item, caption: event.target.value } : item))} /></label></div>}
+      <div className="hub-actions">{!avatar && <><button type="button" className="btn btn-ghost" disabled={index === 0} onClick={() => move(index, -1)}>Move earlier</button>
+        <button type="button" className="btn btn-ghost" disabled={index === media.length - 1} onClick={() => move(index, 1)}>Move later</button></>}
+        <button type="button" className="btn btn-ghost" onClick={() => onChange(media.filter((_, i) => i !== index))}>{avatar ? "Remove avatar selection" : "Remove from draft"}</button></div>
     </article>)}</div>
     <form className="hub-form hub-upload-form" onSubmit={upload}>
       {restart && <p>Recovering {restart.originalName}</p>}
-      {restart?.upload.state !== "uploaded" && <label>Upload a screenshot<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={event => setFile(event.target.files?.[0] ?? null)} /></label>}
+      {restart?.upload.state !== "uploaded" && <label>{avatar ? "Upload an avatar" : "Upload a screenshot"}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={event => setFile(event.target.files?.[0] ?? null)} /></label>}
       <div className="hub-actions"><button className="btn btn-primary" disabled={busy || (!file && restart?.upload.state !== "uploaded")}>{restart?.upload.state === "uploaded" ? "Process stored image" : restart ? "Restart image upload" : "Upload image"}</button>
         {busy && <button type="button" className="btn btn-ghost" onClick={() => operation.current?.abort()}>Stop transfer</button>}
         {restart && !busy && <button type="button" className="btn btn-ghost" onClick={() => { setRestart(null); setFile(null); }}>Choose a new upload</button>}</div>
@@ -103,8 +105,8 @@ export function CreatorMedia({ token, projectId, media, onChange }: {
     <h3 className="hub-library-title">Your uploaded images</h3>
     <div className="hub-media-editor">{history?.items.filter(item => item.upload.kind === "image").map(item => <article className="hub-release" key={item.upload.uploadId}>
       <h4>{item.originalName}</h4><p>{item.upload.state}{item.upload.inspectionCode ? ` · ${item.upload.inspectionCode.replaceAll("_", " ")}` : ""}</p>
-      {item.upload.mediaId && <button type="button" className="btn btn-ghost" disabled={media.length >= 9 || media.some(reference => reference.mediaId === item.upload.mediaId)}
-        onClick={() => onChange([...media, { mediaId: item.upload.mediaId!, altText: "", caption: "" }])}>Attach to draft</button>}
+      {item.upload.mediaId && <button type="button" className="btn btn-ghost" disabled={(!avatar && media.length >= 9) || media.some(reference => reference.mediaId === item.upload.mediaId)}
+        onClick={() => onChange(avatar ? [{ mediaId: item.upload.mediaId!, altText: "Creator avatar" }] : [...media, { mediaId: item.upload.mediaId!, altText: "", caption: "" }])}>{avatar ? "Select avatar" : "Attach to draft"}</button>}
       {["pending", "uploaded"].includes(item.upload.state) && <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => {
         if (Date.parse(item.upload.expiresAtUtc) <= Date.now()) { setError("This reservation expired. Start a new image upload."); return; }
         setRestart(item); setFile(null); setError(""); setNotice("Use the upload form above to recover this image.");
