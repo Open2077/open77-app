@@ -12,7 +12,10 @@ export function PrivateMediaPreview({ token, mediaId, alt }: { token: string; me
   useEffect(() => {
     const controller = new AbortController();
     previewMedia(token, mediaId, AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]))
-      .then(result => { if (!controller.signal.aborted) { setImage(result.derivatives.find(item => item.name === "card") ?? null); setError(""); } })
+      .then(result => { if (!controller.signal.aborted) {
+        const card = result.derivatives.find(item => item.name === "card");
+        setImage(card ?? null); setError(card ? "" : "This image preview is not available. Refresh to try again.");
+      } })
       .catch(() => { if (!controller.signal.aborted) setError("Preview unavailable. Your access or preview link may have expired."); });
     return () => controller.abort();
   }, [token, mediaId, attempt]);

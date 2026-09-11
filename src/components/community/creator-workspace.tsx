@@ -36,7 +36,7 @@ function Dashboard({ session }: { session: StoredSession }) {
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
-    api.myProjects(session.token, controller.signal, cursor).then(data => { if (!controller.signal.aborted) { setPage({ cursor, data }); setError(null); } })
+    api.myProjects(session.token, AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]), cursor).then(data => { if (!controller.signal.aborted) { setPage({ cursor, data }); setError(null); } })
       .catch(error => { if (!controller.signal.aborted) setError(message(error)); });
     return () => controller.abort();
   }, [session.token, attempt, cursor]);

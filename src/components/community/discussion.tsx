@@ -23,7 +23,7 @@ export function Discussion({ project, page, focusThread = false }: { project: Co
   const canManage = !!session?.emailVerified && permission?.token === session.token && permission.projectId === project.projectId && permission.allowed;
   return <section aria-label="Community discussion">{project.state === "published" ? <CommentComposer projectId={project.projectId} parentId={null} updated={refresh} /> : <p className="hub-notice">This archived creation is closed to new comments.</p>}
     {page.items.length === 0 && <p className="hub-notice">Start the conversation. Ask a question or share how you’re using this creation.</p>}
-    {page.items.map(comment => <CommentEntry key={`${comment.commentId}-${comment.revision}`} comment={comment} project={project} updated={refresh} initiallyExpanded={focusThread} canManage={canManage} />)}
+    {page.items.map(comment => <CommentEntry key={comment.commentId} comment={comment} project={project} updated={refresh} initiallyExpanded={focusThread} canManage={canManage} />)}
   </section>;
 }
 
@@ -53,15 +53,15 @@ function CommentComposer({ projectId, parentId, existing, updated }: { projectId
 }
 
 function CommentEntry({ comment, project, updated, initiallyExpanded = false, canManage = false }: { comment: CommunityComment; project: CommunityProject; updated: () => void; initiallyExpanded?: boolean; canManage?: boolean }) {
-  const { session } = useSession(); const [editing, setEditing] = useState(false); const [deleting, setDeleting] = useState(false);
+  const { session } = useSession(); const [editing, setEditing] = useState<CommunityComment | null>(null); const [deleting, setDeleting] = useState(false);
   const [expanded, setExpanded] = useState(initiallyExpanded); const [busy, setBusy] = useState(false); const [error, setError] = useState("");
   async function act(action: () => Promise<void>) { setBusy(true); setError(""); try { await action(); updated(); } catch (error) { setError(error instanceof Error ? error.message : "Action failed. Refresh before trying again."); } finally { setBusy(false); } }
   const own = session?.accountId === comment.authorAccountId;
   return <article id={`comment-${comment.commentId}`} className="hub-comment"><header><strong>{comment.authorHandle ? <Link href={`/creators/${comment.authorHandle}`}>@{comment.authorHandle}</Link> : comment.state === "deleted" ? "Deleted commenter" : "Community member"}</strong>
     <p className="hub-release-meta"><time dateTime={comment.createdAtUtc}>{new Date(comment.createdAtUtc).toLocaleString()}</time>{comment.updatedAtUtc !== comment.createdAtUtc ? " · edited" : ""}{comment.pinned ? " · pinned by creator" : ""}{comment.resolved ? " · marked resolved" : ""}</p></header>
-    {editing ? <CommentComposer projectId={project.projectId} parentId={comment.parentId} existing={comment} updated={() => { setEditing(false); updated(); }} /> : <p className="hub-activity-reason">{comment.body ?? (comment.state === "deleted" ? "This comment was deleted. Existing replies remain below." : "This comment is hidden.")}</p>}
+    {editing ? <CommentComposer projectId={project.projectId} parentId={comment.parentId} existing={editing} updated={() => { setEditing(null); updated(); }} /> : <p className="hub-activity-reason">{comment.body ?? (comment.state === "deleted" ? "This comment was deleted. Existing replies remain below." : "This comment is hidden.")}</p>}
     {error && <p className="hub-notice" role="alert">{error}</p>}
-    <div className="hub-actions">{own && comment.state === "visible" && project.state === "published" && <button className="btn btn-ghost" disabled={busy} onClick={() => setEditing(value => !value)}>{editing ? "Cancel edit" : "Edit"}</button>}
+    <div className="hub-actions">{own && comment.state === "visible" && project.state === "published" && <button className="btn btn-ghost" disabled={busy} onClick={() => { if (!editing || window.confirm("Discard your unsaved comment edit?")) setEditing(editing ? null : comment); }}>{editing ? "Cancel edit" : "Edit"}</button>}
       {own && comment.state !== "deleted" && <button className="btn btn-ghost" disabled={busy} onClick={() => setDeleting(value => !value)}>Delete</button>}
       {!comment.parentId && <button className="btn btn-ghost" aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? "Collapse replies" : "View replies / reply"}</button>}
       {!comment.parentId && comment.state === "visible" && session?.emailVerified && canManage && <><button className="btn btn-ghost" disabled={busy} onClick={() => void act(() => api.markComment(session.token, comment.commentId, comment.revision, !comment.pinned, comment.resolved))}>{comment.pinned ? "Unpin" : "Pin"}</button>
@@ -87,7 +87,7 @@ function Replies({ root, project }: { root: CommunityComment; project: Community
   async function toggleSubscription() { if (!session || subscribed === null) return; setBusy(true); try { await api.setThreadSubscription(session.token, root.commentId, !subscribed); setSubscription({ accountId: session.accountId, value: !subscribed }); } catch (error) { setError(error instanceof Error ? error.message : "Subscription failed."); } finally { setBusy(false); } }
   return <section className="hub-replies" aria-label="Thread replies">{session?.emailVerified && subscribed !== null && <button className="btn btn-ghost" disabled={busy || (!subscribed && root.state !== "visible")} aria-pressed={subscribed} onClick={() => void toggleSubscription()}>{subscribed ? "Stop reply notifications" : "Follow replies"}</button>}
     {error && <p role="alert">{error}</p>}{!page && !error && <p role="status">Loading replies…</p>}
-    {page?.items.map(comment => <CommentEntry key={`${comment.commentId}-${comment.revision}`} comment={comment} project={project} updated={reload} />)}
+    {page?.items.map(comment => <CommentEntry key={comment.commentId} comment={comment} project={project} updated={reload} />)}
     <nav className="hub-actions" aria-label="Reply pages"><button className="btn btn-ghost" onClick={reload}>Refresh replies</button>{cursor && <button className="btn btn-ghost" onClick={() => { setPage(null); setCursor(undefined); }}>Newest replies</button>}{page?.nextCursor && <button className="btn btn-ghost" onClick={() => { setPage(null); setCursor(page.nextCursor ?? undefined); }}>Older replies</button>}</nav>
     {root.state === "visible" && project.state === "published" && <CommentComposer projectId={project.projectId} parentId={root.commentId} updated={() => { setCursor(undefined); reload(); }} />}
   </section>;

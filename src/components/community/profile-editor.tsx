@@ -1,22 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { AuthPanel } from "@/components/account/auth-panel";
-import { useSession } from "@/lib/account/session";
+import { useSession, type StoredSession } from "@/lib/account/session";
 import { myProfile, saveProfile } from "@/lib/community/client-api";
 import type { CommunityProfile } from "@/lib/community/types";
 import { CreatorMedia } from "./creator-media";
 
 export function ProfileEditor() {
   const { session, ready } = useSession();
+  const [owner, setOwner] = useState<StoredSession | null>(null);
+  const [dirty, setDirty] = useState(false);
+  const active = !!session?.emailVerified && session.accountId === owner?.accountId;
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+  if (!owner && session?.emailVerified) setOwner(session);
   if (!ready) return <p role="status">Loading your account…</p>;
-  if (!session) return <AuthPanel />;
-  if (!session.emailVerified) return <p className="hub-notice">Verify your email to create a profile. <Link href="/account">Open your account →</Link></p>;
-  return <Editor key={session.accountId} token={session.token} />;
+  if (!owner) return !session ? <AuthPanel /> : <p className="hub-notice">Verify your email to create a profile. <Link href="/account">Open your account →</Link></p>;
+  return <>{!active && <div className="hub-notice"><p>Your profile edits remain in this tab. Sign in to the same account to continue.</p><AuthPanel />
+    {session?.emailVerified && session.accountId !== owner.accountId && <button type="button" className="btn btn-ghost" onClick={() => { setOwner(session); setDirty(false); }}>Discard profile edits and switch account</button>}</div>}
+    <div hidden={!active}><Editor key={owner.accountId} token={active && session ? session.token : owner.token} active={active} onDirty={setDirty} /></div></>;
 }
 
-function Editor({ token }: { token: string }) {
+function Editor({ token, active, onDirty }: { token: string; active: boolean; onDirty: (dirty: boolean) => void }) {
   const [profile, setProfile] = useState<CommunityProfile | null>(null);
   const [handle, setHandle] = useState("");
   const [bio, setBio] = useState("");
@@ -27,15 +38,20 @@ function Editor({ token }: { token: string }) {
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
   const [refresh, setRefresh] = useState(0);
+  const initialized = useRef(false);
+  const dirty = loaded && (handle !== (profile?.handle ?? "") || bio !== (profile?.bio ?? "") ||
+    avatarMediaId !== (profile?.avatarMediaId ?? null) || JSON.stringify(links) !== JSON.stringify(profile?.links ?? []));
+  useEffect(() => { onDirty(dirty); }, [dirty, onDirty]);
   useEffect(() => {
+    if (!active || initialized.current) return;
     const controller = new AbortController();
     myProfile(token, AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]))
-      .then(({ profile }) => { if (!controller.signal.aborted) { setProfile(profile); setHandle(profile?.handle ?? ""); setBio(profile?.bio ?? ""); setLinks(profile?.links ?? []); setAvatarMediaId(profile?.avatarMediaId ?? null); setLoaded(true); setError(""); } })
+      .then(({ profile }) => { if (!controller.signal.aborted) { initialized.current = true; setProfile(profile); setHandle(profile?.handle ?? ""); setBio(profile?.bio ?? ""); setLinks(profile?.links ?? []); setAvatarMediaId(profile?.avatarMediaId ?? null); setLoaded(true); setError(""); } })
       .catch(error => { if (!controller.signal.aborted) setError(error instanceof Error ? error.message : "Profile could not be loaded."); });
     return () => controller.abort();
-  }, [token, refresh]);
+  }, [token, refresh, active]);
   async function save(event: FormEvent) {
-    event.preventDefault(); setBusy(true); setError(""); setStatus("");
+    event.preventDefault(); if (!active || busy) return; setBusy(true); setError(""); setStatus("");
     try {
       const value = await saveProfile(token, profile?.revision ?? 0, handle, bio, links, AbortSignal.timeout(10000), avatarMediaId);
       setProfile(value); setHandle(value.handle); setStatus("Your public profile is saved.");

@@ -6,8 +6,9 @@ import type { CommunityAppeal } from "@/lib/community/types";
 
 export function AppealForm({ token, decisionId }: { token: string; decisionId: string }) {
   const [open, setOpen] = useState(false);
-  return <details className="hub-report-form" open={open} onToggle={event => setOpen(event.currentTarget.open)}><summary>Appeal this decision / check your appeal</summary>
-    {open && <AppealDetails token={token} decisionId={decisionId} />}</details>;
+  const [visited, setVisited] = useState(false);
+  return <details className="hub-report-form" open={open} onToggle={event => { setOpen(event.currentTarget.open); if (event.currentTarget.open) setVisited(true); }}><summary>Appeal this decision / check your appeal</summary>
+    {visited && <AppealDetails token={token} decisionId={decisionId} />}</details>;
 }
 
 function AppealDetails({ token, decisionId }: { token: string; decisionId: string }) {
@@ -17,6 +18,12 @@ function AppealDetails({ token, decisionId }: { token: string; decisionId: strin
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [refresh, setRefresh] = useState(0);
+  useEffect(() => {
+    if (!reason.trim() || appeal) return;
+    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [reason, appeal]);
   useEffect(() => {
     const controller = new AbortController();
     appealStatus(token, decisionId, AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]))

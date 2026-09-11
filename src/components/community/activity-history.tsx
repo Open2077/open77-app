@@ -9,8 +9,9 @@ export function ActivityHistory({ token, kind, id, title = "Moderation decisions
   token: string; kind: "project" | "report"; id: string; title?: string; initiallyOpen?: boolean; allowAppeals?: boolean;
 }) {
   const [open, setOpen] = useState(initiallyOpen);
-  return <details className="hub-release hub-activity" open={open} onToggle={event => setOpen(event.currentTarget.open)}><summary>{title}</summary>
-    {open && <HistoryEntries token={token} kind={kind} id={id} allowAppeals={allowAppeals} />}</details>;
+  const [visited, setVisited] = useState(initiallyOpen);
+  return <details className="hub-release hub-activity" open={open} onToggle={event => { setOpen(event.currentTarget.open); if (event.currentTarget.open) setVisited(true); }}><summary>{title}</summary>
+    {visited && <HistoryEntries token={token} kind={kind} id={id} allowAppeals={allowAppeals} />}</details>;
 }
 
 function HistoryEntries({ token, kind, id, allowAppeals }: { token: string; kind: "project" | "report"; id: string; allowAppeals: boolean }) {
