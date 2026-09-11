@@ -11,6 +11,7 @@ export function HubShell({ children }: { children: ReactNode }) {
         <Link href="/account/notifications">Notifications</Link>
         <Link href="/account/profile">Creator profile</Link>
         <Link href="/account/saved">Saved</Link>
+        <Link href="/account/connections">Wardens</Link>
         <Link className="hub-publish" href="/account/creations/new">Share a creation ↗</Link></div>
     </nav>{children}</div></main><SiteFooter /></>;
 }
