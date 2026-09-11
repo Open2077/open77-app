@@ -117,6 +117,7 @@ export const footerNav = [
     title: "Create",
     links: [
       { href: "/create", label: "Create a server" },
+      { href: "/host", label: "Download the server" },
       { href: "/docs/platform#dedicated-servers", label: "Dedicated servers" },
       { href: "/docs/server-resources", label: "Resources & scripting" },
     ],

@@ -14,4 +14,14 @@ assert.equal(canDownloadServer({ role: "admin" }), true, "admin with older maste
 assert.equal(canDownloadServer({ role: "user", alphaAccess: false }), false, "unapproved account");
 assert.equal(canDownloadServer({ role: "user" }), false, "missing entitlement is not approval");
 assert.equal(canDownloadServer({ role: "user", alphaAccess: "true" }), false, "malformed entitlement");
-console.log("PASS: approved non-staff and admins can download; signed-out/unapproved accounts stay gated.");
+
+// A working gate is not enough: approved users must be able to find it without
+// entering the staff-only admin workspace or submitting another application.
+for (const file of ["src/app/create/page.tsx", "src/components/developer-alpha.tsx", "src/components/account/account-overview.tsx"]) {
+  const component = await readFile(file, "utf8");
+  assert.match(component, /href="\/host">\s*Download server/, `${file}: direct download entry point`);
+}
+assert.match(await readFile("src/components/account/account-overview.tsx", "utf8"), /canDownloadServer\(account\)/);
+assert.match(await readFile("src/lib/site.ts", "utf8"), /href: "\/host", label: "Download the server"/);
+assert.match(await readFile("src/components/host/host-gate.tsx", "utf8"), /allowed: canDownloadServer\(account\)/);
+console.log("PASS: approved non-staff and admins can download; unapproved accounts stay gated; creator, account and footer entry points are present.");
