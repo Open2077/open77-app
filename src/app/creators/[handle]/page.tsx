@@ -5,11 +5,12 @@ import { HubShell, HubUnavailable } from "@/components/community/hub-shell";
 import { ProjectCard } from "@/components/community/project-card";
 import { CommunityReadError, getCreator, getMedia } from "@/lib/community/public-api";
 import { pageMetadata } from "@/lib/seo";
+import { withCommunityImage } from "@/lib/community/metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ handle: string }> }) {
   const { handle } = await params;
   const result = await getCreator(handle).catch(() => null);
-  return result ? pageMetadata({ title: `@${result.profile.handle}`, description: result.profile.bio.slice(0, 180) || "Community creations on the OPEN//77 Hub.", path: `/creators/${result.profile.handle}` }) :
+  return result ? withCommunityImage(pageMetadata({ title: `@${result.profile.handle}`, description: result.profile.bio.slice(0, 180) || "Community creations on the OPEN//77 Hub.", path: `/creators/${result.profile.handle}` }), result.profile.avatarMediaId, `@${result.profile.handle}`) :
     { title: "Creator unavailable", robots: { index: false, follow: false } };
 }
 

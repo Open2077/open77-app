@@ -8,6 +8,10 @@ import { ExternalVideos } from "@/components/community/external-videos";
 import { ReportForm } from "@/components/community/report-form";
 import { ProjectActions } from "@/components/community/project-actions";
 import { ProjectView } from "@/components/community/project-view";
+import { ShareProject } from "@/components/community/share-project";
+import { withCommunityImage } from "@/lib/community/metadata";
+import { communityStructuredData } from "@/lib/community/structured-data";
+import { SITE_URL, absoluteUrl } from "@/lib/site";
 import { categoryLabel } from "@/lib/community/types";
 import { communityMarkdown } from "@/lib/community/markdown";
 import { pageMetadata } from "@/lib/seo";
@@ -15,7 +19,7 @@ import { pageMetadata } from "@/lib/seo";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = await getProject(slug).catch(() => null);
-  return project ? pageMetadata({ title: project.content.title, description: project.content.summary, path: `/resources/${project.slug}` }) :
+  return project ? withCommunityImage(pageMetadata({ title: project.content.title, description: project.content.summary, path: `/resources/${project.slug}` }), project.content.media?.[0]?.mediaId, project.content.media?.[0]?.altText ?? project.content.title) :
     { title: "Resource unavailable", robots: { index: false, follow: false } };
 }
 export default async function ResourcePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -30,7 +34,7 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
   const [description, installation, license] = await Promise.all([
     communityMarkdown(content.description), communityMarkdown(content.installation), communityMarkdown(content.license ?? ""),
   ]);
-  return <HubShell><ProjectView id={project.projectId} /><header className="hub-directory-head"><Link href="/resources">← Community resources</Link>
+  return <HubShell><ProjectView id={project.projectId} /><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: communityStructuredData(project, SITE_URL) }} /><header className="hub-directory-head"><Link href="/resources">← Community resources</Link>
     <p className="hub-kicker">{categoryLabel(content.category)} / {content.kind === "showcase" ? "SHOWCASE" : "RESOURCE"}</p>
     <h1>{content.title}</h1><p>{content.summary}</p>{project.creatorHandle && <p className="hub-creator-byline">By <Link href={`/creators/${project.creatorHandle}`}>@{project.creatorHandle}</Link></p>}<div className="hub-tags">{content.tags.map(tag => <span key={tag}>{tag}</span>)}</div></header>
     {project.state === "archived" && <p className="hub-notice">This creation is archived. Its approved releases remain available, but it is closed to new comments and updates.</p>}
@@ -52,5 +56,6 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
       <p>{project.views} views{content.kind === "resource" ? ` · ${project.downloads} downloads` : ""}</p>
       {content.kind === "resource" && <small>Downloads count completed file deliveries, including completed resumed transfers.</small>}
       <p><Link href={`/resources/${project.slug}/discussion`}>Join the discussion →</Link></p>
+      <ShareProject url={absoluteUrl(`/resources/${project.slug}`)} title={content.title} />
     </aside></div></HubShell>;
 }

@@ -5,10 +5,11 @@ import { Discussion } from "@/components/community/discussion";
 import { CommunityReadError, getComment, getComments, getProject } from "@/lib/community/public-api";
 import type { CommunityComment, CommunityPage } from "@/lib/community/types";
 import { pageMetadata } from "@/lib/seo";
+import { withCommunityImage } from "@/lib/community/metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params; const project = await getProject(slug).catch(() => null);
-  return project ? pageMetadata({ title: `${project.content.title} — discussion`, description: `Questions and discussion about ${project.content.title}.`, path: `/resources/${project.slug}/discussion` }) : { title: "Discussion unavailable", robots: { index: false, follow: false } };
+  return project ? withCommunityImage(pageMetadata({ title: `${project.content.title} — discussion`, description: `Questions and discussion about ${project.content.title}.`, path: `/resources/${project.slug}/discussion` }), project.content.media?.[0]?.mediaId, project.content.media?.[0]?.altText ?? project.content.title) : { title: "Discussion unavailable", robots: { index: false, follow: false } };
 }
 
 export default async function DiscussionPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ cursor?: string; thread?: string }> }) {
