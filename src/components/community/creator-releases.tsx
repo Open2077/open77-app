@@ -5,6 +5,7 @@ import type { StoredSession } from "@/lib/account/session";
 import * as api from "@/lib/community/client-api";
 import { transferUpload } from "@/lib/community/upload";
 import type { CommunityPage, CommunityProject, CommunityRelease, CommunityUploadItem } from "@/lib/community/types";
+import { validationHelp } from "@/lib/community/validation-help";
 
 const errorText = (error: unknown) => error instanceof Error ? error.message : "The request failed. Please try again.";
 const lines = (value: string) => [...new Set(value.split(/\r?\n/).map(line => line.trim()).filter(Boolean))];
@@ -141,6 +142,7 @@ export function CreatorReleases({ session, project }: { session: StoredSession; 
       {release.state === "uploading" && <PackageTransfer token={session.token} projectId={project.projectId} releaseId={release.releaseId} checkedAt={checkedAt} changed={reload}
         existing={uploads?.items.find(item => item.upload.releaseId === release.releaseId && Date.parse(item.upload.expiresAtUtc) > checkedAt)} />}
       {release.sha256 && <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p>}
+      {release.resources.length > 0 && <details><summary>Inspected resources and requirements</summary>{release.resources.map(resource => <div className="hub-release" key={resource.name}><h4>{resource.name}</h4><p>Root: <code>{resource.relativeRoot || "."}</code> · Manifest version: {resource.manifest.version}</p><p>Open77: {resource.manifest.open77Version}</p><p>Dependencies: {resource.manifest.dependencies.join(", ") || "None declared"}</p><p>Permissions: {resource.manifest.permissions.join(", ") || "None declared"}</p><p>Preloads: {resource.manifest.preloadMods.join(", ") || "None declared"}</p></div>)}</details>}
     </article>)}</div>
     <nav className="hub-actions" aria-label="Your release pages">
       {releaseCursor && <button className="btn btn-ghost" onClick={() => setReleaseCursor(undefined)}>Newest releases</button>}
@@ -150,7 +152,7 @@ export function CreatorReleases({ session, project }: { session: StoredSession; 
     {uploads?.items.length === 0 && <p>No uploads yet.</p>}
     <div className="hub-releases">{uploads?.items.map(item => <article className="hub-release" key={item.upload.uploadId}>
       <div className="hub-release-heading"><h3>{item.originalName}</h3><span className="hub-release-state">{item.upload.state}</span></div>
-      {item.upload.inspectionCode && <p className="hub-notice" role="alert">Validation result: {item.upload.inspectionCode.replaceAll("_", " ")}. Correct the package before creating a replacement version.</p>}
+      {item.upload.inspectionCode && <p className="hub-notice" role="alert">Validation result: <code>{item.upload.inspectionCode}</code>. {validationHelp(item.upload.inspectionCode)} <a href="/docs/server-resources" target="_blank" rel="noopener noreferrer">Resource documentation ↗</a></p>}
       {item.upload.state === "accepted" && <p>Technical validation passed. Publication still requires moderation approval.</p>}
       {["pending", "uploaded"].includes(item.upload.state) && Date.parse(item.upload.expiresAtUtc) <= checkedAt && <p>This reservation expired. Select a ZIP from the release above to start a new reservation.</p>}
       {item.upload.releaseId && <PackageTransfer token={session.token} projectId={project.projectId}
