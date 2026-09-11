@@ -9,6 +9,7 @@ export function HubShell({ children }: { children: ReactNode }) {
       <Link className="hub-wordmark" href="/community">OPEN<span>{"//"}</span>77 <b>HUB</b></Link>
       <div><Link href="/resources">Explore resources</Link><Link href="/account/creations">My creations</Link>
         <Link href="/account/notifications">Notifications</Link>
+        <Link href="/account/profile">Creator profile</Link>
         <Link className="hub-publish" href="/account/creations/new">Share a creation ↗</Link></div>
     </nav>{children}</div></main><SiteFooter /></>;
 }

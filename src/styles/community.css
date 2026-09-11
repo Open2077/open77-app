@@ -4,7 +4,7 @@
 .hub-wordmark { font: 700 24px var(--font-display); letter-spacing: -.02em; white-space: nowrap; }
 .hub-wordmark span { color: var(--accent); }
 .hub-wordmark b { font-size: 13px; border: 1px solid var(--line-strong); padding: 4px 7px; margin-left: 8px; letter-spacing: .12em; }
-.hub-nav > div { display: flex; gap: 24px; align-items: center; font-size: 12px; }
+.hub-nav > div { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; font-size: 12px; }
 .hub-publish { color: var(--accent); }
 .hub-nav a:hover, .hub-card a:hover { color: var(--accent); }
 .hub-kicker { color: var(--accent); font: 500 10px var(--font-mono); letter-spacing: .16em; line-height: 1.8; }
@@ -128,6 +128,9 @@
 .hub-activity-entry { padding-block: 20px; border-bottom: 1px solid var(--line); }
 .hub-activity-entry h3 { text-transform: capitalize; font: 600 22px var(--font-display); }
 .hub-activity-reason { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.8; }
+.hub-creator-bio { white-space: pre-wrap; overflow-wrap: anywhere; }
+.hub-creator-byline { font-size: 12px; }
+.hub-profile-fields { display: grid; gap: 24px; border: 0; padding: 0; min-width: 0; }
 .hub-main :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 @media(max-width: 1000px) {
   .hub-hero { grid-template-columns: 1fr 250px; gap: 28px; }.hub-categories { grid-template-columns: repeat(3,1fr); }

@@ -13,6 +13,7 @@ export async function ProjectCard({ project }: { project: CommunityProject }) {
     </Link><div className="hub-card-body">
       <div className="hub-card-labels"><span>{categoryLabel(content.category)}</span><span>{content.kind === "showcase" ? "Showcase" : "Resource"}</span></div>
       <h3><Link href={`/resources/${project.slug}`}>{content.title}</Link></h3><p>{content.summary}</p>
+      {project.creatorHandle && <p className="hub-creator-byline">By <Link href={`/creators/${project.creatorHandle}`}>@{project.creatorHandle}</Link></p>}
       <div className="hub-tags">{content.tags.map(tag => <span key={tag}>{tag}</span>)}</div>
     </div></article>;
 }

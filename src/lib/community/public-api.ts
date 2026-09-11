@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { MASTER_URL } from "@/lib/account/api";
-import type { CommunityMedia, CommunityPage, CommunityProject, CommunityRelease } from "./types";
+import type { CommunityCreatorPage, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease } from "./types";
 
 const origin = (process.env.OP77_COMMUNITY_API_URL ?? MASTER_URL).replace(/\/$/, "");
 export class CommunityReadError extends Error {
@@ -29,6 +29,7 @@ export function listProjects(params: { query?: string; category?: string; cursor
 // Request memoization only: page and metadata share an approved snapshot.
 export const getProject = cache((slug: string) => read<CommunityProject>(`/projects/${encodeURIComponent(slug)}`));
 export const getMedia = cache((id: string) => read<CommunityMedia>(`/media/${encodeURIComponent(id)}`));
+export const getCreator = cache((handle: string, cursor?: string) => read<CommunityCreatorPage>(`/creators/${encodeURIComponent(handle)}${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`));
 export function listReleases(projectId: string, cursor?: string) {
   const query = new URLSearchParams({ limit: "24" });
   if (cursor) query.set("cursor", cursor);

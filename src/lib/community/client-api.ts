@@ -1,7 +1,9 @@
 import { masterCall } from "@/lib/account/api";
-import type { CommunityActivity, CommunityAppeal, CommunityModerationState, CommunityNotification, CommunityReport, CommunityReviewItem } from "./types";
+import type { CommunityActivity, CommunityAppeal, CommunityModerationState, CommunityNotification, CommunityProfile, CommunityReport, CommunityReviewItem } from "./types";
 import type { CommunityContent, CommunityDelivery, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
 const root = "/api/v1/community";
+export const myProfile = (token: string, signal?: AbortSignal) => masterCall<{ profile: CommunityProfile | null }>(`${root}/me/profile`, { token, signal });
+export const saveProfile = (token: string, expectedRevision: number, handle: string, bio: string, links: CommunityProfile["links"], signal?: AbortSignal) => masterCall<CommunityProfile>(`${root}/me/profile`, { token, method: "PATCH", body: { expectedRevision, handle, bio, links }, signal });
 export const appealStatus = (token: string, decisionId: string, signal?: AbortSignal) => masterCall<{ appeal: CommunityAppeal | null }>(`${root}/me/decisions/${encodeURIComponent(decisionId)}/appeal`, { token, signal });
 export const submitAppeal = (token: string, decisionId: string, reason: string, signal?: AbortSignal) => masterCall<CommunityAppeal>(`${root}/me/decisions/${encodeURIComponent(decisionId)}/appeal`, { token, method: "POST", body: { reason }, signal });
 export const notifications = (token: string, unread: boolean, cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityNotification>>(`${root}/me/notifications?unread=${unread}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
