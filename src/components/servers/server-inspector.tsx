@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DiscordIcon, GlobeIcon, PlayIcon, StarIcon } from "@/components/icons";
 import { FlaggedCountry } from "@/components/servers/country-flag";
 import { ServerImage } from "@/components/servers/server-image";
+import { BrandTile, modeArt } from "@/components/servers/server-placeholder";
 import { languageDisplayName } from "@/lib/locale";
 import { occupancyPercent, popClass, type GameServer } from "@/lib/servers";
 
@@ -60,7 +61,10 @@ export function ServerInspector({
   const full = server.max > 0 && server.players >= server.max;
   return (
     <aside className="directory-detail" aria-label={`Selected server: ${server.name}`}>
-      <div className="directory-detail-cover">
+      <div
+        className="directory-detail-cover"
+        style={{ backgroundImage: `url(${modeArt(server.mode)})` }}
+      >
         <ServerImage src={server.banner || null} kind="banner" alt="" />
         <button
           className="directory-detail-close"
@@ -77,7 +81,7 @@ export function ServerInspector({
             src={server.icon}
             kind="icon"
             className="directory-detail-icon"
-            label={server.name.trim().charAt(0).toUpperCase() || "?"}
+            fallback={<BrandTile />}
           />
           <div>
             <span className="directory-kicker">{"// Server"}</span>

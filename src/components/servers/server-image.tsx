@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { isConformantBanner, isConformantIcon } from "@/lib/server-images";
 
@@ -25,6 +25,7 @@ export function ServerImage({
   alt = "",
   className,
   label,
+  fallback,
 }: {
   src: string | null | undefined;
   kind: Kind;
@@ -33,6 +34,8 @@ export function ServerImage({
   className?: string;
   /** Short text drawn in the placeholder (e.g. a server initial). */
   label?: string;
+  /** Richer placeholder artwork; takes precedence over `label`. */
+  fallback?: ReactNode;
 }) {
   const [loaded, setLoaded] = useState(false);
   const conformant = kind === "icon" ? isConformantIcon : isConformantBanner;
@@ -40,7 +43,7 @@ export function ServerImage({
   return (
     <span className={`svimg svimg-${kind}${loaded ? " is-loaded" : ""}${className ? ` ${className}` : ""}`}>
       <span className="svimg-fallback" aria-hidden="true">
-        {label ? <span className="svimg-initial">{label}</span> : null}
+        {fallback ?? (label ? <span className="svimg-initial">{label}</span> : null)}
       </span>
       {src ? (
         // Server-provided cross-origin URL; the app uses plain <img> for all

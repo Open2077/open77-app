@@ -14,6 +14,7 @@ import { FilterIcon, SearchIcon, StarIcon } from "@/components/icons";
 import { ServerLocale } from "@/components/servers/country-flag";
 import { ServerImage } from "@/components/servers/server-image";
 import { ServerInspector } from "@/components/servers/server-inspector";
+import { BrandTile } from "@/components/servers/server-placeholder";
 import { useToast } from "@/components/toast";
 import { languageDisplayName, regionCode, regionDisplayName } from "@/lib/locale";
 import { usePlayerLocale, type PlayerLocale } from "@/lib/player-locale";
@@ -871,7 +872,7 @@ function ServerRow({
           src={server.icon}
           kind="icon"
           className="sb-thumb"
-          label={server.name.trim().charAt(0).toUpperCase() || "?"}
+          fallback={<BrandTile />}
         />
         <span className="sb-id">
           <Link

@@ -719,6 +719,17 @@
 .directory-dense .svimg-initial {
   font: 700 12px/1 var(--font-ui);
 }
+.directory-dense .svimg-fallback {
+  background: var(--panel-raised);
+}
+/* Default avatar: the mark's "//77" band, cropped to the tile and dimmed. */
+.directory-dense .brand-tile {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: url("/brand/logo/open77-mark-1024.png") center / 120% auto no-repeat;
+  opacity: 0.55;
+}
 .directory-dense .sb-id {
   display: flex;
   flex-direction: column;
@@ -1045,9 +1056,14 @@
   position: relative;
   flex: none;
   aspect-ratio: 16 / 7;
-  background: linear-gradient(135deg, #101a28, #0b0e14);
+  background: linear-gradient(135deg, #101a28, #0b0e14) center / cover no-repeat;
   border-bottom: 1px solid var(--dline);
   overflow: hidden;
+}
+/* The game-type artwork is the inline background; the real banner covers it. */
+.directory-detail-cover .svimg,
+.directory-detail-cover .svimg-fallback {
+  background: transparent;
 }
 .directory-detail-cover .svimg {
   position: absolute;
@@ -1065,7 +1081,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, rgba(13, 19, 29, 0.95), transparent 70%);
+  background: linear-gradient(0deg, rgba(13, 19, 29, 0.92) 8%, transparent 55%);
   pointer-events: none;
 }
 .directory-detail-mode {
