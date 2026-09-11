@@ -642,43 +642,26 @@ export function ServerBrowser({
           </div>
         </aside>
         <section className="directory-main" aria-label="Server directory">
-          <div className="directory-results-bar">
-            <h1>
-              <span className="directory-kicker">
-                {favsOnly ? "// Favorites" : "// Servers"}
-              </span>
-              <span role="status">
-                <b>{visible.length}</b>
-                {active.length ? ` of ${servers.length}` : ""}{" "}
-                {visible.length === 1 && !active.length ? "server" : "servers"}
-                <span className="directory-muted">
-                  {" "}
-                  · <b>{onlinePlayers}</b> players online
-                </span>
-              </span>
-            </h1>
-            <div className="directory-active-filters">
-              {active.map((item) => (
-                <button
-                  key={item.key}
-                  onClick={() => updateFilters({ [item.key]: "" })}
-                  aria-label={`Remove ${item.label} filter`}
-                >
-                  {item.label}
-                  <span aria-hidden="true">×</span>
-                </button>
-              ))}
-              {active.length ? (
+          {active.length ? (
+            <div className="directory-results-bar">
+              <span className="directory-kicker">Filters</span>
+              <div className="directory-active-filters">
+                {active.map((item) => (
+                  <button
+                    key={item.key}
+                    onClick={() => updateFilters({ [item.key]: "" })}
+                    aria-label={`Remove ${item.label} filter`}
+                  >
+                    {item.label}
+                    <span aria-hidden="true">×</span>
+                  </button>
+                ))}
                 <button className="sb-clear" onClick={reset}>
                   Reset all
                 </button>
-              ) : null}
+              </div>
             </div>
-            <span className="directory-list-hint" aria-hidden="true">
-              <kbd>↑</kbd>
-              <kbd>↓</kbd> select · <kbd>Enter</kbd> connect
-            </span>
-          </div>
+          ) : null}
           <section
             className="sb-col-main"
             aria-label="All servers"
@@ -710,12 +693,20 @@ export function ServerBrowser({
               ))
             ) : (
               <>
-                <div className="sb-col-head" aria-hidden="true">
-                  <span>Server</span>
+                <div className="sb-col-head">
+                  <h1>
+                    <span>{favsOnly ? "Favorites" : "Servers"}</span>
+                    <b role="status">
+                      {visible.length}
+                      {active.length ? ` of ${servers.length}` : ""}
+                      <i>
+                        {" "}· {onlinePlayers} {onlinePlayers === 1 ? "player" : "players"} online
+                      </i>
+                    </b>
+                  </h1>
                   <span>Game type · tags</span>
                   <span>Locale</span>
                   <button
-                    aria-hidden="false"
                     onClick={() =>
                       updateFilters({
                         sort: sort === "players" ? "name" : "players",
@@ -770,6 +761,10 @@ export function ServerBrowser({
       </div>
       <footer className="directory-footnote">
         <span>OPEN//77 MULTIPLAYER NETWORK</span>
+        <span className="directory-list-hint" aria-hidden="true">
+          <kbd>↑</kbd>
+          <kbd>↓</kbd> select · <kbd>Enter</kbd> connect · <kbd>/</kbd> search
+        </span>
         <span className="directory-footnote-stage">
           Developer Preview · approved account required to play
         </span>

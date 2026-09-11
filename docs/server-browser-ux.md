@@ -15,7 +15,7 @@ owns it and is scoped to `/servers`; the rest of the site keeps its own design.
 - **Filter rail** — All servers / Favorites, game type, region, language,
   country, availability and the most common tags. Collapsible on desktop and
   remembered per browser; a drawer on narrow screens.
-- **List** — ~46px rows: icon, name (link to the full page) and description, game
+- **List** — 40px rows (FiveM density, first row about 126px from the top of the window): icon, name (link to the full page) and description, game
   type and tags as clickable filters, flag and `US · EN` locale, cyan player count
   with a capacity bar (amber when full), favorite, and a quiet Connect that lights
   up on hover or selection. Only the list and the rail scroll.
