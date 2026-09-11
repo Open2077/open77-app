@@ -10,7 +10,10 @@ export type CommunityProject = {
   revision: number; revisionStatus: string; content: CommunityContent;
   createdAtUtc: string; updatedAtUtc: string; publishedAtUtc: string | null;
   creatorHandle: string | null;
+  upvotes: number;
 };
+export type CommunityProjectState = { projectId: string; voted: boolean; saved: boolean; subscribed: boolean };
+export type CommunitySavedProject = { projectId: string; savedAtUtc: string; project: CommunityProject | null };
 export type CommunityProfile = { handle: string; bio: string; links: { label: string; url: string }[]; revision: number; createdAtUtc: string; updatedAtUtc: string; avatarMediaId: string | null };
 export type CommunityCreatorPage = { profile: CommunityProfile; projects: CommunityPage<CommunityProject> };
 export type CommunityPage<T> = { items: T[]; nextCursor: string | null };

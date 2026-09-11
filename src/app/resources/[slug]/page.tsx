@@ -5,6 +5,7 @@ import { CommunityReadError, getProject, listReleases } from "@/lib/community/pu
 import { ReleaseList } from "@/components/community/release-list";
 import { MediaGallery } from "@/components/community/media-gallery";
 import { ReportForm } from "@/components/community/report-form";
+import { ProjectActions } from "@/components/community/project-actions";
 import { categoryLabel } from "@/lib/community/types";
 import { communityMarkdown } from "@/lib/community/markdown";
 import { pageMetadata } from "@/lib/seo";
@@ -43,5 +44,6 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
       {content.sourceUrl && <a className="btn btn-ghost" href={content.sourceUrl} target="_blank" rel="noopener noreferrer nofollow ugc">View source ↗</a>}
       {content.issueUrl && <p><a href={content.issueUrl} target="_blank" rel="noopener noreferrer nofollow ugc">Issue tracker ↗</a></p>}
       <ReportForm targetType="project" targetId={project.projectId} />
+      <ProjectActions project={project} />
     </aside></div></HubShell>;
 }

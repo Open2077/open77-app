@@ -1,7 +1,11 @@
 import { masterCall } from "@/lib/account/api";
-import type { CommunityActivity, CommunityAppeal, CommunityModerationState, CommunityNotification, CommunityProfile, CommunityReport, CommunityReviewItem } from "./types";
+import type { CommunityActivity, CommunityAppeal, CommunityModerationState, CommunityNotification, CommunityProfile, CommunityProjectState, CommunityReport, CommunityReviewItem, CommunitySavedProject } from "./types";
 import type { CommunityContent, CommunityDelivery, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
 const root = "/api/v1/community";
+export const publicProject = (id: string, signal?: AbortSignal) => masterCall<CommunityProject>(`${root}/projects/${encodeURIComponent(id)}`, { signal });
+export const projectState = (token: string, ids: string[], signal?: AbortSignal) => masterCall<CommunityProjectState[]>(`${root}/me/project-state?${new URLSearchParams(ids.map(id => ["projectIds", id]))}`, { token, signal });
+export const setInteraction = (token: string, projectId: string, kind: "vote" | "save" | "subscription", enabled: boolean, signal?: AbortSignal) => masterCall<void>(`${root}/projects/${encodeURIComponent(projectId)}/${kind}`, { token, method: enabled ? "PUT" : "DELETE", signal });
+export const savedProjects = (token: string, kind: "save" | "subscription", cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunitySavedProject>>(`${root}/me/${kind === "save" ? "saved" : "subscriptions"}${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
 export const myProfile = (token: string, signal?: AbortSignal) => masterCall<{ profile: CommunityProfile | null }>(`${root}/me/profile`, { token, signal });
 export const saveProfile = (token: string, expectedRevision: number, handle: string, bio: string, links: CommunityProfile["links"], signal?: AbortSignal, avatarMediaId?: string | null) => masterCall<CommunityProfile>(`${root}/me/profile`, { token, method: "PATCH", body: { expectedRevision, handle, bio, links, avatarMediaId }, signal });
 export const myAvatarUploads = (token: string, cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityUploadItem>>(`${root}/me/profile/uploads${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
