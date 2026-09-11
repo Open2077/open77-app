@@ -45,5 +45,6 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
       {content.issueUrl && <p><a href={content.issueUrl} target="_blank" rel="noopener noreferrer nofollow ugc">Issue tracker ↗</a></p>}
       <ReportForm targetType="project" targetId={project.projectId} />
       <ProjectActions project={project} />
+      <p><Link href={`/resources/${project.slug}/discussion`}>Join the discussion →</Link></p>
     </aside></div></HubShell>;
 }

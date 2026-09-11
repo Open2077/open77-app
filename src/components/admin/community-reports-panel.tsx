@@ -10,6 +10,7 @@ import { PrivateMediaPreview } from "@/components/community/private-media-previe
 import { DownloadButton } from "@/components/community/download-button";
 import { ProjectModerationControls, ReleaseRevocationControls } from "./community-moderation-controls";
 import { ActivityHistory } from "@/components/community/activity-history";
+import { CommentModeration } from "@/components/community/comment-moderation";
 
 export function CommunityReportsPanel() {
   const { session } = useSession();
@@ -72,6 +73,7 @@ function ReportRow({ token, accountId, report, updated }: { token: string; accou
     <button className="btn btn-ghost" disabled={busy} onClick={inspect}>{project ? "Refresh reported content" : "Inspect reported content"}</button>
     {report.targetBody && <details><summary>{report.targetType === "appeal" ? "Original decision being appealed" : "Reported comment"}</summary><pre className="hub-review-text">{report.targetBody}</pre></details>}
     {report.publicResponse && <details><summary>Response sent to creator</summary><pre className="hub-review-text">{report.publicResponse}</pre></details>}
+    {report.targetType === "comment" && <CommentModeration token={token} id={report.targetId} updated={updated} />}
     {project && <details open><summary>Current project draft: {project.content.title} · {project.state} · revision {project.revision}</summary>
       <p>{project.content.summary}</p><pre className="hub-review-text">{project.content.description}</pre>
       <div className="hub-media-editor">{project.content.media?.map(image => <PrivateMediaPreview key={image.mediaId} token={token} mediaId={image.mediaId} alt={image.altText} />)}</div>

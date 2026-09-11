@@ -132,6 +132,9 @@
 .hub-avatar { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; margin-block: 16px; }
 .hub-creator-byline { font-size: 12px; }
 .hub-profile-fields { display: grid; gap: 24px; border: 0; padding: 0; min-width: 0; }
+.hub-comment { border-top: 1px solid var(--line); padding-block: 24px; scroll-margin-top: 110px; }
+.hub-comment-form { margin-block: 24px; }
+.hub-replies { border-left: 2px solid var(--line-strong); padding-left: clamp(12px,3vw,32px); margin-top: 24px; }
 .hub-main :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 @media(max-width: 1000px) {
   .hub-hero { grid-template-columns: 1fr 250px; gap: 28px; }.hub-categories { grid-template-columns: repeat(3,1fr); }
