@@ -190,6 +190,15 @@ server build, expected result and relevant sanitized logs. You can edit or delet
 your own comment; deletion preserves its replies. Authors can pin useful answers
 and mark threads resolved. Do not post credentials or player-private information.
 
+Unsent comments, replies, comment edits and appeals stay in this tab's memory for
+the account that wrote them when you navigate between Hub pages. Return to the
+same form (or choose **Edit / resume draft**) to continue. Use **Discard draft**
+to remove one explicitly. These drafts are not uploaded or saved across a reload
+or a closed tab; the browser warns before leaving while drafts remain. The tab
+holds up to 64 drafts and asks you to finish or discard one before adding more.
+An unfinished edit keeps its original revision, so a newer server edit can still
+produce a conflict instead of being overwritten.
+
 Use Report on the relevant project, release or comment for abuse, malicious
 content, licensing concerns or other moderation issues. Include evidence and the
 exact version. Reports do not automatically remove content. Affected creators can

@@ -1,12 +1,14 @@
 "use client";
 import Link from "next/link";
-import { Activity, useEffect, useRef, useState, type FormEvent } from "react";
+import { Activity, useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/account/session";
 import * as api from "@/lib/community/client-api";
 import type { CommunityComment, CommunityPage, CommunityProject } from "@/lib/community/types";
 import { ReportForm } from "./report-form";
 import { CommentModeration } from "./comment-moderation";
+import { useCommunityDraft } from "./use-community-draft";
+import { communityDrafts } from "@/lib/community/drafts";
 
 export function Discussion({ project, page, focusThread = false }: { project: CommunityProject; page: CommunityPage<CommunityComment>; focusThread?: boolean }) {
   const router = useRouter(); const refresh = () => router.refresh();
@@ -28,27 +30,36 @@ export function Discussion({ project, page, focusThread = false }: { project: Co
 }
 
 function CommentComposer({ projectId, parentId, existing, updated }: { projectId: string; parentId: string | null; existing?: CommunityComment; updated: () => void }) {
-  const { session } = useSession(); const [body, setBody] = useState(existing?.body ?? ""); const [notify, setNotify] = useState(true);
-  const [busy, setBusy] = useState(false); const [error, setError] = useState(""); const request = useRef<string | null>(null);
-  useEffect(() => {
-    if (!body || body === existing?.body) return;
-    const warn = (event: BeforeUnloadEvent) => event.preventDefault(); window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
-  }, [body, existing?.body]);
+  const { session } = useSession();
+  const memory = useCommunityDraft(session?.accountId, existing ? `comment-edit:${existing.commentId}` : `comment:${projectId}:${parentId ?? "root"}`);
+  const body = memory.draft?.text ?? existing?.body ?? "", notify = memory.draft?.notify ?? true;
+  const revision = memory.draft?.revision ?? existing?.revision;
+  const canWrite = !!session?.emailVerified && (!existing || existing.authorAccountId === session.accountId);
+  const [busy, setBusy] = useState(false); const [error, setError] = useState("");
+  function change(text: string, notifyReplies = notify) {
+    if (!memory.save({ text, notify: notifyReplies, revision, originalBody: memory.draft?.originalBody ?? existing?.body ?? undefined }))
+      setError("This tab already holds 64 unsent drafts. Submit or explicitly discard an existing draft before starting another. Your existing drafts have been kept.");
+    else setError("");
+  }
   async function submit(event: FormEvent) {
-    event.preventDefault(); if (!session || busy) return; setBusy(true); setError("");
+    event.preventDefault(); if (!session || !canWrite || busy) return; setBusy(true); setError("");
     try {
-      if (existing) await api.editComment(session.token, existing.commentId, existing.revision, body);
-      else { request.current ??= crypto.randomUUID(); await api.createComment(session.token, projectId, request.current, parentId, body, notify); }
-      setBody(""); request.current = null; updated();
+      if (existing) await api.editComment(session.token, existing.commentId, revision!, body);
+      else {
+        const requestId = memory.draft?.requestId ?? crypto.randomUUID();
+        if (!memory.save({ ...memory.draft, text: body, notify, requestId })) throw new Error("Draft memory is full. Discard another draft before submitting.");
+        await api.createComment(session.token, projectId, requestId, parentId, body, notify);
+      }
+      memory.discard(); updated();
     } catch (error) { setError(error instanceof Error ? error.message : "Your comment could not be posted. Your text is still here."); }
     finally { setBusy(false); }
   }
   return <form className="hub-form hub-comment-form" onSubmit={submit}><label>{existing ? "Edit your comment" : parentId ? "Your reply" : "Join the discussion"}
-    <textarea required maxLength={5000} rows={4} value={body} readOnly={busy} onChange={event => { setBody(event.target.value); request.current = null; }} /></label>
-    {!existing && <label className="hub-review-confirm"><input type="checkbox" checked={notify} onChange={event => { setNotify(event.target.checked); request.current = null; }} disabled={busy} />Notify me about replies to this thread</label>}
-    {!session?.emailVerified && <p><Link href="/account" target="_blank">Sign in with a verified account</Link> to post. Your text stays in this form.</p>}
-    {error && <p className="hub-notice" role="alert">{error}</p>}<div><button className="btn btn-primary" disabled={busy || !session?.emailVerified || !body.trim()}>{busy ? "Saving…" : existing ? "Save edit" : parentId ? "Post reply" : "Post comment"}</button></div>
+    <textarea required maxLength={5000} rows={4} value={body} readOnly={busy || !canWrite} onChange={event => change(event.target.value)} /></label>
+    {!existing && <label className="hub-review-confirm"><input type="checkbox" checked={notify} onChange={event => change(body, event.target.checked)} disabled={busy || !session?.emailVerified} />Notify me about replies to this thread</label>}
+    {!session?.emailVerified && <p><Link href="/account" target="_blank">Sign in with a verified account</Link> to write a comment. Saved drafts are available only to the account that wrote them.</p>}
+    {memory.draft && <p role="status">Draft kept in this tab for your account across Hub pages. Reloading or closing the tab loses it.{existing && ` This edit uses revision ${revision}.`} <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => { if (window.confirm("Discard this unsent draft?")) memory.discard(); }}>Discard draft</button></p>}
+    {error && <p className="hub-notice" role="alert">{error}</p>}<div><button className="btn btn-primary" disabled={busy || !canWrite || !body.trim()}>{busy ? "Saving…" : existing ? "Save edit" : parentId ? "Post reply" : "Post comment"}</button></div>
   </form>;
 }
 
@@ -61,7 +72,7 @@ function CommentEntry({ comment, project, updated, initiallyExpanded = false, ca
     <p className="hub-release-meta"><time dateTime={comment.createdAtUtc}>{new Date(comment.createdAtUtc).toLocaleString()}</time>{comment.updatedAtUtc !== comment.createdAtUtc ? " · edited" : ""}{comment.pinned ? " · pinned by creator" : ""}{comment.resolved ? " · marked resolved" : ""}</p></header>
     {editing ? <CommentComposer projectId={project.projectId} parentId={comment.parentId} existing={editing} updated={() => { setEditing(null); updated(); }} /> : <p className="hub-activity-reason">{comment.body ?? (comment.state === "deleted" ? "This comment was deleted. Existing replies remain below." : "This comment is hidden.")}</p>}
     {error && <p className="hub-notice" role="alert">{error}</p>}
-    <div className="hub-actions">{own && comment.state === "visible" && project.state === "published" && <button className="btn btn-ghost" disabled={busy} onClick={() => { if (!editing || window.confirm("Discard your unsaved comment edit?")) setEditing(editing ? null : comment); }}>{editing ? "Cancel edit" : "Edit"}</button>}
+    <div className="hub-actions">{own && comment.state === "visible" && project.state === "published" && <button className="btn btn-ghost" disabled={busy} onClick={() => { if (!editing || window.confirm("Discard your unsaved comment edit?")) { if (editing && session) communityDrafts.remove(session.accountId, `comment-edit:${comment.commentId}`); setEditing(editing ? null : comment); } }}>{editing ? "Cancel edit" : "Edit / resume draft"}</button>}
       {own && comment.state !== "deleted" && <button className="btn btn-ghost" disabled={busy} onClick={() => setDeleting(value => !value)}>Delete</button>}
       {!comment.parentId && <button className="btn btn-ghost" aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? "Collapse replies" : "View replies / reply"}</button>}
       {!comment.parentId && comment.state === "visible" && session?.emailVerified && canManage && <><button className="btn btn-ghost" disabled={busy} onClick={() => void act(() => api.markComment(session.token, comment.commentId, comment.revision, !comment.pinned, comment.resolved))}>{comment.pinned ? "Unpin" : "Pin"}</button>
