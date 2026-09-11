@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { HubShell, HubUnavailable } from "@/components/community/hub-shell";
-import { CommunityReadError, getProject } from "@/lib/community/public-api";
+import { CommunityReadError, getProject, listReleases } from "@/lib/community/public-api";
+import { ReleaseList } from "@/components/community/release-list";
 import { categoryLabel } from "@/lib/community/types";
 import { communityMarkdown } from "@/lib/community/markdown";
 import { pageMetadata } from "@/lib/seo";
@@ -20,6 +21,7 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
   const project = result as Awaited<ReturnType<typeof getProject>>;
   if (project.slug !== slug) permanentRedirect(`/resources/${project.slug}`);
   const { content } = project;
+  const releases = content.kind === "resource" ? await listReleases(project.projectId).catch(() => null) : null;
   const [description, installation, license] = await Promise.all([
     communityMarkdown(content.description), communityMarkdown(content.installation), communityMarkdown(content.license ?? ""),
   ]);
@@ -29,9 +31,13 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
     <div className="hub-detail"><article className="hub-prose"><h2>About this creation</h2><div dangerouslySetInnerHTML={{ __html: description }} />
       {content.installation && <><h2>Installation</h2><div dangerouslySetInnerHTML={{ __html: installation }} /></>}
       {content.license && <><h2>License</h2><div dangerouslySetInnerHTML={{ __html: license }} /></>}
+      {content.kind === "resource" && <section aria-label="Releases"><h2>Releases</h2>
+        {releases ? <ReleaseList releases={releases.items.slice(0, 4)} /> : <p className="hub-notice">Release information could not be loaded. Please try again shortly.</p>}
+        <Link className="btn btn-ghost" href={`/resources/${project.slug}/versions`}>All versions →</Link></section>}
     </article><aside className="hub-detail-panel"><p className="hub-kicker">{content.maturity.toUpperCase()}</p>
       <h2>{content.kind === "showcase" ? "A look at what’s possible." : "Release information"}</h2>
       <p>{content.kind === "showcase" ? "This creation is a showcase. Its author hasn’t attached a downloadable release." : "Check the author’s installation instructions and compatibility before adding this resource to your server."}</p>
+      {content.kind === "resource" && <Link className="btn btn-primary" href={`/resources/${project.slug}/versions`}>Browse versions</Link>}
       {content.sourceUrl && <a className="btn btn-ghost" href={content.sourceUrl} target="_blank" rel="noopener noreferrer nofollow ugc">View source ↗</a>}
       {content.issueUrl && <p><a href={content.issueUrl} target="_blank" rel="noopener noreferrer nofollow ugc">Issue tracker ↗</a></p>}
     </aside></div></HubShell>;

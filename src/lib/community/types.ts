@@ -11,6 +11,16 @@ export type CommunityProject = {
   createdAtUtc: string; updatedAtUtc: string; publishedAtUtc: string | null;
 };
 export type CommunityPage<T> = { items: T[]; nextCursor: string | null };
+export type CommunityRelease = {
+  releaseId: string; projectId: string; version: string; state: string; channel: "stable" | "prerelease";
+  revision: number; metadata: { changelog: string; license: string; installation: string; testedBuilds: string[]; requiredResources: string[] };
+  sha256: string | null; sizeBytes: number | null; createdAtUtc: string; publishedAtUtc: string | null; revokedAtUtc: string | null;
+  resources: { name: string; relativeRoot: string; manifest: {
+    version: string; open77Version: string; dependencies: string[]; permissions: string[]; preloadMods: string[];
+  } }[];
+  inspection: unknown | null;
+};
+export type CommunityDelivery = { deliveryId: string; expiresAtUtc: string; downloadUrl: string };
 export const categories = [
   { id: "scripts", label: "Scripts", mark: "</>", description: "New possibilities for your world." },
   { id: "gamemodes", label: "Gamemodes", mark: "77", description: "A whole new way to play." },

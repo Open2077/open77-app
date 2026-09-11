@@ -152,3 +152,10 @@ Remaining: all unchecked acceptance gates, including worker inspection, download
 - Separate master/gateway download flags default off. Master build passes, zero warnings/errors. Community selection: 64 passed, zero skipped (`community-downloads.trx`). After tightening grant lock ordering and adding suspension/expiry assertions, both download integration tests passed again (`community-download-authorization.trx`).
 - Integration evidence traverses real HTTP upload, private storage, MariaDB, ClamAV inspection, release/project approval, guest grant creation and exact-byte/range delivery. Tests also prove grant invalidation after revocation, suspension/expiry, paused gateway behavior and once-only full-range accounting. Browser UI integration and interrupted-network/socket behavior still need their own validation.
 - Goal remains active in full. Public media, publishing/download UI, profiles/social/moderation, GitHub/Warden/launcher and remaining H00–H15 gates are unfinished. Production untouched.
+
+## Public release interface checkpoint — 11 September 2026
+
+- Resource pages now load reviewed release metadata, with a cursor-paginated version-history route. Cards show changelog, author-declared tested builds, runtime resource requirements/permissions, installation, license and immutable SHA-256. Prereleases are explicitly expanded; revoked releases retain history without a download action.
+- Download controls request real short-lived gateway grants and provide an explicit ZIP link, with expiry/error states. Grants remain in component memory; no file buffering or account-token forwarding to the file gateway. Current API/gateway authorization still decides availability at use time.
+- `npm run check` passed (TypeScript and ESLint). Production `npm run build` passed against explicitly configured loopback API origins; resource/version routes remain dynamic. Browser delivery, responsive/accessibility review and end-to-end creator flow remain unvalidated; the earlier automatic approval rejection of local Next server startup remains recorded above.
+- H07 and the overall H00–H15 goal remain open. No production publication/deployment.
