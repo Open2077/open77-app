@@ -125,7 +125,7 @@ export function CreatorReleases({ session, project, readOnly = false, onUnsavedC
     } catch (error) { setError(errorText(error)); }
     finally { setCreating(false); }
   }
-  return <section className="hub-section" aria-label="Manage releases">
+  return <section id="hub-releases" className="hub-section" aria-label="Manage releases">
     <div className="hub-section-head"><div><p className="hub-kicker">PACKAGE PUBLISHING</p><h2>Releases and uploads</h2></div>
       <button type="button" className="btn btn-ghost" onClick={reload}>Refresh status</button></div>
     {error && <p className="hub-notice" role="alert">{error}</p>}
@@ -157,7 +157,7 @@ export function CreatorReleases({ session, project, readOnly = false, onUnsavedC
       {release.state === "uploading" && <div hidden={readOnly}><PackageTransfer token={session.token} projectId={project.projectId} releaseId={release.releaseId} checkedAt={checkedAt} changed={reload}
         existing={uploads?.items.find(item => item.upload.releaseId === release.releaseId && ["pending", "receiving", "uploaded", "processing", "importing"].includes(item.upload.state) && Date.parse(item.upload.expiresAtUtc) > checkedAt)} />
         {!uploads?.items.some(item => item.upload.releaseId === release.releaseId && ["pending", "receiving", "uploaded", "processing", "importing"].includes(item.upload.state) && Date.parse(item.upload.expiresAtUtc) > checkedAt) &&
-          <GitHubImportPicker key={`${session.token}:${release.releaseId}`} token={session.token} projectId={project.projectId} releaseId={release.releaseId} sourceUrl={project.content.sourceUrl} changed={reload} />}</div>}
+          <GitHubImportPicker key={`${session.token}:${release.releaseId}`} session={session} projectId={project.projectId} releaseId={release.releaseId} sourceUrl={project.content.sourceUrl} changed={reload} />}</div>}
       {readOnly && <><p className="hub-merge-text">{release.metadata.changelog}</p><p>Tested builds: {release.metadata.testedBuilds.join(", ") || "None declared"}</p><p>Required resources: {release.metadata.requiredResources.join(", ") || "None declared"}</p><p className="hub-merge-text">License: {release.metadata.license}</p><p className="hub-merge-text">Installation: {release.metadata.installation}</p></>}
       {release.sha256 && <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p>}
       {release.resources.length > 0 && <ReleaseFiles key={`${session.accountId}:${release.releaseId}`} releaseId={release.releaseId} token={session.token} />}

@@ -2,18 +2,20 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import * as github from "@/lib/community/github-api";
+import type { StoredSession } from "@/lib/account/session";
+import { GitHubConnectionControl } from "./github-connection";
 
 const message = (error: unknown) => error instanceof Error ? error.message : "GitHub could not complete this request.";
 const size = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(2)} MiB`;
 const eligible = (asset: github.GitHubAsset) => asset.name.toLowerCase().endsWith(".zip") && asset.sizeBytes > 0 && asset.sizeBytes <= 100 * 1024 * 1024 && !!asset.sha256;
 
-function Provenance({ selection }: { selection: github.GitHubSelection }) {
+function Provenance({ selection, verifiedAt }: { selection: github.GitHubSelection; verifiedAt?: string | null }) {
   return <div className="hub-notice">
     <p><a href={selection.sourceUrl} target="_blank" rel="noopener noreferrer">{selection.repository.fullName} · {selection.release.tag} ↗</a></p>
     <p><strong>{selection.asset.name}</strong> · {size(selection.asset.sizeBytes)} · Asset {selection.asset.assetId}</p>
     <p className="hub-release-digest">SHA-256 <code>{selection.asset.sha256}</code></p>
     {selection.release.commitSha && <p className="hub-release-digest">Commit <code>{selection.release.commitSha}</code></p>}
-    <p>Repository control has not been verified. A source link does not establish ownership or permission to redistribute.</p>
+    <p>{verifiedAt ? `Repository control was verified on ${new Date(verifiedAt).toLocaleString()}.` : "A source link does not establish repository control or permission to redistribute."}</p>
   </div>;
 }
 
@@ -32,19 +34,20 @@ export function GitHubImportStatus({ token, id, checkedAt }: { token: string; id
     {value && <><p role="status">GitHub import: {value.state.replaceAll("_", " ")}{value.state === "accepted" ? " · Technical validation passed; publication still requires review." : ""}</p>
       {value.errorCode && <p className="hub-notice">Import result: <code>{value.errorCode}</code>. {["rejected", "dead"].includes(value.state) ? "Create a new ZIP submission after checking this result." : "The same selected asset is queued for another attempt."}</p>}
       {value.state === "expired" && <p>The import reservation expired. Start a new upload from the release above.</p>}
-      <details><summary>Imported source and integrity</summary><Provenance selection={value.selection} />
+      <details><summary>Imported source and integrity</summary><Provenance selection={value.selection} verifiedAt={value.controlVerifiedAtUtc} />
         {value.fetchedAtUtc && <p>Fetched <time dateTime={value.fetchedAtUtc}>{new Date(value.fetchedAtUtc).toLocaleString()}</time></p>}</details></>}
   </div>;
 }
 
-export function GitHubImportPicker(props: { token: string; projectId: string; releaseId: string; sourceUrl?: string | null; changed: () => void }) {
+export function GitHubImportPicker(props: { session: StoredSession; projectId: string; releaseId: string; sourceUrl?: string | null; changed: () => void }) {
   const [open, setOpen] = useState(false);
   return <details onToggle={event => { if (event.currentTarget.open) setOpen(true); }}><summary>Import a ZIP from a GitHub release</summary>
     {open && <Picker {...props} />}
   </details>;
 }
 
-function Picker({ token, projectId, releaseId, sourceUrl, changed }: { token: string; projectId: string; releaseId: string; sourceUrl?: string | null; changed: () => void }) {
+function Picker({ session, projectId, releaseId, sourceUrl, changed }: { session: StoredSession; projectId: string; releaseId: string; sourceUrl?: string | null; changed: () => void }) {
+  const token = session.token;
   const initial = (() => { try { const url = new URL(sourceUrl ?? ""); return url.hostname === "github.com" ? url.pathname.split("/").filter(Boolean).slice(0, 2) : []; } catch { return []; } })();
   const [owner, setOwner] = useState(initial[0] ?? "");
   const [repo, setRepo] = useState(initial[1] ?? "");
@@ -129,7 +132,7 @@ function Picker({ token, projectId, releaseId, sourceUrl, changed }: { token: st
       <div className="hub-form-row"><label>GitHub owner<input required maxLength={39} value={owner} disabled={locked} onChange={event => setOwner(event.target.value)} /></label>
         <label>Repository<input required maxLength={100} value={repo} disabled={locked} onChange={event => setRepo(event.target.value)} /></label></div>
       <button className="btn btn-ghost" disabled={locked}>Find public releases</button></form>
-      {repository && <p>Browsing <strong>{repository.fullName}</strong></p>}
+      {repository && <><p>Browsing <strong>{repository.fullName}</strong></p><GitHubConnectionControl key={`${session.token}:${repository.repositoryId}`} session={session} projectId={projectId} repository={repository} /></>}
       {releases && <div><h4>Choose a release</h4>{releases.items.length === 0 && <p>No public releases on this page. Upload a ZIP directly if the repository has no release assets.</p>}
         <div className="hub-actions">{releases.items.map(item => <button type="button" className="btn btn-ghost" key={item.releaseId} disabled={locked}
           aria-pressed={release?.releaseId === item.releaseId} onClick={() => assetPage(item, 1)}>{item.tag}{item.prerelease ? " · prerelease" : ""}</button>)}</div>

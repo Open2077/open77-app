@@ -42,7 +42,7 @@ export type CommunityRelease = {
   } }[];
   inspection: unknown | null;
   source?: { provider: string; repositoryId: number; releaseId: number; assetId: number; sourceUrl: string;
-    commitSha: string | null; fetchedAtUtc: string; sha256: string; repositoryControlVerified: boolean } | null;
+    commitSha: string | null; fetchedAtUtc: string; sha256: string; repositoryControlVerified: boolean; repositoryControlVerifiedAtUtc?: string | null } | null;
 };
 export type CommunityDelivery = { deliveryId: string; expiresAtUtc: string; downloadUrl: string };
 export type CommunityMedia = { mediaId: string; derivatives: { name: "card" | "gallery" | "full"; width: number; height: number; sizeBytes: number; url: string }[] };
