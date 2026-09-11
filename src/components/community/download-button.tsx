@@ -2,16 +2,18 @@
 
 import { useState } from "react";
 import { MasterApiError } from "@/lib/account/api";
+import { useSession } from "@/lib/account/session";
 import { requestDownload, requestReviewDownload } from "@/lib/community/client-api";
 
 export function DownloadButton({ releaseId, version, review }: { releaseId: string; version: string; review?: { token: string; revision: number } }) {
+  const { session } = useSession();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [ready, setReady] = useState<{ url: string; expires: number } | null>(null);
   async function prepare() {
     setBusy(true); setError(""); setReady(null);
     try {
-      const delivery = review ? await requestReviewDownload(review.token, releaseId, review.revision) : await requestDownload(releaseId);
+      const delivery = review ? await requestReviewDownload(review.token, releaseId, review.revision) : await requestDownload(releaseId, session?.token);
       const url = new URL(delivery.downloadUrl);
       if (url.username || url.password || !(url.protocol === "https:" ||
         url.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname))) throw new Error("Invalid delivery URL");

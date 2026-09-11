@@ -11,6 +11,8 @@ export type CommunityProject = {
   createdAtUtc: string; updatedAtUtc: string; publishedAtUtc: string | null;
   creatorHandle: string | null;
   upvotes: number;
+  views: number;
+  downloads: number;
 };
 export type CommunityProjectState = { projectId: string; voted: boolean; saved: boolean; subscribed: boolean; canManageComments?: boolean };
 export type CommunityMember = { accountId: string; role: "owner" | "maintainer"; handle: string | null; membershipId: string };

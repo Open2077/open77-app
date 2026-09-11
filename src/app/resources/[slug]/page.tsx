@@ -7,6 +7,7 @@ import { MediaGallery } from "@/components/community/media-gallery";
 import { ExternalVideos } from "@/components/community/external-videos";
 import { ReportForm } from "@/components/community/report-form";
 import { ProjectActions } from "@/components/community/project-actions";
+import { ProjectView } from "@/components/community/project-view";
 import { categoryLabel } from "@/lib/community/types";
 import { communityMarkdown } from "@/lib/community/markdown";
 import { pageMetadata } from "@/lib/seo";
@@ -29,7 +30,7 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
   const [description, installation, license] = await Promise.all([
     communityMarkdown(content.description), communityMarkdown(content.installation), communityMarkdown(content.license ?? ""),
   ]);
-  return <HubShell><header className="hub-directory-head"><Link href="/resources">← Community resources</Link>
+  return <HubShell><ProjectView id={project.projectId} /><header className="hub-directory-head"><Link href="/resources">← Community resources</Link>
     <p className="hub-kicker">{categoryLabel(content.category)} / {content.kind === "showcase" ? "SHOWCASE" : "RESOURCE"}</p>
     <h1>{content.title}</h1><p>{content.summary}</p>{project.creatorHandle && <p className="hub-creator-byline">By <Link href={`/creators/${project.creatorHandle}`}>@{project.creatorHandle}</Link></p>}<div className="hub-tags">{content.tags.map(tag => <span key={tag}>{tag}</span>)}</div></header>
     {project.state === "archived" && <p className="hub-notice">This creation is archived. Its approved releases remain available, but it is closed to new comments and updates.</p>}
@@ -48,6 +49,8 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
       {content.issueUrl && <p><a href={content.issueUrl} target="_blank" rel="noopener noreferrer nofollow ugc">Issue tracker ↗</a></p>}
       <ReportForm targetType="project" targetId={project.projectId} />
       <ProjectActions project={project} />
+      <p>{project.views} views{content.kind === "resource" ? ` · ${project.downloads} downloads` : ""}</p>
+      {content.kind === "resource" && <small>Downloads count completed file deliveries, including completed resumed transfers.</small>}
       <p><Link href={`/resources/${project.slug}/discussion`}>Join the discussion →</Link></p>
     </aside></div></HubShell>;
 }

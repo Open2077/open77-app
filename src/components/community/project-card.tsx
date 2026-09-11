@@ -15,6 +15,6 @@ export async function ProjectCard({ project }: { project: CommunityProject }) {
       <h3><Link href={`/resources/${project.slug}`}>{content.title}</Link></h3><p>{content.summary}</p>
       {project.creatorHandle && <p className="hub-creator-byline">By <Link href={`/creators/${project.creatorHandle}`}>@{project.creatorHandle}</Link></p>}
       <div className="hub-tags">{content.tags.map(tag => <span key={tag}>{tag}</span>)}</div>
-      <p className="hub-creator-byline">{project.upvotes} upvotes</p>
+      <p className="hub-creator-byline">{project.upvotes} upvotes{content.kind === "resource" ? ` · ${project.downloads} downloads` : ""}</p>
     </div></article>;
 }
