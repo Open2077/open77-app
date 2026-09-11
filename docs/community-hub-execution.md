@@ -17,20 +17,20 @@ All four use branch `feat/community-hub`, created from the existing checkout HEA
 
 - [ ] H00: baseline/environment/contract — worktrees ready; Docker 29.7.2 responds; pinned submodule ready; app dependencies installed; SSR preview path pending.
 - [ ] H01: interface prototype — discovery/directory/detail and creator draft surfaces implemented; responsive CSS present, rendered browser review pending.
-- [ ] H02: schema/domain/permissions/revisions — migrations through 33, project/release lifecycle, profiles and accepted membership/ownership workflows implemented/tested. Final acceptance audit remains open.
+- [ ] H02: schema/domain/permissions/revisions — migrations through 36, project/release lifecycle, profiles, accepted membership/ownership, service isolation and quota overrides implemented/tested. Unpublished draft deletion and final acceptance audit remain open.
 - [ ] H03: project/profile/release APIs — initial project create/edit/submit/review/public/private listing routes tested over HTTP; broader contracts still pending.
-- [ ] H04: private file gateway/storage/jobs — real private upload, inspection, review/download and scoped Warden publishing proven; operational isolation and final failure/load acceptance remain pending.
+- [ ] H04: private file gateway/storage/jobs — real private upload, inspection, review/download and scoped Warden publishing proven; auxiliary-principal isolation and restored guards tested. Actual current-service outage/full-disk and final failure acceptance remain pending.
 - [ ] H05: package/media inspection — shared bounded ZIP/preload inspector, media worker and real ClamAV integration tested; final corpus/acceptance audit pending.
 - [ ] H06: review/report/revocation/admin
 - [ ] H07: live publishing/download/directory
 - [ ] H08: social/notifications — moderation/report inbox, votes, private saves, release subscriptions, threaded comments and durable notifications implemented/tested; broader abuse/load and browser validation remain pending.
-- [ ] H09: metrics/search/SEO/accessibility — implementation present; isolated 10,000-project performance harness in progress; actual app browser acceptance pending.
+- [ ] H09: metrics/search/SEO/accessibility — controlled 10,000-project load run passes stated local latency gates with documented host/payload limits; operational collector and actual app browser acceptance remain pending.
 - [ ] H10: GitHub import
 - [ ] H11: Warden browse/planner — real catalog-to-reviewed-install flow proven; final acceptance audit pending.
 - [ ] H12: Warden install/update/rollback — transactional execution/recovery, maintenance and retention tested; real local install/uninstall/reinstall/update/committed rollback proven with latest configuration/user data preserved. Restart-required flow and game acceptance remain.
-- [ ] H13: Warden creator connection/export — real scoped publishing and accepted-draft resume after server restart proven; interrupted transport scenarios and actual web draft browser journey remain.
+- [ ] H13: Warden creator connection/export — real scoped publishing, accepted-draft restart resume and lost-create/PUT-response recovery proven. Actual web draft browser journey and final acceptance audit remain.
 - [ ] H14: launcher/docs — launcher entry implemented and tested; guides present, final cross-flow audit remains.
-- [ ] H15: CI/regression/restore/release artifacts — four local images validated and isolated database/private-storage restore passed; final release candidate, operations and integration gates remain.
+- [ ] H15: CI/regression/restore/release artifacts — four earlier local images validated; schema36 paired restore including security guards passed. Release inventory recorder and daily operations guide present; current images, telemetry/outage checks, final release candidate and integration gates remain.
 
 H16 production rollout is outside authorization.
 
@@ -43,7 +43,7 @@ H16 production rollout is outside authorization.
 
 ## Next work
 
-Finish restart-required installation, real update/rollback/game validation, interrupted publishing recovery and performance measurement. Complete actual app browser and GitHub-provider acceptance, operational isolation/restore/edge checks and the final release-candidate audit. Keep each H00–H15 gate pending until its complete acceptance criteria have direct evidence; implementation and partial tests are recorded below.
+Finish unpublished draft deletion, operational telemetry/guard validation and current-service outage checks. Complete actual app browser, GitHub-provider and restart/game acceptance, then the final release-candidate audit. Real update/rollback, interrupted publishing recovery, controlled load measurement and schema36 restore have evidence below; they do not substitute for the remaining journeys. Keep each H00–H15 gate pending until its complete acceptance criteria have direct evidence.
 
 ## Foundation checkpoint — 11 September 2026
 
@@ -714,3 +714,10 @@ Remaining: all unchecked acceptance gates, including worker inspection, download
 - Master835d899 adds read-only source/image/evidence inventory recording and RELEASE-INVENTORY.md. PowerShell parse and real development snapshot passed; dirty candidate mode correctly rejected before image processing. Evidence artifacts/hub-release/206e2c67cb7e49759813a41e4f085f5a/manifest.json is explicitly a development snapshot of then-current sources and older image evidence, not a release candidate. The recorder always leaves releaseReadinessProven false; evidence hashes do not substitute for H00-H15 review.
 - Follow-up ownership: launcher agent implements schema37 safe owner/revision-fenced unpublished-draft deletion and frontend draft preservation; runtime agent adds bounded validation/storage telemetry and actual collector procedure; transaction agent adds startup detection of missing/tampered service guards. The explicit CommunityPolicy section omitted from master.example.json is being added. These are remaining required work, not deferred features.
 - Local ignored dotnet-counters10.0.745401 installed without changing global tools or tracked package configuration; actual new-meter collection awaits updated binaries. Existing image utility checks do not establish new endpoint/outage behavior. Pending isolated restart approval remains unanswered; no rejected launch retry, production publication/deployment or unrelated-session modification. Goal active and incomplete.
+
+## Latest-main compatibility and current acceptance status — 11 September 2026
+
+- Previous turn made progress with committed schema36 security/readiness and reproducible release inventory. Read-only fetch refreshed master origin/main to98837f57ae19a85d439657cfaa9394996643af35. Its schema remains11; the two incoming commits change release notes, package README and version.json only. Merge004571d integrates those changes into the dedicated Hub branch without conflicts or overwriting active edits; version metadata now tracks upstream build56. This is source integration, not deployment or proof of rebuilt artifact compatibility.
+- App6f88d6c fixes loss of appeal/profile/reply drafts across collapse, token refresh/logout and comment revision refresh; preserves the original comment edit revision; adds explicit edit-cancel confirmation, bounded creation timeout and missing-media retry. Agent reports final npm check and production build368pages passed. Actual browser journeys remain unverified.
+- Updated the top-level acceptance/next-work section to reflect completed interrupted transport, controlled load, schema36 isolation/restore and outstanding draft deletion/current-service/browser/provider/game work. Every H00-H15 checkbox remains open until its whole gate has direct evidence.
+- Runtime telemetry additions are ready for coordinated validation; schema37 deletion and master startup guard checks are under implementation. No production publication/deployment, blocked launch retry or unrelated-session changes. Goal remains active.
