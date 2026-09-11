@@ -3,6 +3,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { HubShell, HubUnavailable } from "@/components/community/hub-shell";
 import { CommunityReadError, getProject, listReleases } from "@/lib/community/public-api";
 import { ReleaseList } from "@/components/community/release-list";
+import { MediaGallery } from "@/components/community/media-gallery";
 import { categoryLabel } from "@/lib/community/types";
 import { communityMarkdown } from "@/lib/community/markdown";
 import { pageMetadata } from "@/lib/seo";
@@ -28,7 +29,7 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
   return <HubShell><header className="hub-directory-head"><Link href="/resources">← Community resources</Link>
     <p className="hub-kicker">{categoryLabel(content.category)} / {content.kind === "showcase" ? "SHOWCASE" : "RESOURCE"}</p>
     <h1>{content.title}</h1><p>{content.summary}</p><div className="hub-tags">{content.tags.map(tag => <span key={tag}>{tag}</span>)}</div></header>
-    <div className="hub-detail"><article className="hub-prose"><h2>About this creation</h2><div dangerouslySetInnerHTML={{ __html: description }} />
+    <div className="hub-detail"><article className="hub-prose"><MediaGallery media={content.media ?? []} /><h2>About this creation</h2><div dangerouslySetInnerHTML={{ __html: description }} />
       {content.installation && <><h2>Installation</h2><div dangerouslySetInnerHTML={{ __html: installation }} /></>}
       {content.license && <><h2>License</h2><div dangerouslySetInnerHTML={{ __html: license }} /></>}
       {content.kind === "resource" && <section aria-label="Releases"><h2>Releases</h2>

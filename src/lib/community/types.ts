@@ -21,6 +21,7 @@ export type CommunityRelease = {
   inspection: unknown | null;
 };
 export type CommunityDelivery = { deliveryId: string; expiresAtUtc: string; downloadUrl: string };
+export type CommunityMedia = { mediaId: string; derivatives: { name: "card" | "gallery" | "full"; width: number; height: number; sizeBytes: number; url: string }[] };
 export type CommunityUpload = {
   uploadId: string; projectId: string; releaseId: string | null; kind: "package" | "image";
   state: string; maximumBytes: number; artifactId: string | null; expiresAtUtc: string;
