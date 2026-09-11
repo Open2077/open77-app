@@ -1,163 +1,29 @@
 import Link from "next/link";
+import { HubShell, HubUnavailable } from "@/components/community/hub-shell";
+import { ProjectCard } from "@/components/community/project-card";
+import { listProjects } from "@/lib/community/public-api";
+import { categories } from "@/lib/community/types";
+import { pageMetadata } from "@/lib/seo";
 
-import { Eyebrow } from "@/components/brand";
-import { DiscordIcon, TikTokIcon, XIcon } from "@/components/icons";
-import { JsonLd } from "@/components/json-ld";
-import { SiteFooter } from "@/components/site-footer";
-import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
-import { site } from "@/lib/site";
-
-export const metadata = pageMetadata({
-  title: "Community",
-  description:
-    "OPEN//77 is developed in the open, and the official Discord is where it is discussed directly. Join in — alpha news lands there first.",
-  path: "/community",
-});
-
-export default function CommunityPage() {
-  return (
-    <>
-      <main id="main">
-        <section className="page-hero page-hero-plain">
-          <div className="section-inner">
-            <Eyebrow>DEVELOPED IN THE OPEN</Eyebrow>
-            <h1 className="page-title">
-              The city is big enough
-              <br />
-              for all of us.
-            </h1>
-            <p className="section-lead">
-              OPEN//77 is being built in the open, and the interesting part — the worlds — will be
-              built by people like you. The official Discord is the one place where the project is
-              discussed directly: development, questions, feedback, and every announcement, first.
-            </p>
-            <div className="hero-ctas">
-              {site.links.discord ? (
-                <a
-                  className="btn btn-discord"
-                  href={site.links.discord}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <DiscordIcon size={16} />
-                  Join our Discord
-                </a>
-              ) : null}
-              {site.links.x ? (
-                <a
-                  className="btn btn-ghost"
-                  href={site.links.x}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <XIcon size={14} />
-                  X / Twitter
-                </a>
-              ) : null}
-              {site.links.tiktok ? (
-                <a
-                  className="btn btn-ghost"
-                  href={site.links.tiktok}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <TikTokIcon size={14} />
-                  TikTok
-                </a>
-              ) : null}
-            </div>
-          </div>
-        </section>
-
-        <section className="section section-community" id="alpha">
-          <div className="section-inner">
-            <div className="alpha-band">
-              <div>
-                <Eyebrow>DEVELOPER PREVIEW ACCESS</Eyebrow>
-                <h2 className="browser-cta-title">Developer Preview is live.</h2>
-                <p>
-                  The launcher, dedicated server packages and live directory are available now.
-                  Joining a world requires an approved OPEN//77 account. Server owners and resource
-                  developers can <Link href="/create#developer-alpha">apply for preview access</Link>,
-                  then <Link href="/download">install the launcher</Link> and sign in with their
-                  approved account. Read the <Link href="/docs/developer-preview">preview guide</Link>
-                  {" "}for requirements, hosting and known limitations.
-                </p>
-              </div>
-              <div className="alpha-side">
-                <p className="alpha-status">
-                  <span className="live-dot" aria-hidden="true" /> STATUS: {site.stage} — ACTIVE
-                </p>
-                {site.links.discord ? (
-                  <a
-                    className="btn btn-discord"
-                    href={site.links.discord}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                  >
-                    <DiscordIcon size={16} />
-                    Join our Discord
-                  </a>
-                ) : null}
-              </div>
-            </div>
-
-            <div className="follow-cards">
-              <div className="follow-card">
-                <h3>Players</h3>
-                <p>
-                  Approved testers can <Link href="/download">download the launcher</Link> and
-                  join worlds from the <Link href="/servers">live server browser</Link>. Downloading
-                  or creating an account alone does not grant access. This preview can contain bugs
-                  and crashes; keep backups and report reproducible issues.
-                </p>
-              </div>
-              <div className="follow-card">
-                <h3>Server owners</h3>
-                <p>
-                  <Link href="/host">Download the Windows or Linux server</Link> with Freeroam and
-                  its system resources, then follow the <Link href="/docs/host-a-server">hosting guide</Link>
-                  {" "}to configure your license and public endpoints. Your players need approved
-                  preview accounts too.
-                </p>
-              </div>
-              <div className="follow-card">
-                <h3>Developers</h3>
-                <p>
-                  The Lua API that resources are written against is already{" "}
-                  <Link href="/docs">documented here</Link> — {" "}
-                  <Link href="/docs/api">every registered function</Link>, generated from the
-                  platform bindings.{" "}
-                  {site.links.platformRepo ? (
-                    <>
-                      The source lives in the{" "}
-                      <a href={site.links.platformRepo} rel="noreferrer noopener" target="_blank">
-                        platform repository
-                      </a>
-                      .
-                    </>
-                  ) : (
-                    // No dead link: the platform repository is still private, and this
-                    // page's own promise is that there are no fake buttons.
-                    <>The platform repository remains private; the published guides and API reference are available now.</>
-                  )}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <SiteFooter />
-
-      <JsonLd
-        data={jsonLdGraph(
-          breadcrumbNode([
-            { name: "Home", path: "/" },
-            { name: "Community", path: "/community" },
-          ]),
-        )}
-      />
-    </>
-  );
+export const metadata = pageMetadata({ title: "Community Hub", description: "Discover and share resources, gamemodes, maps and interfaces built for OPEN//77 servers.", path: "/community" });
+export default async function CommunityPage() {
+  const catalog = await listProjects({ limit: 6 }).catch(() => null);
+  return <HubShell><header className="hub-hero"><div className="hub-hero-copy">
+    <p className="hub-kicker">BUILT BY THE COMMUNITY. MADE FOR YOUR WORLD.</p>
+    <h1>Your next idea.<br /><span>Someone’s next server.</span></h1>
+    <p>Discover what the OPEN//77 community is building. Share your scripts, shape new spaces, and give other creators a head start.</p>
+    <form className="hub-search" action="/resources" role="search"><label className="hub-sr-only" htmlFor="hub-search">Search community resources</label>
+      <span aria-hidden="true">⌕</span><input id="hub-search" type="search" name="query" placeholder="Search resources, gamemodes, maps…" maxLength={200} />
+      <button type="submit">Explore →</button></form>
+  </div><aside className="hub-hero-note"><span className="hub-orbit" aria-hidden="true">{"//"}</span>
+    <span className="hub-kicker">DEVELOPER PREVIEW</span><h2>Built to be shared.</h2>
+    <p>A script, a new interior, a whole gamemode. Your work can become the starting point for someone else.</p>
+    <Link href="/docs/server-resources">Start building ↗</Link></aside></header>
+    <nav className="hub-categories" aria-label="Resource categories">{categories.map(category =>
+      <Link key={category.id} href={`/resources?category=${category.id}`}><span aria-hidden="true">{category.mark}</span><strong>{category.label}</strong><small>{category.description}</small></Link>)}</nav>
+    <section className="hub-section"><div className="hub-section-head"><div><p className="hub-kicker">FROM THE COMMUNITY</p><h2>Find your next addition.</h2></div><Link href="/resources">Explore all ↗</Link></div>
+      {catalog === null ? <HubUnavailable /> : catalog.items.length ? <div className="hub-grid">{catalog.items.map(project => <ProjectCard key={project.projectId} project={project} />)}</div> :
+        <div className="hub-empty"><h3>A new home for your creations.</h3><p>The first community resources will appear here as they’re published. Bring something you’ve built and help get things started.</p><Link className="btn btn-primary" href="/account/creations/new">Share your first creation</Link></div>}
+    </section><section className="hub-bottom-band"><div><p className="hub-kicker">ONE COMMUNITY. MORE POSSIBILITIES.</p><h2>Keep the conversation going.</h2><p>For platform development, missing APIs and help from other builders, join the OPEN//77 Discord.</p></div><a className="btn btn-ghost" href="https://discord.open2077.net" target="_blank" rel="noopener noreferrer">Join the community ↗</a></section>
+  </HubShell>;
 }

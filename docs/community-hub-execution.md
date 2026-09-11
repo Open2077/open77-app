@@ -16,10 +16,10 @@ All four use branch `feat/community-hub`, created from the existing checkout HEA
 ## Acceptance status
 
 - [ ] H00: baseline/environment/contract — worktrees ready; Docker 29.7.2 responds; pinned submodule ready; app dependencies installed; SSR preview path pending.
-- [ ] H01: interface prototype
+- [ ] H01: interface prototype — discovery/directory/detail and creator draft surfaces implemented; responsive CSS present, rendered browser review pending.
 - [ ] H02: schema/domain/permissions/revisions — migration 12 and project revision lifecycle implemented/tested. Profiles, release lifecycle, membership workflows and remaining schema still need implementation.
 - [ ] H03: project/profile/release APIs — initial project create/edit/submit/review/public/private listing routes tested over HTTP; broader contracts still pending.
-- [ ] H04: private file gateway/storage/jobs
+- [ ] H04: private file gateway/storage/jobs — immutable filesystem blob store and leased durable queue implemented/tested; gateway/upload integration pending.
 - [ ] H05: package/media inspection
 - [ ] H06: review/report/revocation/admin
 - [ ] H07: live publishing/download/directory
@@ -66,3 +66,16 @@ Validation:
 - No app interface files were changed in this checkpoint: an attempted combined replacement patch was rejected atomically. UI work is the next step.
 
 Scope remains H00–H15 in full. No production changes, no game startup, no changes to the existing dev server.
+
+## Interface/storage checkpoint — 11 September 2026
+
+- hub-app: dynamic Community landing, searchable/category-filtered resource directory, approved resource details/metadata, creator dashboard, new/edit forms with real API save/submit, account gate, conflict feedback and unsaved-text warning. Uses existing design tokens. No fixture projects or activity counts are presented as real.
+- Markdown rendering removes raw HTML, external tracking images, unsafe link schemes and credential-bearing URLs; formats code/lists and safe links. Dedicated attack-fixture check passes.
+- Frontend is incomplete: media/gallery, releases/download panel, autosaved five-step wizard, profiles/social/moderation, advanced filters and responsive browser review remain required. Current cards show category fallback artwork until processed-media delivery is implemented.
+- `npm run check` passed. Production build passed with `/community`, `/resources` and resource details confirmed dynamic. `node --experimental-strip-types scripts/check-community-markdown.mjs` passed (Node reports benign module-type autodetection warning).
+- hub-master: immutable SHA-256 blob storage, bounded streamed writes, cleanup after cancellation/failure, collision verification and path/reparse-point checks. Durable queue has exclusive claims, lease recovery, stale completion rejection, backoff and maximum three attempts.
+- Master build passed after stopping this task's local master, which had locked its build DLLs. Community test run: 21 passed, zero skipped; report `tests/Open77.Master.Tests/bin/Release/net10.0/TestResults/community-storage.trx`. Full regression was not rerun after these isolated storage additions; prior 116-test baseline remains recorded above.
+- Created isolated Docker container `open77-hub-mariadb`, bound only to `127.0.0.1:13316`, with random local credentials in ignored `hub-master/src/Open77.Master/master.json`. Existing shared MariaDB and dev game server left untouched. Local hub master was started on 18090 and then stopped for rebuilding; DB container remains running.
+- Automatic approval review rejected the local Next server startup on 3008 with only `blocked by policy`. No alternate launch was attempted to bypass that rejection. Browser/served validation remains pending; it is not implied by build success. Other backend implementation remains unblocked.
+
+Next: upload grants/quota reservations, file gateway and inspection pipeline; finish browser validation when the server-start rejection is resolved. Goal remains active with all H00–H15 requirements intact.
