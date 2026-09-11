@@ -18,4 +18,6 @@
   --font-display: var(--font-rajdhani), "Rajdhani", "Chakra Petch", sans-serif;
   --font-body: var(--font-saira), "Saira", "IBM Plex Sans", system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+  /* The launcher's control face: navigation, buttons, row names. */
+  --font-ui: var(--font-chakra), "Chakra Petch", "Rajdhani", "Segoe UI", sans-serif;
 }

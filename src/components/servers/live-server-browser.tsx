@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { DiscordIcon } from "@/components/icons";
 import { ServerBrowser } from "@/components/servers/server-browser";
 import { MasterApiError } from "@/lib/account/api";
 import { fetchServers, type GameServer } from "@/lib/servers";
-import { site } from "@/lib/site";
+
+/** How often the directory re-reads the master while the tab is visible. */
+const REFRESH_MS = 30_000;
 
 /**
  * The server browser, driven by the live master directory.
@@ -16,80 +17,113 @@ import { site } from "@/lib/site";
  * non-browser fetches, so a server-component fetch would be unreliable. This
  * mirrors how the account surfaces call the master (see `lib/account/api`).
  *
- * Three states get their own honest UI — loading, unreachable, and loaded (the
- * empty case is handled inside {@link ServerBrowser}). None of them invent
- * listings while the request is in flight or has failed.
+ * The browser stays mounted across refreshes so filters, selection, favorites
+ * and scroll survive them. A failed refresh keeps the last good list and says
+ * so in the freshness readout; only a first load with nothing to show becomes
+ * the unreachable state. Nothing is invented while a request is in flight.
  */
 export function LiveServerBrowser() {
-  const [servers, setServers] = useState<GameServer[] | null>(null);
+  const [servers, setServers] = useState<GameServer[]>([]);
+  const [updated, setUpdated] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [reload, setReload] = useState(0);
+  const [busy, setBusy] = useState(true);
+  const inFlight = useRef(false);
+
+  const refresh = useCallback(async () => {
+    if (inFlight.current) return;
+    inFlight.current = true;
+    setBusy(true);
+    try {
+      const list = await fetchServers();
+      setServers(list);
+      setUpdated(new Date());
+      setError(null);
+    } catch (err: unknown) {
+      setError(
+        err instanceof MasterApiError
+          ? err.message
+          : "The server directory could not be reached.",
+      );
+    } finally {
+      inFlight.current = false;
+      setBusy(false);
+    }
+  }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    fetchServers()
-      .then((list) => {
-        if (!cancelled) setServers(list);
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        setServers([]);
-        setError(
-          err instanceof MasterApiError
-            ? err.message
-            : "The server directory could not be loaded.",
-        );
-      });
+    const first = window.setTimeout(() => void refresh(), 0);
+    const timer = window.setInterval(() => {
+      if (!document.hidden) void refresh();
+    }, REFRESH_MS);
     return () => {
-      cancelled = true;
+      window.clearTimeout(first);
+      window.clearInterval(timer);
     };
-  }, [reload]);
+  }, [refresh]);
 
-  if (error) {
-    return (
-      <div className="sb-offline" role="status">
-        <p className="sb-offline-title">
-          <span className="live-dot live-dot-idle" aria-hidden="true" /> DIRECTORY UNREACHABLE
-        </p>
-        <p className="sb-offline-body">{error}</p>
-        <div className="sb-offline-ctas">
+  const state = error ? "error" : busy ? "loading" : "ok";
+  const readout = error
+    ? updated
+      ? "Refresh failed · showing last results"
+      : "Directory unavailable"
+    : busy
+      ? "Updating…"
+      : `Updated ${updated?.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+
+  // Before the first successful read there is nothing to list: say why.
+  const emptyState =
+    updated === null ? (
+      <div className="sb-offline" role="status" aria-busy={busy}>
+        <span className="directory-kicker">
+          {error ? "DIRECTORY UNREACHABLE" : "OPEN//77 DIRECTORY"}
+        </span>
+        <h2>{error ? "Unable to load servers" : "Reading the live directory…"}</h2>
+        <p>{error ?? "Community worlds appear here as soon as the master answers."}</p>
+        {error ? (
           <button
-            className="btn btn-ghost"
+            className="btn btn-primary btn-small"
             type="button"
-            onClick={() => {
-              setError(null);
-              setServers(null);
-              setReload((n) => n + 1);
-            }}
+            disabled={busy}
+            onClick={() => void refresh()}
           >
             Try again
           </button>
-          {site.links.discord ? (
-            <a
-              className="btn btn-discord"
-              href={site.links.discord}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              <DiscordIcon size={16} />
-              Join our Discord
-            </a>
-          ) : null}
+        ) : (
+          <div className="directory-loading" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </div>
+        )}
+      </div>
+    ) : undefined;
+
+  return (
+    <ServerBrowser
+      servers={servers}
+      emptyState={emptyState}
+      status={
+        <div className="directory-freshness" data-state={state}>
+          <span role="status">{readout}</span>
+          <button
+            className="sb-tool"
+            type="button"
+            disabled={busy}
+            title="Refresh the directory"
+            onClick={() => void refresh()}
+          >
+            <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+              <path
+                d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+              />
+            </svg>
+            <span>{busy ? "Refreshing…" : "Refresh"}</span>
+          </button>
         </div>
-      </div>
-    );
-  }
-
-  if (servers === null) {
-    return (
-      <div className="sb-offline" role="status" aria-busy="true">
-        <p className="sb-offline-title">
-          <span className="live-dot" aria-hidden="true" /> LOADING SERVERS…
-        </p>
-        <p className="sb-offline-body">Reading the live OPEN//77 directory.</p>
-      </div>
-    );
-  }
-
-  return <ServerBrowser servers={servers} featured={null} />;
+      }
+    />
+  );
 }

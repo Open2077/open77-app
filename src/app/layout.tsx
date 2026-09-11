@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Rajdhani, Saira } from "next/font/google";
+import { Chakra_Petch, IBM_Plex_Mono, Rajdhani, Saira } from "next/font/google";
 
 import { JsonLd } from "@/components/json-ld";
 import { MotionEffects } from "@/components/motion-effects";
@@ -19,6 +19,13 @@ const saira = Saira({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-saira",
+  display: "swap",
+});
+
+const chakra = Chakra_Petch({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-chakra",
   display: "swap",
 });
 
@@ -78,7 +85,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={site.lang} className={`${rajdhani.variable} ${saira.variable} ${plexMono.variable}`}>
+    <html lang={site.lang} className={`${rajdhani.variable} ${saira.variable} ${chakra.variable} ${plexMono.variable}`}>
       <body>
         <a className="skip-link" href="#main">
           Skip to content

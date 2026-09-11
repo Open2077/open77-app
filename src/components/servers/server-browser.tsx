@@ -1,78 +1,55 @@
 "use client";
-
 import Link from "next/link";
-import { useId, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
-
+import {
+  useId,
+  useEffect,
+  useRef,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import { useFavorites } from "@/components/favorites";
-import { DiscordIcon, FilterIcon, PlugIcon, SearchIcon, StarIcon } from "@/components/icons";
+import { FilterIcon, SearchIcon, StarIcon } from "@/components/icons";
 import { ServerLocale } from "@/components/servers/country-flag";
 import { ServerImage } from "@/components/servers/server-image";
+import { ServerInspector } from "@/components/servers/server-inspector";
 import { useToast } from "@/components/toast";
 import { regionCode, regionDisplayName } from "@/lib/locale";
-import { site } from "@/lib/site";
 import {
   LANGUAGES,
   PRIMARY_MODES,
   REGIONS,
-  formatPing,
   joinServer,
   occupancyPercent,
-  pingClass,
   popClass,
   type GameServer,
 } from "@/lib/servers";
-
 const MODE_CHIPS = ["all", ...PRIMARY_MODES, "Custom"] as const;
 const PRIMARY_MODE_SET: ReadonlySet<string> = new Set(PRIMARY_MODES);
-
 const MIN_PLAYER_OPTIONS = [
   { value: 0, label: "Any" },
   { value: 25, label: "25+" },
   { value: 50, label: "50+" },
   { value: 100, label: "100+" },
 ];
-
-const MAX_PING_OPTIONS = [
-  { value: 999, label: "Any" },
-  { value: 30, label: "< 30 ms" },
-  { value: 60, label: "< 60 ms" },
-  { value: 100, label: "< 100 ms" },
-];
-
 const SORTS = [
-  { value: "recommended", label: "Recommended" },
-  { value: "players", label: "Players" },
-  { value: "ping", label: "Ping" },
+  { value: "players", label: "Most players" },
+  { value: "name", label: "Name A–Z" },
   { value: "recent", label: "Recently added" },
 ] as const;
-
 type Sort = (typeof SORTS)[number]["value"];
-
 /** Sentinel for "listings whose operator gave no region subtag at all". */
 const NO_COUNTRY = "none";
-
-const DEFAULT_FILTERS = {
-  region: "all",
-  lang: "all",
-  country: "all",
-  minPlayers: 0,
-  maxPing: 999,
-};
-
-function byRecommended(a: GameServer, b: GameServer): number {
-  if (Boolean(a.featured) !== Boolean(b.featured)) return a.featured ? -1 : 1;
-  return b.players / b.max - a.players / a.max || b.players - a.players;
-}
-
+const RAIL_KEY = "open77.directory.rail";
 function sortServers(list: GameServer[], sort: Sort): GameServer[] {
   const out = [...list];
-  if (sort === "recommended") out.sort(byRecommended);
-  if (sort === "players") out.sort((a, b) => b.players - a.players);
-  if (sort === "ping") out.sort((a, b) => a.ping - b.ping);
+  if (sort === "players")
+    out.sort((a, b) => b.players - a.players || a.name.localeCompare(b.name));
+  if (sort === "name") out.sort((a, b) => a.name.localeCompare(b.name));
   if (sort === "recent") out.sort((a, b) => a.addedDaysAgo - b.addedDaysAgo);
   return out;
 }
-
 /**
  * The values a `<select>` should offer: those actually present in the listing on
  * screen, plus the current selection when the directory has shifted under it, so
@@ -87,13 +64,11 @@ function presentOptions(
   if (selected !== "all" && !offered.includes(selected)) offered.push(selected);
   return offered;
 }
-
 /** Both the code and the readable name, so "France" finds an `fr-FR` listing. */
 function localeHaystack(country: string | null | undefined): string {
   const region = regionCode(country);
   return region ? `${region} ${regionDisplayName(region)}` : "";
 }
-
 function haystack(server: GameServer): string {
   return [
     server.name,
@@ -109,81 +84,152 @@ function haystack(server: GameServer): string {
     .join(" ")
     .toLowerCase();
 }
-
-/**
- * The `?mode=` deep link, or `"all"`.
- *
- * `useSearchParams` is deliberately not used: reading search params during
- * render forces the surrounding page out of static prerendering, and an empty
- * listing in the HTML is a far worse trade than reading the query string
- * through the store API instead.
- *
- * The URL is an external store, so it is read through `useSyncExternalStore`
- * with an empty server snapshot. That is what lets the prerendered HTML show
- * the unfiltered list and the browser apply the deep link immediately after
- * hydration, without either a mismatch or an effect that re-renders.
- */
-function useLinkedMode(): string {
+/** Filters live in the URL so links, reload and Back restore the same directory. */
+const URL_EVENT = "open77-directory-url";
+function subscribeToHistory(listener: () => void) {
+  window.addEventListener("popstate", listener);
+  window.addEventListener(URL_EVENT, listener);
+  return () => {
+    window.removeEventListener("popstate", listener);
+    window.removeEventListener(URL_EVENT, listener);
+  };
+}
+function updateFilters(
+  patch: Record<string, string | number | boolean>,
+  reset = false,
+) {
+  const url = new URL(window.location.href);
+  if (reset) url.search = "";
+  for (const [key, value] of Object.entries(patch)) {
+    if (value === "" || value === "all" || value === false || value === 0)
+      url.searchParams.delete(key);
+    else url.searchParams.set(key, String(value));
+  }
+  // Typing does not create a history entry for each character. The URL still
+  // travels with a server-detail visit, so Back restores the exact search.
+  window.history.replaceState(window.history.state, "", url);
+  window.dispatchEvent(new Event(URL_EVENT));
+}
+function useDirectoryFilters() {
   const search = useSyncExternalStore(
     subscribeToHistory,
     () => window.location.search,
     () => "",
   );
-
   return useMemo(() => {
-    const requested = new URLSearchParams(search).get("mode");
-    const known = (MODE_CHIPS as readonly string[]).includes(requested ?? "");
-    return requested && known ? requested : "all";
+    const p = new URLSearchParams(search);
+    const requestedMode = p.get("mode") ?? "all";
+    const requestedSort = p.get("sort") ?? "players";
+    return {
+      query: p.get("q") ?? "",
+      mode: MODE_CHIPS.includes(requestedMode as (typeof MODE_CHIPS)[number])
+        ? requestedMode
+        : "all",
+      sort: SORTS.some((s) => s.value === requestedSort)
+        ? (requestedSort as Sort)
+        : ("players" as Sort),
+      favorites: p.get("favorites") === "true",
+      region: p.get("region") ?? "all",
+      lang: p.get("lang") ?? "all",
+      country: p.get("country") ?? "all",
+      tag: p.get("tag")?.toLowerCase() ?? "all",
+      minPlayers: MIN_PLAYER_OPTIONS.some(
+        (o) => o.value === Number(p.get("minPlayers")),
+      )
+        ? Number(p.get("minPlayers"))
+        : 0,
+      hideEmpty: p.get("hideEmpty") === "true",
+      hideFull: p.get("hideFull") === "true",
+    };
   }, [search]);
 }
 
-/** Nothing here writes to the URL, so only the user's own history moves it. */
-function subscribeToHistory(listener: () => void) {
-  window.addEventListener("popstate", listener);
-  return () => window.removeEventListener("popstate", listener);
+/** Whether the filter rail is shown on desktop. Memory backs storage when it is unavailable. */
+let railMemory: boolean | null = null;
+const railListeners = new Set<() => void>();
+function subscribeRail(listener: () => void) {
+  railListeners.add(listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    railListeners.delete(listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+function readRail(): boolean {
+  if (railMemory !== null) return railMemory;
+  try {
+    return localStorage.getItem(RAIL_KEY) !== "closed";
+  } catch {
+    return true;
+  }
+}
+function writeRail(open: boolean) {
+  railMemory = open;
+  try {
+    localStorage.setItem(RAIL_KEY, open ? "open" : "closed");
+  } catch {
+    /* optional browser storage */
+  }
+  for (const listener of railListeners) listener();
 }
 
-/**
- * The server directory, filtered in the browser.
- *
- * The full list is rendered on the server so the static HTML carries every
- * listing — the legacy page built its rows from JavaScript, which meant crawlers
- * and answer engines saw an empty `<ul>`. Filtering then happens client-side
- * with no navigation, which is what the interaction wants.
- */
+/** Whether a keyboard event started inside a text field or another control. */
+function insideControl(target: EventTarget | null): boolean {
+  return Boolean(
+    (target as HTMLElement | null)?.closest(
+      "input, textarea, select, [contenteditable=true]",
+    ),
+  );
+}
+
 export function ServerBrowser({
   servers,
-  featured,
+  status,
+  emptyState,
 }: {
   servers: GameServer[];
-  featured: ReactNode;
+  status?: ReactNode;
+  emptyState?: ReactNode;
 }) {
-  const [query, setQuery] = useState("");
-  // The deep link supplies the mode until the visitor picks one themselves.
-  const linkedMode = useLinkedMode();
-  const [chosenMode, setChosenMode] = useState<string | null>(null);
-  const mode = chosenMode ?? linkedMode;
-  const [filters, setFilters] = useState(DEFAULT_FILTERS);
-  const [sort, setSort] = useState<Sort>("recommended");
-  const [favsOnly, setFavsOnly] = useState(false);
-  const [openPanel, setOpenPanel] = useState<"filters" | "direct" | null>(null);
-
+  const filters = useDirectoryFilters();
+  const { query, mode, sort, favorites: favsOnly } = filters;
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const { isFavorite, toggle } = useFavorites();
   const { show: showToast, node: toastNode } = useToast();
-
   const filterPanelId = useId();
-  const directPanelId = useId();
+  const searchRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLElement>(null);
+  const lastFilters = useRef<string | null>(null);
 
-  /**
-   * Which region, country and language values the listing on screen actually
-   * contains. Filter controls are built from this rather than from the full
-   * static vocabularies: offering a continent or a country that no live server
-   * is in only produces empty results.
-   */
+  // The rail preference is per browser, like favorites: an external store, so
+  // the prerendered page and the first client render agree (open).
+  const railOpen = useSyncExternalStore(subscribeRail, readRail, () => true);
+  const toggleRail = () => writeRail(!railOpen);
+
+  // Filtering starts at the first match; background refresh never resets scroll.
+  useEffect(() => {
+    if (servers.length === 0) return;
+    const key = JSON.stringify(filters);
+    if (lastFilters.current === key) return;
+    let top = 0;
+    if (lastFilters.current === null) {
+      try {
+        top =
+          Number(sessionStorage.getItem(`open77.directory.scroll:${key}`)) || 0;
+      } catch {
+        /* optional browser storage */
+      }
+    }
+    listRef.current?.scrollTo({ top });
+    lastFilters.current = key;
+  }, [filters, servers.length]);
+
   const facets = useMemo(() => {
     const regions = new Set<string>();
     const langs = new Set<string>();
     const countries = new Set<string>();
+    const tags = new Map<string, number>();
     let unlocated = false;
     for (const server of servers) {
       regions.add(server.region);
@@ -191,6 +237,8 @@ export function ServerBrowser({
       const country = regionCode(server.country);
       if (country) countries.add(country);
       else unlocated = true;
+      for (const tag of new Set(server.tags.map((t) => t.toLowerCase())))
+        tags.set(tag, (tags.get(tag) ?? 0) + 1);
     }
     return {
       regions,
@@ -199,329 +247,567 @@ export function ServerBrowser({
         .map((code) => ({ code, name: regionDisplayName(code) }))
         .sort((a, b) => a.name.localeCompare(b.name)),
       unlocated,
+      tags: [...tags]
+        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+        .slice(0, 10),
     };
   }, [servers]);
 
+  const modeCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const chip of MODE_CHIPS) counts.set(chip, 0);
+    for (const server of servers) {
+      counts.set("all", (counts.get("all") ?? 0) + 1);
+      const key = PRIMARY_MODE_SET.has(server.mode) ? server.mode : "Custom";
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    return counts;
+  }, [servers]);
+
   const visible = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    const matched = servers.filter((server) => {
-      if (favsOnly && !isFavorite(server.id)) return false;
-      if (mode === "Custom") {
-        if (PRIMARY_MODE_SET.has(server.mode)) return false;
-      } else if (mode !== "all") {
-        if (server.mode !== mode && !server.tags.includes(mode)) return false;
+    const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    return sortServers(
+      servers.filter((server) => {
+        if (favsOnly && !isFavorite(server.id)) return false;
+        if (
+          mode === "Custom"
+            ? PRIMARY_MODE_SET.has(server.mode)
+            : mode !== "all" && server.mode !== mode
+        )
+          return false;
+        if (filters.region !== "all" && server.region !== filters.region)
+          return false;
+        if (filters.lang !== "all" && server.lang !== filters.lang)
+          return false;
+        if (
+          filters.country !== "all" &&
+          (filters.country === NO_COUNTRY
+            ? regionCode(server.country) !== null
+            : regionCode(server.country) !== filters.country)
+        )
+          return false;
+        if (
+          filters.tag !== "all" &&
+          !server.tags.some((tag) => tag.toLowerCase() === filters.tag)
+        )
+          return false;
+        if (
+          server.players < filters.minPlayers ||
+          (filters.hideEmpty && server.players === 0) ||
+          (filters.hideFull && server.players >= server.max)
+        )
+          return false;
+        const text = haystack(server);
+        return terms.every((term) => text.includes(term));
+      }),
+      sort,
+    );
+  }, [servers, filters, query, mode, sort, favsOnly, isFavorite]);
+
+  // The selection follows the directory: a world that refreshed away or was
+  // filtered out is no longer inspected, and the pane says so by going idle.
+  const selected = useMemo(
+    () => visible.find((server) => server.id === selectedId) ?? null,
+    [visible, selectedId],
+  );
+
+  const join = (server: GameServer) => {
+    showToast("Opening the OPEN//77 launcher…");
+    joinServer(server.id);
+  };
+
+  // Keyboard: `/` searches, ↑/↓ walk the list, Enter connects, Escape clears.
+  const keyState = useRef({ visible, selected, join, filtersOpen });
+  useEffect(() => {
+    keyState.current = { visible, selected, join, filtersOpen };
+  });
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent) => {
+      const { visible, selected, join, filtersOpen } = keyState.current;
+      const inControl = insideControl(event.target);
+      if (event.key === "/" && !event.ctrlKey && !event.metaKey && !inControl) {
+        event.preventDefault();
+        searchRef.current?.focus();
+        return;
       }
-      if (filters.region !== "all" && server.region !== filters.region) return false;
-      if (filters.lang !== "all" && server.lang !== filters.lang) return false;
-      if (filters.country !== "all") {
-        const country = regionCode(server.country);
-        const matches =
-          filters.country === NO_COUNTRY ? country === null : country === filters.country;
-        if (!matches) return false;
+      if (event.key === "Escape") {
+        if (filtersOpen) setFiltersOpen(false);
+        else if (document.activeElement === searchRef.current) {
+          searchRef.current?.blur();
+        } else setSelectedId(null);
+        return;
       }
-      if (server.players < filters.minPlayers) return false;
-      if (server.ping > filters.maxPing) return false;
-      if (needle && !haystack(server).includes(needle)) return false;
-      return true;
+      if (inControl && event.target !== searchRef.current) return;
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        if (visible.length === 0) return;
+        event.preventDefault();
+        const index = selected
+          ? visible.findIndex((s) => s.id === selected.id)
+          : -1;
+        const next =
+          event.key === "ArrowDown"
+            ? Math.min(visible.length - 1, index + 1)
+            : Math.max(0, index - 1);
+        const id = visible[next]?.id;
+        if (!id) return;
+        setSelectedId(id);
+        listRef.current
+          ?.querySelector<HTMLElement>(`[data-server-id="${CSS.escape(id)}"]`)
+          ?.scrollIntoView({ block: "nearest" });
+        return;
+      }
+      if (event.key === "Enter" && selected && !inControl) {
+        event.preventDefault();
+        join(selected);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, []);
+
+  const countryOptions = [...facets.countries];
+  if (
+    filters.country !== "all" &&
+    filters.country !== NO_COUNTRY &&
+    !countryOptions.some((c) => c.code === filters.country)
+  )
+    countryOptions.push({
+      code: filters.country,
+      name: regionDisplayName(filters.country),
     });
-    return sortServers(matched, sort);
-  }, [servers, query, mode, filters, sort, favsOnly, isFavorite]);
-
-  const regionOptions = presentOptions(REGIONS, facets.regions, filters.region);
-  const langOptions = presentOptions(LANGUAGES, facets.langs, filters.lang);
-  const countryOptions =
-    filters.country === "all" ||
-    filters.country === NO_COUNTRY ||
-    facets.countries.some((entry) => entry.code === filters.country)
-      ? facets.countries
-      : [...facets.countries, { code: filters.country, name: regionDisplayName(filters.country) }];
-  const offerNoCountry = facets.unlocated || filters.country === NO_COUNTRY;
-
-  const activeFilterCount =
-    (filters.region !== "all" ? 1 : 0) +
-    (filters.lang !== "all" ? 1 : 0) +
-    (filters.country !== "all" ? 1 : 0) +
-    (filters.minPlayers > 0 ? 1 : 0) +
-    (filters.maxPing < 999 ? 1 : 0);
+  const active = [
+    ...(query ? [{ key: "q", label: `Search: ${query}` }] : []),
+    ...(mode !== "all" ? [{ key: "mode", label: mode }] : []),
+    ...(favsOnly ? [{ key: "favorites", label: "Favorites" }] : []),
+    ...(filters.region !== "all"
+      ? [{ key: "region", label: `Region: ${filters.region}` }]
+      : []),
+    ...(filters.lang !== "all"
+      ? [{ key: "lang", label: `Language: ${filters.lang}` }]
+      : []),
+    ...(filters.country !== "all"
+      ? [
+          {
+            key: "country",
+            label:
+              filters.country === NO_COUNTRY
+                ? "Country not specified"
+                : regionDisplayName(filters.country),
+          },
+        ]
+      : []),
+    ...(filters.tag !== "all"
+      ? [{ key: "tag", label: `Tag: ${filters.tag}` }]
+      : []),
+    ...(filters.minPlayers > 0
+      ? [{ key: "minPlayers", label: `${filters.minPlayers}+ players` }]
+      : []),
+    ...(filters.hideEmpty ? [{ key: "hideEmpty", label: "Hide empty" }] : []),
+    ...(filters.hideFull ? [{ key: "hideFull", label: "Has room" }] : []),
+  ];
+  const reset = () => updateFilters({}, true);
+  const railFilters = active.filter((item) => item.key !== "q" && item.key !== "mode").length;
+  const onlinePlayers = visible.reduce((sum, s) => sum + s.players, 0);
 
   return (
-    <>
-      <div className="sb-toolbar">
-        <div className="sb-search">
-          <SearchIcon />
-          <input
-            type="search"
-            placeholder="Search servers, communities, tags…"
-            aria-label="Search servers"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-        </div>
+    <div
+      className={`directory-workspace directory-dense${filtersOpen ? " filters-open" : ""}${railOpen ? "" : " rail-collapsed"}${selected ? " has-selection" : ""}`}
+    >
+      <div className="directory-command" role="search">
         <button
-          className={`sb-tool${openPanel === "filters" ? " is-open" : ""}`}
-          type="button"
-          aria-expanded={openPanel === "filters"}
+          className="directory-tool directory-filter-toggle"
+          aria-expanded={filtersOpen}
           aria-controls={filterPanelId}
-          onClick={() => setOpenPanel((open) => (open === "filters" ? null : "filters"))}
+          onClick={() => setFiltersOpen((open) => !open)}
         >
-          <FilterIcon />
-          Filters
-          <span className="sb-tool-badge" hidden={activeFilterCount === 0}>
-            {activeFilterCount}
-          </span>
+          <FilterIcon size={15} />
+          <span>Filters</span>
+          {railFilters ? <b>{railFilters}</b> : null}
         </button>
         <button
-          className={`sb-tool${openPanel === "direct" ? " is-open" : ""}`}
-          type="button"
-          aria-expanded={openPanel === "direct"}
-          aria-controls={directPanelId}
-          onClick={() => setOpenPanel((open) => (open === "direct" ? null : "direct"))}
+          className="directory-tool directory-rail-toggle"
+          aria-pressed={railOpen}
+          aria-controls={filterPanelId}
+          title={railOpen ? "Hide filters" : "Show filters"}
+          onClick={toggleRail}
         >
-          <PlugIcon />
-          Direct connect
+          <FilterIcon size={15} />
+          <span>Filters</span>
+          {railFilters ? <b>{railFilters}</b> : null}
         </button>
-      </div>
-
-      <div className="sb-panel" id={filterPanelId} hidden={openPanel !== "filters"}>
-        <label className="select-wrap">
-          <span className="select-label">Region</span>
-          <select
-            aria-label="Filter by region"
-            value={filters.region}
-            onChange={(event) =>
-              setFilters((current) => ({ ...current, region: event.target.value }))
-            }
-          >
-            <option value="all">All</option>
-            {regionOptions.map((region) => (
-              <option key={region} value={region}>
-                {region}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="select-wrap">
-          <span className="select-label">Language</span>
-          <select
-            aria-label="Filter by language"
-            value={filters.lang}
-            onChange={(event) => setFilters((current) => ({ ...current, lang: event.target.value }))}
-          >
-            <option value="all">All</option>
-            {langOptions.map((lang) => (
-              <option key={lang} value={lang}>
-                {lang}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="select-wrap">
-          <span className="select-label">Country</span>
-          <select
-            aria-label="Filter by country"
-            value={filters.country}
-            onChange={(event) =>
-              setFilters((current) => ({ ...current, country: event.target.value }))
-            }
-          >
-            <option value="all">All</option>
-            {countryOptions.map((entry) => (
-              <option key={entry.code} value={entry.code}>
-                {entry.name} ({entry.code})
-              </option>
-            ))}
-            {offerNoCountry ? <option value={NO_COUNTRY}>Not specified</option> : null}
-          </select>
-        </label>
-        <label className="select-wrap">
-          <span className="select-label">Min players</span>
-          <select
-            aria-label="Minimum players online"
-            value={String(filters.minPlayers)}
-            onChange={(event) =>
-              setFilters((current) => ({ ...current, minPlayers: Number(event.target.value) }))
-            }
-          >
-            {MIN_PLAYER_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="select-wrap">
-          <span className="select-label">Max ping</span>
-          <select
-            aria-label="Maximum ping"
-            value={String(filters.maxPing)}
-            onChange={(event) =>
-              setFilters((current) => ({ ...current, maxPing: Number(event.target.value) }))
-            }
-          >
-            {MAX_PING_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button className="sb-clear" type="button" onClick={() => setFilters(DEFAULT_FILTERS)}>
-          Clear filters
-        </button>
-      </div>
-
-      <div
-        className="sb-panel sb-panel-direct"
-        id={directPanelId}
-        hidden={openPanel !== "direct"}
-      >
-        <div className="sb-direct-field">
-          <span className="select-label">Server address</span>
+        <div className="sb-search">
+          <SearchIcon size={16} />
           <input
-            type="text"
-            inputMode="text"
-            autoComplete="off"
-            spellCheck={false}
-            placeholder="connect open77://address-or-code"
-            aria-label="Server address or code"
+            ref={searchRef}
+            type="search"
+            aria-label="Search servers"
+            placeholder="Search servers, game types, tags, countries…"
+            value={query}
+            onChange={(e) => updateFilters({ q: e.target.value })}
           />
+          <kbd aria-hidden="true">/</kbd>
         </div>
-        <button
-          className="btn btn-primary btn-small"
-          type="button"
-          onClick={() => showToast("Use Direct Connect in the OPEN//77 launcher to join by address.")}
+        <div
+          className="directory-modes"
+          role="group"
+          aria-label="Filter by game type"
         >
-          Connect
-        </button>
-        <p className="sb-panel-note">
-          Address-based connections are available through Direct Connect in the OPEN//77 launcher.
-          This demo control does not initiate a connection.
-        </p>
-      </div>
-
-      <div className="sb-modes">
-        <div className="client-filters" role="group" aria-label="Filter by game mode">
           {MODE_CHIPS.map((chip) => (
             <button
               className={`filter-chip${mode === chip ? " is-active" : ""}`}
-              type="button"
               key={chip}
               aria-pressed={mode === chip}
-              onClick={() => setChosenMode(chip)}
+              onClick={() => updateFilters({ mode: chip })}
             >
               {chip === "all" ? "All" : chip}
+              <small>{modeCounts.get(chip) ?? 0}</small>
             </button>
           ))}
-          <button
-            className={`filter-chip fav-filter${favsOnly ? " is-active" : ""}`}
-            type="button"
-            aria-pressed={favsOnly}
-            onClick={() => setFavsOnly((only) => !only)}
-          >
-            <StarIcon size={13} />
-            Favorites
-          </button>
         </div>
         <label className="select-wrap sb-sort">
           <span className="select-label">Sort</span>
           <select
             aria-label="Sort servers"
             value={sort}
-            onChange={(event) => setSort(event.target.value as Sort)}
+            onChange={(e) => updateFilters({ sort: e.target.value })}
           >
-            {SORTS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+            {SORTS.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
               </option>
             ))}
           </select>
         </label>
+        {status}
       </div>
-
-      {servers.length === 0 ? (
-        /* The live directory answered with no servers online. The toolbar above
-           stays — it shows the shape of the product — but the listing area says
-           what is actually true right now. */
-        <div className="sb-offline" role="status">
-          <p className="sb-offline-title">
-            <span className="live-dot live-dot-idle" aria-hidden="true" /> NO SERVERS ONLINE
-          </p>
-          <p className="sb-offline-body">
-            No community worlds are online right now. The moment a server comes up it shows up right
-            here — this browser reads the live OPEN//77 directory.
-          </p>
-          <div className="sb-offline-ctas">
-            {site.links.discord ? (
-              <a
-                className="btn btn-discord"
-                href={site.links.discord}
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                <DiscordIcon size={16} />
-                Join our Discord
-              </a>
-            ) : null}
-            <Link className="btn btn-ghost" href="/create">
-              Plan your own server
-            </Link>
+      <div className="directory-body">
+        <aside
+          className="directory-rail"
+          aria-label="Directory filters"
+          id={filterPanelId}
+        >
+          <div className="directory-rail-heading">
+            <span className="directory-kicker">Directory</span>
+            <button
+              className="directory-filter-close"
+              onClick={() => setFiltersOpen(false)}
+              aria-label="Close filters"
+            >
+              ×
+            </button>
           </div>
-        </div>
-      ) : (
-        <div className="sb-layout">
-          <section className="sb-col-main" aria-label="All servers">
-            <div className="sb-col-head">
-              <h2>All servers</h2>
-              <span className="sb-count">
-                {visible.length} / {servers.length}
-              </span>
+          <nav aria-label="Server collections" className="directory-collections">
+            <button
+              className={`directory-nav${!favsOnly && active.length === 0 ? " is-active" : ""}`}
+              aria-pressed={!favsOnly && active.length === 0}
+              onClick={reset}
+            >
+              <SearchIcon size={15} /> All servers <small>{servers.length}</small>
+            </button>
+            <button
+              className={`directory-nav${favsOnly ? " is-active" : ""}`}
+              aria-pressed={favsOnly}
+              onClick={() => updateFilters({ favorites: !favsOnly })}
+            >
+              <StarIcon size={15} /> Favorites{" "}
+              <small>{servers.filter((s) => isFavorite(s.id)).length}</small>
+            </button>
+          </nav>
+          <div
+            className="directory-filter-section client-filters"
+            role="group"
+            aria-label="Filter by game type"
+          >
+            <h2>Game type</h2>
+            {MODE_CHIPS.map((chip) => (
+              <button
+                className={`directory-mode-row${mode === chip ? " is-active" : ""}`}
+                key={chip}
+                aria-pressed={mode === chip}
+                onClick={() => updateFilters({ mode: chip })}
+              >
+                <span>{chip === "all" ? "All types" : chip}</span>
+                <small>{modeCounts.get(chip) ?? 0}</small>
+              </button>
+            ))}
+          </div>
+          <div className="directory-filter-section directory-location">
+            <h2>Location & language</h2>
+            <label className="select-wrap">
+              <span className="select-label">Region</span>
+              <select
+                aria-label="Filter by region"
+                value={filters.region}
+                onChange={(e) => updateFilters({ region: e.target.value })}
+              >
+                <option value="all">Any region</option>
+                {presentOptions(REGIONS, facets.regions, filters.region).map(
+                  (r) => (
+                    <option key={r}>{r}</option>
+                  ),
+                )}
+              </select>
+            </label>
+            <label className="select-wrap">
+              <span className="select-label">Language</span>
+              <select
+                aria-label="Filter by language"
+                value={filters.lang}
+                onChange={(e) => updateFilters({ lang: e.target.value })}
+              >
+                <option value="all">Any language</option>
+                {presentOptions(LANGUAGES, facets.langs, filters.lang).map(
+                  (l) => (
+                    <option key={l}>{l}</option>
+                  ),
+                )}
+              </select>
+            </label>
+            <label className="select-wrap">
+              <span className="select-label">Country</span>
+              <select
+                aria-label="Filter by country"
+                value={filters.country}
+                onChange={(e) => updateFilters({ country: e.target.value })}
+              >
+                <option value="all">Any country</option>
+                {countryOptions.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
+                ))}
+                {facets.unlocated || filters.country === NO_COUNTRY ? (
+                  <option value={NO_COUNTRY}>Not specified</option>
+                ) : null}
+              </select>
+            </label>
+          </div>
+          <div className="directory-filter-section">
+            <h2>Availability</h2>
+            <label className="directory-checkbox">
+              <input
+                type="checkbox"
+                checked={filters.hideEmpty}
+                onChange={(e) => updateFilters({ hideEmpty: e.target.checked })}
+              />{" "}
+              Hide empty servers
+            </label>
+            <label className="directory-checkbox">
+              <input
+                type="checkbox"
+                checked={filters.hideFull}
+                onChange={(e) => updateFilters({ hideFull: e.target.checked })}
+              />{" "}
+              Has room to join
+            </label>
+            <label className="select-wrap">
+              <span className="select-label">Min. players</span>
+              <select
+                aria-label="Minimum players online"
+                value={filters.minPlayers}
+                onChange={(e) =>
+                  updateFilters({ minPlayers: Number(e.target.value) })
+                }
+              >
+                {MIN_PLAYER_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          {facets.tags.length > 0 ? (
+            <div className="directory-filter-section">
+              <h2>Tags</h2>
+              <div className="directory-tag-filters">
+                {facets.tags.map(([tag, count]) => (
+                  <button
+                    key={tag}
+                    aria-pressed={filters.tag === tag}
+                    onClick={() =>
+                      updateFilters({ tag: filters.tag === tag ? "all" : tag })
+                    }
+                  >
+                    {tag}
+                    <small>{count}</small>
+                  </button>
+                ))}
+              </div>
             </div>
-            <ul className="sb-list">
-              {visible.map((server) => (
-                <ServerRow
-                  key={server.id}
-                  server={server}
-                  isFavorite={isFavorite(server.id)}
-                  onToggleFavorite={() => toggle(server.id)}
-                  onConnect={() => {
-                    showToast("Opening the OPEN//77 launcher…");
-                    joinServer(server.id);
-                  }}
-                />
+          ) : null}
+          <div className="directory-rail-bottom">
+            <Link href="/create">Create a server</Link>
+            <Link href="/download">Get the launcher</Link>
+          </div>
+        </aside>
+        <section className="directory-main" aria-label="Server directory">
+          <div className="directory-results-bar">
+            <h1>
+              <span className="directory-kicker">
+                {favsOnly ? "// Favorites" : "// Servers"}
+              </span>
+              <span role="status">
+                <b>{visible.length}</b>
+                {active.length ? ` of ${servers.length}` : ""}{" "}
+                {visible.length === 1 && !active.length ? "server" : "servers"}
+                <span className="directory-muted">
+                  {" "}
+                  · <b>{onlinePlayers}</b> players online
+                </span>
+              </span>
+            </h1>
+            <div className="directory-active-filters">
+              {active.map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => updateFilters({ [item.key]: "" })}
+                  aria-label={`Remove ${item.label} filter`}
+                >
+                  {item.label}
+                  <span aria-hidden="true">×</span>
+                </button>
               ))}
-              {visible.length === 0 ? (
-                <li className="server-empty">
-                  No servers match these filters. Clear the search or pick another mode.
-                </li>
+              {active.length ? (
+                <button className="sb-clear" onClick={reset}>
+                  Reset all
+                </button>
               ) : null}
-            </ul>
+            </div>
+            <span className="directory-list-hint" aria-hidden="true">
+              <kbd>↑</kbd>
+              <kbd>↓</kbd> select · <kbd>Enter</kbd> connect
+            </span>
+          </div>
+          <section
+            className="sb-col-main"
+            aria-label="All servers"
+            ref={listRef}
+            onScroll={(event) => {
+              try {
+                sessionStorage.setItem(
+                  `open77.directory.scroll:${JSON.stringify(filters)}`,
+                  String(event.currentTarget.scrollTop),
+                );
+              } catch {
+                /* browsing works with storage disabled */
+              }
+            }}
+          >
+            {servers.length === 0 ? (
+              (emptyState ?? (
+                <div className="sb-offline" role="status">
+                  <span className="directory-kicker">OPEN//77 DIRECTORY</span>
+                  <h2>No servers online</h2>
+                  <p>
+                    The directory is empty right now. New servers will appear
+                    here automatically.
+                  </p>
+                  <Link className="btn btn-ghost btn-small" href="/create">
+                    Create a server
+                  </Link>
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="sb-col-head" aria-hidden="true">
+                  <span>Server</span>
+                  <span>Game type · tags</span>
+                  <span>Locale</span>
+                  <button
+                    aria-hidden="false"
+                    onClick={() =>
+                      updateFilters({
+                        sort: sort === "players" ? "name" : "players",
+                      })
+                    }
+                  >
+                    Players {sort === "players" ? "↓" : ""}
+                  </button>
+                  <span />
+                </div>
+                <ul className="sb-list">
+                  {visible.map((server) => (
+                    <ServerRow
+                      key={server.id}
+                      server={server}
+                      isFavorite={isFavorite(server.id)}
+                      isSelected={selected?.id === server.id}
+                      onSelect={() =>
+                        setSelectedId((id) =>
+                          id === server.id ? null : server.id,
+                        )
+                      }
+                      onToggleFavorite={() => toggle(server.id)}
+                      onConnect={() => join(server)}
+                    />
+                  ))}
+                  {visible.length === 0 ? (
+                    <li className="server-empty">
+                      <span className="directory-kicker">NO MATCH</span>
+                      <h3>No matching servers</h3>
+                      <p>Remove a filter or try a different search.</p>
+                      <button
+                        className="btn btn-primary btn-small"
+                        onClick={reset}
+                      >
+                        Show all servers
+                      </button>
+                    </li>
+                  ) : null}
+                </ul>
+              </>
+            )}
           </section>
-
-          {featured}
-        </div>
-      )}
-
+        </section>
+        <ServerInspector
+          server={selected}
+          isFavorite={selected ? isFavorite(selected.id) : false}
+          onToggleFavorite={() => selected && toggle(selected.id)}
+          onConnect={() => selected && join(selected)}
+          onClose={() => setSelectedId(null)}
+        />
+      </div>
+      <footer className="directory-footnote">
+        <span>OPEN//77 MULTIPLAYER NETWORK</span>
+        <span className="directory-footnote-stage">
+          Developer Preview · approved account required to play
+        </span>
+        <Link href="/download">Need the launcher? ↗</Link>
+      </footer>
       {toastNode}
-    </>
+    </div>
   );
 }
 
 function ServerRow({
   server,
   isFavorite,
+  isSelected,
+  onSelect,
   onToggleFavorite,
   onConnect,
 }: {
   server: GameServer;
   isFavorite: boolean;
+  isSelected: boolean;
+  onSelect: () => void;
   onToggleFavorite: () => void;
   onConnect: () => void;
 }) {
+  const full = server.max > 0 && server.players >= server.max;
   return (
-    <li className="sb-row">
-      {/* The card navigates to the live detail page; the explicit Connect button
-          (in sb-actions, a sibling of this link) fires the deep link instead. */}
-      <Link className="sb-row-link" href={`/servers/${server.id}`}>
+    <li
+      className={`sb-row${isSelected ? " is-selected" : ""}${full ? " is-full" : ""}`}
+      data-server-id={server.id}
+      data-selected={isSelected || undefined}
+      onClick={(event) => {
+        // Links and buttons inside the row keep their own behaviour.
+        if ((event.target as HTMLElement).closest("a, button")) return;
+        onSelect();
+      }}
+    >
+      <div className="sb-row-main">
         <ServerImage
           src={server.icon}
           kind="icon"
@@ -529,49 +815,72 @@ function ServerRow({
           label={server.name.trim().charAt(0).toUpperCase() || "?"}
         />
         <span className="sb-id">
-          <span className="sb-name">
-            {server.name}
-            {server.featured ? <span className="sb-feat-chip">FEATURED</span> : null}
-          </span>
-          <span className="sb-desc">{server.desc}</span>
-          <span className="sb-tags">
-            {server.tags.slice(0, 3).map((tag) => (
-              <span className="tag" key={tag}>
-                {tag}
-              </span>
-            ))}
+          <Link
+            className="sb-row-link"
+            href={`/servers/${server.id}`}
+            aria-label={`View ${server.name}`}
+          >
+            <span className="sb-name">{server.name}</span>
+          </Link>
+          <span className="sb-desc" title={server.desc}>
+            {server.desc || "Community server"}
           </span>
         </span>
-        <span className={`sb-players ${popClass(server)}`}>
-          <span className="sb-players-num">
-            {server.players}
-            <span className="sb-players-max"> / {server.max}</span>
-          </span>
-          <span className="sb-players-label">players</span>
-          <span className="players-bar" aria-hidden="true">
-            <span style={{ width: `${occupancyPercent(server)}%` }} />
-          </span>
+      </div>
+      <div className="sb-row-tags">
+        <button
+          className="sb-mode"
+          onClick={() => updateFilters({ mode: server.mode })}
+          title={`Find ${server.mode} servers`}
+        >
+          {server.mode}
+        </button>
+        {server.tags
+          .filter((t) => t.toLowerCase() !== server.mode.toLowerCase())
+          .slice(0, 3)
+          .map((tag) => (
+            <button
+              className="tag"
+              key={tag}
+              onClick={() => updateFilters({ tag: tag.toLowerCase() })}
+              title={`Filter by ${tag}`}
+            >
+              {tag}
+            </button>
+          ))}
+      </div>
+      <ServerLocale
+        className="sb-loc"
+        country={server.country}
+        lang={server.lang}
+      />
+      <span className={`sb-players ${popClass(server)}`}>
+        <span className="sb-players-num">
+          <b>{server.players}</b>
+          <span className="sb-players-max"> / {server.max}</span>
         </span>
-        <span className="sb-net">
-          <span className={`sb-ping ${server.ping > 0 ? pingClass(server.ping) : ""}`}>
-            {formatPing(server.ping)}
-          </span>
-          <ServerLocale className="sb-loc" country={server.country} lang={server.lang} />
+        <span className="players-bar" aria-hidden="true">
+          <span style={{ width: `${occupancyPercent(server)}%` }} />
         </span>
-      </Link>
+      </span>
       <span className="sb-actions">
         <button
           className={`fav-btn${isFavorite ? " is-fav" : ""}`}
-          type="button"
           aria-pressed={isFavorite}
           aria-label={
-            isFavorite ? `Remove ${server.name} from favorites` : `Add ${server.name} to favorites`
+            isFavorite
+              ? `Remove ${server.name} from favorites`
+              : `Add ${server.name} to favorites`
           }
           onClick={onToggleFavorite}
         >
-          <StarIcon filled={isFavorite} />
+          <StarIcon size={15} filled={isFavorite} />
         </button>
-        <button className="sb-connect" type="button" onClick={onConnect}>
+        <button
+          className="sb-connect"
+          onClick={onConnect}
+          aria-label={`Connect to ${server.name}`}
+        >
           Connect
         </button>
       </span>

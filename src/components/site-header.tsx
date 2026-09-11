@@ -57,7 +57,10 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <header className={`site-header${scrolled ? " is-scrolled" : ""}`} id="top">
+    <header
+      className={`site-header${scrolled ? " is-scrolled" : ""}${pathname === "/servers" ? " directory-header" : ""}`}
+      id="top"
+    >
       <div className="header-inner">
         <Wordmark />
         <nav className="main-nav" id="main-nav" aria-label="Main">

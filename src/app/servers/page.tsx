@@ -1,7 +1,5 @@
-import { Eyebrow } from "@/components/brand";
 import { JsonLd } from "@/components/json-ld";
 import { LiveServerBrowser } from "@/components/servers/live-server-browser";
-import { SiteFooter } from "@/components/site-footer";
 import { breadcrumbNode, collectionPageNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -14,20 +12,11 @@ export const metadata = pageMetadata({
 export default function ServersPage() {
   return (
     <>
+      {/* The directory is a full-window application: no page chrome around it,
+          and the site footer is folded into its own status strip. */}
       <main id="main" className="sb-page">
-        <div className="section-inner section-inner-wide">
-          <header className="sb-head">
-            <div className="sb-head-title">
-              <Eyebrow>SERVER BROWSER</Eyebrow>
-              <h1 className="sb-title">Find your world.</h1>
-            </div>
-          </header>
-
-          <LiveServerBrowser />
-        </div>
+        <LiveServerBrowser />
       </main>
-
-      <SiteFooter fineprint="Live listings from the OPEN//77 master directory." />
 
       {/*
         Deliberately no ItemList of the listings: the directory is live and
