@@ -62,9 +62,10 @@ export async function run(options) {
   const profile = await fs.mkdtemp(path.join(os.tmpdir(), "open77-hub-browser-"));
   const output = path.resolve("artifacts/hub-browser", new Date().toISOString().replaceAll(/[:.]/g, "-"));
   await fs.mkdir(output, { recursive: true });
-  const evidence = { ...options, canonical, scope: "guest served-browser checks only", fullHubAcceptanceClaim: false, browserExecuted: true, widths: [], checks: [], passed: false };
+  const evidence = { ...options, canonical, scope: "guest served-browser checks only", fullHubAcceptanceClaim: false, browserExecuted: false, widths: [], checks: [], passed: false };
   let child, cdp;
-  function assert(ok, name) { if (!ok) throw Error(name); evidence.checks.push(name); }
+  let stage = "owned browser startup";
+  function assert(ok, name) { stage = name; if (!ok) throw Error(name); evidence.checks.push(name); }
   try {
     child = spawn(executable, ["--headless=new", "--remote-debugging-address=127.0.0.1", "--remote-debugging-port=0", `--user-data-dir=${profile}`, "--no-first-run", "--no-default-browser-check", "--disable-gpu", "about:blank"], { windowsHide: true, stdio: "ignore" });
     let launchError; child.on("error", error => { launchError = error; });
@@ -77,6 +78,7 @@ export async function run(options) {
     await new Promise((resolve, reject) => { const timer = setTimeout(() => reject(Error("CDP connection timeout")), 5000); socket.addEventListener("open", () => { clearTimeout(timer); resolve(); }); socket.addEventListener("error", () => { clearTimeout(timer); reject(Error("CDP connection failed")); }); });
     cdp = new Cdp(socket); await cdp.send("Page.enable"); await cdp.send("Runtime.enable");
     async function visit(url) {
+      stage = "real page navigation and hydration";
       await cdp.send("Page.navigate", { url });
       await until(() => cdp.evaluate(`return location.href===${JSON.stringify(url)} && document.readyState==='complete' && !!document.querySelector('main');`), "page load");
       await cdp.evaluate("await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));return true;");
@@ -86,13 +88,14 @@ export async function run(options) {
       await cdp.send("Emulation.setDeviceMetricsOverride", { width, height: 1000, deviceScaleFactor: 1, mobile: false });
       // DOMParser reads the actual fetched SSR HTML, independently of hydration.
       await visit(options.origin + route);
+      evidence.browserExecuted = true;
       assert(await cdp.evaluate(`const doc=new DOMParser().parseFromString(${JSON.stringify(html)},'text/html');return doc.querySelector('h1')?.textContent.trim()===${JSON.stringify(options.title)};`), `${width}: SSR exact project title`);
       await until(() => cdp.evaluate("return document.body.innerText.includes('to vote, save or follow releases.') && !document.body.innerText.includes('Loading community actions');"), "guest action hydration");
       assert(await cdp.evaluate(`return document.querySelector('h1')?.textContent.trim()===${JSON.stringify(options.title)} && document.querySelector('link[rel=canonical]')?.href===${JSON.stringify(canonical)} && document.title.includes(${JSON.stringify(options.title)});`), `${width}: hydrated title and canonical`);
       assert(await cdp.evaluate("return document.documentElement.scrollWidth<=innerWidth+1;"), `${width}: no horizontal overflow`);
       assert(await cdp.evaluate("return !localStorage.getItem('open77.session') && [...document.querySelectorAll('a')].some(a=>a.textContent==='Sign in with a verified account'&&new URL(a.href).pathname==='/account') && ![...document.querySelectorAll('button')].some(b=>/^(Upvote|Save|Follow releases)$/.test(b.textContent.trim()));"), `${width}: guest interaction gate`);
       const gallery = await cdp.evaluate("return document.querySelectorAll('.hub-media-gallery a[aria-haspopup=dialog]').length;");
-      if (options.requireGallery) assert(gallery > 0, `${width}: required real gallery present`);
+      if (options.requireGallery) assert(gallery >= 2, `${width}: two real gallery images required for navigation`);
       if (gallery) {
         assert(await cdp.evaluate("return [...document.querySelectorAll('.hub-media-gallery img')].every(i=>i.alt.trim().length>=3 && !/^(image|screenshot|photo)(\\s*\\d+)?$/i.test(i.alt.trim()));"), `${width}: meaningful gallery alt text`);
         await cdp.evaluate("const a=document.querySelector('.hub-media-gallery a');a.scrollIntoView();a.focus();return true;");
@@ -117,6 +120,10 @@ export async function run(options) {
       await screenshot(`discussion-${width}`); evidence.widths.push({ width, gallery: gallery ? "executed" : "not present", galleryNavigation: gallery > 1 ? "executed" : "requires two real images" });
     }
     assert(cdp.errors.length === 0, "No browser console errors or uncaught exceptions"); evidence.passed = true;
+  } catch (error) {
+    // Fixed assertion/stage labels only: never persist raw CDP, URL or token text.
+    evidence.failure = { stage, kind: error instanceof Error ? "check_failed" : "unexpected_failure" };
+    throw error;
   } finally {
     if (cdp) { try { await cdp.send("Browser.close"); } catch {} cdp.close(); }
     if (child && child.exitCode === null) { child.kill(); await Promise.race([new Promise(resolve => child.once("exit", resolve)), delay(3000)]); }
