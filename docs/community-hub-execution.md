@@ -17,20 +17,20 @@ All four use branch `feat/community-hub`, created from the existing checkout HEA
 
 - [ ] H00: baseline/environment/contract — worktrees ready; Docker 29.7.2 responds; pinned submodule ready; app dependencies installed; SSR preview path pending.
 - [ ] H01: interface prototype — discovery/directory/detail and creator draft surfaces implemented; responsive CSS present, rendered browser review pending.
-- [ ] H02: schema/domain/permissions/revisions — migrations through 27, project/release lifecycle, profiles and accepted membership/ownership workflows implemented/tested. Remaining integrations and final upgrade/load acceptance remain open.
+- [ ] H02: schema/domain/permissions/revisions — migrations through 33, project/release lifecycle, profiles and accepted membership/ownership workflows implemented/tested. Final acceptance audit remains open.
 - [ ] H03: project/profile/release APIs — initial project create/edit/submit/review/public/private listing routes tested over HTTP; broader contracts still pending.
-- [ ] H04: private file gateway/storage/jobs — immutable storage, leased durable queue and scoped upload gateway implemented/tested; inspection integration, delivery and operations remain pending.
-- [ ] H05: package/media inspection
+- [ ] H04: private file gateway/storage/jobs — real private upload, inspection, review/download and scoped Warden publishing proven; operational isolation and final failure/load acceptance remain pending.
+- [ ] H05: package/media inspection — shared bounded ZIP/preload inspector, media worker and real ClamAV integration tested; final corpus/acceptance audit pending.
 - [ ] H06: review/report/revocation/admin
 - [ ] H07: live publishing/download/directory
 - [ ] H08: social/notifications — moderation/report inbox, votes, private saves, release subscriptions, threaded comments and durable notifications implemented/tested; broader abuse/load and browser validation remain pending.
-- [ ] H09: metrics/search/SEO/accessibility
+- [ ] H09: metrics/search/SEO/accessibility — implementation present; isolated 10,000-project performance harness in progress; actual app browser acceptance pending.
 - [ ] H10: GitHub import
-- [ ] H11: Warden browse/planner
-- [ ] H12: Warden install/update/rollback
-- [ ] H13: Warden creator connection/export
-- [ ] H14: launcher/docs
-- [ ] H15: CI/regression/restore/release artifacts
+- [ ] H11: Warden browse/planner — real catalog-to-reviewed-install flow proven; final acceptance audit pending.
+- [ ] H12: Warden install/update/rollback — transactional execution/recovery, maintenance and retention tested; real local install/uninstall/reinstall proven. Restart-required flow, live update/rollback and game acceptance remain.
+- [ ] H13: Warden creator connection/export — real scoped publishing and accepted-draft resume after server restart proven; interrupted transport scenarios and actual web draft browser journey remain.
+- [ ] H14: launcher/docs — launcher entry implemented and tested; guides present, final cross-flow audit remains.
+- [ ] H15: CI/regression/restore/release artifacts — four local images validated and isolated database/private-storage restore passed; final release candidate, operations and integration gates remain.
 
 H16 production rollout is outside authorization.
 
@@ -43,7 +43,7 @@ H16 production rollout is outside authorization.
 
 ## Next work
 
-Finish bounded notification read-all, draft deletion, metrics/discovery and GitHub integration, then Warden/launcher and release validation. Keep all H00–H15 gates pending until direct evidence satisfies them.
+Finish restart-required installation, real update/rollback/game validation, interrupted publishing recovery and performance measurement. Complete actual app browser and GitHub-provider acceptance, operational isolation/restore/edge checks and the final release-candidate audit. Keep each H00–H15 gate pending until its complete acceptance criteria have direct evidence; implementation and partial tests are recorded below.
 
 ## Foundation checkpoint — 11 September 2026
 
@@ -638,3 +638,13 @@ Remaining: all unchecked acceptance gates, including worker inspection, download
 - test-warden-hub-maintenance-live.ps1 proved real reviewed uninstall of owned hub_live_sample project9c2046e4-c212-4ad6-afcb-629231818773 (inventory1→2; no running resource), then exact release533572d2 reinstallation (inventory2→3; sample running). Durable jobsd106386f-54ed-4248-9fb0-f6bbc409a413 and42c7e56c-4e10-42fb-b30a-e1cebff0c3ec; evidence maintenance-evidence.json. No game-client/restart-preload acceptance claimed. Unrelated clients/servers remained untouched.
 - Masterffe5e57 adds reproducible isolated real mariadb-dump/SQL+private-tar restore drill and sanitized ops/community/evidence/restore-2026-09-11.json. Exact metadata, package/avatar HTTP SHA checks, corruption rejection and single pending-image recovery passed using restricted restored principals. Current community test inventory162 is not a full162-test claim. Production signing continuity, Linux ownership/ACL restore and off-site retention remain unproved.
 - Next: durable publishing receipts/resume/stream digest; authoritative shared nested preload inspection and Warden integration; history/backup retention; remaining live update/rollback/restart-preload/game scenarios, GitHub OAuth/import, performance and full H15 operational/CI gates. Maintenance HTTP/history final commit is coordinated separately; no production changes. Goal remains active and incomplete.
+
+## Shared inspection, restart-resume and retention checkpoint — 11 September 2026
+
+- Base f21f0bc8 moves ZIP staging, content policy, cumulative budgets and nested preload inspection into the shared Resources assembly. Warden and master consume it; master a7f7983 pins that revision and adds export digest/length responses. Full master community regression passed162 tests; final provenance-label adjustment rebuilt and passed11 focused tests. Provenance: f21f0bc8;hub:4.
+- Master0217f69 adds locked/digest-pinned root image builds, four-image validation and Ubuntu CI. All four development images built and passed nonroot UID1654, no-network/read-only config/source/key exclusion checks; Compose and CI YAML validation passed. artifacts/hub-images/validation.json records source state/image IDs. These dirty development snapshots are not final release candidates; no remote CI run or deployment-overlay startup claimed.
+- Refreshed only owned master/files/worker to copied a7f7983 artifacts (sessions9215/10772/68071; ports18090/18091 and existing dedicated DB/scanner). Copied server bin-resume-preload runs session53376 on Warden11889/UDP11888. Configuration, identities, resources and unrelated sessions preserved.
+- Root cbbf7247 adds server instance evidence, test-warden-hub-resume-live.ps1 and retention access at the1000-job creation limit. Real private publishing created project43c88e45-9c4a-45e2-9abb-2b5999500df1, export001363fe-394f-49f1-8ea1-7d37ee528f92, job78c59f2b-fd6b-4f80-93c3-c66477d5ea12;639-byte ZIP SHA17eae3000ba6166b70efa193c050efc3bbc2925cc522e2e2fe86ab8676643383. After an actual owned-server restart, a new session resumed the same accepted draft/export/hash and disconnected. Instance2342ea6c-0a43-4bc7-b48a-9dd5ab10d5ec changed to c2a5670a-4bd7-4a50-8b26-3a11608df3f5. Sanitized creator-evidence.json/resume-evidence.json contain no credentials. This proves accepted-draft restart recovery, not interrupted real PUT/create response recovery.
+- Base a6292fea commits token-free fixed-request receipts, explicit current-session resume, stream/master-artifact digest fences, shared preload export inspection and conservative private spool cleanup. Retention uses reviewed hash/lease-protected expiry, minimum30days/newest3 committed installs, current/source-job protection, exact payload verification, unique config/user/modified backup preservation and resumable detached cleanup. Joint embedded browser fixture passed retention/publishing; standalone retention commit coordinated separately.
+- Clean combined Release build: zero warnings/errors. All316 Windows Warden/runtime tests passed without failures/skips (warden-hub-retention-spool-final.trx); pinned isolated Linux27 focused shared-inspection/publishing/export/retention tests passed without skips. Earlier310-test checkpoint is superseded. Prior Linux output lost at compaction is not counted; the27-test run is observed evidence.
+- Active parallel work: real-service lost-response fixture, restart-required install/maintenance and isolated10,000-project performance measurement. Actual app browser/GitHub provider/game validation and remaining operational/release-candidate gates remain open. No production publication/deployment; goal active and incomplete.
