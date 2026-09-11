@@ -20,6 +20,7 @@ artifact inventory qualification remains separate from unresolved acceptance gat
 | Storage pressure | Actual 8 MiB tmpfs ENOSPC after upload admission; lease reset, temporary-file cleanup, same-grant retry and matching hash | Isolated temporary filesystem; no release-host disk was filled |
 | Readiness | Real scanner pause: worker 503 while master/files stayed 200; recovery to all 200. DB pause: files/worker 503 and master health timeout; recovery to all 200 | Local dependencies; not a production uptime guarantee |
 | Telemetry | Actual master/files/worker counters, durations, storage gauges and an image-format rejection captured with assembly/tool identities | No installed production collector or alert-delivery verification |
+| Release host | Read-only SSH metadata: about 351 GiB free disk, 28.6 GiB available RAM, active Docker/cron, running master/Caddy and healthy MariaDB; nightly backup schedule and 14 local dump files. Public master/CDN TLS checks returned 200 | Snapshot is not load capacity, backup integrity/encryption/off-site recovery or alert delivery proof; Hub storage directory absent and website `/resources` returns 404 |
 | Warden maintenance | Real install/uninstall/reinstall/update/rollback, configuration and user-file preservation, publishing and lost-response restart recovery | Final browser/game journeys remain distinct |
 | Restart-required activation | Real isolated install→restart→update→restart→rollback→restart; expected Lua version running and durable jobs committed | Inert archive classifies preload requirements; does not prove real game assets mounted |
 | Website | Production builds and checks; permission/route tests, draft-preservation tests and static guide links | Actual served browser journeys remain blocked |
@@ -100,13 +101,14 @@ full Hub acceptance. Browser execution remains unperformed.
 3. **Actual game acceptance:** two unrelated clients occupied
    11,316/12,227 MiB VRAM at the latest recorded check; one was in-world and one
    was offline. They were preserved. A free
-   authorized game-test slot and a valid authored preload asset fixture are needed;
+   authorized game-test slot is needed to validate the authored preload fixture;
    the successful inert-archive server restart is not that proof.
 4. **Release-host and owner checks:** name the moderation owner; review contributor
    terms/license/report/appeal copy; verify operational credentials/capacity,
    signing-identity continuity, encrypted off-site paired backups, host permissions,
-   edge TLS/DNS and alert delivery. Local fixture results do not establish those
-   host- or owner-specific facts.
+   Hub edge routing and alert delivery. Read-only host metadata and general public
+   TLS checks now pass; they do not establish those remaining host- or owner-specific
+   facts. No Hub production deployment was attempted.
 
 Production publication/deployment remains outside authorization. Rollback preserves
 database, immutable blobs and signing identities, disables new writes/imports/install
