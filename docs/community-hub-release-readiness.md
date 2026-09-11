@@ -22,6 +22,8 @@ artifact inventory qualification remains separate from unresolved acceptance gat
 | Telemetry | Actual master/files/worker counters, durations, storage gauges and an image-format rejection captured with assembly/tool identities | No installed production collector or alert-delivery verification |
 | Release host | Read-only SSH metadata: about 351 GiB free disk, 28.6 GiB available RAM, active Docker/cron, running master/Caddy and healthy MariaDB; nightly backup schedule and 14 local dump files. Public master/CDN TLS checks returned 200 | Snapshot is not load capacity, backup integrity/encryption/off-site recovery or alert delivery proof; Hub storage directory absent and website `/resources` returns 404 |
 | Warden maintenance | Real install/uninstall/reinstall/update/rollback, configuration and user-file preservation, publishing and lost-response restart recovery | Final browser/game journeys remain distinct |
+| Warden browser | Actual login, installed project, discovery and published release details at 390/1440 pixels; visually reviewed screenshots, no overflow or browser errors | Read journeys only; mutation UI and main website acceptance remain separate |
+| Matching native candidate | Standard no-deploy Hub client build and all 24 CTest cases passed; DLL, WebHost and dependency hashes recorded | Full platform archive is still building; candidate has not yet been staged or launched |
 | Restart-required activation | Real isolated install→restart→update→restart→rollback→restart; expected Lua version running and durable jobs committed | Inert archive classifies preload requirements; does not prove real game assets mounted |
 | Website | Production builds and checks; permission/route tests, draft-preservation tests and static guide links | Actual served browser journeys remain blocked |
 | Launcher | Launcher Hub entry and regression tests; embedded browser evidence recorded in ledger | Actual native ShellExecute invocation was rejected by automatic review before execution; OS handoff and destination remain unverified |
@@ -108,6 +110,11 @@ full Hub acceptance. Browser execution remains unperformed.
    genuine preload packages passed real local Hub inspection/review/download;
    actual game rendering and supported preload preparation are in progress.
    The successful inert-archive server restart is not asset-mounting proof.
+   The first connection exposed Cyberware protocol 1.24 versus Hub 1.23. The
+   matching Hub native build now passes all 24 tests; its platform archive is
+   building before isolated staging. Automatic review separately rejected the
+   owned 11889 server restart with only `blocked by policy`. Live Lua refresh
+   succeeded without a restart, but cannot establish preload reboot acceptance.
 4. **Release-host and owner checks:** name the moderation owner; review contributor
    terms/license/report/appeal copy; verify operational credentials/capacity,
    signing-identity continuity, encrypted off-site paired backups, host permissions,
