@@ -4,14 +4,15 @@ Status: **not release-ready**. This is a working assessment dated 11 September
 2026, not authorization to publish or deploy. H00–H15 remain the completion scope;
 paid packages and the explicitly deferred features remain excluded. The
 [execution ledger](community-hub-execution.md) records exact checkpoints, failures,
-corrections and evidence locations. This report must be updated after the final
-schema-38 checks; it does not substitute older passing results for current code.
+corrections and evidence locations. Schema-38 regression is complete; source and
+artifact inventory qualification remains separate from unresolved acceptance gates.
 
 ## Integration evidence already observed
 
 | Area | Strongest observed evidence | Limit of that evidence |
 | --- | --- | --- |
-| Master/platform | Unfiltered schema-37 master suite: 295 passed, zero failed/skipped; clean Release build | Schema-38 retention changes require their own final regression |
+| Master/platform | Clean Release build and unfiltered schema-38 suite at master `c5e6919`: 306 passed, zero failed/skipped in 5m27s | This establishes local platform regression, not browser/provider/game acceptance |
+| Retention | Final Windows focused 20/20 and isolated Linux 7/7; cross-process publication locks, crash recovery and wrapper ownership checks passed | Default off; all writers must participate before enabling; current schema-37 live storage was not swept |
 | Private artifact flow | Real local registration, ZIP upload, worker inspection, reviewer publication and SHA-verified download on refreshed services | Locally authored fixtures; no production publication |
 | Service isolation | Restricted auxiliary accounts, raw-SQL attack tests, guard-definition/DEFINER verification and paired restore | Production principal provisioning still requires operator verification |
 | Storage pressure | Actual 8 MiB tmpfs ENOSPC after upload admission; lease reset, temporary-file cleanup, same-grant retry and matching hash | Isolated temporary filesystem; no release-host disk was filled |
@@ -30,8 +31,9 @@ The master repository owns these reviewable artifacts:
 - `ops/community/Dockerfile`, `compose.yml`, and `compose.maintenance.yml`: private
   files, worker, importer and maintenance services alongside master.
 - `ops/community/test-images.ps1`: five-image non-root/private-image validation and
-  both Compose overlays. Existing five-image evidence is a development snapshot;
-  rebuild after the final retention commit for candidate evidence.
+  both Compose overlays. All five images passed at clean master `c5e6919`, with
+  UID1654, private contents and both overlays checked. Refresh evidence after the
+  final CI-only checkpoint before recording the inventory.
 - `ops/community/Caddyfile`, `test-edge.ps1`, and `edge-fixture/`: restricted public
   gateway routing and actual streamed 100 MiB boundary checks.
 - `ops/community/POLICY.md`, `READINESS.md`, and `OPERATIONS.md`: quota settings,
@@ -47,16 +49,17 @@ The master repository owns these reviewable artifacts:
   validated image and evidence identities. The manifest intentionally leaves
   `releaseReadinessProven:false`; hashes alone do not prove acceptance.
 
-Before a candidate can be called ready, finish the current retention regression,
-commit its reviewed implementation, rebuild and validate all five images, and bind
+Before a candidate can be called ready, finish the CI wiring validation and bind
 the final app/base/launcher artifacts and test evidence to exact revisions. Keep
 the paired backup and rollback instructions alongside that inventory. Remote CI
 execution and production deployment have not been performed by this goal.
 
-The H14 audit also identified a missing standalone versioned package JSON Schema
-and checked-in licensed resource/bundle examples. The parser and inline/live
-fixtures do not replace that distributable documentation requirement. Those
-artifacts are being implemented and need validation against the actual parser.
+Base `b9f6bc4f` supplies a standalone versioned package JSON Schema and newly
+authored MIT-licensed resource/config-template and two-resource bundle examples.
+The no-deploy server build passed with no warnings/errors; seven actual ZIP/parser
+and metadata tests passed. Schema checks accepted both examples and rejected ten
+invalid boundary fixtures. These diagnostic Lua examples do not prove game asset
+loading.
 
 ## External and execution blockers
 
