@@ -31,6 +31,7 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
   return <HubShell><header className="hub-directory-head"><Link href="/resources">← Community resources</Link>
     <p className="hub-kicker">{categoryLabel(content.category)} / {content.kind === "showcase" ? "SHOWCASE" : "RESOURCE"}</p>
     <h1>{content.title}</h1><p>{content.summary}</p>{project.creatorHandle && <p className="hub-creator-byline">By <Link href={`/creators/${project.creatorHandle}`}>@{project.creatorHandle}</Link></p>}<div className="hub-tags">{content.tags.map(tag => <span key={tag}>{tag}</span>)}</div></header>
+    {project.state === "archived" && <p className="hub-notice">This creation is archived. Its approved releases remain available, but it is closed to new comments and updates.</p>}
     <div className="hub-detail"><article className="hub-prose"><MediaGallery media={content.media ?? []} /><h2>About this creation</h2><div dangerouslySetInnerHTML={{ __html: description }} />
       {content.installation && <><h2>Installation</h2><div dangerouslySetInnerHTML={{ __html: installation }} /></>}
       {content.license && <><h2>License</h2><div dangerouslySetInnerHTML={{ __html: license }} /></>}

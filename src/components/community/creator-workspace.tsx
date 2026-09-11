@@ -7,12 +7,13 @@ import { AuthPanel } from "@/components/account/auth-panel";
 import { useSession, type StoredSession } from "@/lib/account/session";
 import { MasterApiError } from "@/lib/account/api";
 import * as api from "@/lib/community/client-api";
-import { categories, type CommunityContent, type CommunityProject } from "@/lib/community/types";
+import { categories, type CommunityContent, type CommunityPage, type CommunityProject } from "@/lib/community/types";
 import { CreatorReleases } from "./creator-releases";
 import { CreatorMedia } from "./creator-media";
 import { ActivityHistory } from "./activity-history";
 import { mergeDraft, type DraftField } from "@/lib/community/draft-merge";
 import { DraftPreview } from "./draft-preview";
+import { ProjectLifecycle } from "./project-lifecycle";
 
 function message(error: unknown) { return error instanceof Error ? error.message : "Something went wrong. Please try again."; }
 const emptyContent: CommunityContent = { title: "", summary: "", category: "scripts", description: "", installation: "", kind: "showcase", maturity: "experimental", tags: [] };
@@ -27,22 +28,28 @@ function CreatorGate({ children }: { children: (session: StoredSession) => React
 
 export function CreatorDashboard() { return <CreatorGate>{session => <Dashboard session={session} />}</CreatorGate>; }
 function Dashboard({ session }: { session: StoredSession }) {
-  const [projects, setProjects] = useState<CommunityProject[] | null>(null);
+  const [page, setPage] = useState<{ cursor?: string; data: CommunityPage<CommunityProject> } | null>(null);
+  const [cursor, setCursor] = useState<string>();
+  const [trail, setTrail] = useState<(string | undefined)[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
-    api.myProjects(session.token, controller.signal).then(page => { if (!controller.signal.aborted) { setProjects(page.items); setError(null); } })
+    api.myProjects(session.token, controller.signal, cursor).then(data => { if (!controller.signal.aborted) { setPage({ cursor, data }); setError(null); } })
       .catch(error => { if (!controller.signal.aborted) setError(message(error)); });
     return () => controller.abort();
-  }, [session.token, attempt]);
+  }, [session.token, attempt, cursor]);
   if (error) return <div className="hub-notice" role="alert"><p>{error}</p><button className="btn btn-ghost" onClick={() => setAttempt(attempt + 1)}>Try again</button></div>;
-  if (!projects) return <p className="hub-notice" role="status">Loading your creations…</p>;
-  if (!projects.length) return <div className="hub-empty"><h2>Your first creation starts here.</h2><p>Give your work a home. Start with a showcase or prepare a resource for other server owners.</p><Link className="btn btn-primary" href="/account/creations/new">Create a project</Link></div>;
+  if (!page || page.cursor !== cursor) return <p className="hub-notice" role="status">Loading your creations…</p>;
+  const projects = page.data.items;
+  if (!projects.length && !cursor) return <div className="hub-empty"><h2>Your first creation starts here.</h2><p>Give your work a home. Start with a showcase or prepare a resource for other server owners.</p><Link className="btn btn-primary" href="/account/creations/new">Create a project</Link></div>;
   return <div>{projects.map(project => <article className="hub-draft-row" key={project.projectId}><div>
-    <p className="hub-kicker">{project.revisionStatus.replaceAll("_", " ")}</p><h2>{project.content.title}</h2><p>{project.content.summary || "Add a short description to introduce your creation."}</p>
+    <p className="hub-kicker">{project.state.replaceAll("_", " ")} · {project.revisionStatus.replaceAll("_", " ")}</p><h2>{project.content.title}</h2><p>{project.content.summary || "Add a short description to introduce your creation."}</p>
   </div><div className="hub-actions"><Link className="btn btn-ghost" href={`/account/creations/${project.projectId}/edit`}>Edit project</Link>
-    {project.publishedAtUtc && <Link href={`/resources/${project.slug}`}>View public page ↗</Link>}</div></article>)}</div>;
+    {project.publishedAtUtc && project.state !== "suspended" && <Link href={`/resources/${project.slug}`}>View public page ↗</Link>}</div></article>)}
+    {!projects.length && <p className="hub-notice">No creations remain on this page. Return to the previous page.</p>}
+    <nav className="hub-actions" aria-label="Your creation pages">{trail.length > 0 && <button className="btn btn-ghost" onClick={() => { setCursor(trail[trail.length - 1]); setTrail(value => value.slice(0, -1)); }}>Previous creations</button>}
+      {page.data.nextCursor && <button className="btn btn-ghost" onClick={() => { setTrail(value => [...value, cursor]); setCursor(page.data.nextCursor ?? undefined); }}>More creations</button>}</nav></div>;
 }
 
 export function CreatorEditor({ id }: { id?: string }) {
@@ -86,6 +93,7 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
   const [rights, setRights] = useState(false);
   const heading = useRef<HTMLHeadingElement>(null);
   const steps = ["Basics", "Showcase", "Release", "Validation", "Preview and submit"];
+  const locked = project?.state === "archived" || project?.state === "suspended";
   function navigateStep(next: number) { setStep(next); setTimeout(() => heading.current?.focus(), 0); }
   const saving = useRef(false);
   const initialized = useRef(false);
@@ -139,10 +147,10 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
   useEffect(() => {
     // Creating the first draft explicitly reserves its permanent public address.
     // Subsequent edits debounce and serialize, with no blind retry after failure.
-    if (!active || !project || !dirty || busy || paused || conflict || !content.title.trim()) return;
+    if (!active || locked || !project || !dirty || busy || paused || conflict || !content.title.trim()) return;
     const timer = setTimeout(() => { void save(); }, 1500);
     return () => clearTimeout(timer);
-  }, [active, project, dirty, busy, paused, conflict, content, save]);
+  }, [active, locked, project, dirty, busy, paused, conflict, content, save]);
   async function compare() {
     if (!active || !project || saving.current) return;
     saving.current = true; setBusy(true); setError(null);
@@ -185,10 +193,11 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
     {status && <div className="hub-notice" role="status">{status}</div>}
     {project && <p className="hub-notice">Revision {project.revision} · {project.revisionStatus.replaceAll("_", " ")}{project.publishedAtUtc ? " · Earlier approved content remains public." : " · Not published yet."}</p>}
     {project && <ActivityHistory key={`${project.projectId}-${project.revisionStatus}`} token={session.token} kind="project" id={project.projectId} allowAppeals initiallyOpen={project.revisionStatus === "rejected" || project.state === "suspended"} />}
+    {project && <ProjectLifecycle session={session} project={project} disabled={busy} unsaved={dirty || releaseDirty || conflict} changed={state => { setProject(current => current ? { ...current, state } : current); setStatus(state === "archived" ? "Project archived. Its approved page and downloads remain available." : "Project reopened."); }} />}
     <nav aria-label="Publishing steps"><ol className="hub-wizard-steps">{steps.map((label, index) => <li key={label}><button type="button" className="btn btn-ghost" aria-current={step === index ? "step" : undefined} onClick={() => navigateStep(index)}>{index + 1}. {label}{index === 2 && content.kind === "showcase" ? " (no package)" : ""}</button></li>)}</ol></nav>
     <h2 ref={heading} tabIndex={-1}>Step {step + 1}: {steps[step]}</h2>
     <form className="hub-form" noValidate onSubmit={event => { event.preventDefault(); void save(); }}>
-      <fieldset className="hub-editor-fields" disabled={conflict}>
+      <fieldset className="hub-editor-fields" disabled={conflict || locked}>
       <div className="hub-editor-fields" hidden={step !== 0}>
       <label>Project title<input required maxLength={80} value={content.title} onChange={event => change("title", event.target.value)} /></label>
       <label>Resource address<input required maxLength={80} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} readOnly={!!project || busy} value={slug} onChange={event => { editSequence.current++; setSlug(event.target.value); setDirty(true); }} placeholder="auto-taxi" /><small>open2077.net/resources/{slug || "your-project"}</small></label>
@@ -211,13 +220,13 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
       <label>License<textarea maxLength={10000} value={content.license ?? ""} onChange={event => change("license", event.target.value || null)} placeholder="Name your license and any third-party notices." /></label>
       </div>
       </fieldset>
-      <div className="hub-actions"><button type="submit" className="btn btn-primary" disabled={busy || conflict}>{busy ? "Saving…" : project ? "Save draft" : "Create draft"}</button>
+      <div className="hub-actions"><button type="submit" className="btn btn-primary" disabled={busy || conflict || locked}>{busy ? "Saving…" : project ? "Save draft" : "Create draft"}</button>
         <span role="status">{dirty ? busy ? "Saving your changes…" : paused || conflict ? "Unsaved changes — autosave paused" : project ? "Unsaved changes — autosave pending" : "Create your draft to enable autosave" : project ? "All project changes saved" : ""}</span></div>
     </form>
-    {project && <fieldset className="hub-editor-fields" hidden={step !== 1} disabled={conflict}><CreatorMedia token={session.token} projectId={project.projectId} media={content.media ?? []} onChange={value => change("media", value)} /></fieldset>}
+    {project && <fieldset className="hub-editor-fields" hidden={step !== 1} disabled={conflict || locked}><CreatorMedia token={session.token} projectId={project.projectId} media={content.media ?? []} onChange={value => change("media", value)} /></fieldset>}
     {step === 1 && <DraftPreview content={content} token={session.token} />}
     {!project && step > 0 && <p className="hub-notice">Create your draft from Basics to upload media and releases. Your text stays in this tab until saved.</p>}
-    {project && <div hidden={content.kind !== "resource" || (step !== 2 && step !== 3 && step !== 4)}><CreatorReleases session={session} project={project} readOnly={step === 4} onUnsavedChange={setReleaseDirty} /></div>}
+    {project && <div hidden={content.kind !== "resource" || (step !== 2 && step !== 3 && step !== 4)}><CreatorReleases session={session} project={project} readOnly={step === 4 || locked} onUnsavedChange={setReleaseDirty} /></div>}
     {step === 3 && <section className="hub-notice"><h3>Project checks</h3><ul>
       <li>{content.title.trim() ? "Title entered." : "Add a title in Basics."}</li>
       <li>{content.summary.trim() ? "Summary entered." : "Add a summary in Basics."}</li>
@@ -226,7 +235,7 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
       <li>{dirty ? "Save outstanding changes before submitting." : "Project content is saved."}</li>
     </ul><p>The server rechecks your content and processed files when you submit. Technical validation does not replace moderation review.</p></section>}
     {step === 4 && <><DraftPreview content={content} token={session.token} /><label className="hub-rights"><input type="checkbox" checked={rights} onChange={event => setRights(event.target.checked)} />I have permission to share this creation, its images and all included files under the stated license.</label>
-      <button type="button" className="btn btn-primary" disabled={!project || busy || dirty || conflict || !rights || project.revisionStatus !== "draft"} onClick={submit}>Submit for review</button></>}
+      <button type="button" className="btn btn-primary" disabled={!project || locked || busy || dirty || conflict || !rights || project.revisionStatus !== "draft"} onClick={submit}>Submit for review</button></>}
     <nav className="hub-actions" aria-label="Continue publishing">{step > 0 && <button type="button" className="btn btn-ghost" onClick={() => navigateStep(step - 1)}>Previous</button>}{step < 4 && <button type="button" className="btn btn-primary" onClick={() => navigateStep(step + 1)}>Continue to {steps[step + 1]}</button>}</nav>
   </>;
 }
