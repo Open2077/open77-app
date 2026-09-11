@@ -1,7 +1,10 @@
 import { masterCall } from "@/lib/account/api";
+import type { CommunityReleaseEditor, CommunityReleaseEditorContent } from "./types";
 import type { CommunityActivity, CommunityAppeal, CommunityComment, CommunityModerationState, CommunityNotification, CommunityProfile, CommunityProjectState, CommunityReport, CommunityReviewItem, CommunitySavedProject } from "./types";
 import type { CommunityContent, CommunityDelivery, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
 const root = "/api/v1/community";
+export const releaseEditor = (token: string, id: string, signal?: AbortSignal) => masterCall<{ draft: CommunityReleaseEditor | null }>(`${root}/me/projects/${encodeURIComponent(id)}/release-editor`, { token, signal });
+export const saveReleaseEditor = (token: string, id: string, expectedRevision: number, content: CommunityReleaseEditorContent) => masterCall<CommunityReleaseEditor>(`${root}/me/projects/${encodeURIComponent(id)}/release-editor`, { token, method: "PUT", body: { expectedRevision, content }, signal: AbortSignal.timeout(15000) });
 export const comments = (projectId: string, parentId?: string, cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityComment>>(`${root}/projects/${encodeURIComponent(projectId)}/comments?${new URLSearchParams({ ...(parentId ? { parentId } : {}), ...(cursor ? { cursor } : {}) })}`, { signal });
 export const createComment = (token: string, projectId: string, requestId: string, parentId: string | null, body: string, notifyReplies: boolean) => masterCall<{ commentId: string }>(`${root}/projects/${encodeURIComponent(projectId)}/comments`, { token, method: "POST", body: { requestId, parentId, body, notifyReplies }, signal: AbortSignal.timeout(10000) });
 export const editComment = (token: string, id: string, expectedRevision: number, body: string) => masterCall<void>(`${root}/comments/${encodeURIComponent(id)}`, { token, method: "PATCH", body: { expectedRevision, body }, signal: AbortSignal.timeout(10000) });

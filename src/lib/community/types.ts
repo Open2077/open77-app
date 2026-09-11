@@ -42,6 +42,8 @@ export type CommunityUpload = {
 export type CommunityUploadItem = { upload: CommunityUpload; originalName: string; createdAtUtc: string };
 export type CommunityUploadGrant = { uploadId: string; token: string; maximumBytes: number; expiresAtUtc: string; uploadUrl: string };
 export type CommunityReleaseDraft = Pick<CommunityRelease, "releaseId" | "projectId" | "version" | "state" | "channel">;
+export type CommunityReleaseEditorContent = { version: string; changelog: string; installation: string; license: string; testedBuilds: string; requiredResources: string };
+export type CommunityReleaseEditor = { revision: number; content: CommunityReleaseEditorContent; updatedAtUtc: string };
 export const categories = [
   { id: "scripts", label: "Scripts", mark: "</>", description: "New possibilities for your world." },
   { id: "gamemodes", label: "Gamemodes", mark: "77", description: "A whole new way to play." },

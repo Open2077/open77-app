@@ -6,6 +6,7 @@ import * as api from "@/lib/community/client-api";
 import { transferUpload } from "@/lib/community/upload";
 import type { CommunityPage, CommunityProject, CommunityRelease, CommunityUploadItem } from "@/lib/community/types";
 import { validationHelp } from "@/lib/community/validation-help";
+import { useReleaseEditor } from "./use-release-editor";
 
 const errorText = (error: unknown) => error instanceof Error ? error.message : "The request failed. Please try again.";
 const lines = (value: string) => [...new Set(value.split(/\r?\n/).map(line => line.trim()).filter(Boolean))];
@@ -81,12 +82,9 @@ export function CreatorReleases({ session, project }: { session: StoredSession; 
   const [error, setError] = useState("");
   const [pollPaused, setPollPaused] = useState(false);
   const [checkedAt, setCheckedAt] = useState(0);
-  const [version, setVersion] = useState("");
-  const [changelog, setChangelog] = useState("");
-  const [license, setLicense] = useState(project.content.license ?? "");
-  const [installation, setInstallation] = useState(project.content.installation);
-  const [testedBuilds, setTestedBuilds] = useState("");
-  const [requiredResources, setRequiredResources] = useState("");
+  const draft = useReleaseEditor(session.token, project.projectId, { version: "", changelog: "", license: project.content.license ?? "",
+    installation: project.content.installation, testedBuilds: "", requiredResources: "" });
+  const { version, changelog, license, installation, testedBuilds, requiredResources } = draft.content;
   const [creating, setCreating] = useState(false);
   function reload() { setRefresh(value => value + 1); }
   useEffect(() => {
@@ -112,11 +110,13 @@ export function CreatorReleases({ session, project }: { session: StoredSession; 
     return () => { controller.abort(); clearTimeout(timer); };
   }, [session.token, project.projectId, releaseCursor, uploadCursor, refresh]);
   async function create(event: FormEvent) {
-    event.preventDefault(); setCreating(true); setError("");
+    event.preventDefault(); if (creating || !draft.loaded || draft.busy || draft.conflict) return;
+    setCreating(true); setError("");
     try {
+      if (!await draft.save()) return;
       await api.createRelease(session.token, project.projectId, version.trim(), { changelog, license, installation,
         testedBuilds: lines(testedBuilds), requiredResources: lines(requiredResources) });
-      setVersion(""); setChangelog(""); setReleaseCursor(undefined); reload();
+      draft.change("version", ""); draft.change("changelog", ""); setReleaseCursor(undefined); reload();
     } catch (error) { setError(errorText(error)); }
     finally { setCreating(false); }
   }
@@ -127,14 +127,23 @@ export function CreatorReleases({ session, project }: { session: StoredSession; 
     {pollPaused && <p className="hub-notice">Automatic status checks have paused. Use Refresh status to check again.</p>}
     <details className="hub-release"><summary>Create a version</summary>
       <p className="hub-notice">Release versions and their details cannot be reused or edited after creation. Check these details before continuing. Your ZIP is validated and reviewed before publication.</p>
+      <p role="status">{!draft.loaded ? "Loading your private release draft…" : draft.busy ? "Saving release details…" : draft.dirty ? "Unsaved release details" : "Release details saved"} · This unfinished form is private to your account.</p>
+      {draft.error && <p className="hub-notice" role="alert">{draft.error} Your text is retained; autosave is paused. <button type="button" className="btn btn-ghost" disabled={draft.busy || draft.conflict} onClick={() => { if (draft.loaded) void draft.save(); else draft.retryLoad(); }}>Retry</button></p>}
+      {draft.conflict && <div className="hub-notice"><p>Another tab changed your release draft. Compare before resuming.</p><button type="button" className="btn btn-ghost" disabled={draft.busy} onClick={draft.compare}>Compare saved details</button>
+        {draft.remote && <><div className="hub-form-row"><div><h3>Your details</h3><pre className="hub-merge-text">{JSON.stringify(draft.content, null, 2)}</pre></div><div><h3>Saved details</h3><pre className="hub-merge-text">{JSON.stringify(draft.remote.content, null, 2)}</pre></div></div>
+          <button type="button" className="btn btn-ghost" onClick={() => draft.recover("remote")}>Discard mine and use saved details</button><button type="button" className="btn btn-primary" onClick={() => draft.recover("local")}>Replace saved details with mine</button></>}
+      </div>}
       <form className="hub-form" onSubmit={create}>
-        <label>Version<input required maxLength={100} placeholder="1.0.0 or 1.0.0-beta.1" value={version} onChange={event => setVersion(event.target.value)} /></label>
-        <label>Changelog<textarea required maxLength={50000} value={changelog} onChange={event => setChangelog(event.target.value)} /></label>
-        <label>Installation and configuration<textarea required maxLength={50000} value={installation} onChange={event => setInstallation(event.target.value)} /></label>
-        <label>License and attribution<textarea required maxLength={10000} value={license} onChange={event => setLicense(event.target.value)} /></label>
-        <label>Tested Open77 builds, one per line<textarea maxLength={10000} value={testedBuilds} onChange={event => setTestedBuilds(event.target.value)} /></label>
-        <label>Required resources, one per line<textarea maxLength={10000} value={requiredResources} onChange={event => setRequiredResources(event.target.value)} /></label>
-        <button className="btn btn-primary" disabled={creating}>{creating ? "Creating…" : "Create version"}</button>
+        <fieldset className="hub-editor-fields" disabled={!draft.loaded || draft.conflict || creating}>
+        <label>Version<input required maxLength={100} placeholder="1.0.0 or 1.0.0-beta.1" value={version} onChange={event => draft.change("version", event.target.value)} /></label>
+        <label>Changelog<textarea required maxLength={50000} value={changelog} onChange={event => draft.change("changelog", event.target.value)} /></label>
+        <label>Installation and configuration<textarea required maxLength={50000} value={installation} onChange={event => draft.change("installation", event.target.value)} /></label>
+        <label>License and attribution<textarea required maxLength={10000} value={license} onChange={event => draft.change("license", event.target.value)} /></label>
+        <label>Tested Open77 builds, one per line<textarea maxLength={10000} value={testedBuilds} onChange={event => draft.change("testedBuilds", event.target.value)} /></label>
+        <label>Required resources, one per line<textarea maxLength={10000} value={requiredResources} onChange={event => draft.change("requiredResources", event.target.value)} /></label>
+        </fieldset>
+        <button type="button" className="btn btn-ghost" disabled={!draft.loaded || draft.busy || draft.conflict || creating} onClick={() => { void draft.save(); }}>Save release draft</button>
+        <button className="btn btn-primary" disabled={!draft.loaded || draft.busy || draft.conflict || creating}>{creating ? "Creating…" : "Create immutable version"}</button>
       </form></details>
     {!releases && !error && <p role="status">Loading releases…</p>}
     <div className="hub-releases">{releases?.items.map(release => <article className="hub-release" key={release.releaseId}>
