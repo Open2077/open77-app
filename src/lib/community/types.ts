@@ -42,3 +42,10 @@ export const categories = [
   { id: "tools", label: "Tools & libraries", mark: "{ }", description: "A head start for your next creation." },
 ] as const;
 export const categoryLabel = (id: string) => categories.find(item => item.id === id)?.label ?? id;
+export interface CommunityNotification {
+  notificationId: string;
+  kind: string;
+  content: { title: string; message: string; path: string | null };
+  createdAtUtc: string;
+  readAtUtc: string | null;
+}

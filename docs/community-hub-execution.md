@@ -23,7 +23,7 @@ All four use branch `feat/community-hub`, created from the existing checkout HEA
 - [ ] H05: package/media inspection
 - [ ] H06: review/report/revocation/admin
 - [ ] H07: live publishing/download/directory
-- [ ] H08: social/notifications
+- [ ] H08: social/notifications — moderation/report outbox delivery and private inbox implemented/tested; comments, votes, saves, subscriptions and their notifications remain pending.
 - [ ] H09: metrics/search/SEO/accessibility
 - [ ] H10: GitHub import
 - [ ] H11: Warden browse/planner
@@ -223,3 +223,11 @@ Remaining: all unchecked acceptance gates, including worker inspection, download
 - Creator editor now opens decision history for rejected/suspended projects. Admin project/report views expose lazy-loaded audit history and report assignment controls. History is available before notification delivery; report resolution requests now include their expected revision.
 - Community selection: 78 passed, zero skipped (`community-history-assignment.trx`, 40 seconds). Full master regression: 181 passed, zero skipped (`hub-history-assignment-regression.trx`, 82 seconds). Evidence covers takeover/release/stale resolution, role denial, creator/private history separation, audience-bound cursors and HTTP history/assignment flows. Master solution build passes with zero warnings/errors; migration recovery expects schema 19.
 - App TypeScript/lint and production build pass with loopback API origins. Browser validation remains unproven under the recorded startup rejection. An appeal route, notification delivery, complete publishing wizard and remaining H00–H15 integrations are still required. Goal active; production untouched.
+
+## Notification delivery and inbox checkpoint — 11 September 2026
+
+- Migration 20 adds bounded invalid-event state to the outbox. A worker consumer now delivers review decisions, revocations, suspension/restoration and generic report outcomes into account notifications. Transactional row claims and recipient/event uniqueness prevent duplicate delivery on concurrent workers or replay. Invalid supported events are isolated; unknown kinds stay pending. Transient database failure rolls back for retry.
+- The dispatcher projects only approved message fields. Report investigation notes never reach recipients; internal project links still require current access. Added account-bound all/unread pagination and idempotent read timestamps, with session, active-account and ownership enforcement.
+- Added `/account/notifications` and Hub navigation. The inbox provides read controls, unread filtering, bounded requests, refresh, pagination and creation links. Notification state resets across accounts and filters. Subscription controls/events and browser interaction evidence are still pending.
+- Master build passed with zero warnings/errors. Initial targeted tests: 3 passed (`community-notifications-targeted.trx`), including a separate worker executable delivering a queued decision against real MariaDB. Full master regression: 184 passed, zero failed/skipped (`hub-notifications-regression.trx`, 120 seconds). Coverage includes concurrent/replayed events, poison isolation, private-note exclusion, account/filter cursors, cross-account read denial and real HTTP persisted read state.
+- App `npm run check` and production `npm run build` passed with loopback API origins; the new inbox route is generated. Browser validation remains pending under the recorded automatic approval rejection of local Next startup. Administrative dead-letter tooling, appeals, the complete publishing wizard and all remaining H00–H15 integrations remain required. Goal active; no production publication/deployment.

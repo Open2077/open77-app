@@ -1,7 +1,9 @@
 import { masterCall } from "@/lib/account/api";
-import type { CommunityActivity, CommunityModerationState, CommunityReport, CommunityReviewItem } from "./types";
+import type { CommunityActivity, CommunityModerationState, CommunityNotification, CommunityReport, CommunityReviewItem } from "./types";
 import type { CommunityContent, CommunityDelivery, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
 const root = "/api/v1/community";
+export const notifications = (token: string, unread: boolean, cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityNotification>>(`${root}/me/notifications?unread=${unread}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
+export const readNotification = (token: string, id: string, signal?: AbortSignal) => masterCall<void>(`${root}/me/notifications/${encodeURIComponent(id)}/read`, { token, method: "PATCH", signal });
 export const activity = (token: string, kind: "project" | "report", id: string, cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityActivity>>(`${root}/${kind === "project" ? "me/projects" : "admin/reports"}/${encodeURIComponent(id)}/activity${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
 export const assignReport = (token: string, id: string, expectedRevision: number, claim: boolean, reason: string) => masterCall<void>(`${root}/admin/reports/${encodeURIComponent(id)}/assignment`, { token, method: "POST", body: { expectedRevision, claim, reason } });
 export const moderationState = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityModerationState>(`${root}/admin/projects/${encodeURIComponent(id)}/moderation`, { token, signal });
