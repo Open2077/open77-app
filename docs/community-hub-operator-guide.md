@@ -11,6 +11,7 @@ at `/docs/community-hub`. The hand-maintained navigation metadata registers it a
 | Topic | Canonical source |
 | --- | --- |
 | ZIP/GitHub publishing, media, review, inbox, reports, appeals, collaboration | [Website user guide](../content/guides/community-hub.md) |
+| Warden installation, updates, uninstall, rollback, preload restart and retention | [Base-owned public runtime guide](../content/docs/community-hub-warden.md), `/docs/community-hub-warden` |
 | Host export, scoped creator credentials, durable transfer replay and spool cleanup | [Base export guide](../../hub-base/docs/community-hub-warden-export.md) |
 | Archive metadata, dependency identities and explicit configuration mappings | [Base package metadata](../../hub-base/docs/community-hub-package-metadata.md) |
 | Shared outer/nested archive content inspection | [Base shared inspection](../../hub-base/docs/community-hub-shared-inspection.md) |
@@ -20,8 +21,12 @@ at `/docs/community-hub`. The hand-maintained navigation metadata registers it a
 Sibling `hub-base` links are for this review worktree. Public source links in the
 authored guide currently name `feat/community-hub`; replace them with the released
 base revision or synced wiki routes during an authorized release. Do not push a
-branch just to make a release-candidate documentation link public. Runtime guide
-authoring and wiki synchronization remain base-owned; do not hand-edit synced
+branch just to make a release-candidate documentation link public. The runtime
+guide is authored in `hub-base/wiki/community-hub-warden.md` and synchronized with
+`npm run sync:wiki -- --from ../hub-base/wiki --only community-hub-warden.md`.
+This scoped sync preserves the newer unrelated vendored snapshot and records the
+runtime guide's exact source revision separately. It is not a full-source drift
+claim. Do not hand-edit synced
 `content/docs/*.md`. Historical investigation notes are not current capability
 statements. The package metadata guide describes the current integration; the
 Warden research notes preserve the chronology of earlier implementation stages.

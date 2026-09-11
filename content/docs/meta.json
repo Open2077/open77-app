@@ -72,6 +72,13 @@
           "description": "Warden is the OPEN//77 in-server admin panel: a browser control room for live console, Lua resources, players, configuration and admins. Review operations that require a restart."
         },
         {
+          "slug": "community-hub-warden",
+          "kind": "guide",
+          "nav": "Hub resources in Warden",
+          "title": "Manage Hub resources with Warden",
+          "description": "Review resource installation, updates, uninstall and rollback; manage preload restart staging and preserve local configuration and retained backups."
+        },
+        {
           "slug": "launcher-for-server-owners",
           "kind": "guide",
           "source": "authored",

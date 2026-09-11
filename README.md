@@ -118,6 +118,15 @@ header. Guide content remains authored in the platform wiki.
 
 On this workstation, sync with `npm run sync:wiki -- --from ../CyberM/wiki`.
 The sync also discovers sibling `CyberM`, `open77-base` and `base` checkouts automatically.
+When a feature worktree contains one new guide but lacks unrelated sources from a
+newer vendored snapshot, use the explicit scoped pipeline:
+`npm run sync:wiki -- --from ../hub-base/wiki --only community-hub-warden.md`.
+The selected source must be committed. This preserves unrelated files and manifest
+records, recording the selected guide's `sourceRevision` and `sourceSyncedAt`
+without advancing the full-snapshot timestamp. Verify with the same arguments plus
+`--check`; this checks only that guide and does not claim a complete wiki sync.
+Full sync retains its source requirements and stale-guide removal behavior.
+Run `node --test scripts/test-sync-wiki-scoped.mjs` for the preservation/drift checks.
 Run `node scripts/check-hydration.mjs http://127.0.0.1:3000 --docs` for the focused browser
 checks: filters, deep links, Back, clipboard, themes, sticky navigation and mobile layout.
 This writes review screenshots under `.shots/` (ignored by Git).

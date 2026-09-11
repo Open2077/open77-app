@@ -20,6 +20,7 @@ import { existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import process from "node:process";
+import { execFileSync } from "node:child_process";
 
 import { EXCLUDED_GUIDES, isExcluded } from "./wiki-exclusions.mjs";
 
@@ -33,12 +34,57 @@ const VEHICLE_CATALOGUE_OUT = "public/data/vehicle-weapons-2.31.json";
 
 
 function parseArgs(argv) {
-  const args = { from: DEFAULT_SOURCE, check: false };
+  const args = { from: DEFAULT_SOURCE, check: false, only: null };
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === "--from") args.from = argv[++i] ?? args.from;
     else if (argv[i] === "--check") args.check = true;
+    else if (argv[i] === "--only") {
+      if (args.only !== null) throw new Error("--only may be specified once");
+      args.only = argv[++i];
+      if (!args.only || !/^[A-Za-z0-9][A-Za-z0-9_-]*\.md$/.test(args.only) || isExcluded(args.only))
+        throw new Error("--only requires one non-excluded wiki Markdown filename, without directories");
+    }
   }
   return args;
+}
+
+/** Refresh one base-owned guide without claiming to refresh the rest of a newer
+ * vendored snapshot. Full sync deliberately retains its strict source contract. */
+async function syncSelected(args, sourceDir) {
+  const selected = args.only;
+  const sourceFile = path.join(sourceDir, selected);
+  const markdown = (await readFile(sourceFile, "utf8")).replace(/\r\n/g, "\n");
+  const target = `${DOCS_OUT}/${selected}`.replace(/\\/g, "/");
+  const manifestPath = path.join(DOCS_OUT, "_manifest.json");
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  if (!Array.isArray(manifest.files)) throw new Error("Scoped sync requires an existing manifest");
+  const slug = selected === "README.md" ? "index" : selected.replace(/\.md$/, "");
+  const previous = manifest.files.filter((record) => record.target === target);
+  if (previous.length > 1) throw new Error("Duplicate selected manifest record");
+  if (existsSync(path.join("content", "guides", selected))) throw new Error("Selected guide collides with authored content");
+  const digest = sha256(markdown);
+  const revision = execFileSync("git", ["-C", sourceDir, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  if (!/^[a-f0-9]{40}$/.test(revision)) throw new Error("Source revision is unavailable");
+  execFileSync("git", ["-C", sourceDir, "ls-files", "--error-unmatch", "--", selected], { encoding: "utf8" });
+  const sourceStatus = execFileSync("git", ["-C", sourceDir, "status", "--porcelain", "--", selected], { encoding: "utf8" }).trim();
+  if (sourceStatus) throw new Error("Commit the selected wiki source before recording its provenance");
+  if (args.check) {
+    const current = existsSync(target) ? await readFile(target, "utf8") : null;
+    const record = previous[0];
+    if (current !== markdown || !record || record.sha256 !== digest || record.bytes !== Buffer.byteLength(markdown, "utf8") ||
+        record.source !== `wiki/${selected}` || !/^[a-f0-9]{40}$/.test(record.sourceRevision ?? "") || !record.sourceSyncedAt)
+      throw new Error(`Selected guide or provenance differs: ${target}`);
+    console.log(`up to date: selected guide ${selected}; unrelated source drift was not checked`);
+    return;
+  }
+  const record = { source: `wiki/${selected}`, target, slug, title: extractTitle(markdown, slug),
+    bytes: Buffer.byteLength(markdown, "utf8"), sha256: digest, sourceRevision: revision, sourceSyncedAt: new Date().toISOString() };
+  manifest.files = previous.length ? manifest.files.map((entry) => entry.target === target ? record : entry) : [...manifest.files, record];
+  manifest.guides = manifest.files.filter((entry) => "slug" in entry).length;
+  // Preserve the full-snapshot timestamp and all unselected record metadata.
+  await writeFile(target, markdown, "utf8");
+  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+  console.log(`synced selected guide ${selected} from ${revision}; unrelated files preserved`);
 }
 
 function sha256(text) {
@@ -65,6 +111,8 @@ async function collectMarkdown(sourceDir) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const sourceDir = path.resolve(args.from);
+
+  if (args.only) return syncSelected(args, sourceDir);
 
   if (!existsSync(sourceDir)) {
     // The vendored content is committed precisely so a build needs no platform

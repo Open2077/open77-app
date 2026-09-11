@@ -3,7 +3,7 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-10T22:54:19.717Z",
-  "guides": 45,
+  "guides": 46,
   "apiEntries": 420,
   "files": [
     {
@@ -381,6 +381,16 @@
       "mountDefinitions": 15,
       "bytes": 45651,
       "sha256": "214ac628f685aebd54f581c22ef0c7adaf47961d38b0c8c866a7dab4e1b0dfb8"
+    },
+    {
+      "source": "wiki/community-hub-warden.md",
+      "target": "content/docs/community-hub-warden.md",
+      "slug": "community-hub-warden",
+      "title": "Manage Hub resources with Warden",
+      "bytes": 8034,
+      "sha256": "67c13863ca27545544ea2c7def39a0bf2817185d2a07e9f283d74901732b4a44",
+      "sourceRevision": "9ae45475ff0232276cb4d69d8364165221532a56",
+      "sourceSyncedAt": "2026-09-11T16:26:10.506Z"
     }
   ]
 }
