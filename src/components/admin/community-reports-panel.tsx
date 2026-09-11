@@ -8,6 +8,7 @@ import type { CommunityProject, CommunityRelease, CommunityReport } from "@/lib/
 import { useAdminData } from "./use-admin-data";
 import { PrivateMediaPreview } from "@/components/community/private-media-preview";
 import { DownloadButton } from "@/components/community/download-button";
+import { ProjectModerationControls, ReleaseRevocationControls } from "./community-moderation-controls";
 
 export function CommunityReportsPanel() {
   const { session } = useSession();
@@ -60,9 +61,12 @@ function ReportRow({ token, report, updated }: { token: string; report: Communit
     {project && <details open><summary>Current project draft: {project.content.title} · {project.state} · revision {project.revision}</summary>
       <p>{project.content.summary}</p><pre className="hub-review-text">{project.content.description}</pre>
       <div className="hub-media-editor">{project.content.media?.map(image => <PrivateMediaPreview key={image.mediaId} token={token} mediaId={image.mediaId} alt={image.altText} />)}</div>
-      <Link href={`/resources/${project.slug}`}>Open public project page</Link></details>}
+      <Link href={`/resources/${project.slug}`}>Open public project page</Link>
+      <p><Link href={`/admin/resources/${project.projectId}`}>Open project moderation and release history</Link></p>
+      <ProjectModerationControls token={token} projectId={project.projectId} updated={inspect} /></details>}
     {release && <details open><summary>Release {release.version} · {release.state}</summary><pre className="hub-review-text">{release.metadata.changelog}</pre>
-      <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p><DownloadButton key={`${release.releaseId}-${release.revision}`} releaseId={release.releaseId} version={release.version} review={{ token, revision: release.revision }} /></details>}
+      <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p><DownloadButton key={`${release.releaseId}-${release.revision}`} releaseId={release.releaseId} version={release.version} review={{ token, revision: release.revision }} />
+      <ReleaseRevocationControls token={token} release={release} updated={inspect} /></details>}
     {report.state === "open" && <form className="hub-form" onSubmit={resolve}><p>Apply any required content action before recording the outcome. Investigation notes stay private.</p>
       <label>Outcome<select value={outcome} onChange={event => setOutcome(event.target.value as typeof outcome)}><option value="dismissed">Dismiss report</option><option value="action_taken">Action taken</option></select></label>
       <label>Private investigation notes<textarea required maxLength={5000} value={reason} onChange={event => setReason(event.target.value)} /></label>

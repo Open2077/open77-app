@@ -20,6 +20,7 @@ export function ReportForm({ targetType, targetId }: { targetType: CommunityRepo
     finally { setBusy(false); }
   }
   return <details className="hub-report-form"><summary>Report this {targetType === "project" ? "creation" : targetType}</summary>
+    {session?.role === "admin" && targetType === "project" && <p><Link href={`/admin/resources/${targetId}`}>Open project moderation</Link></p>}
     {!ready ? <p role="status">Loading account…</p> : !session || !session.emailVerified ? <p><Link href="/account">Sign in with a verified account</Link> to submit a report.</p> :
       sent ? <p role="status">Your report is in the moderation queue. Thank you for providing the details.</p> :
         <form className="hub-form" onSubmit={submit}><label>What should moderators investigate?<textarea required maxLength={5000} value={reason} onChange={event => setReason(event.target.value)} /></label>

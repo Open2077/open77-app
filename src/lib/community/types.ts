@@ -11,6 +11,7 @@ export type CommunityProject = {
   createdAtUtc: string; updatedAtUtc: string; publishedAtUtc: string | null;
 };
 export type CommunityPage<T> = { items: T[]; nextCursor: string | null };
+export type CommunityModerationState = { projectId: string; state: string; moderationRevision: number; suspendedFromState: string | null };
 export type CommunityReviewItem = { id: string; projectId: string; title: string; slug: string; kind: "projects" | "releases"; revision: number; version: string | null; queuedAtUtc: string };
 export type CommunityReport = { reportId: string; reporterAccountId: string; targetType: "project" | "release" | "comment"; targetId: string; projectId: string; reason: string; state: "open" | "action_taken" | "dismissed"; assignedAccountId: string | null; createdAtUtc: string; targetBody: string | null };
 export type CommunityRelease = {

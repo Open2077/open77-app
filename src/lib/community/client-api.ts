@@ -1,7 +1,10 @@
 import { masterCall } from "@/lib/account/api";
-import type { CommunityReport, CommunityReviewItem } from "./types";
+import type { CommunityModerationState, CommunityReport, CommunityReviewItem } from "./types";
 import type { CommunityContent, CommunityDelivery, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
 const root = "/api/v1/community";
+export const moderationState = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityModerationState>(`${root}/admin/projects/${encodeURIComponent(id)}/moderation`, { token, signal });
+export const moderateProject = (token: string, id: string, expectedModerationRevision: number, suspend: boolean, reason: string) => masterCall<CommunityModerationState>(`${root}/admin/projects/${encodeURIComponent(id)}/moderation`, { token, method: "POST", body: { expectedModerationRevision, suspend, reason } });
+export const revokeRelease = (token: string, id: string, expectedRevision: number, reason: string) => masterCall<void>(`${root}/admin/releases/${encodeURIComponent(id)}/revoke`, { token, method: "POST", body: { expectedRevision, reason } });
 export const reportContent = (token: string, targetType: CommunityReport["targetType"], targetId: string, reason: string) => masterCall<{ reportId: string }>(`${root}/reports`, { token, method: "POST", body: { targetType, targetId, reason } });
 export const reports = (token: string, state: CommunityReport["state"], cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityReport>>(`${root}/admin/reports?state=${state}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
 export const resolveReport = (token: string, id: string, outcome: "action_taken" | "dismissed", reason: string) => masterCall<void>(`${root}/admin/reports/${encodeURIComponent(id)}/resolve`, { token, method: "POST", body: { outcome, reason } });

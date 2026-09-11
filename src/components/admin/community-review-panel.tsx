@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { useSession } from "@/lib/account/session";
 import * as api from "@/lib/community/client-api";
 import type { CommunityPage, CommunityProject, CommunityRelease, CommunityReviewItem } from "@/lib/community/types";
@@ -44,7 +45,8 @@ export function CommunityReviewPanel() {
     {!page && !error && <p role="status">Loading review queue…</p>}
     {page?.items.length === 0 && <p className="hub-notice">Nothing is waiting in this queue.</p>}
     {page?.items.map(item => <article className="hub-draft-row" key={item.id}><div><h2>{item.title}</h2><p>{item.version ? `Version ${item.version} · ` : ""}Revision {item.revision} · {new Date(item.queuedAtUtc).toLocaleString()}</p></div>
-      <button className="btn btn-primary" onClick={() => setSelected(item)}>Inspect submission</button></article>)}
+      <div className="hub-actions"><button className="btn btn-primary" onClick={() => setSelected(item)}>Inspect submission</button>
+        <Link href={`/admin/resources/${item.projectId}`}>Project moderation</Link></div></article>)}
     <nav className="hub-actions" aria-label="Review queue pages">{cursor && <button className="btn btn-ghost" onClick={() => setCursor(undefined)}>Start of queue</button>}
       {page?.nextCursor && <button className="btn btn-ghost" onClick={() => setCursor(page.nextCursor ?? undefined)}>Next page</button>}</nav>
     {selected && <ReviewDetail key={`${selected.kind}-${selected.id}-${selected.revision}`} token={token} item={selected}

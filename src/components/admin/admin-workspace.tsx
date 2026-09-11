@@ -25,7 +25,8 @@ const NAV = [
 
 export function AdminWorkspace({ children, operator }: { children: ReactNode; operator: string }) {
   const pathname = usePathname();
-  const current = NAV.find(n => n.href === pathname) ?? NAV[0];
+  const current = NAV.find(n => n.href === pathname) ??
+    (pathname.startsWith("/admin/resources/") ? NAV.find(n => n.href === "/admin/resources") : undefined) ?? NAV[0];
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [compact, setCompact] = useState(true);
