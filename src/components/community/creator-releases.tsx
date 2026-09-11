@@ -66,7 +66,7 @@ function PackageTransfer({ token, projectId, releaseId, existing, checkedAt, cha
   if (!busy && existing && (!["pending", "uploaded"].includes(existing.upload.state) || Date.parse(existing.upload.expiresAtUtc) <= checkedAt)) return null;
   return <form className="hub-form hub-upload-form" onSubmit={submit}>
     {existing?.upload.state !== "uploaded" && <label>{existing ? "Select your ZIP again to restart" : "Release ZIP"}<input type="file" accept=".zip,application/zip" disabled={busy}
-      onChange={event => { setFile(event.target.files?.[0] ?? null); setError(""); }} /><small>Up to 100 MiB. Include open77.lua and the declared resource files.</small></label>}
+      onChange={event => { setFile(event.target.files?.[0] ?? null); setError(""); }} /><small>Protocol ceiling: 100 MiB. Your publishing limits may be lower. Include open77.lua and the declared resource files.</small></label>}
     <div className="hub-actions"><button className="btn btn-primary" disabled={busy || (!file && existing?.upload.state !== "uploaded")}>
       {existing?.upload.state === "uploaded" ? "Submit stored file for validation" : existing ? "Restart upload" : "Upload ZIP"}</button>
       {busy && <button type="button" className="btn btn-ghost" onClick={() => controller.current?.abort()}>Stop transfer</button>}</div>

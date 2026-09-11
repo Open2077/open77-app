@@ -13,6 +13,7 @@ import { CreatorMedia } from "./creator-media";
 import { ActivityHistory } from "./activity-history";
 import { mergeDraft, type DraftField } from "@/lib/community/draft-merge";
 import { DraftPreview } from "./draft-preview";
+import { CreatorLimits } from "./creator-limits";
 import { ProjectLifecycle } from "./project-lifecycle";
 
 function message(error: unknown) { return error instanceof Error ? error.message : "Something went wrong. Please try again."; }
@@ -209,6 +210,7 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
     {project && <ActivityHistory key={`${project.projectId}-${project.revisionStatus}`} token={session.token} kind="project" id={project.projectId} allowAppeals initiallyOpen={project.revisionStatus === "rejected" || project.state === "suspended"} />}
     {project && <ProjectLifecycle session={session} project={project} disabled={busy} unsaved={dirty || releaseDirty || conflict} changed={state => { setProject(current => current ? { ...current, state } : current); setStatus(state === "archived" ? "Project archived. Its approved page and downloads remain available." : "Project reopened."); }} />}
     <nav aria-label="Publishing steps"><ol className="hub-wizard-steps">{steps.map((label, index) => <li key={label}><button type="button" className="btn btn-ghost" aria-current={step === index ? "step" : undefined} onClick={() => navigateStep(index)}>{index + 1}. {label}{index === 2 && content.kind === "showcase" ? " (no package)" : ""}</button></li>)}</ol></nav>
+    <CreatorLimits token={session.token} />
     <h2 ref={heading} tabIndex={-1}>Step {step + 1}: {steps[step]}</h2>
     <form className="hub-form" noValidate onSubmit={event => { event.preventDefault(); void save(); }}>
       <fieldset className="hub-editor-fields" disabled={conflict || locked}>

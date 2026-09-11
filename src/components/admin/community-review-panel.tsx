@@ -38,6 +38,7 @@ export function CommunityReviewPanel() {
   }, [token, kind, cursor, refresh, begin]);
   if (!token) return null;
   return <div className="hub-review-panel"><div className="hub-actions" aria-label="Review queues">
+    <Link href="/admin/resources/quotas">Creator allowances →</Link>
     {(["projects", "releases"] as const).map(value => <button key={value} className="btn btn-ghost" aria-pressed={value === kind} onClick={() => {
       setKind(value); setCursor(undefined); setPage(null); setSelected(null);
     }}>{value === "projects" ? "Project pages" : "Package releases"}</button>)}
