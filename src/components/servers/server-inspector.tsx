@@ -30,12 +30,15 @@ function addedLabel(days: number): string {
  */
 export function ServerInspector({
   server,
+  nearYou = false,
   isFavorite,
   onToggleFavorite,
   onConnect,
   onClose,
 }: {
   server: GameServer | null;
+  /** Same country as the player. */
+  nearYou?: boolean;
   isFavorite: boolean;
   onToggleFavorite: () => void;
   onConnect: () => void;
@@ -81,6 +84,23 @@ export function ServerInspector({
             <h2 className="directory-detail-name">{server.name}</h2>
           </div>
         </div>
+        <div className="directory-detail-actions">
+        <button className="btn btn-primary directory-detail-connect" onClick={onConnect}>
+          <PlayIcon size={14} />
+          Connect
+        </button>
+        <button
+          className={`fav-btn directory-detail-fav${isFavorite ? " is-fav" : ""}`}
+          aria-pressed={isFavorite}
+          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          onClick={onToggleFavorite}
+        >
+          <StarIcon size={16} filled={isFavorite} />
+        </button>
+        <Link className="directory-detail-more" href={`/servers/${server.id}`}>
+          Full details ↗
+        </Link>
+        </div>
         <p className="directory-detail-desc">
           {server.desc || "This server has not published a description yet."}
         </p>
@@ -100,6 +120,7 @@ export function ServerInspector({
             <dt>Country</dt>
             <dd>
               <FlaggedCountry code={server.country} className="directory-detail-country" />
+              {nearYou ? <span className="directory-detail-near">Near you</span> : null}
             </dd>
           </div>
           <div>
@@ -140,23 +161,6 @@ export function ServerInspector({
             ) : null}
           </div>
         ) : null}
-      </div>
-      <div className="directory-detail-actions">
-        <button className="btn btn-primary directory-detail-connect" onClick={onConnect}>
-          <PlayIcon size={14} />
-          Connect
-        </button>
-        <button
-          className={`fav-btn directory-detail-fav${isFavorite ? " is-fav" : ""}`}
-          aria-pressed={isFavorite}
-          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-          onClick={onToggleFavorite}
-        >
-          <StarIcon size={16} filled={isFavorite} />
-        </button>
-        <Link className="directory-detail-more" href={`/servers/${server.id}`}>
-          Full details ↗
-        </Link>
       </div>
     </aside>
   );

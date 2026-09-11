@@ -15,7 +15,8 @@ import { ServerLocale } from "@/components/servers/country-flag";
 import { ServerImage } from "@/components/servers/server-image";
 import { ServerInspector } from "@/components/servers/server-inspector";
 import { useToast } from "@/components/toast";
-import { regionCode, regionDisplayName } from "@/lib/locale";
+import { languageDisplayName, regionCode, regionDisplayName } from "@/lib/locale";
+import { usePlayerLocale, type PlayerLocale } from "@/lib/player-locale";
 import {
   LANGUAGES,
   PRIMARY_MODES,
@@ -34,6 +35,7 @@ const MIN_PLAYER_OPTIONS = [
   { value: 100, label: "100+" },
 ];
 const SORTS = [
+  { value: "nearby", label: "Near you" },
   { value: "players", label: "Most players" },
   { value: "name", label: "Name A–Z" },
   { value: "recent", label: "Recently added" },
@@ -42,8 +44,27 @@ type Sort = (typeof SORTS)[number]["value"];
 /** Sentinel for "listings whose operator gave no region subtag at all". */
 const NO_COUNTRY = "none";
 const RAIL_KEY = "open77.directory.rail";
-function sortServers(list: GameServer[], sort: Sort): GameServer[] {
+/**
+ * How close a server is to the player, by locale: the directory carries no
+ * latency, and for roleplay the language matters more than the milliseconds.
+ * Same country outranks same language, which outranks the same region bucket.
+ */
+function proximity(server: GameServer, me: PlayerLocale): number {
+  let score = 0;
+  if (me.country && regionCode(server.country) === me.country) score += 4;
+  if (me.lang && server.lang === me.lang) score += 2;
+  if (me.region && server.region === me.region) score += 1;
+  return score;
+}
+function sortServers(list: GameServer[], sort: Sort, me: PlayerLocale): GameServer[] {
   const out = [...list];
+  if (sort === "nearby")
+    out.sort(
+      (a, b) =>
+        proximity(b, me) - proximity(a, me) ||
+        b.players - a.players ||
+        a.name.localeCompare(b.name),
+    );
   if (sort === "players")
     out.sort((a, b) => b.players - a.players || a.name.localeCompare(b.name));
   if (sort === "name") out.sort((a, b) => a.name.localeCompare(b.name));
@@ -119,7 +140,7 @@ function useDirectoryFilters() {
   return useMemo(() => {
     const p = new URLSearchParams(search);
     const requestedMode = p.get("mode") ?? "all";
-    const requestedSort = p.get("sort") ?? "players";
+    const requestedSort = p.get("sort") ?? "nearby";
     return {
       query: p.get("q") ?? "",
       mode: MODE_CHIPS.includes(requestedMode as (typeof MODE_CHIPS)[number])
@@ -127,7 +148,7 @@ function useDirectoryFilters() {
         : "all",
       sort: SORTS.some((s) => s.value === requestedSort)
         ? (requestedSort as Sort)
-        : ("players" as Sort),
+        : ("nearby" as Sort),
       favorites: p.get("favorites") === "true",
       region: p.get("region") ?? "all",
       lang: p.get("lang") ?? "all",
@@ -196,6 +217,7 @@ export function ServerBrowser({
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { isFavorite, toggle } = useFavorites();
+  const me = usePlayerLocale();
   const { show: showToast, node: toastNode } = useToast();
   const filterPanelId = useId();
   const searchRef = useRef<HTMLInputElement>(null);
@@ -301,8 +323,9 @@ export function ServerBrowser({
         return terms.every((term) => text.includes(term));
       }),
       sort,
+      me,
     );
-  }, [servers, filters, query, mode, sort, favsOnly, isFavorite]);
+  }, [servers, filters, query, mode, sort, favsOnly, isFavorite, me]);
 
   // The selection follows the directory: a world that refreshed away or was
   // filtered out is no longer inspected, and the pane says so by going idle.
@@ -464,6 +487,21 @@ export function ServerBrowser({
             </button>
           ))}
         </div>
+        <label className="select-wrap sb-lang">
+          <span className="select-label">Language</span>
+          <select
+            aria-label="Filter by language"
+            value={filters.lang}
+            onChange={(e) => updateFilters({ lang: e.target.value })}
+          >
+            <option value="all">Any</option>
+            {presentOptions(LANGUAGES, facets.langs, filters.lang).map((l) => (
+              <option key={l} value={l}>
+                {l} · {languageDisplayName(l.toLowerCase())}
+              </option>
+            ))}
+          </select>
+        </label>
         <label className="select-wrap sb-sort">
           <span className="select-label">Sort</span>
           <select
@@ -513,6 +551,42 @@ export function ServerBrowser({
               <small>{servers.filter((s) => isFavorite(s.id)).length}</small>
             </button>
           </nav>
+          {me.country || me.lang ? (
+            <div className="directory-filter-section directory-near" role="group" aria-label="Near you">
+              <h2>Near you</h2>
+              <p className="directory-you">
+                {me.country ? (
+                  <ServerLocale country={me.country} lang={me.lang ?? "—"} />
+                ) : (
+                  <span>{me.lang ? languageDisplayName(me.lang.toLowerCase()) : ""}</span>
+                )}
+              </p>
+              <div className="directory-tag-filters">
+                {me.country ? (
+                  <button
+                    aria-pressed={filters.country === me.country}
+                    onClick={() =>
+                      updateFilters({
+                        country: filters.country === me.country ? "all" : me.country!,
+                      })
+                    }
+                  >
+                    My country <small>{regionDisplayName(me.country)}</small>
+                  </button>
+                ) : null}
+                {me.lang ? (
+                  <button
+                    aria-pressed={filters.lang === me.lang}
+                    onClick={() =>
+                      updateFilters({ lang: filters.lang === me.lang ? "all" : me.lang! })
+                    }
+                  >
+                    My language <small>{me.lang}</small>
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
           <div
             className="directory-filter-section client-filters"
             role="group"
@@ -532,7 +606,7 @@ export function ServerBrowser({
             ))}
           </div>
           <div className="directory-filter-section directory-location">
-            <h2>Location & language</h2>
+            <h2>Location</h2>
             <label className="select-wrap">
               <span className="select-label">Region</span>
               <select
@@ -544,21 +618,6 @@ export function ServerBrowser({
                 {presentOptions(REGIONS, facets.regions, filters.region).map(
                   (r) => (
                     <option key={r}>{r}</option>
-                  ),
-                )}
-              </select>
-            </label>
-            <label className="select-wrap">
-              <span className="select-label">Language</span>
-              <select
-                aria-label="Filter by language"
-                value={filters.lang}
-                onChange={(e) => updateFilters({ lang: e.target.value })}
-              >
-                <option value="all">Any language</option>
-                {presentOptions(LANGUAGES, facets.langs, filters.lang).map(
-                  (l) => (
-                    <option key={l}>{l}</option>
                   ),
                 )}
               </select>
@@ -709,7 +768,7 @@ export function ServerBrowser({
                   <button
                     onClick={() =>
                       updateFilters({
-                        sort: sort === "players" ? "name" : "players",
+                        sort: sort === "players" ? "nearby" : "players",
                       })
                     }
                   >
@@ -722,6 +781,7 @@ export function ServerBrowser({
                     <ServerRow
                       key={server.id}
                       server={server}
+                      near={proximity(server, me) >= 4}
                       isFavorite={isFavorite(server.id)}
                       isSelected={selected?.id === server.id}
                       onSelect={() =>
@@ -753,6 +813,7 @@ export function ServerBrowser({
         </section>
         <ServerInspector
           server={selected}
+          nearYou={selected ? proximity(selected, me) >= 4 : false}
           isFavorite={selected ? isFavorite(selected.id) : false}
           onToggleFavorite={() => selected && toggle(selected.id)}
           onConnect={() => selected && join(selected)}
@@ -777,6 +838,7 @@ export function ServerBrowser({
 
 function ServerRow({
   server,
+  near,
   isFavorite,
   isSelected,
   onSelect,
@@ -784,6 +846,8 @@ function ServerRow({
   onConnect,
 }: {
   server: GameServer;
+  /** Same country as the player: the locale cell lights up. */
+  near: boolean;
   isFavorite: boolean;
   isSelected: boolean;
   onSelect: () => void;
@@ -845,7 +909,7 @@ function ServerRow({
           ))}
       </div>
       <ServerLocale
-        className="sb-loc"
+        className={`sb-loc${near ? " is-near" : ""}`}
         country={server.country}
         lang={server.lang}
       />

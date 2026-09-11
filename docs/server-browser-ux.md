@@ -10,7 +10,7 @@ owns it and is scoped to `/servers`; the rest of the site keeps its own design.
 `/servers` fills the viewport below the header, at FiveM density, with four parts:
 
 - **Command bar** — search (`/` focuses it), the game-type segmented control with
-  live counts, sort, the freshness readout and Refresh. The status dot on Refresh
+  live counts, a language filter, sort, the freshness readout and Refresh. The status dot on Refresh
   is green, cyan while updating and amber when the last refresh failed.
 - **Filter rail** — All servers / Favorites, game type, region, language,
   country, availability and the most common tags. Collapsible on desktop and
@@ -24,6 +24,15 @@ owns it and is scoped to `/servers`; the rest of the site keeps its own design.
   community links, Connect, favorite and the link to the full page. Nothing is
   selected on the player's behalf. Below 1200px it is an overlay that appears
   only for a selected server.
+
+**Near you.** The default sort is "Near you": the browser's language
+preferences (`navigator.languages`, no permission, no geolocation service) give
+the player's country, language and region bucket, and servers rank by same
+country, then same language, then same region, then population. Same-country
+rows light their locale cell cyan, the inspector shows a "Near you" mark, and the
+rail offers one-click "My country" / "My language" filters. The directory
+carries no latency, so locale stands in for ping; nothing is filtered out by
+default.
 
 Keyboard: ↑/↓ walk the list, Enter connects, Escape clears the selection or
 closes the filter drawer. Filters, sort and search live in the URL so links,

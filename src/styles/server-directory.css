@@ -258,8 +258,13 @@
 .directory-dense select option {
   background: var(--panel);
 }
-.directory-dense .sb-sort {
+.directory-dense .sb-sort,
+.directory-dense .sb-lang {
   flex: 0 0 auto;
+}
+.directory-dense .sb-lang select {
+  width: 128px;
+  height: 34px;
 }
 .directory-dense .sb-sort select {
   width: 148px;
@@ -462,6 +467,23 @@
   flex-wrap: wrap;
   gap: 4px;
   padding: 0 4px;
+}
+.directory-near {
+  border-top: 0;
+  padding-top: 0;
+}
+.directory-you {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0 4px;
+  font: 500 9.5px/1 var(--font-mono);
+  letter-spacing: 0.06em;
+  color: var(--body);
+}
+.directory-you .flag-sep {
+  color: var(--cyan);
 }
 .directory-tag-filters button {
   display: inline-flex;
@@ -777,6 +799,12 @@
   color: var(--body);
 }
 .directory-dense .sb-loc .flag-sep {
+  color: var(--cyan);
+}
+.directory-dense .sb-loc.is-near {
+  color: var(--cyan);
+}
+.directory-dense .sb-loc.is-near .flag-lang {
   color: var(--cyan);
 }
 .directory-dense .sb-loc .flag-lang {
@@ -1159,6 +1187,17 @@
   align-items: center;
   gap: 6px;
 }
+.directory-detail-near {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 5px;
+  background: var(--cyan);
+  color: #05262a;
+  font: 700 8px/1.2 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
 .directory-detail-tags {
   display: flex;
   flex-wrap: wrap;
@@ -1183,14 +1222,14 @@
   color: var(--cyan);
   border-color: var(--cyan);
 }
+/* Connect sits right under the name: no scrolling to reach it on any screen. */
 .directory-detail-actions {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 8px;
-  margin-top: auto;
-  padding: 14px 18px 18px;
-  border-top: 1px solid var(--dline);
-  background: var(--panel);
+  margin: 0;
+  padding: 0 0 14px;
+  border-bottom: 1px solid var(--dline);
 }
 .directory-dense .directory-detail-connect {
   min-height: 44px;
@@ -1315,7 +1354,10 @@
   }
   .directory-modes {
     order: 5;
-    flex-basis: 100%;
+    flex: 1 1 auto;
+  }
+  .directory-dense .sb-lang {
+    order: 6;
   }
 }
 @media (max-width: 1000px) {
@@ -1406,9 +1448,13 @@
     flex-basis: 100%;
     order: 2;
   }
-  .directory-dense .sb-sort select {
-    width: 128px;
+  .directory-dense .sb-sort select,
+  .directory-dense .sb-lang select {
+    width: 112px;
     height: 36px;
+  }
+  .directory-dense .sb-lang .select-label {
+    display: none;
   }
   .directory-tool,
   .directory-dense .sb-tool {

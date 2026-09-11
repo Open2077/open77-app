@@ -276,7 +276,7 @@ export function normaliseRoster(players: unknown): ServerRoster | null {
 }
 
 /** BCP-47 primary subtag → the browser's language chip. Anything else reads as EN. */
-function localeToLang(locale: string): ServerLanguage {
+export function localeToLang(locale: string): ServerLanguage {
   const primary = parseLocaleTag(locale).language;
   if (primary === "fr") return "FR";
   if (primary === "de") return "DE";
@@ -289,7 +289,7 @@ function localeToLang(locale: string): ServerLanguage {
  * locale, not a continent, so this is a best-effort projection and defaults to
  * EU when the tag is missing or unrecognised.
  */
-function localeToRegion(locale: string): ServerRegion {
+export function localeToRegion(locale: string): ServerRegion {
   const region = parseLocaleTag(locale).region;
   if (!region) return "EU";
   if (["US", "CA", "MX"].includes(region)) return "NA";
