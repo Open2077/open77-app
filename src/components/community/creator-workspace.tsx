@@ -102,7 +102,7 @@ function Editor({ session, id }: { session: StoredSession; id?: string }) {
     {error && <div className="hub-notice" role="alert">{error}{conflict && <p>Your text is still here. Copy any unsaved changes before reloading the newer draft.</p>}</div>}
     {status && <div className="hub-notice" role="status">{status}</div>}
     {project && <p className="hub-notice">Revision {project.revision} · {project.revisionStatus.replaceAll("_", " ")}{project.publishedAtUtc ? " · Earlier approved content remains public." : " · Not published yet."}</p>}
-    {project && <ActivityHistory key={`${project.projectId}-${project.revisionStatus}`} token={session.token} kind="project" id={project.projectId} initiallyOpen={project.revisionStatus === "rejected" || project.state === "suspended"} />}
+    {project && <ActivityHistory key={`${project.projectId}-${project.revisionStatus}`} token={session.token} kind="project" id={project.projectId} allowAppeals initiallyOpen={project.revisionStatus === "rejected" || project.state === "suspended"} />}
     <form className="hub-form" onSubmit={save}>
       <label>Project title<input required maxLength={80} value={content.title} onChange={event => change("title", event.target.value)} /></label>
       <label>Resource address<input required maxLength={80} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} readOnly={!!project || busy} value={slug} onChange={event => { editSequence.current++; setSlug(event.target.value); setDirty(true); }} placeholder="auto-taxi" /><small>open2077.net/resources/{slug || "your-project"}</small></label>

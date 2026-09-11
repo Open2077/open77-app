@@ -3,16 +3,17 @@
 import { useEffect, useState } from "react";
 import { activity } from "@/lib/community/client-api";
 import type { CommunityActivity, CommunityPage } from "@/lib/community/types";
+import { AppealForm } from "./appeal-form";
 
-export function ActivityHistory({ token, kind, id, title = "Moderation decisions", initiallyOpen = false }: {
-  token: string; kind: "project" | "report"; id: string; title?: string; initiallyOpen?: boolean;
+export function ActivityHistory({ token, kind, id, title = "Moderation decisions", initiallyOpen = false, allowAppeals = false }: {
+  token: string; kind: "project" | "report"; id: string; title?: string; initiallyOpen?: boolean; allowAppeals?: boolean;
 }) {
   const [open, setOpen] = useState(initiallyOpen);
   return <details className="hub-release hub-activity" open={open} onToggle={event => setOpen(event.currentTarget.open)}><summary>{title}</summary>
-    {open && <HistoryEntries token={token} kind={kind} id={id} />}</details>;
+    {open && <HistoryEntries token={token} kind={kind} id={id} allowAppeals={allowAppeals} />}</details>;
 }
 
-function HistoryEntries({ token, kind, id }: { token: string; kind: "project" | "report"; id: string }) {
+function HistoryEntries({ token, kind, id, allowAppeals }: { token: string; kind: "project" | "report"; id: string; allowAppeals: boolean }) {
   const [page, setPage] = useState<CommunityPage<CommunityActivity> | null>(null);
   const [cursor, setCursor] = useState<string>();
   const [refresh, setRefresh] = useState(0);
@@ -30,6 +31,7 @@ function HistoryEntries({ token, kind, id }: { token: string; kind: "project" | 
     {page?.items.map(item => <article className="hub-activity-entry" key={item.activityId}><h3>{item.action.replaceAll("_", " ")}</h3>
       <p className="hub-release-meta"><time dateTime={item.createdAtUtc}>{new Date(item.createdAtUtc).toLocaleString()}</time>{item.actorDisplayName ? ` · ${item.actorDisplayName}` : ""}</p>
       {item.reason && <p className="hub-activity-reason">{item.reason}</p>}
+      {kind === "project" && allowAppeals && ["project_rejected", "release_rejected", "release_revoked", "project_suspended"].includes(item.action) && <AppealForm token={token} decisionId={item.activityId} />}
       {item.actorDisplayName && <details><summary>Audit details</summary><pre className="hub-review-text">{JSON.stringify(item.details, null, 2)}</pre></details>}
     </article>)}
     <nav className="hub-actions" aria-label="History pages"><button type="button" className="btn btn-ghost" onClick={() => setRefresh(value => value + 1)}>Refresh history</button>
