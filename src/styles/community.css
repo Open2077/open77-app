@@ -124,6 +124,10 @@
 .hub-report-form summary { cursor: pointer; color: var(--text-dim); }
 .hub-report-form .hub-form { margin-top: 16px; gap: 12px; }
 .hub-report-form p { font-size: 12px; line-height: 1.8; }
+.hub-activity { margin-block: 24px; }
+.hub-activity-entry { padding-block: 20px; border-bottom: 1px solid var(--line); }
+.hub-activity-entry h3 { text-transform: capitalize; font: 600 22px var(--font-display); }
+.hub-activity-reason { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; line-height: 1.8; }
 .hub-main :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 @media(max-width: 1000px) {
   .hub-hero { grid-template-columns: 1fr 250px; gap: 28px; }.hub-categories { grid-template-columns: repeat(3,1fr); }

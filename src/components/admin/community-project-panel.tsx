@@ -8,6 +8,7 @@ import { useAdminData } from "./use-admin-data";
 import { ProjectModerationControls, ReleaseRevocationControls } from "./community-moderation-controls";
 import { PrivateMediaPreview } from "@/components/community/private-media-preview";
 import { DownloadButton } from "@/components/community/download-button";
+import { ActivityHistory } from "@/components/community/activity-history";
 
 export function CommunityProjectPanel({ id }: { id: string }) {
   const { session } = useSession();
@@ -27,6 +28,7 @@ export function CommunityProjectPanel({ id }: { id: string }) {
     <p>{project.content.summary}</p><pre className="hub-review-text">{project.content.description}</pre>
     <div className="hub-media-editor">{project.content.media?.map(image => <PrivateMediaPreview key={image.mediaId} token={session.token} mediaId={image.mediaId} alt={image.altText} />)}</div>
     <ProjectModerationControls token={session.token} projectId={id} updated={result.reload} />
+    <ActivityHistory token={session.token} kind="project" id={id} title="Project audit history" />
     <h3>Release history</h3><div className="hub-releases">{releases.items.map(release => <article className="hub-release" key={`${release.releaseId}-${release.revision}`}>
       <h4>Version {release.version} · {release.state}</h4><pre className="hub-review-text">{release.metadata.changelog}</pre>
       {release.sha256 && <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p>}

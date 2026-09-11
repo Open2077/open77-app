@@ -10,6 +10,7 @@ import * as api from "@/lib/community/client-api";
 import { categories, type CommunityContent, type CommunityProject } from "@/lib/community/types";
 import { CreatorReleases } from "./creator-releases";
 import { CreatorMedia } from "./creator-media";
+import { ActivityHistory } from "./activity-history";
 
 function message(error: unknown) { return error instanceof Error ? error.message : "Something went wrong. Please try again."; }
 const emptyContent: CommunityContent = { title: "", summary: "", category: "scripts", description: "", installation: "", kind: "showcase", maturity: "experimental", tags: [] };
@@ -101,6 +102,7 @@ function Editor({ session, id }: { session: StoredSession; id?: string }) {
     {error && <div className="hub-notice" role="alert">{error}{conflict && <p>Your text is still here. Copy any unsaved changes before reloading the newer draft.</p>}</div>}
     {status && <div className="hub-notice" role="status">{status}</div>}
     {project && <p className="hub-notice">Revision {project.revision} · {project.revisionStatus.replaceAll("_", " ")}{project.publishedAtUtc ? " · Earlier approved content remains public." : " · Not published yet."}</p>}
+    {project && <ActivityHistory key={`${project.projectId}-${project.revisionStatus}`} token={session.token} kind="project" id={project.projectId} initiallyOpen={project.revisionStatus === "rejected" || project.state === "suspended"} />}
     <form className="hub-form" onSubmit={save}>
       <label>Project title<input required maxLength={80} value={content.title} onChange={event => change("title", event.target.value)} /></label>
       <label>Resource address<input required maxLength={80} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} readOnly={!!project || busy} value={slug} onChange={event => { editSequence.current++; setSlug(event.target.value); setDirty(true); }} placeholder="auto-taxi" /><small>open2077.net/resources/{slug || "your-project"}</small></label>

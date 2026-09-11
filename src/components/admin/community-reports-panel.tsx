@@ -9,6 +9,7 @@ import { useAdminData } from "./use-admin-data";
 import { PrivateMediaPreview } from "@/components/community/private-media-preview";
 import { DownloadButton } from "@/components/community/download-button";
 import { ProjectModerationControls, ReleaseRevocationControls } from "./community-moderation-controls";
+import { ActivityHistory } from "@/components/community/activity-history";
 
 export function CommunityReportsPanel() {
   const { session } = useSession();
@@ -23,19 +24,27 @@ export function CommunityReportsPanel() {
     {result.error && <p className="hub-notice" role="alert">{result.error}</p>}
     {!result.data && !result.error && <p role="status">Loading reports…</p>}
     {result.data?.items.length === 0 && <p className="hub-notice">No reports match this filter.</p>}
-    <div className="hub-releases">{result.data?.items.map(report => <ReportRow key={`${report.reportId}-${report.state}`} token={session.token} report={report} updated={result.reload} />)}</div>
+    <div className="hub-releases">{result.data?.items.map(report => <ReportRow key={`${report.reportId}-${report.state}`} token={session.token} accountId={session.accountId} report={report} updated={result.reload} />)}</div>
     <nav className="hub-actions" aria-label="Report pages">{cursor && <button className="btn btn-ghost" onClick={() => setCursor(undefined)}>Start of queue</button>}
       {result.data?.nextCursor && <button className="btn btn-ghost" onClick={() => setCursor(result.data?.nextCursor ?? undefined)}>Next page</button>}</nav>
   </div>;
 }
 
-function ReportRow({ token, report, updated }: { token: string; report: CommunityReport; updated: () => void }) {
+function ReportRow({ token, accountId, report, updated }: { token: string; accountId: string; report: CommunityReport; updated: () => void }) {
   const [reason, setReason] = useState("");
   const [outcome, setOutcome] = useState<"action_taken" | "dismissed">("dismissed");
   const [project, setProject] = useState<CommunityProject | null>(null);
   const [release, setRelease] = useState<CommunityRelease | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [assignmentReason, setAssignmentReason] = useState("");
+  async function assign(event: FormEvent) {
+    event.preventDefault(); if (busy) return;
+    setBusy(true); setError("");
+    try { await api.assignReport(token, report.reportId, report.revision, report.assignedAccountId !== accountId, assignmentReason); setAssignmentReason(""); updated(); }
+    catch (error) { setError(error instanceof Error ? error.message : "Assignment failed."); }
+    finally { setBusy(false); }
+  }
   async function inspect() {
     setBusy(true); setError("");
     try {
@@ -49,13 +58,16 @@ function ReportRow({ token, report, updated }: { token: string; report: Communit
   async function resolve(event: FormEvent) {
     event.preventDefault(); if (busy) return;
     setBusy(true); setError("");
-    try { await api.resolveReport(token, report.reportId, outcome, reason); updated(); }
+    try { await api.resolveReport(token, report.reportId, outcome, reason, report.revision); updated(); }
     catch (error) { setError(error instanceof Error ? error.message : "The report could not be resolved."); }
     finally { setBusy(false); }
   }
   return <article className="hub-release"><div className="hub-release-heading"><h2>Reported {report.targetType}</h2><span className="hub-release-state">{report.state.replaceAll("_", " ")}</span></div>
     <p className="hub-release-meta">{new Date(report.createdAtUtc).toLocaleString()}</p><pre className="hub-review-text">{report.reason}</pre>
     {error && <p className="hub-notice" role="alert">{error}</p>}
+    <p>Assigned to: {report.assignedAccountId === accountId ? "you" : report.assignedAccountId ? "another moderator" : "unassigned"} · revision {report.revision}</p>
+    {report.state === "open" && <form className="hub-form" onSubmit={assign}><label>Assignment note<input required maxLength={5000} value={assignmentReason} onChange={event => setAssignmentReason(event.target.value)} /></label>
+      <button className="btn btn-ghost" disabled={busy || !assignmentReason.trim()}>{report.assignedAccountId === accountId ? "Release to queue" : report.assignedAccountId ? "Take over report" : "Assign to me"}</button></form>}
     <button className="btn btn-ghost" disabled={busy} onClick={inspect}>{project ? "Refresh reported content" : "Inspect reported content"}</button>
     {report.targetBody && <details><summary>Reported comment</summary><pre className="hub-review-text">{report.targetBody}</pre></details>}
     {project && <details open><summary>Current project draft: {project.content.title} · {project.state} · revision {project.revision}</summary>
@@ -70,6 +82,7 @@ function ReportRow({ token, report, updated }: { token: string; report: Communit
     {report.state === "open" && <form className="hub-form" onSubmit={resolve}><p>Apply any required content action before recording the outcome. Investigation notes stay private.</p>
       <label>Outcome<select value={outcome} onChange={event => setOutcome(event.target.value as typeof outcome)}><option value="dismissed">Dismiss report</option><option value="action_taken">Action taken</option></select></label>
       <label>Private investigation notes<textarea required maxLength={5000} value={reason} onChange={event => setReason(event.target.value)} /></label>
-      <button className="btn btn-primary" disabled={busy || !reason.trim()}>{busy ? "Working…" : "Resolve report"}</button></form>}
+      <button className="btn btn-primary" disabled={busy || !reason.trim() || (!!report.assignedAccountId && report.assignedAccountId !== accountId)}>{busy ? "Working…" : "Resolve report"}</button></form>}
+    <ActivityHistory key={`${report.reportId}-${report.revision}`} token={token} kind="report" id={report.reportId} title="Private report history" />
   </article>;
 }

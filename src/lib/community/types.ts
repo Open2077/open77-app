@@ -12,8 +12,9 @@ export type CommunityProject = {
 };
 export type CommunityPage<T> = { items: T[]; nextCursor: string | null };
 export type CommunityModerationState = { projectId: string; state: string; moderationRevision: number; suspendedFromState: string | null };
+export type CommunityActivity = { activityId: string; action: string; reason: string; details: unknown; createdAtUtc: string; actorDisplayName: string | null; relatedReleaseId: string | null };
 export type CommunityReviewItem = { id: string; projectId: string; title: string; slug: string; kind: "projects" | "releases"; revision: number; version: string | null; queuedAtUtc: string };
-export type CommunityReport = { reportId: string; reporterAccountId: string; targetType: "project" | "release" | "comment"; targetId: string; projectId: string; reason: string; state: "open" | "action_taken" | "dismissed"; assignedAccountId: string | null; createdAtUtc: string; targetBody: string | null };
+export type CommunityReport = { reportId: string; reporterAccountId: string; targetType: "project" | "release" | "comment"; targetId: string; projectId: string; reason: string; state: "open" | "action_taken" | "dismissed"; assignedAccountId: string | null; createdAtUtc: string; targetBody: string | null; revision: number };
 export type CommunityRelease = {
   releaseId: string; projectId: string; version: string; state: string; channel: "stable" | "prerelease";
   revision: number; metadata: { changelog: string; license: string; installation: string; testedBuilds: string[]; requiredResources: string[] };
