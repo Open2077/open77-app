@@ -1,7 +1,10 @@
 import { masterCall } from "@/lib/account/api";
-import type { CommunityReviewItem } from "./types";
+import type { CommunityReport, CommunityReviewItem } from "./types";
 import type { CommunityContent, CommunityDelivery, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
 const root = "/api/v1/community";
+export const reportContent = (token: string, targetType: CommunityReport["targetType"], targetId: string, reason: string) => masterCall<{ reportId: string }>(`${root}/reports`, { token, method: "POST", body: { targetType, targetId, reason } });
+export const reports = (token: string, state: CommunityReport["state"], cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityReport>>(`${root}/admin/reports?state=${state}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
+export const resolveReport = (token: string, id: string, outcome: "action_taken" | "dismissed", reason: string) => masterCall<void>(`${root}/admin/reports/${encodeURIComponent(id)}/resolve`, { token, method: "POST", body: { outcome, reason } });
 export const reviewQueue = (token: string, kind: "projects" | "releases", cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityReviewItem>>(`${root}/admin/review/${kind}${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
 export const reviewRelease = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityRelease>(`${root}/admin/releases/${encodeURIComponent(id)}`, { token, signal });
 export const reviewDecision = (token: string, kind: "projects" | "releases", id: string, expectedRevision: number, approve: boolean, reason: string) => masterCall<void>(`${root}/admin/${kind}/${encodeURIComponent(id)}/decision`, { token, method: "POST", body: { expectedRevision, approve, reason } });

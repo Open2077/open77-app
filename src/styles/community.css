@@ -120,6 +120,10 @@
 .hub-review-text { white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.8 var(--font-mono); background: var(--surface); padding: 20px; margin-block: 16px; max-height: 480px; overflow: auto; }
 .hub-form .hub-review-confirm { flex-direction: row; align-items: center; }
 .hub-review-confirm input { width: 20px; min-height: 20px; flex-shrink: 0; }
+.hub-report-form { margin-top: 24px; border-top: 1px solid var(--line); padding-top: 16px; font-size: 12px; }
+.hub-report-form summary { cursor: pointer; color: var(--text-dim); }
+.hub-report-form .hub-form { margin-top: 16px; gap: 12px; }
+.hub-report-form p { font-size: 12px; line-height: 1.8; }
 .hub-main :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 @media(max-width: 1000px) {
   .hub-hero { grid-template-columns: 1fr 250px; gap: 28px; }.hub-categories { grid-template-columns: repeat(3,1fr); }
