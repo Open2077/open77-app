@@ -1,9 +1,14 @@
 import { masterCall } from "@/lib/account/api";
 import type { CommunityInvitation, CommunityMember } from "./types";
+import type { CommunityEditorialState, CommunityRankingExclusion } from "./types";
 import type { CommunityReleaseEditor, CommunityReleaseEditorContent, CommunityReleaseFiles } from "./types";
 import type { CommunityActivity, CommunityAppeal, CommunityComment, CommunityModerationState, CommunityNotification, CommunityProfile, CommunityProjectState, CommunityReport, CommunityReviewItem, CommunitySavedProject } from "./types";
 import type { CommunityContent, CommunityDelivery, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
 const root = "/api/v1/community";
+export const editorialState = (token: string, id: string) => masterCall<CommunityEditorialState>(`${root}/admin/projects/${encodeURIComponent(id)}/editorial`, { token, signal: AbortSignal.timeout(10000) });
+export const setEditorial = (token: string, id: string, expectedModerationRevision: number, featured: boolean, reason: string) => masterCall<CommunityEditorialState>(`${root}/admin/projects/${encodeURIComponent(id)}/editorial`, { token, method: "PUT", body: { expectedModerationRevision, featured, reason }, signal: AbortSignal.timeout(10000) });
+export const rankingExclusion = (token: string, id: string) => masterCall<CommunityRankingExclusion>(`${root}/admin/accounts/${encodeURIComponent(id)}/ranking-exclusion`, { token, signal: AbortSignal.timeout(10000) });
+export const setRankingExclusion = (token: string, id: string, expectedRevision: number, excluded: boolean, reason: string) => masterCall<void>(`${root}/admin/accounts/${encodeURIComponent(id)}/ranking-exclusion`, { token, method: "PUT", body: { expectedRevision, excluded, reason }, signal: AbortSignal.timeout(10000) });
 export const recordProjectView = (id: string, token?: string, signal?: AbortSignal) => masterCall<void>(`${root}/projects/${encodeURIComponent(id)}/view`, { token, method: "POST", signal });
 export const projectMembers = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityMember[]>(`${root}/me/projects/${encodeURIComponent(id)}/members`, { token, signal });
 export const removeProjectMember = (token: string, id: string, member: CommunityMember) => masterCall<void>(`${root}/projects/${encodeURIComponent(id)}/members/${encodeURIComponent(member.accountId)}?expectedMembershipId=${encodeURIComponent(member.membershipId)}`, { token, method: "DELETE", signal: AbortSignal.timeout(10000) });

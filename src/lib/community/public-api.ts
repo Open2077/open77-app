@@ -2,6 +2,8 @@ import "server-only";
 import { cache } from "react";
 import { MASTER_URL } from "@/lib/account/api";
 import type { CommunityComment, CommunityCreatorPage, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease } from "./types";
+import type { CommunityDirectoryPage, CommunityDirectoryQuery } from "./types";
+import { directoryQuery } from "./directory";
 
 const origin = (process.env.OP77_COMMUNITY_API_URL ?? MASTER_URL).replace(/\/$/, "");
 export class CommunityReadError extends Error {
@@ -18,13 +20,8 @@ async function read<T>(path: string): Promise<T> {
   try { return await response.json() as T; }
   catch { throw new CommunityReadError(502, "The hub returned an unreadable response."); }
 }
-export function listProjects(params: { query?: string; category?: string; cursor?: string; limit?: number } = {}) {
-  const query = new URLSearchParams();
-  if (params.query) query.set("query", params.query);
-  if (params.category) query.set("category", params.category);
-  if (params.cursor) query.set("cursor", params.cursor);
-  query.set("limit", String(params.limit ?? 24));
-  return read<CommunityPage<CommunityProject>>(`/projects?${query}`);
+export function listProjects(params: CommunityDirectoryQuery = {}) {
+  return read<CommunityDirectoryPage>(`/projects?${directoryQuery({ ...params, limit: params.limit ?? 24 })}`);
 }
 // Request memoization only: page and metadata share an approved snapshot.
 export const getProject = cache((slug: string) => read<CommunityProject>(`/projects/${encodeURIComponent(slug)}`));

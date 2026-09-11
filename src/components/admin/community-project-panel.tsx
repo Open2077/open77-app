@@ -10,6 +10,7 @@ import { PrivateMediaPreview } from "@/components/community/private-media-previe
 import { DownloadButton } from "@/components/community/download-button";
 import { ActivityHistory } from "@/components/community/activity-history";
 import { ReleaseFiles } from "@/components/community/release-files";
+import { CommunityEditorialControls, CommunityRankingControls } from "./community-editorial-controls";
 
 export function CommunityProjectPanel({ id }: { id: string }) {
   const { session } = useSession();
@@ -29,6 +30,8 @@ export function CommunityProjectPanel({ id }: { id: string }) {
     <p>{project.content.summary}</p><pre className="hub-review-text">{project.content.description}</pre>
     <div className="hub-media-editor">{project.content.media?.map(image => <PrivateMediaPreview key={image.mediaId} token={session.token} mediaId={image.mediaId} alt={image.altText} />)}</div>
     <ProjectModerationControls token={session.token} projectId={id} updated={result.reload} />
+    <CommunityEditorialControls key={`editorial-${id}-${session.token}`} token={session.token} projectId={id} updated={result.reload} />
+    <CommunityRankingControls key={`ranking-${session.token}`} token={session.token} />
     <ActivityHistory token={session.token} kind="project" id={id} title="Project audit history" />
     <h3>Release history</h3><div className="hub-releases">{releases.items.map(release => <article className="hub-release" key={`${release.releaseId}-${release.revision}`}>
       <h4>Version {release.version} · {release.state}</h4><pre className="hub-review-text">{release.metadata.changelog}</pre>

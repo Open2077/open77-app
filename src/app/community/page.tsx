@@ -7,7 +7,25 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({ title: "Community Hub", description: "Discover and share resources, gamemodes, maps and interfaces built for OPEN//77 servers.", path: "/community" });
 export default async function CommunityPage() {
-  const catalog = await listProjects({ limit: 6 }).catch(() => null);
+  const results = await Promise.allSettled([
+    listProjects({ sort: "featured", limit: 1 }), listProjects({ sort: "trending", limit: 6 }),
+    listProjects({ sort: "new", limit: 6 }), listProjects({ sort: "updated", limit: 6 }), listProjects({ kind: "showcase", limit: 3 }),
+  ]);
+  const shelves = results.map(result => result.status === "fulfilled" ? result.value : null);
+  const seen = new Set<string>();
+  const sections = [
+    { title: "An editorial pick", label: "SELECTED BY OPEN//77", href: "/resources?sort=featured" },
+    { title: "Trending this week", label: "COMMUNITY ACTIVITY", href: "/resources?sort=trending" },
+    { title: "Fresh from the community", label: "NEW CREATIONS", href: "/resources?sort=new" },
+    { title: "Recently updated", label: "KEEP BUILDING", href: "/resources?sort=updated" },
+    { title: "A look at what’s possible", label: "COMMUNITY SHOWCASES", href: "/resources?kind=showcase" },
+  ].map((section, index) => {
+    const shelf = shelves[index];
+    const items = (index === 1 && !shelf?.rankingAsOfUtc ? [] : shelf?.items ?? []).filter(project => !seen.has(project.projectId));
+    items.forEach(project => seen.add(project.projectId));
+    return { ...section, items, unavailable: shelf === null };
+  });
+  const empty = shelves.every(shelf => shelf !== null) && seen.size === 0;
   return <HubShell><header className="hub-hero"><div className="hub-hero-copy">
     <p className="hub-kicker">BUILT BY THE COMMUNITY. MADE FOR YOUR WORLD.</p>
     <h1>Your next idea.<br /><span>Someone’s next server.</span></h1>
@@ -21,9 +39,10 @@ export default async function CommunityPage() {
     <Link href="/docs/server-resources">Start building ↗</Link></aside></header>
     <nav className="hub-categories" aria-label="Resource categories">{categories.map(category =>
       <Link key={category.id} href={`/resources?category=${category.id}`}><span aria-hidden="true">{category.mark}</span><strong>{category.label}</strong><small>{category.description}</small></Link>)}</nav>
-    <section className="hub-section"><div className="hub-section-head"><div><p className="hub-kicker">FROM THE COMMUNITY</p><h2>Find your next addition.</h2></div><Link href="/resources">Explore all ↗</Link></div>
-      {catalog === null ? <HubUnavailable /> : catalog.items.length ? <div className="hub-grid">{catalog.items.map(project => <ProjectCard key={project.projectId} project={project} />)}</div> :
-        <div className="hub-empty"><h3>A new home for your creations.</h3><p>The first community resources will appear here as they’re published. Bring something you’ve built and help get things started.</p><Link className="btn btn-primary" href="/account/creations/new">Share your first creation</Link></div>}
-    </section><section className="hub-bottom-band"><div><p className="hub-kicker">ONE COMMUNITY. MORE POSSIBILITIES.</p><h2>Keep the conversation going.</h2><p>For platform development, missing APIs and help from other builders, join the OPEN//77 Discord.</p></div><a className="btn btn-ghost" href="https://discord.open2077.net" target="_blank" rel="noopener noreferrer">Join the community ↗</a></section>
+    {sections.map(section => section.items.length > 0 || section.unavailable ? <section className={`hub-section${section.href === "/resources?sort=featured" ? " hub-section-featured" : ""}`} key={section.href}><div className="hub-section-head"><div><p className="hub-kicker">{section.label}</p><h2>{section.title}</h2></div><Link href={section.href}>Explore all ↗</Link></div>
+      {section.unavailable ? <HubUnavailable /> : <div className="hub-grid">{section.items.map(project => <ProjectCard key={project.projectId} project={project} />)}</div>}
+    </section> : null)}
+    {empty && <div className="hub-empty"><h3>A new home for your creations.</h3><p>The first community resources will appear here as they’re published. Bring something you’ve built and help get things started.</p><Link className="btn btn-primary" href="/account/creations/new">Share your first creation</Link></div>}
+    <section className="hub-bottom-band"><div><p className="hub-kicker">ONE COMMUNITY. MORE POSSIBILITIES.</p><h2>Keep the conversation going.</h2><p>For platform development, missing APIs and help from other builders, join the OPEN//77 Discord.</p></div><a className="btn btn-ghost" href="https://discord.open2077.net" target="_blank" rel="noopener noreferrer">Join the community ↗</a></section>
   </HubShell>;
 }
