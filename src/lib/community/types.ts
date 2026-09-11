@@ -41,6 +41,8 @@ export type CommunityRelease = {
     version: string; open77Version: string; dependencies: string[]; permissions: string[]; preloadMods: string[];
   } }[];
   inspection: unknown | null;
+  source?: { provider: string; repositoryId: number; releaseId: number; assetId: number; sourceUrl: string;
+    commitSha: string | null; fetchedAtUtc: string; sha256: string; repositoryControlVerified: boolean } | null;
 };
 export type CommunityDelivery = { deliveryId: string; expiresAtUtc: string; downloadUrl: string };
 export type CommunityMedia = { mediaId: string; derivatives: { name: "card" | "gallery" | "full"; width: number; height: number; sizeBytes: number; url: string }[] };
@@ -49,7 +51,7 @@ export type CommunityUpload = {
   state: string; maximumBytes: number; artifactId: string | null; expiresAtUtc: string;
   mediaId: string | null; inspectionCode: string | null;
 };
-export type CommunityUploadItem = { upload: CommunityUpload; originalName: string; createdAtUtc: string };
+export type CommunityUploadItem = { upload: CommunityUpload; originalName: string; createdAtUtc: string; importId?: string | null };
 export type CommunityUploadGrant = { uploadId: string; token: string; maximumBytes: number; expiresAtUtc: string; uploadUrl: string };
 export type CommunityReleaseDraft = Pick<CommunityRelease, "releaseId" | "projectId" | "version" | "state" | "channel">;
 export type CommunityReleaseEditorContent = { version: string; changelog: string; installation: string; license: string; testedBuilds: string; requiredResources: string };

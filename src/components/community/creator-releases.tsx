@@ -8,6 +8,7 @@ import type { CommunityPage, CommunityProject, CommunityRelease, CommunityUpload
 import { validationHelp } from "@/lib/community/validation-help";
 import { useReleaseEditor } from "./use-release-editor";
 import { ReleaseFiles } from "./release-files";
+import { GitHubImportPicker, GitHubImportStatus } from "./github-import";
 
 const errorText = (error: unknown) => error instanceof Error ? error.message : "The request failed. Please try again.";
 const lines = (value: string) => [...new Set(value.split(/\r?\n/).map(line => line.trim()).filter(Boolean))];
@@ -104,7 +105,7 @@ export function CreatorReleases({ session, project, readOnly = false, onUnsavedC
         ]);
         if (controller.signal.aborted) return;
         setReleases(nextReleases); setUploads(nextUploads); setError(""); setPollPaused(false); setCheckedAt(Date.now());
-        if (nextUploads.items.some(item => ["processing", "receiving"].includes(item.upload.state))) {
+        if (nextUploads.items.some(item => ["processing", "receiving", "importing"].includes(item.upload.state))) {
           if (polls++ < 20) timer = setTimeout(load, Math.min(30000, 3000 * 1.3 ** polls));
           else setPollPaused(true);
         }
@@ -154,7 +155,9 @@ export function CreatorReleases({ session, project, readOnly = false, onUnsavedC
     <div className="hub-releases">{releases?.items.map(release => <article className="hub-release" key={release.releaseId}>
       <div className="hub-release-heading"><h3>Version {release.version}</h3><span className="hub-release-state">{release.state.replaceAll("_", " ")}</span></div>
       {release.state === "uploading" && <div hidden={readOnly}><PackageTransfer token={session.token} projectId={project.projectId} releaseId={release.releaseId} checkedAt={checkedAt} changed={reload}
-        existing={uploads?.items.find(item => item.upload.releaseId === release.releaseId && Date.parse(item.upload.expiresAtUtc) > checkedAt)} /></div>}
+        existing={uploads?.items.find(item => item.upload.releaseId === release.releaseId && ["pending", "receiving", "uploaded", "processing", "importing"].includes(item.upload.state) && Date.parse(item.upload.expiresAtUtc) > checkedAt)} />
+        {!uploads?.items.some(item => item.upload.releaseId === release.releaseId && ["pending", "receiving", "uploaded", "processing", "importing"].includes(item.upload.state) && Date.parse(item.upload.expiresAtUtc) > checkedAt) &&
+          <GitHubImportPicker key={`${session.token}:${release.releaseId}`} token={session.token} projectId={project.projectId} releaseId={release.releaseId} sourceUrl={project.content.sourceUrl} changed={reload} />}</div>}
       {readOnly && <><p className="hub-merge-text">{release.metadata.changelog}</p><p>Tested builds: {release.metadata.testedBuilds.join(", ") || "None declared"}</p><p>Required resources: {release.metadata.requiredResources.join(", ") || "None declared"}</p><p className="hub-merge-text">License: {release.metadata.license}</p><p className="hub-merge-text">Installation: {release.metadata.installation}</p></>}
       {release.sha256 && <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p>}
       {release.resources.length > 0 && <ReleaseFiles key={`${session.accountId}:${release.releaseId}`} releaseId={release.releaseId} token={session.token} />}
@@ -168,6 +171,7 @@ export function CreatorReleases({ session, project, readOnly = false, onUnsavedC
     {uploads?.items.length === 0 && <p>No uploads yet.</p>}
     <div className="hub-releases">{uploads?.items.map(item => <article className="hub-release" key={item.upload.uploadId}>
       <div className="hub-release-heading"><h3>{item.originalName}</h3><span className="hub-release-state">{item.upload.state}</span></div>
+      {item.importId && <GitHubImportStatus key={`${session.token}:${item.importId}`} token={session.token} id={item.importId} checkedAt={checkedAt} />}
       {item.upload.inspectionCode && <p className="hub-notice" role="alert">Validation result: <code>{item.upload.inspectionCode}</code>. {validationHelp(item.upload.inspectionCode)} <a href="/docs/server-resources" target="_blank" rel="noopener noreferrer">Resource documentation ↗</a></p>}
       {item.upload.state === "accepted" && <p>Technical validation passed. Publication still requires moderation approval.</p>}
       {["pending", "uploaded"].includes(item.upload.state) && Date.parse(item.upload.expiresAtUtc) <= checkedAt && <p>This reservation expired. Select a ZIP from the release above to start a new reservation.</p>}
