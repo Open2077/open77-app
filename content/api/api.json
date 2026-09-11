@@ -4935,6 +4935,172 @@
   "route_id": "Open77.loot.upsert"
  },
  {
+  "namespace": "Open77.map",
+  "name": "cancelPick",
+  "handler": "LuaMapCancelPick",
+  "summary": "Cancels this resource's outstanding native map request.",
+  "description": "Requires map.control. Returns true or false, reason. The requester receives open77:map:pointPicked with status='cancelled' when a picker was active. Resource shutdown also releases its UI ownership without delivering events to its replacement instance.",
+  "params": [],
+  "returns": [
+   "boolean, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11678,
+  "qualified": "Open77.map.cancelPick",
+  "route_id": "Open77.map.cancelPick"
+ },
+ {
+  "namespace": "Open77.map",
+  "name": "close",
+  "handler": "LuaMapClose",
+  "summary": "Closes a map session opened by this resource.",
+  "description": "Requires map.control. Returns true on accepted closure, otherwise false, reason. Cannot close a user-opened map or another resource's map. Closure is asynchronous. A pending picker is cancelled.",
+  "params": [],
+  "returns": [
+   "boolean, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11676,
+  "qualified": "Open77.map.close",
+  "route_id": "Open77.map.close"
+ },
+ {
+  "namespace": "Open77.map",
+  "name": "getSelectedMarker",
+  "handler": "LuaMapGetSelectedMarker",
+  "summary": "Reads the marker highlighted in the vanilla map.",
+  "description": "Requires map.read. Returns a marker table or nil. kind distinguishes waypoint, quest, poi, resource and unknown. Selection is not the same as the player's waypoint; highlighting a marker does not change navigation.",
+  "params": [],
+  "returns": [
+   "value, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11672,
+  "qualified": "Open77.map.getSelectedMarker",
+  "route_id": "Open77.map.getSelectedMarker"
+ },
+ {
+  "namespace": "Open77.map",
+  "name": "getWaypoint",
+  "handler": "LuaMapGetWaypoint",
+  "summary": "Reads the player's manual vanilla waypoint.",
+  "description": "Returns nil (without an error) when no player waypoint is tracked. Quest, POI and Open77 resource markers are excluded. Requires map.read. The result has a string id, kind='waypoint', source='player', position={x,y,z} and revision. Errors return nil, reason; map_unavailable means the world snapshot is unavailable or stale.",
+  "params": [],
+  "returns": [
+   "value, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11671,
+  "qualified": "Open77.map.getWaypoint",
+  "route_id": "Open77.map.getWaypoint"
+ },
+ {
+  "namespace": "Open77.map",
+  "name": "isOpen",
+  "handler": "LuaMapIsOpen",
+  "summary": "Checks whether the vanilla world map is open.",
+  "description": "Requires map.read. Returns a boolean, or nil, reason when map state is unavailable. Uses native map controller lifecycle callbacks.",
+  "params": [],
+  "returns": [
+   "value, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11673,
+  "qualified": "Open77.map.isOpen",
+  "route_id": "Open77.map.isOpen"
+ },
+ {
+  "namespace": "Open77.map",
+  "name": "open",
+  "handler": "LuaMapOpen",
+  "summary": "Opens the vanilla map, optionally focused on a world location.",
+  "description": "Requires map.control. options.position={x,y,z} optionally focuses the map. Returns requestId, or nil, reason. Acceptance is asynchronous; observe open77:map:opened or open77:map:requestFailed. Respects game UI restrictions and exclusive ownership; map_busy means another map session exists.",
+  "params": [
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "requestId, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11675,
+  "qualified": "Open77.map.open",
+  "route_id": "Open77.map.open"
+ },
+ {
+  "namespace": "Open77.map",
+  "name": "pickPoint",
+  "handler": "LuaMapPickPoint",
+  "summary": "Lets the player select a native map point without travel.",
+  "description": "Requires map.control. Optional position={x,y,z} and timeoutMilliseconds (1000..300000, default 60000). Returns requestId or nil, reason. open77:map:pointPicked is delivered only to the requesting resource, with requestId, status, position and marker. Use the vanilla waypoint gesture to select. Fast travel, taxi confirmation and Open77 admin map teleport are suppressed during the picker.",
+  "params": [
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "requestId, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11677,
+  "qualified": "Open77.map.pickPoint",
+  "route_id": "Open77.map.pickPoint"
+ },
+ {
+  "namespace": "Open77.map",
+  "name": "state",
+  "handler": "LuaMapState",
+  "summary": "Reads a coherent native map snapshot.",
+  "description": "Requires map.read. Returns open, picking, waypoint, selectedMarker, revision and sampleAgeMs, or nil, reason. Read this on resource startup before subscribing to change events; no historical placement event is synthesized.",
+  "params": [],
+  "returns": [
+   "value, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11674,
+  "qualified": "Open77.map.state",
+  "route_id": "Open77.map.state"
+ },
+ {
   "namespace": "Open77.markers",
   "name": "clear",
   "handler": "LuaMarkerClear",
@@ -7340,32 +7506,32 @@
   "qualified": "Open77.vehicles.get",
   "route_id": "Open77.vehicles.get"
  },
-  {
-    "namespace": "Open77.vehicles",
-    "name": "getActiveWeapons",
-    "handler": "LuaVehicleGetActiveWeapons",
-    "summary": "Lists the attached weapons selected by the driver.",
-    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Uses captured selection for the local driver and replicated selection for observers. Unknown selection returns nil, weapon_state_unavailable; a known empty selection returns an empty table.",
-    "params": [
-      {
-        "name": "vehicleId",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      }
-    ],
-    "returns": [
-      "Array of weapon tables, or nil, reason"
-    ],
-    "api_set": "game",
-    "runtime": "client",
-    "source": "ResourceHost.cpp",
-    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons, reason = Open77.vehicles.getActiveWeapons(seat.vehicleId)\nif not weapons then print(reason); return end\nfor _, weapon in ipairs(weapons) do\n    print(\"Selected mount\", weapon.index, weapon.type)\nend\n-- An empty array means known selection with no active attached weapons.",
-    "inferred": false,
-    "source_line": 11450,
-    "qualified": "Open77.vehicles.getActiveWeapons",
-    "route_id": "Open77.vehicles.getActiveWeapons"
-  },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getActiveWeapons",
+  "handler": "LuaVehicleGetActiveWeapons",
+  "summary": "Lists the attached weapons selected by the driver.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Uses captured selection for the local driver and replicated selection for observers. Unknown selection returns nil, weapon_state_unavailable; a known empty selection returns an empty table.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Array of weapon tables, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons, reason = Open77.vehicles.getActiveWeapons(seat.vehicleId)\nif not weapons then print(reason); return end\nfor _, weapon in ipairs(weapons) do\n    print(\"Selected mount\", weapon.index, weapon.type)\nend\n-- An empty array means known selection with no active attached weapons.",
+  "inferred": false,
+  "source_line": 11450,
+  "qualified": "Open77.vehicles.getActiveWeapons",
+  "route_id": "Open77.vehicles.getActiveWeapons"
+ },
  {
   "namespace": "Open77.vehicles",
   "name": "getPaint",
@@ -7418,148 +7584,148 @@
   "qualified": "Open77.vehicles.getPlayerSeat",
   "route_id": "Open77.vehicles.getPlayerSeat"
  },
-  {
-    "namespace": "Open77.vehicles",
-    "name": "getWeapon",
-    "handler": "LuaVehicleGetWeapon",
-    "summary": "Reads one weapon mount by its stable one-based index.",
-    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. The index comes from weapon.index, not weaponId or slotId. An unattached declared mount is returned with attached=false; invalid indices are rejected.",
-    "params": [
-      {
-        "name": "vehicleId",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      },
-      {
-        "name": "mountIndex",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      }
-    ],
-    "returns": [
-      "Weapon table, or nil, reason"
-    ],
-    "api_set": "game",
-    "runtime": "client",
-    "source": "ResourceHost.cpp",
-    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal weapon, reason = Open77.vehicles.getWeapon(seat.vehicleId, weapons[1].index)\nif not weapon then print(reason); return end\nprint(weapon.index, weapon.attached, weapon.active)",
-    "inferred": false,
-    "source_line": 11451,
-    "qualified": "Open77.vehicles.getWeapon",
-    "route_id": "Open77.vehicles.getWeapon"
-  },
-  {
-    "namespace": "Open77.vehicles",
-    "name": "getWeaponAim",
-    "handler": "LuaVehicleGetWeaponAim",
-    "summary": "Reads the Basilisk's captured or replicated turret inputs.",
-    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Returns yaw, pitch and source. These are graph angles in degrees relative to the chassis, not a world aim ray. Other models or unavailable state return nil, weapon_aim_unavailable.",
-    "params": [
-      {
-        "name": "vehicleId",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      }
-    ],
-    "returns": [
-      "Aim table, or nil, reason"
-    ],
-    "api_set": "game",
-    "runtime": "client",
-    "source": "ResourceHost.cpp",
-    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal aim, reason = Open77.vehicles.getWeaponAim(seat.vehicleId)\nif not aim then print(reason); return end\nprint(aim.yaw, aim.pitch, aim.source) -- degrees relative to the chassis",
-    "inferred": false,
-    "source_line": 11456,
-    "qualified": "Open77.vehicles.getWeaponAim",
-    "route_id": "Open77.vehicles.getWeaponAim"
-  },
-  {
-    "namespace": "Open77.vehicles",
-    "name": "getWeaponAmmo",
-    "handler": "LuaVehicleGetWeaponAmmo",
-    "summary": "Reads available native ammunition counters for a mounted weapon.",
-    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Returns available, source, optional magazine/capacity/total/reserve. Ammunition is native-local-driver only; observer counters are not replicated and are omitted, never invented as zero. Counters do not establish whether a mounted weapon has infinite ammo or can fire.",
-    "params": [
-      {
-        "name": "vehicleId",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      },
-      {
-        "name": "mountIndex",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      }
-    ],
-    "returns": [
-      "Ammo table, or nil, reason"
-    ],
-    "api_set": "game",
-    "runtime": "client",
-    "source": "ResourceHost.cpp",
-    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal ammo, reason = Open77.vehicles.getWeaponAmmo(seat.vehicleId, weapons[1].index)\nif not ammo then print(reason); return end\nif ammo.available and ammo.magazine ~= nil then\n    print(ammo.magazine, ammo.capacity)\nelse\n    print(\"--\", ammo.source) -- e.g. not_replicated for a passenger\nend",
-    "inferred": false,
-    "source_line": 11452,
-    "qualified": "Open77.vehicles.getWeaponAmmo",
-    "route_id": "Open77.vehicles.getWeaponAmmo"
-  },
-  {
-    "namespace": "Open77.vehicles",
-    "name": "getWeaponCount",
-    "handler": "LuaVehicleGetWeaponCount",
-    "summary": "Counts weapon objects attached to a streamed vehicle.",
-    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Returns actual attached count, not declaredCount or activeCount. Zero means a known streamed vehicle with no resolved weapon objects.",
-    "params": [
-      {
-        "name": "vehicleId",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      }
-    ],
-    "returns": [
-      "integer, or nil, reason"
-    ],
-    "api_set": "game",
-    "runtime": "client",
-    "source": "ResourceHost.cpp",
-    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal count, reason = Open77.vehicles.getWeaponCount(seat.vehicleId)\nif count == nil then print(reason); return end\nprint(\"Attached weapons:\", count) -- zero is valid",
-    "inferred": false,
-    "source_line": 11455,
-    "qualified": "Open77.vehicles.getWeaponCount",
-    "route_id": "Open77.vehicles.getWeaponCount"
-  },
-  {
-    "namespace": "Open77.vehicles",
-    "name": "getWeaponModel",
-    "handler": "LuaVehicleGetWeaponModel",
-    "summary": "Reads the weapon mounts declared by a vehicle model.",
-    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. This is a TweakDB declaration, not proof that all weapons are attached in an appearance. Returns record, hasWeaponMounts, declaredCount and mounts.",
-    "params": [
-      {
-        "name": "record",
-        "type": "string",
-        "optional": false,
-        "default": null
-      }
-    ],
-    "returns": [
-      "Model table, or nil, reason"
-    ],
-    "api_set": "game",
-    "runtime": "client",
-    "source": "ResourceHost.cpp",
-    "example": "local model, reason = Open77.vehicles.getWeaponModel(\"Vehicle.v_militech_basilisk\")\nif not model then print(reason); return end\nprint(model.record, model.declaredCount)\nfor _, mount in ipairs(model.mounts) do\n    print(mount.index, mount.record, mount.slot, mount.type)\nend",
-    "inferred": false,
-    "source_line": 11445,
-    "qualified": "Open77.vehicles.getWeaponModel",
-    "route_id": "Open77.vehicles.getWeaponModel"
-  },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getWeapon",
+  "handler": "LuaVehicleGetWeapon",
+  "summary": "Reads one weapon mount by its stable one-based index.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. The index comes from weapon.index, not weaponId or slotId. An unattached declared mount is returned with attached=false; invalid indices are rejected.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "mountIndex",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Weapon table, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal weapon, reason = Open77.vehicles.getWeapon(seat.vehicleId, weapons[1].index)\nif not weapon then print(reason); return end\nprint(weapon.index, weapon.attached, weapon.active)",
+  "inferred": false,
+  "source_line": 11451,
+  "qualified": "Open77.vehicles.getWeapon",
+  "route_id": "Open77.vehicles.getWeapon"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getWeaponAim",
+  "handler": "LuaVehicleGetWeaponAim",
+  "summary": "Reads the Basilisk's captured or replicated turret inputs.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Returns yaw, pitch and source. These are graph angles in degrees relative to the chassis, not a world aim ray. Other models or unavailable state return nil, weapon_aim_unavailable.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Aim table, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal aim, reason = Open77.vehicles.getWeaponAim(seat.vehicleId)\nif not aim then print(reason); return end\nprint(aim.yaw, aim.pitch, aim.source) -- degrees relative to the chassis",
+  "inferred": false,
+  "source_line": 11456,
+  "qualified": "Open77.vehicles.getWeaponAim",
+  "route_id": "Open77.vehicles.getWeaponAim"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getWeaponAmmo",
+  "handler": "LuaVehicleGetWeaponAmmo",
+  "summary": "Reads available native ammunition counters for a mounted weapon.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Returns available, source, optional magazine/capacity/total/reserve. Ammunition is native-local-driver only; observer counters are not replicated and are omitted, never invented as zero. Counters do not establish whether a mounted weapon has infinite ammo or can fire.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "mountIndex",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Ammo table, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal ammo, reason = Open77.vehicles.getWeaponAmmo(seat.vehicleId, weapons[1].index)\nif not ammo then print(reason); return end\nif ammo.available and ammo.magazine ~= nil then\n    print(ammo.magazine, ammo.capacity)\nelse\n    print(\"--\", ammo.source) -- e.g. not_replicated for a passenger\nend",
+  "inferred": false,
+  "source_line": 11452,
+  "qualified": "Open77.vehicles.getWeaponAmmo",
+  "route_id": "Open77.vehicles.getWeaponAmmo"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getWeaponCount",
+  "handler": "LuaVehicleGetWeaponCount",
+  "summary": "Counts weapon objects attached to a streamed vehicle.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Returns actual attached count, not declaredCount or activeCount. Zero means a known streamed vehicle with no resolved weapon objects.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "integer, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal count, reason = Open77.vehicles.getWeaponCount(seat.vehicleId)\nif count == nil then print(reason); return end\nprint(\"Attached weapons:\", count) -- zero is valid",
+  "inferred": false,
+  "source_line": 11455,
+  "qualified": "Open77.vehicles.getWeaponCount",
+  "route_id": "Open77.vehicles.getWeaponCount"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getWeaponModel",
+  "handler": "LuaVehicleGetWeaponModel",
+  "summary": "Reads the weapon mounts declared by a vehicle model.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. This is a TweakDB declaration, not proof that all weapons are attached in an appearance. Returns record, hasWeaponMounts, declaredCount and mounts.",
+  "params": [
+   {
+    "name": "record",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Model table, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local model, reason = Open77.vehicles.getWeaponModel(\"Vehicle.v_militech_basilisk\")\nif not model then print(reason); return end\nprint(model.record, model.declaredCount)\nfor _, mount in ipairs(model.mounts) do\n    print(mount.index, mount.record, mount.slot, mount.type)\nend",
+  "inferred": false,
+  "source_line": 11445,
+  "qualified": "Open77.vehicles.getWeaponModel",
+  "route_id": "Open77.vehicles.getWeaponModel"
+ },
  {
   "namespace": "Open77.vehicles",
   "name": "getWeaponState",
@@ -7586,64 +7752,64 @@
   "qualified": "Open77.vehicles.getWeaponState",
   "route_id": "Open77.vehicles.getWeaponState"
  },
-  {
-    "namespace": "Open77.vehicles",
-    "name": "getWeaponType",
-    "handler": "LuaVehicleGetWeaponType",
-    "summary": "Reads a mounted weapon's stable category.",
-    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Categories: machine_gun, cannon, missile, countermeasure, unknown. Native itemType, when available, is a separate field in getWeapon.",
-    "params": [
-      {
-        "name": "vehicleId",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      },
-      {
-        "name": "mountIndex",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      }
-    ],
-    "returns": [
-      "Category string, or nil, reason"
-    ],
-    "api_set": "game",
-    "runtime": "client",
-    "source": "ResourceHost.cpp",
-    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal category, reason = Open77.vehicles.getWeaponType(seat.vehicleId, weapons[1].index)\nif not category then print(reason); return end\nprint(category) -- machine_gun, cannon, missile, countermeasure or unknown",
-    "inferred": false,
-    "source_line": 11453,
-    "qualified": "Open77.vehicles.getWeaponType",
-    "route_id": "Open77.vehicles.getWeaponType"
-  },
-  {
-    "namespace": "Open77.vehicles",
-    "name": "getWeapons",
-    "handler": "LuaVehicleGetWeapons",
-    "summary": "Lists the weapon objects actually attached to a streamed vehicle.",
-    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. The returned array is dense but each weapon.index preserves its one-based position in the model mount list. Do not use the array position as the mount index.",
-    "params": [
-      {
-        "name": "vehicleId",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      }
-    ],
-    "returns": [
-      "Array of weapon tables, or nil, reason"
-    ],
-    "api_set": "game",
-    "runtime": "client",
-    "source": "ResourceHost.cpp",
-    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons, reason = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons then print(reason); return end\nfor _, weapon in ipairs(weapons) do\n    print(weapon.index, weapon.type, weapon.slot)\nend",
-    "inferred": false,
-    "source_line": 11449,
-    "qualified": "Open77.vehicles.getWeapons",
-    "route_id": "Open77.vehicles.getWeapons"
-  },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getWeaponType",
+  "handler": "LuaVehicleGetWeaponType",
+  "summary": "Reads a mounted weapon's stable category.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Categories: machine_gun, cannon, missile, countermeasure, unknown. Native itemType, when available, is a separate field in getWeapon.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "mountIndex",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Category string, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal category, reason = Open77.vehicles.getWeaponType(seat.vehicleId, weapons[1].index)\nif not category then print(reason); return end\nprint(category) -- machine_gun, cannon, missile, countermeasure or unknown",
+  "inferred": false,
+  "source_line": 11453,
+  "qualified": "Open77.vehicles.getWeaponType",
+  "route_id": "Open77.vehicles.getWeaponType"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getWeapons",
+  "handler": "LuaVehicleGetWeapons",
+  "summary": "Lists the weapon objects actually attached to a streamed vehicle.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. The returned array is dense but each weapon.index preserves its one-based position in the model mount list. Do not use the array position as the mount index.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Array of weapon tables, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons, reason = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons then print(reason); return end\nfor _, weapon in ipairs(weapons) do\n    print(weapon.index, weapon.type, weapon.slot)\nend",
+  "inferred": false,
+  "source_line": 11449,
+  "qualified": "Open77.vehicles.getWeapons",
+  "route_id": "Open77.vehicles.getWeapons"
+ },
  {
   "namespace": "Open77.vehicles",
   "name": "honk",
@@ -7677,32 +7843,32 @@
   "qualified": "Open77.vehicles.honk",
   "route_id": "Open77.vehicles.honk"
  },
-  {
-    "namespace": "Open77.vehicles",
-    "name": "isArmed",
-    "handler": "LuaVehicleIsArmed",
-    "summary": "Checks whether a streamed vehicle actually has attached weapons.",
-    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Counts resolved weapon objects, not the model's inherited mount declarations. An unstreamed vehicle returns nil, vehicle_not_streamed.",
-    "params": [
-      {
-        "name": "vehicleId",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      }
-    ],
-    "returns": [
-      "boolean, or nil, reason"
-    ],
-    "api_set": "game",
-    "runtime": "client",
-    "source": "ResourceHost.cpp",
-    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal armed, reason = Open77.vehicles.isArmed(seat.vehicleId)\nif armed == nil then print(reason); return end\nprint(armed and \"Attached weapons found\" or \"No attached weapons\")",
-    "inferred": false,
-    "source_line": 11448,
-    "qualified": "Open77.vehicles.isArmed",
-    "route_id": "Open77.vehicles.isArmed"
-  },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "isArmed",
+  "handler": "LuaVehicleIsArmed",
+  "summary": "Checks whether a streamed vehicle actually has attached weapons.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Counts resolved weapon objects, not the model's inherited mount declarations. An unstreamed vehicle returns nil, vehicle_not_streamed.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal armed, reason = Open77.vehicles.isArmed(seat.vehicleId)\nif armed == nil then print(reason); return end\nprint(armed and \"Attached weapons found\" or \"No attached weapons\")",
+  "inferred": false,
+  "source_line": 11448,
+  "qualified": "Open77.vehicles.isArmed",
+  "route_id": "Open77.vehicles.isArmed"
+ },
  {
   "namespace": "Open77.vehicles",
   "name": "isDoorOpen",
@@ -7787,38 +7953,38 @@
   "qualified": "Open77.vehicles.isPlayerExitLocked",
   "route_id": "Open77.vehicles.isPlayerExitLocked"
  },
-  {
-    "namespace": "Open77.vehicles",
-    "name": "isWeaponActive",
-    "handler": "LuaVehicleIsWeaponActive",
-    "summary": "Checks whether the driver selected a particular attached mount.",
-    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Selection is not a firing event or a guarantee of native mesh deployment. Unknown selection is an explicit error.",
-    "params": [
-      {
-        "name": "vehicleId",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      },
-      {
-        "name": "mountIndex",
-        "type": "integer",
-        "optional": false,
-        "default": null
-      }
-    ],
-    "returns": [
-      "boolean, or nil, reason"
-    ],
-    "api_set": "game",
-    "runtime": "client",
-    "source": "ResourceHost.cpp",
-    "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal active, reason = Open77.vehicles.isWeaponActive(seat.vehicleId, weapons[1].index)\nif active == nil then print(reason); return end\nprint(active and \"Selected\" or \"Not selected\") -- not a firing flag",
-    "inferred": false,
-    "source_line": 11454,
-    "qualified": "Open77.vehicles.isWeaponActive",
-    "route_id": "Open77.vehicles.isWeaponActive"
-  },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "isWeaponActive",
+  "handler": "LuaVehicleIsWeaponActive",
+  "summary": "Checks whether the driver selected a particular attached mount.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. Selection is not a firing event or a guarantee of native mesh deployment. Unknown selection is an explicit error.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "mountIndex",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local seat = Open77.vehicles.getPlayerSeat()\nif not seat then return end\nlocal weapons = Open77.vehicles.getWeapons(seat.vehicleId)\nif not weapons or not weapons[1] then return end\nlocal active, reason = Open77.vehicles.isWeaponActive(seat.vehicleId, weapons[1].index)\nif active == nil then print(reason); return end\nprint(active and \"Selected\" or \"Not selected\") -- not a firing flag",
+  "inferred": false,
+  "source_line": 11454,
+  "qualified": "Open77.vehicles.isWeaponActive",
+  "route_id": "Open77.vehicles.isWeaponActive"
+ },
  {
   "namespace": "Open77.vehicles",
   "name": "isWindowOpen",
@@ -7851,32 +8017,32 @@
   "qualified": "Open77.vehicles.isWindowOpen",
   "route_id": "Open77.vehicles.isWindowOpen"
  },
-  {
-    "namespace": "Open77.vehicles",
-    "name": "modelHasWeaponMounts",
-    "handler": "LuaVehicleModelHasWeaponMounts",
-    "summary": "Checks whether a vehicle model declares any weapon mounts.",
-    "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. A valid unarmed model returns false; an unknown model returns nil. Inherited mounts do not guarantee a usable armed vehicle.",
-    "params": [
-      {
-        "name": "record",
-        "type": "string",
-        "optional": false,
-        "default": null
-      }
-    ],
-    "returns": [
-      "boolean, or nil, reason"
-    ],
-    "api_set": "game",
-    "runtime": "client",
-    "source": "ResourceHost.cpp",
-    "example": "local declared, reason = Open77.vehicles.modelHasWeaponMounts(\"Vehicle.v_militech_basilisk\")\nif declared == nil then print(reason); return end\nprint(declared and \"Model declares mounts\" or \"No declared mounts\")\n-- Declarations alone do not prove weapons are attached to a live vehicle.",
-    "inferred": false,
-    "source_line": 11446,
-    "qualified": "Open77.vehicles.modelHasWeaponMounts",
-    "route_id": "Open77.vehicles.modelHasWeaponMounts"
-  },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "modelHasWeaponMounts",
+  "handler": "LuaVehicleModelHasWeaponMounts",
+  "summary": "Checks whether a vehicle model declares any weapon mounts.",
+  "description": "Requires `vehicles.read`. Client-side, synchronous and read-only. A valid unarmed model returns false; an unknown model returns nil. Inherited mounts do not guarantee a usable armed vehicle.",
+  "params": [
+   {
+    "name": "record",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local declared, reason = Open77.vehicles.modelHasWeaponMounts(\"Vehicle.v_militech_basilisk\")\nif declared == nil then print(reason); return end\nprint(declared and \"Model declares mounts\" or \"No declared mounts\")\n-- Declarations alone do not prove weapons are attached to a live vehicle.",
+  "inferred": false,
+  "source_line": 11446,
+  "qualified": "Open77.vehicles.modelHasWeaponMounts",
+  "route_id": "Open77.vehicles.modelHasWeaponMounts"
+ },
  {
   "namespace": "Open77.vehicles",
   "name": "ratedTopSpeed",
@@ -11680,5 +11846,371 @@
   "source_line": 5998,
   "qualified": "Open77.vehicles.warpPlayerIntoVehicle",
   "route_id": "server:Open77.vehicles.warpPlayerIntoVehicle"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "attachDriver",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Attaches a server-owned vehicle AI controller.",
+  "description": "options.npcId optionally mounts an existing NPC owned by this resource; omission means driverless operation. Reserves the driver seat. Requires world.vehicles. Refuses occupied driver seats, destroyed vehicles, unsupported AV/Basilisk records and conflicting controllers. The NPC must be alive, in the same bucket and without active tasks. No NPC is created automatically.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6018,
+  "qualified": "Open77.vehicles.ai.attachDriver",
+  "route_id": "server:Open77.vehicles.ai.attachDriver"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "chase",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Pursues a canonical entity using native autonomous pathing.",
+  "description": "Same targetKind, targetId, speed, distance, behavior and timeout options as follow. Requires world.vehicles and controller ownership. It does not enable weapon use, teleport catch-up, scripted ramming or police pursuit logic. Targets and simulator must remain in the same routing bucket.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6024,
+  "qualified": "Open77.vehicles.ai.chase",
+  "route_id": "server:Open77.vehicles.ai.chase"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "driveTo",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Starts native autonomous driving to a world position.",
+  "description": "Requires world.vehicles and this resource's attached controller. options.position={x,y,z} is required. Optional speed (0.5..55 m/s), arrivalRadius (1..20 m), timeoutMilliseconds (1000..3600000) and behavior. Returns a task state, or nil, reason. Acceptance is not arrival: subscribe to arrived, blocked or failed.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6021,
+  "qualified": "Open77.vehicles.ai.driveTo",
+  "route_id": "server:Open77.vehicles.ai.driveTo"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "follow",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Continuously follows a canonical player, vehicle or NPC.",
+  "description": "Requires world.vehicles and controller ownership. options.targetKind is player, vehicle or npc and targetId is the canonical ID. Optional distance (3..80 m), speed, behavior and timeoutMilliseconds. Uses the native autonomous path follower with server-updated target coordinates, at most twice per second. Stops with target_unavailable if the target leaves the bucket or disappears.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6023,
+  "qualified": "Open77.vehicles.ai.follow",
+  "route_id": "server:Open77.vehicles.ai.follow"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "followRoute",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Drives an ordered route of world points.",
+  "description": "Requires world.vehicles and controller ownership. options.points is an array of 1..64 {x,y,z} positions. Supports loop, speed, behavior, arrivalRadius and timeoutMilliseconds. Emits waypointReached at each point and arrived once at a non-looping route's end. This is a destination sequence, not an exact authored racing spline.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6022,
+  "qualified": "Open77.vehicles.ai.followRoute",
+  "route_id": "server:Open77.vehicles.ai.followRoute"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "joinTraffic",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Starts indefinite native road-following.",
+  "description": "Requires world.vehicles and controller ownership. Uses the autonomous command's driveDownTheRoadIndefinitely mode; it does not spawn ambient traffic or use the solo Delamain taxi system. Supports speed, behavior and timeoutMilliseconds. No arrival event is expected; stop explicitly or handle failure/timeout.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6025,
+  "qualified": "Open77.vehicles.ai.joinTraffic",
+  "route_id": "server:Open77.vehicles.ai.joinTraffic"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "on",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Subscribes to this resource's vehicle AI lifecycle events.",
+  "description": "Requires a function callback. Events: waypointReached, arrived, cancelled, failed, blocked and resumed. The handler receives a decoded state table, not JSON text. Events are routed only to the controller's resource. blocked with reason=no_progress is a stall detector, not proof of an obstacle collision. No events are replayed; query state first.",
+  "params": [
+   {
+    "name": "event",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "handler",
+    "type": "function",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Event handler registration"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6029,
+  "qualified": "Open77.vehicles.ai.on",
+  "route_id": "server:Open77.vehicles.ai.on"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "removeDriver",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Stops AI control and releases its driver seat.",
+  "description": "Requires world.vehicles and ownership of this AI controller. Cancels an active task and unmounts (but does not delete) the optional NPC, restoring its previous AI mode. Returns the detached state, or nil, reason.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6019,
+  "qualified": "Open77.vehicles.ai.removeDriver",
+  "route_id": "server:Open77.vehicles.ai.removeDriver"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "setBehavior",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Selects normal, cautious or aggressive AI behavior.",
+  "description": "Requires world.vehicles and controller ownership. normal keeps native avoidance; cautious uses a 75% speed ceiling; aggressive enables native clearTrafficOnPath. These are bounded presets, not a promise of police AI or traffic-law compliance.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "behavior",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6028,
+  "qualified": "Open77.vehicles.ai.setBehavior",
+  "route_id": "server:Open77.vehicles.ai.setBehavior"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "setSpeed",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Updates the native driving speed limit.",
+  "description": "Requires world.vehicles and controller ownership. speed is finite, 0.5..55 m/s; default 12. Changes the active command without restarting it each frame. Actual speed remains subject to road geometry, obstacles and the vehicle. Cautious behavior applies 75% of the configured ceiling.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "speed",
+    "type": "number",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6027,
+  "qualified": "Open77.vehicles.ai.setSpeed",
+  "route_id": "server:Open77.vehicles.ai.setSpeed"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "state",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reads authoritative vehicle AI state.",
+  "description": "Requires world.vehicles. Returns the controller state or nil when no driver is attached. Contains vehicleId, npcId, taskId (strings), revision, mode, status, reason, speed, behavior, destination x/y/z, routeIndex/count, targetKind/id, distance, owner and epoch. Motion is still subject to the ordinary vehicle authority lease.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6020,
+  "qualified": "Open77.vehicles.ai.state",
+  "route_id": "server:Open77.vehicles.ai.state"
+ },
+ {
+  "namespace": "Open77.vehicles.ai",
+  "name": "stop",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Cancels the active task and stops the vehicle.",
+  "description": "Requires world.vehicles and controller ownership. Idempotent. Keeps the AI controller and driver seat reserved for the next task. Emits cancelled once for an active task. Use removeDriver to release the seat.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 6026,
+  "qualified": "Open77.vehicles.ai.stop",
+  "route_id": "server:Open77.vehicles.ai.stop"
  }
 ]

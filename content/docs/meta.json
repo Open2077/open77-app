@@ -242,6 +242,12 @@
           "description": "Server-controlled RGB paint, replication and change events."
         },
         {
+          "slug": "vehicle-ai",
+          "kind": "guide",
+          "nav": "Autonomous vehicles & AI",
+          "description": "Server-owned autonomous driving, optional visible NPC drivers, reserved driver seats, routes, follow and chase, speed, behavior, lifecycle events and simulator handover."
+        },
+        {
           "slug": "weather",
           "kind": "guide",
           "nav": "Time and weather",
@@ -279,6 +285,12 @@
       "id": "interfaces",
       "title": "Interfaces & input",
       "pages": [
+        {
+          "slug": "native-map",
+          "kind": "guide",
+          "nav": "Native map & waypoints",
+          "description": "Read the player's vanilla-map waypoint separately from quests and POIs, observe placement and selection events, focus the native map and pick a destination without fast travel. Includes a taxi-sharing example."
+        },
         {
           "slug": "world-drawing",
           "kind": "guide",

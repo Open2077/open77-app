@@ -161,6 +161,12 @@ const VEHICLE_WEAPON_READS = new Set([
 ]);
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (runtime === "client" && raw.namespace === "Open77.map") {
+    return { usageGuideHref: "/docs/native-map", usageGuideLabel: "Native map & waypoints guide" };
+  }
+  if (runtime === "server" && raw.namespace === "Open77.vehicles.ai") {
+    return { usageGuideHref: "/docs/vehicle-ai", usageGuideLabel: "Autonomous vehicles & AI guide" };
+  }
   if (raw.namespace === "Open77.animations") {
     return { usageGuideHref: `/docs/rp-animations#${runtime}-lua-api`, usageGuideLabel: "RP animation guide" };
   }

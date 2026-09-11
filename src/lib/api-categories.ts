@@ -2,10 +2,10 @@
 export const API_CATEGORIES = [
   { id: "core", label: "Core & resources", namespaces: ["_G", "Open77.Promise", "Open77.resource", "Open77.runtime", "Open77.events", "Open77.exports", "Open77.json"] },
   { id: "players", label: "Players & characters", namespaces: ["Open77.players", "Open77.character", "Open77.stats", "Open77.appearance", "Open77.clothing", "Open77.animations"] },
-  { id: "vehicles", label: "Vehicles", namespaces: ["Open77.vehicles"] },
+  { id: "vehicles", label: "Vehicles", namespaces: ["Open77.vehicles", "Open77.vehicles.ai"] },
   { id: "world", label: "World & environment", namespaces: ["Open77.world", "Open77.environment", "Open77.time", "Open77.travel", "Open77.doors", "Open77.elevators", "Open77.props"] },
   { id: "combat", label: "NPCs, weapons & loot", namespaces: ["Open77.npcs", "Open77.weapons", "Open77.loot"] },
-  { id: "ui", label: "Interfaces & markers", namespaces: ["Open77.webui", "WebUI.Page", "Open77.hud", "Open77.blips", "Open77.markers", "Open77.anchors", "Open77.nameplates"] },
+  { id: "ui", label: "Interfaces & markers", namespaces: ["Open77.webui", "WebUI.Page", "Open77.hud", "Open77.blips", "Open77.map", "Open77.markers", "Open77.anchors", "Open77.nameplates"] },
   { id: "camera", label: "Camera & input", namespaces: ["Open77.camera", "Open77.perspective", "Open77.photoMode", "Open77.input", "Open77.settings"] },
   { id: "audio", label: "Voice & effects", namespaces: ["Open77.voice", "Open77.sfx", "Open77.vfx"] },
   { id: "network", label: "Network & sessions", namespaces: ["Open77.net", "Open77.network", "Open77.session"] },
