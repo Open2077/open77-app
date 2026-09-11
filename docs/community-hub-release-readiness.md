@@ -13,6 +13,8 @@ artifact inventory qualification remains separate from unresolved acceptance gat
 | --- | --- | --- |
 | Master/platform | Clean Release build and unfiltered schema-38 suite at master `c5e6919`: 306 passed, zero failed/skipped in 5m27s | This establishes local platform regression, not browser/provider/game acceptance |
 | Retention | Final Windows focused 20/20 and isolated Linux 7/7; cross-process publication locks, crash recovery and wrapper ownership checks passed | Default off; all writers must participate before enabling; current schema-37 live storage was not swept |
+| Migration recovery | Four focused tests: three interrupted schema-38 DDL prefixes with connection/lock release and restart, plus incompatible-schema refusal; queued work and private bytes retained | Connection-death simulation, not database power loss |
+| Compatible image switch | Real isolated a6f7fc9 → reconstructed c5e6919 master switch; retained identity, published bytes and queued work; schema-37 image refused and compatible image recovered | Candidate images share production implementation; earlier images reconstructed from recorded source, not a historical production rollback |
 | Private artifact flow | Real local registration, ZIP upload, worker inspection, reviewer publication and SHA-verified download on refreshed services | Locally authored fixtures; no production publication |
 | Service isolation | Restricted auxiliary accounts, raw-SQL attack tests, guard-definition/DEFINER verification and paired restore | Production principal provisioning still requires operator verification |
 | Storage pressure | Actual 8 MiB tmpfs ENOSPC after upload admission; lease reset, temporary-file cleanup, same-grant retry and matching hash | Isolated temporary filesystem; no release-host disk was filled |
@@ -48,11 +50,19 @@ The master repository owns these reviewable artifacts:
 - `ops/community/record-release-candidate.ps1` and `RELEASE-INVENTORY.md`: source,
   validated image and evidence identities. The manifest intentionally leaves
   `releaseReadinessProven:false`; hashes alone do not prove acceptance.
+- `ops/community/prepare-image-rollback.ps1` and `test-image-rollback.ps1`:
+  reconstruction provenance and actual isolated candidate switch/refusal rehearsal.
+  Run `193f77f00bdd488494081c154f001b58` passed and removed all owned resources.
+  Content-based local image tags retain validated artifacts across working-tag
+  replacements; the original earlier untagged images were unavailable.
 
 CI wiring validation passed, including exact Windows/Linux gate probes. Bind the
 final app/base/launcher artifacts and test evidence to their build revisions. Keep
 the paired backup and rollback instructions alongside that inventory. Remote CI
 execution and production deployment have not been performed by this goal.
+App `e98f611` adds CI for locked install, typecheck/lint, deterministic Hub tests
+and build. The local `test:hub` command passed 18 tests plus Markdown/browser-runner
+guards; the app CI does not claim served-browser or provider acceptance.
 
 Base `b9f6bc4f` supplies a standalone versioned package JSON Schema and newly
 authored MIT-licensed resource/config-template and two-resource bundle examples.
@@ -86,8 +96,9 @@ full Hub acceptance. Browser execution remains unperformed.
    replacement-asset tests exist, but a real configured OAuth connection and a
    permitted release-asset import are still needed. Do not describe fixture
    responses as a completed provider integration journey.
-3. **Actual game acceptance:** two unrelated in-world sessions occupied
-   11,391/12,227 MiB VRAM at the latest recorded check. They were preserved. A free
+3. **Actual game acceptance:** two unrelated clients occupied
+   11,316/12,227 MiB VRAM at the latest recorded check; one was in-world and one
+   was offline. They were preserved. A free
    authorized game-test slot and a valid authored preload asset fixture are needed;
    the successful inert-archive server restart is not that proof.
 4. **Release-host and owner checks:** name the moderation owner; review contributor
