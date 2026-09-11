@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { Activity, useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { AuthPanel } from "@/components/account/auth-panel";
 import { useSession, type StoredSession } from "@/lib/account/session";
 import { MasterApiError } from "@/lib/account/api";
@@ -49,18 +49,25 @@ export function CreatorEditor({ id }: { id?: string }) {
   const { session, ready } = useSession();
   const [owner, setOwner] = useState<StoredSession | null>(null);
   const [discard, setDiscard] = useState(false);
+  const [unsaved, setUnsaved] = useState(false);
+  const active = session?.accountId === owner?.accountId && session?.emailVerified;
+  useEffect(() => {
+    if (active || !unsaved) return;
+    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [active, unsaved]);
   if (!owner && session?.emailVerified) setOwner(session);
   if (!ready) return <p role="status">Loading your account…</p>;
   if (!owner) return <CreatorGate>{() => <p role="status">Opening your draft…</p>}</CreatorGate>;
-  const active = session?.accountId === owner.accountId && session.emailVerified;
   return <>
     {!active && <div className="hub-notice"><p>Your draft remains in this tab. Sign in to the same account to resume.</p><AuthPanel />
-      {session && session.accountId !== owner.accountId && <>{discard ? <><p>Discard unsaved text and switch to this account?</p><button className="btn btn-primary" onClick={() => { setOwner(session); setDiscard(false); }}>Discard and switch account</button><button className="btn btn-ghost" onClick={() => setDiscard(false)}>Keep my draft</button></> : <button className="btn btn-ghost" onClick={() => setDiscard(true)}>Switch editor account</button>}</>}
+      {session && session.accountId !== owner.accountId && <>{discard ? <><p>Discard unsaved text and switch to this account?</p><button className="btn btn-primary" onClick={() => { setOwner(session); setDiscard(false); setUnsaved(false); }}>Discard and switch account</button><button className="btn btn-ghost" onClick={() => setDiscard(false)}>Keep my draft</button></> : <button className="btn btn-ghost" onClick={() => setDiscard(true)}>Switch editor account</button>}</>}
     </div>}
-    <Editor key={`${owner.accountId}:${id ?? "new"}`} session={active ? session : owner} active={!!active} id={id} />
+    <Activity mode={active ? "visible" : "hidden"}><Editor key={`${owner.accountId}:${id ?? "new"}`} session={active && session ? session : owner} active={!!active} id={id} onUnsavedChange={setUnsaved} /></Activity>
   </>;
 }
-function Editor({ session, active, id }: { session: StoredSession; active: boolean; id?: string }) {
+function Editor({ session, active, id, onUnsavedChange }: { session: StoredSession; active: boolean; id?: string; onUnsavedChange: (dirty: boolean) => void }) {
   const router = useRouter();
   const [content, setContent] = useState<CommunityContent>(emptyContent);
   const [slug, setSlug] = useState("");
@@ -70,6 +77,7 @@ function Editor({ session, active, id }: { session: StoredSession; active: boole
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const [releaseDirty, setReleaseDirty] = useState(false);
   const [conflict, setConflict] = useState(false);
   const [recovery, setRecovery] = useState<{ remote: CommunityProject; merged: CommunityContent; fields: DraftField[] } | null>(null);
   const [choices, setChoices] = useState<Partial<Record<DraftField, "local" | "remote">>>({});
@@ -82,6 +90,7 @@ function Editor({ session, active, id }: { session: StoredSession; active: boole
   const saving = useRef(false);
   const initialized = useRef(false);
   const editSequence = useRef(0);
+  useEffect(() => { onUnsavedChange(dirty || releaseDirty); }, [dirty, releaseDirty, onUnsavedChange]);
   useEffect(() => {
     if (!active || !id || initialized.current) return;
     const controller = new AbortController();
@@ -93,7 +102,7 @@ function Editor({ session, active, id }: { session: StoredSession; active: boole
     return () => controller.abort();
   }, [id, session.token, active]);
   useEffect(() => {
-    if (!dirty) return;
+    if (!dirty && !releaseDirty) return;
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); };
     const navigation = (event: MouseEvent) => {
       if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
@@ -106,7 +115,7 @@ function Editor({ session, active, id }: { session: StoredSession; active: boole
     window.addEventListener("beforeunload", warn);
     document.addEventListener("click", navigation, true);
     return () => { window.removeEventListener("beforeunload", warn); document.removeEventListener("click", navigation, true); };
-  }, [dirty]);
+  }, [dirty, releaseDirty]);
   function change<K extends keyof CommunityContent>(key: K, value: CommunityContent[K]) {
     editSequence.current++;
     setRights(false);
@@ -162,7 +171,6 @@ function Editor({ session, active, id }: { session: StoredSession; active: boole
     } catch (error) { setError(message(error)); }
     finally { saving.current = false; setBusy(false); }
   }
-  if (!active) return null;
   if (!loaded) return <div className="hub-notice" role={error ? "alert" : "status"}>{error ?? "Loading your draft…"}</div>;
   return <>
     {error && <div className="hub-notice" role="alert">{error}</div>}
@@ -209,7 +217,7 @@ function Editor({ session, active, id }: { session: StoredSession; active: boole
     {project && <fieldset className="hub-editor-fields" hidden={step !== 1} disabled={conflict}><CreatorMedia token={session.token} projectId={project.projectId} media={content.media ?? []} onChange={value => change("media", value)} /></fieldset>}
     {step === 1 && <DraftPreview content={content} token={session.token} />}
     {!project && step > 0 && <p className="hub-notice">Create your draft from Basics to upload media and releases. Your text stays in this tab until saved.</p>}
-    {project && content.kind === "resource" && <div hidden={step !== 2 && step !== 3 && step !== 4}><CreatorReleases session={session} project={project} readOnly={step === 4} /></div>}
+    {project && <div hidden={content.kind !== "resource" || (step !== 2 && step !== 3 && step !== 4)}><CreatorReleases session={session} project={project} readOnly={step === 4} onUnsavedChange={setReleaseDirty} /></div>}
     {step === 3 && <section className="hub-notice"><h3>Project checks</h3><ul>
       <li>{content.title.trim() ? "Title entered." : "Add a title in Basics."}</li>
       <li>{content.summary.trim() ? "Summary entered." : "Add a summary in Basics."}</li>

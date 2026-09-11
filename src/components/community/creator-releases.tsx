@@ -74,7 +74,7 @@ function PackageTransfer({ token, projectId, releaseId, existing, checkedAt, cha
   </form>;
 }
 
-export function CreatorReleases({ session, project, readOnly = false }: { session: StoredSession; project: CommunityProject; readOnly?: boolean }) {
+export function CreatorReleases({ session, project, readOnly = false, onUnsavedChange }: { session: StoredSession; project: CommunityProject; readOnly?: boolean; onUnsavedChange?: (dirty: boolean) => void }) {
   const [releases, setReleases] = useState<CommunityPage<CommunityRelease> | null>(null);
   const [uploads, setUploads] = useState<CommunityPage<CommunityUploadItem> | null>(null);
   const [releaseCursor, setReleaseCursor] = useState<string>();
@@ -89,6 +89,7 @@ export function CreatorReleases({ session, project, readOnly = false }: { sessio
   const [creating, setCreating] = useState(false);
   const [rightsContent, setRightsContent] = useState<typeof draft.content | null>(null);
   const rights = rightsContent === draft.content;
+  useEffect(() => { onUnsavedChange?.(draft.dirty); }, [draft.dirty, onUnsavedChange]);
   function reload() { setRefresh(value => value + 1); }
   useEffect(() => {
     const controller = new AbortController();
