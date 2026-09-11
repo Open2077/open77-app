@@ -21,6 +21,14 @@ export type CommunityRelease = {
   inspection: unknown | null;
 };
 export type CommunityDelivery = { deliveryId: string; expiresAtUtc: string; downloadUrl: string };
+export type CommunityUpload = {
+  uploadId: string; projectId: string; releaseId: string | null; kind: "package" | "image";
+  state: string; maximumBytes: number; artifactId: string | null; expiresAtUtc: string;
+  mediaId: string | null; inspectionCode: string | null;
+};
+export type CommunityUploadItem = { upload: CommunityUpload; originalName: string; createdAtUtc: string };
+export type CommunityUploadGrant = { uploadId: string; token: string; maximumBytes: number; expiresAtUtc: string; uploadUrl: string };
+export type CommunityReleaseDraft = Pick<CommunityRelease, "releaseId" | "projectId" | "version" | "state" | "channel">;
 export const categories = [
   { id: "scripts", label: "Scripts", mark: "</>", description: "New possibilities for your world." },
   { id: "gamemodes", label: "Gamemodes", mark: "77", description: "A whole new way to play." },

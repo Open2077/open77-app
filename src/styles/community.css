@@ -98,6 +98,11 @@
 .hub-download-action [role=alert] { flex-basis: 100%; color: var(--danger); font-size: 13px; }
 .hub-prereleases > summary { padding-block: 12px; }
 .hub-prereleases > .hub-release { margin-top: 24px; }
+.hub-upload-form { margin-top: 20px; gap: 16px; }
+.hub-upload-form progress { width: 100%; accent-color: var(--accent); }
+.hub-upload-form > p { font-size: 13px; line-height: 1.8; color: var(--text-dim); }
+.hub-release > .hub-form { margin-top: 24px; }
+.hub-release-heading h3 { font: 600 24px var(--font-display); }
 .hub-main :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 @media(max-width: 1000px) {
   .hub-hero { grid-template-columns: 1fr 250px; gap: 28px; }.hub-categories { grid-template-columns: repeat(3,1fr); }

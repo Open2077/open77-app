@@ -1,5 +1,5 @@
 import { masterCall } from "@/lib/account/api";
-import type { CommunityContent, CommunityDelivery, CommunityPage, CommunityProject } from "./types";
+import type { CommunityContent, CommunityDelivery, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
 const root = "/api/v1/community";
 export const myProjects = (token: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityProject>>(`${root}/me/projects`, { token, signal });
 export const myProject = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityProject>(`${root}/me/projects/${encodeURIComponent(id)}`, { token, signal });
@@ -7,3 +7,10 @@ export const createProject = (token: string, slug: string, content: CommunityCon
 export const editProject = (token: string, id: string, expectedRevision: number, content: CommunityContent) => masterCall<CommunityProject>(`${root}/projects/${encodeURIComponent(id)}`, { token, method: "PATCH", body: { expectedRevision, content } });
 export const submitProject = (token: string, id: string, expectedRevision: number) => masterCall<void>(`${root}/projects/${encodeURIComponent(id)}/submit`, { token, method: "POST", body: { expectedRevision } });
 export const requestDownload = (releaseId: string) => masterCall<CommunityDelivery>(`${root}/releases/${encodeURIComponent(releaseId)}/download`, { method: "POST", signal: AbortSignal.timeout(10000) });
+export const myReleases = (token: string, projectId: string, cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityRelease>>(`${root}/me/projects/${encodeURIComponent(projectId)}/releases${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
+export const createRelease = (token: string, projectId: string, version: string, metadata: CommunityRelease["metadata"]) => masterCall<CommunityReleaseDraft>(`${root}/projects/${encodeURIComponent(projectId)}/releases`, { token, method: "POST", body: { version, metadata } });
+export const myUploads = (token: string, projectId: string, cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityUploadItem>>(`${root}/me/projects/${encodeURIComponent(projectId)}/uploads${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
+export const reserveUpload = (token: string, projectId: string, releaseId: string | null, kind: "package" | "image", file: File, signal?: AbortSignal) => masterCall<CommunityUploadGrant>(`${root}/uploads`, { token, method: "POST", body: { projectId, releaseId, kind, originalName: file.name, maximumBytes: file.size }, signal });
+export const restartUpload = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityUploadGrant>(`${root}/uploads/${encodeURIComponent(id)}/restart`, { token, method: "POST", signal });
+export const uploadStatus = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityUpload>(`${root}/uploads/${encodeURIComponent(id)}`, { token, signal });
+export const completeUpload = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityUpload>(`${root}/uploads/${encodeURIComponent(id)}/complete`, { token, method: "POST", signal });

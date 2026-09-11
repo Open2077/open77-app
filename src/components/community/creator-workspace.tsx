@@ -8,6 +8,7 @@ import { useSession, type StoredSession } from "@/lib/account/session";
 import { MasterApiError } from "@/lib/account/api";
 import * as api from "@/lib/community/client-api";
 import { categories, type CommunityContent, type CommunityProject } from "@/lib/community/types";
+import { CreatorReleases } from "./creator-releases";
 
 function message(error: unknown) { return error instanceof Error ? error.message : "Something went wrong. Please try again."; }
 const emptyContent: CommunityContent = { title: "", summary: "", category: "scripts", description: "", installation: "", kind: "showcase", maturity: "experimental", tags: [] };
@@ -109,5 +110,6 @@ function Editor({ session, id }: { session: StoredSession; id?: string }) {
         {project && <button type="button" className="btn btn-ghost" disabled={busy || dirty || conflict || project.revisionStatus !== "draft"} onClick={submit}>Submit for review</button>}
         <span role="status">{dirty ? "Unsaved changes" : ""}</span></div>
     </form>
+    {project && content.kind === "resource" && <CreatorReleases session={session} project={project} />}
   </>;
 }
