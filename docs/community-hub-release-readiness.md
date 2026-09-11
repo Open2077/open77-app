@@ -31,9 +31,9 @@ The master repository owns these reviewable artifacts:
 - `ops/community/Dockerfile`, `compose.yml`, and `compose.maintenance.yml`: private
   files, worker, importer and maintenance services alongside master.
 - `ops/community/test-images.ps1`: five-image non-root/private-image validation and
-  both Compose overlays. All five images passed at clean master `c5e6919`, with
-  UID1654, private contents and both overlays checked. Refresh evidence after the
-  final CI-only checkpoint before recording the inventory.
+  both Compose overlays. All five images were rebuilt and passed at clean master
+  `f4dc02b7`, with UID1654, private contents and both overlays checked; exact local
+  image identities are in master `artifacts/hub-images/validation.json`.
 - `ops/community/Caddyfile`, `test-edge.ps1`, and `edge-fixture/`: restricted public
   gateway routing and actual streamed 100 MiB boundary checks.
 - `ops/community/POLICY.md`, `READINESS.md`, and `OPERATIONS.md`: quota settings,
@@ -49,8 +49,8 @@ The master repository owns these reviewable artifacts:
   validated image and evidence identities. The manifest intentionally leaves
   `releaseReadinessProven:false`; hashes alone do not prove acceptance.
 
-Before a candidate can be called ready, finish the CI wiring validation and bind
-the final app/base/launcher artifacts and test evidence to exact revisions. Keep
+CI wiring validation passed, including exact Windows/Linux gate probes. Bind the
+final app/base/launcher artifacts and test evidence to their build revisions. Keep
 the paired backup and rollback instructions alongside that inventory. Remote CI
 execution and production deployment have not been performed by this goal.
 
