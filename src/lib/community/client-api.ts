@@ -1,6 +1,7 @@
 import { masterCall } from "@/lib/account/api";
-import type { CommunityContent, CommunityDelivery, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
+import type { CommunityContent, CommunityDelivery, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
 const root = "/api/v1/community";
+export const previewMedia = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityMedia & { expiresAtUtc: string }>(`${root}/media/${encodeURIComponent(id)}/preview`, { token, method: "POST", signal });
 export const myProjects = (token: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityProject>>(`${root}/me/projects`, { token, signal });
 export const myProject = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityProject>(`${root}/me/projects/${encodeURIComponent(id)}`, { token, signal });
 export const createProject = (token: string, slug: string, content: CommunityContent) => masterCall<CommunityProject>(`${root}/projects`, { token, method: "POST", body: { slug, content } });

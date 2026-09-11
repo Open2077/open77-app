@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { AuthPanel } from "@/components/account/auth-panel";
 import { useSession, type StoredSession } from "@/lib/account/session";
 import { MasterApiError } from "@/lib/account/api";
 import * as api from "@/lib/community/client-api";
 import { categories, type CommunityContent, type CommunityProject } from "@/lib/community/types";
 import { CreatorReleases } from "./creator-releases";
+import { CreatorMedia } from "./creator-media";
 
 function message(error: unknown) { return error instanceof Error ? error.message : "Something went wrong. Please try again."; }
 const emptyContent: CommunityContent = { title: "", summary: "", category: "scripts", description: "", installation: "", kind: "showcase", maturity: "experimental", tags: [] };
@@ -53,6 +54,7 @@ function Editor({ session, id }: { session: StoredSession; id?: string }) {
   const [busy, setBusy] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [conflict, setConflict] = useState(false);
+  const editSequence = useRef(0);
   useEffect(() => {
     if (!id) return;
     const controller = new AbortController();
@@ -69,14 +71,19 @@ function Editor({ session, id }: { session: StoredSession; id?: string }) {
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
   function change<K extends keyof CommunityContent>(key: K, value: CommunityContent[K]) {
+    editSequence.current++;
     setContent(current => ({ ...current, [key]: value })); setDirty(true); setStatus("");
   }
   async function save(event: FormEvent) {
     event.preventDefault(); setBusy(true); setError(null); setStatus("");
+    const savingSequence = editSequence.current;
     try {
       const saved = project ? await api.editProject(session.token, project.projectId, project.revision, content) : await api.createProject(session.token, slug, content);
-      setProject(saved); setDirty(false); setStatus("Draft saved. Only you and your project maintainers can see these changes.");
-      if (!id) router.replace(`/account/creations/${saved.projectId}/edit`);
+      setProject(saved);
+      const changedDuringSave = editSequence.current !== savingSequence;
+      setDirty(changedDuringSave);
+      setStatus(changedDuringSave ? "Draft saved. Your newer edits still need saving." : "Draft saved. Only you and your project maintainers can see these changes.");
+      if (!id && !changedDuringSave) router.replace(`/account/creations/${saved.projectId}/edit`);
     } catch (error) { setError(message(error)); if (error instanceof MasterApiError && error.code === "revision_conflict") setConflict(true); }
     finally { setBusy(false); }
   }
@@ -96,7 +103,7 @@ function Editor({ session, id }: { session: StoredSession; id?: string }) {
     {project && <p className="hub-notice">Revision {project.revision} · {project.revisionStatus.replaceAll("_", " ")}{project.publishedAtUtc ? " · Earlier approved content remains public." : " · Not published yet."}</p>}
     <form className="hub-form" onSubmit={save}>
       <label>Project title<input required maxLength={80} value={content.title} onChange={event => change("title", event.target.value)} /></label>
-      <label>Resource address<input required maxLength={80} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} readOnly={!!project} value={slug} onChange={event => { setSlug(event.target.value); setDirty(true); }} placeholder="auto-taxi" /><small>open2077.net/resources/{slug || "your-project"}</small></label>
+      <label>Resource address<input required maxLength={80} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} readOnly={!!project || busy} value={slug} onChange={event => { editSequence.current++; setSlug(event.target.value); setDirty(true); }} placeholder="auto-taxi" /><small>open2077.net/resources/{slug || "your-project"}</small></label>
       <label>Short description<input required maxLength={200} value={content.summary} onChange={event => change("summary", event.target.value)} /></label>
       <div className="hub-form-row"><label>Category<select value={content.category} onChange={event => change("category", event.target.value)}>{categories.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
         <label>Project type<select value={content.kind} onChange={event => change("kind", event.target.value as CommunityContent["kind"])}><option value="showcase">Showcase — share your work</option><option value="resource">Resource — downloadable package</option></select></label></div>
@@ -110,6 +117,7 @@ function Editor({ session, id }: { session: StoredSession; id?: string }) {
         {project && <button type="button" className="btn btn-ghost" disabled={busy || dirty || conflict || project.revisionStatus !== "draft"} onClick={submit}>Submit for review</button>}
         <span role="status">{dirty ? "Unsaved changes" : ""}</span></div>
     </form>
+    {project && <CreatorMedia token={session.token} projectId={project.projectId} media={content.media ?? []} onChange={value => change("media", value)} />}
     {project && content.kind === "resource" && <CreatorReleases session={session} project={project} />}
   </>;
 }
