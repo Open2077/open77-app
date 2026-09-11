@@ -34,7 +34,7 @@ The master repository owns these reviewable artifacts:
   files, worker, importer and maintenance services alongside master.
 - `ops/community/test-images.ps1`: five-image non-root/private-image validation and
   both Compose overlays. All five images were rebuilt and passed at clean master
-  `f4dc02b7`, with UID1654, private contents and both overlays checked; exact local
+  `41b4a2c18`, with UID1654, private contents and both overlays checked; exact local
   image identities are in master `artifacts/hub-images/validation.json`.
 - `ops/community/Caddyfile`, `test-edge.ps1`, and `edge-fixture/`: restricted public
   gateway routing and actual streamed 100 MiB boundary checks.
@@ -56,8 +56,9 @@ The master repository owns these reviewable artifacts:
   Content-based local image tags retain validated artifacts across working-tag
   replacements; the original earlier untagged images were unavailable.
 
-CI wiring validation passed, including exact Windows/Linux gate probes. Bind the
-final app/base/launcher artifacts and test evidence to their build revisions. Keep
+CI wiring validation passed, including exact Windows/Linux gate probes. The
+component artifact inventory records actual app/base/launcher build identities
+and their provenance qualifications. Keep
 the paired backup and rollback instructions alongside that inventory. Remote CI
 execution and production deployment have not been performed by this goal.
 App `e98f611` adds CI for locked install, typecheck/lint, deterministic Hub tests
