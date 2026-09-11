@@ -61,6 +61,11 @@ and metadata tests passed. Schema checks accepted both examples and rejected ten
 invalid boundary fixtures. These diagnostic Lua examples do not prove game asset
 loading.
 
+The final acceptance audit also requires a distributable world-placement sample,
+a supported authored preload-asset sample, and a deterministic served Hub browser
+scenario. Those are being prepared independently of the blocked live journeys;
+the existing diagnostic examples and generic website scripts do not satisfy them.
+
 ## External and execution blockers
 
 1. **Actual website browser acceptance:** automatic command review rejected the
@@ -73,7 +78,7 @@ loading.
    permitted release-asset import are still needed. Do not describe fixture
    responses as a completed provider integration journey.
 3. **Actual game acceptance:** two unrelated in-world sessions occupied
-   10,864/12,227 MiB VRAM at the latest recorded check. They were preserved. A free
+   11,391/12,227 MiB VRAM at the latest recorded check. They were preserved. A free
    authorized game-test slot and a valid authored preload asset fixture are needed;
    the successful inert-archive server restart is not that proof.
 4. **Release-host and owner checks:** name the moderation owner; review contributor
