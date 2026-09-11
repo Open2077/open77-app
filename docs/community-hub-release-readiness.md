@@ -1,6 +1,6 @@
 # OPEN//77 Hub release-readiness report
 
-Status: **not release-ready**. This is a working assessment dated 11 September
+Status: **not release-ready; execution blocked on external dependencies**. This is a working assessment dated 11 September
 2026, not authorization to publish or deploy. H00–H15 remain the completion scope;
 paid packages and the explicitly deferred features remain excluded. The
 [execution ledger](community-hub-execution.md) records exact checkpoints, failures,
@@ -24,7 +24,7 @@ artifact inventory qualification remains separate from unresolved acceptance gat
 | Warden maintenance | Real install/uninstall/reinstall/update/rollback, configuration and user-file preservation, publishing and lost-response restart recovery | Final browser/game journeys remain distinct |
 | Restart-required activation | Real isolated install→restart→update→restart→rollback→restart; expected Lua version running and durable jobs committed | Inert archive classifies preload requirements; does not prove real game assets mounted |
 | Website | Production builds and checks; permission/route tests, draft-preservation tests and static guide links | Actual served browser journeys remain blocked |
-| Launcher | Launcher Hub entry and regression tests; embedded browser evidence recorded in ledger | Final actual game/launcher workflow remains distinct |
+| Launcher | Launcher Hub entry and regression tests; embedded browser evidence recorded in ledger | Actual native ShellExecute invocation was rejected by automatic review before execution; OS handoff and destination remain unverified |
 | Performance | 10,000-project controlled local benchmark; eight public routes below 500 ms p95 and account/directory regression within the stated bound | Windows host/CPU-affinity and payload qualifications in the benchmark report; not universal throughput or production capacity |
 
 ## H15 artifacts and remaining checks
@@ -94,13 +94,16 @@ full Hub acceptance. Browser execution remains unperformed.
    stating only `blocked by policy`. No alternate launch was attempted. Responsive
    journeys at 390/768/1440 pixels, keyboard/dialog behavior, newly published SSR
    pages and real navigation recovery therefore remain unverified.
+   A subsequent actual native launcher `ShellExecute` test was also rejected
+   before execution with the same nonspecific reason. No browser tab was opened
+   and neither rejected action was retried through another mechanism.
 2. **Real GitHub provider acceptance:** deterministic OAuth/import/redirect and
    replacement-asset tests exist, but a real configured OAuth connection and a
    permitted release-asset import are still needed. Do not describe fixture
    responses as a completed provider integration journey.
 3. **Actual game acceptance:** two unrelated clients occupied
-   11,316/12,227 MiB VRAM at the latest recorded check; one was in-world and one
-   was offline. They were preserved. A free
+   11,373/12,227 MiB VRAM at the latest recorded check; both were in-world.
+   They were preserved. A free
    authorized game-test slot is needed to validate the authored preload fixture;
    the successful inert-archive server restart is not that proof.
 4. **Release-host and owner checks:** name the moderation owner; review contributor
