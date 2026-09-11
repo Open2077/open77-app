@@ -15,13 +15,13 @@
 export const WARDEN_TITLE = "Warden";
 
 export const WARDEN_DESCRIPTION =
-  "Warden is the OPEN//77 in-server admin panel: a browser control room for your live server. Stream the console, run commands, hot-reload Lua resources, moderate players, post announcements, edit config and manage admins — without ever restarting.";
+  "Warden is the OPEN//77 in-server admin panel: a browser control room for your live server. Stream the console, run commands, hot-reload Lua resources, moderate players, post announcements, edit config and manage admins. Configuration and preload changes can require a restart.";
 
 export const WARDEN_LEDE =
   "Warden is your live server control room. Open it in a browser from your own PC and run the whole server — console, resources, players and config — while it stays up. It is to an OPEN//77 server what txAdmin is to a FiveM one.";
 
 export const WARDEN_OVERVIEW =
-  "A dedicated server is a program on a box somewhere; Warden is the window into it. Instead of tailing a log file over SSH and restarting the process for every change, you open a panel in your browser and drive the running server directly — watch the live console, type commands, reload a resource you just edited, deal with a troublesome player, and push a message to everyone online. Nothing needs a restart, and you never need to be at the machine itself. It is off by default; you turn it on when you want it.";
+  "A dedicated server is a program on a box somewhere; Warden is the window into it. Open the panel in your browser to watch the live console, type commands, reload a Lua resource, manage players and send announcements. Many operations apply while the server runs; configuration and preload changes can require a restart. Follow the operation's review and status before treating a change as live. Warden is off by default; you turn it on when you want it.";
 
 export const ENABLE_INTRO =
   "Warden ships inside the server build — there is nothing extra to download. You switch it on in server.jsonc by enabling the warden block, then restart the server once so the setting takes effect.";

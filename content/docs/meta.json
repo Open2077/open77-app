@@ -22,6 +22,14 @@
           "description": "Start using the active OPEN//77 Developer Preview: account approval, downloads, hosting, the Lua API, experimental features and reporting bugs."
         },
         {
+          "slug": "community-hub",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Community Hub",
+          "title": "Share and use community resources",
+          "description": "Find and share free OPEN//77 resources: ZIP and GitHub releases, Warden creator connections, compatibility, moderation and project ownership."
+        },
+        {
           "slug": "platform",
           "kind": "page",
           "nav": "How the platform works",
@@ -61,7 +69,7 @@
           "kind": "page",
           "nav": "Warden admin panel",
           "title": "Warden",
-          "description": "Warden is the OPEN//77 in-server admin panel: a browser control room for your live server. Stream the console, run commands, hot-reload Lua resources, moderate players, post announcements, edit config and manage admins — without ever restarting."
+          "description": "Warden is the OPEN//77 in-server admin panel: a browser control room for live console, Lua resources, players, configuration and admins. Review operations that require a restart."
         },
         {
           "slug": "launcher-for-server-owners",
