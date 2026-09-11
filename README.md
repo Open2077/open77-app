@@ -1,12 +1,14 @@
 # OPEN//77 — web app
 
-Marketing site, server browser and documentation for OPEN//77, a multiplayer project for
+Marketing site, community resource Hub, server browser and documentation for OPEN//77, a multiplayer project for
 Cyberpunk 2077. Built with Next.js on the App Router and deployed on Vercel.
 
-Every route is prerendered at build time. There is no database, no request-time data fetching and
-no runtime dependency on the platform: the whole site is static HTML, which is what makes the
-documentation legible to search engines, answer engines and coding agents without any of them
-executing JavaScript.
+Documentation and marketing content are prerendered. Public Hub pages read approved
+content from the master API at request time and render their content and metadata
+on the server. Account, moderation and creator workflows also depend on the master;
+private file uploads and downloads use its configured gateway. The app owns no
+database. Documentation and public Hub content remain readable without executing
+client JavaScript.
 
 ## Requirements
 
@@ -23,15 +25,29 @@ npm run dev     # http://localhost:3000
 | Script                   | Purpose                                                           |
 | ------------------------ | ----------------------------------------------------------------- |
 | `npm run dev`            | Development server                                                |
-| `npm run build`          | Production build, prerenders every route                          |
+| `npm run build`          | Production build, prerenders static routes                        |
 | `npm start`              | Serves the build; the `verify:served` scripts expect it on `:3000` |
 | `npm run check`          | Typecheck then lint                                               |
+| `npm run test:hub`       | Deterministic Hub tests, Markdown safety and browser-runner guards |
 | `npm run sync:wiki`      | Re-copies the documentation source out of the platform repository |
 | `npm run verify:content` | Checks the synced content before it is built                      |
 | `npm run verify:served`  | Checks the built site over HTTP and in a real browser             |
 | `npm run inspect:output` | Prints what a crawler receives for a sample of pages              |
 | `npm run inspect:prose`  | Prints the prose around each platform-repository file reference   |
 | `npm run screenshot`     | Writes full-page screenshots of every page shape                  |
+
+App CI runs a locked dependency install, `check`, `test:hub` and the production
+build on Node24.19.0. It compiles loopback API targets and does not deploy or claim
+real browser/provider acceptance. For the separate real-site guest scenario, see
+[Hub browser acceptance](docs/community-hub-browser-acceptance.md).
+
+Configure `NEXT_PUBLIC_OP77_MASTER_URL` before building for browser API calls.
+`OP77_COMMUNITY_API_URL` selects the server-side Hub API origin and falls back to
+the browser master origin when absent. Keep credentials out of both URLs. The
+deployment needs working browser-to-master/gateway and server-to-master paths;
+a successful static build alone does not verify those connections. See the
+[operator guide](docs/community-hub-operator-guide.md) and
+[release-readiness report](docs/community-hub-release-readiness.md).
 
 ## Layout
 
