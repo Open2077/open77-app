@@ -19,7 +19,7 @@ All four use branch `feat/community-hub`, created from the existing checkout HEA
 - [ ] H01: interface prototype — discovery/directory/detail and creator draft surfaces implemented; responsive CSS present, rendered browser review pending.
 - [ ] H02: schema/domain/permissions/revisions — migration 12 and project revision lifecycle implemented/tested. Profiles, release lifecycle, membership workflows and remaining schema still need implementation.
 - [ ] H03: project/profile/release APIs — initial project create/edit/submit/review/public/private listing routes tested over HTTP; broader contracts still pending.
-- [ ] H04: private file gateway/storage/jobs — immutable filesystem blob store and leased durable queue implemented/tested; gateway/upload integration pending.
+- [ ] H04: private file gateway/storage/jobs — immutable storage, leased durable queue and scoped upload gateway implemented/tested; inspection integration, delivery and operations remain pending.
 - [ ] H05: package/media inspection
 - [ ] H06: review/report/revocation/admin
 - [ ] H07: live publishing/download/directory
@@ -79,3 +79,18 @@ Scope remains H00–H15 in full. No production changes, no game startup, no chan
 - Automatic approval review rejected the local Next server startup on 3008 with only `blocked by policy`. No alternate launch was attempted to bypass that rejection. Browser/served validation remains pending; it is not implied by build success. Other backend implementation remains unblocked.
 
 Next: upload grants/quota reservations, file gateway and inspection pipeline; finish browser validation when the server-start rejection is resolved. Goal remains active with all H00–H15 requirements intact.
+
+## Upload/archive checkpoint — 11 September 2026
+
+- Added independent `Open77.Community.Files` gateway. It verifies an existing schema without applying migrations or loading platform signing keys. Transfer authorization uses expiring upload-specific bearer grants; account session tokens are not accepted by this gateway.
+- Master creates immutable SemVer release identities, reserves per-account upload slots/bytes transactionally, issues grants, exposes private status, and finalizes uploads into quarantine plus one durable inspection job. Completed transfers cannot overwrite bytes. Gateway bounds stream size, concurrent transfers and transfer duration; interrupted transfers reset for retry.
+- Additive migration 13 allows separate artifact ownership records to reference the same immutable physical digest. Public visibility remains governed by individual artifact/release state.
+- `dotnet build Open77.Master.slnx -c Release --nologo`: zero warnings/errors. Community tests: 26 passed, zero skipped (`community-uploads.trx`). Full master regression: 129 passed, zero skipped in 50 seconds (`hub-upload-regression.trx`). Reports are under the test project's ignored `bin/Release/net10.0/TestResults/`.
+- Real HTTP integration tests use MariaDB and private temporary filesystem storage: grant isolation, retry after oversized data, single-use transfers, cross-account ownership, concurrent quota reservation, exact bytes, private visibility and idempotent job enqueue. Random test bytes deliberately remain quarantined; this does not claim successful package inspection.
+- Added disposable ZIP staging with shared expanded-byte/entry budgets, portable paths, case/Unicode collision checks, link/device rejection, bounded streamed extraction and cleanup. Six attack/cleanup/budget tests pass (`community-zip-boundary.trx`). This container boundary is not complete package or malware validation; manifest/media/preload inspection and worker integration remain required.
+- hub-base parser now has a package-root entry point using the same resource validation implementation, while installed resources still require matching directory names. Parser/preload/resource-subsystem selection: 46 passed, zero skipped (`hub-resource-parser.trx`).
+- First base server build found the new worktree's native transport absent. Native source/pins match the existing base checkout (`git diff f8ae5471 -- server/native` empty); copied only its cached Release transport DLL into this worktree. Source/destination SHA-256: `06ef37f835e35b3704ebf5696c8cb9d56a561ea06bfff3b78cea3cb41abc11cf`. No identity/config/cache deletion. The subsequent server build passed; server regression is running.
+
+- Base full server suite finished: 909 passed, five environment-dependent skips (native platform module and four database scenarios), one pre-existing `ShippedWebUiUsesCefSafeCustomDropdowns` failure. Failing test/Freeroam HTML unchanged from baseline `f8ae5471`; prior runbook documents this same failure. The full suite is not green; targeted Hub parser validation is green. No test was suppressed or changed to hide this failure.
+
+Remaining: all unchecked acceptance gates, including worker inspection, download authorization, full creator/social/moderation UI, GitHub/Warden/launcher integrations and release validation. No production publication/deployment.
