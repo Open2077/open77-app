@@ -1,4 +1,5 @@
 "use client";
+import { ReleaseFiles } from "@/components/community/release-files";
 
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
@@ -94,6 +95,7 @@ function ReviewDetail({ token, item, completed }: { token: string; item: Communi
       <p>License: {release.metadata.license}</p><p>Tested builds: {release.metadata.testedBuilds.join(", ") || "None declared"}</p><p>Required resources: {release.metadata.requiredResources.join(", ") || "None declared"}</p>
       <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code> · {release.sizeBytes} bytes</p>
       <DownloadButton key={`${release.releaseId}-${release.revision}`} releaseId={release.releaseId} version={release.version} review={{ token, revision: release.revision }} />
+      <ReleaseFiles key={release.releaseId} releaseId={release.releaseId} token={token} />
       <p className="hub-notice">This private ZIP is for review. Its link expires after five minutes or a release decision. Review downloads do not count toward public popularity.</p>
       <details open><summary>Immutable inspection snapshot and manifests</summary><pre className="hub-review-text">{JSON.stringify(release.inspection, null, 2)}</pre></details></>}
     {project && !current && <p className="hub-notice" role="alert">This submission changed or has already been reviewed. Refresh the queue and inspect the current revision.</p>}

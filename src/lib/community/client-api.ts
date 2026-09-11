@@ -1,8 +1,9 @@
 import { masterCall } from "@/lib/account/api";
-import type { CommunityReleaseEditor, CommunityReleaseEditorContent } from "./types";
+import type { CommunityReleaseEditor, CommunityReleaseEditorContent, CommunityReleaseFiles } from "./types";
 import type { CommunityActivity, CommunityAppeal, CommunityComment, CommunityModerationState, CommunityNotification, CommunityProfile, CommunityProjectState, CommunityReport, CommunityReviewItem, CommunitySavedProject } from "./types";
 import type { CommunityContent, CommunityDelivery, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
 const root = "/api/v1/community";
+export const releaseFiles = (id: string, token?: string, cursor?: string, signal?: AbortSignal) => masterCall<CommunityReleaseFiles>(`${root}/${token ? "me/" : ""}releases/${encodeURIComponent(id)}/files${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
 export const releaseEditor = (token: string, id: string, signal?: AbortSignal) => masterCall<{ draft: CommunityReleaseEditor | null }>(`${root}/me/projects/${encodeURIComponent(id)}/release-editor`, { token, signal });
 export const saveReleaseEditor = (token: string, id: string, expectedRevision: number, content: CommunityReleaseEditorContent) => masterCall<CommunityReleaseEditor>(`${root}/me/projects/${encodeURIComponent(id)}/release-editor`, { token, method: "PUT", body: { expectedRevision, content }, signal: AbortSignal.timeout(15000) });
 export const comments = (projectId: string, parentId?: string, cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityComment>>(`${root}/projects/${encodeURIComponent(projectId)}/comments?${new URLSearchParams({ ...(parentId ? { parentId } : {}), ...(cursor ? { cursor } : {}) })}`, { signal });

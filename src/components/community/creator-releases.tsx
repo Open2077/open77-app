@@ -7,6 +7,7 @@ import { transferUpload } from "@/lib/community/upload";
 import type { CommunityPage, CommunityProject, CommunityRelease, CommunityUploadItem } from "@/lib/community/types";
 import { validationHelp } from "@/lib/community/validation-help";
 import { useReleaseEditor } from "./use-release-editor";
+import { ReleaseFiles } from "./release-files";
 
 const errorText = (error: unknown) => error instanceof Error ? error.message : "The request failed. Please try again.";
 const lines = (value: string) => [...new Set(value.split(/\r?\n/).map(line => line.trim()).filter(Boolean))];
@@ -73,7 +74,7 @@ function PackageTransfer({ token, projectId, releaseId, existing, checkedAt, cha
   </form>;
 }
 
-export function CreatorReleases({ session, project }: { session: StoredSession; project: CommunityProject }) {
+export function CreatorReleases({ session, project, readOnly = false }: { session: StoredSession; project: CommunityProject; readOnly?: boolean }) {
   const [releases, setReleases] = useState<CommunityPage<CommunityRelease> | null>(null);
   const [uploads, setUploads] = useState<CommunityPage<CommunityUploadItem> | null>(null);
   const [releaseCursor, setReleaseCursor] = useState<string>();
@@ -127,7 +128,7 @@ export function CreatorReleases({ session, project }: { session: StoredSession; 
       <button type="button" className="btn btn-ghost" onClick={reload}>Refresh status</button></div>
     {error && <p className="hub-notice" role="alert">{error}</p>}
     {pollPaused && <p className="hub-notice">Automatic status checks have paused. Use Refresh status to check again.</p>}
-    <details className="hub-release"><summary>Create a version</summary>
+    <details className="hub-release" hidden={readOnly}><summary>Create a version</summary>
       <p className="hub-notice">Release versions and their details cannot be reused or edited after creation. Check these details before continuing. Your ZIP is validated and reviewed before publication.</p>
       <p role="status">{!draft.loaded ? "Loading your private release draft…" : draft.busy ? "Saving release details…" : draft.dirty ? "Unsaved release details" : "Release details saved"} · This unfinished form is private to your account.</p>
       {draft.error && <p className="hub-notice" role="alert">{draft.error} Your text is retained; autosave is paused. <button type="button" className="btn btn-ghost" disabled={draft.busy || draft.conflict} onClick={() => { if (draft.loaded) void draft.save(); else draft.retryLoad(); }}>Retry</button></p>}
@@ -151,15 +152,17 @@ export function CreatorReleases({ session, project }: { session: StoredSession; 
     {!releases && !error && <p role="status">Loading releases…</p>}
     <div className="hub-releases">{releases?.items.map(release => <article className="hub-release" key={release.releaseId}>
       <div className="hub-release-heading"><h3>Version {release.version}</h3><span className="hub-release-state">{release.state.replaceAll("_", " ")}</span></div>
-      {release.state === "uploading" && <PackageTransfer token={session.token} projectId={project.projectId} releaseId={release.releaseId} checkedAt={checkedAt} changed={reload}
-        existing={uploads?.items.find(item => item.upload.releaseId === release.releaseId && Date.parse(item.upload.expiresAtUtc) > checkedAt)} />}
+      {release.state === "uploading" && <div hidden={readOnly}><PackageTransfer token={session.token} projectId={project.projectId} releaseId={release.releaseId} checkedAt={checkedAt} changed={reload}
+        existing={uploads?.items.find(item => item.upload.releaseId === release.releaseId && Date.parse(item.upload.expiresAtUtc) > checkedAt)} /></div>}
+      {readOnly && <><p className="hub-merge-text">{release.metadata.changelog}</p><p>Tested builds: {release.metadata.testedBuilds.join(", ") || "None declared"}</p><p>Required resources: {release.metadata.requiredResources.join(", ") || "None declared"}</p><p className="hub-merge-text">License: {release.metadata.license}</p><p className="hub-merge-text">Installation: {release.metadata.installation}</p></>}
       {release.sha256 && <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p>}
+      {release.resources.length > 0 && <ReleaseFiles key={`${session.accountId}:${release.releaseId}`} releaseId={release.releaseId} token={session.token} />}
       {release.resources.length > 0 && <details><summary>Inspected resources and requirements</summary>{release.resources.map(resource => <div className="hub-release" key={resource.name}><h4>{resource.name}</h4><p>Root: <code>{resource.relativeRoot || "."}</code> · Manifest version: {resource.manifest.version}</p><p>Open77: {resource.manifest.open77Version}</p><p>Dependencies: {resource.manifest.dependencies.join(", ") || "None declared"}</p><p>Permissions: {resource.manifest.permissions.join(", ") || "None declared"}</p><p>Preloads: {resource.manifest.preloadMods.join(", ") || "None declared"}</p></div>)}</details>}
     </article>)}</div>
     <nav className="hub-actions" aria-label="Your release pages">
       {releaseCursor && <button className="btn btn-ghost" onClick={() => setReleaseCursor(undefined)}>Newest releases</button>}
       {releases?.nextCursor && <button className="btn btn-ghost" onClick={() => setReleaseCursor(releases.nextCursor ?? undefined)}>Older releases</button>}</nav>
-    <div className="hub-section-head"><h2>Your upload history</h2></div>
+    <div hidden={readOnly}><div className="hub-section-head"><h2>Your upload history</h2></div>
     <p className="hub-notice">Interrupted transfers restart from the beginning. Pending reservations expire after 30 minutes; stored files can be submitted for validation without uploading again.</p>
     {uploads?.items.length === 0 && <p>No uploads yet.</p>}
     <div className="hub-releases">{uploads?.items.map(item => <article className="hub-release" key={item.upload.uploadId}>
@@ -172,6 +175,6 @@ export function CreatorReleases({ session, project }: { session: StoredSession; 
     </article>)}</div>
     <nav className="hub-actions" aria-label="Your upload pages">
       {uploadCursor && <button className="btn btn-ghost" onClick={() => setUploadCursor(undefined)}>Newest uploads</button>}
-      {uploads?.nextCursor && <button className="btn btn-ghost" onClick={() => setUploadCursor(uploads.nextCursor ?? undefined)}>Older uploads</button>}</nav>
+      {uploads?.nextCursor && <button className="btn btn-ghost" onClick={() => setUploadCursor(uploads.nextCursor ?? undefined)}>Older uploads</button>}</nav></div>
   </section>;
 }

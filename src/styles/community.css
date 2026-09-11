@@ -152,8 +152,14 @@
 @media(prefers-reduced-motion:reduce) { .hub-main * { transition: none !important; } }
 .hub-editor-fields { display: grid; gap: 1rem; border: 0; padding: 0; margin: 0; min-width: 0; }
 .hub-editor-fields[hidden] { display: none; }
+.hub-release[hidden] { display: none; }
 .hub-wizard-steps { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; padding: 0; margin: 1.5rem 0; }
 .hub-wizard-steps [aria-current="step"] { border-color: var(--accent); }
 .hub-rights { display: flex; align-items: flex-start; gap: .75rem; margin: 1.5rem 0; }
 .hub-rights input { flex: 0 0 auto; margin-top: .25rem; }
 .hub-merge-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 20rem; overflow: auto; font: inherit; }
+.hub-file-table { max-width: 100%; overflow-x: auto; margin-block: 1rem; }
+.hub-file-table table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.hub-file-table th,.hub-file-table td { padding: .75rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; border-bottom: 1px solid var(--line); }
+.hub-file-table th:nth-child(2),.hub-file-table td:nth-child(2) { width: 6rem; }
+.hub-file-table code { font-size: .75rem; }

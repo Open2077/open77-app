@@ -9,6 +9,7 @@ import { ProjectModerationControls, ReleaseRevocationControls } from "./communit
 import { PrivateMediaPreview } from "@/components/community/private-media-preview";
 import { DownloadButton } from "@/components/community/download-button";
 import { ActivityHistory } from "@/components/community/activity-history";
+import { ReleaseFiles } from "@/components/community/release-files";
 
 export function CommunityProjectPanel({ id }: { id: string }) {
   const { session } = useSession();
@@ -33,6 +34,7 @@ export function CommunityProjectPanel({ id }: { id: string }) {
       <h4>Version {release.version} · {release.state}</h4><pre className="hub-review-text">{release.metadata.changelog}</pre>
       {release.sha256 && <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p>}
       {release.inspection != null && <><DownloadButton releaseId={release.releaseId} version={release.version} review={{ token: session.token, revision: release.revision }} />
+        <ReleaseFiles key={`${session.accountId}:${release.releaseId}`} releaseId={release.releaseId} token={session.token} />
         <details><summary>Inspection snapshot</summary><pre className="hub-review-text">{JSON.stringify(release.inspection, null, 2)}</pre></details></>}
       <ReleaseRevocationControls token={session.token} release={release} updated={result.reload} />
     </article>)}</div>

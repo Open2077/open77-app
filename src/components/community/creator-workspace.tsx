@@ -209,7 +209,7 @@ function Editor({ session, active, id }: { session: StoredSession; active: boole
     {project && <fieldset className="hub-editor-fields" hidden={step !== 1} disabled={conflict}><CreatorMedia token={session.token} projectId={project.projectId} media={content.media ?? []} onChange={value => change("media", value)} /></fieldset>}
     {step === 1 && <DraftPreview content={content} token={session.token} />}
     {!project && step > 0 && <p className="hub-notice">Create your draft from Basics to upload media and releases. Your text stays in this tab until saved.</p>}
-    {project && content.kind === "resource" && <div hidden={step !== 2 && step !== 3}><CreatorReleases session={session} project={project} /></div>}
+    {project && content.kind === "resource" && <div hidden={step !== 2 && step !== 3 && step !== 4}><CreatorReleases session={session} project={project} readOnly={step === 4} /></div>}
     {step === 3 && <section className="hub-notice"><h3>Project checks</h3><ul>
       <li>{content.title.trim() ? "Title entered." : "Add a title in Basics."}</li>
       <li>{content.summary.trim() ? "Summary entered." : "Add a summary in Basics."}</li>

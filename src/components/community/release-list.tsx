@@ -2,6 +2,7 @@ import { communityMarkdown } from "@/lib/community/markdown";
 import type { CommunityRelease } from "@/lib/community/types";
 import { DownloadButton } from "./download-button";
 import { ReportForm } from "./report-form";
+import { ReleaseFiles } from "./release-files";
 
 function bytes(value: number) { return value < 1024 * 1024 ? `${Math.ceil(value / 1024)} KiB` : `${(value / (1024 * 1024)).toFixed(1)} MiB`; }
 
@@ -34,6 +35,7 @@ async function ReleaseCard({ release, downloadable }: { release: CommunityReleas
       {release.sha256 && <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p>}
     </details>
     <ReportForm targetType="release" targetId={release.releaseId} />
+    <ReleaseFiles releaseId={release.releaseId} />
   </article>;
 }
 
