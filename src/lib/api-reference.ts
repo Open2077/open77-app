@@ -161,6 +161,9 @@ const VEHICLE_WEAPON_READS = new Set([
 ]);
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (runtime === "client" && raw.namespace === "Open77.screen") {
+    return { usageGuideHref: "/docs/screen-transitions", usageGuideLabel: "Native fades & transitions guide" };
+  }
   if (raw.namespace === "Open77.npcs") {
     return runtime === "server"
       ? { usageGuideHref: "/docs/npc-behavior", usageGuideLabel: "NPC AI, combat & voice guide" }

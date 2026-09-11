@@ -95,6 +95,7 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [RP animation catalogue](rp-animation-catalogue.md) | All 12 profiles and 70 selectable clips, prop/placement requirements and validation status. |
 | [World props](props.md) | Server-authoritative props and lights: models, streaming, buckets, ownership, and the client projection. |
 | [Visual and audio effects](effects.md) | Client-local world/entity VFX and spatialised SFX, and the server-replicated effect registry. |
+| [Native screen transitions](screen-transitions.md) | Client Lua fades to black/color, native completion events, resource ownership, cancellation and recovery. |
 | [Privileged debug runtime](debug-runtime.md) | ACL-targeted client Lua execution, native lab commands, and REDscript bridge probes. |
 | [Autonomous agent testing](agent-testing.md) | The MCP server and skill that let an AI agent drive the real game: stack, connection, tools, scenarios, and safety rules. |
 | [Chat](chat.md) | Messages, slash commands, completion, and resource integration. |

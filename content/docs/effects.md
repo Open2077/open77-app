@@ -252,6 +252,9 @@ fx.catalog
 
 ## Exhaustive references
 
+For full-screen quest-style fades rather than entity/world VFX, use the
+[native screen transition API](screen-transitions.md).
+
 - [`docs/generated/vfx-assets-2.31.csv`](../docs/generated/vfx-assets-2.31.csv) lists all 1,070 `.effect` paths found in the local 2.31 cooked-archive inventory.
 - [`docs/generated/sfx-events-wolvenkit-seed.csv`](../docs/generated/sfx-events-wolvenkit-seed.csv) lists 17,586 distinct Wwise event names from 17,684 WolvenKit database rows. Its source declares game version 1.6; entries therefore require runtime validation on 2.31.
 

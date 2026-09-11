@@ -298,6 +298,12 @@
       "title": "Interfaces & input",
       "pages": [
         {
+          "slug": "screen-transitions",
+          "kind": "guide",
+          "nav": "Native fades & transitions",
+          "description": "Use Cyberpunk's native screen fades from client Lua: fade out, hold and return, color options, completion events, resource ownership and automatic recovery. Includes server-coordinated transitions and HUD limitations."
+        },
+        {
           "slug": "native-map",
           "kind": "guide",
           "nav": "Native map & waypoints",

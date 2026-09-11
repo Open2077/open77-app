@@ -6610,6 +6610,167 @@
   "route_id": "Open77.runtime.version"
  },
  {
+  "namespace": "Open77.screen",
+  "name": "cancel",
+  "handler": "LuaScreenCancel",
+  "summary": "Cancels an owned native transition and restores the image immediately.",
+  "description": "Client-only; requires screen.effects. Ownership includes resource generation and host instance. Never clears a native game fade that has taken over. Emits open77:screen:cancelled with reason=requested on success.",
+  "params": [
+   {
+    "name": "id",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11822,
+  "qualified": "Open77.screen.cancel",
+  "route_id": "Open77.screen.cancel"
+ },
+ {
+  "namespace": "Open77.screen",
+  "name": "catalog",
+  "handler": "LuaScreenCatalog",
+  "summary": "Lists supported native screen transition presets and backend availability.",
+  "description": "Client-only; requires screen.effects. Current preset is fade, with backend=native_quest_fade, available, color, maxDurationMs, maxHoldMs and maxTimeoutMs. Availability verifies this executable's guarded native entry, not whether a world is ready or another fade is busy. Glitch remains unsupported.",
+  "params": [],
+  "returns": [
+   "presets, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11824,
+  "qualified": "Open77.screen.catalog",
+  "route_id": "Open77.screen.catalog"
+ },
+ {
+  "namespace": "Open77.screen",
+  "name": "fadeIn",
+  "handler": "LuaScreenFadeIn",
+  "summary": "Returns the image for this resource's active native fade.",
+  "description": "Client-only; requires screen.effects. options.durationMs is 0..10000 (default 500). Can reverse an outgoing fade; does not extend the safety deadline. Rejects another owner, stale generation or an already-running return. Observe open77:screen:finished for native completion.",
+  "params": [
+   {
+    "name": "id",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11820,
+  "qualified": "Open77.screen.fadeIn",
+  "route_id": "Open77.screen.fadeIn"
+ },
+ {
+  "namespace": "Open77.screen",
+  "name": "fadeOut",
+  "handler": "LuaScreenFadeOut",
+  "summary": "Applies a native black or color-tinted quest fade (colored rendering is engine-controlled).",
+  "description": "Client-only; requires screen.effects. Returns an owned string ID, not completion. Options: durationMs (0..10000, default 500), color={r,g,b,a=255}, timeoutMs (1000..60000, default at least 15000). Wait for open77:screen:black or covered, then call fadeIn or cancel. Resource cleanup and a bounded real-time deadline restore the image. See the Native screen transitions guide.",
+  "params": [
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "id, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11819,
+  "qualified": "Open77.screen.fadeOut",
+  "route_id": "Open77.screen.fadeOut"
+ },
+ {
+  "namespace": "Open77.screen",
+  "name": "state",
+  "handler": "LuaScreenState",
+  "summary": "Reads this resource generation's active or recent native transition.",
+  "description": "Client-only; requires screen.effects. Returns id, generation, phase, reason, backend, timing, automatic, elapsedMs, remainingMs, timeoutMs, black and color. remainingMs is the native fade timer, not hold time; native-state completion is not a GPU fence or streaming-complete signal. History is bounded to 64 global entries and removed on resource release.",
+  "params": [
+   {
+    "name": "id",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11823,
+  "qualified": "Open77.screen.state",
+  "route_id": "Open77.screen.state"
+ },
+ {
+  "namespace": "Open77.screen",
+  "name": "transition",
+  "handler": "LuaScreenTransition",
+  "summary": "Runs a native fade, bounded hold and return sequence.",
+  "description": "Client-only; requires screen.effects. Supported preset: fade. Options: durationMs=500, holdMs=250, fadeInMs=500, timeoutMs and opaque RGB color. Durations are integer milliseconds; hold is 0..30000, fades 0..10000. Only one active owner; vanilla requests retain priority. No teleport or network mutation. Glitch is not yet a supported preset.",
+  "params": [
+   {
+    "name": "preset",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "id, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 11821,
+  "qualified": "Open77.screen.transition",
+  "route_id": "Open77.screen.transition"
+ },
+ {
   "namespace": "Open77.session",
   "name": "characterBootstrap",
   "handler": "LuaSessionCharacterBootstrap",
