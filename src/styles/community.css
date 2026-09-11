@@ -163,3 +163,7 @@
 .hub-file-table th,.hub-file-table td { padding: .75rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; border-bottom: 1px solid var(--line); }
 .hub-file-table th:nth-child(2),.hub-file-table td:nth-child(2) { width: 6rem; }
 .hub-file-table code { font-size: .75rem; }
+.hub-video { margin-block: 1.5rem; }
+.hub-video-frame { width: 100%; aspect-ratio: 16 / 9; min-height: 200px; background: var(--surface); border: 1px solid var(--line); }
+.hub-video-frame iframe { width: 100%; height: 100%; min-height: 200px; border: 0; display: block; }
+.hub-video-placeholder { height: 100%; display: grid; place-content: center; gap: 1rem; padding: 1rem; text-align: center; }

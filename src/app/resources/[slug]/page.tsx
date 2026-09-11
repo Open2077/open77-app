@@ -4,6 +4,7 @@ import { HubShell, HubUnavailable } from "@/components/community/hub-shell";
 import { CommunityReadError, getProject, listReleases } from "@/lib/community/public-api";
 import { ReleaseList } from "@/components/community/release-list";
 import { MediaGallery } from "@/components/community/media-gallery";
+import { ExternalVideos } from "@/components/community/external-videos";
 import { ReportForm } from "@/components/community/report-form";
 import { ProjectActions } from "@/components/community/project-actions";
 import { categoryLabel } from "@/lib/community/types";
@@ -33,6 +34,7 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
     <h1>{content.title}</h1><p>{content.summary}</p>{project.creatorHandle && <p className="hub-creator-byline">By <Link href={`/creators/${project.creatorHandle}`}>@{project.creatorHandle}</Link></p>}<div className="hub-tags">{content.tags.map(tag => <span key={tag}>{tag}</span>)}</div></header>
     {project.state === "archived" && <p className="hub-notice">This creation is archived. Its approved releases remain available, but it is closed to new comments and updates.</p>}
     <div className="hub-detail"><article className="hub-prose"><MediaGallery media={content.media ?? []} /><h2>About this creation</h2><div dangerouslySetInnerHTML={{ __html: description }} />
+      <ExternalVideos urls={content.videoUrls ?? []} />
       {content.installation && <><h2>Installation</h2><div dangerouslySetInnerHTML={{ __html: installation }} /></>}
       {content.license && <><h2>License</h2><div dangerouslySetInnerHTML={{ __html: license }} /></>}
       {content.kind === "resource" && <section aria-label="Releases"><h2>Releases</h2>

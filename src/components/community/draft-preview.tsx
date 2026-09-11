@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { communityMarkdown } from "@/lib/community/markdown";
 import type { CommunityContent } from "@/lib/community/types";
 import { PrivateMediaPreview } from "./private-media-preview";
+import { ExternalVideos } from "./external-videos";
 
 export function DraftPreview({ content, token }: { content: CommunityContent; token: string }) {
   const [rendered, setRendered] = useState<{ source: CommunityContent; html: string[] } | null>(null);
@@ -23,10 +24,7 @@ export function DraftPreview({ content, token }: { content: CommunityContent; to
       {content.installation && <section><h3>Installation</h3><div className="hub-prose" dangerouslySetInnerHTML={{ __html: rendered.html[1] ?? "" }} /></section>}
       {content.license && <section><h3>License</h3><div className="hub-prose" dangerouslySetInnerHTML={{ __html: rendered.html[2] ?? "" }} /></section>}
     </>}
-    {content.videoUrls?.map((url, index) => { let valid = false;
-      try { const parsed = new URL(url); valid = parsed.protocol === "https:" && !parsed.username && !parsed.password && ["youtube.com", "www.youtube.com", "youtu.be", "vimeo.com", "www.vimeo.com"].includes(parsed.hostname); } catch { /* Unsent text can contain an incomplete URL. */ }
-      return <p key={index}>{valid ? <a href={url} target="_blank" rel="noopener noreferrer nofollow ugc">Watch video ↗</a> : "Complete this video link before publishing."}</p>;
-    })}
+    <ExternalVideos urls={content.videoUrls ?? []} />
   </article>;
 }
 
