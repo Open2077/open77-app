@@ -22,7 +22,7 @@ export function CommunityReportsPanel() {
   return <div className="hub-review-panel"><div className="hub-actions">
     {(["open", "action_taken", "dismissed"] as const).map(value => <button key={value} className="btn btn-ghost" aria-pressed={state === value} onClick={() => { setState(value); setCursor(undefined); }}>{value.replaceAll("_", " ")}</button>)}
     <Link href="/admin/resources">Project and release review →</Link></div>
-    {result.error && <p className="hub-notice" role="alert">{result.error}</p>}
+    {result.error && <div className="hub-notice" role="alert"><p>{result.error}</p><button type="button" className="btn btn-ghost" onClick={result.reload}>Retry reports</button></div>}
     {!result.data && !result.error && <p role="status">Loading reports…</p>}
     {result.data?.items.length === 0 && <p className="hub-notice">No reports match this filter.</p>}
     <div className="hub-releases">{result.data?.items.map(report => <ReportRow key={`${report.reportId}-${report.state}`} token={session.token} accountId={session.accountId} report={report} updated={result.reload} />)}</div>

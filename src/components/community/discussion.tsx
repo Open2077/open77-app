@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Activity, useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/account/session";
 import * as api from "@/lib/community/client-api";
@@ -69,7 +69,7 @@ function CommentEntry({ comment, project, updated, initiallyExpanded = false, ca
     {deleting && session && <div className="hub-notice"><p>Delete your comment? Its text will be removed and existing replies will remain.</p><button className="btn btn-primary" disabled={busy} onClick={() => void act(() => api.deleteComment(session.token, comment.commentId, comment.revision))}>Confirm deletion</button><button className="btn btn-ghost" onClick={() => setDeleting(false)}>Keep comment</button></div>}
     {comment.state === "visible" && <ReportForm targetType="comment" targetId={comment.commentId} />}
     {session?.role === "admin" && <CommentModeration token={session.token} id={comment.commentId} updated={updated} />}
-    {expanded && !comment.parentId && <Replies root={comment} project={project} />}
+    {!comment.parentId && <Activity mode={expanded ? "visible" : "hidden"}><Replies root={comment} project={project} /></Activity>}
   </article>;
 }
 

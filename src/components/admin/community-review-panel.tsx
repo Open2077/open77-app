@@ -1,7 +1,7 @@
 "use client";
 import { ReleaseFiles } from "@/components/community/release-files";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useSession } from "@/lib/account/session";
 import * as api from "@/lib/community/client-api";
@@ -63,14 +63,17 @@ function ReviewDetail({ token, item, completed }: { token: string; item: Communi
   const [approve, setApprove] = useState(false);
   const [checked, setChecked] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+  const heading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { heading.current?.focus(); }, []);
   useEffect(() => {
     const controller = new AbortController();
     const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]);
     Promise.all([api.myProject(token, item.projectId, signal), item.kind === "releases" ? api.reviewRelease(token, item.id, signal) : Promise.resolve(null)])
-      .then(([project, release]) => { if (!controller.signal.aborted) { setProject(project); setRelease(release); } })
+      .then(([project, release]) => { if (!controller.signal.aborted) { setProject(project); setRelease(release); setError(""); } })
       .catch(error => { if (!controller.signal.aborted) setError(message(error)); });
     return () => controller.abort();
-  }, [token, item]);
+  }, [token, item, attempt]);
   const revision = item.kind === "projects" ? project?.revision : release?.revision;
   const state = item.kind === "projects" ? project?.revisionStatus : release?.state;
   const current = revision === item.revision && state === (item.kind === "projects" ? "submitted" : "pending_review");
@@ -81,9 +84,9 @@ function ReviewDetail({ token, item, completed }: { token: string; item: Communi
     catch (error) { setError(message(error)); setChecked(false); }
     finally { setBusy(false); }
   }
-  return <section className="hub-section" aria-label="Submission review"><h2>Inspect {item.title}{item.version ? ` · ${item.version}` : ""}</h2>
+  return <section className="hub-section" aria-label="Submission review"><h2 ref={heading} tabIndex={-1}>Inspect {item.title}{item.version ? ` · ${item.version}` : ""}</h2>
     <p className="hub-notice">Reviewing revision {item.revision}. A resource project needs an approved release before its page can be approved.</p>
-    {error && <p className="hub-notice" role="alert">{error}</p>}
+    {error && <div className="hub-notice" role="alert"><p>{error}</p><button type="button" className="btn btn-ghost" disabled={busy} onClick={() => { setChecked(false); setError(""); setAttempt(value => value + 1); }}>Reload this submission</button></div>}
     {!project && !error && <p role="status">Loading submission…</p>}
     {project && <><p>{project.content.summary}</p><p>{project.content.category} · {project.content.kind} · {project.content.maturity}</p>
       <details open><summary>Project description and installation</summary><pre className="hub-review-text">{project.content.description}</pre><pre className="hub-review-text">{project.content.installation}</pre></details>

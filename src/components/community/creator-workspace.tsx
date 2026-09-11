@@ -80,6 +80,7 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
   const [slug, setSlug] = useState("");
   const [project, setProject] = useState<CommunityProject | null>(null);
   const [loaded, setLoaded] = useState(!id);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
@@ -98,17 +99,28 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
   const saving = useRef(false);
   const initialized = useRef(false);
   const editSequence = useRef(0);
+  useEffect(() => {
+    const revealRelease = () => {
+      if (window.location.hash === "#hub-releases") {
+        setStep(2);
+        requestAnimationFrame(() => heading.current?.focus());
+      }
+    };
+    const frame = requestAnimationFrame(revealRelease);
+    window.addEventListener("hashchange", revealRelease);
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("hashchange", revealRelease); };
+  }, [id, loaded]);
   useEffect(() => { onUnsavedChange(dirty || releaseDirty); }, [dirty, releaseDirty, onUnsavedChange]);
   useEffect(() => {
     if (!active || !id || initialized.current) return;
     const controller = new AbortController();
-    api.myProject(session.token, id, controller.signal).then(project => {
+    api.myProject(session.token, id, AbortSignal.any([controller.signal, AbortSignal.timeout(15000)])).then(project => {
       if (controller.signal.aborted) return;
       initialized.current = true;
       setProject(project); setContent(project.content); setSlug(project.slug); setLoaded(true);
     }).catch(error => { if (!controller.signal.aborted) setError(message(error)); });
     return () => controller.abort();
-  }, [id, session.token, active]);
+  }, [id, session.token, active, loadAttempt]);
   useEffect(() => {
     if (!dirty && !releaseDirty) return;
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); };
@@ -179,7 +191,8 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
     } catch (error) { setError(message(error)); }
     finally { saving.current = false; setBusy(false); }
   }
-  if (!loaded) return <div className="hub-notice" role={error ? "alert" : "status"}>{error ?? "Loading your draft…"}</div>;
+  if (!loaded) return <div className="hub-notice" role={error ? "alert" : "status"}>{error ?? "Loading your draft…"}
+    {error && <button type="button" className="btn btn-ghost" onClick={() => { setError(null); setLoadAttempt(value => value + 1); }}>Retry loading draft</button>}</div>;
   return <>
     {error && <div className="hub-notice" role="alert">{error}</div>}
     {paused && !conflict && <p className="hub-notice">Autosave paused. Your text is still here. Correct the issue, then use Save draft to retry. <a href="/account" target="_blank" rel="noopener noreferrer">Sign in again in another tab</a> if your session expired.</p>}

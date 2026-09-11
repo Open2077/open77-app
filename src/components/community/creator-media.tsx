@@ -15,6 +15,7 @@ export function CreatorMedia({ token, projectId, media, onChange }: {
   const [cursor, setCursor] = useState<string>();
   const [refresh, setRefresh] = useState(0);
   const [error, setError] = useState("");
+  const [historyError, setHistoryError] = useState("");
   const [notice, setNotice] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
@@ -37,12 +38,12 @@ export function CreatorMedia({ token, projectId, media, onChange }: {
         const signal = AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]);
         const result = await (projectId === null ? api.myAvatarUploads(token, cursor, signal) : api.myUploads(token, projectId, cursor, signal));
         if (controller.signal.aborted) return;
-        setHistory(result);
+        setHistory(result); setHistoryError("");
         if (result.items.some(item => item.upload.kind === "image" && ["processing", "receiving"].includes(item.upload.state))) {
           if (count++ < 20) timer = setTimeout(load, Math.min(30000, 3000 * 1.3 ** count));
           else setNotice("Automatic image checks paused. Refresh to check again.");
         }
-      } catch (error) { if (!controller.signal.aborted) setError(error instanceof Error ? error.message : "Image history could not be loaded."); }
+      } catch (error) { if (!controller.signal.aborted) setHistoryError(error instanceof Error ? error.message : "Image history could not be loaded."); }
     }
     void load();
     return () => { controller.abort(); clearTimeout(timer); };
@@ -84,7 +85,7 @@ export function CreatorMedia({ token, projectId, media, onChange }: {
     <div className="hub-section-head"><div><p className="hub-kicker">{avatar ? "YOUR CREATOR IDENTITY" : "SHOW YOUR CREATION"}</p><h2>{avatar ? "Profile avatar" : "Cover and screenshots"}</h2></div>
       <button type="button" className="btn btn-ghost" onClick={reload}>Refresh images</button></div>
     <p className="hub-notice">{avatar ? "Upload an image, select it after processing, then save your public profile to make it visible. Use an image you have permission to share." : "The first image is your cover. Add up to eight more screenshots, describe each image, and save your draft. New images become public after review."}</p>
-    {error && <p className="hub-notice" role="alert">{error}</p>}{notice && <p className="hub-notice" role="status">{notice}</p>}
+    {error && <p className="hub-notice" role="alert">{error}</p>}{historyError && <p className="hub-notice" role="alert">{historyError}</p>}{notice && <p className="hub-notice" role="status">{notice}</p>}
     <div className="hub-media-editor">{media.map((reference, index) => <article className="hub-release" key={reference.mediaId}>
       <p className="hub-kicker">{avatar ? "SELECTED AVATAR" : index === 0 ? "COVER" : `SCREENSHOT ${index}`}</p>
       <PrivateMediaPreview token={token} mediaId={reference.mediaId} alt={reference.altText} />
@@ -103,9 +104,11 @@ export function CreatorMedia({ token, projectId, media, onChange }: {
       {busy && <progress max={100} value={progress} aria-label="Image upload progress" />}
     </form>
     <h3 className="hub-library-title">Your uploaded images</h3>
+    {!history && !historyError && <p role="status">Loading your image library…</p>}
+    {history && !history.items.some(item => item.upload.kind === "image") && <p className="hub-notice">{cursor ? "No images on this upload-history page. Browse another page or return to the newest uploads." : "No images on this page yet. Upload a JPEG, PNG or WebP above to start your gallery."}</p>}
     <div className="hub-media-editor">{history?.items.filter(item => item.upload.kind === "image").map(item => <article className="hub-release" key={item.upload.uploadId}>
       <h4>{item.originalName}</h4><p>{item.upload.state}{item.upload.inspectionCode ? ` · ${item.upload.inspectionCode.replaceAll("_", " ")}` : ""}</p>
-      {item.upload.mediaId && <button type="button" className="btn btn-ghost" disabled={(!avatar && media.length >= 9) || media.some(reference => reference.mediaId === item.upload.mediaId)}
+      {item.upload.state === "accepted" && item.upload.mediaId && <button type="button" className="btn btn-ghost" disabled={(!avatar && media.length >= 9) || media.some(reference => reference.mediaId === item.upload.mediaId)}
         onClick={() => onChange(avatar ? [{ mediaId: item.upload.mediaId!, altText: "Creator avatar" }] : [...media, { mediaId: item.upload.mediaId!, altText: "", caption: "" }])}>{avatar ? "Select avatar" : "Attach to draft"}</button>}
       {["pending", "uploaded"].includes(item.upload.state) && <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => {
         if (Date.parse(item.upload.expiresAtUtc) <= Date.now()) { setError("This reservation expired. Start a new image upload."); return; }

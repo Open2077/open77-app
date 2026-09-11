@@ -1,0 +1,7 @@
+.dialog { width: min(1100px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 20px; box-sizing: border-box; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--text); overflow: auto; }
+.dialog::backdrop { background: rgb(0 0 0 / 85%); }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.header h2 { margin: 0; font-size: 20px; }
+.image { display: block; max-width: 100%; width: auto; height: auto; max-height: 65dvh; object-fit: contain; margin: 16px auto; }
+.caption { white-space: pre-wrap; overflow-wrap: anywhere; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
