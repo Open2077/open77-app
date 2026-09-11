@@ -1,6 +1,6 @@
 # OPEN//77 Hub release-readiness report
 
-Status: **not release-ready; execution blocked on external dependencies**. This is a working assessment dated 11 September
+Status: **not release-ready; authorized game validation resumed, with other external gates pending**. This is a working assessment dated 12 September
 2026, not authorization to publish or deploy. H00–H15 remain the completion scope;
 paid packages and the explicitly deferred features remain excluded. The
 [execution ledger](community-hub-execution.md) records exact checkpoints, failures,
@@ -101,11 +101,13 @@ full Hub acceptance. Browser execution remains unperformed.
    replacement-asset tests exist, but a real configured OAuth connection and a
    permitted release-asset import are still needed. Do not describe fixture
    responses as a completed provider integration journey.
-3. **Actual game acceptance:** two unrelated clients occupied
-   11,373/12,227 MiB VRAM at the latest recorded check; both were in-world.
-   They were preserved. A free
-   authorized game-test slot is needed to validate the authored preload fixture;
-   the successful inert-archive server restart is not that proof.
+3. **Actual game acceptance:** the user authorized using one current Cyberware
+   client on 12 September. Current CyberwareB (PID58640) was selected, its state
+   recorded and the shared save folder backed up with 103 file hashes verified.
+   CyberwareA (PID40808) remains on its original server. Authored mapping and
+   genuine preload packages passed real local Hub inspection/review/download;
+   actual game rendering and supported preload preparation are in progress.
+   The successful inert-archive server restart is not asset-mounting proof.
 4. **Release-host and owner checks:** name the moderation owner; review contributor
    terms/license/report/appeal copy; verify operational credentials/capacity,
    signing-identity continuity, encrypted off-site paired backups, host permissions,
