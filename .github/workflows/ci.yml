@@ -1,0 +1,37 @@
+name: App CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: app-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      # Compile explicit development targets; no production API or credentials.
+      NEXT_PUBLIC_OP77_MASTER_URL: http://127.0.0.1:18090
+      OP77_COMMUNITY_API_URL: http://127.0.0.1:18090
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - name: Deterministic Hub tests and browser-runner guards
+        run: npm run test:hub
+      - run: npm run build
+      # Actual browser/provider/game acceptance requires the separate real stack.
