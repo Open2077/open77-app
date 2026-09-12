@@ -170,6 +170,7 @@ disappeared from the HTML, or a hydration mismatch — so those have scripts.
 
 ```bash
 npm run check            # types and lint
+npm run verify:releases  # release changes, channel isolation and automatic refresh (offline)
 npm run verify:content   # the synced content, before building
 npm run build
 npm start                # in another terminal, on :3000
@@ -199,6 +200,29 @@ npm run verify:served    # the built site, over HTTP and in a real browser
   existed.
 
 ## Deployment
+
+### Download release freshness
+
+`/download` shows the **launcher** and **dedicated server** as separate channels.
+`/host` keeps the approved-preview account gate and offers the Windows/Linux
+archives. Each channel reads its own CDN `latest.json` at request time, with
+`no-store` and a bounded timeout. These two pages are not build-time/ISR release
+snapshots; publishing a pointer updates them without redeploying the website.
+Only metadata for immutable, versioned artefacts is cached.
+
+Visible tabs refresh every 60 seconds, on returning to the tab or reconnecting,
+and through **Check for updates**. Refresh preserves the current scroll position
+and account state. The displayed version and its archive links come from the
+same pointer; cross-version/channel URLs are rejected. If the pointer cannot be
+verified, the page shows an unavailable state instead of substituting an old
+version or inventing a download URL.
+
+`npm run verify:releases` simulates consecutive publications and CDN failures.
+After `npm run build` and `npm start`, run
+`node scripts/check-host-download-ui.mjs http://127.0.0.1:3000` to compare the
+rendered versions/links against the live CDN and check preview gates, manual
+refresh, hydration and desktop/mobile layouts. Browser account responses are
+synthetic: this test uses no production credentials.
 
 Zero-config on Vercel: framework detection handles the build, and there is deliberately no
 `vercel.json`. Redirects, rewrites, headers and image settings all live in `next.config.ts`, which

@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { CheckIcon, CopyIcon } from "@/components/icons";
+import { useClipboardSupported } from "@/lib/use-clipboard-supported";
 
 /**
  * A full-width, monospace value with a copy button beside it.
@@ -25,7 +26,7 @@ export function CopyLine({
   display?: string;
 }) {
   const [copied, setCopied] = useState(false);
-  const canCopy = typeof navigator !== "undefined" && !!navigator.clipboard;
+  const canCopy = useClipboardSupported();
 
   return (
     <div className="copy-line">

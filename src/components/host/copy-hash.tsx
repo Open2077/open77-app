@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { CheckIcon, CopyIcon } from "@/components/icons";
+import { useClipboardSupported } from "@/lib/use-clipboard-supported";
 
 /**
  * A short, click-to-copy SHA-256. Shows the first 16 hex chars, copies the full
@@ -13,7 +14,7 @@ export function CopyHash({ value }: { value: string }) {
   const [copied, setCopied] = useState(false);
   const short = `${value.slice(0, 16)}…`;
 
-  const canCopy = typeof navigator !== "undefined" && !!navigator.clipboard;
+  const canCopy = useClipboardSupported();
 
   if (!canCopy) {
     return (
