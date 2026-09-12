@@ -4,7 +4,7 @@ import type { CommunityInvitation, CommunityMember } from "./types";
 import type { CommunityEditorialState, CommunityRankingExclusion } from "./types";
 import type { CommunityReleaseEditor, CommunityReleaseEditorContent, CommunityReleaseFiles } from "./types";
 import type { CommunityActivity, CommunityAppeal, CommunityComment, CommunityModerationState, CommunityNotification, CommunityProfile, CommunityProjectState, CommunityReport, CommunityReviewItem, CommunitySavedProject } from "./types";
-import type { CommunityContent, CommunityDelivery, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
+import type { CommunityContent, CommunityDelivery, CommunityDirectoryPage, CommunityMedia, CommunityPage, CommunityProject, CommunityRelease, CommunityReleaseDraft, CommunityUpload, CommunityUploadGrant, CommunityUploadItem } from "./types";
 const root = "/api/v1/community";
 export const editorialState = (token: string, id: string) => masterCall<CommunityEditorialState>(`${root}/admin/projects/${encodeURIComponent(id)}/editorial`, { token, signal: AbortSignal.timeout(10000) });
 export const setEditorial = (token: string, id: string, expectedModerationRevision: number, featured: boolean, reason: string) => masterCall<CommunityEditorialState>(`${root}/admin/projects/${encodeURIComponent(id)}/editorial`, { token, method: "PUT", body: { expectedModerationRevision, featured, reason }, signal: AbortSignal.timeout(10000) });
@@ -31,6 +31,9 @@ export const inspectComment = (token: string, id: string) => masterCall<Communit
 export const moderateComment = (token: string, id: string, expectedRevision: number, hidden: boolean, reason: string) => masterCall<void>(`${root}/admin/comments/${encodeURIComponent(id)}/moderation`, { token, method: "POST", body: { expectedRevision, hidden, reason }, signal: AbortSignal.timeout(10000) });
 export const threadSubscription = (token: string, id: string, signal?: AbortSignal) => masterCall<{ subscribed: boolean }>(`${root}/comments/${encodeURIComponent(id)}/subscription`, { token, signal });
 export const setThreadSubscription = (token: string, id: string, enabled: boolean) => masterCall<void>(`${root}/comments/${encodeURIComponent(id)}/subscription`, { token, method: enabled ? "PUT" : "DELETE", signal: AbortSignal.timeout(10000) });
+export const listPublicProjects = (query: URLSearchParams, signal?: AbortSignal) => masterCall<CommunityDirectoryPage>(`${root}/projects?${query}`, { signal });
+export const publicMedia = (id: string, signal?: AbortSignal) => masterCall<CommunityMedia>(`${root}/media/${encodeURIComponent(id)}`, { signal });
+export const publicReleases = (projectId: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityRelease>>(`${root}/projects/${encodeURIComponent(projectId)}/releases?limit=24`, { signal });
 export const publicProject = (id: string, signal?: AbortSignal) => masterCall<CommunityProject>(`${root}/projects/${encodeURIComponent(id)}`, { signal });
 export const projectState = (token: string, ids: string[], signal?: AbortSignal) => masterCall<CommunityProjectState[]>(`${root}/me/project-state?${new URLSearchParams(ids.map(id => ["projectIds", id]))}`, { token, signal });
 export const setInteraction = (token: string, projectId: string, kind: "vote" | "save" | "subscription", enabled: boolean, signal?: AbortSignal) => masterCall<void>(`${root}/projects/${encodeURIComponent(projectId)}/${kind}`, { token, method: enabled ? "PUT" : "DELETE", signal });
