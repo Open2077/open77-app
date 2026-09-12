@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { HubShell, HubUnavailable } from "@/components/community/hub-shell";
+import { HubReadFailure } from "@/components/community/hub-read-failure";
+import { HubShell } from "@/components/community/hub-shell";
 import { ProjectCard } from "@/components/community/project-card";
 import { DirectoryFilters } from "@/components/community/directory-filters";
 import { CommunityReadError, listProjects } from "@/lib/community/public-api";
@@ -29,7 +30,7 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Pr
     <DirectoryFilters filters={filters} />
     {filters.query && <p className="hub-notice">Exact and prefix title matches appear first, followed by other matches in your selected order.</p>}
     {filters.sort === "trending" && catalog && <p className="hub-notice">{catalog.rankingAsOfUtc ? `Ranking calculated ${new Date(catalog.rankingAsOfUtc).toISOString().replace("T", " ").slice(0, 16)} UTC from eligible activity over seven days.` : "The first ranking calculation is pending. Creations with equal scores are ordered by project ID."}</p>}
-    {catalog === null ? invalid ? <div className="hub-notice" role="alert"><p>This page expired or the filters are invalid. Use up to five lowercase tags, or start from the first page.</p><Link href={`/resources?${directoryQuery(filters)}`}>Start from first page →</Link></div> : <HubUnavailable /> : catalog.items.length ? <>
+    {catalog === null ? invalid ? <div className="hub-notice" role="alert"><p>This page expired or the filters are invalid. Use up to five lowercase tags, or start from the first page.</p><Link href={`/resources?${directoryQuery(filters)}`}>Start from first page →</Link></div> : <HubReadFailure error={result} /> : catalog.items.length ? <>
       <div className="hub-grid">{catalog.items.map(project => <ProjectCard key={project.projectId} project={project} />)}</div>
       <div className="hub-pagination hub-actions">{cursor && <Link className="btn btn-ghost" href={`/resources?${directoryQuery(filters)}`}>First page</Link>}{catalog.nextCursor && <Link className="btn btn-ghost" href={`/resources?${directoryQuery({ ...filters, cursor: catalog.nextCursor })}`}>Next page →</Link>}</div>
     </> : <div className="hub-empty"><h2>{filtered ? "No creations match just yet." : "The library is just getting started."}</h2><p>{filtered ? "Try another search or explore all categories." : "Published community creations will appear here."}</p><Link href={filtered ? "/resources" : "/account/creations/new"}>{filtered ? "Explore all resources" : "Share a creation"} →</Link></div>}

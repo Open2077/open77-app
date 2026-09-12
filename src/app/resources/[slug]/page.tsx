@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
-import { HubShell, HubUnavailable } from "@/components/community/hub-shell";
+import { HubReadFailure } from "@/components/community/hub-read-failure";
+import { HubShell } from "@/components/community/hub-shell";
 import { CommunityReadError, getProject, listReleases } from "@/lib/community/public-api";
 import { ReleaseList } from "@/components/community/release-list";
 import { MediaGallery } from "@/components/community/media-gallery";
@@ -26,11 +27,12 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   const result = await getProject(slug).catch((error: unknown) => error);
   if (result instanceof CommunityReadError && result.status === 404) notFound();
-  if (!result || typeof result !== "object" || !("projectId" in result)) return <HubShell><HubUnavailable /></HubShell>;
+  if (!result || typeof result !== "object" || !("projectId" in result)) return <HubShell><HubReadFailure error={result} /></HubShell>;
   const project = result as Awaited<ReturnType<typeof getProject>>;
   if (project.slug !== slug) permanentRedirect(`/resources/${project.slug}`);
   const { content } = project;
-  const releases = content.kind === "resource" ? await listReleases(project.projectId).catch(() => null) : null;
+  const releaseResult = content.kind === "resource" ? await listReleases(project.projectId).catch((error: unknown) => error) : null;
+  const releases = releaseResult && typeof releaseResult === "object" && "items" in releaseResult ? releaseResult as Awaited<ReturnType<typeof listReleases>> : null;
   const [description, installation, license] = await Promise.all([
     communityMarkdown(content.description), communityMarkdown(content.installation), communityMarkdown(content.license ?? ""),
   ]);
@@ -43,7 +45,7 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
       {content.installation && <><h2>Installation</h2><div dangerouslySetInnerHTML={{ __html: installation }} /></>}
       {content.license && <><h2>License</h2><div dangerouslySetInnerHTML={{ __html: license }} /></>}
       {content.kind === "resource" && <section aria-label="Releases"><h2>Releases</h2>
-        {releases ? <ReleaseList releases={releases.items.slice(0, 4)} /> : <p className="hub-notice">Release information could not be loaded. Please try again shortly.</p>}
+        {releases ? <ReleaseList releases={releases.items.slice(0, 4)} /> : <HubReadFailure error={releaseResult} />}
         <Link className="btn btn-ghost" href={`/resources/${project.slug}/versions`}>All versions →</Link></section>}
     </article><aside className="hub-detail-panel"><p className="hub-kicker">{content.maturity.toUpperCase()}</p>
       <h2>{content.kind === "showcase" ? "A look at what’s possible." : "Release information"}</h2>

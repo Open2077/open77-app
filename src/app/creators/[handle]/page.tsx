@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound, permanentRedirect } from "next/navigation";
-import { HubShell, HubUnavailable } from "@/components/community/hub-shell";
+import { HubReadFailure } from "@/components/community/hub-read-failure";
+import { HubShell } from "@/components/community/hub-shell";
 import { ProjectCard } from "@/components/community/project-card";
 import { CommunityReadError, getCreator, getMedia } from "@/lib/community/public-api";
 import { pageMetadata } from "@/lib/seo";
@@ -22,7 +23,7 @@ export default async function CreatorPage({ params, searchParams }: {
   const result = await getCreator(handle, cursor).catch((error: unknown) => error);
   if (result instanceof CommunityReadError && result.status === 404) notFound();
   if (result instanceof CommunityReadError && result.status === 400) return <HubShell><p className="hub-notice">This page link has expired or is invalid. <Link href={`/creators/${encodeURIComponent(handle)}`}>Start from the creator’s latest page.</Link></p></HubShell>;
-  if (!result || typeof result !== "object" || !("profile" in result)) return <HubShell><HubUnavailable /></HubShell>;
+  if (!result || typeof result !== "object" || !("profile" in result)) return <HubShell><HubReadFailure error={result} /></HubShell>;
   const { profile, projects } = result as Awaited<ReturnType<typeof getCreator>>;
   if (profile.handle !== handle) permanentRedirect(`/creators/${profile.handle}${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`);
   const avatar = profile.avatarMediaId ? (await getMedia(profile.avatarMediaId).catch(() => null))?.derivatives.find(item => item.name === "card") : null;

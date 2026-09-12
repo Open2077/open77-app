@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
-import { HubShell, HubUnavailable } from "@/components/community/hub-shell";
+import { HubReadFailure } from "@/components/community/hub-read-failure";
+import { HubShell } from "@/components/community/hub-shell";
 import { Discussion } from "@/components/community/discussion";
 import { CommunityReadError, getComment, getComments, getProject } from "@/lib/community/public-api";
 import type { CommunityComment, CommunityPage } from "@/lib/community/types";
@@ -16,7 +17,7 @@ export default async function DiscussionPage({ params, searchParams }: { params:
   const { slug } = await params; const { cursor, thread } = await searchParams;
   const project = await getProject(slug).catch((error: unknown) => error);
   if (project instanceof CommunityReadError && project.status === 404) notFound();
-  if (!project || typeof project !== "object" || !("projectId" in project)) return <HubShell><HubUnavailable /></HubShell>;
+  if (!project || typeof project !== "object" || !("projectId" in project)) return <HubShell><HubReadFailure error={project} /></HubShell>;
   const resource = project as Awaited<ReturnType<typeof getProject>>;
   if (resource.slug !== slug) permanentRedirect(`/resources/${resource.slug}/discussion${thread ? `?thread=${encodeURIComponent(thread)}` : cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`);
   let page: CommunityPage<CommunityComment>;
@@ -32,7 +33,7 @@ export default async function DiscussionPage({ params, searchParams }: { params:
     if (error instanceof CommunityReadError) {
       if (error.status === 404) notFound();
       if (error.status === 400) return <HubShell><p className="hub-notice">This discussion page link is invalid. <Link href={`/resources/${resource.slug}/discussion`}>Open the latest discussion.</Link></p></HubShell>;
-      return <HubShell><HubUnavailable /></HubShell>;
+      return <HubShell><HubReadFailure error={error} /></HubShell>;
     }
     throw error;
   }
