@@ -1,14 +1,14 @@
 "use client";
 import { ReleaseFiles } from "@/components/community/release-files";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useSession } from "@/lib/account/session";
 import * as api from "@/lib/community/client-api";
 import type { CommunityPage, CommunityProject, CommunityRelease, CommunityReviewItem } from "@/lib/community/types";
 import { PrivateMediaPreview } from "@/components/community/private-media-preview";
 import { DownloadButton } from "@/components/community/download-button";
-import { useAdminActivity } from "./admin-activity";
+import { useAdminData } from "./use-admin-data";
 
 const message = (error: unknown) => error instanceof Error ? error.message : "The request failed. Please try again.";
 
@@ -16,33 +16,19 @@ export function CommunityReviewPanel() {
   const { session } = useSession();
   const [kind, setKind] = useState<"projects" | "releases">("projects");
   const [cursor, setCursor] = useState<string>();
-  const [page, setPage] = useState<CommunityPage<CommunityReviewItem> | null>(null);
-  const [error, setError] = useState("");
-  const [refresh, setRefresh] = useState(0);
   const [selected, setSelected] = useState<CommunityReviewItem | null>(null);
+  const load = useCallback((token: string) => api.reviewQueue(token, kind, cursor, AbortSignal.timeout(10000)), [kind, cursor]);
+  const queue = useAdminData(load);
   const token = session?.token;
-  const { begin } = useAdminActivity();
-  useEffect(() => {
-    const refresh = () => setRefresh(value => value + 1);
-    window.addEventListener("open77:admin-refresh", refresh);
-    return () => window.removeEventListener("open77:admin-refresh", refresh);
-  }, []);
-  useEffect(() => {
-    if (!token) return;
-    const controller = new AbortController();
-    const finish = begin();
-    api.reviewQueue(token, kind, cursor, AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]))
-      .then(result => { if (!controller.signal.aborted) { setPage(result); setError(""); finish(true); } })
-      .catch(error => { if (!controller.signal.aborted) { setError(message(error)); finish(false); } });
-    return () => { controller.abort(); finish(); };
-  }, [token, kind, cursor, refresh, begin]);
+  const page: CommunityPage<CommunityReviewItem> | null = queue.loading ? null : queue.data;
+  const error = queue.error ?? "";
   if (!token) return null;
   return <div className="hub-review-panel"><div className="hub-actions" aria-label="Review queues">
     <Link href="/admin/resources/quotas">Creator allowances →</Link>
     {(["projects", "releases"] as const).map(value => <button key={value} className="btn btn-ghost" aria-pressed={value === kind} onClick={() => {
-      setKind(value); setCursor(undefined); setPage(null); setSelected(null);
+      setKind(value); setCursor(undefined); setSelected(null);
     }}>{value === "projects" ? "Project pages" : "Package releases"}</button>)}
-    <button className="btn btn-ghost" onClick={() => setRefresh(value => value + 1)}>Refresh queue</button></div>
+    <button className="btn btn-ghost" onClick={queue.reload}>Refresh queue</button></div>
     {error && <p className="hub-notice" role="alert">{error}</p>}
     {!page && !error && <p role="status">Loading review queue…</p>}
     {page?.items.length === 0 && <p className="hub-notice">Nothing is waiting in this queue.</p>}
@@ -52,7 +38,7 @@ export function CommunityReviewPanel() {
     <nav className="hub-actions" aria-label="Review queue pages">{cursor && <button className="btn btn-ghost" onClick={() => setCursor(undefined)}>Start of queue</button>}
       {page?.nextCursor && <button className="btn btn-ghost" onClick={() => setCursor(page.nextCursor ?? undefined)}>Next page</button>}</nav>
     {selected && <ReviewDetail key={`${selected.kind}-${selected.id}-${selected.revision}`} token={token} item={selected}
-      completed={() => { setSelected(null); setRefresh(value => value + 1); }} />}
+      completed={() => { setSelected(null); queue.reload(); }} />}
   </div>;
 }
 

@@ -1,6 +1,7 @@
-import { HubShell } from "@/components/community/hub-shell";
+import Link from "next/link";
+import { HubPageHead, HubShell } from "@/components/community/hub-shell";
 import { SavedProjects } from "@/components/community/saved-projects";
 export const metadata = { title: "Release subscriptions", robots: { index: false, follow: false } };
 export default function SubscriptionsPage() {
-  return <HubShell><header className="hub-directory-head"><p className="hub-kicker">FOLLOWING RELEASES</p><h1>Release subscriptions</h1><p>Manage the creations you follow for release updates in your Hub inbox.</p></header><SavedProjects kind="subscription" /></HubShell>;
+  return <HubShell><HubPageHead kicker="YOUR COLLECTION" title="Release subscriptions" actions={<Link className="btn btn-ghost btn-small" href="/account/saved">Saved creations</Link>}><p>Creations you follow. New releases land in your inbox.</p></HubPageHead><SavedProjects kind="subscription" /></HubShell>;
 }

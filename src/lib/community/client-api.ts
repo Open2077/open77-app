@@ -64,8 +64,8 @@ export async function createProject(token: string, slug: string, content: Commun
   if (!validCreatedProject(result, slug)) throw new Error("The project response was incomplete. Retry to recover the same draft.");
   return result;
 }
-export const editProject = (token: string, id: string, expectedRevision: number, content: CommunityContent) => masterCall<CommunityProject>(`${root}/projects/${encodeURIComponent(id)}`, { token, method: "PATCH", body: { expectedRevision, content } });
-export const submitProject = (token: string, id: string, expectedRevision: number, distributionRightsConfirmed: boolean) => masterCall<void>(`${root}/projects/${encodeURIComponent(id)}/submit`, { token, method: "POST", body: { expectedRevision, distributionRightsConfirmed } });
+export const editProject = (token: string, id: string, expectedRevision: number, content: CommunityContent) => masterCall<CommunityProject>(`${root}/projects/${encodeURIComponent(id)}`, { token, method: "PATCH", body: { expectedRevision, content }, signal: AbortSignal.timeout(15000) });
+export const submitProject = (token: string, id: string, expectedRevision: number, distributionRightsConfirmed: boolean) => masterCall<void>(`${root}/projects/${encodeURIComponent(id)}/submit`, { token, method: "POST", body: { expectedRevision, distributionRightsConfirmed }, signal: AbortSignal.timeout(15000) });
 export const requestDownload = (releaseId: string, token?: string) => masterCall<CommunityDelivery>(`${root}/releases/${encodeURIComponent(releaseId)}/download`, { token, method: "POST", signal: AbortSignal.timeout(10000) });
 export const myReleases = (token: string, projectId: string, cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityRelease>>(`${root}/me/projects/${encodeURIComponent(projectId)}/releases${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
 export async function createRelease(token: string, projectId: string, version: string, metadata: CommunityRelease["metadata"], distributionRightsConfirmed: boolean, requestId: string) {

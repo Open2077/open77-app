@@ -3,7 +3,10 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { HubReadFailure } from "@/components/community/hub-read-failure";
 import { HubShell } from "@/components/community/hub-shell";
 import { ReleaseList } from "@/components/community/release-list";
-import { CommunityReadError, getProject, listReleases } from "@/lib/community/public-api";
+import { ResourceHeader } from "@/components/community/resource-header";
+import { CommunityReadError, getProject, latestRelease, listReleases } from "@/lib/community/public-api";
+import { pickLatestStable } from "@/lib/community/format";
+import type { CommunityRelease } from "@/lib/community/types";
 import { pageMetadata } from "@/lib/seo";
 import { withCommunityImage } from "@/lib/community/metadata";
 
@@ -24,12 +27,18 @@ export default async function VersionsPage({ params, searchParams }: {
   if (!project || typeof project !== "object" || !("projectId" in project)) return <HubShell><HubReadFailure error={project} /></HubShell>;
   const resource = project as Awaited<ReturnType<typeof getProject>>;
   if (resource.slug !== slug) permanentRedirect(`/resources/${resource.slug}/versions${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`);
-  const result = await listReleases(resource.projectId, cursor).catch((error: unknown) => error);
+  const base = `/resources/${resource.slug}`;
+  const [result, latestResult] = await Promise.all([listReleases(resource.projectId, cursor).catch((error: unknown) => error), latestRelease(resource.projectId).catch(() => null)]);
   const releases = result && typeof result === "object" && "items" in result ? result as Awaited<ReturnType<typeof listReleases>> : null;
-  return <HubShell><header className="hub-directory-head"><Link href={`/resources/${resource.slug}`}>← {resource.content.title}</Link>
-    <p className="hub-kicker">RELEASE HISTORY</p><h1>Choose your version.</h1><p>Review compatibility, changes and installation instructions before downloading.</p></header>
-    {releases ? <><ReleaseList releases={releases.items} downloadable={resource.content.kind === "resource"} />
-      <nav className="hub-pagination" aria-label="Release pages">{cursor && <Link className="btn btn-ghost" href={`/resources/${resource.slug}/versions`}>Newest releases</Link>}
-        {releases.nextCursor && <Link className="btn btn-ghost" href={`/resources/${resource.slug}/versions?cursor=${encodeURIComponent(releases.nextCursor)}`}>Older releases →</Link>}</nav></> : result instanceof CommunityReadError && result.status === 400 ? <p className="hub-notice">This version page expired or is invalid. <Link href={`/resources/${resource.slug}/versions`}>Return to the newest releases.</Link></p> : <HubReadFailure error={result} />}
+  const latest: CommunityRelease | null = latestResult && typeof latestResult === "object" && "releaseId" in latestResult ? latestResult : releases && !cursor ? pickLatestStable(releases.items) : null;
+  return <HubShell><p className="hub-back"><Link href="/resources">← Library</Link></p>
+    <ResourceHeader project={resource} latest={latest} tab="versions" />
+    <div className="hub-detail hub-detail-single"><article className="hub-detail-main">
+      <div className="hub-section-head"><h2>Version history</h2><p className="hub-footnote">Published files are immutable. Withdrawn versions stay listed but cannot be downloaded.</p></div>
+      {releases ? <><ReleaseList releases={releases.items} downloadable={resource.content.kind === "resource"} />
+        <nav className="hub-pagination hub-actions" aria-label="Release pages">{cursor && <Link className="btn btn-ghost btn-small" href={`${base}/versions`}>Newest releases</Link>}
+          {releases.nextCursor && <Link className="btn btn-ghost btn-small" href={`${base}/versions?cursor=${encodeURIComponent(releases.nextCursor)}`}>Older releases →</Link>}</nav></> :
+        result instanceof CommunityReadError && result.status === 400 ? <p className="hub-notice">This version page expired or is invalid. <Link href={`${base}/versions`}>Return to the newest releases.</Link></p> : <HubReadFailure error={result} />}
+    </article></div>
   </HubShell>;
 }

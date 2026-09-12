@@ -1,10 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound, permanentRedirect } from "next/navigation";
+import { safeHttpUrl } from "@/components/admin/format";
+import { GlobeIcon } from "@/components/icons";
 import { HubReadFailure } from "@/components/community/hub-read-failure";
 import { HubShell } from "@/components/community/hub-shell";
 import { ProjectCard } from "@/components/community/project-card";
 import { CommunityReadError, getCreator, getMedia } from "@/lib/community/public-api";
+import { formatDate } from "@/lib/community/format";
 import { pageMetadata } from "@/lib/seo";
 import { withCommunityImage } from "@/lib/community/metadata";
 
@@ -27,13 +30,17 @@ export default async function CreatorPage({ params, searchParams }: {
   const { profile, projects } = result as Awaited<ReturnType<typeof getCreator>>;
   if (profile.handle !== handle) permanentRedirect(`/creators/${profile.handle}${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`);
   const avatar = profile.avatarMediaId ? (await getMedia(profile.avatarMediaId).catch(() => null))?.derivatives.find(item => item.name === "card") : null;
-  return <HubShell><header className="hub-directory-head"><p className="hub-kicker">COMMUNITY CREATOR</p><h1>@{profile.handle}</h1>
-    {avatar && <Image className="hub-avatar" unoptimized src={avatar.url} width={avatar.width} height={avatar.height} alt="" referrerPolicy="no-referrer" />}
-    {profile.bio && <p className="hub-creator-bio">{profile.bio}</p>}
-    <div className="hub-actions">{profile.links.map(link => <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer nofollow ugc">{link.label} ↗</a>)}</div></header>
-    <section aria-label="Published creations"><h2 className="hub-library-title">Creations</h2>
+  const links = profile.links.map(link => ({ ...link, url: safeHttpUrl(link.url) })).filter(link => link.url);
+  return <HubShell><p className="hub-back"><Link href="/resources">← Library</Link></p>
+    <header className="hub-creator-head">
+      {avatar ? <Image className="hub-avatar" unoptimized src={avatar.url} width={avatar.width} height={avatar.height} alt="" referrerPolicy="no-referrer" /> : <span className="hub-avatar hub-avatar-blank" aria-hidden="true">{profile.handle.slice(0, 1).toUpperCase()}</span>}
+      <div className="hub-creator-body"><p className="hub-kicker">COMMUNITY CREATOR · SINCE {formatDate(profile.createdAtUtc).toUpperCase()}</p><h1>@{profile.handle}</h1>
+        {profile.bio && <p className="hub-creator-bio">{profile.bio}</p>}
+        {links.length > 0 && <div className="hub-links">{links.map(link => <a key={link.url} className="hub-link-chip" href={link.url!} target="_blank" rel="noopener noreferrer nofollow ugc"><GlobeIcon size={13} />{link.label}</a>)}</div>}</div>
+    </header>
+    <section className="hub-shelf" aria-label="Published creations"><div className="hub-section-head"><h2>Creations</h2></div>
       {projects.items.length ? <div className="hub-grid">{projects.items.map(project => <ProjectCard key={project.projectId} project={project} />)}</div> : <p className="hub-notice">No published creations on this page yet.</p>}
-      <nav className="hub-actions" aria-label="Creator project pages">{cursor && <Link className="btn btn-ghost" href={`/creators/${profile.handle}`}>First page</Link>}
-        {projects.nextCursor && <Link className="btn btn-ghost" href={`/creators/${profile.handle}?cursor=${encodeURIComponent(projects.nextCursor)}`}>More creations →</Link>}</nav>
+      <nav className="hub-pagination hub-actions" aria-label="Creator project pages">{cursor && <Link className="btn btn-ghost btn-small" href={`/creators/${profile.handle}`}>First page</Link>}
+        {projects.nextCursor && <Link className="btn btn-ghost btn-small" href={`/creators/${profile.handle}?cursor=${encodeURIComponent(projects.nextCursor)}`}>More creations →</Link>}</nav>
     </section></HubShell>;
 }

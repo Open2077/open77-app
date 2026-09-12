@@ -59,7 +59,7 @@ Preflight work:
 
 ## 4. UX deliverables and state coverage
 
-Use existing navy/cyan tokens and typography. Build reusable media cards and compact filter controls; screenshots carry visual identity. No invented author endorsements or production statistics. Prototype content is explicitly labelled and removed from production seed paths.
+Use existing navy/cyan tokens and typography. Build reusable media cards and compact filter controls; screenshots carry visual identity. **Change, 12 September 2026:** the Hub follows the density and vocabulary of the reworked server directory on `main` (one strip under the site header instead of a second navigation, compact heads, toolbar + chips + rail library, cover-band resource header with tabs); the first served review found the marketing-page voice inconsistent with the current site and harder to use. Reason and evidence are in the execution ledger. No invented author endorsements or production statistics. Prototype content is explicitly labelled and removed from production seed paths.
 
 | Screen | Required behavior |
 | --- | --- |

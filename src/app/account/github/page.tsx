@@ -1,8 +1,8 @@
-import { HubShell } from "@/components/community/hub-shell";
+import Link from "next/link";
+import { HubPageHead, HubShell } from "@/components/community/hub-shell";
 import { GitHubAccountConnection } from "@/components/community/github-connection";
 
 export const metadata = { title: "GitHub connection", robots: { index: false, follow: false } };
 export default function GitHubPage() {
-  return <HubShell><header className="hub-directory-head"><p className="hub-kicker">CREATOR CONNECTIONS</p><h1>GitHub account</h1>
-    <p>Verify your public identity without granting repository write access.</p></header><GitHubAccountConnection /></HubShell>;
+  return <HubShell><HubPageHead kicker="CREATOR CONNECTIONS" title="GitHub account" actions={<Link className="btn btn-ghost btn-small" href="/account/profile">Creator profile</Link>}><p>Verify your public identity and import release assets, without granting write access.</p></HubPageHead><GitHubAccountConnection /></HubShell>;
 }

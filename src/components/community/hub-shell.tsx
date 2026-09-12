@@ -1,20 +1,19 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/site-footer";
+import { HubBar } from "./hub-bar";
 import { HubRetry } from "./hub-retry";
 
-export function HubShell({ children }: { children: ReactNode }) {
-  return <><main id="main" className="hub-main"><div className="hub-wrap">
-    <nav className="hub-nav" aria-label="Community">
-      <Link className="hub-wordmark" href="/community">OPEN<span>{"//"}</span>77 <b>HUB</b></Link>
-      <div><Link href="/resources">Explore resources</Link><Link href="/account/creations">My creations</Link>
-        <Link href="/account/notifications">Notifications</Link>
-        <Link href="/account/profile">Creator profile</Link>
-        <Link href="/account/saved">Saved</Link>
-        <Link href="/account/connections">Wardens</Link>
-        <Link className="hub-publish" href="/account/creations/new">Share a creation ↗</Link></div>
-    </nav>{children}</div></main><SiteFooter /></>;
+export function HubShell({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
+  return <><main id="main" className="hub-main"><HubBar />
+    <div className={`hub-wrap${wide ? " hub-wrap-wide" : ""}`}>{children}</div></main><SiteFooter /></>;
 }
+
+/** Compact page head shared by account and creator pages: eyebrow, title, one line, optional actions. */
+export function HubPageHead({ kicker, title, children, actions }: { kicker: string; title: ReactNode; children?: ReactNode; actions?: ReactNode }) {
+  return <header className="hub-page-head"><div><p className="hub-kicker">{kicker}</p><h1>{title}</h1>{children}</div>
+    {actions && <div className="hub-page-head-actions">{actions}</div>}</header>;
+}
+
 export function HubUnavailable() {
   return <div className="hub-empty" role="status"><span className="hub-kicker">CONNECTION INTERRUPTED</span>
     <h2>The hub will be right back.</h2><p>We couldn’t reach the resource catalog. Please try again shortly.</p>

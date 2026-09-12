@@ -15,6 +15,9 @@ import { CreateAttempt } from "@/lib/community/create-attempt";
 import { ValidationIssues } from "./validation-issues";
 
 const errorText = (error: unknown) => error instanceof Error ? error.message : "The request failed. Please try again.";
+/** An upload still able to complete for this release: reserved, in flight or queued, and not yet expired. */
+const activeUploadFor = (releaseId: string, checkedAt: number) => (item: CommunityUploadItem) =>
+  item.upload.releaseId === releaseId && ["pending", "receiving", "uploaded", "processing", "importing"].includes(item.upload.state) && Date.parse(item.upload.expiresAtUtc) > checkedAt;
 const lines = (value: string) => [...new Set(value.split(/\r?\n/).map(line => line.trim()).filter(Boolean))];
 
 function PackageTransfer({ token, projectId, releaseId, existing, checkedAt, changed }: {
@@ -175,8 +178,8 @@ export function CreatorReleases({ session, project, readOnly = false, onUnsavedC
     <div className="hub-releases">{releases?.items.map(release => <article className="hub-release" key={release.releaseId}>
       <div className="hub-release-heading"><h3>Version {release.version}</h3><span className="hub-release-state">{release.state.replaceAll("_", " ")}</span></div>
       {release.state === "uploading" && <div hidden={readOnly}><PackageTransfer token={session.token} projectId={project.projectId} releaseId={release.releaseId} checkedAt={checkedAt} changed={reload}
-        existing={uploads?.items.find(item => item.upload.releaseId === release.releaseId && ["pending", "receiving", "uploaded", "processing", "importing"].includes(item.upload.state) && Date.parse(item.upload.expiresAtUtc) > checkedAt)} />
-        {!uploads?.items.some(item => item.upload.releaseId === release.releaseId && ["pending", "receiving", "uploaded", "processing", "importing"].includes(item.upload.state) && Date.parse(item.upload.expiresAtUtc) > checkedAt) &&
+        existing={uploads?.items.find(activeUploadFor(release.releaseId, checkedAt))} />
+        {!uploads?.items.some(activeUploadFor(release.releaseId, checkedAt)) &&
           <GitHubImportPicker key={`${session.token}:${release.releaseId}`} session={session} projectId={project.projectId} releaseId={release.releaseId} sourceUrl={project.content.sourceUrl} changed={reload} />}</div>}
       {readOnly && <><p className="hub-merge-text">{release.metadata.changelog}</p><p>Tested builds: {release.metadata.testedBuilds.join(", ") || "None declared"}</p><p>Required resources: {release.metadata.requiredResources.join(", ") || "None declared"}</p><p className="hub-merge-text">License: {release.metadata.license}</p><p className="hub-merge-text">Installation: {release.metadata.installation}</p></>}
       {release.sha256 && <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p>}

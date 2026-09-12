@@ -19,6 +19,8 @@ import { ProjectLifecycle } from "./project-lifecycle";
 import { CreateAttempt } from "@/lib/community/create-attempt";
 import type { FieldErrors } from "@/lib/account/field-errors";
 import { ValidationIssues } from "./validation-issues";
+import { normalizeSlug } from "@/lib/community/slug";
+import { SITE_URL } from "@/lib/site";
 
 function message(error: unknown) { return error instanceof Error ? error.message : "Something went wrong. Please try again."; }
 const emptyContent: CommunityContent = { title: "", summary: "", category: "scripts", description: "", installation: "", kind: "showcase", maturity: "experimental", tags: [] };
@@ -156,7 +158,7 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
     saving.current = true; setBusy(true); setError(null); setFieldErrors({}); setStatus("");
     const savingSequence = editSequence.current;
     try {
-      const request = project ? null : createAttempt.current.begin({ slug, content });
+      const request = project ? null : createAttempt.current.begin({ slug: normalizeSlug(slug, { final: true }), content });
       setPendingCreate(request !== null);
       const saved = project ? await api.editProject(session.token, project.projectId, project.revision, content) : await api.createProject(session.token, request!.body.slug, request!.body.content, request!.requestId);
       createAttempt.current.resolved(); setPendingCreate(false);
@@ -240,7 +242,7 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
       <fieldset className="hub-editor-fields" disabled={conflict || locked || (pendingCreate && busy)}>
       <div className="hub-editor-fields" hidden={step !== 0}>
       <label>Project title<input required maxLength={80} value={content.title} onChange={event => change("title", event.target.value)} /></label>
-      <label>Resource address<input required maxLength={80} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} readOnly={!!project || busy || pendingCreate} value={slug} onChange={event => { editSequence.current++; setFieldErrors({}); setSlug(event.target.value); setDirty(true); }} placeholder="auto-taxi" /><small>open2077.net/resources/{slug || "your-project"}</small></label>
+      <label>Resource address<input required maxLength={80} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} readOnly={!!project || busy || pendingCreate} value={slug} onChange={event => { editSequence.current++; setFieldErrors({}); setSlug(normalizeSlug(event.target.value)); setDirty(true); }} placeholder="auto-taxi" /><small>{SITE_URL.replace(/^https?:\/\//, "")}/resources/{slug || "your-project"}</small></label>
       <label>Short description<input required maxLength={200} value={content.summary} onChange={event => change("summary", event.target.value)} /></label>
       <div className="hub-form-row"><label>Category<select value={content.category} onChange={event => change("category", event.target.value)}>{categories.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
         <label>Project type<select value={content.kind} onChange={event => change("kind", event.target.value as CommunityContent["kind"])}><option value="showcase">Showcase — share your work</option><option value="resource">Resource — downloadable package</option></select></label></div>
