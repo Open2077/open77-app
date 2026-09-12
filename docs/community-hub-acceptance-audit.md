@@ -75,8 +75,8 @@ Evidence: `hub-base/artifacts/hub-process-crash-evidence.json` and
 Earlier real Warden and game evidence remains attached to the older host and
 matching native candidate identified in `final-game-evidence.json`. No newer
 server validation is implied by those screenshots. The previous 102-file
-inventory remains immutable; the next inventory must retain it while recording
-the new component builds and any subsequent real-service refresh separately.
+inventory remains immutable. The new 206-file candidate retains those identities
+and records the new component builds and refresh preparation separately.
 
 ## Protected local refresh preparation
 
@@ -106,10 +106,13 @@ the same exact assemblies and hashes; signing identity was unchanged. The latest
 contracts passed real HTTP TestServer/MariaDB tests, but no refresh or acceptance
 against the running fixture occurred. Warden's separate host also remains older.
 
-The next candidate inventory is linked by
-`hub-app/artifacts/hub-release/contract-inventory-latest.json`. It must preserve
-all 102 prior evidence identities, freeze the latest build/test reports and
-sanitized preparation receipts, and keep release readiness false.
+The recorded candidate inventory is linked by
+`hub-app/artifacts/hub-release/contract-inventory-latest.json`. All 206 evidence
+identities were verified, including all 102 prior identities, current build/test
+reports and sanitized preparation receipts. Manifest SHA-256 is
+`d6fb47bd36693e5333afb58770436abf4a002853bbfceb5bf550a5f2d2ce3528`;
+release readiness remains false. The subsequent documentation-only blocked audit
+does not imply new component builds or replace that frozen inventory.
 
 ## Execution limits still in force
 
