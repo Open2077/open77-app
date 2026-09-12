@@ -639,6 +639,48 @@ try {
     await fs.writeFile(".shots/server-export-api.png", Buffer.from(data, "base64"));
   }
 
+  await visit("/docs/doors");
+  reportConsole("networked door guide");
+  check("door guide explains installation, authority and native landing doors", await session.evaluate(`
+    const prose = document.querySelector('.dx-prose');
+    return prose.textContent.includes('network-door development build') &&
+      prose.textContent.includes('doorsClosed') && prose.textContent.includes('pending:await()') &&
+      !!document.querySelector('.docs-site a[href="/docs/doors"]');
+  `));
+  for (const theme of ["light", "dark"]) {
+    await session.evaluate(`
+      if (document.querySelector('.docs-site').dataset.theme !== '${theme}') document.querySelector('.docs-theme-toggle').click();
+      await new Promise(r => setTimeout(r, 180));
+    `);
+    if (process.argv.includes("--docs")) {
+      const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await fs.writeFile(`.shots/doors-${theme}.png`, Buffer.from(data, "base64"));
+    }
+  }
+  for (const [runtime, method, count] of [["server", "setaccess", 14], ["client", "requestopen", 3]]) {
+    await visit(`/docs/api?side=${runtime}&namespace=open77_doors#${runtime}/resource-open77-doors/${method}`);
+    reportConsole(`${runtime} door exports`);
+    check(`${runtime} door exports show real call syntax and correct runtime`, await session.evaluate(`
+      const detail = document.querySelector('.api-detail');
+      return document.querySelectorAll('.api-function-row').length === ${count} &&
+        detail.querySelector('.api-side').textContent === '${runtime}' &&
+        detail.querySelector('.api-signature-block').textContent.includes('Open77.exports.call("open77_doors"') &&
+        detail.textContent.includes('Promise') && !!detail.querySelector('a[href="/docs/doors"]');
+    `));
+  }
+  await session.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  await visit("/docs/doors");
+  check("door guide contains wide tables within mobile viewport", await session.evaluate(`
+    return document.documentElement.scrollWidth <= window.innerWidth + 1;
+  `));
+  reportConsole("mobile door guide");
+  if (process.argv.includes("--docs")) {
+    const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+    await fs.writeFile(".shots/doors-mobile.png", Buffer.from(data, "base64"));
+  }
+  await session.evaluate(`if (document.querySelector('.docs-site').dataset.theme !== 'light') document.querySelector('.docs-theme-toggle').click();`);
+  await session.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
+
   await visit("/docs/api");
   reportConsole("/docs/api");
   const total = await session.evaluate("return document.querySelectorAll('.api-function-row').length;");

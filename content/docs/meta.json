@@ -272,6 +272,12 @@
           "description": "Server-authoritative native lifts: adopting a LiftDevice, bucket and chunk streaming, movement and pause control, late-join catch-up, and the reference resource commands."
         },
         {
+          "slug": "doors",
+          "kind": "guide",
+          "nav": "Networked doors",
+          "description": "Server-owned automatic and interactive doors: dynamic discovery, native animations, elevator landing safety, routing buckets, access rules and client/server Lua exports."
+        },
+        {
           "slug": "props",
           "kind": "guide",
           "nav": "World props",

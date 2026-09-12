@@ -88,6 +88,7 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Cordon](cordon.md) | The 64-player battle royale: the closing block cordon, squads and revive at the body, ground loot, bots as contestants, the tunables and what is measured versus designed. |
 | [Notifications](notifications.md) | Reusable WebUI toasts, client/server exports, queues, positions, progress, and ownership. |
 | [Elevators](elevators.md) | Implemented server-authoritative native lifts, bucket/chunk streaming, late join, ACL commands, and Lua APIs. |
+| [Networked doors](doors.md) | Dynamic discovery, automatic and elevator landing doors, server authority, access rules, and Lua exports. |
 | [Blips](blips.md) | Vanilla map markers, entity attachment, and sprites. |
 | [Vanilla HUD visibility](hud-visibility.md) | Client API for minimap, compass, clock, health, stamina, weapons/ammo, speed, and custom-HUD replacement. |
 | [Third person](perspective.md) | The playable third-person view: the player's key, server policy, the states that hand the view back, and the measured limitations. |

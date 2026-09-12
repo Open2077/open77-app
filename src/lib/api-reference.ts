@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { getDocumentedServerApi } from "@/lib/server-api-docs";
+import { getDoorServiceApi } from "@/lib/door-service-api";
 
 const API_FILE = path.join(process.cwd(), "content", "api", "api.json");
 
@@ -30,6 +31,8 @@ export type ApiEntryRaw = {
   qualified: string;
   route_id: string;
   documentedSignature?: string;
+  /** Full call expression for resource exports (not a native Lua namespace). */
+  callSignature?: string;
   signatureKnown?: boolean;
   guideHref?: string;
 };
@@ -97,6 +100,8 @@ function slugify(value: string): string {
   // letter "g", which is a meaningless URL, so it gets the name it is called by
   // everywhere else in the reference.
   if (value === "_G") return "globals";
+  // The resource open77_doors must not collide with native Open77.doors.
+  if (value === "open77_doors") return "resource-open77-doors";
   return (
     value
       .replace(/^server:/, "")
@@ -107,6 +112,7 @@ function slugify(value: string): string {
 }
 
 function buildSignature(entry: ApiEntryRaw): string {
+  if (entry.callSignature) return entry.callSignature;
   if (entry.documentedSignature) return `${entry.qualified}${entry.documentedSignature}`;
   const params = entry.params
     .map((param) => (param.optional ? `[${param.name}]` : param.name))
@@ -161,6 +167,9 @@ const VEHICLE_WEAPON_READS = new Set([
 ]);
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (raw.namespace === "open77_doors" || raw.namespace === "Open77.doors") {
+    return { usageGuideHref: "/docs/doors", usageGuideLabel: "Networked world doors guide" };
+  }
   if (runtime === "client" && raw.namespace === "Open77.screen") {
     return { usageGuideHref: "/docs/screen-transitions", usageGuideLabel: "Native fades & transitions guide" };
   }
@@ -203,7 +212,7 @@ export function getApiIndex(): Promise<ApiIndex> {
 async function loadApiIndex(): Promise<ApiIndex> {
   const raw = await readFile(API_FILE, "utf8");
   const generated = JSON.parse(raw) as ApiEntryRaw[];
-  const parsed = [...generated, ...await getDocumentedServerApi(generated)];
+  const parsed = [...generated, ...await getDocumentedServerApi(generated), ...await getDoorServiceApi()];
 
   const namespaceKeys = new Map<string, string>();
   const anchorKeys = new Map<string, string>();

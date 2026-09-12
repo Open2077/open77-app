@@ -130,6 +130,20 @@ async function main() {
   });
   writes.push({ file: path.join(API_OUT, "api.json"), text: apiText });
 
+  // Resource exports are not native namespace bindings. Keep their reviewed
+  // contracts separate, but vendor them so deployments need no base checkout.
+  const doorsText = (await readFile(path.join(sourceDir, "door-service-api.json"), "utf8"))
+    .replace(/\r\n/g, "\n");
+  const doorExports = JSON.parse(doorsText);
+  if (!Array.isArray(doorExports) || doorExports.length === 0) {
+    throw new Error("door-service-api.json must contain resource export contracts");
+  }
+  records.push({
+    source: "wiki/door-service-api.json", target: `${API_OUT}/door-service-api.json`,
+    entries: doorExports.length, bytes: Buffer.byteLength(doorsText, "utf8"), sha256: sha256(doorsText),
+  });
+  writes.push({ file: path.join(API_OUT, "door-service-api.json"), text: doorsText });
+
   // Published alongside its guide: exact typed TweakDB extraction, not a
   // hand-maintained list or a claim that every appearance has been tested.
   const catalogueText = (await readFile(path.resolve(sourceDir, "..", VEHICLE_CATALOGUE_SOURCE), "utf8"))

@@ -10,6 +10,12 @@ removes nothing until the reply arrives.
 The official `open77_loot` resource must stay started. Its manifest asks for `network.events` and
 `world.loot`, and its client is distributed with the server's resource set.
 
+Vanilla loot suppression is a client session policy, independent of this resource. A server
+without `open77_loot`, or one that stops it, does **not** enable solo loot: unmanaged choices and
+local pickup/consume callbacks remain blocked. Managed drops keep their native presentation and
+server pickup requests. Outside multiplayer, normal solo behavior remains the fallback unless
+loot authority has been explicitly enabled for a local test.
+
 Use this guide to place items in the world from a server resource, and to credit them to a player's
 inventory when they are picked up.
 
