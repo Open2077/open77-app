@@ -19,7 +19,7 @@ const PAGE_SIZE = 100;
 const SORT_IDS = new Set<string>(directorySorts.map(sort => sort.id));
 const URL_EVENT = "open77-library-url";
 
-type Filters = { query: string; category: string; kind: string; source: string; tag: string; sort: string; saved: boolean };
+type Filters = { query: string; category: string; kind: string; source: string; tag: string; sort: string; saved: boolean; view: "tiles" | "list" };
 
 /** Wide art per category, for a selected creation without screenshots. */
 function categoryArt(category: string): string {
@@ -44,7 +44,7 @@ function updateFilters(patch: Partial<Record<keyof Filters, string | boolean>>, 
   const url = new URL(window.location.href);
   if (reset) url.search = "";
   for (const [key, value] of Object.entries(patch)) {
-    if (value === "" || value === false || value === "new") url.searchParams.delete(key);
+    if (value === "" || value === false || value === "new" || (key === "view" && value === "tiles")) url.searchParams.delete(key);
     else url.searchParams.set(key, String(value));
   }
   window.history.replaceState(window.history.state, "", url);
@@ -65,6 +65,7 @@ function parseFilters(search: string): Filters {
     tag: (p.get("tag") ?? p.get("tags") ?? "").split(",")[0]?.trim().toLowerCase() ?? "",
     sort: SORT_IDS.has(sort) ? sort : "new",
     saved: p.get("saved") === "true",
+    view: p.get("view") === "list" ? "list" : "tiles",
   };
 }
 
@@ -93,6 +94,32 @@ function useDerivative(mediaId: string | undefined, name: "card" | "gallery") {
     return () => { cancelled = true; };
   }, [mediaId, name]);
   return mediaId && loaded?.mediaId === mediaId ? loaded.url : null;
+}
+
+/**
+ * Nexus-style hover preview: while the pointer rests on a tile, the cover
+ * gives way to the next screenshots in turn. Images load on first hover only.
+ */
+function useHoverGallery(media: { mediaId: string }[] | null | undefined, hovering: boolean): string | null {
+  const ids = useMemo(() => (media ?? []).slice(0, 5).map(item => item.mediaId), [media]);
+  const [urls, setUrls] = useState<{ key: string; list: (string | null)[] } | null>(null);
+  const [index, setIndex] = useState(0);
+  const key = ids.join(",");
+  useEffect(() => {
+    if (!hovering || !ids.length || urls?.key === key) return;
+    let cancelled = false;
+    void Promise.all(ids.map(id => loadMedia(id).then(item => item?.derivatives.find(entry => entry.name === "card")?.url ?? null)))
+      .then(list => { if (!cancelled) setUrls({ key, list }); });
+    return () => { cancelled = true; };
+  }, [hovering, ids, key, urls?.key]);
+  useEffect(() => {
+    if (!hovering || !urls || urls.key !== key || urls.list.filter(Boolean).length < 2) return;
+    const timer = window.setInterval(() => setIndex(current => current + 1), 900);
+    return () => window.clearInterval(timer);
+  }, [hovering, urls, key]);
+  const list = urls?.key === key ? urls.list.filter((url): url is string => !!url) : [];
+  if (!hovering || list.length < 2) return null;
+  return list[index % list.length] ?? null;
 }
 
 function haystack(project: CommunityProject): string {
@@ -262,6 +289,12 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
       </div>
       <label className="select-wrap sb-sort"><span className="select-label">Sort</span>
         <select aria-label="Sort resources" value={filters.sort} onChange={event => updateFilters({ sort: event.target.value })}>{directorySorts.map(sort => <option key={sort.id} value={sort.id}>{sort.label}</option>)}</select></label>
+      <div className="hub-view-toggle" role="group" aria-label="Layout">
+        <button className={`sb-tool${filters.view === "tiles" ? " is-active" : ""}`} type="button" aria-pressed={filters.view === "tiles"} title="Tiles" onClick={() => updateFilters({ view: "tiles" })}>
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z" fill="currentColor" /></svg></button>
+        <button className={`sb-tool${filters.view === "list" ? " is-active" : ""}`} type="button" aria-pressed={filters.view === "list"} title="List" onClick={() => updateFilters({ view: "list" })}>
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M2 3h12M2 8h12M2 13h12" stroke="currentColor" strokeWidth="2" /></svg></button>
+      </div>
       <div className="directory-freshness" data-state={catalog.error ? "error" : catalog.loading ? "loading" : "ok"}>
         <span role="status">{readout}</span>
         <button className="sb-tool" type="button" disabled={catalog.loading} title="Reload the library" onClick={() => void fetchPage(filters.sort, null)}>
@@ -308,7 +341,18 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
             <p>{catalog.error ?? (catalog.loading ? "Community creations appear here as soon as the hub answers." : "The first reviewed creations will appear here. Bring something you have built.")}</p>
             {catalog.error ? <button className="btn btn-primary btn-small" type="button" disabled={catalog.loading} onClick={() => void fetchPage(filters.sort, null)}>Try again</button> :
               catalog.loading ? <div className="directory-loading" aria-hidden="true"><i /><i /><i /></div> : <Link className="btn btn-primary btn-small" href="/account/creations/new">Share a creation</Link>}
-          </div> : <>
+          </div> : filters.view === "tiles" ? <>
+            <div className="hub-tiles-head"><h1><span>{filters.saved ? "Saved" : filters.category ? categoryLabel(filters.category) : "Creations"}</span>
+              <b role="status">{visible.length}{active.length ? ` of ${catalog.items.length}` : ""}</b><i>· {directorySorts.find(sort => sort.id === filters.sort)?.label.toLowerCase()}</i></h1>
+              <span className="directory-muted">Hover a tile to flip through its screenshots</span></div>
+            <ul className="hub-tiles">
+              {visible.map(project => <ResourceTile key={project.projectId} project={project} isSaved={!!saved[project.projectId]} savingSave={busySave === project.projectId}
+                isSelected={selected?.projectId === project.projectId} onSelect={() => setSelectedId(id => id === project.projectId ? null : project.projectId)} onToggleSave={() => void toggleSave(project)} />)}
+              {visible.length === 0 && <li className="server-empty hub-tiles-empty"><span className="directory-kicker">NO MATCH</span><h3>No matching creations</h3><p>Remove a filter or try a different search.</p>
+                <button className="btn btn-primary btn-small" onClick={reset}>Show everything</button></li>}
+              {catalog.nextCursor && <li className="hub-directory-more hub-tiles-more"><button className="btn btn-ghost btn-small" type="button" disabled={catalog.loading} onClick={() => void fetchPage(filters.sort, catalog.nextCursor)}>{catalog.loading ? "Loading…" : "Load more creations"}</button></li>}
+            </ul>
+          </> : <>
             <div className="sb-col-head">
               <h1><span>{filters.saved ? "Saved" : filters.category ? categoryLabel(filters.category) : "Creations"}</span>
                 <b role="status">{visible.length}{active.length ? ` of ${catalog.items.length}` : ""}<i> · {directorySorts.find(sort => sort.id === filters.sort)?.label.toLowerCase()}</i></b></h1>
@@ -334,6 +378,34 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
     </footer>
     {toastNode}
   </div>;
+}
+
+function ResourceTile({ project, isSaved, savingSave, isSelected, onSelect, onToggleSave }: {
+  project: CommunityProject; isSaved: boolean; savingSave: boolean; isSelected: boolean; onSelect: () => void; onToggleSave: () => void;
+}) {
+  const { content } = project;
+  const [hovering, setHovering] = useState(false);
+  const cover = useDerivative(content.media?.[0]?.mediaId, "card");
+  const preview = useHoverGallery(content.media, hovering);
+  const shown = preview ?? cover;
+  const href = `/resources/${project.slug}`;
+  const mark = categories.find(category => category.id === content.category)?.mark ?? "//";
+  return <li className={`hub-tile${isSelected ? " is-selected" : ""}`} data-project-id={project.projectId} onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
+    <Link className="hub-tile-art" href={href} aria-label={`Open ${content.title}`} style={shown ? undefined : { backgroundImage: `url(${categoryArt(content.category)})` }}>
+      {shown ? <Image unoptimized src={shown} width={640} height={360} alt="" referrerPolicy="no-referrer" /> : <span className="hub-tile-mark" aria-hidden="true">{mark}</span>}
+      <span className="hub-tile-badges"><button type="button" className="sb-mode" onClick={event => { event.preventDefault(); event.stopPropagation(); updateFilters({ category: content.category }); }}>{categoryLabel(content.category)}</button>
+        {content.kind === "showcase" ? <span className="tag hub-tile-kind">Showcase</span> : content.maturity === "stable" ? <span className="tag hub-tile-kind is-stable">Stable</span> : null}</span>
+      {(content.media?.length ?? 0) > 1 && <span className="hub-tile-count" aria-hidden="true">{content.media?.length} shots</span>}
+      <span className="hub-tile-caption"><span className="hub-tile-title">{content.title}</span><span className="hub-tile-author">{project.creatorHandle ? `@${project.creatorHandle}` : "Community creator"}</span></span>
+    </Link>
+    <div className="hub-tile-foot">
+      <span className="hub-tile-stats"><span title="Upvotes">▲ {formatCount(project.upvotes)}</span>{content.kind === "resource" && <span title="Downloads">⤓ {formatCount(project.downloads)}</span>}<span title="Updated">{formatDate(project.updatedAtUtc)}</span></span>
+      <span className="hub-tile-actions">
+        <button className={`fav-btn${isSaved ? " is-fav" : ""}`} aria-pressed={isSaved} disabled={savingSave} aria-label={isSaved ? `Remove ${content.title} from saved` : `Save ${content.title}`} onClick={onToggleSave}><StarIcon size={14} filled={isSaved} /></button>
+        <button className="sb-connect" type="button" aria-pressed={isSelected} onClick={onSelect}>{isSelected ? "Close" : "Quick view"}</button>
+      </span>
+    </div>
+  </li>;
 }
 
 function ResourceRow({ project, isSaved, savingSave, isSelected, onSelect, onToggleSave }: {
