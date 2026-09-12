@@ -46,7 +46,7 @@ export async function getDoorServiceApi(): Promise<ApiEntryRaw[]> {
       namespace: "open77_doors", name: entry.name, qualified: `open77_doors.${entry.name}`,
       route_id: `${entry.runtime}:open77_doors.${entry.name}`, handler: `export:${entry.name}`,
       summary: entry.summary,
-      description: `${entry.description}\n\nThis is an asynchronous ${entry.runtime}-side resource export. Depend on open77_doors >=1.0.0 and call Open77.exports.call, not a Lua table named open77_doors. The call returns a Promise (or nil, error if it cannot be queued); awaiting it yields: ${entry.returns}. Requires the network-door development build; older CDN clients do not contain its native projection bridge.`,
+      description: `${entry.description}\n\nThis is an asynchronous ${entry.runtime}-side resource export. Depend on open77_doors >=1.0.0 and call Open77.exports.call, not a Lua table named open77_doors. The call returns a Promise (or nil, error if it cannot be queued); awaiting it yields: ${entry.returns}. Available with client and server release 2.31.13+op77.58 on the CDN; older clients do not contain its native projection bridge.`,
       params, returns: ["Promise | nil", "queue error, if any"],
       api_set: entry.runtime === "server" ? "server" : "network", runtime: entry.runtime,
       source: `resources/system/open77_doors/${entry.runtime}/main.lua`,

@@ -7,8 +7,8 @@ the authoritative cabin instead of opening over an empty shaft.
 
 ## Installation
 
-Availability: **network-door development build**. This guide accompanies the
-implementation; it does not mean older CDN clients already contain the bridge.
+Availability: **client and server release 2.31.13+op77.58**, published on the CDN.
+Older clients do not contain the native door projection bridge.
 Install matching client scripts/binary and the `open77_doors` system resource
 before enabling this feature. Protocol compatibility alone is not a feature check.
 

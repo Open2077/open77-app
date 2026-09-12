@@ -19,7 +19,7 @@ for (const entry of contracts) {
 const nav = JSON.parse(await read("content/docs/meta.json"));
 assert.ok(nav.sections.flatMap((section) => section.pages).some((page) => page.slug === "doors" && page.kind === "guide"));
 const guide = await read("content/docs/doors.md");
-for (const needle of ["network-door development build", "server exports", "pending:await()",
+for (const needle of ["2.31.13+op77.58", "server exports", "pending:await()",
   "routing bucket", "doorsClosed", "server_authority_required", "anti-tailgating", "not a world attestation",
   "open77:doors:requestResult", "generation", "4096", "256", "networkInstance"]) {
   assert.ok(guide.includes(needle), needle);
@@ -34,7 +34,7 @@ const origin = process.argv[2];
 if (origin) {
   for (const [url, needle] of [
     ["/docs/doors", "Networked world doors"],
-    ["/docs/doors.md", "network-door development build"],
+    ["/docs/doors.md", "2.31.13+op77.58"],
     ["/docs/api/server/resource-open77-doors", "open77_doors.setAccess"],
     ["/docs/api/server/resource-open77-doors.md", 'Open77.exports.call("open77_doors", "setAccess"'],
     ["/docs/api/client/resource-open77-doors", "open77_doors.requestOpen"],
