@@ -7,11 +7,22 @@ paid packages and the explicitly deferred features remain excluded. The
 corrections and evidence locations. Schema-38 regression is complete; source and
 artifact inventory qualification remains separate from unresolved acceptance gates.
 
+The subsequent [contract audit](community-hub-acceptance-audit.md) found and fixed
+additional implementation gaps: creation replay and field errors, suspended-owner
+review reports, the latest stable release panel, installed revocation notices and
+actual subprocess crash coverage. Its component builds supersede the earlier
+source checkpoint, while the earlier runtime screenshots retain their original
+host/build provenance. The local API candidate, protected paired backup and
+Windows-compatible schema-38 rollback are prepared. Automatic review blocked
+authoring the refresh execution phase; no service transition occurred. The new
+contracts have HTTP TestServer/MariaDB evidence, but the running API fixture and
+Warden host have not yet been updated or used to verify these changes.
+
 ## Integration evidence already observed
 
 | Area | Strongest observed evidence | Limit of that evidence |
 | --- | --- | --- |
-| Master/platform | Clean Release build and unfiltered schema-38 suite at master `c5e6919`: 306 passed, zero failed/skipped in 5m27s | This establishes local platform regression, not browser/provider/game acceptance |
+| Master/platform | Schema-38 full checkpoint: 315/315; final scoped edits at `46cf754` passed 10/10 focused tests and a clean build | Full run preceded the final small edits; final focused run covers new contracts and AdminApi. Running fixture is still older; browser/provider/game acceptance remains separate |
 | Retention | Final Windows focused 20/20 and isolated Linux 7/7; cross-process publication locks, crash recovery and wrapper ownership checks passed | Default off; all writers must participate before enabling; current schema-37 live storage was not swept |
 | Migration recovery | Four focused tests: three interrupted schema-38 DDL prefixes with connection/lock release and restart, plus incompatible-schema refusal; queued work and private bytes retained | Connection-death simulation, not database power loss |
 | Compatible image switch | Real isolated a6f7fc9 → reconstructed c5e6919 master switch; retained identity, published bytes and queued work; schema-37 image refused and compatible image recovered | Candidate images share production implementation; earlier images reconstructed from recorded source, not a historical production rollback |
@@ -23,6 +34,8 @@ artifact inventory qualification remains separate from unresolved acceptance gat
 | Release host | Read-only SSH metadata: about 351 GiB free disk, 28.6 GiB available RAM, active Docker/cron, running master/Caddy and healthy MariaDB; nightly backup schedule and 14 local dump files. Public master/CDN TLS checks returned 200 | Snapshot is not load capacity, backup integrity/encryption/off-site recovery or alert delivery proof; Hub storage directory absent and website `/resources` returns 404 |
 | Warden maintenance | Real install/uninstall/reinstall/update/rollback, configuration and user-file preservation, publishing and lost-response restart recovery | Final browser/game journeys remain distinct |
 | Warden browser | Actual login/discovery/details at 390/1440 pixels, plus reviewed install → update → rollback → uninstall with visible terminal UI results and preserved other resources; no browser errors | Harmless local diagnostic package; game/preload and main website acceptance remain separate |
+| Installed release status | 177 focused Warden/host tests and an Edge fixture showing revoked → unavailable while retaining installed content | The actual running Warden host has not been upgraded; this fixture is separate from its earlier browser lifecycle |
+| Installer crash recovery | Final 55 focused tests, including 30 real child-process terminations at persisted install/update/rollback boundaries | Uses real installer/files/recovery with in-memory catalog/runtime fixtures; no live host restart or preload mounting |
 | Matching native candidate | Standard no-deploy Hub client build and all 24 CTest cases passed; full platform archive completed, 296 files privately staged, matching client reached the actual world alive with loading handoff complete | Initial archive build required a documented RP prerequisite resume; tested runtime paths do not establish every native API |
 | Actual authored Lua resource | Published and installed two-chair sample rendered in-game; reviewed uninstall removed both props, reinstall restored them, and a real 1.0.1 update corrected their ground placement; chair blocked movement while the gap allowed passage | Local Hub/Warden and isolated test client; global keyboard input isolation from concurrent CyberwareA testing is unproven |
 | Restart-required activation | Real isolated install→restart→update→restart→rollback→restart; expected Lua version running and durable jobs committed | Inert archive classifies preload requirements; does not prove real game assets mounted |
@@ -38,7 +51,7 @@ The master repository owns these reviewable artifacts:
   files, worker, importer and maintenance services alongside master.
 - `ops/community/test-images.ps1`: five-image non-root/private-image validation and
   both Compose overlays. All five images were rebuilt and passed at clean master
-  `41b4a2c18`, with UID1654, private contents and both overlays checked; exact local
+  `46cf754`, with UID1654, private contents and both overlays checked; exact local
   image identities are in master `artifacts/hub-images/validation.json`.
 - `ops/community/Caddyfile`, `test-edge.ps1`, and `edge-fixture/`: restricted public
   gateway routing and actual streamed 100 MiB boundary checks.
@@ -66,8 +79,13 @@ and their provenance qualifications. Keep
 the paired backup and rollback instructions alongside that inventory. Remote CI
 execution and production deployment have not been performed by this goal.
 App `e98f611` adds CI for locked install, typecheck/lint, deterministic Hub tests
-and build. The local `test:hub` command passed 18 tests plus Markdown/browser-runner
-guards; the app CI does not claim served-browser or provider acceptance.
+and build. The latest app `7a82d56` passed production build, typecheck/lint and
+24 Hub tests plus Markdown/browser-runner guards. The complete `.next` output
+excluding cache is frozen separately from runtime dependencies/configuration;
+build ID is `82zRnhUF_a_gzgtl4hv3a`. Base `e7a80789` checks/restores or builds the
+pinned native GNS prerequisite before native CI. Local workflow syntax and
+prerequisite checks passed; remote CI remains unobserved. These checks do not
+claim served-browser or provider acceptance.
 
 Base `b9f6bc4f` supplies a standalone versioned package JSON Schema and newly
 authored MIT-licensed resource/config-template and two-resource bundle examples.
@@ -105,6 +123,16 @@ Both still matched after test exit. The online resource-hash command was refused
 by the client guard: archive identity is established by staging and post-exit
 hashes, with actual rendering of the generated chair depot, not by a runtime hash
 API. See `placement-corrected.png` beside the aggregate evidence for the final view.
+
+The subsequent candidate is linked from
+`hub-app/artifacts/hub-release/contract-inventory-latest.json`. It retains the
+earlier 102 evidence identities and separately records current component builds,
+test scopes and local refresh preparation. The original runtime inventory remains
+unchanged. The protected paired schema-37 backup and schema-38 Windows rollback
+are prepared under `hub-master/artifacts/hub-contract-refresh/`; this new backup
+has not been restore-tested and no refresh execution phase was authored or run.
+Only sanitized receipts and hash inventories enter release evidence; raw backups,
+private configuration and signing keys remain in protected local storage.
 
 The authorized CyberwareB was replaced by the matching isolated HubValidationB
 client for this test. That test client was closed and its temporary teleport ACL
@@ -154,6 +182,20 @@ full Hub acceptance. Browser execution remains unperformed.
    Hub edge routing and alert delivery. Read-only host metadata and general public
    TLS checks now pass; they do not establish those remaining host- or owner-specific
    facts. No Hub production deployment was attempted.
+5. **Current local API acceptance:** automatic review rejected authoring the
+   guarded refresh execution phase and parsing the script, stating only
+   `blocked by policy`. Preflight, candidate staging, a protected paired backup
+   and a Windows-compatible rollback build completed beforehand. The script
+   retains its execution fence; no alternate authoring or service transition
+   was attempted. Original processes and signing identity remained unchanged.
+   The latest endpoint tests used real HTTP TestServer/MariaDB, not refreshed
+   running services.
+
+Automatic review also rejected removal of five inactive crash-test directories
+with only `blocked by policy`. Their paths are recorded in
+`hub-base/artifacts/hub-process-crash-evidence.json`; cleanup was not retried.
+Successful crash cases cleaned their own fixtures. These remnants do not turn
+passing recovery tests into completed cross-component acceptance.
 
 Production publication/deployment remains outside authorization. Rollback preserves
 database, immutable blobs and signing identities, disables new writes/imports/install
