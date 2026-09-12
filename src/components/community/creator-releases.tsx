@@ -9,6 +9,10 @@ import { validationHelp } from "@/lib/community/validation-help";
 import { useReleaseEditor } from "./use-release-editor";
 import { ReleaseFiles } from "./release-files";
 import { GitHubImportPicker, GitHubImportStatus } from "./github-import";
+import { MasterApiError } from "@/lib/account/api";
+import type { FieldErrors } from "@/lib/account/field-errors";
+import { CreateAttempt } from "@/lib/community/create-attempt";
+import { ValidationIssues } from "./validation-issues";
 
 const errorText = (error: unknown) => error instanceof Error ? error.message : "The request failed. Please try again.";
 const lines = (value: string) => [...new Set(value.split(/\r?\n/).map(line => line.trim()).filter(Boolean))];
@@ -88,9 +92,14 @@ export function CreatorReleases({ session, project, readOnly = false, onUnsavedC
     installation: project.content.installation, testedBuilds: "", requiredResources: "" });
   const { version, changelog, license, installation, testedBuilds, requiredResources } = draft.content;
   const [creating, setCreating] = useState(false);
+  const createAttempt = useRef(new CreateAttempt<{ version: string; metadata: CommunityRelease["metadata"]; distributionRightsConfirmed: boolean }>());
+  const [pendingCreate, setPendingCreate] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [createError, setCreateError] = useState("");
+  const [createStatus, setCreateStatus] = useState("");
   const [rightsContent, setRightsContent] = useState<typeof draft.content | null>(null);
   const rights = rightsContent === draft.content;
-  useEffect(() => { onUnsavedChange?.(draft.dirty); }, [draft.dirty, onUnsavedChange]);
+  useEffect(() => { onUnsavedChange?.(draft.dirty || pendingCreate); }, [draft.dirty, pendingCreate, onUnsavedChange]);
   function reload() { setRefresh(value => value + 1); }
   useEffect(() => {
     const controller = new AbortController();
@@ -115,20 +124,31 @@ export function CreatorReleases({ session, project, readOnly = false, onUnsavedC
     return () => { controller.abort(); clearTimeout(timer); };
   }, [session.token, project.projectId, releaseCursor, uploadCursor, refresh]);
   async function create(event: FormEvent) {
-    event.preventDefault(); if (creating || !draft.loaded || draft.busy || draft.conflict || !rights) return;
-    setCreating(true); setError("");
+    event.preventDefault(); if (creating || (!createAttempt.current.pending && (!draft.loaded || draft.busy || draft.conflict || !rights))) return;
+    setCreating(true); setCreateError(""); setCreateStatus(""); setFieldErrors({});
     try {
-      if (!await draft.save()) return;
-      await api.createRelease(session.token, project.projectId, version.trim(), { changelog, license, installation,
-        testedBuilds: lines(testedBuilds), requiredResources: lines(requiredResources) }, rights);
-      draft.change("version", ""); draft.change("changelog", ""); setReleaseCursor(undefined); reload();
-    } catch (error) { setError(errorText(error)); }
+      if (!createAttempt.current.pending && !await draft.save()) return;
+      const request = createAttempt.current.begin({ version: version.trim(), metadata: { changelog, license, installation,
+        testedBuilds: lines(testedBuilds), requiredResources: lines(requiredResources) }, distributionRightsConfirmed: rights });
+      setPendingCreate(true);
+      await api.createRelease(session.token, project.projectId, request.body.version, request.body.metadata, request.body.distributionRightsConfirmed, request.requestId);
+      createAttempt.current.resolved(); setPendingCreate(false);
+      const currentDetails = { version: version.trim(), metadata: { changelog, license, installation, testedBuilds: lines(testedBuilds), requiredResources: lines(requiredResources) } };
+      if (JSON.stringify(currentDetails) === JSON.stringify({ version: request.body.version, metadata: request.body.metadata })) {
+        draft.change("version", ""); draft.change("changelog", "");
+      }
+      setCreateStatus(`Version ${request.body.version} is created. Find it in the release list below.`); setReleaseCursor(undefined); reload();
+    } catch (error) { if (error instanceof MasterApiError) { createAttempt.current.rejected(error.status); setPendingCreate(createAttempt.current.pending); setFieldErrors(error.fieldErrors); } setCreateError(errorText(error)); }
     finally { setCreating(false); }
   }
   return <section id="hub-releases" className="hub-section" aria-label="Manage releases">
     <div className="hub-section-head"><div><p className="hub-kicker">PACKAGE PUBLISHING</p><h2>Releases and uploads</h2></div>
       <button type="button" className="btn btn-ghost" onClick={reload}>Refresh status</button></div>
     {error && <p className="hub-notice" role="alert">{error}</p>}
+    {createError && <p className="hub-notice" role="alert">{createError} <a href="/account" target="_blank" rel="noopener noreferrer">Sign in again in another tab</a> with the same account if your session expired. Your details remain here.</p>}
+    {createStatus && <p role="status">{createStatus}</p>}
+    <ValidationIssues errors={fieldErrors} />
+    {pendingCreate && !creating && <p className="hub-notice">The version may already have been created. Retry the same request to recover it before editing these details. Keep this tab open until it finishes.</p>}
     {pollPaused && <p className="hub-notice">Automatic status checks have paused. Use Refresh status to check again.</p>}
     <details className="hub-release" hidden={readOnly}><summary>Create a version</summary>
       <p className="hub-notice">Release versions and their details cannot be reused or edited after creation. Check these details before continuing. Your ZIP is validated and reviewed before publication.</p>
@@ -139,7 +159,7 @@ export function CreatorReleases({ session, project, readOnly = false, onUnsavedC
           <button type="button" className="btn btn-ghost" onClick={() => draft.recover("remote")}>Discard mine and use saved details</button><button type="button" className="btn btn-primary" onClick={() => draft.recover("local")}>Replace saved details with mine</button></>}
       </div>}
       <form className="hub-form" onSubmit={create}>
-        <fieldset className="hub-editor-fields" disabled={!draft.loaded || draft.conflict || creating}>
+        <fieldset className="hub-editor-fields" disabled={!draft.loaded || draft.conflict || creating || pendingCreate}>
         <label>Version<input required maxLength={100} placeholder="1.0.0 or 1.0.0-beta.1" value={version} onChange={event => draft.change("version", event.target.value)} /></label>
         <label>Changelog<textarea required maxLength={50000} value={changelog} onChange={event => draft.change("changelog", event.target.value)} /></label>
         <label>Installation and configuration<textarea required maxLength={50000} value={installation} onChange={event => draft.change("installation", event.target.value)} /></label>
@@ -147,9 +167,9 @@ export function CreatorReleases({ session, project, readOnly = false, onUnsavedC
         <label>Tested Open77 builds, one per line<textarea maxLength={10000} value={testedBuilds} onChange={event => draft.change("testedBuilds", event.target.value)} /></label>
         <label>Required resources, one per line<textarea maxLength={10000} value={requiredResources} onChange={event => draft.change("requiredResources", event.target.value)} /></label>
         </fieldset>
-        <label className="hub-rights"><input type="checkbox" checked={rights} disabled={creating || !draft.loaded} onChange={event => setRightsContent(event.target.checked ? draft.content : null)} />I have permission to share this creation, its images and all included files under the stated license.</label>
+        <label className="hub-rights"><input type="checkbox" checked={rights} disabled={creating || pendingCreate || !draft.loaded} onChange={event => setRightsContent(event.target.checked ? draft.content : null)} />I have permission to share this creation, its images and all included files under the stated license.</label>
         <button type="button" className="btn btn-ghost" disabled={!draft.loaded || draft.busy || draft.conflict || creating} onClick={() => { void draft.save(); }}>Save release draft</button>
-        <button className="btn btn-primary" disabled={!draft.loaded || draft.busy || draft.conflict || creating || !rights}>{creating ? "Creating…" : "Create immutable version"}</button>
+        <button className="btn btn-primary" disabled={creating || (!pendingCreate && (!draft.loaded || draft.busy || draft.conflict || !rights))}>{creating ? "Creating…" : pendingCreate ? "Recover created version" : "Create immutable version"}</button>
       </form></details>
     {!releases && !error && <p role="status">Loading releases…</p>}
     <div className="hub-releases">{releases?.items.map(release => <article className="hub-release" key={release.releaseId}>

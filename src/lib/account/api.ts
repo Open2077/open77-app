@@ -1,3 +1,5 @@
+import { parseFieldErrors, type FieldErrors } from "./field-errors";
+
 /**
  * Browser client for the OPEN//77 master's account API.
  *
@@ -27,12 +29,14 @@ export const MASTER_URL = (
 export class MasterApiError extends Error {
   readonly code: string;
   readonly status: number;
+  readonly fieldErrors: FieldErrors;
 
-  constructor(code: string, message: string, status: number) {
+  constructor(code: string, message: string, status: number, fieldErrors?: unknown) {
     super(message);
     this.name = "MasterApiError";
     this.code = code;
     this.status = status;
+    this.fieldErrors = parseFieldErrors(fieldErrors);
   }
 }
 
@@ -127,14 +131,16 @@ export async function masterCall<T>(
   if (!response.ok) {
     let code = "unknown";
     let message = `The master server answered ${response.status}.`;
+    let fieldErrors: unknown;
     try {
-      const body = (await response.json()) as { code?: string; message?: string };
-      if (body.code) code = body.code;
-      if (body.message) message = body.message;
+      const body = (await response.json()) as { code?: unknown; message?: unknown; fieldErrors?: unknown };
+      if (typeof body.code === "string") code = body.code;
+      if (typeof body.message === "string") message = body.message;
+      fieldErrors = body.fieldErrors;
     } catch {
       // A non-JSON error body keeps the fallback message.
     }
-    throw new MasterApiError(code, message, response.status);
+    throw new MasterApiError(code, message, response.status, fieldErrors);
   }
   // 204 has no body by definition; the master's fire-and-forget endpoints
   // (resend-verification, forgot-password) answer 202 with an empty body too.

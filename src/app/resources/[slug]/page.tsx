@@ -2,8 +2,9 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { HubReadFailure } from "@/components/community/hub-read-failure";
 import { HubShell } from "@/components/community/hub-shell";
-import { CommunityReadError, getProject, listReleases } from "@/lib/community/public-api";
+import { CommunityReadError, getProject, latestRelease, listReleases } from "@/lib/community/public-api";
 import { ReleaseList } from "@/components/community/release-list";
+import { LatestRelease } from "@/components/community/latest-release";
 import { MediaGallery } from "@/components/community/media-gallery";
 import { ExternalVideos } from "@/components/community/external-videos";
 import { ReportForm } from "@/components/community/report-form";
@@ -31,7 +32,9 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
   const project = result as Awaited<ReturnType<typeof getProject>>;
   if (project.slug !== slug) permanentRedirect(`/resources/${project.slug}`);
   const { content } = project;
-  const releaseResult = content.kind === "resource" ? await listReleases(project.projectId).catch((error: unknown) => error) : null;
+  const [releaseResult, latestResult] = content.kind === "resource" ? await Promise.all([
+    listReleases(project.projectId).catch((error: unknown) => error), latestRelease(project.projectId).catch((error: unknown) => error),
+  ]) : [null, null];
   const releases = releaseResult && typeof releaseResult === "object" && "items" in releaseResult ? releaseResult as Awaited<ReturnType<typeof listReleases>> : null;
   const [description, installation, license] = await Promise.all([
     communityMarkdown(content.description), communityMarkdown(content.installation), communityMarkdown(content.license ?? ""),
@@ -50,6 +53,8 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
     </article><aside className="hub-detail-panel"><p className="hub-kicker">{content.maturity.toUpperCase()}</p>
       <h2>{content.kind === "showcase" ? "A look at what’s possible." : "Release information"}</h2>
       <p>{content.kind === "showcase" ? "This creation is a showcase. Its author hasn’t attached a downloadable release." : "Check the author’s installation instructions and compatibility before adding this resource to your server."}</p>
+      {content.kind === "resource" && (latestResult === null || (typeof latestResult === "object" && "releaseId" in latestResult)
+        ? <LatestRelease release={latestResult as Awaited<ReturnType<typeof latestRelease>>} /> : <HubReadFailure error={latestResult} />)}
       {content.kind === "resource" && <Link className="btn btn-primary" href={`/resources/${project.slug}/versions`}>Browse versions</Link>}
       {content.sourceUrl && <a className="btn btn-ghost" href={content.sourceUrl} target="_blank" rel="noopener noreferrer nofollow ugc">View source ↗</a>}
       {content.issueUrl && <p><a href={content.issueUrl} target="_blank" rel="noopener noreferrer nofollow ugc">Issue tracker ↗</a></p>}

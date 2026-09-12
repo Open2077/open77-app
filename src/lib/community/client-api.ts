@@ -1,4 +1,5 @@
 import { masterCall } from "@/lib/account/api";
+import { validCreatedProject, validCreatedRelease } from "./create-response";
 import type { CommunityInvitation, CommunityMember } from "./types";
 import type { CommunityEditorialState, CommunityRankingExclusion } from "./types";
 import type { CommunityReleaseEditor, CommunityReleaseEditorContent, CommunityReleaseFiles } from "./types";
@@ -58,12 +59,20 @@ export const requestReviewDownload = (token: string, id: string, expectedRevisio
 export const previewMedia = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityMedia & { expiresAtUtc: string }>(`${root}/media/${encodeURIComponent(id)}/preview`, { token, method: "POST", signal });
 export const myProjects = (token: string, signal?: AbortSignal, cursor?: string) => masterCall<CommunityPage<CommunityProject>>(`${root}/me/projects${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
 export const myProject = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityProject>(`${root}/me/projects/${encodeURIComponent(id)}`, { token, signal });
-export const createProject = (token: string, slug: string, content: CommunityContent) => masterCall<CommunityProject>(`${root}/projects`, { token, method: "POST", body: { slug, content } });
+export async function createProject(token: string, slug: string, content: CommunityContent, requestId: string) {
+  const result = await masterCall<CommunityProject>(`${root}/projects`, { token, method: "POST", body: { slug, content, requestId }, signal: AbortSignal.timeout(15000) });
+  if (!validCreatedProject(result, slug)) throw new Error("The project response was incomplete. Retry to recover the same draft.");
+  return result;
+}
 export const editProject = (token: string, id: string, expectedRevision: number, content: CommunityContent) => masterCall<CommunityProject>(`${root}/projects/${encodeURIComponent(id)}`, { token, method: "PATCH", body: { expectedRevision, content } });
 export const submitProject = (token: string, id: string, expectedRevision: number, distributionRightsConfirmed: boolean) => masterCall<void>(`${root}/projects/${encodeURIComponent(id)}/submit`, { token, method: "POST", body: { expectedRevision, distributionRightsConfirmed } });
 export const requestDownload = (releaseId: string, token?: string) => masterCall<CommunityDelivery>(`${root}/releases/${encodeURIComponent(releaseId)}/download`, { token, method: "POST", signal: AbortSignal.timeout(10000) });
 export const myReleases = (token: string, projectId: string, cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityRelease>>(`${root}/me/projects/${encodeURIComponent(projectId)}/releases${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
-export const createRelease = (token: string, projectId: string, version: string, metadata: CommunityRelease["metadata"], distributionRightsConfirmed: boolean) => masterCall<CommunityReleaseDraft>(`${root}/projects/${encodeURIComponent(projectId)}/releases`, { token, method: "POST", body: { version, metadata, distributionRightsConfirmed } });
+export async function createRelease(token: string, projectId: string, version: string, metadata: CommunityRelease["metadata"], distributionRightsConfirmed: boolean, requestId: string) {
+  const result = await masterCall<CommunityReleaseDraft>(`${root}/projects/${encodeURIComponent(projectId)}/releases`, { token, method: "POST", body: { version, metadata, distributionRightsConfirmed, requestId }, signal: AbortSignal.timeout(15000) });
+  if (!validCreatedRelease(result, projectId, version)) throw new Error("The version response was incomplete. Retry to recover the same version.");
+  return result;
+}
 export const myUploads = (token: string, projectId: string, cursor?: string, signal?: AbortSignal) => masterCall<CommunityPage<CommunityUploadItem>>(`${root}/me/projects/${encodeURIComponent(projectId)}/uploads${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`, { token, signal });
 export const reserveUpload = (token: string, projectId: string, releaseId: string | null, kind: "package" | "image", file: File, signal?: AbortSignal) => masterCall<CommunityUploadGrant>(`${root}/uploads`, { token, method: "POST", body: { projectId, releaseId, kind, originalName: file.name, maximumBytes: file.size }, signal });
 export const restartUpload = (token: string, id: string, signal?: AbortSignal) => masterCall<CommunityUploadGrant>(`${root}/uploads/${encodeURIComponent(id)}/restart`, { token, method: "POST", signal });

@@ -16,6 +16,9 @@ import { DraftPreview } from "./draft-preview";
 import { CreatorLimits } from "./creator-limits";
 import { DraftDeletion } from "./draft-deletion";
 import { ProjectLifecycle } from "./project-lifecycle";
+import { CreateAttempt } from "@/lib/community/create-attempt";
+import type { FieldErrors } from "@/lib/account/field-errors";
+import { ValidationIssues } from "./validation-issues";
 
 function message(error: unknown) { return error instanceof Error ? error.message : "Something went wrong. Please try again."; }
 const emptyContent: CommunityContent = { title: "", summary: "", category: "scripts", description: "", installation: "", kind: "showcase", maturity: "experimental", tags: [] };
@@ -100,6 +103,9 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
   const locked = project?.state === "archived" || project?.state === "suspended";
   function navigateStep(next: number) { setStep(next); setTimeout(() => heading.current?.focus(), 0); }
   const saving = useRef(false);
+  const createAttempt = useRef(new CreateAttempt<{ slug: string; content: CommunityContent }>());
+  const [pendingCreate, setPendingCreate] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const initialized = useRef(false);
   const editSequence = useRef(0);
   useEffect(() => {
@@ -142,23 +148,37 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
   function change<K extends keyof CommunityContent>(key: K, value: CommunityContent[K]) {
     editSequence.current++;
     setRights(false);
+    setFieldErrors({});
     setContent(current => ({ ...current, [key]: value })); setDirty(true); setStatus("");
   }
   const save = useCallback(async () => {
     if (!active || saving.current || conflict) return;
-    saving.current = true; setBusy(true); setError(null); setStatus("");
+    saving.current = true; setBusy(true); setError(null); setFieldErrors({}); setStatus("");
     const savingSequence = editSequence.current;
     try {
-      const saved = project ? await api.editProject(session.token, project.projectId, project.revision, content) : await api.createProject(session.token, slug, content);
+      const request = project ? null : createAttempt.current.begin({ slug, content });
+      setPendingCreate(request !== null);
+      const saved = project ? await api.editProject(session.token, project.projectId, project.revision, content) : await api.createProject(session.token, request!.body.slug, request!.body.content, request!.requestId);
+      createAttempt.current.resolved(); setPendingCreate(false);
       setProject(saved);
+      setSlug(saved.slug);
       setPaused(false);
-      const changedDuringSave = editSequence.current !== savingSequence;
+      const editedDuringSave = editSequence.current !== savingSequence;
+      const recovered = request && !editedDuringSave ? mergeDraft(request.body.content, content, saved.content) : null;
+      if (recovered) {
+        setContent(recovered.merged);
+        if (recovered.conflicts.length) {
+          setRecovery({ remote: saved, merged: recovered.merged, fields: recovered.conflicts });
+          setChoices({}); setConflict(true); setPaused(true);
+        }
+      }
+      const changedDuringSave = editedDuringSave || (request !== null && JSON.stringify(recovered?.merged ?? content) !== JSON.stringify(saved.content));
       setDirty(changedDuringSave);
       setStatus(changedDuringSave ? "Draft saved. Your newer edits still need saving." : "Draft saved. Only you and your project maintainers can see these changes.");
-      if (!id && !changedDuringSave) router.replace(`/account/creations/${saved.projectId}/edit`);
-    } catch (error) { setError(message(error)); setPaused(true); if (error instanceof MasterApiError && error.code === "revision_conflict") setConflict(true); }
+      if (!id && !changedDuringSave && !recovered?.conflicts.length) router.replace(`/account/creations/${saved.projectId}/edit`);
+    } catch (error) { setError(message(error)); setPaused(true); if (error instanceof MasterApiError) { createAttempt.current.rejected(error.status); setPendingCreate(createAttempt.current.pending); setFieldErrors(error.fieldErrors); if (error.code === "revision_conflict") setConflict(true); } }
     finally { saving.current = false; setBusy(false); }
-  }, [active, conflict, project, session.token, content, slug, id, router]);
+  }, [active, conflict, project, session.token, content, slug, id, router, setFieldErrors, setPendingCreate]);
   useEffect(() => {
     // Creating the first draft explicitly reserves its permanent public address.
     // Subsequent edits debounce and serialize, with no blind retry after failure.
@@ -198,6 +218,8 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
     {error && <button type="button" className="btn btn-ghost" onClick={() => { setError(null); setLoadAttempt(value => value + 1); }}>Retry loading draft</button>}</div>;
   return <>
     {error && <div className="hub-notice" role="alert">{error}</div>}
+    <ValidationIssues errors={fieldErrors} />
+    {!project && pendingCreate && !busy && <p className="hub-notice">The previous create request may have completed. Save draft will recover that request first, then save any newer edits. Keep this tab open until it finishes.</p>}
     {paused && !conflict && <p className="hub-notice">Autosave paused. Your text is still here. Correct the issue, then use Save draft to retry. <a href="/account" target="_blank" rel="noopener noreferrer">Sign in again in another tab</a> if your session expired.</p>}
     {conflict && <section className="hub-notice" aria-label="Recover concurrent edits"><h2>A newer draft was saved</h2><p>Your text is still here. Compare both versions before continuing.</p>
       <button type="button" className="btn btn-ghost" disabled={busy} onClick={compare}>Compare with current draft</button>
@@ -215,10 +237,10 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
     <CreatorLimits token={session.token} />
     <h2 ref={heading} tabIndex={-1}>Step {step + 1}: {steps[step]}</h2>
     <form className="hub-form" noValidate onSubmit={event => { event.preventDefault(); void save(); }}>
-      <fieldset className="hub-editor-fields" disabled={conflict || locked}>
+      <fieldset className="hub-editor-fields" disabled={conflict || locked || (pendingCreate && busy)}>
       <div className="hub-editor-fields" hidden={step !== 0}>
       <label>Project title<input required maxLength={80} value={content.title} onChange={event => change("title", event.target.value)} /></label>
-      <label>Resource address<input required maxLength={80} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} readOnly={!!project || busy} value={slug} onChange={event => { editSequence.current++; setSlug(event.target.value); setDirty(true); }} placeholder="auto-taxi" /><small>open2077.net/resources/{slug || "your-project"}</small></label>
+      <label>Resource address<input required maxLength={80} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} readOnly={!!project || busy || pendingCreate} value={slug} onChange={event => { editSequence.current++; setFieldErrors({}); setSlug(event.target.value); setDirty(true); }} placeholder="auto-taxi" /><small>open2077.net/resources/{slug || "your-project"}</small></label>
       <label>Short description<input required maxLength={200} value={content.summary} onChange={event => change("summary", event.target.value)} /></label>
       <div className="hub-form-row"><label>Category<select value={content.category} onChange={event => change("category", event.target.value)}>{categories.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
         <label>Project type<select value={content.kind} onChange={event => change("kind", event.target.value as CommunityContent["kind"])}><option value="showcase">Showcase — share your work</option><option value="resource">Resource — downloadable package</option></select></label></div>

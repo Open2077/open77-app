@@ -29,6 +29,7 @@ export const sitemapEntries = (kind: string, bucket: string, cursor?: string, si
 export const getProject = cache((slug: string) => read<CommunityProject>(`/projects/${encodeURIComponent(slug)}`));
 export const getMedia = cache((id: string) => read<CommunityMedia>(`/media/${encodeURIComponent(id)}`));
 export const getComment = cache((id: string) => read<CommunityComment>(`/comments/${encodeURIComponent(id)}`));
+export const latestRelease = (projectId: string) => read<CommunityRelease | null>(`/projects/${encodeURIComponent(projectId)}/releases/latest`);
 export const getComments = (id: string, cursor?: string) => read<CommunityPage<CommunityComment>>(`/projects/${encodeURIComponent(id)}/comments${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`);
 export const getCreator = cache((handle: string, cursor?: string) => read<CommunityCreatorPage>(`/creators/${encodeURIComponent(handle)}${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`));
 export function listReleases(projectId: string, cursor?: string) {

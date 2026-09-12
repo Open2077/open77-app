@@ -28,6 +28,13 @@ creator account.
 Creator publication does not grant installation rights. Do not share Warden
 credentials or add creator tokens to resource archives.
 
+The installed list checks current Hub release status when refreshed. A **revoked**
+warning blocks no local reading and does not remove or stop the installed copy;
+review the project and decide whether to uninstall it. New installs and updates
+to that release remain blocked. **Unknown** means the release is no longer listed;
+**unavailable** means its status could not be checked. Neither confirms revocation
+or continued publication. Retry after connectivity or catalog capacity returns.
+
 ## Install or update
 
 1. Find a project and open its releases. Select the release you intend to use.
