@@ -1,6 +1,6 @@
 # OPEN//77 Hub release-readiness report
 
-Status: **not release-ready; authorized game validation resumed, with other external gates pending**. This is a working assessment dated 12 September
+Status: **not release-ready; Warden browser and actual Lua game lifecycle passed, with preload and external gates pending**. This is a working assessment dated 12 September
 2026, not authorization to publish or deploy. H00–H15 remain the completion scope;
 paid packages and the explicitly deferred features remain excluded. The
 [execution ledger](community-hub-execution.md) records exact checkpoints, failures,
@@ -23,7 +23,8 @@ artifact inventory qualification remains separate from unresolved acceptance gat
 | Release host | Read-only SSH metadata: about 351 GiB free disk, 28.6 GiB available RAM, active Docker/cron, running master/Caddy and healthy MariaDB; nightly backup schedule and 14 local dump files. Public master/CDN TLS checks returned 200 | Snapshot is not load capacity, backup integrity/encryption/off-site recovery or alert delivery proof; Hub storage directory absent and website `/resources` returns 404 |
 | Warden maintenance | Real install/uninstall/reinstall/update/rollback, configuration and user-file preservation, publishing and lost-response restart recovery | Final browser/game journeys remain distinct |
 | Warden browser | Actual login/discovery/details at 390/1440 pixels, plus reviewed install → update → rollback → uninstall with visible terminal UI results and preserved other resources; no browser errors | Harmless local diagnostic package; game/preload and main website acceptance remain separate |
-| Matching native candidate | Standard no-deploy Hub client build and all 24 CTest cases passed; DLL, WebHost and dependency hashes recorded | Full platform archive is still building; candidate has not yet been staged or launched |
+| Matching native candidate | Standard no-deploy Hub client build and all 24 CTest cases passed; full platform archive completed, 296 files privately staged, matching client reached the actual world alive with loading handoff complete | Initial archive build required a documented RP prerequisite resume; tested runtime paths do not establish every native API |
+| Actual authored Lua resource | Published and installed two-chair sample rendered in-game; reviewed uninstall removed both props, reinstall restored them, and a real 1.0.1 update corrected their ground placement; chair blocked movement while the gap allowed passage | Local Hub/Warden and isolated test client; global keyboard input isolation from concurrent CyberwareA testing is unproven |
 | Restart-required activation | Real isolated install→restart→update→restart→rollback→restart; expected Lua version running and durable jobs committed | Inert archive classifies preload requirements; does not prove real game assets mounted |
 | Website | Production builds and checks; permission/route tests, draft-preservation tests and static guide links | Actual served browser journeys remain blocked |
 | Launcher | Launcher Hub entry and regression tests; embedded browser evidence recorded in ledger | Actual native ShellExecute invocation was rejected by automatic review before execution; OS handoff and destination remain unverified |
@@ -80,8 +81,40 @@ Lua runtime test verifies two owned props and cleanup; WolvenKit converted, pack
 and extracted a newly authored 375-byte CR2W entity without copying game assets.
 The 597-byte nested ZIP passes shared package/preload inspection. Clean no-deploy
 build and focused 16/16 tests passed; schema checks accepted four samples and rejected
-ten invalid fixtures. The empty preload entity has no visible mesh; actual game
-mounting and the world-placement sample's client rendering remain unverified.
+ten invalid fixtures. Subsequent actual game validation exposed floating chairs in
+the initial placement sample. Base `5b6957c8` fixes the coordinates and versions it
+as 1.0.1; the no-deploy server build, five focused example tests and four accepted /
+ten rejected schema fixtures passed. Real local publication and reviewed Warden
+update advanced inventory 19 to 20 while preserving the other 19 resources. Both
+chairs rendered on the measured ground in the actual game. The original 1.0.0
+release bytes remain unchanged. The empty preload entity has no visible mesh;
+its genuine game mounting remains unverified.
+
+The aggregate runtime evidence is
+`hub-base/artifacts/hub-game-validation/final-game-evidence.json`, binding 45 files
+including staging, build, actual screenshots/snapshots, release/install receipts,
+preload failure and cleanup. The frozen runtime inventory is linked by
+`hub-app/artifacts/hub-release/runtime-inventory-latest.json`; it preserves the
+earlier 15 evidence identities and original build provenance, and separately
+binds the completed native/archive and runtime/browser evidence. Inventory
+readiness remains false. The matching DLL is SHA-256
+`02f07e31fef53b74e789e1a5eb817bf1778782841286f128e38d32e9b72379aa`;
+the staged platform archive is
+`bdf9d576c8eabc800ffda2e3e9e31c8a66486aca1b3250fad0282b1d5ee4aea9`.
+Both still matched after test exit. The online resource-hash command was refused
+by the client guard: archive identity is established by staging and post-exit
+hashes, with actual rendering of the generated chair depot, not by a runtime hash
+API. See `placement-corrected.png` beside the aggregate evidence for the final view.
+
+The authorized CyberwareB was replaced by the matching isolated HubValidationB
+client for this test. That test client was closed and its temporary teleport ACL
+removed. CyberwareA stayed alive and connected; its position changed during
+concurrent probes, and attribution to those probes versus global keyboard input
+is unproven. All 103 save files remained identical. Shared settings retained four
+language changes and a newly changed volume after test exit; difficulty and key
+defaults returned automatically. Current settings and the original backup were
+preserved because the remaining changes' ownership is uncertain. No claim of
+complete shared-profile or input isolation is made.
 
 App `b26847c` supplies the deterministic served Hub guest
 browser scenario described in [browser acceptance](community-hub-browser-acceptance.md).
@@ -103,18 +136,18 @@ full Hub acceptance. Browser execution remains unperformed.
    replacement-asset tests exist, but a real configured OAuth connection and a
    permitted release-asset import are still needed. Do not describe fixture
    responses as a completed provider integration journey.
-3. **Actual game acceptance:** the user authorized using one current Cyberware
-   client on 12 September. Current CyberwareB (PID58640) was selected, its state
-   recorded and the shared save folder backed up with 103 file hashes verified.
-   CyberwareA (PID40808) remains on its original server. Authored mapping and
-   genuine preload packages passed real local Hub inspection/review/download;
-   actual game rendering and supported preload preparation are in progress.
-   The successful inert-archive server restart is not asset-mounting proof.
-   The first connection exposed Cyberware protocol 1.24 versus Hub 1.23. The
-   matching Hub native build now passes all 24 tests; its platform archive is
-   building before isolated staging. Automatic review separately rejected the
-   owned 11889 server restart with only `blocked by policy`. Live Lua refresh
-   succeeded without a restart, but cannot establish preload reboot acceptance.
+3. **Genuine preload game acceptance:** normal Lua placement now has actual game
+   proof. Genuine preload staging was attempted against the older copied host
+   on 11889: job `8678530f-1a47-41c7-8110-a69c2a619010` failed with
+   `restart_install_pending`, with no durable installation job created. Inventory,
+   runtime, configuration and the empty active-mod manifest stayed unchanged.
+   `hub-base/artifacts/hub-preload-stage/1789172171167/` binds the old host assembly
+   and the exact result. This is not evidence that the latest-source staging
+   implementation failed. The prepared host upgrade/restart remains blocked:
+   automatic review rejected the restart with only `blocked by policy`; no
+   alternate restart was attempted. The earlier successful inert-archive restart
+   is not genuine asset-mounting proof. Supported launcher preload preparation,
+   restart, mount and resulting game verification still need execution.
 4. **Release-host and owner checks:** name the moderation owner; review contributor
    terms/license/report/appeal copy; verify operational credentials/capacity,
    signing-identity continuity, encrypted off-site paired backups, host permissions,
