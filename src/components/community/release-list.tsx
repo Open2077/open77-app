@@ -36,7 +36,7 @@ async function ReleaseCard({ release, downloadable }: { release: CommunityReleas
       {release.sha256 && <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p>}
       {release.source && <div className="hub-notice"><h3>Imported source</h3>
         <p>{safeHttpUrl(release.source.sourceUrl) ? <a href={safeHttpUrl(release.source.sourceUrl)!} target="_blank" rel="noopener noreferrer nofollow ugc">Original GitHub release ↗</a> : "Original GitHub release"} · Asset {release.source.assetId}</p>
-        <p>Fetched <time dateTime={release.source.fetchedAtUtc}>{new Date(release.source.fetchedAtUtc).toLocaleDateString("en-GB", { dateStyle: "medium", timeZone: "UTC" })}</time>. This Hub release contains the pinned bytes shown above.</p>
+        <p>Fetched <time dateTime={release.source.fetchedAtUtc}>{new Date(release.source.fetchedAtUtc).toLocaleDateString("en-GB", { dateStyle: "medium", timeZone: "UTC" })}</time>. This Workshop release contains the pinned bytes shown above.</p>
         {release.source.commitSha && <p className="hub-release-digest">Commit <code>{release.source.commitSha}</code></p>}
         <p>{release.source.repositoryControlVerified ? "Repository control was verified for this import." : "Repository control was not verified. The publisher confirmed permission to redistribute these files."}</p>
       </div>}

@@ -1,242 +1,403 @@
-# Share and use community resources
+# The Workshop: install and share resources
 
-The OPEN//77 Workshop brings together Lua resources, gamemodes, mapping projects and
-showcases made for OPEN//77 servers. Start in [the Workshop](/workshop) to find
-installable packages, or [Discover](/workshop/discover) for featured and trending creations.
-Packages in this release are free. Selling packages is outside this release.
+The [Workshop](/workshop) is where OPEN//77 creators publish what they built and
+where server owners pick it up. It holds Lua resources, gamemodes, maps, interface
+packs and tools. Everything in it is free. Nothing is for sale.
 
-This guide describes the Workshop release candidate. It does not announce production
-availability: the operator must enable the corresponding services. A disabled
-import or installation control means that capability is unavailable on that host.
+Browse the full library at [/workshop](/workshop). Featured and trending creations
+are on [Discover](/workshop/discover). Every creation has its own page, and every
+creator has a public profile. The old `/community`, `/resources` and `/creators`
+addresses redirect to the new ones, so existing links keep working.
 
-## Choose your first step
+Two things to know before you start:
 
-- **Trying a resource:** open its page, read installation and compatibility notes,
-  then choose a release. Test it on a development server before your live world.
-- **Sharing something you built:** sign in, verify your email, create your
-  [creator profile](/account/profile), then open [My creations](/account/creations).
-- **Running a server:** begin with [Host a server](/docs/host-a-server), then use
-  the Workshop section in [Warden](/docs/warden) to review an installation.
-- **Learning to build:** start with [Writing a gamemode](/docs/writing-a-gamemode)
-  and [the resource runtime](/docs/resource-runtime). A Workshop project does not
-  replace a resource's `open77.lua` manifest.
+- Each creation ships as **versioned releases**. A release is a ZIP that never
+  changes after it is published. A fix always means a new version.
+- Moderators review every creation and every release before it becomes public.
+  An upload that passed technical checks is not public yet.
 
-## Find and download a release
+The Workshop can be switched off on a given host. If a control such as GitHub
+import, hover clips or Warden installation is greyed out, that capability is not
+enabled where you are, not broken.
 
-Search the directory and combine category, content type and sorting filters.
-On a small screen, open the filter drawer and apply your selection. A creator's
-profile links their public projects. A showcase can explain work in progress
-without offering an installable download.
+## I run a server and want to add a resource
 
-On a resource page, inspect its description, gallery, installation instructions
-and releases. Screenshots open in a viewer with Previous, Next and Close controls;
-Escape closes it. Videos load only after you choose to play them and also have a
-link to the original provider.
+You install Workshop creations through **Warden**, your server's admin console.
+Warden downloads the package, checks it, shows you exactly what it will change,
+and applies the change only after you accept it. You never copy files by hand.
 
-Published release downloads are available without signing in. Choose the exact
-version you need; prereleases require an explicit choice. Review tested builds,
-runtime requirements, included files, license and SHA-256. A tested-build label
-reports the creator's declared testing; it is not a promise that every server
-configuration is compatible. A withdrawn or revoked download cannot be retrieved
-by requesting a fresh link. If a temporary download link expires, request a new
-one from the release page.
+### Find it
 
-Downloading a package does not install it. With Warden, review its plan before
-accepting changes. For manual work, use the [server resource guide](/docs/server-resources)
-and the package's instructions; do not overwrite a live resource directory or
-your private configuration without a backup and a deliberate migration.
+Search the [library](/workshop) and narrow the results by category, content type
+and sort order. On a phone, open the filter drawer. Open the creation's page and
+read its description, gallery, installation notes and requirements. Check the
+**tested builds** on the release you plan to use: that is what the creator
+declares they tested, not a promise that it works on every server.
 
-## Publish from a ZIP
+A creation labelled as a showcase has no download. It exists to show work in
+progress.
 
-For a small starting point, use the
-[newly authored MIT resource and bundle examples](https://github.com/Open2077/open77-base/tree/feat/community-hub/examples/community-hub/v1).
-Their README explains ZIP layout, configuration templates and the versioned
-metadata schema. They contain diagnostic Lua only, with no game or community
-assets. These links refer to the Workshop development branch until a release is pinned.
+### Get the direct link
 
-Create a project in [My creations](/account/creations). The editor has five steps:
+Every creation page has an **Install with Warden** box. It shows the creation's
+public address, for example `https://open2077.net/workshop/auto-taxi`. Press
+**Copy link**. That address is all Warden needs.
 
-1. **Basics:** choose a stable slug, title, summary, type, category, maturity and
-   tags. Explain what the resource does and who it is for. Source links are useful
-   but do not replace a release artifact or establish redistribution rights.
-2. **Showcase:** describe installation and usage. Upload a JPEG, PNG or WebP,
-   wait for processing, then attach it. The first image is the cover; add up to
-   eight more screenshots with meaningful alternative text and optional captions.
-   Add up to two supported YouTube or Vimeo links. Only use media you can share.
-3. **Release:** create a version, fill in changelog, license, installation,
-   tested builds and requirements, then upload the ZIP or import a GitHub asset.
-   Review the discovered resources and inspection results.
-4. **Validation:** address blocking findings and check the requirements shown by
-   the editor. An upload being accepted means technical inspection passed; it
-   does not mean the project or release is public.
-5. **Preview and submit:** read the rendered page, verify your rights to distribute
-   every included file, save outstanding changes, and submit the exact draft for
-   review. Project-page review and release review are separate; an installable
-   project's page needs an approved release before it can be approved.
+You can also download the ZIP yourself from the release list, without signing
+in. Do that to inspect it or to install by hand on a test server, following
+[Server resources](/docs/server-resources). Never extract an unknown package onto
+a live server: a wildcard load rule can start it immediately.
 
-Keep the ZIP focused on the resource directories and their manifests. Include
-the required scripts/assets and license, plus explicitly prepared example
-configuration. Do not include server identities, accounts, database exports,
-live configuration, tokens or player data. The compressed ZIP limit is 100 MiB;
-the inspection budget is 500 MiB expanded and 10,000 entries across outer and
-nested archives. Image uploads are limited to 10 MiB and 40 megapixels.
+### Paste it into Warden
 
-The editor autosaves drafts. If saving pauses, keep the tab open, correct the
-error and use Save draft. If your sign-in expires, sign in again in another tab
-before retrying. If another editor changed the draft, compare and resolve the
-conflict instead of overwriting their work. Unsaved text is not a durable backup
-against closing the browser or losing the device.
+1. Open your server's Warden and go to the **Workshop** tab.
+2. Paste the link into the search field and press **Search Workshop**. Warden
+   looks the creation up on the OPEN//77 master. The short form
+   `workshop:auto-taxi` works too.
+3. Choose the release you want. Prereleases need an explicit choice.
 
-Published content keeps its approved snapshot while you edit a revision. Publish
-changed package bytes as a new release version; existing approved artifacts are
-immutable. Use upload history and Refresh status after a connection problem
-before starting another submission.
+Your Warden login needs the `hub.view` permission to browse and `hub.manage` to
+install anything. These are Warden permissions on your server. They have nothing
+to do with your website account.
 
-## Import a GitHub release asset
+### Review the plan
 
-In a release draft, open **Import a ZIP from a GitHub release**. If the provider is
-enabled, connect GitHub through the offered authorization flow, choose the
-repository, release and eligible ZIP asset, and inspect the repository/tag, asset
-identity, size and SHA-256 before confirming redistribution rights.
+Warden builds an **install plan** before it touches anything. Read it. It lists:
 
-The import copies a specific release asset into the Workshop's private inspection
-pipeline. Pasting a repository URL into the source field alone does not import
-anything. A changing branch, arbitrary external download URL or automatically
-generated source archive is not a substitute for the selected release asset.
-The picker requires a nonempty ZIP within the size limit and a provider digest.
+- the files it will add, replace or leave alone, including files you edited;
+- the permissions the resource asks for;
+- the load rules it proposes, so the resource starts with the server;
+- required and optional dependencies, and their exact versions;
+- compatibility with your server build, and whether a restart is needed.
 
-Repository control and permission to redistribute are separate concerns. Check
-licenses for bundled dependencies and mapping assets even when you control the
-repository. Refresh import status after a temporary provider failure; a rejected,
-expired or terminal failed import needs the action explained by its result.
-Manage or disconnect the provider at [GitHub connections](/account/github).
-Real GitHub OAuth/provider validation remains a release gate; local fixtures do
-not establish that a deployed provider configuration works.
+Resolve any blocker it reports. If you change local files while the plan is
+open, make a fresh plan. When you accept, you accept that exact plan: Warden
+cannot swap in a different release or option behind it.
 
-## Publish an export from Warden
+### Install
 
-A local Warden account and an OPEN//77 creator account are separate identities.
-The local account needs `hub.publish`. Use Creator connection in Warden to obtain
-a human approval code, open the supplied website link, and sign into the creator
-account there. Verify the code and server label before approving the requested
-existing project or new-draft scope. Do not paste account passwords or tokens
-into the export form.
+Accept the plan and follow the job. It is done when Warden reports the job as
+**committed**. A finished download or staging step alone is not an install.
 
-Select server-discovered resource names, a release version and any explicit
-example configuration/documentation. Review included and excluded files,
-dependencies, metadata, warnings and blocking findings. Build the reviewed ZIP;
-you can download and inspect it locally before sending it to the Workshop. Local
-credential detection is heuristic and cannot guarantee that a package contains
-no secrets. Your review and redistribution confirmation are still required.
+Two phrases from the install box, explained:
 
-Send the ZIP to the private creator draft, then follow the edit link to finish
-media, release details and website review. **Draft ready means private**, not
-published. Leaving the browser does not cancel an accepted background transfer.
-After a server restart or ambiguous network failure, sign back into the same
-local account, inspect Saved creator transfers and explicitly resume the matching
-reviewed hash. Do not create a duplicate project merely because a response was lost.
+- **It starts with the server.** The plan adds a load rule for the resource,
+  the same `resources.load` rule in `server.jsonc` that selects your own
+  resources, so it is started every time the server boots. Ordinary Lua
+  resources also activate in the running server without a restart.
+- **Players get the client part.** A resource has a server half and a client
+  half. The server hands the client half to every player who connects, signed,
+  exactly as it does for your own resources. Server scripts never leave the
+  server.
 
-Disconnect from Warden or revoke its scope in [Warden connections](/account/connections)
-when access should end. Revocation prevents further use of that connection and
-cancels its uncommitted exports; accepted private drafts remain on the website.
-Reconnecting is a new authorization, not recovery of a revoked connection.
+In the **Resources** tab, installed packages carry a chip such as
+**Workshop · v1.0.1** so you can tell them from resources you wrote yourself.
+The tab summary also counts how many come from the Workshop.
 
-The canonical host-side export, private-storage and recovery details live in the
+### Assets that load before the game starts
+
+Some packages declare **preload** assets: game files that must be in place
+before Cyberpunk starts. These cannot be swapped live. Warden stages them
+privately and marks the job **awaiting restart**. Nothing changes on the live
+server until it restarts. A Warden operator with `restart.schedule` can
+schedule that restart. Players must relaunch through the launcher when the
+required asset set changes.
+
+While a restart is pending, no other Workshop change can start. You can cancel
+the pending staging. At boot, Warden checks that the release is still published
+and that nothing was edited in between; if the check fails, it boots the
+previous installation and you review a new plan.
+
+### Update
+
+Search the same creation, pick a newer release and create a plan. Warden
+compares the new release with what is installed, including any files you
+changed, and shows the differences. Review and accept as for an install.
+Automatic updates do not exist: nothing changes without your review.
+
+### Roll back
+
+Open the job history and pick a rollback source. Warden builds a fresh reverse
+plan against the server as it is now and asks you to accept it. Your current
+configuration and user files are preserved as the plan describes. Rollback is
+only offered while the backup from that job is still retained, and it refuses
+to run if the old release has been withdrawn or a current dependency needs a
+different version.
+
+### Uninstall
+
+In **Installed resources**, select the package and create an uninstall review.
+Warden checks what else depends on it, including resources you did not select.
+It shows what it removes, what it keeps, and any restart requirement. Your
+configuration and user files stay behind as the review describes. Accept to run
+it. If the package leaves configuration behind, you may see an inert directory
+with the manifest renamed so it cannot load.
+
+The full Warden reference, including retention of old backups, is in
+[Workshop resources in Warden](/docs/community-hub-warden).
+
+## I built something and want to share it
+
+### What you need
+
+- An OPEN//77 account with a **verified email**. The editor refuses to open
+  otherwise.
+- A [creator profile](/account/profile) with a public handle.
+- A resource that already runs on a server, with its `open77.lua` manifest. The
+  Workshop does not replace the manifest; it packages it. See
+  [the resource runtime](/docs/resource-runtime) if you are starting from zero.
+
+### The five-step editor
+
+Open [My creations](/account/creations) and start a creation. The editor
+autosaves. Its five steps are:
+
+1. **Basics.** Slug, title, summary, type, category, maturity and tags. Pick the
+   slug carefully: it becomes the public address that server owners paste into
+   Warden. Say what the resource does and who it is for.
+2. **Showcase.** Installation and usage notes, cover, screenshots, videos and the
+   optional hover clip. Details below.
+3. **Release.** Version number, changelog, license, installation notes, tested
+   builds and required resources, then the ZIP itself or a GitHub import. Skip
+   this step for a showcase without a download.
+4. **Validation.** The result of the automatic package inspection. Fix anything
+   it blocks on.
+5. **Preview and submit.** The page exactly as visitors will see it. Tick the
+   rights box, save, then submit for review. The submission is that exact draft.
+
+### What the ZIP looks like
+
+Put `open77.lua` at the root of the ZIP or inside one resource folder:
+
+```text
+auto-taxi-1.0.0.zip
+  auto_taxi/
+    open77.lua
+    server/main.lua
+    client/main.lua
+    shared/config.example.lua
+    README.md
+    LICENSE
+```
+
+To ship several resources in one package, add an `open77-hub.json` file listing
+each resource root. Each release installs as one unit. Every resource in a bundle
+needs a distinct name that matches its folder.
+
+Include only the resource, its license and an explicitly prepared example
+configuration. Leave out server identities, accounts, database dumps, live
+configuration, tokens, logs and player data. Inspection scans for these and
+rejects the upload when it finds them.
+
+Limits: 100 MiB compressed, 500 MiB when expanded, 10,000 entries in total
+across the ZIP and any nested archives.
+
+Two [MIT-licensed example packages](https://github.com/Open2077/open77-base/tree/feat/community-hub/examples/community-hub/v1)
+show the single-resource and bundle layouts. They contain diagnostic Lua only.
+The link points at the development branch until a release is pinned.
+
+### Screenshots, videos and the hover clip
+
+**Images.** JPEG, PNG or WebP, up to 10 MiB and 40 megapixels each. Animated
+images are rejected. Upload an image, wait for processing, then attach it. The
+first image is the cover; you can add up to eight more screenshots. Each needs
+an **Image description** (read by screen readers and search engines) and can
+have a caption. Images are re-encoded and stripped of metadata before they are
+served.
+
+**Videos.** Up to two YouTube or Vimeo links. Visitors see a preview and load
+the player only when they press play.
+
+**Hover clip.** One short muted clip that plays when someone rests the pointer
+on your card in the library. WebM, MP4 or GIF, up to **8 seconds** and
+**8 MiB**. The server re-encodes it muted at up to 640 pixels wide and drops
+sound, subtitles and metadata. Upload it, wait for processing, press
+**Use as hover clip**, then save the draft. Keep a cover image as well: the
+clip is not used anywhere else. If the section says hover clips are not
+enabled on this workshop, the host has not turned them on.
+
+Only use media you have the right to share. Screenshots are showcase material;
+they are never installed.
+
+### Import a release from GitHub
+
+In a release draft, open **Import a ZIP from a GitHub release**. Connect your
+GitHub account when asked, then pick the repository, the release and the ZIP
+asset. Check the tag, asset name, size and SHA-256 before you confirm.
+
+The import copies that one asset into the same private inspection pipeline as
+an upload. It does not follow the branch afterwards; if the upstream asset
+changes, publish a new version. A repository URL in the source field is a
+link, not an import. Automatic source archives generated by GitHub usually lack
+built web assets and are not a substitute for a packaged release. Manage the
+connection at [GitHub connections](/account/github).
+
+Owning the repository does not settle redistribution rights for everything in
+it. Check the licenses of bundled dependencies and assets.
+
+### Review: what happens after you submit
+
+Submission runs in two stages.
+
+1. **Inspection**, automatic and private. The worker unpacks the ZIP, checks
+   its layout and manifest, scans for secrets and malware, and re-encodes
+   media. The Validation step shows the result with a code and a correction.
+2. **Moderation**, by a person. Moderators check that the creation is what it
+   says it is, that it contains only content you may distribute, that it has
+   a stated license, and that it is not abusive or misleading. The page and
+   each release are reviewed separately. A downloadable creation needs an
+   approved release before its page can be approved.
+
+Until both stages pass, nothing is visible to anyone but you and your
+maintainers. The decision arrives in your [inbox](/account/notifications) and
+in the creation's activity history. If the answer is no, you can fix the draft
+and resubmit, or open one appeal per decision with your reasons and evidence.
+
+### Versions, changelogs and licenses
+
+A published release is **immutable**. Its bytes, its file list and its SHA-256
+never change. To ship a fix, create a new version with a higher number. Older
+versions stay downloadable so a server owner can roll back.
+
+Each release carries a **changelog** in Markdown. Say what changed and what a
+server owner must do to upgrade, especially when a config template changed.
+
+Each release needs a **license and attribution** text. Name the license and
+list any third-party notices. A free download does not by itself allow
+modification or redistribution; the license does. Do not upload repacked game
+files or someone else's work.
+
+A version with a prerelease suffix, such as `1.1.0-beta.1`, is listed as a
+prerelease. The page hides prereleases behind an explicit control, and Warden
+only installs one when the operator chooses it on purpose.
+
+### Working with others, archiving and deleting
+
+From My creations, invite another verified creator by handle as a maintainer.
+They get access when they accept in [Invitations](/account/invitations). To
+hand a creation over, offer ownership to a maintainer; you remain owner until
+they accept.
+
+Archive a published creation when you stop maintaining it. The page and its
+downloads stay up, comments close and edits freeze. You can reopen it later.
+
+Delete an unpublished draft with **Delete unpublished draft**. A creation with
+any published history cannot be deleted this way; archive it instead. Deletion
+frees your draft allowance but keeps the slug reserved.
+
+## Publish straight from my server with Warden
+
+Warden can package a resource that already runs on your server and send it to
+the Workshop as a **private draft** on your creator account. You then finish
+it on the website.
+
+1. Your Warden login needs the `hub.publish` permission.
+2. In the Workshop tab, open **Creator connection**. Warden shows an approval
+   code and a website link. Open the link, sign into your creator account,
+   check that the code and server name match, and approve the requested scope:
+   an existing creation or a new draft. Never type your account password or a
+   token into Warden.
+3. Select the resource names to include, a version number and any example
+   configuration or documentation you want shipped. Warden lists included and
+   excluded files, dependencies, warnings and blockers. Its secret scan is a
+   heuristic; you still read the list.
+4. Build the ZIP. You can download it and inspect it locally first.
+5. Send it. **Draft ready** means the Workshop accepted a private draft. It is
+   not published. Open the edit link to add media, complete the release details
+   and submit for review.
+
+The transfer keeps running if you close the browser. After a server restart or
+a lost response, sign back into the same Warden account and open **Saved
+creator transfers** to resume the matching upload instead of creating a second
+draft.
+
+Revoke the connection from [Warden connections](/account/connections) on the
+website, or disconnect from Warden, when it should end. Revocation cancels
+unsent exports; drafts already accepted stay on the website.
+
+Warden never exports your server identity, signing keys, live configuration,
+logs or player data. The host-side details are in the
 [Warden export guide](https://github.com/Open2077/open77-base/blob/feat/community-hub/docs/community-hub-warden-export.md).
-This release-candidate source link will need its release revision when published.
 
-## Compatibility, mapping and server maintenance
+## Discussion, upvotes, saves, follow releases, reports
 
-Mapping is a project category, not a bypass around package inspection. A mapping
-package can contain Lua resources and supported declared preloads; describe which
-client assets, game build and expansions it requires. Nested ZIP/7z preloads are
-inspected under the same rules as their outer package. An ordinary Cyberpunk mod
-is not automatically an OPEN//77 resource, and arbitrary native plugins are not
-accepted merely because they are inside an archive.
+Sign in to take part. Browsing and downloading need no account.
 
-Warden separates `hub.view`, `hub.manage` and `hub.publish`. When installation is
-available, choose the release and review exact dependency versions, resource names,
-compatibility, local changes and configuration handling. Optional dependencies,
-prereleases and untested-build acknowledgements need deliberate choices. An
-acknowledgement cannot override a manifest's incompatible runtime requirement.
+- **Upvote** a creation once; you can take it back. Creators cannot upvote
+  their own work.
+- **Save** puts a creation in your private [saved list](/account/saved).
+- **Follow** subscribes you to its new releases. Saving and following are
+  separate. Manage them under [subscriptions](/account/subscriptions); new
+  releases and replies land in your [inbox](/account/notifications).
+- **Discussion** lives on the creation's page. Ask questions and report
+  reproducible problems with the release, your server build, what you expected
+  and sanitized logs. Creators can pin answers and mark threads resolved. You
+  can edit or delete your own comments; deleting keeps the replies underneath.
+  Do not post credentials or other players' private data.
+- **Report** a creation, a release or a comment for abuse, malicious content
+  or a licensing problem. Give evidence and the exact version. A report does
+  not remove anything by itself; a moderator decides.
 
-Install/update jobs expose their actual state. A cancellation request is not
-complete until rollback has finished. If a review becomes stale, create a fresh
-plan. An unresolved recovery error needs operator investigation; do not remove
-the private journal to force another install.
+Unsent comments and edits stay in the tab while you move between Workshop
+pages. They are lost when the tab closes. The browser warns before that.
 
-Update uses a new reviewed plan. Uninstall checks dependents and preserves
-operator data/configuration according to the reviewed transaction. History offers
-rollback only while the required backup is retained. Review any changed files
-before accepting rollback; it is not permission to erase newer player data.
+## FAQ
 
-Preloads can require a restart and launcher preparation. An **awaiting restart**
-job is staged privately, not a completed live installation. Follow the pending
-restart review in the current server build. Full restart/preload/player validation
-is tracked separately from ordinary Lua install/update/rollback testing; this
-guide does not claim that final gate has passed.
+**Is it free?** Yes. Browsing, downloading and installing cost nothing, and
+publishing costs nothing.
 
-Retention has its own review. Cleaning duplicate payloads and permanently
-expiring an eligible rollback record are different actions. Protected or changed
-data may prevent cleanup even when disk space is low. Consult the canonical
-[retention policy](https://github.com/Open2077/open77-base/blob/feat/community-hub/docs/community-hub-retention.md)
-and [package metadata specification](https://github.com/Open2077/open77-base/blob/feat/community-hub/docs/community-hub-package-metadata.md)
-for exact limits and configuration-template declarations. Do not manually delete
-live Workshop journals or backups to bypass a quota.
+**Can I sell what I make?** No. The Workshop has no prices, checkout or
+payouts. Every creation is free to download. Your license still decides what
+people may do with it afterwards.
 
-## Discuss, follow and report
+**What happens if a release is revoked?** Moderators can withdraw a release,
+for example after a rights complaint or a malware report. Its download stops
+working and it disappears from recommendations. Servers that already installed
+it keep running; nothing is deleted from them. Warden shows a **Revoked by the
+Workshop** notice on the installed package, blocks new installs and updates to
+that version, and refuses to roll back to it. Review the creation and decide
+whether to uninstall. Creators see the decision in their inbox and can appeal.
 
-Sign in to upvote, save, subscribe or comment. Saving a project and subscribing to
-new releases are separate actions. Manage [saved projects](/account/saved),
-[subscriptions](/account/subscriptions) and your [inbox](/account/notifications)
-from your account. Owners cannot upvote their own projects.
+**Why was my upload rejected?** The Validation step shows a code. In plain
+words:
 
-Use the discussion for questions and reproducible feedback: include the release,
-server build, expected result and relevant sanitized logs. You can edit or delete
-your own comment; deletion preserves its replies. Authors can pin useful answers
-and mark threads resolved. Do not post credentials or player-private information.
+- `package_layout` – `open77.lua` is not at the ZIP root or inside one resource
+  folder, or a bundle does not list its roots in `open77-hub.json`.
+- `package_metadata` – `open77-hub.json` does not match the schema or the
+  release version.
+- `package_unmapped_file` – files sit outside the declared resource roots.
+- `resource_manifest` – `open77.lua` has a syntax error, a bad name, a bad
+  entrypoint or references a missing file.
+- `resource_name_collision` – two resources share a runtime name, or a name
+  does not match its folder.
+- `archive_path`, `archive_collision`, `archive_link`, `archive_directory`,
+  `archive_length` – the ZIP contains traversal or absolute paths, names that
+  differ only by case, symbolic links, unusual entries, or inconsistent sizes.
+  Rebuild it from the original files with ordinary paths.
+- `archive_encrypted` – the ZIP has a password. Export it without one.
+- `archive_budget` – too big when expanded, too many entries or too deep a
+  nesting of archives.
+- `archive_empty` or `invalid_zip` – nothing inside, or not a valid ZIP.
+- `preload_archive`, `preload_capability` – a declared preload archive does not
+  follow the supported mod layout, or uses content the platform does not accept.
+- `package_signature` – the malware or secret scanner flagged content. Inspect
+  the package locally and remove it.
+- `inspection_temporarily_unavailable` – processing is down. Wait and refresh;
+  do not create a second version.
 
-Unsent comments, replies, comment edits and appeals stay in this tab's memory for
-the account that wrote them when you navigate between Workshop pages. Return to the
-same form (or choose **Edit / resume draft**) to continue. Use **Discard draft**
-to remove one explicitly. These drafts are not uploaded or saved across a reload
-or a closed tab; the browser warns before leaving while drafts remain. The tab
-holds up to 64 drafts and asks you to finish or discard one before adding more.
-An unfinished edit keeps its original revision, so a newer server edit can still
-produce a conflict instead of being overwritten.
+For images: the file is not a JPEG, PNG or WebP, is animated, cannot be
+decoded, or is over 10 MiB or 40 megapixels. The history entry shows the
+reason, for example `image format`.
 
-Use Report on the relevant project, release or comment for abuse, malicious
-content, licensing concerns or other moderation issues. Include evidence and the
-exact version. Reports do not automatically remove content. Affected creators can
-read the decision in their activity/inbox and open **Appeal this decision / check
-your appeal**. One appeal is allowed per decision; include the reason and source
-evidence. An appeal does not change the content's current state while reviewed.
+For the hover clip: `clip_format` means the file is not a WebM, MP4 or GIF with
+one video stream; `clip_duration` means it is longer than 8 seconds;
+`clip_size` means it is larger than 8 MiB; `clip_dimensions` means a frame is
+too large (over 4096 pixels on a side).
 
-## Share maintenance and transfer ownership
+**My install says "awaiting restart". Is it installed?** Not yet. The files
+are staged privately. Schedule the restart in Warden; the install commits on
+the next boot if every check still passes.
 
-Open a project's membership page from My creations. An owner can invite a
-verified creator by public handle as a maintainer. Access begins when they accept
-in [Invitations](/account/invitations). Maintainers can work on drafts and releases;
-owners manage membership. Revoke an unused invitation or remove a maintainer when
-that access is no longer appropriate.
-
-To transfer the project, offer ownership to an existing maintainer. You remain
-owner until they accept. Acceptance makes you a maintainer and revokes other
-pending invitations. This explicit handover preserves published history.
-
-Archive a published project when active development stops. Archiving keeps the
-approved page and downloads available, closes new comments and freezes edits;
-the owner can reopen it later. It is not a takedown or artifact deletion tool.
-
-For an unpublished project you no longer need, choose **Delete unpublished draft**
-in [My creations](/account/creations). Only its owner can confirm deletion, and
-the confirmation applies to the displayed revision. If someone has edited it,
-reload and review the latest version first. Projects with any published project
-or release history cannot use draft deletion.
-
-Deletion removes the draft from your workspace and frees its draft allowance.
-It revokes project membership, invitations, creator connections and private
-preview access, and prevents pending uploads or jobs from completing. There is
-no creator restore action. The slug remains reserved, and private audit records
-and artifact references are retained; this action does not immediately erase
-stored files or shared objects.
+**Does downloading a ZIP install it?** No. Either paste the link into Warden
+or install by hand on a test server first, following
+[Server resources](/docs/server-resources).

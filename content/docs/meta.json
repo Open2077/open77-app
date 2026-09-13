@@ -25,9 +25,9 @@
           "slug": "community-hub",
           "kind": "guide",
           "source": "authored",
-          "nav": "Community Hub",
-          "title": "Share and use community resources",
-          "description": "Find and share free OPEN//77 resources: ZIP and GitHub releases, Warden creator connections, compatibility, moderation and project ownership."
+          "nav": "The Workshop",
+          "title": "The Workshop: install and share resources",
+          "description": "The free OPEN//77 Workshop: paste a creation link into Warden to install, update or roll back a resource; publish your own as a ZIP or GitHub release with screenshots and a hover clip; what moderators check, versions, licenses, discussion and the upload rejection reasons."
         },
         {
           "slug": "platform",
@@ -74,9 +74,9 @@
         {
           "slug": "community-hub-warden",
           "kind": "guide",
-          "nav": "Hub resources in Warden",
-          "title": "Manage Hub resources with Warden",
-          "description": "Review resource installation, updates, uninstall and rollback; manage preload restart staging and preserve local configuration and retained backups."
+          "nav": "Workshop resources in Warden",
+          "title": "Manage Workshop resources with Warden",
+          "description": "Install a Workshop creation from its pasted link, review the plan, update, uninstall and roll back; the Workshop chip in the Resources tab, revoked releases, preload restart staging, local configuration and retained backups."
         },
         {
           "slug": "launcher-for-server-owners",
