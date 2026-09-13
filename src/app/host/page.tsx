@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { connection } from "next/server";
 
 import { Eyebrow, SlashMark } from "@/components/brand";
 import { CopyHash } from "@/components/host/copy-hash";
@@ -14,6 +15,7 @@ import {
 } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
+import { ReleaseRefresh } from "@/components/release-refresh";
 import { formatBytes, formatReleaseDate } from "@/lib/cdn";
 import { cssBackgrounds } from "@/lib/images";
 import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
@@ -34,13 +36,6 @@ export const metadata: Metadata = {
   // account-gated page out of search results until access is unrestricted.
   robots: { index: false, follow: false },
 };
-
-/**
- * The download data comes from the public CDN's `server/latest.json` pointer;
- * ISR keeps the page static while picking a freshly cut release up within
- * minutes of the pipeline publishing it.
- */
-export const revalidate = 300;
 
 /** How you launch the server on each platform, once it is unpacked. */
 const RUN_COMMANDS: Record<ServerBuild["os"], string> = {
@@ -93,6 +88,8 @@ const SETUP_STEPS = [
 ];
 
 export default async function HostPage() {
+  // Never bake a mutable release pointer into an ISR/build-time snapshot.
+  await connection();
   const release = await fetchLatestServerRelease();
 
   return (
@@ -131,6 +128,7 @@ export default async function HostPage() {
             <div className="section-inner">
               <Eyebrow>THE BUILD</Eyebrow>
               <h2 className="section-title">Latest server release.</h2>
+              <ReleaseRefresh />
               {release ? <ReleaseDownloads release={release} /> : <NoReleaseYet />}
               <p className="status-note" role="note">
                 <ShieldIcon size={18} />
@@ -193,7 +191,7 @@ export default async function HostPage() {
 
 function ReleaseDownloads({ release }: { release: ServerRelease }) {
   return (
-    <div className="host-release">
+    <div className="host-release" data-release-channel="server" data-release-version={release.version}>
       <span className="hud-corners" aria-hidden="true" />
       <div className="host-release-head">
         <div>
@@ -290,11 +288,10 @@ function NoReleaseYet() {
     <div className="host-empty">
       <span className="hud-corners" aria-hidden="true" />
       <ServerRackIcon size={28} className="host-empty-icon" />
-      <h3>No server build published yet.</h3>
+      <h3>Server release temporarily unavailable.</h3>
       <p>
-        The release pipeline hasn&apos;t cut a public dedicated-server build. The moment the first
-        one ships, this page picks it up automatically from the CDN — check back soon, or watch the
-        Discord announcements.
+        We couldn&apos;t verify the current server release from the CDN. No older build is being
+        substituted. Use Check for updates to retry; this page also checks again automatically.
       </p>
     </div>
   );

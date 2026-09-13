@@ -3,6 +3,11 @@
 Open77 keeps Cyberpunk 2077's native moving-platform motion, sounds, collision and floor markers,
 but makes the dedicated server authoritative over every registered elevator.
 
+For synchronized landing doors, enable [networked doors](doors.md). The
+`open77_doors` service discovers each landing's native lift/floor relationship
+and projects its server-approved state; it never opens a landing just because a
+player is near an empty shaft. Cabin inner-door animation stays with the lift.
+
 > **Status:** protocol 1.7, server authority, bucket/chunk streaming, late-join catch-up, Lua APIs
 > and the `open77_elevators` reference package are implemented. Two-client runtime acceptance is
 > still required for quest-specific elevators and landing-door variants.

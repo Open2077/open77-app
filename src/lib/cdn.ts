@@ -16,6 +16,43 @@ export const CDN_URL = (
   process.env.NEXT_PUBLIC_OP77_CDN_URL ?? "https://cdn.open2077.net"
 ).replace(/\/$/, "");
 
+/** Mutable channel pointers must never be frozen in Next's data/ISR cache. */
+export async function fetchReleasePointer(channel: "server" | "launcher") {
+  try {
+    const response = await fetch(`${CDN_URL}/${channel}/latest.json`, {
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache" },
+      signal: AbortSignal.timeout(8_000),
+    });
+    if (!response.ok) return null;
+    const raw: unknown = await response.json();
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+    return {
+      raw: raw as Record<string, unknown>,
+      lastModifiedUtc: parseDate(response.headers.get("last-modified")),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** A channel/version may only advertise an artefact from its own CDN directory. */
+export function releaseArtefactUrl(value: unknown, channel: "server" | "launcher", version: string) {
+  if (typeof value !== "string") return null;
+  try {
+    const url = new URL(value);
+    const root = new URL(CDN_URL);
+    const prefix = `${root.pathname.replace(/\/$/, "")}/${channel}/${version}/`;
+    const pathname = decodeURIComponent(url.pathname);
+    if (url.origin !== root.origin || url.username || url.password || url.search || url.hash ||
+        !pathname.startsWith(prefix) || !pathname.slice(prefix.length) ||
+        pathname.slice(prefix.length).includes("/")) return null;
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
 /** `123456789` → `"117.7 MB"`. Binary-adjacent but decimal units, like browsers show. */
 export function formatBytes(bytes: number): string {
   if (bytes >= 1_000_000_000) return `${(bytes / 1_000_000_000).toFixed(2)} GB`;
@@ -73,7 +110,13 @@ export type ArtefactMeta = {
  */
 export async function fetchArtefactMeta(url: string): Promise<ArtefactMeta> {
   try {
-    const head = await fetch(url, { method: "HEAD" });
+    // Versioned artefacts are immutable; only the tiny latest.json is uncached.
+    const head = await fetch(url, {
+      method: "HEAD",
+      cache: "force-cache",
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(3_000),
+    });
     if (!head.ok) return { sizeBytes: null, lastModifiedUtc: null };
     const bytes = Number(head.headers.get("content-length"));
     return {

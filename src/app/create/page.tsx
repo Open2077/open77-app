@@ -90,9 +90,12 @@ export default function CreatePage() {
               your rules, your identity, and gameplay you design. {CREATE_REQUIREMENTS_NOTE}
             </p>
             <div className="hero-ctas">
-              <a className="btn btn-primary" href="#developer-alpha">
-                Apply for preview access
+              <Link className="btn btn-primary" href="/host">
+                Download server
                 <ArrowRightIcon />
+              </Link>
+              <a className="btn btn-ghost" href="#developer-alpha">
+                Apply for preview access
               </a>
               <Link className="btn btn-ghost" href="/docs/platform#dedicated-servers">
                 Technical docs
@@ -194,7 +197,8 @@ export default function CreatePage() {
               <span>
                 <strong>Developer Preview is active.</strong> Applications are open for a limited
                 number of server owners and developers. <a href="#developer-alpha">Apply for access</a>.
-                Approved accounts can download and run the server now; applying does not grant immediate access.
+                Approved accounts can <Link href="/host">download and run the server now</Link>;
+                applying does not grant immediate access.
                 See the{" "}
                 <Link href="/docs/platform#roadmap">roadmap</Link>.
               </span>

@@ -194,7 +194,19 @@
           "slug": "npcs",
           "kind": "guide",
           "nav": "NPCs",
-          "description": "Server-owned NPCs: templates, streaming, authority leases, the task queue, health and damage, events, the read-only client API, and the current limitations."
+          "description": "Spawn Character records directly; manage streaming, authority, tasks, health and replicated behavior."
+        },
+        {
+          "slug": "npc-behavior",
+          "kind": "guide",
+          "nav": "NPC AI & voice control",
+          "description": "Control AI, combat, perception and voice lines per NPC with authoritative server Lua APIs."
+        },
+        {
+          "slug": "npc-catalogue",
+          "kind": "guide",
+          "nav": "NPC catalogue",
+          "description": "Search 6,582 Character records, copy spawn IDs and inspect appearances and compatibility warnings."
         },
         {
           "slug": "loot",
@@ -218,13 +230,37 @@
           "slug": "rp-animation-catalogue",
           "kind": "guide",
           "nav": "Animation catalogue",
-          "description": "Browse 12 RP profiles and 70 exact clip variants, with categories, props, placement, rig bindings and clearly stated experimental playback coverage."
+          "description": "Browse 15 RP profiles and 73 exact clip variants, including giving, examination and wounded poses, with placement, rig bindings and experimental playback coverage."
+        },
+        {
+          "slug": "player-interactions",
+          "kind": "guide",
+          "nav": "Player interactions",
+          "description": "Coordinate giving, healing, carrying and escorting: server reservations, player consent, shared animation timing, Lua examples and safe cancellation. Requires matching client/server builds and the player-interactions system resource."
         },
         {
           "slug": "photo-mode",
           "kind": "guide",
           "nav": "Photo mode",
           "description": "Control photo mode from a client resource, with exclusive ownership and cleanup."
+        }
+      ]
+    },
+    {
+      "id": "cyberware",
+      "title": "Cyberware & abilities",
+      "pages": [
+        {
+          "slug": "cyberware",
+          "kind": "guide",
+          "nav": "Cyberware overview",
+          "description": "Build multiplayer cyberware with server-owned implants, configurable grades, persistent installation, native presentation and permission-controlled Lua APIs."
+        },
+        {
+          "slug": "gorilla-arms",
+          "kind": "guide",
+          "nav": "Gorilla Arms",
+          "description": "Add native Gorilla Arms to your server: normal and charged punches, synchronized knockback, configurable damage and cosmetics, plus Lua installation examples and optional doctor and arena resources."
         }
       ]
     },
@@ -257,6 +293,12 @@
           "description": "Server-controlled RGB paint, replication and change events."
         },
         {
+          "slug": "vehicle-ai",
+          "kind": "guide",
+          "nav": "Autonomous vehicles & AI",
+          "description": "Server-owned autonomous driving, optional visible NPC drivers, reserved driver seats, routes, follow and chase, speed, behavior, lifecycle events and simulator handover."
+        },
+        {
           "slug": "weather",
           "kind": "guide",
           "nav": "Time and weather",
@@ -269,10 +311,22 @@
           "description": "Server-authoritative native lifts: adopting a LiftDevice, bucket and chunk streaming, movement and pause control, late-join catch-up, and the reference resource commands."
         },
         {
+          "slug": "doors",
+          "kind": "guide",
+          "nav": "Networked doors",
+          "description": "Server-owned automatic and interactive doors: dynamic discovery, native animations, elevator landing safety, routing buckets, access rules and client/server Lua exports."
+        },
+        {
           "slug": "props",
           "kind": "guide",
           "nav": "World props",
           "description": "Server-owned world props and lights: creation, streaming and cleanup."
+        },
+        {
+          "slug": "attachments",
+          "kind": "guide",
+          "nav": "Synchronized attachments",
+          "description": "Attach props to player slots or vehicles with local position and rotation. Learn server authority, client rendering, bone discovery, revision-safe handoffs and lifecycle cleanup. Requires matching attachment-capable client/server builds and assets."
         },
         {
           "slug": "props-and-effects",
@@ -294,6 +348,18 @@
       "id": "interfaces",
       "title": "Interfaces & input",
       "pages": [
+        {
+          "slug": "screen-transitions",
+          "kind": "guide",
+          "nav": "Native fades & transitions",
+          "description": "Use Cyberpunk's native screen fades from client Lua: fade out, hold and return, color options, completion events, resource ownership and automatic recovery. Includes server-coordinated transitions and HUD limitations."
+        },
+        {
+          "slug": "native-map",
+          "kind": "guide",
+          "nav": "Native map & waypoints",
+          "description": "Read the player's vanilla-map waypoint separately from quests and POIs, observe placement and selection events, focus the native map and pick a destination without fast travel. Includes a taxi-sharing example."
+        },
         {
           "slug": "world-drawing",
           "kind": "guide",
@@ -360,7 +426,13 @@
           "slug": "voice",
           "kind": "guide",
           "nav": "Voice chat",
-          "description": "Proximity voice, radio and phone channels, Lua APIs and settings."
+          "description": "Proximity voice, radio and phone channels, voice-driven lipsync, Lua APIs and settings."
+        },
+        {
+          "slug": "voice-lipsync",
+          "kind": "guide",
+          "nav": "Voice lipsync",
+          "description": "Enable voice-driven mouths on male/female player heads, locally and on replicated players, with resource-owned Lua controls and diagnostics."
         },
         {
           "slug": "clipboard",

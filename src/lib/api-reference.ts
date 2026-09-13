@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { getDocumentedServerApi } from "@/lib/server-api-docs";
+import { getDoorServiceApi } from "@/lib/door-service-api";
 
 const API_FILE = path.join(process.cwd(), "content", "api", "api.json");
 
@@ -30,6 +31,8 @@ export type ApiEntryRaw = {
   qualified: string;
   route_id: string;
   documentedSignature?: string;
+  /** Full call expression for resource exports (not a native Lua namespace). */
+  callSignature?: string;
   signatureKnown?: boolean;
   guideHref?: string;
 };
@@ -97,6 +100,8 @@ function slugify(value: string): string {
   // letter "g", which is a meaningless URL, so it gets the name it is called by
   // everywhere else in the reference.
   if (value === "_G") return "globals";
+  // The resource open77_doors must not collide with native Open77.doors.
+  if (value === "open77_doors") return "resource-open77-doors";
   return (
     value
       .replace(/^server:/, "")
@@ -107,6 +112,7 @@ function slugify(value: string): string {
 }
 
 function buildSignature(entry: ApiEntryRaw): string {
+  if (entry.callSignature) return entry.callSignature;
   if (entry.documentedSignature) return `${entry.qualified}${entry.documentedSignature}`;
   const params = entry.params
     .map((param) => (param.optional ? `[${param.name}]` : param.name))
@@ -161,6 +167,43 @@ const VEHICLE_WEAPON_READS = new Set([
 ]);
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (raw.namespace === "Open77.voice") {
+    return runtime === "client" && ["setLipSyncEnabled", "setPlayerLipSyncEnabled", "getLipSyncStatus", "getPlayerLipSyncState"].includes(raw.name)
+      ? { usageGuideHref: "/docs/voice-lipsync", usageGuideLabel: "Voice lipsync guide" }
+      : { usageGuideHref: `/docs/voice#${runtime}-lua-api`, usageGuideLabel: "Integrated voice chat guide" };
+  }
+  if (raw.namespace === "Open77.playerInteractions") {
+    return { usageGuideHref: `/docs/player-interactions#${runtime}-api`, usageGuideLabel: "Player interactions guide" };
+  }
+  if (raw.namespace === "Open77.props" && ["attach", "detach", "getAttachment", "isAttached", "attachedTo", "setAttachmentTransform", "bones"].includes(raw.name)) {
+    return {
+      usageGuideHref: `/docs/attachments#${runtime === "server" ? "server-api" : "client-api-and-diagnostics"}`,
+      usageGuideLabel: "Synchronized attachments guide",
+    };
+  }
+  if (raw.namespace === "Open77.cyberware") {
+    return { usageGuideHref: "/docs/gorilla-arms", usageGuideLabel: "Gorilla Arms implementation guide" };
+  }
+  if (raw.namespace === "Open77.motion") {
+    return { usageGuideHref: "/docs/cyberware", usageGuideLabel: "Cyberware authority & motion guide" };
+  }
+  if (raw.namespace === "open77_doors" || raw.namespace === "Open77.doors") {
+    return { usageGuideHref: "/docs/doors", usageGuideLabel: "Networked world doors guide" };
+  }
+  if (runtime === "client" && raw.namespace === "Open77.screen") {
+    return { usageGuideHref: "/docs/screen-transitions", usageGuideLabel: "Native fades & transitions guide" };
+  }
+  if (raw.namespace === "Open77.npcs") {
+    return runtime === "server"
+      ? { usageGuideHref: "/docs/npc-behavior", usageGuideLabel: "NPC AI, combat & voice guide" }
+      : { usageGuideHref: "/docs/npcs", usageGuideLabel: "NPC lifecycle & read-only client guide" };
+  }
+  if (runtime === "client" && raw.namespace === "Open77.map") {
+    return { usageGuideHref: "/docs/native-map", usageGuideLabel: "Native map & waypoints guide" };
+  }
+  if (runtime === "server" && raw.namespace === "Open77.vehicles.ai") {
+    return { usageGuideHref: "/docs/vehicle-ai", usageGuideLabel: "Autonomous vehicles & AI guide" };
+  }
   if (raw.namespace === "Open77.animations") {
     return { usageGuideHref: `/docs/rp-animations#${runtime}-lua-api`, usageGuideLabel: "RP animation guide" };
   }
@@ -189,7 +232,7 @@ export function getApiIndex(): Promise<ApiIndex> {
 async function loadApiIndex(): Promise<ApiIndex> {
   const raw = await readFile(API_FILE, "utf8");
   const generated = JSON.parse(raw) as ApiEntryRaw[];
-  const parsed = [...generated, ...await getDocumentedServerApi(generated)];
+  const parsed = [...generated, ...await getDocumentedServerApi(generated), ...await getDoorServiceApi()];
 
   const namespaceKeys = new Map<string, string>();
   const anchorKeys = new Map<string, string>();

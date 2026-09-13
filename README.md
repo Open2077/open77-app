@@ -132,7 +132,7 @@ string, so selections survive reload and browser Back. The documentation has a l
 switch (saved locally), its own search and collapsible guide navigation below the main site
 header. Guide content remains authored in the platform wiki.
 
-On this workstation, sync with `npm run sync:wiki -- --from ../CyberM/wiki`.
+On this workstation, sync with `npm run sync:wiki -- --from ../base/wiki`.
 The sync also discovers sibling `CyberM`, `open77-base` and `base` checkouts automatically.
 When a feature worktree contains one new guide but lacks unrelated sources from a
 newer vendored snapshot, use the explicit scoped pipeline:
@@ -143,6 +143,30 @@ without advancing the full-snapshot timestamp. Verify with the same arguments pl
 `--check`; this checks only that guide and does not claim a complete wiki sync.
 Full sync retains its source requirements and stale-guide removal behavior.
 Run `node --test scripts/test-sync-wiki-scoped.mjs` for the preservation/drift checks.
+
+When another session is implementing a feature, select a clean worktree of the intended
+platform revision with `--from <worktree>/wiki`; do not publish its unfinished working files.
+Set `OPEN77_WIKI_SOURCE` to that same wiki path when running `npm run verify:content`,
+so the drift, coverage and overlay checks all verify the selected revision.
+
+If that checkout predates the site's Cyberware additions, do **not** run a full
+wiki sync: it would remove those newer guides and API cards. For the attachment /
+player-interaction update, `npm run sync:attachments -- --from ../CyberM/wiki`
+copies only `attachments`, `player-interactions`, `props` and the RP catalogue,
+merging the 24 new contracts and 17 animation cards by runtime/name. Other content
+is preserved and `_manifest.json.partialSync` records the scope. Check that slice
+with `npm run sync:attachments -- --check`, then `npm run verify:attachments`
+(append `-- http://localhost:3000` to also verify served HTML/Markdown). A full
+`verify:content` drift check still requires a platform checkout containing both
+features; targeted verification does not claim the rest of that checkout matches.
+
+Cyberware guides live in the platform wiki: `cyberware.md` describes the reusable foundations
+and `gorilla-arms.md` is the first ability guide. Add future powers alongside them, register
+their pages under the `cyberware` section in `content/docs/meta.json`, and link their API
+namespaces to the guide in `src/lib/api-reference.ts`. Category membership is maintained in
+`src/lib/api-categories.ts`. Generate the platform API JSON before syncing; publish only
+implemented contracts and state the required compatible client/server build in each guide.
+
 Run `node scripts/check-hydration.mjs http://127.0.0.1:3000 --docs` for the focused browser
 checks: filters, deep links, Back, clipboard, themes, sticky navigation and mobile layout.
 This writes review screenshots under `.shots/` (ignored by Git).
@@ -195,6 +219,7 @@ disappeared from the HTML, or a hydration mismatch — so those have scripts.
 
 ```bash
 npm run check            # types and lint
+npm run verify:releases  # release changes, channel isolation and automatic refresh (offline)
 npm run verify:content   # the synced content, before building
 npm run build
 npm start                # in another terminal, on :3000
@@ -224,6 +249,29 @@ npm run verify:served    # the built site, over HTTP and in a real browser
   existed.
 
 ## Deployment
+
+### Download release freshness
+
+`/download` shows the **launcher** and **dedicated server** as separate channels.
+`/host` keeps the approved-preview account gate and offers the Windows/Linux
+archives. Each channel reads its own CDN `latest.json` at request time, with
+`no-store` and a bounded timeout. These two pages are not build-time/ISR release
+snapshots; publishing a pointer updates them without redeploying the website.
+Only metadata for immutable, versioned artefacts is cached.
+
+Visible tabs refresh every 60 seconds, on returning to the tab or reconnecting,
+and through **Check for updates**. Refresh preserves the current scroll position
+and account state. The displayed version and its archive links come from the
+same pointer; cross-version/channel URLs are rejected. If the pointer cannot be
+verified, the page shows an unavailable state instead of substituting an old
+version or inventing a download URL.
+
+`npm run verify:releases` simulates consecutive publications and CDN failures.
+After `npm run build` and `npm start`, run
+`node scripts/check-host-download-ui.mjs http://127.0.0.1:3000` to compare the
+rendered versions/links against the live CDN and check preview gates, manual
+refresh, hydration and desktop/mobile layouts. Browser account responses are
+synthetic: this test uses no production credentials.
 
 Zero-config on Vercel: framework detection handles the build, and there is deliberately no
 `vercel.json`. Redirects, rewrites, headers and image settings all live in `next.config.ts`, which

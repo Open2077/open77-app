@@ -65,14 +65,18 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Game data reference](data-reference.md) | NPC templates, vehicle records, seats, flags, weapons, appearances, VFX, SFX, animations, and sprite catalogues. |
 | [Identity and ACL](server-acl.md) | Authentication, restricted commands, and access control. |
 | [Player identity](identity.md) | Durable identifiers, display names, and rename flow. |
-| [Clothing Lua API](../docs/clothing.md) | Validated wardrobe catalogue, local/server APIs, permissions, errors, and appearance replication. |
+| [Equipment Lua API](../docs/equipment.md) | Validated wardrobe catalogue, local/server APIs, permissions, errors, and appearance replication. |
 | [Perspective](../docs/perspective.md) | First and third person: the ownership arbiter, the server policy, the player's key and persisted preference. |
 | [Photo mode](photo-mode.md) | Exclusive client-resource control of the native photo mode; stock shortcuts are disabled. |
 | [Weapon Lua API](weapons-api.md) | Assign standard weapons by TweakDB template, select slots, holster, snapshot, and target a player from the server. |
 | [Player health and stamina](player-stats.md) | Shared client/server reads, server-only setters, maximums, regeneration, and synchronization semantics. |
+| [Cyberware framework](cyberware.md) | Persistent implants, permissions, transactions, temporary loadouts and native projection. |
+| [Gorilla Arms](gorilla-arms.md) | Build native arm grades, self-service installation, charge effects, clinics and practice arenas. |
 | [Loot](loot.md) | Authoritative ground drops and pickup integration. |
 | [Weather](weather.md) | Session time, weather presets, synchronization, and events. |
 | [Vehicles](vehicles.md) | Identity, streaming, authority leases, seats, and Lua APIs. |
+| [Vehicle AI](vehicle-ai.md) | Autonomous driving, routes, entity following, NPC drivers and authoritative task events. |
+| [Native map](native-map.md) | Player waypoints, map lifecycle, marker selection and non-travel point picking. |
 | [Armed vehicle spawn catalogue](armed-vehicles.md) | Exact spawn IDs, mounted-weapon profiles, verified examples, and the complete 2.31 record inventory. |
 | [Vehicle weapon Lua API](vehicle-weapons.md) | Client armament queries: mounted/selected weapons, native ammo, heat, trigger mode and turret aim. |
 | [Vehicle paint](vehicle-paint.md) | Server-authoritative RGB paint, cross-resource controls, replication, events, and native limitations. |
@@ -86,6 +90,7 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Cordon](cordon.md) | The 64-player battle royale: the closing block cordon, squads and revive at the body, ground loot, bots as contestants, the tunables and what is measured versus designed. |
 | [Notifications](notifications.md) | Reusable WebUI toasts, client/server exports, queues, positions, progress, and ownership. |
 | [Elevators](elevators.md) | Implemented server-authoritative native lifts, bucket/chunk streaming, late join, ACL commands, and Lua APIs. |
+| [Networked doors](doors.md) | Dynamic discovery, automatic and elevator landing doors, server authority, access rules, and Lua exports. |
 | [Blips](blips.md) | Vanilla map markers, entity attachment, and sprites. |
 | [Vanilla HUD visibility](hud-visibility.md) | Client API for minimap, compass, clock, health, stamina, weapons/ammo, speed, and custom-HUD replacement. |
 | [Third person](perspective.md) | The playable third-person view: the player's key, server policy, the states that hand the view back, and the measured limitations. |
@@ -93,6 +98,7 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [RP animation catalogue](rp-animation-catalogue.md) | All 12 profiles and 70 selectable clips, prop/placement requirements and validation status. |
 | [World props](props.md) | Server-authoritative props and lights: models, streaming, buckets, ownership, and the client projection. |
 | [Visual and audio effects](effects.md) | Client-local world/entity VFX and spatialised SFX, and the server-replicated effect registry. |
+| [Native screen transitions](screen-transitions.md) | Client Lua fades to black/color, native completion events, resource ownership, cancellation and recovery. |
 | [Privileged debug runtime](debug-runtime.md) | ACL-targeted client Lua execution, native lab commands, and REDscript bridge probes. |
 | [Autonomous agent testing](agent-testing.md) | The MCP server and skill that let an AI agent drive the real game: stack, connection, tools, scenarios, and safety rules. |
 | [Chat](chat.md) | Messages, slash commands, completion, and resource integration. |

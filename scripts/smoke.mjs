@@ -23,9 +23,20 @@ const origin = process.argv[2] ?? "http://127.0.0.1:3000";
  * }[]}
  */
 const CHECKS = [
+  { path: "/docs/cyberware", expect: 200, contains: "Cyberware &amp; abilities" },
+  { path: "/docs/gorilla-arms", expect: 200, contains: "Gorilla Arms" },
+  { path: "/docs/gorilla-arms.md", expect: 200, contains: "gorilla_install" },
+  { path: "/docs/cyberware.md", expect: 200, contains: "onCyberwareOperationCompleted" },
+  { path: "/docs/api/client/open77-cyberware", expect: 200, contains: "player.cyberware.project" },
+  { path: "/docs/api/server/open77-cyberware", expect: 200, contains: "players.cyberware.manage" },
+  { path: "/docs/api/server/open77-cyberware.md", expect: 200, contains: "Open77.cyberware.install" },
+  { path: "/docs/api/client/open77-motion", expect: 200, contains: "Cyberware authority &amp; motion guide" },
+  { path: "/docs/api/server/open77-motion", expect: 200, contains: "players.motion.control" },
+  { path: "/sitemap.xml", expect: 200, contains: "/docs/gorilla-arms" },
+  { path: "/llms.txt", expect: 200, contains: "/docs/cyberware" },
   { path: "/", expect: 200, contains: "OPEN//77", type: "text/html" },
   { path: "/", expect: 200, contains: "Phantom Liberty" },
-  { path: "/", expect: 200, contains: "Develop in Lua" },
+  { path: "/", expect: 200, contains: "own Night City." },
   // The launcher page's version and digest come from the CDN at build time, so
   // the assertions are on the copy that is always there, not on a build number.
   // The headline rather than the button: the button reads "Download for Windows"
@@ -33,8 +44,9 @@ const CHECKS = [
   // to hold in both states.
   { path: "/download", expect: 200, contains: "OPEN//77 launcher.", type: "text/html" },
   { path: "/download", expect: 200, contains: "SHA-256" },
-  { path: "/servers", expect: 200, contains: "Night City Roleplay", type: "text/html" },
-  { path: "/servers/nc-roleplay", expect: 200, contains: "Online now" },
+  // Listings load from the live master in the browser; SSR has no fixed sample server.
+  { path: "/servers", expect: 200, contains: "OPEN//77 server browser", type: "text/html" },
+  { path: "/servers/nc-roleplay", expect: 200, contains: "Back to server browser" },
   { path: "/create", expect: 200, contains: "Create" },
   { path: "/create", expect: 200, contains: "Phantom Liberty" },
   // `open77-base` is private, so no rendered page may link to it. These guard

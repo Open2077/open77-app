@@ -1,0 +1,138 @@
+[
+  {
+    "runtime": "server",
+    "name": "get",
+    "args": "id, bucket",
+    "returns": "Door snapshot or nil",
+    "summary": "Read the authoritative state of a world door.",
+    "description": "IDs are opaque hex strings. The bucket defaults to 0. The result is a copy and may exist before the native object streams."
+  },
+  {
+    "runtime": "server",
+    "name": "list",
+    "args": "bucket, offset, limit",
+    "returns": "{ doors, total, nextOffset? }",
+    "summary": "List registered doors with bounded pagination.",
+    "description": "Bucket may be nil for all buckets. Offset defaults to 0, limit to 16 (maximum 16). Pagination is not transactional; rescan if the registry changes."
+  },
+  {
+    "runtime": "server",
+    "name": "near",
+    "args": "position, bucket, radius",
+    "returns": "{ doors, total, truncated }",
+    "summary": "Find the nearest authoritative doors.",
+    "description": "Position is {x,y,z}. The radius must be positive and no more than 120 metres. At most 16 closest doors are returned."
+  },
+  {
+    "runtime": "server",
+    "name": "register",
+    "args": "descriptor",
+    "returns": "Door snapshot or nil, reason",
+    "summary": "Register or claim a world door for the calling resource.",
+    "description": "A new descriptor requires id and position; bucket defaults to zero. Optional automatic, autoClose, lift, elevatorId and elevatorFloor describe initial topology. Claims preserve an existing door's state; another resource's ownership cannot be stolen."
+  },
+  {
+    "runtime": "server",
+    "name": "configure",
+    "args": "id, bucket, patch",
+    "returns": "true or false, reason",
+    "summary": "Configure a door atomically on the server.",
+    "description": "Requires ownership. Fields: open, locked, sealed, automatic, autoClose, defaultAccess, openRadius, closeRadius, closeDelay. Radii 1–12m, closeRadius >= openRadius, delay 0.2–60s. Invalid patches change nothing. Locks/seals close the door; lift opening is controlled by the elevator."
+  },
+  {
+    "runtime": "server",
+    "name": "setOpen",
+    "args": "id, bucket, open",
+    "returns": "true or false, reason",
+    "summary": "Set a non-elevator door's target state.",
+    "description": "Requires ownership. Disable automatic mode and autoClose if a scripted open state must persist. This cannot override elevator safety, a lock or a seal."
+  },
+  {
+    "runtime": "server",
+    "name": "setLocked",
+    "args": "id, bucket, locked",
+    "returns": "true or false, reason",
+    "summary": "Lock or unlock a shared door.",
+    "description": "Requires ownership and a strict boolean. Locking closes the door and blocks all players, including access-granted players."
+  },
+  {
+    "runtime": "server",
+    "name": "setSealed",
+    "args": "id, bucket, sealed",
+    "returns": "true or false, reason",
+    "summary": "Seal or unseal a shared door.",
+    "description": "Requires ownership and a strict boolean. Sealing closes the door and prevents all player requests."
+  },
+  {
+    "runtime": "server",
+    "name": "setAutomatic",
+    "args": "id, bucket, automatic",
+    "returns": "true or false, reason",
+    "summary": "Enable or disable authoritative proximity opening.",
+    "description": "Requires ownership. Automatic doors use fresh player positions in their bucket; NPC-only local proximity does not drive the server. Lift doors reject this operation."
+  },
+  {
+    "runtime": "server",
+    "name": "setAccess",
+    "args": "id, bucket, playerId, allow",
+    "returns": "true or false, reason",
+    "summary": "Grant or deny a connected player door access.",
+    "description": "Requires ownership. A boolean overrides defaultAccess; nil clears the override. Overrides are removed on disconnect. This shared physical door is not an anti-tailgating barrier."
+  },
+  {
+    "runtime": "server",
+    "name": "linkElevator",
+    "args": "id, bucket, elevatorId, floor",
+    "returns": "true or false, reason",
+    "summary": "Link a landing door to its elevator and floor.",
+    "description": "Requires ownership of a lift door. The lift must exist in the same bucket, have the zero-based floor, and be horizontally within 40m. Opening requires an idle, powered cabin at that floor with doorsClosed unset."
+  },
+  {
+    "runtime": "server",
+    "name": "remove",
+    "args": "id, bucket",
+    "returns": "true or false, reason",
+    "summary": "Release a door owned by this resource.",
+    "description": "Stops projecting this registry record. Discovery may subsequently adopt it again. Owner restarts also release their records; persist rules in your own resource if required."
+  },
+  {
+    "runtime": "server",
+    "name": "setDiscoveryEnabled",
+    "args": "enabled",
+    "returns": "true or false, reason",
+    "summary": "Enable or disable acceptance of new discovered doors.",
+    "description": "Existing registered doors remain managed. Use explicit server registration with discovery disabled for security-sensitive worlds; discovery is not a cryptographic attestation of client topology."
+  },
+  {
+    "runtime": "server",
+    "name": "changes",
+    "args": "cursor",
+    "returns": "{ cursor, reset, events }",
+    "summary": "Read a bounded feed of authoritative door changes.",
+    "description": "At most eight events per page, from a 512-event ring. Continue with the returned cursor; if reset is true, rescan list. Supports cross-resource observation without assuming a server event bus."
+  },
+  {
+    "runtime": "client",
+    "name": "get",
+    "args": "id",
+    "returns": "Interested server snapshot or nil",
+    "summary": "Read a door's latest replicated target state.",
+    "description": "This is a server-interest snapshot, not proof that the native object is currently streamed. Native Open77.doors.state(id) reads the local projection instead."
+  },
+  {
+    "runtime": "client",
+    "name": "list",
+    "args": "offset, limit",
+    "returns": "{ doors, total, nextOffset? }",
+    "summary": "List door states within this client's interest.",
+    "description": "Offset defaults to 0, limit to 16 (maximum 16). Interest is bounded to 256 nearest doors and follows the player's routing bucket."
+  },
+  {
+    "runtime": "client",
+    "name": "requestOpen",
+    "args": "id, open",
+    "returns": "queued boolean, reason?",
+    "summary": "Ask the server to open or close an interactive door.",
+    "description": "Queue acceptance is not server approval. Listen to open77:doors:requestResult(id, accepted, reason). Distance, bucket, access and doorway occupancy are checked server-side. Automatic doors and lift doors reject manual requests."
+  }
+]

@@ -20,12 +20,19 @@ export function DeveloperAlpha({ compact = false }: { compact?: boolean }) {
         your community&apos;s Cyberpunk 2077 experience once your account is approved.
       </p>
       <div className={styles.actions}>
-        <a className="btn btn-primary" href={site.links.developerAlpha} target="_blank" rel="noreferrer noopener">
-          Apply for preview access
+        <Link className="btn btn-primary" href="/host">
+          Download server
           <ArrowRightIcon />
+        </Link>
+        <a className="btn btn-ghost" href={site.links.developerAlpha} target="_blank" rel="noreferrer noopener">
+          Apply for preview access
         </a>
         <Link className="btn btn-ghost" href="/docs/developer-preview">Preview guide</Link>
       </div>
+      <p className={styles.note}>
+        <strong>Already have alpha access?</strong> Download the Windows or Linux server
+        with your approved account — no new application or staff role is required.
+      </p>
       <p className={styles.note}>
         <strong>Very limited launch slots.</strong> For server owners and developers.
         Applications are reviewed, with priority given to serious, well-defined projects.

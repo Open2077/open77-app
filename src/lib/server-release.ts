@@ -18,7 +18,7 @@
  *       }
  *     }
  *
- *   OLD (single Windows zip — still live today):
+ *   OLD (single Windows zip):
  *     { "version": "…", "url": "…", "sha256": "…", "zipSha256": "…" }
  *
  * When `builds` is present each platform is rendered; otherwise the single
@@ -27,14 +27,14 @@
  *
  * It runs server-side on purpose: the CDN is a plain static file server with no
  * CORS headers, so a browser fetch would be blocked while a Node fetch needs
- * nothing. The page that consumes this is statically generated with ISR, so a
- * freshly cut release shows up within minutes of publish without a redeploy.
+ * nothing. Mutable pointers are fetched at request time, independently of the
+ * launcher channel, so new server releases need no site rebuild or cache purge.
  *
  * A missing `latest.json` is not an error: it simply means no server release
  * has been cut yet, and callers render an empty state.
  */
 
-import { asString, basename, CDN_URL, fetchArtefactMeta, parseDate } from "@/lib/cdn";
+import { asString, basename, fetchArtefactMeta, fetchReleasePointer, parseDate, releaseArtefactUrl } from "@/lib/cdn";
 
 /** The platform keys the pipeline publishes, in the order we present them. */
 export type PlatformKey = "windows-x64" | "linux-x64";
@@ -83,22 +83,18 @@ export type ServerRelease = {
   /** Full version string, e.g. `2.31.0+op77.4`. */
   version: string;
   /**
-   * SHA-256 of the shipped managed server binary — platform-independent, the
-   * hash the pipeline registers with the master. `null` when the pointer omits
-   * it.
+   * Legacy/default server binary digest. Current releases also publish a
+   * distinct binary hash for each platform. Never use this as an archive hash.
    */
   serverSha256: string | null;
   /** One entry per known platform; unavailable ones carry a `null` URL. */
   builds: ServerBuild[];
   /**
-   * Publish time as an ISO string. `latest.json` carries no date, so this comes
-   * from the CDN's `Last-Modified` on the index — or from a `publishedAtUtc`
-   * field if the pipeline ever adds one, which takes precedence.
+   * Publish time from the pointer's publishedAt/publishedAtUtc, falling back
+   * to Last-Modified for older release pipelines.
    */
   publishedAtUtc: string | null;
 };
-
-const REVALIDATE_SECONDS = 300;
 
 /** Pull one platform's `{ url, archiveSha256 }` out of a `builds` map. */
 function readBuildEntry(builds: Record<string, unknown>, key: PlatformKey) {
@@ -108,6 +104,8 @@ function readBuildEntry(builds: Record<string, unknown>, key: PlatformKey) {
   return {
     url: asString(record.url),
     archiveSha256: asString(record.archiveSha256),
+    sizeBytes: typeof record.size === "number" && Number.isSafeInteger(record.size) && record.size > 0
+      ? record.size : null,
   };
 }
 
@@ -116,49 +114,33 @@ function readBuildEntry(builds: Record<string, unknown>, key: PlatformKey) {
  * (or the CDN is unreachable — the page treats both as "nothing to offer").
  */
 export async function fetchLatestServerRelease(): Promise<ServerRelease | null> {
-  let response: Response;
-  try {
-    response = await fetch(`${CDN_URL}/server/latest.json`, {
-      next: { revalidate: REVALIDATE_SECONDS },
-    });
-  } catch {
-    return null;
-  }
-  if (!response.ok) return null;
-
-  let raw: Record<string, unknown>;
-  try {
-    const parsed: unknown = await response.json();
-    if (!parsed || typeof parsed !== "object") return null;
-    raw = parsed as Record<string, unknown>;
-  } catch {
-    return null;
-  }
+  const pointer = await fetchReleasePointer("server");
+  if (!pointer) return null;
+  const { raw } = pointer;
 
   const version = asString(raw.version);
   if (!version) return null;
 
-  const hasBuilds = raw.builds !== null && typeof raw.builds === "object";
+  const hasBuilds = raw.builds !== null && typeof raw.builds === "object" && !Array.isArray(raw.builds);
   const builds = hasBuilds ? (raw.builds as Record<string, unknown>) : null;
 
-  // NEW: platform-independent server hash. OLD: `sha256` served the same role.
+  // OLD: `sha256` served the same role. Neither field is an archive checksum.
   const serverSha256 = asString(raw.serverSha256) ?? asString(raw.sha256);
 
   // In the legacy single-zip shape the one URL is the Windows build.
-  const legacyUrl =
-    !builds &&
-    (asString(raw.url) ??
-      `${CDN_URL}/server/${encodeURIComponent(version)}/open77-server-${encodeURIComponent(version)}.zip`);
+  const legacyUrl = !builds && releaseArtefactUrl(raw.url, "server", version);
   const legacyZipSha = asString(raw.zipSha256);
 
   const resolved = PLATFORMS.map((meta): ServerBuild => {
     let url: string | null = null;
     let archiveSha256: string | null = null;
+    let sizeBytes: number | null = null;
 
     if (builds) {
       const entry = readBuildEntry(builds, meta.platform);
-      url = entry.url;
+      url = releaseArtefactUrl(entry.url, "server", version);
       archiveSha256 = entry.archiveSha256;
+      sizeBytes = entry.sizeBytes ?? null;
     } else if (meta.platform === "windows-x64" && legacyUrl) {
       url = legacyUrl;
       archiveSha256 = legacyZipSha;
@@ -168,15 +150,17 @@ export async function fetchLatestServerRelease(): Promise<ServerRelease | null> 
       ...meta,
       url,
       fileName: url ? basename(url) : null,
-      archiveSha256,
-      sizeBytes: null,
+      archiveSha256: url ? archiveSha256 : null,
+      sizeBytes: url ? sizeBytes : null,
     };
   });
 
-  // Fill in sizes for the available builds in parallel; missing ones stay null.
+  if (!resolved.some((build) => build.url)) return null;
+
+  // Current pointers already include sizes. HEAD is only a legacy fallback.
   await Promise.all(
     resolved.map(async (build) => {
-      if (build.url) build.sizeBytes = (await fetchArtefactMeta(build.url)).sizeBytes;
+      if (build.url && build.sizeBytes === null) build.sizeBytes = (await fetchArtefactMeta(build.url)).sizeBytes;
     }),
   );
 
@@ -186,6 +170,6 @@ export async function fetchLatestServerRelease(): Promise<ServerRelease | null> 
     builds: resolved,
     publishedAtUtc:
       parseDate(asString(raw.publishedAtUtc)) ??
-      parseDate(response.headers.get("last-modified")),
+      parseDate(asString(raw.publishedAt)) ?? pointer.lastModifiedUtc,
   };
 }

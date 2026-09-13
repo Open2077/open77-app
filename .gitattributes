@@ -5,3 +5,6 @@
 *.jpeg binary
 *.ico binary
 *.zip binary
+
+# Preserve exact extraction bytes: the JSON and sync manifest attest this hash.
+public/data/npc-records-2.31.csv -text

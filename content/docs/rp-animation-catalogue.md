@@ -14,6 +14,9 @@ Durations and loop timing are not inferred from clip names. All actions are stat
 
 | ID | Action | Category | Placement | Expected prop |
 | --- | --- | --- | --- | --- |
+| `give` | Offer an item | interactions | standing | None |
+| `examine` | Kneel and examine | interactions | ground | None |
+| `wounded` | Wounded seated breathing | interactions | ground | None |
 | `smoke` | Smoke a cigarette | consumables | standing | cigarette |
 | `cigar` | Smoke a cigar | consumables | standing | cigar |
 | `drink` | Drink from a can | consumables | standing | can |
@@ -26,6 +29,48 @@ Durations and loop timing are not inferred from clip names. All actions are stat
 | `cry` | Cry | emotions | standing | None |
 | `think` | Think | emotions | standing | None |
 | `stretch` | Stretch | relaxation | standing | None |
+
+## Offer an item (`give`)
+
+Workspot: `base\workspots\common\ground\generic__stand_ground_item__give__01.workspot`.
+
+Open77 playback workspot: `cyberm\workspots\rp\give.workspot`.
+
+Default clip: `stand__2h_on_sides__01__to__stand__rh_item__01__turn0__01`.
+
+Declared rig bindings: male and female base rigs. Status: asset verified; runtime pending.
+
+Selectable authored clips:
+
+- `stand__2h_on_sides__01__to__stand__rh_item__01__turn0__01`
+
+## Kneel and examine (`examine`)
+
+Workspot: `base\workspots\common\ground\generic__kneel_ground__inspect__01.workspot`.
+
+Open77 playback workspot: `cyberm\workspots\rp\examine.workspot`.
+
+Default clip: `kneel__rk_on_ground__01__inspect_ground__01`.
+
+Declared rig bindings: male and female base rigs. Status: asset verified; runtime pending.
+
+Selectable authored clips:
+
+- `kneel__rk_on_ground__01__inspect_ground__01`
+
+## Wounded seated breathing (`wounded`)
+
+Workspot: `base\workspots\common\ground\generic__sit_ground_wall_lean_back__wounded__01.workspot`.
+
+Open77 playback workspot: `cyberm\workspots\rp\wounded.workspot`.
+
+Default clip: `sit_ground_lean180__rh_on_belly__01__deep_breath__01`.
+
+Declared rig bindings: male and female base rigs. Status: asset verified; runtime pending.
+
+Selectable authored clips:
+
+- `sit_ground_lean180__rh_on_belly__01__deep_breath__01`
 
 ## Smoke a cigarette (`smoke`)
 

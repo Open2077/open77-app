@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { type FormEvent, useEffect, useState } from "react";
 
-import { CheckIcon, InfoIcon, KeyIcon, PeopleIcon, SignOutIcon } from "@/components/icons";
+import { CheckIcon, DownloadIcon, InfoIcon, KeyIcon, PeopleIcon, ServerRackIcon, SignOutIcon } from "@/components/icons";
 import * as master from "@/lib/account/api";
 import { type Account, MasterApiError } from "@/lib/account/api";
+import { canDownloadServer } from "@/lib/account/host-access";
 import { type StoredSession, useSession } from "@/lib/account/session";
 
 function formatDate(iso: string): string {
@@ -193,6 +194,26 @@ export function AccountOverview({ session }: { session: StoredSession }) {
               </div>
             ) : null}
           </div>
+
+          {canDownloadServer(account) ? (
+            <div className="ac-card" data-server-download>
+              <div className="ac-card-head">
+                <h2 className="ac-card-title">
+                  <ServerRackIcon size={18} />
+                  Server downloads
+                </h2>
+                <span className="ac-badge ac-badge-ok">Preview access approved</span>
+              </div>
+              <p className="ac-lead">
+                Your account can download and run the Windows and Linux dedicated server.
+                You do not need to apply again or have a staff role.
+              </p>
+              <Link className="btn btn-small btn-primary" href="/host">
+                Download server
+                <DownloadIcon size={16} />
+              </Link>
+            </div>
+          ) : null}
 
           <div className="ac-card">
             <div className="ac-card-head">

@@ -276,6 +276,13 @@ The package exports `status`, `devices`, `getProximityDistance`,
 - The client follows Windows communication-default changes and automatically retries an invalidated
   input or output endpoint without blocking the game thread.
 
+## Voice-driven lipsync
+
+Client resources can enable or suppress mouth animation globally or per player.
+See [Voice lipsync](voice-lipsync.md) for the Lua API, supported facial graphs,
+resource ownership and limitations. This is an audio-energy envelope, not
+phoneme recognition or prerecorded quest dialogue.
+
 ## Runtime diagnostics
 
 Authenticated development sessions expose metadata-only commands; no PCM or Opus payload is logged:
@@ -286,6 +293,7 @@ voice.devices [input|output]
 voice.mictest on|off
 voice.transmit on|off [proximity|channels|all|channel:<id>]
 voice.lipsync <playerId> <0..1|off>
+voice.lipsyncstate <playerId>
 ```
 
 `voice.lipsync` is a bounded visual laboratory override for validating a streamed proxy's facial

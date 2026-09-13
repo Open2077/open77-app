@@ -17,7 +17,7 @@ import { isExcluded } from "./wiki-exclusions.mjs";
 
 const CONTENT_DIR = path.join(process.cwd(), "content", "docs");
 const AUTHORED_DIR = path.join(process.cwd(), "content", "guides");
-const sourceWiki = process.argv[2] ?? ["CyberM", "open77-base", "base"]
+const sourceWiki = process.argv[2] ?? process.env.OPEN77_WIKI_SOURCE ?? ["CyberM", "open77-base", "base"]
   .map((directory) => path.join(process.cwd(), "..", directory, "wiki"))
   .find(existsSync) ?? path.join(process.cwd(), "..", "base", "wiki");
 

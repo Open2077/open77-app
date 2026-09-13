@@ -361,10 +361,45 @@ re-validation every caller must apply.
 
 This export is instructional and should not be used as a production dependency.
 
+### `open77_equipment`
+
+These client exports forward to the local `Open77.equipment` adapter. They do not
+submit a durable server clothing transaction; authoritative presentation can
+subsequently replace a local edit. See [Equipment and wardrobe](../docs/equipment.md).
+
+| Export | Signature | Result |
+|---|---|---|
+| `slots` | `slots()` | Supported slot names and attachment slots. |
+| `records` | `records(options?)` | Record metadata; optional slot, family, restricted and limit filters. |
+| `info` | `info(record)` | Metadata for one record, or `nil, reason`. |
+| `registry` | `registry()` | Worn slot values: record strings or `false` for empty. |
+| `equip` | `equip(record, slot?, options?)` | Native mutation accepted, or `nil, reason`; not visual completion. |
+| `unequip` | `unequip(slot)` | Removes one local worn slot without deleting inventory. |
+| `apply` | `apply(slots, options?)` | Sequential slot mutation; can partially apply before an error. |
+| `beginPreview` | `beginPreview()` | `true` only for `open77_wardrobe_ui` when presentation is ready and no preview is held. |
+| `endPreview` | `endPreview()` | Releases the calling preview owner and reapplies authoritative presentation. |
+
+Preview ownership is checked with `GetInvokingResource()`. Other callers receive
+`preview_owner_denied`; unavailable initial presentation returns
+`presentation_not_ready`. Owner resource stop also ends its preview. Preview
+acceptance does not prove that native clothing has finished rendering.
+
+### `open77_wardrobe`
+
+| Export | Signature | Result |
+|---|---|---|
+| `beginPreview` | `beginPreview()` | `true` for `open77_wardrobe_ui` only when authoritative wardrobe presentation is ready and no preview is held. |
+| `endPreview` | `endPreview()` | Releases the calling preview owner and restores pending or current authoritative wardrobe state. |
+
+The same `preview_owner_denied` and `presentation_not_ready` guards apply.
+Stopping the preview owner also restores authoritative state. These coordination
+exports do not create a persistent outfit or expose arbitrary preview ownership.
+
 ## Audit status
 
-This catalogue is generated from every literal `exports("name", ...)` declaration under the
-official `resources/` tree. It currently covers **96 client exports across 19 packages**. Dynamic exports
+This catalogue is checked against literal `exports("name", ...)` declarations in
+`resources/*/client/*.lua`, the root-level client packages. System-resource exports
+are documented in their feature guides. Dynamic exports
 are intentionally discouraged because they cannot be audited or completed reliably by tooling.
 
 `resources/gamemodes/race` is intentionally absent from this catalogue: it declares no `exports("name", ...)`

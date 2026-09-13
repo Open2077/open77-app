@@ -5,6 +5,7 @@ import { AgentNote } from "@/components/docs/agent-note";
 import { DocPager } from "@/components/docs/doc-pager";
 import { DocToc } from "@/components/docs/doc-toc";
 import { DocsShell } from "@/components/docs/docs-shell";
+import { NpcCatalogue } from "@/components/docs/npc-catalogue";
 import { JsonLd } from "@/components/json-ld";
 import {
   docMarkdownHref,
@@ -69,6 +70,22 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <span>{guide.readingMinutes} min read</span>
             <span>{guide.wordCount.toLocaleString("en-GB")} words</span>
             <a href={docMarkdownHref(slug)}>Markdown</a>
+            {slug === "attachments" || slug === "player-interactions" ? (
+              <>
+                <Link href={`/docs/api/server/${slug === "attachments" ? "open77-props" : "open77-playerinteractions"}`}>Server Lua API</Link>
+                <Link href={`/docs/api/client/${slug === "attachments" ? "open77-props" : "open77-playerinteractions"}`}>Client Lua API</Link>
+                <Link href={slug === "attachments" ? "/docs/player-interactions" : "/docs/attachments"}>
+                  {slug === "attachments" ? "Player interactions" : "Synchronized attachments"}
+                </Link>
+              </>
+            ) : null}
+            {["npcs", "npc-behavior", "npc-catalogue"].includes(slug) ? (
+              <>
+                <Link href="/docs/api/server/open77-npcs">Server Lua API</Link>
+                <Link href="/docs/api/client/open77-npcs">Client Lua API</Link>
+                {slug !== "npc-catalogue" ? <Link href="/docs/npc-catalogue">NPC catalogue</Link> : null}
+              </>
+            ) : null}
             {slug === "rp-animations" || slug === "rp-animation-catalogue" ? (
               <>
                 <Link href="/docs/api/client/open77-animations">Client Lua API</Link>
@@ -88,6 +105,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         }
         toc={<DocToc entries={guide.toc} />}
       >
+        {slug === "npc-catalogue" ? <NpcCatalogue /> : null}
         <div className="dx-prose" dangerouslySetInnerHTML={{ __html: guide.html }} />
         <AgentNote markdownHref={docMarkdownHref(slug)} />
         <DocPager {...neighbours} />

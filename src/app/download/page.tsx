@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { connection } from "next/server";
 
 import { Eyebrow, SlashMark } from "@/components/brand";
 import { CopyLine } from "@/components/copy-line";
@@ -7,14 +8,17 @@ import {
   DiscordIcon,
   DownloadIcon,
   InfoIcon,
+  ServerRackIcon,
   ShieldIcon,
   WindowsIcon,
 } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { SiteFooter } from "@/components/site-footer";
+import { ReleaseRefresh } from "@/components/release-refresh";
 import { formatBytes, formatReleaseDate } from "@/lib/cdn";
 import { cssBackgrounds } from "@/lib/images";
 import { fetchLatestLauncherRelease, type LauncherRelease } from "@/lib/launcher-release";
+import { fetchLatestServerRelease, type ServerRelease } from "@/lib/server-release";
 import { GAME_BUILD, GAME_EXPANSION, PLAYER_REQUIREMENT_SHORT } from "@/lib/requirements";
 import {
   breadcrumbNode,
@@ -30,20 +34,6 @@ export const metadata = pageMetadata({
     "Download the OPEN//77 launcher for Windows. It signs you in, checks your Cyberpunk 2077 build, installs and updates the mod, and takes you to the server browser. Free; requires your own copy of the game.",
   path: "/download",
 });
-
-/**
- * Everything factual on this page — version, digest, size, publish date — comes
- * from the CDN's `launcher/latest.json` pointer, never from copy written here,
- * so publishing a new launcher updates the page with no code change.
- *
- * ISR rather than a request-time fetch: the rest of the site is prerendered
- * static HTML, and this page has no per-visitor content, so there is no reason
- * to make every visitor wait on a CDN round-trip. The pointer is re-read at
- * most once every five minutes, which is well inside the time it takes anyone
- * to notice a release. It also fails softly — if the CDN blinks, the last good
- * page keeps being served instead of a broken one.
- */
-export const revalidate = 300;
 
 /** PowerShell is on every supported Windows, so the check needs no install. */
 function verifyCommand(fileName: string): string {
@@ -127,7 +117,10 @@ const FIRST_RUN = [
 ];
 
 export default async function DownloadPage() {
-  const release = await fetchLatestLauncherRelease();
+  await connection();
+  const [release, serverRelease] = await Promise.all([
+    fetchLatestLauncherRelease(), fetchLatestServerRelease(),
+  ]);
 
   return (
     <>
@@ -167,14 +160,26 @@ export default async function DownloadPage() {
               <a className="btn btn-ghost" href="#requirements">
                 What you need
               </a>
+              <Link className="btn btn-ghost" href="/host">Download the server</Link>
             </div>
             {release ? (
               <p className="dl-hero-meta">
-                {release.version}
+                Launcher {release.version}
                 {release.sizeBytes !== null ? ` · ${formatBytes(release.sizeBytes)}` : ""} · Windows
                 10 / 11, 64-bit
               </p>
             ) : null}
+            <div className="dl-channels" aria-label="Current release versions">
+              <a href="#get" data-channel-summary="launcher">
+                <span>Player launcher · Windows</span>
+                <strong>{release?.version ?? "Temporarily unavailable"}</strong>
+              </a>
+              <a href="#server" data-channel-summary="server">
+                <span>Dedicated server · Windows / Linux</span>
+                <strong>{serverRelease?.version ?? "Temporarily unavailable"}</strong>
+              </a>
+            </div>
+            <p className="dl-channel-note">The launcher and dedicated server have separate release versions.</p>
             {/* Downloads are public; approval to join is a separate account gate. */}
             <p className="status-note" role="note">
               <InfoIcon size={18} />
@@ -192,6 +197,7 @@ export default async function DownloadPage() {
           <div className="section-inner">
             <Eyebrow>THE BUILD</Eyebrow>
             <h2 className="section-title">Latest launcher release.</h2>
+            <ReleaseRefresh />
             {release ? <ReleasePanel release={release} /> : <NoReleaseYet />}
             <p className="status-note" role="note">
               <ShieldIcon size={18} />
@@ -201,6 +207,14 @@ export default async function DownloadPage() {
                 always land on the current version.
               </span>
             </p>
+          </div>
+        </section>
+
+        <section className="section" id="server">
+          <div className="section-inner">
+            <Eyebrow>FOR SERVER OWNERS</Eyebrow>
+            <h2 className="section-title">Latest dedicated server.</h2>
+            <ServerReleasePanel release={serverRelease} />
           </div>
         </section>
 
@@ -295,7 +309,7 @@ export default async function DownloadPage() {
 
 function ReleasePanel({ release }: { release: LauncherRelease }) {
   return (
-    <div className="dl-release">
+    <div className="dl-release" data-release-channel="launcher" data-release-version={release.version}>
       <span className="hud-corners" aria-hidden="true" />
 
       <div className="dl-release-head">
@@ -351,6 +365,32 @@ function ReleasePanel({ release }: { release: LauncherRelease }) {
             </div>
           </details>
         ) : null}
+      </div>
+    </div>
+  );
+}
+
+function ServerReleasePanel({ release }: { release: ServerRelease | null }) {
+  return (
+    <div className="dl-release" data-release-channel="server" data-release-version={release?.version}>
+      <div className="dl-release-head">
+        <div>
+          <p className="dl-release-tag"><SlashMark /> DEDICATED SERVER · NOT THE LAUNCHER</p>
+          <p className="dl-release-version">{release?.version ?? "Temporarily unavailable"}</p>
+        </div>
+        <div className="dl-chips">
+          <span className="dl-chip"><ServerRackIcon size={13} /> Windows / Linux</span>
+          {release?.publishedAtUtc ? <span className="dl-chip">published {formatReleaseDate(release.publishedAtUtc)}</span> : null}
+        </div>
+      </div>
+      <p className="dl-server-description">
+        {release
+          ? "Ready-to-play Freeroam and system resources, with the .NET runtime included. No Cyberpunk 2077 installation required on the host."
+          : "We couldn’t verify the latest server release from the CDN. No older build is substituted; the page will check again automatically."}
+      </p>
+      <div className="dl-cta">
+        <Link className="btn btn-primary" href="/host">Get the server <DownloadIcon size={16} /></Link>
+        <span className="dl-cta-meta">Platform downloads and checksums · approved preview accounts</span>
       </div>
     </div>
   );

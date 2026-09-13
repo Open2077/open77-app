@@ -21,7 +21,7 @@
  * renders an empty state for both rather than failing to build.
  */
 
-import { asString, basename, CDN_URL, fetchArtefactMeta, parseDate } from "@/lib/cdn";
+import { asString, basename, fetchArtefactMeta, fetchReleasePointer, parseDate, releaseArtefactUrl } from "@/lib/cdn";
 
 export type LauncherRelease = {
   /** Full version string, e.g. `2.31.0+op77.6`. */
@@ -46,35 +46,17 @@ export type LauncherRelease = {
   publishedAtUtc: string | null;
 };
 
-/** Long enough to be cheap, short enough that a release lands within minutes. */
-const REVALIDATE_SECONDS = 300;
-
 /**
  * The latest published launcher, or `null` when the pointer is missing,
  * malformed or unreachable.
  */
 export async function fetchLatestLauncherRelease(): Promise<LauncherRelease | null> {
-  let response: Response;
-  try {
-    response = await fetch(`${CDN_URL}/launcher/latest.json`, {
-      next: { revalidate: REVALIDATE_SECONDS },
-    });
-  } catch {
-    return null;
-  }
-  if (!response.ok) return null;
-
-  let raw: Record<string, unknown>;
-  try {
-    const parsed: unknown = await response.json();
-    if (!parsed || typeof parsed !== "object") return null;
-    raw = parsed as Record<string, unknown>;
-  } catch {
-    return null;
-  }
+  const pointer = await fetchReleasePointer("launcher");
+  if (!pointer) return null;
+  const { raw } = pointer;
 
   const version = asString(raw.version);
-  const url = asString(raw.url);
+  const url = version ? releaseArtefactUrl(raw.url, "launcher", version) : null;
   // Both are load-bearing: a version with no URL is not a download, and a URL
   // with no version cannot be named. Either missing means "nothing to offer".
   if (!version || !url) return null;
@@ -87,6 +69,7 @@ export async function fetchLatestLauncherRelease(): Promise<LauncherRelease | nu
     fileName: basename(url),
     sha256: asString(raw.sha256),
     sizeBytes: meta.sizeBytes,
-    publishedAtUtc: parseDate(asString(raw.publishedAtUtc)) ?? meta.lastModifiedUtc,
+    publishedAtUtc: parseDate(asString(raw.publishedAtUtc)) ??
+      parseDate(asString(raw.publishedAt)) ?? meta.lastModifiedUtc ?? pointer.lastModifiedUtc,
   };
 }

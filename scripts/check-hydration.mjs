@@ -239,6 +239,76 @@ try {
     }
   }
 
+  if (process.argv.includes("--npcs")) {
+    await fs.mkdir(".shots", { recursive: true });
+    await session.send("Network.enable");
+    await session.send("Network.setBlockedURLs", { urls: ["*npc-records-2.31.json*"] });
+    await visit("/docs/npc-catalogue");
+    check("NPC catalogue has recoverable download error", await session.evaluate(`
+      return document.querySelector('.npc-catalogue [role="alert"]')?.textContent.includes('Retry download');
+    `));
+    await session.send("Network.setBlockedURLs", { urls: [] });
+    await session.evaluate(`document.querySelector('.npc-catalogue [role="alert"] button').click();`);
+    for (let i = 0; i < 60; i++) {
+      if (await session.evaluate(`return document.querySelectorAll('.npc-catalogue-list > li').length === 40;`)) break;
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    check("NPC retry loads 40 of 6582 records", await session.evaluate(`
+      return document.querySelectorAll('.npc-catalogue-list > li').length === 40 && document.querySelector('.npc-catalogue-results').textContent.includes('6,582');
+    `));
+    messages = []; // The intentionally blocked fetch above is expected.
+    const pageChanged = await session.evaluate(`
+      const first = document.querySelector('.npc-catalogue-record code').textContent;
+      document.querySelector('.npc-catalogue-pagination button:last-child').click();
+      await new Promise(r => setTimeout(r, 100));
+      return first !== document.querySelector('.npc-catalogue-record code').textContent;
+    `);
+    check("NPC pagination changes records", pageChanged);
+    const search = async (value) => session.evaluate(`
+      const input = document.querySelector('.npc-catalogue input');
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, ${JSON.stringify(value)});
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 100));
+      return document.querySelectorAll('.npc-catalogue-list > li').length;
+    `);
+    check("NPC search finds exact spawn example", await search("Character.cpz_maelstrom_grunt1_ranged1_lexington_wa") === 1);
+    await session.send("Browser.grantPermissions", { origin, permissions: ["clipboardReadWrite", "clipboardSanitizedWrite"] }, false);
+    check("NPC copy uses exact Character ID", await session.evaluate(`
+      document.querySelector('.npc-catalogue-record button').click();
+      await new Promise(r => setTimeout(r, 150));
+      return await navigator.clipboard.readText() === 'Character.cpz_maelstrom_grunt1_ranged1_lexington_wa';
+    `));
+    await session.evaluate(`document.querySelector('.npc-catalogue summary').click();`);
+    check("NPC details expose template and appearance", await session.evaluate(`return document.querySelector('.npc-catalogue details[open] dd').textContent.includes('.ent');`));
+    for (const width of [1440, 900, 390]) {
+      await session.send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: width === 390 });
+      for (const theme of ['light', 'dark']) {
+        await session.evaluate(`
+          if (document.querySelector('.docs-site').dataset.theme !== '${theme}') document.querySelector('.docs-theme-toggle').click();
+          document.querySelector('.npc-catalogue').scrollIntoView({ behavior: 'instant', block: 'start' });
+          await new Promise(r => setTimeout(r, 150));
+        `);
+        check(`NPC catalogue ${width}px ${theme} no overflow`, await session.evaluate(`return document.documentElement.scrollWidth <= innerWidth;`));
+        if (width !== 900) {
+          const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+          await fs.writeFile(`.shots/npc-${width}-${theme}.png`, Buffer.from(data, "base64"));
+        }
+      }
+    }
+    check("NPC empty search is explicit", await search("__no_such_character__") === 0);
+    await session.evaluate(`document.querySelector('.npc-catalogue-empty button').click(); await new Promise(r => setTimeout(r, 100));`);
+    check("NPC reset restores catalogue", await session.evaluate(`return document.querySelectorAll('.npc-catalogue-list > li').length === 40;`));
+    check("NPC classification filter works", await session.evaluate(`
+      const select = document.querySelectorAll('.npc-catalogue select')[1];
+      select.value = 'candidate'; select.dispatchEvent(new Event('change', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 100));
+      return [...document.querySelectorAll('.npc-catalogue-tags [data-risk]')].every(el => el.dataset.risk === 'candidate') && document.querySelectorAll('.npc-catalogue-list > li').length === 40;
+    `));
+    reportConsole("NPC interactions");
+    await session.evaluate(`if (document.querySelector('.docs-site').dataset.theme !== 'light') document.querySelector('.docs-theme-toggle').click();`);
+    await session.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
+  }
+
   if (process.argv.includes("--preview")) {
     for (const width of [1440, 1100, 420]) {
       await session.send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
@@ -488,6 +558,74 @@ try {
   `);
   check("guide categories expand", expanded);
 
+  for (const slug of ["cyberware", "gorilla-arms"]) {
+    await visit(`/docs/${slug}`);
+    reportConsole(`${slug} guide`);
+    check(`${slug} guide exposes both runtime references`, await session.evaluate(`
+      return !!document.querySelector('.dx-prose a[href="/docs/api/server/open77-cyberware"]') &&
+        !!document.querySelector('.dx-prose a[href="/docs/api/client/open77-cyberware"]');
+    `));
+    if (process.argv.includes("--docs")) {
+      const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await fs.writeFile(`.shots/${slug}-guide.png`, Buffer.from(data, "base64"));
+    }
+  }
+  for (const [runtime, method, expected] of [
+    ["server", "install", "players.cyberware.manage"],
+    ["client", "projectLocal", "player.cyberware.project"],
+  ]) {
+    await visit(`/docs/api?side=${runtime}&category=cyberware&namespace=Open77.cyberware#${runtime}/open77-cyberware/${method.toLowerCase()}`);
+    reportConsole(`Cyberware ${runtime} API`);
+    check(`Cyberware ${runtime} filtering, permission and tutorial`, await session.evaluate(`
+      const detail = document.querySelector('.api-detail');
+      const rows = [...document.querySelectorAll('.api-function-row')];
+      return detail.querySelector('h2').textContent === '${method}' &&
+        detail.querySelector('.api-side').textContent === '${runtime}' &&
+        detail.textContent.includes('${expected}') &&
+        !!detail.querySelector('a[href="/docs/gorilla-arms"]') && rows.length > 0 &&
+        rows.every(row => row.textContent.includes('Open77.cyberware.'));
+    `));
+  }
+
+  for (const [slug, namespace] of [["attachments", "open77-props"], ["player-interactions", "open77-playerinteractions"]]) {
+    await visit(`/docs/${slug}`);
+    reportConsole(`${slug} guide`);
+    check(`${slug} tutorial exposes both runtime references`, await session.evaluate(`
+      return !!document.querySelector('.dx-meta a[href="/docs/api/client/${namespace}"]') &&
+        !!document.querySelector('.dx-meta a[href="/docs/api/server/${namespace}"]') &&
+        !!document.getElementById('server-api') && document.documentElement.scrollWidth <= innerWidth;
+    `));
+    if (process.argv.includes("--docs")) {
+      const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await fs.writeFile(`.shots/${slug}-guide.png`, Buffer.from(data, "base64"));
+    }
+  }
+  for (const [runtime, method, count, expected] of [
+    ["client", "accept", 9, "Open77.Promise"],
+    ["server", "request", 6, "players.interactions.control"],
+  ]) {
+    await visit(`/docs/api?side=${runtime}&category=players&namespace=Open77.playerInteractions#${runtime}/open77-playerinteractions/${method}`);
+    reportConsole(`player interactions ${runtime} API`);
+    check(`player interactions ${runtime} category, contract and guide`, await session.evaluate(`
+      const detail = document.querySelector('.api-detail');
+      return detail.querySelector('h2').textContent === '${method}' &&
+        detail.querySelector('.api-side').textContent === '${runtime}' &&
+        document.querySelectorAll('.api-function-row').length === ${count} &&
+        detail.textContent.includes('${expected}') &&
+        !!detail.querySelector('a[href="/docs/player-interactions#${runtime}-api"]');
+    `));
+  }
+  for (const runtime of ["client", "server"]) {
+    await visit(`/docs/api?side=${runtime}&category=world&namespace=Open77.props#${runtime}/open77-props/attach`);
+    reportConsole(`attachments ${runtime} API`);
+    check(`attachments ${runtime} has the correct runtime and guide`, await session.evaluate(`
+      const detail = document.querySelector('.api-detail');
+      return detail.querySelector('h2').textContent === 'attach' &&
+        detail.querySelector('.api-side').textContent === '${runtime}' &&
+        !!detail.querySelector('a[href^="/docs/attachments#${runtime}"]');
+    `));
+  }
+
   await visit("/docs/rp-animations");
   reportConsole("RP animation guide");
   check("RP tutorial links to both runtime references and the catalogue", await session.evaluate(`
@@ -568,6 +706,48 @@ try {
     const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
     await fs.writeFile(".shots/server-export-api.png", Buffer.from(data, "base64"));
   }
+
+  await visit("/docs/doors");
+  reportConsole("networked door guide");
+  check("door guide explains installation, authority and native landing doors", await session.evaluate(`
+    const prose = document.querySelector('.dx-prose');
+    return prose.textContent.includes('open77_doors >=1.0.0') &&
+      prose.textContent.includes('doorsClosed') && prose.textContent.includes('pending:await()') &&
+      !!document.querySelector('.docs-site a[href="/docs/doors"]');
+  `));
+  for (const theme of ["light", "dark"]) {
+    await session.evaluate(`
+      if (document.querySelector('.docs-site').dataset.theme !== '${theme}') document.querySelector('.docs-theme-toggle').click();
+      await new Promise(r => setTimeout(r, 180));
+    `);
+    if (process.argv.includes("--docs")) {
+      const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await fs.writeFile(`.shots/doors-${theme}.png`, Buffer.from(data, "base64"));
+    }
+  }
+  for (const [runtime, method, count] of [["server", "setaccess", 14], ["client", "requestopen", 3]]) {
+    await visit(`/docs/api?side=${runtime}&namespace=open77_doors#${runtime}/resource-open77-doors/${method}`);
+    reportConsole(`${runtime} door exports`);
+    check(`${runtime} door exports show real call syntax and correct runtime`, await session.evaluate(`
+      const detail = document.querySelector('.api-detail');
+      return document.querySelectorAll('.api-function-row').length === ${count} &&
+        detail.querySelector('.api-side').textContent === '${runtime}' &&
+        detail.querySelector('.api-signature-block').textContent.includes('Open77.exports.call("open77_doors"') &&
+        detail.textContent.includes('Promise') && !!detail.querySelector('a[href="/docs/doors"]');
+    `));
+  }
+  await session.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+  await visit("/docs/doors");
+  check("door guide contains wide tables within mobile viewport", await session.evaluate(`
+    return document.documentElement.scrollWidth <= window.innerWidth + 1;
+  `));
+  reportConsole("mobile door guide");
+  if (process.argv.includes("--docs")) {
+    const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+    await fs.writeFile(".shots/doors-mobile.png", Buffer.from(data, "base64"));
+  }
+  await session.evaluate(`if (document.querySelector('.docs-site').dataset.theme !== 'light') document.querySelector('.docs-theme-toggle').click();`);
+  await session.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
 
   await visit("/docs/api");
   reportConsole("/docs/api");
@@ -669,6 +849,16 @@ try {
       document.documentElement.scrollWidth <= innerWidth;
   `));
   reportConsole("mobile RP API");
+  for (const slug of ["cyberware", "gorilla-arms", "attachments", "player-interactions"]) {
+    await visit(`/docs/${slug}`);
+    check(`${slug} mobile guide has no page overflow`, await session.evaluate(`
+      return document.documentElement.scrollWidth <= innerWidth;
+    `));
+    if (process.argv.includes("--docs")) {
+      const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await fs.writeFile(`.shots/${slug}-mobile.png`, Buffer.from(data, "base64"));
+    }
+  }
   await visit("/docs/vehicles");
   check("mobile documentation has no horizontal page overflow", await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
   const mobile = await session.evaluate(`
