@@ -345,7 +345,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <p className="finale-note">
-              <Link href="/workshop/discover">Follow development</Link>
+              <Link href="/workshop">Follow development</Link>
             </p>
           </div>
         </section>

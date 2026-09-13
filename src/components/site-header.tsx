@@ -58,7 +58,7 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`site-header${scrolled ? " is-scrolled" : ""}${pathname === "/servers" || pathname === "/workshop" ? " directory-header" : ""}`}
+      className={`site-header${scrolled ? " is-scrolled" : ""}${pathname === "/servers" || pathname === "/workshop/browse" ? " directory-header" : ""}`}
       id="top"
     >
       <div className="header-inner">

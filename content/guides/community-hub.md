@@ -4,8 +4,8 @@ The [Workshop](/workshop) is where OPEN//77 creators publish what they built and
 where server owners pick it up. It holds Lua resources, gamemodes, maps, interface
 packs and tools. Everything in it is free. Nothing is for sale.
 
-Browse the full library at [/workshop](/workshop). Featured and trending creations
-are on [Discover](/workshop/discover). Every creation has its own page, and every
+Featured and trending creations are on the [Workshop front page](/workshop).
+Browse the full library at [/workshop/browse](/workshop/browse). Every creation has its own page, and every
 creator has a public profile. The old `/community`, `/resources` and `/creators`
 addresses redirect to the new ones, so existing links keep working.
 

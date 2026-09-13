@@ -8,8 +8,8 @@ import { useSession } from "@/lib/account/session";
 type Tab = { href: string; label: string; match: (path: string) => boolean };
 
 const publicTabs: Tab[] = [
-  { href: "/workshop", label: "Browse", match: path => path.startsWith("/workshop") && path !== "/workshop/discover" },
-  { href: "/workshop/discover", label: "Discover", match: path => path === "/workshop/discover" },
+  { href: "/workshop", label: "Discover", match: path => path === "/workshop" },
+  { href: "/workshop/browse", label: "Browse", match: path => path.startsWith("/workshop/") },
 ];
 const accountTabs: Tab[] = [
   { href: "/account/creations", label: "My creations", match: path => path.startsWith("/account/creations") },

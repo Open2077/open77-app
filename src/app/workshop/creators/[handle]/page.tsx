@@ -31,7 +31,7 @@ export default async function CreatorPage({ params, searchParams }: {
   if (profile.handle !== handle) permanentRedirect(`/workshop/creators/${profile.handle}${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`);
   const avatar = profile.avatarMediaId ? (await getMedia(profile.avatarMediaId).catch(() => null))?.derivatives.find(item => item.name === "card") : null;
   const links = profile.links.map(link => ({ ...link, url: safeHttpUrl(link.url) })).filter(link => link.url);
-  return <HubShell><p className="hub-back"><Link href="/workshop">← Workshop</Link></p>
+  return <HubShell><p className="hub-back"><Link href="/workshop/browse">← Browse</Link></p>
     <header className="hub-creator-head">
       {avatar ? <Image className="hub-avatar" unoptimized src={avatar.url} width={avatar.width} height={avatar.height} alt="" referrerPolicy="no-referrer" /> : <span className="hub-avatar hub-avatar-blank" aria-hidden="true">{profile.handle.slice(0, 1).toUpperCase()}</span>}
       <div className="hub-creator-body"><p className="hub-kicker">COMMUNITY CREATOR · SINCE {formatDate(profile.createdAtUtc).toUpperCase()}</p><h1>@{profile.handle}</h1>

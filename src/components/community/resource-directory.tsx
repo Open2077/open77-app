@@ -279,7 +279,7 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
         <div className="directory-rail-bottom">
           <Link href="/account/creations/new">Share a creation</Link>
           <Link href="/account/creations">My creations</Link>
-          <Link href="/workshop/discover">Workshop home</Link>
+          <Link href="/workshop">Workshop home</Link>
           <Link href="/docs/community-hub-warden">Install with Warden</Link>
         </div>
       </aside>

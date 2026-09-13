@@ -32,7 +32,7 @@ if (origin) {
     ["/docs", "Developer Preview is active"],
     ["/download", "Developer Preview is active"],
     ["/create", "Developer Preview is active"],
-    ["/workshop/discover", "Developer Preview is live"],
+    ["/workshop", "Developer Preview is live"],
     ["/docs/platform.md", "Developer Preview is active"],
     ["/docs/host-a-server.md", "Both Windows x64 and Linux x64"],
     ["/llms.txt", "Developer Preview is active"],

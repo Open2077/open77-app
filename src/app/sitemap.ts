@@ -39,8 +39,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl("/download"), changeFrequency: "weekly" },
     { url: absoluteUrl("/servers"), changeFrequency: "daily" },
     { url: absoluteUrl("/create"), changeFrequency: "monthly" },
-    { url: absoluteUrl("/workshop/discover"), changeFrequency: "daily" },
     { url: absoluteUrl("/workshop"), changeFrequency: "daily" },
+    { url: absoluteUrl("/workshop/browse"), changeFrequency: "daily" },
     { url: absoluteUrl("/brand"), changeFrequency: "yearly" },
   ];
 

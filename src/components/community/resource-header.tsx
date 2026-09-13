@@ -18,7 +18,7 @@ export function ResourceHeader({ project, latest, tab }: { project: CommunityPro
   const { content } = project;
   const base = `/workshop/${project.slug}`;
   return <>
-    <nav className="ws-crumbs" aria-label="Breadcrumb"><Link href="/workshop">Workshop</Link><span>/</span><Link href={`/workshop?category=${content.category}`}>{categoryLabel(content.category)}</Link>
+    <nav className="ws-crumbs" aria-label="Breadcrumb"><Link href="/workshop">Workshop</Link><span>/</span><Link href={`/workshop/browse?category=${content.category}`}>{categoryLabel(content.category)}</Link>
       {tab !== "overview" && <><span>/</span><Link href={base}>{content.title}</Link><span>/</span><span>{tab === "versions" ? "All versions" : "Discussion"}</span></>}</nav>
     <header className="ws-head">
       <div className="ws-head-main">
@@ -29,7 +29,7 @@ export function ResourceHeader({ project, latest, tab }: { project: CommunityPro
         <p className="ws-summary">{content.summary}</p>
         <p className="ws-byline">{project.creatorHandle ? <>by <Link href={`/workshop/creators/${project.creatorHandle}`}>@{project.creatorHandle}</Link></> : "by a community creator"}
           <span className="ws-byline-sep">·</span>updated {formatDate(project.updatedAtUtc)}
-          {content.tags.length > 0 && <><span className="ws-byline-sep">·</span>{content.tags.map(tag => <Link className="ws-tag" key={tag} href={`/workshop?tag=${encodeURIComponent(tag)}`}>{tag}</Link>)}</>}</p>
+          {content.tags.length > 0 && <><span className="ws-byline-sep">·</span>{content.tags.map(tag => <Link className="ws-tag" key={tag} href={`/workshop/browse?tag=${encodeURIComponent(tag)}`}>{tag}</Link>)}</>}</p>
         <ul className="ws-stats" aria-label="Statistics">
           {content.kind === "resource" && <li title="Completed downloads"><DownloadIcon size={13} /><b>{formatCount(project.downloads)}</b> downloads</li>}
           <li title="Upvotes"><UpIcon /><b>{formatCount(project.upvotes)}</b> upvotes</li>
