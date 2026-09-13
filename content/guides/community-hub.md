@@ -51,8 +51,8 @@ a live server: a wildcard load rule can start it immediately.
 ### Paste it into Warden
 
 1. Open your server's Warden and go to the **Workshop** tab.
-2. Paste the link into the search field and press **Search Workshop**. Warden
-   looks the creation up on the OPEN//77 master. The short form
+2. Paste the link into the search field and press **Search**. Warden looks the
+   creation up on the OPEN//77 master and opens its releases. The short form
    `workshop:auto-taxi` works too.
 3. Choose the release you want. Prereleases need an explicit choice.
 
