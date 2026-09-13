@@ -226,7 +226,7 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
     return () => window.removeEventListener("keydown", handleKey);
   }, [router]);
 
-  const readout = catalog.loading ? "Loading…" : catalog.error ? "Hub unavailable" : `${catalog.items.length} loaded${catalog.nextCursor ? " · more available" : ""}`;
+  const readout = catalog.loading ? "Loading…" : catalog.error ? "Workshop unavailable" : `${catalog.items.length} loaded${catalog.nextCursor ? " · more available" : ""}`;
 
   return <div className={`directory-workspace directory-dense hub-directory${filtersOpen ? " filters-open" : ""}${selected ? " has-selection" : ""}`}>
     <div className="directory-command" role="search">
