@@ -3,7 +3,7 @@ const FALLBACK_CATEGORY = { id: "utilities", label: "Data & utilities", namespac
 
 export const API_CATEGORIES = [
   { id: "core", label: "Core & resources", namespaces: ["_G", "Open77.Promise", "Open77.resource", "Open77.runtime", "Open77.events", "Open77.exports", "Open77.json"] },
-  { id: "players", label: "Players & characters", namespaces: ["Open77.players", "Open77.character", "Open77.stats", "Open77.appearance", "Open77.clothing", "Open77.equipment", "Open77.wardrobe", "Open77.puppets", "Open77.animations"] },
+  { id: "players", label: "Players & characters", namespaces: ["Open77.players", "Open77.character", "Open77.stats", "Open77.appearance", "Open77.clothing", "Open77.equipment", "Open77.wardrobe", "Open77.puppets", "Open77.animations", "Open77.playerInteractions"] },
   { id: "cyberware", label: "Cyberware & abilities", namespaces: ["Open77.cyberware", "Open77.motion"] },
   { id: "vehicles", label: "Vehicles", namespaces: ["Open77.vehicles", "Open77.vehicles.ai"] },
   { id: "world", label: "World & environment", namespaces: ["Open77.world", "Open77.environment", "Open77.time", "Open77.travel", "Open77.doors", "open77_doors", "Open77.elevators", "Open77.props"] },

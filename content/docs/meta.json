@@ -215,7 +215,13 @@
           "slug": "rp-animation-catalogue",
           "kind": "guide",
           "nav": "Animation catalogue",
-          "description": "Browse 12 RP profiles and 70 exact clip variants, with categories, props, placement, rig bindings and clearly stated experimental playback coverage."
+          "description": "Browse 15 RP profiles and 73 exact clip variants, including giving, examination and wounded poses, with placement, rig bindings and experimental playback coverage."
+        },
+        {
+          "slug": "player-interactions",
+          "kind": "guide",
+          "nav": "Player interactions",
+          "description": "Coordinate giving, healing, carrying and escorting: server reservations, player consent, shared animation timing, Lua examples and safe cancellation. Requires matching client/server builds and the player-interactions system resource."
         },
         {
           "slug": "photo-mode",
@@ -300,6 +306,12 @@
           "kind": "guide",
           "nav": "World props",
           "description": "Server-owned world props and lights: creation, streaming and cleanup."
+        },
+        {
+          "slug": "attachments",
+          "kind": "guide",
+          "nav": "Synchronized attachments",
+          "description": "Attach props to player slots or vehicles with local position and rotation. Learn server authority, client rendering, bone discovery, revision-safe handoffs and lifecycle cleanup. Requires matching attachment-capable client/server builds and assets."
         },
         {
           "slug": "props-and-effects",

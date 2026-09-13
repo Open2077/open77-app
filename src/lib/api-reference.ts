@@ -167,6 +167,15 @@ const VEHICLE_WEAPON_READS = new Set([
 ]);
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (raw.namespace === "Open77.playerInteractions") {
+    return { usageGuideHref: `/docs/player-interactions#${runtime}-api`, usageGuideLabel: "Player interactions guide" };
+  }
+  if (raw.namespace === "Open77.props" && ["attach", "detach", "getAttachment", "isAttached", "attachedTo", "setAttachmentTransform", "bones"].includes(raw.name)) {
+    return {
+      usageGuideHref: `/docs/attachments#${runtime === "server" ? "server-api" : "client-api-and-diagnostics"}`,
+      usageGuideLabel: "Synchronized attachments guide",
+    };
+  }
   if (raw.namespace === "Open77.cyberware") {
     return { usageGuideHref: "/docs/gorilla-arms", usageGuideLabel: "Gorilla Arms implementation guide" };
   }

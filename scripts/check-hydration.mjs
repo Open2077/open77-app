@@ -587,6 +587,45 @@ try {
     `));
   }
 
+  for (const [slug, namespace] of [["attachments", "open77-props"], ["player-interactions", "open77-playerinteractions"]]) {
+    await visit(`/docs/${slug}`);
+    reportConsole(`${slug} guide`);
+    check(`${slug} tutorial exposes both runtime references`, await session.evaluate(`
+      return !!document.querySelector('.dx-meta a[href="/docs/api/client/${namespace}"]') &&
+        !!document.querySelector('.dx-meta a[href="/docs/api/server/${namespace}"]') &&
+        !!document.getElementById('server-api') && document.documentElement.scrollWidth <= innerWidth;
+    `));
+    if (process.argv.includes("--docs")) {
+      const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await fs.writeFile(`.shots/${slug}-guide.png`, Buffer.from(data, "base64"));
+    }
+  }
+  for (const [runtime, method, count, expected] of [
+    ["client", "accept", 9, "Open77.Promise"],
+    ["server", "request", 6, "players.interactions.control"],
+  ]) {
+    await visit(`/docs/api?side=${runtime}&category=players&namespace=Open77.playerInteractions#${runtime}/open77-playerinteractions/${method}`);
+    reportConsole(`player interactions ${runtime} API`);
+    check(`player interactions ${runtime} category, contract and guide`, await session.evaluate(`
+      const detail = document.querySelector('.api-detail');
+      return detail.querySelector('h2').textContent === '${method}' &&
+        detail.querySelector('.api-side').textContent === '${runtime}' &&
+        document.querySelectorAll('.api-function-row').length === ${count} &&
+        detail.textContent.includes('${expected}') &&
+        !!detail.querySelector('a[href="/docs/player-interactions#${runtime}-api"]');
+    `));
+  }
+  for (const runtime of ["client", "server"]) {
+    await visit(`/docs/api?side=${runtime}&category=world&namespace=Open77.props#${runtime}/open77-props/attach`);
+    reportConsole(`attachments ${runtime} API`);
+    check(`attachments ${runtime} has the correct runtime and guide`, await session.evaluate(`
+      const detail = document.querySelector('.api-detail');
+      return detail.querySelector('h2').textContent === 'attach' &&
+        detail.querySelector('.api-side').textContent === '${runtime}' &&
+        !!detail.querySelector('a[href^="/docs/attachments#${runtime}"]');
+    `));
+  }
+
   await visit("/docs/rp-animations");
   reportConsole("RP animation guide");
   check("RP tutorial links to both runtime references and the catalogue", await session.evaluate(`
@@ -810,7 +849,7 @@ try {
       document.documentElement.scrollWidth <= innerWidth;
   `));
   reportConsole("mobile RP API");
-  for (const slug of ["cyberware", "gorilla-arms"]) {
+  for (const slug of ["cyberware", "gorilla-arms", "attachments", "player-interactions"]) {
     await visit(`/docs/${slug}`);
     check(`${slug} mobile guide has no page overflow`, await session.evaluate(`
       return document.documentElement.scrollWidth <= innerWidth;

@@ -451,28 +451,38 @@ at all rather than an error.
 
 ## Carrying a prop
 
-The bundled resource ships `prop.pickup` and `prop.drop`, and it is worth
-knowing exactly what they are before you build on them.
+The bundled `prop.pickup` / `prop.drop` commands now use
+[synchronized attachments](/docs/attachments). Install matching client/server
+builds, the updated `open77_props` resource and its attachment-host assets.
 
-**Carrying is a server-side follow, not an attachment.** Ten times a second
-the server moves the prop to a metre above the carrier's origin, through the
-same `setTransform` every other move uses. That is why it replicates for
-free, and why another player watching sees the crate travel rather than jump.
+The server replicates a binding: canonical player or vehicle ID, optional
+named slot, local position and rotation. Each client follows its locally
+rendered parent every frame, including the animated slot. This replaces the
+old ten-times-per-second world-position follow loop.
 
-What it is not:
+```lua
+-- Server: the calling resource must own this prop and have world.props.
+local ok, err = Open77.props.attach(propId, {
+    parentType='player', parentId=playerId, bone='RightHand',
+    offset={x=0,y=0,z=0}, rotation={x=0,y=0,z=0},
+})
+if not ok then print(err) end
+```
 
-- **Not physics.** Nothing collides while it is carried, so a carrier can
-  walk a crate through a wall, through a car, and off a roof.
-- **Not in the hand.** The prop floats at chest height and does not rotate
-  with the carrier — the position snapshot the follow loop reads carries no
-  heading, so a carried prop keeps the yaw it had.
-- **Not a lease.** Reach is checked on the server at 4 m at pickup time, and
-  after that the prop simply follows. A carrier who disconnects, or whose
-  position stops resolving, drops it where it was.
+Use `Open77.props.bones` on the client to discover the rendered parent's named
+slots. `RightHand` is an example, not a universal rig contract; calibrate the
+offset for your mesh. Missing parents/slots hide the prop until it can bind.
+Attached props use visual-only hosts and do **not** collide with walls.
+Lights, looping effects and arbitrary raw mesh paths are not attachable.
 
-One player carries one thing at a time, and only `kind = "prop"` can be
-carried — a light or an effect refuses. If you want a real hand attachment,
-this is not it, and there is no API for it yet.
+Death, disconnection, bucket changes and vehicle removal detach the prop;
+resource stop removes its owned props. Detach before calling `setTransform`.
+The server's drop anchor is not an authoritative animated hand position.
+
+An attachment does not reserve a player or transfer inventory ownership. Use
+[player interactions](/docs/player-interactions) for consent, paired animations
+and cancellation, then commit item ownership in your server resource after
+validated completion. The guide includes a revision-safe handoff example.
 
 ## Quotas, lifetime and the three ways a prop dies
 

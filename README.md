@@ -123,6 +123,17 @@ platform revision with `--from <worktree>/wiki`; do not publish its unfinished w
 Set `OPEN77_WIKI_SOURCE` to that same wiki path when running `npm run verify:content`,
 so the drift, coverage and overlay checks all verify the selected revision.
 
+If that checkout predates the site's Cyberware additions, do **not** run a full
+wiki sync: it would remove those newer guides and API cards. For the attachment /
+player-interaction update, `npm run sync:attachments -- --from ../CyberM/wiki`
+copies only `attachments`, `player-interactions`, `props` and the RP catalogue,
+merging the 24 new contracts and 17 animation cards by runtime/name. Other content
+is preserved and `_manifest.json.partialSync` records the scope. Check that slice
+with `npm run sync:attachments -- --check`, then `npm run verify:attachments`
+(append `-- http://localhost:3000` to also verify served HTML/Markdown). A full
+`verify:content` drift check still requires a platform checkout containing both
+features; targeted verification does not claim the rest of that checkout matches.
+
 Cyberware guides live in the platform wiki: `cyberware.md` describes the reusable foundations
 and `gorilla-arms.md` is the first ability guide. Add future powers alongside them, register
 their pages under the `cyberware` section in `content/docs/meta.json`, and link their API

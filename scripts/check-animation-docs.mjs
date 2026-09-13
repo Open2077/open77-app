@@ -42,7 +42,7 @@ for (const section of ["How it works", "Quick start: your first client action", 
 assert.match(guide, /Open77RP\.archive/);
 assert.match(guide, /onAnimationPlaybackFailed/);
 assert.match(guide, /known limitation/);
-assert.equal((await read("content/docs/rp-animation-catalogue.md")).match(/^- `/gm).length, 70);
+assert.equal((await read("content/docs/rp-animation-catalogue.md")).match(/^- `/gm).length, 73);
 
 const origin = process.argv[2];
 if (origin) {
@@ -67,4 +67,4 @@ if (origin) {
     console.log(`served OK ${path}`);
   }
 }
-console.log("Animation documentation OK: 12 synchronized APIs, 5 legacy APIs, tutorial and 70 clips.");
+console.log("Animation documentation OK: 12 synchronized APIs, 5 legacy APIs, tutorial and 73 clips.");

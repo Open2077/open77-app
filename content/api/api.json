@@ -763,7 +763,7 @@
   "source": "ResourceHost.cpp",
   "example": "CreateThread(function()\n    local pending, err = Open77.animations.cancel()\n    if not pending then print(err); return end\n    local cancelled, rejected = pending:await()\n    if not cancelled then print(rejected) end\nend)",
   "inferred": false,
-  "source_line": 11899,
+  "source_line": 11831,
   "qualified": "Open77.animations.cancel",
   "route_id": "Open77.animations.cancel"
  },
@@ -790,7 +790,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 11912,
+  "source_line": 11844,
   "qualified": "Open77.animations.current",
   "route_id": "Open77.animations.current"
  },
@@ -817,7 +817,7 @@
   "source": "ResourceHost.cpp",
   "example": "CreateThread(function()\n    local pending, err = Open77.animations.get('smoke')\n    if not pending then print(err); return end\n    local profile, rejected = pending:await()\n    if rejected then print(rejected); return end\n    if profile then print(profile.clip, #profile.clips) end\nend)",
   "inferred": false,
-  "source_line": 11899,
+  "source_line": 11831,
   "qualified": "Open77.animations.get",
   "route_id": "Open77.animations.get"
  },
@@ -826,7 +826,7 @@
   "name": "list",
   "handler": "LuaAnimationServiceExport",
   "summary": "Find synchronized RP animation profiles in the local catalogue.",
-  "description": "Resolves to copied profile definitions containing id, label, category, default clip and allowed clips. The optional query is a case-insensitive substring across ID, label and category, up to 128 characters. An empty query returns all 12 profiles; no match returns an empty array. Catalogue membership and male/female rig bindings are not proof of native playback validation. Declare dependency 'open77_animations' in your resource manifest. This asynchronous facade requires the service in the same downloaded resource host, not a separate bootstrap host. Await from a managed coroutine/event handler. No animations.presentation capability is required by the caller; underscore hooks are internal.",
+  "description": "Resolves to copied profile definitions containing id, label, category, default clip and allowed clips. The optional query is a case-insensitive substring across ID, label and category, up to 128 characters. An empty query returns all 15 profiles; no match returns an empty array. Catalogue membership and male/female rig bindings are not proof of native playback validation. Declare dependency 'open77_animations' in your resource manifest. This asynchronous facade requires the service in the same downloaded resource host, not a separate bootstrap host. Await from a managed coroutine/event handler. No animations.presentation capability is required by the caller; underscore hooks are internal.",
   "params": [
    {
     "name": "query",
@@ -844,7 +844,7 @@
   "source": "ResourceHost.cpp",
   "example": "CreateThread(function()\n    local pending, err = Open77.animations.list('social')\n    if not pending then print(err); return end\n    local profiles, rejected = pending:await()\n    if not profiles then print(rejected); return end\n    for _, profile in ipairs(profiles) do print(profile.id, profile.label) end\nend)",
   "inferred": false,
-  "source_line": 11899,
+  "source_line": 11831,
   "qualified": "Open77.animations.list",
   "route_id": "Open77.animations.list"
  },
@@ -877,7 +877,7 @@
   "source": "ResourceHost.cpp",
   "example": "local ok, reason = Open77.animations.play(entityId, \"emote_smoke\")\nif not ok then print(\"refused: \" .. reason) end",
   "inferred": false,
-  "source_line": 11908,
+  "source_line": 11840,
   "qualified": "Open77.animations.play",
   "route_id": "Open77.animations.play"
  },
@@ -910,7 +910,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 11909,
+  "source_line": 11841,
   "qualified": "Open77.animations.playSelf",
   "route_id": "Open77.animations.playSelf"
  },
@@ -943,7 +943,7 @@
   "source": "ResourceHost.cpp",
   "example": "CreateThread(function()\n    local pending, err = Open77.animations.request('smoke', { loop = false, durationMs = 15000 })\n    if not pending then print(err); return end\n    local playback, rejected = pending:await()\n    if not playback then print(rejected); return end\n    print('Accepted action: ' .. playback.playbackId)\nend)",
   "inferred": false,
-  "source_line": 11899,
+  "source_line": 11831,
   "qualified": "Open77.animations.request",
   "route_id": "Open77.animations.request"
  },
@@ -976,7 +976,7 @@
   "source": "ResourceHost.cpp",
   "example": "CreateThread(function()\n    local pending, err = Open77.animations.sequence({\n        { profile = 'handsup', durationMs = 4000 },\n        { profile = 'clap', durationMs = 6000 },\n    }, { loop = false })\n    if not pending then print(err); return end\n    local playback, rejected = pending:await()\n    if not playback then print(rejected); return end\n    print(playback.playbackId)\nend)",
   "inferred": false,
-  "source_line": 11899,
+  "source_line": 11831,
   "qualified": "Open77.animations.sequence",
   "route_id": "Open77.animations.sequence"
  },
@@ -1003,7 +1003,7 @@
   "source": "ResourceHost.cpp",
   "example": "CreateThread(function()\n    local pending, err = Open77.animations.state()\n    if not pending then print(err); return end\n    local state, rejected = pending:await()\n    if rejected then print(rejected); return end\n    if state then print(state.playbackId, state.active) end\nend)",
   "inferred": false,
-  "source_line": 11899,
+  "source_line": 11831,
   "qualified": "Open77.animations.state",
   "route_id": "Open77.animations.state"
  },
@@ -1030,7 +1030,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 11911,
+  "source_line": 11843,
   "qualified": "Open77.animations.stop",
   "route_id": "Open77.animations.stop"
  },
@@ -1050,7 +1050,7 @@
   "source": "ResourceHost.cpp",
   "example": "",
   "inferred": false,
-  "source_line": 11910,
+  "source_line": 11842,
   "qualified": "Open77.animations.stopSelf",
   "route_id": "Open77.animations.stopSelf"
  },
@@ -10576,7 +10576,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "local state, err = Open77.animations.current(playerId)\nif err then print(err); return end\nif state then print(state.playbackId, state.step, state.elapsedMs) end",
   "inferred": false,
-  "source_line": 5761,
+  "source_line": 5697,
   "qualified": "Open77.animations.current",
   "route_id": "server:Open77.animations.current"
  },
@@ -10603,7 +10603,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "local profile, err = Open77.animations.get('smoke')\nif err then print(err); return end\nif profile then print(profile.clip, #profile.clips) end",
   "inferred": false,
-  "source_line": 5751,
+  "source_line": 5687,
   "qualified": "Open77.animations.get",
   "route_id": "server:Open77.animations.get"
  },
@@ -10612,7 +10612,7 @@
   "name": "list",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Search the authoritative RP profile catalogue.",
-  "description": "No capability is required. Returns profile definitions synchronously, not a Promise. Search is a case-insensitive substring across ID, label and category; the maximum query length is 128 characters. Empty search returns all 12 profiles and no match returns an empty array. Definitions include clip variants and rig metadata, which must not be mistaken for proof of native rendering. Provided directly by the server runtime; no animation resource export dependency is needed for this server call.",
+  "description": "No capability is required. Returns profile definitions synchronously, not a Promise. Search is a case-insensitive substring across ID, label and category; the maximum query length is 128 characters. Empty search returns all 15 profiles and no match returns an empty array. Definitions include clip variants and rig metadata, which must not be mistaken for proof of native rendering. Provided directly by the server runtime; no animation resource export dependency is needed for this server call.",
   "params": [
    {
     "name": "query",
@@ -10630,7 +10630,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "local profiles, err = Open77.animations.list('social')\nif not profiles then print(err); return end\nfor _, profile in ipairs(profiles) do print(profile.id, profile.label) end",
   "inferred": false,
-  "source_line": 5750,
+  "source_line": 5686,
   "qualified": "Open77.animations.list",
   "route_id": "server:Open77.animations.list"
  },
@@ -10669,7 +10669,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "-- open77.lua: permission 'players.animations.control'\nlocal playback, err = Open77.animations.play(playerId, 'smoke', {\n    durationMs = 15000, loop = false,\n})\nif not playback then print(err); return end\nprint(playback.playbackId)",
   "inferred": false,
-  "source_line": 5752,
+  "source_line": 5688,
   "qualified": "Open77.animations.play",
   "route_id": "server:Open77.animations.play"
  },
@@ -10708,7 +10708,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "local playback, err = Open77.animations.sequence(playerId, {\n    { profile = 'handsup', durationMs = 4000 },\n    { profile = 'clap', durationMs = 6000 },\n}, { loop = false })\nif not playback then print(err); return end\nprint(playback.playbackId)",
   "inferred": false,
-  "source_line": 5755,
+  "source_line": 5691,
   "qualified": "Open77.animations.sequence",
   "route_id": "server:Open77.animations.sequence"
  },
@@ -10741,7 +10741,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "local playback, err = Open77.animations.play(playerId, 'smoke')\nif not playback then print(err); return end\nSetTimeout(10000, function()\n    local stopped, reason = Open77.animations.stop(playerId, playback.playbackId)\n    if not stopped then print(reason) end\nend)",
   "inferred": false,
-  "source_line": 5758,
+  "source_line": 5694,
   "qualified": "Open77.animations.stop",
   "route_id": "server:Open77.animations.stop"
  },
@@ -14003,5 +14003,699 @@
   "source_line": 6164,
   "qualified": "Open77.vehicles.ai.stop",
   "route_id": "server:Open77.vehicles.ai.stop"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "accept",
+  "handler": "LuaPlayerInteractionExport",
+  "summary": "Queue acceptance of the local player's offered invitation.",
+  "description": "Declare dependency 'open77_player_interactions >=1.0.0'. This is an asynchronous resource-export facade: call from a managed coroutine and await the Promise; nil plus reason indicates dispatch/rejection. No presentation capability is required for consumers. Resolving a request ID means queued, not accepted by the server. Observe onPlayerInteractionResult or result(requestId), then lifecycle state events.",
+  "params": [
+   {
+    "name": "interactionId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to request ID; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.playerInteractions.accept(interactionId)\n    if not pending then print(err); return end\n    local value, rejected = pending:await()\n    if rejected then print(rejected); return end\n    print(value)\nend)",
+  "inferred": false,
+  "source_line": 11822,
+  "qualified": "Open77.playerInteractions.accept",
+  "route_id": "Open77.playerInteractions.accept"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "cancel",
+  "handler": "LuaPlayerInteractionExport",
+  "summary": "Queue cancellation of an action the local player participates in; defaults to their current action.",
+  "description": "Declare dependency 'open77_player_interactions >=1.0.0'. This is an asynchronous resource-export facade: call from a managed coroutine and await the Promise; nil plus reason indicates dispatch/rejection. No presentation capability is required for consumers. Resolving a request ID means queued, not accepted by the server. Observe onPlayerInteractionResult or result(requestId), then lifecycle state events.",
+  "params": [
+   {
+    "name": "interactionId",
+    "type": "string",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to request ID; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.playerInteractions.cancel(interactionId)\n    if not pending then print(err); return end\n    local value, rejected = pending:await()\n    if rejected then print(rejected); return end\n    print(value)\nend)",
+  "inferred": false,
+  "source_line": 11822,
+  "qualified": "Open77.playerInteractions.cancel",
+  "route_id": "Open77.playerInteractions.cancel"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "current",
+  "handler": "LuaPlayerInteractionExport",
+  "summary": "Read a player's active reservation; defaults to the local player.",
+  "description": "Declare dependency 'open77_player_interactions >=1.0.0'. This is an asynchronous resource-export facade: call from a managed coroutine and await the Promise; nil plus reason indicates dispatch/rejection. No presentation capability is required for consumers. Client observations are not authority for inventory, healing or rewards.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to state or nil; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.playerInteractions.current()\n    if not pending then print(err); return end\n    local value, rejected = pending:await()\n    if rejected then print(rejected); return end\n    print(value)\nend)",
+  "inferred": false,
+  "source_line": 11822,
+  "qualified": "Open77.playerInteractions.current",
+  "route_id": "Open77.playerInteractions.current"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "decline",
+  "handler": "LuaPlayerInteractionExport",
+  "summary": "Queue refusal of the local player's offered invitation.",
+  "description": "Declare dependency 'open77_player_interactions >=1.0.0'. This is an asynchronous resource-export facade: call from a managed coroutine and await the Promise; nil plus reason indicates dispatch/rejection. No presentation capability is required for consumers. Resolving a request ID means queued, not accepted by the server. Observe onPlayerInteractionResult or result(requestId), then lifecycle state events.",
+  "params": [
+   {
+    "name": "interactionId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to request ID; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.playerInteractions.decline(interactionId)\n    if not pending then print(err); return end\n    local value, rejected = pending:await()\n    if rejected then print(rejected); return end\n    print(value)\nend)",
+  "inferred": false,
+  "source_line": 11822,
+  "qualified": "Open77.playerInteractions.decline",
+  "route_id": "Open77.playerInteractions.decline"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "get",
+  "handler": "LuaPlayerInteractionExport",
+  "summary": "Read one visible active interaction; missing is not an error.",
+  "description": "Declare dependency 'open77_player_interactions >=1.0.0'. This is an asynchronous resource-export facade: call from a managed coroutine and await the Promise; nil plus reason indicates dispatch/rejection. No presentation capability is required for consumers. Client observations are not authority for inventory, healing or rewards.",
+  "params": [
+   {
+    "name": "interactionId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to state or nil; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.playerInteractions.get(interactionId)\n    if not pending then print(err); return end\n    local value, rejected = pending:await()\n    if rejected then print(rejected); return end\n    print(value)\nend)",
+  "inferred": false,
+  "source_line": 11822,
+  "qualified": "Open77.playerInteractions.get",
+  "route_id": "Open77.playerInteractions.get"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "isReserved",
+  "handler": "LuaPlayerInteractionExport",
+  "summary": "Check the visible reservation cache; defaults to the local player.",
+  "description": "Declare dependency 'open77_player_interactions >=1.0.0'. This is an asynchronous resource-export facade: call from a managed coroutine and await the Promise; nil plus reason indicates dispatch/rejection. No presentation capability is required for consumers. Client observations are not authority for inventory, healing or rewards.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to boolean; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.playerInteractions.isReserved()\n    if not pending then print(err); return end\n    local value, rejected = pending:await()\n    if rejected then print(rejected); return end\n    print(value)\nend)",
+  "inferred": false,
+  "source_line": 11822,
+  "qualified": "Open77.playerInteractions.isReserved",
+  "route_id": "Open77.playerInteractions.isReserved"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "list",
+  "handler": "LuaPlayerInteractionExport",
+  "summary": "Read copied active states visible in this routing bucket.",
+  "description": "Declare dependency 'open77_player_interactions >=1.0.0'. This is an asynchronous resource-export facade: call from a managed coroutine and await the Promise; nil plus reason indicates dispatch/rejection. No presentation capability is required for consumers. Client observations are not authority for inventory, healing or rewards.",
+  "params": [],
+  "returns": [
+   "Open77.Promise resolving to state[]; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.playerInteractions.list()\n    if not pending then print(err); return end\n    local value, rejected = pending:await()\n    if rejected then print(rejected); return end\n    print(value)\nend)",
+  "inferred": false,
+  "source_line": 11822,
+  "qualified": "Open77.playerInteractions.list",
+  "route_id": "Open77.playerInteractions.list"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "respond",
+  "handler": "LuaPlayerInteractionExport",
+  "summary": "Queue acceptance or refusal of the local player's offered invitation. Only the target may respond.",
+  "description": "Declare dependency 'open77_player_interactions >=1.0.0'. This is an asynchronous resource-export facade: call from a managed coroutine and await the Promise; nil plus reason indicates dispatch/rejection. No presentation capability is required for consumers. Resolving a request ID means queued, not accepted by the server. Observe onPlayerInteractionResult or result(requestId), then lifecycle state events.",
+  "params": [
+   {
+    "name": "interactionId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "accepted",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to request ID; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.playerInteractions.respond(interactionId, true)\n    if not pending then print(err); return end\n    local value, rejected = pending:await()\n    if rejected then print(rejected); return end\n    print(value)\nend)",
+  "inferred": false,
+  "source_line": 11822,
+  "qualified": "Open77.playerInteractions.respond",
+  "route_id": "Open77.playerInteractions.respond"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "result",
+  "handler": "LuaPlayerInteractionExport",
+  "summary": "Read a cached server acknowledgement for a queued request; acknowledgements expire after30seconds.",
+  "description": "Declare dependency 'open77_player_interactions >=1.0.0'. This is an asynchronous resource-export facade: call from a managed coroutine and await the Promise; nil plus reason indicates dispatch/rejection. No presentation capability is required for consumers. Client observations are not authority for inventory, healing or rewards.",
+  "params": [
+   {
+    "name": "requestId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to result table or nil; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.playerInteractions.result(requestId)\n    if not pending then print(err); return end\n    local value, rejected = pending:await()\n    if rejected then print(rejected); return end\n    print(value)\nend)",
+  "inferred": false,
+  "source_line": 11822,
+  "qualified": "Open77.playerInteractions.result",
+  "route_id": "Open77.playerInteractions.result"
+ },
+ {
+  "namespace": "Open77.props",
+  "name": "attach",
+  "handler": "LuaPropAttach",
+  "summary": "Attach a resource-owned local prop to a rendered bone or vehicle.",
+  "description": "Binding fields: parentType ('player' or 'vehicle'), parentId (canonical network ID, not an engine handle), bone (named slot, empty for root), offset {x,y,z} in metres (each ±20), rotation {x,y,z} in degrees (each ±360, local Z-Y-X composition). Unknown fields and non-finite numbers reject. Missing streamed parents are hidden, then rebound when available. See attachments.md. Requires world.props. This changes only this client's prop, not server authority. Physics uses a visual-only attachment host; arbitrary mesh paths without that host are refused.",
+  "params": [
+   {
+    "name": "propId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "binding",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success, reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local ok, err = Open77.props.attach(localPropId, {parentType='player', parentId=playerId, bone='RightHand'})",
+  "inferred": false,
+  "source_line": 12265,
+  "qualified": "Open77.props.attach",
+  "route_id": "Open77.props.attach"
+ },
+ {
+  "namespace": "Open77.props",
+  "name": "bones",
+  "handler": "LuaPropAttachmentBones",
+  "summary": "List available named attachment slots on a streamed parent.",
+  "description": "Requires world.props. Returns sorted names from the current native slot components, not all skeleton bones. Parent IDs are canonical player/vehicle IDs. Empty array means unavailable or no slots; it does not establish that a different body/model supports a requested slot.",
+  "params": [
+   {
+    "name": "parentType",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "parentId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "string[] or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local slots, err = Open77.props.bones('player', playerId)\nif slots then for _, slot in ipairs(slots) do print(slot) end end",
+  "inferred": false,
+  "source_line": 12267,
+  "qualified": "Open77.props.bones",
+  "route_id": "Open77.props.bones"
+ },
+ {
+  "namespace": "Open77.props",
+  "name": "detach",
+  "handler": "LuaPropDetach",
+  "summary": "Detach a resource-owned local prop.",
+  "description": "Requires world.props. Restores an independent host at the last locally rendered pose. Does not detach a server-owned network prop. Calling the server API is required for a replicated release.",
+  "params": [
+   {
+    "name": "propId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success, reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local ok, err = Open77.props.detach(localPropId)",
+  "inferred": false,
+  "source_line": 12266,
+  "qualified": "Open77.props.detach",
+  "route_id": "Open77.props.detach"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "cancel",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Cancel an interaction owned by this resource.",
+  "description": "Requires players.interactions.read (inspection) or players.interactions.control (creation/cancellation). Uses canonical player IDs. The coordinator reserves both players and cancels on death, disconnect, vehicle entry, bucket change, resource stop, timeout or presentation failure. Gameplay effects remain the resource's responsibility. See player-interactions.md. Custom reason accepts 1–64 ASCII alphanumeric/underscore characters; invalid reasons normalize to cancelled. Delayed callbacks should retain the interaction ID, never cancel whatever action happens to occupy the player later.",
+  "params": [
+   {
+    "name": "interactionId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "reason",
+    "type": "string",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "terminal state or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local state, err = Open77.playerInteractions.cancel(interactionId, 'item_removed')",
+  "inferred": false,
+  "source_line": 5683,
+  "qualified": "Open77.playerInteractions.cancel",
+  "route_id": "server:Open77.playerInteractions.cancel"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "current",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Read the interaction reserving a player, including an unanswered invitation.",
+  "description": "Requires players.interactions.read (inspection) or players.interactions.control (creation/cancellation). Uses canonical player IDs. The coordinator reserves both players and cancels on death, disconnect, vehicle entry, bucket change, resource stop, timeout or presentation failure. Gameplay effects remain the resource's responsibility. See player-interactions.md. Terminal states are removed from the active registry. Read access never grants cancellation of another resource's action.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "active state or nil; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local value, err = Open77.playerInteractions.current(playerId)",
+  "inferred": false,
+  "source_line": 5680,
+  "qualified": "Open77.playerInteractions.current",
+  "route_id": "server:Open77.playerInteractions.current"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "get",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Read a copied active state by opaque interaction ID.",
+  "description": "Requires players.interactions.read (inspection) or players.interactions.control (creation/cancellation). Uses canonical player IDs. The coordinator reserves both players and cancels on death, disconnect, vehicle entry, bucket change, resource stop, timeout or presentation failure. Gameplay effects remain the resource's responsibility. See player-interactions.md. Terminal states are removed from the active registry. Read access never grants cancellation of another resource's action.",
+  "params": [
+   {
+    "name": "interactionId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "active state or nil; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local value, err = Open77.playerInteractions.get(interactionId)",
+  "inferred": false,
+  "source_line": 5679,
+  "qualified": "Open77.playerInteractions.get",
+  "route_id": "server:Open77.playerInteractions.get"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "isReserved",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Check whether a player is exclusively reserved by this service.",
+  "description": "Requires players.interactions.read (inspection) or players.interactions.control (creation/cancellation). Uses canonical player IDs. The coordinator reserves both players and cancels on death, disconnect, vehicle entry, bucket change, resource stop, timeout or presentation failure. Gameplay effects remain the resource's responsibility. See player-interactions.md. Terminal states are removed from the active registry. Read access never grants cancellation of another resource's action.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local value, err = Open77.playerInteractions.isReserved(playerId)",
+  "inferred": false,
+  "source_line": 5681,
+  "qualified": "Open77.playerInteractions.isReserved",
+  "route_id": "server:Open77.playerInteractions.isReserved"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "list",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "List active interactions owned by this resource only.",
+  "description": "Requires players.interactions.read (inspection) or players.interactions.control (creation/cancellation). Uses canonical player IDs. The coordinator reserves both players and cancels on death, disconnect, vehicle entry, bucket change, resource stop, timeout or presentation failure. Gameplay effects remain the resource's responsibility. See player-interactions.md. Terminal states are removed from the active registry. Read access never grants cancellation of another resource's action.",
+  "params": [],
+  "returns": [
+   "state[]; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local value, err = Open77.playerInteractions.list()",
+  "inferred": false,
+  "source_line": 5682,
+  "qualified": "Open77.playerInteractions.list",
+  "route_id": "server:Open77.playerInteractions.list"
+ },
+ {
+  "namespace": "Open77.playerInteractions",
+  "name": "request",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reserve and coordinate a two-player interaction.",
+  "description": "Requires players.interactions.read (inspection) or players.interactions.control (creation/cancellation). Uses canonical player IDs. The coordinator reserves both players and cancels on death, disconnect, vehicle entry, bucket change, resource stop, timeout or presentation failure. Gameplay effects remain the resource's responsibility. See player-interactions.md. Kinds: give, heal, carry, escort, custom. Options: durationMs (500–600000, default4000), startDistance (.25–10, default3), breakDistance (startDistance–20, default5), inviteTimeoutMs (1000–60000, default15000), consent (defaulttrue), optional actorAnimation/targetAnimation RP profiles for stationary kinds. Carry/escort reject profile overrides. Both players must be alive, on foot, near and in the same bucket. Acceptance is not proof of native playback; observe lifecycle events.",
+  "params": [
+   {
+    "name": "actorId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "targetId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "kind",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state table or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local state, err = Open77.playerInteractions.request(source, targetId, 'give', {durationMs=4000})",
+  "inferred": false,
+  "source_line": 5674,
+  "qualified": "Open77.playerInteractions.request",
+  "route_id": "server:Open77.playerInteractions.request"
+ },
+ {
+  "namespace": "Open77.props",
+  "name": "attach",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Set a synchronized prop binding.",
+  "description": "Binding fields: parentType ('player' or 'vehicle'), parentId (canonical network ID, not an engine handle), bone (named slot, empty for root), offset {x,y,z} in metres (each ±20), rotation {x,y,z} in degrees (each ±360, local Z-Y-X composition). Unknown fields and non-finite numbers reject. Missing streamed parents are hidden, then rebound when available. See attachments.md. Requires world.props and ownership of the prop. Parent must be alive/valid in the same bucket. Up to 32 bindings per parent. Optional expectedRevision enables compare-and-swap; stale updates reject. Idempotent identical attachment does not create a new revision.",
+  "params": [
+   {
+    "name": "propId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "binding",
+    "type": "table",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "expectedRevision",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true on success; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local ok, err = Open77.props.attach(propId, {parentType='player', parentId=playerId, bone='RightHand'})",
+  "inferred": false,
+  "source_line": 6438,
+  "qualified": "Open77.props.attach",
+  "route_id": "server:Open77.props.attach"
+ },
+ {
+  "namespace": "Open77.props",
+  "name": "attachedTo",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "List replicated props attached to one parent.",
+  "description": "Requires world.props. Uses a canonical player/vehicle ID and returns copied prop records, including bindings and revisions. Inspection can include other resources' props, but mutation still checks ownership.",
+  "params": [
+   {
+    "name": "parentType",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "parentId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "prop[] or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local props, err = Open77.props.attachedTo('vehicle', vehicleId)",
+  "inferred": false,
+  "source_line": 6428,
+  "qualified": "Open77.props.attachedTo",
+  "route_id": "server:Open77.props.attachedTo"
+ },
+ {
+  "namespace": "Open77.props",
+  "name": "detach",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Release a synchronized prop binding.",
+  "description": "Requires world.props and prop ownership. Optional expectedRevision prevents detaching a newer binding. Leaves the prop at the server's last coarse parent anchor, which is not an exact client-side animated bone transform. Already detached is idempotent. Death, disconnect, parent removal and bucket changes also detach automatically.",
+  "params": [
+   {
+    "name": "propId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "expectedRevision",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true on success; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local ok, err = Open77.props.detach(propId, revision)",
+  "inferred": false,
+  "source_line": 6444,
+  "qualified": "Open77.props.detach",
+  "route_id": "server:Open77.props.detach"
+ },
+ {
+  "namespace": "Open77.props",
+  "name": "getAttachment",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Read a prop's current replicated binding.",
+  "description": "Binding fields: parentType ('player' or 'vehicle'), parentId (canonical network ID, not an engine handle), bone (named slot, empty for root), offset {x,y,z} in metres (each ±20), rotation {x,y,z} in degrees (each ±360, local Z-Y-X composition). Unknown fields and non-finite numbers reject. Missing streamed parents are hidden, then rebound when available. See attachments.md. Requires world.props. Returns a copy, not a mutable reference. Nil can mean detached or absent; inspect the second result for a capability/validation failure.",
+  "params": [
+   {
+    "name": "propId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "binding table or nil; nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local binding, err = Open77.props.getAttachment(propId)\nif binding then print(binding.parentType, binding.parentId, binding.bone) end",
+  "inferred": false,
+  "source_line": 6445,
+  "qualified": "Open77.props.getAttachment",
+  "route_id": "server:Open77.props.getAttachment"
+ },
+ {
+  "namespace": "Open77.props",
+  "name": "isAttached",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Check whether a prop has a binding.",
+  "description": "Requires world.props. Returns false when no binding exists, and nil plus reason for a rejected query. This tests authoritative state, not whether a particular client has streamed or rendered its parent.",
+  "params": [
+   {
+    "name": "propId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local attached, err = Open77.props.isAttached(propId)",
+  "inferred": false,
+  "source_line": 6446,
+  "qualified": "Open77.props.isAttached",
+  "route_id": "server:Open77.props.isAttached"
+ },
+ {
+  "namespace": "Open77.props",
+  "name": "setAttachmentTransform",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Change a binding's local offset and rotation.",
+  "description": "Binding fields: parentType ('player' or 'vehicle'), parentId (canonical network ID, not an engine handle), bone (named slot, empty for root), offset {x,y,z} in metres (each ±20), rotation {x,y,z} in degrees (each ±360, local Z-Y-X composition). Unknown fields and non-finite numbers reject. Missing streamed parents are hidden, then rebound when available. See attachments.md. Requires world.props and prop ownership. Omitted vectors retain their previous values. The current revision is used if expectedRevision is omitted; stale explicit revisions reject. A detached prop rejects with not_attached.",
+  "params": [
+   {
+    "name": "propId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "offset",
+    "type": "table",
+    "optional": true,
+    "default": null
+   },
+   {
+    "name": "rotation",
+    "type": "table",
+    "optional": true,
+    "default": null
+   },
+   {
+    "name": "expectedRevision",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true on success; nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local ok, err = Open77.props.setAttachmentTransform(propId, {x=0,y=0,z=0.1}, {x=0,y=0,z=90})",
+  "inferred": false,
+  "source_line": 6429,
+  "qualified": "Open77.props.setAttachmentTransform",
+  "route_id": "server:Open77.props.setAttachmentTransform"
  }
 ]
