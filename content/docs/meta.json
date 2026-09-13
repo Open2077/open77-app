@@ -411,7 +411,13 @@
           "slug": "voice",
           "kind": "guide",
           "nav": "Voice chat",
-          "description": "Proximity voice, radio and phone channels, Lua APIs and settings."
+          "description": "Proximity voice, radio and phone channels, voice-driven lipsync, Lua APIs and settings."
+        },
+        {
+          "slug": "voice-lipsync",
+          "kind": "guide",
+          "nav": "Voice lipsync",
+          "description": "Enable voice-driven mouths on male/female player heads, locally and on replicated players, with resource-owned Lua controls and diagnostics."
         },
         {
           "slug": "clipboard",

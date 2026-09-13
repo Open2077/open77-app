@@ -167,6 +167,11 @@ const VEHICLE_WEAPON_READS = new Set([
 ]);
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (raw.namespace === "Open77.voice") {
+    return runtime === "client" && ["setLipSyncEnabled", "setPlayerLipSyncEnabled", "getLipSyncStatus", "getPlayerLipSyncState"].includes(raw.name)
+      ? { usageGuideHref: "/docs/voice-lipsync", usageGuideLabel: "Voice lipsync guide" }
+      : { usageGuideHref: `/docs/voice#${runtime}-lua-api`, usageGuideLabel: "Integrated voice chat guide" };
+  }
   if (raw.namespace === "Open77.playerInteractions") {
     return { usageGuideHref: `/docs/player-interactions#${runtime}-api`, usageGuideLabel: "Player interactions guide" };
   }

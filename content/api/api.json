@@ -14697,5 +14697,108 @@
   "source_line": 6429,
   "qualified": "Open77.props.setAttachmentTransform",
   "route_id": "server:Open77.props.setAttachmentTransform"
+ },
+ {
+  "namespace": "Open77.voice",
+  "name": "getLipSyncStatus",
+  "handler": "LuaVoiceLipSyncStatus",
+  "summary": "Reads native mouth-presentation policy and tracked-player counts.",
+  "description": "Requires voice.client. Fields: enabled, sessionActive, mode=audio_envelope, trackedPlayers, availablePlayers, activePlayers. Not phoneme recognition.",
+  "params": [],
+  "returns": [
+   "status table, or nil, reason"
+  ],
+  "api_set": "client",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local state, reason = Open77.voice.getLipSyncStatus()\nif state then print(state.mode, state.activePlayers) else print(reason) end",
+  "inferred": false,
+  "source_line": 11950,
+  "qualified": "Open77.voice.getLipSyncStatus",
+  "route_id": "Open77.voice.getLipSyncStatus"
+ },
+ {
+  "namespace": "Open77.voice",
+  "name": "getPlayerLipSyncState",
+  "handler": "LuaVoicePlayerLipSyncState",
+  "summary": "Reads a player's current facial binding and smoothed voice envelope.",
+  "description": "Requires voice.client. Fields: playerId, entity, isLocal, enabled, available, active, level (0..1), reason. Unstreamed/custom unsupported heads report unavailable without changing the body animation.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state table, or nil, reason"
+  ],
+  "api_set": "client",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local state, reason = Open77.voice.getPlayerLipSyncState(42)\nif state then print(state.available, state.level, state.reason) else print(reason) end",
+  "inferred": false,
+  "source_line": 11951,
+  "qualified": "Open77.voice.getPlayerLipSyncState",
+  "route_id": "Open77.voice.getPlayerLipSyncState"
+ },
+ {
+  "namespace": "Open77.voice",
+  "name": "setLipSyncEnabled",
+  "handler": "LuaVoiceLipSyncEnabled<false>",
+  "summary": "Enables or suppresses local voice-driven mouth presentation.",
+  "description": "Requires voice.client. False adds this resource's global suppression; true removes only its own suppression. Resource stop/reload/failure releases it. Does not mute audio. See the Voice lipsync guide for setup and client-build requirements.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "client",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local ok, reason = Open77.voice.setLipSyncEnabled(true)\nif not ok then print(reason) end",
+  "inferred": false,
+  "source_line": 11948,
+  "qualified": "Open77.voice.setLipSyncEnabled",
+  "route_id": "Open77.voice.setLipSyncEnabled"
+ },
+ {
+  "namespace": "Open77.voice",
+  "name": "setPlayerLipSyncEnabled",
+  "handler": "LuaVoiceLipSyncEnabled<true>",
+  "summary": "Enables or suppresses voice-driven lipsync for one network player.",
+  "description": "Requires voice.client. Positive network player ID, not entity ID. True cannot override another resource's suppression or a global suppression. Per-player policies reset across sessions.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "client",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local ok, reason = Open77.voice.setPlayerLipSyncEnabled(42, false)\nif not ok then print(reason) end",
+  "inferred": false,
+  "source_line": 11949,
+  "qualified": "Open77.voice.setPlayerLipSyncEnabled",
+  "route_id": "Open77.voice.setPlayerLipSyncEnabled"
  }
 ]
