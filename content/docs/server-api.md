@@ -1,9 +1,8 @@
 # Complete server Lua API
 
 This page inventories the Lua surface installed by the dedicated server runtime. These functions
-exist only in `server_script` and server-side `shared_script` files. The generated client reference
-documents a different runtime; a function appearing on this page must not be assumed to exist on a
-client.
+exist only in `server_script` and server-side `shared_script` files. The searchable reference labels client and server cards separately; a function
+appearing on this page must not be assumed to exist on a client.
 
 Prefer the `Open77.*` names below. FiveM-style globals remain available where listed for familiar
 resource code and as the low-level implementation surface.
@@ -33,6 +32,20 @@ Limits are 1,024 scheduled tasks and 2,048 handlers per resource. Network events
 arguments in a 48 KiB JSON envelope. During a network handler, global `source` is set from the
 authenticated connection, never from client payload data.
 
+The host queues `open77:resource:started(name, revision)` and
+`open77:resource:stopped(name, revision)` into running server resources after a resource
+transition. Use local handlers for optional cross-resource lifecycle adapters;
+peer events in this namespace are discarded. `onResourceStart` and
+`onResourceStop` describe only the current resource's own VM. A queued event
+describes the transition, so check `GetResourceState(name)` when current
+availability matters (a stop/start can occur before the next tick). Revisions
+increase for every host transition. Remember the newest revision per resource
+and ignore older notifications: scheduler order is not a lifecycle guarantee.
+
+The [cyberware API](cyberware.md) separates definition, identity, management and
+read permissions. Use the [Gorilla Arms walkthrough](gorilla-arms.md) for a complete
+resource example; installation completion is asynchronous.
+
 The namespaced equivalents are:
 
 | Function | Signature |
@@ -45,6 +58,82 @@ The namespaced equivalents are:
 | `Open77.resource.state` | `(resourceName)` |
 | `Open77.events.on` / `off` / `emit` | Same as `AddEventHandler`, `RemoveEventHandler`, `TriggerEvent` |
 | `Open77.net.on` / `emitClient` | Same as `RegisterNetEvent`, `TriggerClientEvent` |
+
+## Cyberware and living motion
+
+Requires paired protocol **1.26** clients/server and the shipped native Gorilla
+adapter; this release supports `slot="arms"`, `profile="gorilla_arms"`. It does
+not expose an implemented legs/jump power. Server mutations are synchronous
+admission calls returning a result table or `nil, reason`, not Promises. Native
+projection, persistence and restoration complete later. Read methods return a
+table or nil when unavailable; distinguish nil readiness from an empty `arms`.
+
+| Function | Signature | Permission | Purpose |
+|---|---|---|---|
+| `Open77.cyberware.current` | `(playerId)` | `players.cyberware.read` | Read the ready durable implant record. |
+| `Open77.cyberware.effective` | `(playerId)` | `players.cyberware.read` | Read the ready implant including an active temporary loadout. |
+| `Open77.cyberware.activity` | `(playerId)` | `players.cyberware.read` | Read fresh authoritative Gorilla charge activity. |
+| `Open77.cyberware.leaseState` | `(playerId)` | `players.cyberware.read` | Read a temporary loadout lease and restoration phase. |
+| `Open77.cyberware.newOperationId` | `()` | `players.cyberware.manage` | Create an operation ID to retain across durable retries. |
+| `Open77.cyberware.define` | `(definition)` | `players.cyberware.define` | Register resource-owned Gorilla Arms grades. |
+| `Open77.cyberware.bind` | `(playerId, character)` | `players.cyberware.identity` | Bind the authenticated player to a server-selected durable character. |
+| `Open77.cyberware.unbind` | `(playerId)` | `players.cyberware.identity` | Release this resource's character binding and runtime grants. |
+| `Open77.cyberware.install` | `(playerId, definition, grade, options)` | `players.cyberware.manage` | Stage a durable Gorilla Arms installation. |
+| `Open77.cyberware.remove` | `(playerId, options)` | `players.cyberware.manage` | Stage a durable Gorilla Arms removal. |
+| `Open77.cyberware.cancel` | `(playerId, ticket)` | `players.cyberware.manage` | Cancel an owned installation/removal before durable commit. |
+| `Open77.cyberware.lease` | `(playerId, definition, grade, options?)` | `players.cyberware.temporary` | Stage a temporary implant without overwriting paid state. |
+| `Open77.cyberware.releaseLease` | `(playerId, lease)` | `players.cyberware.temporary` | Release this resource's temporary loadout and restore paid arms. |
+| `Open77.motion.current` | `(playerId)` | `players.motion.read` | Read an authoritative living-motion lease. |
+| `Open77.motion.knockdown` | `(playerId, options)` | `players.motion.control` | Request bounded native living-player motion. |
+| `Open77.motion.cancel` | `(playerId, id)` | `players.motion.control` | Cancel this resource's authoritative motion lease. |
+
+`newOperationId()` returns a string; definition/identity/manage calls return
+`{ok=true,error=nil,ticket?,lease?}`. `install` and `remove` require
+`options={expectedRevision=record.revision,operationId=retainedOperationId}`.
+Retain the same ID and contents across retries. Correlate
+`onCyberwareOperationCompleted(playerId,ticket,encodedResult)` with the pending
+player and ticket; decode the JSON result and check `ok`/`error`. A queued ticket
+is not a committed purchase or visual proof. A completed idempotent retry may
+return success without a new ticket. Do not refund submitted storage work merely
+because native presentation is delayed; `cancel` can return `operation_committing`.
+
+`current()` reads durable `{revision,arms,operationId}`; `effective()` substitutes
+an active temporary arms snapshot while retaining the durable revision/receipt.
+`lease` accepts `durationMs=1000..300000` (default300000), returns
+`{ok=true,lease,ticket}`, and restores paid state on release/expiry/lifecycle loss.
+`onCyberwareLeaseChanged(playerId,encodedState)` carries
+`id,player,phase,definition,grade,expiresAt,ticket,reason`. Wait for matching
+`active` before enabling combat; `ended` after body loss alone does not prove
+paid native restoration. Identity adapters alone select the authenticated user's
+character. Restart a stopped definition provider before expecting its persisted
+implants to grant combat again.
+
+`Open77.motion.knockdown` returns `{ok=true,id}` after admission, not damage or
+actual movement. `onPlayerMotionChanged(playerId,id,phase,reason)` reports
+`pending`, `active`, `ended`; the owner native acknowledgement starts the bounded
+six-second server ownership window. Requested travel0..6 m is collision-dependent,
+not an exact-distance teleport. Cancellation requests cleanup without instantly
+freezing momentum. The snapshot validator uses ACK-time bounds rather than the
+exact native launch origin. See the runtime-separated searchable cards for
+native client projection primitives; server scripts never send local entity
+handles over the network.
+
+The related public foundations are
+`Open77.combat.createScope({bucket,players})` / `removeScope(id)` with
+`combat.scope.control`, and `Open77.effects.attach(target,effect,options)`,
+`playOn(target,event,options?)`, `sound(target,event,options?)` with `world.effects`.
+Scopes do not bypass team/life/Lua veto rules. Effects use typed network target
+IDs and native lifetime guards. `sound` supports an opaque `actionId` and
+`excludePlayers` to avoid adding network sound for listeners already hearing the
+native contact. These are configurable presentation rules, not extra damage.
+
+Low-level globals backing related namespaced APIs:
+
+| Global | Signature | Permission and result |
+|---|---|---|
+| `AttachEffect` | `(targetId,kind,effect,slot,localAnchor,localSlot,ttlMs?,radius,hysteresis,localEvent?,soundEvent?,soundOnOwner?)` | `world.effects`; decimal effect ID or nil/reason. Prefer `Open77.effects.attach`. |
+| `SetPlayerDownedDamageable` | `(playerId,enabled)` | `players.stats.apply`; boolean/reason. Also exposed as `Open77.stats.setDownedDamageable`. |
+| `VehicleDrivingCommand` | `(operation,vehicleId,options?)` | `world.vehicles`; driving-state table or nil/reason (state may be nil when absent). Prefer [vehicle AI methods](vehicle-ai.md). |
 
 ## Cross-resource exports
 
@@ -252,7 +341,7 @@ Promise-based self-request API; do not use their signatures on the server.
 
 ## Player clothing
 
-These asynchronous methods target the official `open77_clothing` client relay. The calling server
+These asynchronous methods target the official `open77_equipment` client relay. The calling server
 resource must declare `network.events`. Request IDs are prefixed with the resource name, and only
 that resource VM can match the completion.
 
@@ -267,8 +356,13 @@ that resource VM can match the completion.
 Listen for the resource-local `open77:clothing:completed` event. Its arguments are
 `playerId, requestId, operation, accepted, reason, result`. Dispatch failures are returned
 immediately; unanswered requests complete with `request_timeout` after 10 seconds. Full record,
-slot, result, rollback, and replication semantics are in
-[Clothing Lua API](../docs/clothing.md).
+slot and result semantics follow the relay's equipment registry. `set` accepts a
+slot-to-record table, for example `{outer_chest="Items.Jacket_01_basic_01"}`;
+`false` empties a slot and omitted slots stay unchanged. A snapshot returns rows
+with `slot`, `attachmentSlot`, `equipped`, and optional `record`/`tweakDbId`.
+These writes follow normal presentation persistence; completion alone is not
+proof of observer appearance. An active wardrobe outfit can hide equipment.
+See the [installed clothing catalog](../docs/research/clothing-items-catalog.md).
 
 ## Player weapons
 
@@ -419,13 +513,14 @@ Vehicle-seat low-level aliases are `SetPlayerIntoVehicle`, `ForcePlayerOutOfVehi
 
 ## Combat policy
 
-All combat policy functions require `combat.config`.
+The global combat policy functions below require `combat.config`. Scoped PvP
+grants use the separate `combat.scope.control` permission.
 
 | Function | Signature | Purpose |
 |---|---|---|
 | `Open77.combat.onDamage` | `(handler)` | Add a synchronous damage arbiter and return it. `false` cancels; a number rewrites damage. |
 | `Open77.combat.offDamage` | `(handler)` | Remove a previously installed arbiter. |
-| `Open77.combat.setFriendlyFire` | `(enabled)` | Enable or disable damage between teammates. |
+| `Open77.combat.setFriendlyFire` | `(enabled)` | Enable or disable global player-versus-player damage; equal nonzero teams remain protected. |
 | `Open77.combat.setTeam` | `(playerId, teamId)` | Assign a non-negative team. |
 | `Open77.combat.setDamageMultiplier` | `(multiplier)` | Set global multiplier, range 0–100. |
 | `Open77.combat.setHeadshotMultiplier` | `(multiplier)` | Set headshot multiplier, range 0–100. |
@@ -434,6 +529,32 @@ All combat policy functions require `combat.config`.
 
 Low-level aliases are `SetCombatFriendlyFire`, `SetCombatTeam`, `SetCombatDamageMultiplier`,
 `SetCombatHeadshotMultiplier`, `SetCombatWeaponMultiplier`, and `SetCombatKindMultiplier`.
+
+### Scoped PvP
+
+`Open77.combat.createScope({bucket=7, players={firstPlayer, secondPlayer}})` returns
+a scope ID string, or `nil, reason`. `Open77.combat.removeScope(id)` returns
+`true`, or `nil, reason`. Both require `combat.scope.control`; `combat.config`
+alone does not grant them. Scopes belong to the calling resource instance.
+
+A scope permits its explicit roster to damage one another in that bucket while
+global PvP remains disabled. It changes no global settings and never overrides
+same-team, god-mode, life, range or Lua damage-veto checks. It does not disable
+damage that an existing global PvP policy already permits. The resource still
+owns admission/consent and may use `onDamage` for additional arena rules.
+
+Creation requires 2–32 distinct living registered players already in the
+specified bucket. A player can belong to only one scope. Limits are 64 scopes
+globally and eight per resource instance. Resource stop/disposal releases its
+scopes. Disconnect, bucket exit and body registration remove that participant;
+fewer than two remaining participants destroys the scope. Reconnecting or
+returning to the bucket does not restore admission. Remove and recreate a scope
+to change its roster; an ID from an earlier resource instance cannot be reused.
+
+Typical refusals: `invalid_scope`, `player_unavailable`, `player_scoped`,
+`scope_limit`, `scope_owned`, `scope_unavailable`, `resource_stopping`.
+This API supplies combat permission only; it does not teleport players, switch
+teams, alter implants or provide a temporary equipment loadout.
 
 ## Routing buckets
 
@@ -873,7 +994,8 @@ resource-prefixed server logger. Their common signature is `(...)`; no return va
 | `players.access` | `Open77.access`: the server's built-in whitelist and ban list |
 | `players.disconnect` | `Open77.players.disconnect` / `kick` |
 | `players.ban` | `Open77.players.ban` |
-| `combat.config` | `Open77.combat` and damage arbiters |
+| `combat.config` | Global `Open77.combat` policy and damage arbiters |
+| `combat.scope.control` | Resource-owned `Open77.combat.createScope` / `removeScope` |
 | `players.animations.control` | Start, sequence and stop player RP animations owned by this VM |
 | `players.animations.read` | Query a player's authoritative RP playback |
 | `voice.manage` | `Open77.voice` authoritative topology and policy |

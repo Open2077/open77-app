@@ -558,6 +558,35 @@ try {
   `);
   check("guide categories expand", expanded);
 
+  for (const slug of ["cyberware", "gorilla-arms"]) {
+    await visit(`/docs/${slug}`);
+    reportConsole(`${slug} guide`);
+    check(`${slug} guide exposes both runtime references`, await session.evaluate(`
+      return !!document.querySelector('.dx-prose a[href="/docs/api/server/open77-cyberware"]') &&
+        !!document.querySelector('.dx-prose a[href="/docs/api/client/open77-cyberware"]');
+    `));
+    if (process.argv.includes("--docs")) {
+      const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await fs.writeFile(`.shots/${slug}-guide.png`, Buffer.from(data, "base64"));
+    }
+  }
+  for (const [runtime, method, expected] of [
+    ["server", "install", "players.cyberware.manage"],
+    ["client", "projectLocal", "player.cyberware.project"],
+  ]) {
+    await visit(`/docs/api?side=${runtime}&category=cyberware&namespace=Open77.cyberware#${runtime}/open77-cyberware/${method.toLowerCase()}`);
+    reportConsole(`Cyberware ${runtime} API`);
+    check(`Cyberware ${runtime} filtering, permission and tutorial`, await session.evaluate(`
+      const detail = document.querySelector('.api-detail');
+      const rows = [...document.querySelectorAll('.api-function-row')];
+      return detail.querySelector('h2').textContent === '${method}' &&
+        detail.querySelector('.api-side').textContent === '${runtime}' &&
+        detail.textContent.includes('${expected}') &&
+        !!detail.querySelector('a[href="/docs/gorilla-arms"]') && rows.length > 0 &&
+        rows.every(row => row.textContent.includes('Open77.cyberware.'));
+    `));
+  }
+
   await visit("/docs/rp-animations");
   reportConsole("RP animation guide");
   check("RP tutorial links to both runtime references and the catalogue", await session.evaluate(`
@@ -643,7 +672,7 @@ try {
   reportConsole("networked door guide");
   check("door guide explains installation, authority and native landing doors", await session.evaluate(`
     const prose = document.querySelector('.dx-prose');
-    return prose.textContent.includes('network-door development build') &&
+    return prose.textContent.includes('open77_doors >=1.0.0') &&
       prose.textContent.includes('doorsClosed') && prose.textContent.includes('pending:await()') &&
       !!document.querySelector('.docs-site a[href="/docs/doors"]');
   `));
@@ -781,6 +810,16 @@ try {
       document.documentElement.scrollWidth <= innerWidth;
   `));
   reportConsole("mobile RP API");
+  for (const slug of ["cyberware", "gorilla-arms"]) {
+    await visit(`/docs/${slug}`);
+    check(`${slug} mobile guide has no page overflow`, await session.evaluate(`
+      return document.documentElement.scrollWidth <= innerWidth;
+    `));
+    if (process.argv.includes("--docs")) {
+      const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await fs.writeFile(`.shots/${slug}-mobile.png`, Buffer.from(data, "base64"));
+    }
+  }
   await visit("/docs/vehicles");
   check("mobile documentation has no horizontal page overflow", await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
   const mobile = await session.evaluate(`

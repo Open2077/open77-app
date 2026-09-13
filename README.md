@@ -116,8 +116,20 @@ string, so selections survive reload and browser Back. The documentation has a l
 switch (saved locally), its own search and collapsible guide navigation below the main site
 header. Guide content remains authored in the platform wiki.
 
-On this workstation, sync with `npm run sync:wiki -- --from ../CyberM/wiki`.
+On this workstation, sync with `npm run sync:wiki -- --from ../base/wiki`.
 The sync also discovers sibling `CyberM`, `open77-base` and `base` checkouts automatically.
+When another session is implementing a feature, select a clean worktree of the intended
+platform revision with `--from <worktree>/wiki`; do not publish its unfinished working files.
+Set `OPEN77_WIKI_SOURCE` to that same wiki path when running `npm run verify:content`,
+so the drift, coverage and overlay checks all verify the selected revision.
+
+Cyberware guides live in the platform wiki: `cyberware.md` describes the reusable foundations
+and `gorilla-arms.md` is the first ability guide. Add future powers alongside them, register
+their pages under the `cyberware` section in `content/docs/meta.json`, and link their API
+namespaces to the guide in `src/lib/api-reference.ts`. Category membership is maintained in
+`src/lib/api-categories.ts`. Generate the platform API JSON before syncing; publish only
+implemented contracts and state the required compatible client/server build in each guide.
+
 Run `node scripts/check-hydration.mjs http://127.0.0.1:3000 --docs` for the focused browser
 checks: filters, deep links, Back, clipboard, themes, sticky navigation and mobile layout.
 This writes review screenshots under `.shots/` (ignored by Git).

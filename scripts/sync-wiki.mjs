@@ -24,7 +24,7 @@ import process from "node:process";
 import { EXCLUDED_GUIDES, isExcluded } from "./wiki-exclusions.mjs";
 import { buildNpcCatalogue } from "./npc-catalogue.mjs";
 
-const DEFAULT_SOURCE = ["CyberM", "open77-base", "base"]
+const DEFAULT_SOURCE = process.env.OPEN77_WIKI_SOURCE ?? ["CyberM", "open77-base", "base"]
   .map((directory) => path.join("..", directory, "wiki"))
   .find((directory) => existsSync(directory)) ?? path.join("..", "base", "wiki");
 const DOCS_OUT = path.join("content", "docs");

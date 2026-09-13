@@ -226,6 +226,24 @@
       ]
     },
     {
+      "id": "cyberware",
+      "title": "Cyberware & abilities",
+      "pages": [
+        {
+          "slug": "cyberware",
+          "kind": "guide",
+          "nav": "Cyberware overview",
+          "description": "Build multiplayer cyberware with server-owned implants, configurable grades, persistent installation, native presentation and permission-controlled Lua APIs."
+        },
+        {
+          "slug": "gorilla-arms",
+          "kind": "guide",
+          "nav": "Gorilla Arms",
+          "description": "Add native Gorilla Arms to your server: normal and charged punches, synchronized knockback, configurable damage and cosmetics, plus Lua installation examples and optional doctor and arena resources."
+        }
+      ]
+    },
+    {
       "id": "world",
       "title": "World & vehicles",
       "pages": [

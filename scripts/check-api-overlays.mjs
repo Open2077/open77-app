@@ -14,7 +14,7 @@ import fs from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
-const wiki = process.argv[2] ?? ["CyberM", "open77-base", "base"]
+const wiki = process.argv[2] ?? process.env.OPEN77_WIKI_SOURCE ?? ["CyberM", "open77-base", "base"]
   .map((directory) => path.join(process.cwd(), "..", directory, "wiki"))
   .find(existsSync) ?? path.join(process.cwd(), "..", "base", "wiki");
 const api = JSON.parse(
@@ -50,7 +50,9 @@ function carries(entries, text) {
   if (!entries || !text) return false;
   const needle = text.replace(/\s+/g, " ").trim().slice(0, 60);
   return entries.some((entry) =>
-    JSON.stringify(entry).replace(/\\n/g, " ").includes(needle),
+    [entry.description, entry.summary].some((value) =>
+      typeof value === "string" && value.replace(/\s+/g, " ").includes(needle),
+    ),
   );
 }
 
@@ -101,6 +103,15 @@ for (const runtime of ["client", "server"]) {
   gaps += audit(`animation-api.json (${runtime})`, animations[runtime], (name) =>
     byQualified.get(`Open77.animations.${name}`)?.filter((entry) => entry.runtime === runtime),
   );
+}
+
+const cyberware = await readOverlay("cyberware-api.json");
+for (const [runtime, namespaces] of Object.entries(cyberware)) {
+  for (const [namespace, cards] of Object.entries(namespaces)) {
+    gaps += audit(`cyberware-api.json (${runtime} ${namespace})`, cards, (name) =>
+      byQualified.get(`${namespace}.${name}`)?.filter((entry) => entry.runtime === runtime),
+    );
+  }
 }
 
 console.log("\nCoverage of the generated fields:");

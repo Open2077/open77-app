@@ -65,11 +65,13 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Game data reference](data-reference.md) | NPC templates, vehicle records, seats, flags, weapons, appearances, VFX, SFX, animations, and sprite catalogues. |
 | [Identity and ACL](server-acl.md) | Authentication, restricted commands, and access control. |
 | [Player identity](identity.md) | Durable identifiers, display names, and rename flow. |
-| [Clothing Lua API](../docs/clothing.md) | Validated wardrobe catalogue, local/server APIs, permissions, errors, and appearance replication. |
+| [Equipment Lua API](../docs/equipment.md) | Validated wardrobe catalogue, local/server APIs, permissions, errors, and appearance replication. |
 | [Perspective](../docs/perspective.md) | First and third person: the ownership arbiter, the server policy, the player's key and persisted preference. |
 | [Photo mode](photo-mode.md) | Exclusive client-resource control of the native photo mode; stock shortcuts are disabled. |
 | [Weapon Lua API](weapons-api.md) | Assign standard weapons by TweakDB template, select slots, holster, snapshot, and target a player from the server. |
 | [Player health and stamina](player-stats.md) | Shared client/server reads, server-only setters, maximums, regeneration, and synchronization semantics. |
+| [Cyberware framework](cyberware.md) | Persistent implants, permissions, transactions, temporary loadouts and native projection. |
+| [Gorilla Arms](gorilla-arms.md) | Build native arm grades, self-service installation, charge effects, clinics and practice arenas. |
 | [Loot](loot.md) | Authoritative ground drops and pickup integration. |
 | [Weather](weather.md) | Session time, weather presets, synchronization, and events. |
 | [Vehicles](vehicles.md) | Identity, streaming, authority leases, seats, and Lua APIs. |

@@ -1,7 +1,10 @@
 /** Presentation only. Function contracts and runtime always come from wiki/data/api.json. */
+const FALLBACK_CATEGORY = { id: "utilities", label: "Data & utilities", namespaces: ["Open77.assets", "Open77.kvp", "Open77.clipboard", "Open77.debug", "Open77.inspector"] } as const;
+
 export const API_CATEGORIES = [
   { id: "core", label: "Core & resources", namespaces: ["_G", "Open77.Promise", "Open77.resource", "Open77.runtime", "Open77.events", "Open77.exports", "Open77.json"] },
-  { id: "players", label: "Players & characters", namespaces: ["Open77.players", "Open77.character", "Open77.stats", "Open77.appearance", "Open77.clothing", "Open77.animations"] },
+  { id: "players", label: "Players & characters", namespaces: ["Open77.players", "Open77.character", "Open77.stats", "Open77.appearance", "Open77.clothing", "Open77.equipment", "Open77.wardrobe", "Open77.puppets", "Open77.animations"] },
+  { id: "cyberware", label: "Cyberware & abilities", namespaces: ["Open77.cyberware", "Open77.motion"] },
   { id: "vehicles", label: "Vehicles", namespaces: ["Open77.vehicles", "Open77.vehicles.ai"] },
   { id: "world", label: "World & environment", namespaces: ["Open77.world", "Open77.environment", "Open77.time", "Open77.travel", "Open77.doors", "open77_doors", "Open77.elevators", "Open77.props"] },
   { id: "combat", label: "NPCs, weapons & loot", namespaces: ["Open77.npcs", "Open77.weapons", "Open77.loot"] },
@@ -9,7 +12,7 @@ export const API_CATEGORIES = [
   { id: "camera", label: "Camera & input", namespaces: ["Open77.camera", "Open77.perspective", "Open77.photoMode", "Open77.input", "Open77.settings"] },
   { id: "audio", label: "Voice & effects", namespaces: ["Open77.voice", "Open77.sfx", "Open77.vfx"] },
   { id: "network", label: "Network & sessions", namespaces: ["Open77.net", "Open77.network", "Open77.session"] },
-  { id: "utilities", label: "Data & utilities", namespaces: ["Open77.assets", "Open77.kvp", "Open77.clipboard", "Open77.debug", "Open77.inspector"] },
+  FALLBACK_CATEGORY,
 ] as const;
 
 export function apiCategory(namespace: string) {
@@ -19,7 +22,7 @@ export function apiCategory(namespace: string) {
     "Open77.routingBuckets": "network", "Open77.effects": "audio",
     "Open77.io": "utilities", "Open77.database": "utilities", "Open77.http": "utilities", "Open77.log": "utilities",
   };
-  return API_CATEGORIES.find((category) => (category.namespaces as readonly string[]).includes(namespace) || category.id === extra[namespace]) ?? API_CATEGORIES[9];
+  return API_CATEGORIES.find((category) => (category.namespaces as readonly string[]).includes(namespace) || category.id === extra[namespace]) ?? FALLBACK_CATEGORY;
 }
 
 export function apiExplorerHref(entry: { runtime: string; namespaceSlug: string; anchor: string }) {

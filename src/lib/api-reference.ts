@@ -167,6 +167,12 @@ const VEHICLE_WEAPON_READS = new Set([
 ]);
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (raw.namespace === "Open77.cyberware") {
+    return { usageGuideHref: "/docs/gorilla-arms", usageGuideLabel: "Gorilla Arms implementation guide" };
+  }
+  if (raw.namespace === "Open77.motion") {
+    return { usageGuideHref: "/docs/cyberware", usageGuideLabel: "Cyberware authority & motion guide" };
+  }
   if (raw.namespace === "open77_doors" || raw.namespace === "Open77.doors") {
     return { usageGuideHref: "/docs/doors", usageGuideLabel: "Networked world doors guide" };
   }
