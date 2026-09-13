@@ -42,7 +42,7 @@ function ConnectionList({ session }: { session: StoredSession }) {
     finally { setBusy(false); }
   }
   return <section className="hub-notice" aria-label="Warden creator connections">
-    <p>Connected Wardens can prepare resource drafts and upload selected files with your approval. Review and publication remain in the Hub.</p>
+    <p>Connected Wardens can prepare resource drafts and upload selected files with your approval. Review and publication remain in the Workshop.</p>
     {error && <p role="alert">{error}</p>}
     {!data && !error && <p role="status">Loading connections…</p>}
     {data && <>

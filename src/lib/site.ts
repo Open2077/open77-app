@@ -100,7 +100,7 @@ export const mainNav = [
   { href: "/create", label: "Create Server" },
   { href: "/docs", label: "Docs" },
   { href: "/devblog", label: "Devblog" },
-  { href: "/community", label: "Community" },
+  { href: "/workshop", label: "Workshop" },
 ] as const;
 
 export const footerNav = [
@@ -126,7 +126,7 @@ export const footerNav = [
     links: [
       { href: "/docs/platform#roadmap", label: "Status & roadmap" },
       { href: "/devblog", label: "Devblog" },
-      { href: "/community", label: "Community" },
+      { href: "/workshop", label: "Workshop" },
       { href: "/docs", label: "Documentation" },
       { href: "/brand", label: "Brand kit" },
     ],

@@ -4,6 +4,8 @@ export type CommunityContent = {
   sourceUrl?: string | null; issueUrl?: string | null; license?: string | null;
   media?: { mediaId: string; altText: string; caption?: string | null }[] | null;
   videoUrls?: string[] | null;
+  /** One processed hover clip (video/webm + poster), played muted on cards. */
+  clipMediaId?: string | null;
 };
 export type CommunityProject = {
   projectId: string; ownerAccountId: string; slug: string; state: string;
@@ -45,9 +47,9 @@ export type CommunityRelease = {
     commitSha: string | null; fetchedAtUtc: string; sha256: string; repositoryControlVerified: boolean; repositoryControlVerifiedAtUtc?: string | null } | null;
 };
 export type CommunityDelivery = { deliveryId: string; expiresAtUtc: string; downloadUrl: string };
-export type CommunityMedia = { mediaId: string; derivatives: { name: "card" | "gallery" | "full"; width: number; height: number; sizeBytes: number; url: string }[] };
+export type CommunityMedia = { mediaId: string; derivatives: { name: "card" | "gallery" | "full" | "clip" | "poster"; width: number; height: number; sizeBytes: number; url: string }[] };
 export type CommunityUpload = {
-  uploadId: string; projectId: string | null; releaseId: string | null; kind: "package" | "image";
+  uploadId: string; projectId: string | null; releaseId: string | null; kind: "package" | "image" | "clip";
   state: string; maximumBytes: number; artifactId: string | null; expiresAtUtc: string;
   mediaId: string | null; inspectionCode: string | null;
 };

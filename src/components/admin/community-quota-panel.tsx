@@ -38,7 +38,7 @@ function Editor({ token, ownId }: { token: string; ownId: string }) {
     } catch (error) { setError(error instanceof Error ? error.message : "The change could not be saved. Reload before retrying an uncertain result."); }
     finally { setBusy(false); }
   }
-  return <section className="hub-review-panel"><Link href="/admin/resources">Back to Hub review →</Link><h1>Creator publishing allowances</h1>
+  return <section className="hub-review-panel"><Link href="/admin/resources">Back to Workshop review →</Link><h1>Creator publishing allowances</h1>
     <p>Review the account quotas before changing them. Blank overrides use global defaults. Package and inspection safety limits remain unchanged.</p>
     {error && <p className="hub-notice" role="alert">{error}</p>}{status && <p role="status">{status}</p>}
     <form className="hub-form" onSubmit={load}><label>Creator account ID<input required pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" value={id} onChange={event => setId(event.target.value)} disabled={busy} /></label>

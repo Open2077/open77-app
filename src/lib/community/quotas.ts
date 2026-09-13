@@ -3,7 +3,7 @@ import { masterCall } from "@/lib/account/api";
 export type Quotas = { draftProjectsPerAccount: number; activeUploadsPerAccount: number; pendingBytesPerAccount: number; gitHubImportsPerDay: number };
 export type QuotaOverrides = { [K in keyof Quotas]: number | null };
 export type AccountQuota = { accountId: string; revision: number; overrides: QuotaOverrides; effective: Quotas };
-export type UploadLimits = { packageBytes: number; imageBytes: number; expandedBytes: number; archiveEntries: number; imagePixels: number };
+export type UploadLimits = { packageBytes: number; imageBytes: number; expandedBytes: number; archiveEntries: number; imagePixels: number; clipBytes?: number; clipSeconds?: number };
 export const myQuotas = (token: string, signal: AbortSignal) => masterCall<AccountQuota>("/api/v1/community/me/quotas", { token, signal });
 export const uploadLimits = (signal: AbortSignal) => masterCall<{ limits: UploadLimits }>("/api/v1/community/catalog", { signal });
 export const accountQuotas = (token: string, id: string, signal: AbortSignal) => masterCall<AccountQuota>(`/api/v1/admin/community/accounts/${encodeURIComponent(id)}/quotas`, { token, signal });

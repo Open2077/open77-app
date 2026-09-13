@@ -11,8 +11,9 @@ import { useSession } from "@/lib/account/session";
 import * as api from "@/lib/community/client-api";
 import { directorySorts } from "@/lib/community/directory";
 import { formatBytes, formatCount, formatDate, pickLatestStable } from "@/lib/community/format";
-import { categories, categoryLabel, type CommunityDirectoryPage, type CommunityMedia, type CommunityProject, type CommunityRelease } from "@/lib/community/types";
+import { categories, categoryLabel, type CommunityDirectoryPage, type CommunityProject, type CommunityRelease } from "@/lib/community/types";
 import { DownloadButton } from "./download-button";
+import { useDerivative, useHoverPreview } from "./use-hover-media";
 
 /** One API page: the master ranks, the browser filters what it has loaded. */
 const PAGE_SIZE = 100;
@@ -72,54 +73,6 @@ function parseFilters(search: string): Filters {
 function useLibraryFilters(initialSearch: string): Filters {
   const search = useSyncExternalStore(subscribeToHistory, () => window.location.search, () => initialSearch);
   return useMemo(() => parseFilters(search), [search]);
-}
-
-/* ---------- Media: one request per image, shared across rows and the inspector ---------- */
-
-const mediaCache = new Map<string, Promise<CommunityMedia | null>>();
-function loadMedia(id: string) {
-  let pending = mediaCache.get(id);
-  if (!pending) {
-    pending = api.publicMedia(id, AbortSignal.timeout(10000)).catch(() => null);
-    mediaCache.set(id, pending);
-  }
-  return pending;
-}
-function useDerivative(mediaId: string | undefined, name: "card" | "gallery") {
-  const [loaded, setLoaded] = useState<{ mediaId: string; url: string | null } | null>(null);
-  useEffect(() => {
-    if (!mediaId) return;
-    let cancelled = false;
-    void loadMedia(mediaId).then(media => { if (!cancelled) setLoaded({ mediaId, url: media?.derivatives.find(item => item.name === name)?.url ?? null }); });
-    return () => { cancelled = true; };
-  }, [mediaId, name]);
-  return mediaId && loaded?.mediaId === mediaId ? loaded.url : null;
-}
-
-/**
- * Nexus-style hover preview: while the pointer rests on a tile, the cover
- * gives way to the next screenshots in turn. Images load on first hover only.
- */
-function useHoverGallery(media: { mediaId: string }[] | null | undefined, hovering: boolean): string | null {
-  const ids = useMemo(() => (media ?? []).slice(0, 5).map(item => item.mediaId), [media]);
-  const [urls, setUrls] = useState<{ key: string; list: (string | null)[] } | null>(null);
-  const [index, setIndex] = useState(0);
-  const key = ids.join(",");
-  useEffect(() => {
-    if (!hovering || !ids.length || urls?.key === key) return;
-    let cancelled = false;
-    void Promise.all(ids.map(id => loadMedia(id).then(item => item?.derivatives.find(entry => entry.name === "card")?.url ?? null)))
-      .then(list => { if (!cancelled) setUrls({ key, list }); });
-    return () => { cancelled = true; };
-  }, [hovering, ids, key, urls?.key]);
-  useEffect(() => {
-    if (!hovering || !urls || urls.key !== key || urls.list.filter(Boolean).length < 2) return;
-    const timer = window.setInterval(() => setIndex(current => current + 1), 900);
-    return () => window.clearInterval(timer);
-  }, [hovering, urls, key]);
-  const list = urls?.key === key ? urls.list.filter((url): url is string => !!url) : [];
-  if (!hovering || list.length < 2) return null;
-  return list[index % list.length] ?? null;
 }
 
 function haystack(project: CommunityProject): string {
@@ -267,7 +220,7 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
         listRef.current?.querySelector<HTMLElement>(`[data-project-id="${CSS.escape(id)}"]`)?.scrollIntoView({ block: "nearest" });
         return;
       }
-      if (event.key === "Enter" && selected && !inControl) { event.preventDefault(); router.push(`/resources/${selected.slug}`); }
+      if (event.key === "Enter" && selected && !inControl) { event.preventDefault(); router.push(`/workshop/${selected.slug}`); }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
@@ -326,19 +279,19 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
         <div className="directory-rail-bottom">
           <Link href="/account/creations/new">Share a creation</Link>
           <Link href="/account/creations">My creations</Link>
-          <Link href="/community">Hub home</Link>
+          <Link href="/workshop/discover">Workshop home</Link>
           <Link href="/docs/community-hub-warden">Install with Warden</Link>
         </div>
       </aside>
-      <section className="directory-main" aria-label="Community library">
+      <section className="directory-main" aria-label="Workshop">
         {active.length ? <div className="directory-results-bar"><span className="directory-kicker">Filters</span>
           <div className="directory-active-filters">{active.map(item => <button key={item.key} onClick={() => updateFilters({ [item.key]: item.key === "saved" ? false : "" })} aria-label={`Remove ${item.label} filter`}>{item.label}<span aria-hidden="true">×</span></button>)}
             <button className="sb-clear" onClick={reset}>Reset all</button></div></div> : null}
         <section className="sb-col-main" aria-label="Creations" ref={listRef}>
           {catalog.items.length === 0 ? <div className="sb-offline" role="status" aria-busy={catalog.loading}>
-            <span className="directory-kicker">{catalog.error ? "HUB UNREACHABLE" : "COMMUNITY LIBRARY"}</span>
+            <span className="directory-kicker">{catalog.error ? "HUB UNREACHABLE" : "WORKSHOP"}</span>
             <h2>{catalog.error ? "Unable to load the library" : catalog.loading ? "Reading the library…" : "Nothing published yet"}</h2>
-            <p>{catalog.error ?? (catalog.loading ? "Community creations appear here as soon as the hub answers." : "The first reviewed creations will appear here. Bring something you have built.")}</p>
+            <p>{catalog.error ?? (catalog.loading ? "Creations appear here as soon as the hub answers." : "The first reviewed creations will appear here. Bring something you have built.")}</p>
             {catalog.error ? <button className="btn btn-primary btn-small" type="button" disabled={catalog.loading} onClick={() => void fetchPage(filters.sort, null)}>Try again</button> :
               catalog.loading ? <div className="directory-loading" aria-hidden="true"><i /><i /><i /></div> : <Link className="btn btn-primary btn-small" href="/account/creations/new">Share a creation</Link>}
           </div> : filters.view === "tiles" ? <>
@@ -371,7 +324,7 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
       <ResourceInspector project={selected} isSaved={selected ? !!saved[selected.projectId] : false} onToggleSave={() => selected && void toggleSave(selected)} onClose={() => setSelectedId(null)} />
     </div>
     <footer className="directory-footnote">
-      <span>OPEN//77 COMMUNITY HUB</span>
+      <span>OPEN//77 WORKSHOP</span>
       <span className="directory-list-hint" aria-hidden="true"><kbd>↑</kbd><kbd>↓</kbd> select · <kbd>Enter</kbd> open · <kbd>/</kbd> search</span>
       <span className="directory-footnote-stage">Free resources · reviewed before publication</span>
       <Link href="/account/creations/new">Share a creation ↗</Link>
@@ -385,14 +338,16 @@ function ResourceTile({ project, isSaved, savingSave, isSelected, onSelect, onTo
 }) {
   const { content } = project;
   const [hovering, setHovering] = useState(false);
-  const cover = useDerivative(content.media?.[0]?.mediaId, "card");
-  const preview = useHoverGallery(content.media, hovering);
-  const shown = preview ?? cover;
-  const href = `/resources/${project.slug}`;
+  const cover = useDerivative(content.media?.[0]?.mediaId ?? content.clipMediaId, content.media?.[0] ? "card" : "poster");
+  const preview = useHoverPreview(content.media, content.clipMediaId, hovering);
+  const shown = preview?.kind === "image" ? preview.src : cover;
+  const href = `/workshop/${project.slug}`;
   const mark = categories.find(category => category.id === content.category)?.mark ?? "//";
   return <li className={`hub-tile${isSelected ? " is-selected" : ""}`} data-project-id={project.projectId} onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
-    <Link className="hub-tile-art" href={href} aria-label={`Open ${content.title}`} style={shown ? undefined : { backgroundImage: `url(${categoryArt(content.category)})` }}>
-      {shown ? <Image unoptimized src={shown} width={640} height={360} alt="" referrerPolicy="no-referrer" /> : <span className="hub-tile-mark" aria-hidden="true">{mark}</span>}
+    <Link className="hub-tile-art" href={href} aria-label={`Open ${content.title}`} style={shown || preview?.kind === "video" ? undefined : { backgroundImage: `url(${categoryArt(content.category)})` }}>
+      {preview?.kind === "video" ? <video src={preview.src} poster={preview.poster ?? cover ?? undefined} muted autoPlay loop playsInline preload="none" aria-hidden="true" /> :
+        shown ? <Image unoptimized src={shown} width={640} height={360} alt="" referrerPolicy="no-referrer" /> : <span className="hub-tile-mark" aria-hidden="true">{mark}</span>}
+      {content.clipMediaId && !preview && <span className="hub-tile-play" aria-hidden="true">▶</span>}
       <span className="hub-tile-badges"><button type="button" className="sb-mode" onClick={event => { event.preventDefault(); event.stopPropagation(); updateFilters({ category: content.category }); }}>{categoryLabel(content.category)}</button>
         {content.kind === "showcase" ? <span className="tag hub-tile-kind">Showcase</span> : content.maturity === "stable" ? <span className="tag hub-tile-kind is-stable">Stable</span> : null}</span>
       {(content.media?.length ?? 0) > 1 && <span className="hub-tile-count" aria-hidden="true">{content.media?.length} shots</span>}
@@ -419,7 +374,7 @@ function ResourceRow({ project, isSaved, savingSave, isSelected, onSelect, onTog
     <div className="sb-row-main">
       <span className="sb-thumb hub-thumb" aria-hidden="true">{thumb ? <Image unoptimized src={thumb} width={26} height={26} alt="" referrerPolicy="no-referrer" /> : <span className="hub-thumb-mark">{mark}</span>}</span>
       <span className="sb-id">
-        <Link className="sb-row-link" href={`/resources/${project.slug}`} aria-label={`Open ${content.title}`}><span className="sb-name">{content.title}</span></Link>
+        <Link className="sb-row-link" href={`/workshop/${project.slug}`} aria-label={`Open ${content.title}`}><span className="sb-name">{content.title}</span></Link>
         <span className="sb-desc" title={content.summary}>{project.creatorHandle ? `@${project.creatorHandle} · ` : ""}{content.summary || "Community creation"}</span>
       </span>
     </div>
@@ -431,13 +386,13 @@ function ResourceRow({ project, isSaved, savingSave, isSelected, onSelect, onTog
     <span className="sb-players hub-row-stats"><span className="sb-players-num"><b>▲ {formatCount(project.upvotes)}</b>{content.kind === "resource" && <span className="sb-players-max"> · ⤓ {formatCount(project.downloads)}</span>}</span></span>
     <span className="sb-actions">
       <button className={`fav-btn${isSaved ? " is-fav" : ""}`} aria-pressed={isSaved} disabled={savingSave} aria-label={isSaved ? `Remove ${content.title} from saved` : `Save ${content.title}`} onClick={onToggleSave}><StarIcon size={15} filled={isSaved} /></button>
-      <Link className="sb-connect" href={`/resources/${project.slug}`} aria-label={`Open ${content.title}`}>{content.kind === "resource" ? "Get" : "View"}</Link>
+      <Link className="sb-connect" href={`/workshop/${project.slug}`} aria-label={`Open ${content.title}`}>{content.kind === "resource" ? "Get" : "View"}</Link>
     </span>
   </li>;
 }
 
 function ResourceInspector({ project, isSaved, onToggleSave, onClose }: { project: CommunityProject | null; isSaved: boolean; onToggleSave: () => void; onClose: () => void }) {
-  const cover = useDerivative(project?.content.media?.[0]?.mediaId, "gallery");
+  const cover = useDerivative(project?.content.media?.[0]?.mediaId ?? project?.content.clipMediaId, project?.content.media?.[0] ? "gallery" : "poster");
   const [latest, setLatest] = useState<{ projectId: string; release: CommunityRelease | null; failed: boolean } | null>(null);
   useEffect(() => {
     if (!project || project.content.kind !== "resource") return;
@@ -460,15 +415,15 @@ function ResourceInspector({ project, isSaved, onToggleSave, onClose }: { projec
       <div className="directory-detail-head"><div><span className="directory-kicker">{content.kind === "showcase" ? "// Showcase" : "// Resource"}</span><h2 className="directory-detail-name">{content.title}</h2></div></div>
       <div className="directory-detail-actions hub-detail-actions">
         {content.kind === "resource" && release?.release ? <DownloadButton releaseId={release.release.releaseId} version={release.release.version} /> :
-          <Link className="btn btn-primary directory-detail-connect" href={`/resources/${project.slug}${content.kind === "resource" ? "/versions" : ""}`}>{content.kind === "resource" ? (release ? "Browse versions" : "Checking releases…") : "View showcase"}</Link>}
+          <Link className="btn btn-primary directory-detail-connect" href={`/workshop/${project.slug}${content.kind === "resource" ? "/versions" : ""}`}>{content.kind === "resource" ? (release ? "Browse versions" : "Checking releases…") : "View showcase"}</Link>}
         <button className={`fav-btn directory-detail-fav${isSaved ? " is-fav" : ""}`} aria-pressed={isSaved} aria-label={isSaved ? "Remove from saved" : "Save creation"} onClick={onToggleSave}><StarIcon size={16} filled={isSaved} /></button>
-        <Link className="directory-detail-more" href={`/resources/${project.slug}`}>Full page ↗</Link>
+        <Link className="directory-detail-more" href={`/workshop/${project.slug}`}>Full page ↗</Link>
       </div>
       <p className="directory-detail-desc">{content.summary || "This creation has no summary yet."}</p>
       <dl className="directory-detail-facts">
         {content.kind === "resource" && <div><dt>Latest</dt><dd>{release?.release ? `v${release.release.version} · ${formatBytes(release.release.sizeBytes)}` : release?.failed ? "Unavailable" : release ? "No stable release" : "…"}</dd></div>}
         {content.kind === "resource" && release?.release && <div><dt>Tested on</dt><dd>{release.release.metadata.testedBuilds.length ? release.release.metadata.testedBuilds.slice(0, 2).join(", ") : "Not declared"}</dd></div>}
-        <div><dt>Creator</dt><dd>{project.creatorHandle ? <Link href={`/creators/${project.creatorHandle}`}>@{project.creatorHandle}</Link> : "Community creator"}</dd></div>
+        <div><dt>Creator</dt><dd>{project.creatorHandle ? <Link href={`/workshop/creators/${project.creatorHandle}`}>@{project.creatorHandle}</Link> : "Community creator"}</dd></div>
         <div><dt>Status</dt><dd>{content.maturity === "stable" ? "Stable" : "Experimental"}</dd></div>
         <div><dt>Upvotes</dt><dd>{formatCount(project.upvotes)}</dd></div>
         {content.kind === "resource" && <div><dt>Downloads</dt><dd>{formatCount(project.downloads)}</dd></div>}
@@ -477,8 +432,8 @@ function ResourceInspector({ project, isSaved, onToggleSave, onClose }: { projec
       </dl>
       {content.tags.length > 0 && <div className="directory-detail-tags">{content.tags.map(tag => <button className="tag" key={tag} onClick={() => updateFilters({ tag: tag.toLowerCase() })}>{tag}</button>)}</div>}
       <div className="directory-detail-links">
-        <Link href={`/resources/${project.slug}/discussion`}>Discussion</Link>
-        {content.kind === "resource" && <Link href={`/resources/${project.slug}/versions`}>All versions</Link>}
+        <Link href={`/workshop/${project.slug}/discussion`}>Discussion</Link>
+        {content.kind === "resource" && <Link href={`/workshop/${project.slug}/versions`}>All versions</Link>}
       </div>
     </div>
   </aside>;

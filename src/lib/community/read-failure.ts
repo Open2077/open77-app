@@ -5,7 +5,7 @@ export function hubReadFailure(status?: number) {
   };
   if (status === 410) return {
     label: "CONTENT REMOVED", title: "This content has been removed.",
-    description: "It is no longer available on the Hub. You can explore other public creations.", retry: false,
+    description: "It is no longer available on the Workshop. You can explore other public creations.", retry: false,
   };
   if (status === 404) return {
     label: "CONTENT NOT FOUND", title: "We couldn’t find this content.",

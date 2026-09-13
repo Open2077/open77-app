@@ -48,7 +48,7 @@ export default function robots(): MetadataRoute.Robots {
       },
       ...ANSWER_ENGINE_AGENTS.map((userAgent) => ({ userAgent, allow: "/" })),
     ],
-    sitemap: [absoluteUrl("/sitemap.xml"), absoluteUrl("/community/sitemap.xml")],
+    sitemap: [absoluteUrl("/sitemap.xml"), absoluteUrl("/workshop/sitemap.xml")],
     host: absoluteUrl("/"),
   };
 }

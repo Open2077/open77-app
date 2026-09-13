@@ -16,7 +16,7 @@ const LEGACY_PAGES: Record<string, string> = {
   "/index.html": "/",
   "/servers.html": "/servers",
   "/create.html": "/create",
-  "/community.html": "/community",
+  "/community.html": "/workshop/discover",
   "/brand.html": "/brand",
   "/docs.html": "/docs/platform",
 };
@@ -77,6 +77,13 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       { source: "/server.html", destination: "/servers", permanent: true },
+      // The community resource library moved under /workshop (2026-09-13).
+      { source: "/community", destination: "/workshop/discover", permanent: true },
+      { source: "/community/sitemap.xml", destination: "/workshop/sitemap.xml", permanent: true },
+      { source: "/community/sitemaps/:path*", destination: "/workshop/sitemaps/:path*", permanent: true },
+      { source: "/resources", destination: "/workshop", permanent: true },
+      { source: "/resources/:path*", destination: "/workshop/:path*", permanent: true },
+      { source: "/creators/:handle", destination: "/workshop/creators/:handle", permanent: true },
     ];
   },
 

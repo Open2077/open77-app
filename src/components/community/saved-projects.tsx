@@ -37,8 +37,8 @@ function Entries({ token, kind }: { token: string; kind: "save" | "subscription"
   function load(cursor?: string) { setPage(null); setCursor(cursor); setRefresh(value => value + 1); }
   return <section aria-label={kind === "save" ? "Saved creations" : "Release subscriptions"}>
     {error && <p className="hub-notice" role="alert">{error}</p>}{!page && !error && <p role="status">Loading your list…</p>}
-    {page?.items.length === 0 && <div className="hub-empty"><h2>No creations on this page yet.</h2><Link href="/resources">Explore resources →</Link></div>}
-    {page?.items.map(item => <article className="hub-draft-row" key={item.projectId}><div><h2>{item.project ? <Link href={`/resources/${item.project.slug}`}>{item.project.content.title}</Link> : "Creation unavailable"}</h2>
+    {page?.items.length === 0 && <div className="hub-empty"><h2>No creations on this page yet.</h2><Link href="/workshop">Explore resources →</Link></div>}
+    {page?.items.map(item => <article className="hub-draft-row" key={item.projectId}><div><h2>{item.project ? <Link href={`/workshop/${item.project.slug}`}>{item.project.content.title}</Link> : "Creation unavailable"}</h2>
       <p>{item.project?.content.summary ?? "This creation is no longer publicly available. You can still remove it from your list."}</p></div>
       <button className="btn btn-ghost" disabled={busy !== null} onClick={() => void remove(item.projectId)}>{busy === item.projectId ? "Removing…" : kind === "save" ? "Remove saved creation" : "Unfollow releases"}</button></article>)}
     <nav className="hub-actions" aria-label="Private list pages"><button className="btn btn-ghost" disabled={busy !== null} onClick={() => load(cursor)}>Refresh</button>

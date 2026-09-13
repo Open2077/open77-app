@@ -14,7 +14,7 @@ import { withCommunityImage } from "@/lib/community/metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params; const project = await getProject(slug).catch(() => null);
-  return project ? withCommunityImage(pageMetadata({ title: `${project.content.title} — discussion`, description: `Questions and discussion about ${project.content.title}.`, path: `/resources/${project.slug}/discussion` }), project.content.media?.[0]?.mediaId, project.content.media?.[0]?.altText ?? project.content.title) : { title: "Discussion unavailable", robots: { index: false, follow: false } };
+  return project ? withCommunityImage(pageMetadata({ title: `${project.content.title} — discussion`, description: `Questions and discussion about ${project.content.title}.`, path: `/workshop/${project.slug}/discussion` }), project.content.media?.[0]?.mediaId, project.content.media?.[0]?.altText ?? project.content.title) : { title: "Discussion unavailable", robots: { index: false, follow: false } };
 }
 
 export default async function DiscussionPage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ cursor?: string; thread?: string }> }) {
@@ -23,8 +23,8 @@ export default async function DiscussionPage({ params, searchParams }: { params:
   if (project instanceof CommunityReadError && project.status === 404) notFound();
   if (!project || typeof project !== "object" || !("projectId" in project)) return <HubShell><HubReadFailure error={project} /></HubShell>;
   const resource = project as Awaited<ReturnType<typeof getProject>>;
-  if (resource.slug !== slug) permanentRedirect(`/resources/${resource.slug}/discussion${thread ? `?thread=${encodeURIComponent(thread)}` : cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`);
-  const base = `/resources/${resource.slug}`;
+  if (resource.slug !== slug) permanentRedirect(`/workshop/${resource.slug}/discussion${thread ? `?thread=${encodeURIComponent(thread)}` : cursor ? `?cursor=${encodeURIComponent(cursor)}` : ""}`);
+  const base = `/workshop/${resource.slug}`;
   let page: CommunityPage<CommunityComment>;
   try {
     if (thread) {
@@ -48,8 +48,7 @@ export default async function DiscussionPage({ params, searchParams }: { params:
     latest = direct && typeof direct === "object" && "releaseId" in direct ? direct : pickLatestStable((await listReleases(resource.projectId).catch(() => null))?.items ?? []);
   }
   const issueUrl = safeHttpUrl(resource.content.issueUrl);
-  return <HubShell><p className="hub-back"><Link href="/resources">← Library</Link></p>
-    <ResourceHeader project={resource} latest={latest} tab="discussion" />
+  return <HubShell><ResourceHeader project={resource} latest={latest} tab="discussion" />
     <div className="hub-detail hub-detail-single"><article className="hub-detail-main">
       <div className="hub-section-head"><h2>Discussion</h2>{issueUrl && <a className="hub-link-chip" href={issueUrl} target="_blank" rel="noopener noreferrer nofollow ugc"><GlobeIcon size={13} />Report bugs on the author’s tracker</a>}</div>
       <Discussion project={resource} page={page} focusThread={!!thread} />

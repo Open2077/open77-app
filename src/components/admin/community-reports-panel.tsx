@@ -77,7 +77,7 @@ function ReportRow({ token, accountId, report, updated }: { token: string; accou
     {project && <details open><summary>Current project draft: {project.content.title} · {project.state} · revision {project.revision}</summary>
       <p>{project.content.summary}</p><pre className="hub-review-text">{project.content.description}</pre>
       <div className="hub-media-editor">{project.content.media?.map(image => <PrivateMediaPreview key={image.mediaId} token={token} mediaId={image.mediaId} alt={image.altText} />)}</div>
-      <Link href={`/resources/${project.slug}`}>Open public project page</Link>
+      <Link href={`/workshop/${project.slug}`}>Open public project page</Link>
       <p><Link href={`/admin/resources/${project.projectId}`}>Open project moderation and release history</Link></p>
       <ProjectModerationControls token={token} projectId={project.projectId} updated={inspect} /></details>}
     {release && <details open><summary>Release {release.version} · {release.state}</summary><pre className="hub-review-text">{release.metadata.changelog}</pre>

@@ -49,7 +49,7 @@ class Cdp {
 }
 
 export async function run(options) {
-  const route = `/resources/${options.slug}`, canonical = `https://open2077.net${route}`;
+  const route = `/workshop/${options.slug}`, canonical = `https://open2077.net${route}`;
   // Verify the already-running origin before creating a browser. No server startup.
   const response = await fetch(options.origin + route, { redirect: "error", signal: AbortSignal.timeout(15000) });
   if (!response.ok) throw Error(`Published SSR fixture unavailable: HTTP ${response.status}`);

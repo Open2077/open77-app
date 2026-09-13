@@ -40,7 +40,7 @@ const CHECKS = [
   // `open77-base` is private, so no rendered page may link to it. These guard
   // against a wiki link, a `sameAs` entry or a hand-written href reintroducing
   // a guaranteed 404.
-  { path: "/community", expect: 200, absent: "open77-base" },
+  { path: "/workshop/discover", expect: 200, absent: "open77-base" },
   { path: "/brand", expect: 200 },
   { path: "/docs", expect: 200, contains: "Welcome to OPEN//77", absent: "open77-base" },
   { path: "/docs/vehicles", expect: 200, contains: "authority", absent: "open77-base" },
@@ -82,7 +82,7 @@ const CHECKS = [
   { path: "/index.html", expect: 308, location: "/" },
   { path: "/servers.html", expect: 308, location: "/servers" },
   { path: "/create.html", expect: 308, location: "/create" },
-  { path: "/community.html", expect: 308, location: "/community" },
+  { path: "/community.html", expect: 308, location: "/workshop/discover" },
   { path: "/brand.html", expect: 308, location: "/brand" },
   { path: "/docs.html", expect: 308, location: "/docs/platform" },
   // Next re-appends the source query string to a redirect destination, so the

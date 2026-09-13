@@ -9,6 +9,6 @@ export function HubReadFailure({ error }: { error: unknown }) {
   const failure = hubReadFailure(error instanceof CommunityReadError ? error.status : undefined);
   return <div className="hub-empty" role="status"><span className="hub-kicker">{failure.label}</span>
     <h2>{failure.title}</h2><p>{failure.description}</p>
-    {failure.retry ? <HubRetry /> : <Link className="btn btn-ghost" href="/resources">Explore public resources</Link>}
+    {failure.retry ? <HubRetry /> : <Link className="btn btn-ghost" href="/workshop">Explore public resources</Link>}
   </div>;
 }

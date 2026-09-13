@@ -70,7 +70,7 @@ function Entries({ token, unread }: { token: string; unread: boolean }) {
       <p className="hub-kicker">{item.readAtUtc ? "Read" : "Unread"}</p><h2>{item.content.title}</h2>
       <p className="hub-release-meta"><time dateTime={item.createdAtUtc}>{new Date(item.createdAtUtc).toLocaleString()}</time></p>
       <p className="hub-activity-reason">{item.content.message}</p>
-      <div className="hub-actions">{item.content.path && /^(?:\/account\/invitations|\/account\/creations\/[0-9a-f-]{36}\/edit|\/resources\/[a-z0-9]+(?:-[a-z0-9]+)*\/(?:versions|discussion\?thread=[0-9a-f-]{36}))$/i.test(item.content.path) && <Link href={item.content.path}>Open update →</Link>}
+      <div className="hub-actions">{item.content.path && /^(?:\/account\/invitations|\/account\/creations\/[0-9a-f-]{36}\/edit|\/(?:workshop|resources)\/[a-z0-9]+(?:-[a-z0-9]+)*\/(?:versions|discussion\?thread=[0-9a-f-]{36}))$/i.test(item.content.path) && <Link href={item.content.path.replace(/^\/resources\//, "/workshop/")}>Open update →</Link>}
         {!item.readAtUtc && <button className="btn btn-ghost" disabled={busy !== null} onClick={() => void markRead(item.notificationId)}>{busy === item.notificationId ? "Saving…" : "Mark as read"}</button>}</div>
     </article>)}
     <nav className="hub-actions" aria-label="Notification pages"><button className="btn btn-ghost" disabled={busy !== null} onClick={() => load(cursor)}>Refresh</button>

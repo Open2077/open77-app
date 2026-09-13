@@ -8,7 +8,7 @@ type Search = Record<string, string | string[] | undefined>;
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<Search> }) {
   const search = await searchParams;
-  return { ...pageMetadata({ title: "Community library", description: "Browse scripts, gamemodes, maps, interfaces and tools for your OPEN//77 server, made by the community.", path: "/resources" }),
+  return { ...pageMetadata({ title: "Workshop", description: "Browse scripts, gamemodes, maps, interfaces and tools for your OPEN//77 server, made by the community.", path: "/workshop" }),
     ...(Object.keys(search).length ? { robots: { index: false, follow: true } } : {}) };
 }
 
@@ -27,8 +27,8 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Pr
   return <>
     <main id="main" className="sb-page"><ResourceDirectory initial={initial} initialSort={sort} initialSearch={query.toString() ? `?${query}` : ""} /></main>
     <JsonLd data={jsonLdGraph(
-      collectionPageNode({ name: "OPEN//77 community library", description: "Community-made resources, gamemodes, maps and tools for OPEN//77 servers.", path: "/resources" }),
-      breadcrumbNode([{ name: "Home", path: "/" }, { name: "Community", path: "/community" }, { name: "Library", path: "/resources" }]),
+      collectionPageNode({ name: "OPEN//77 community library", description: "Community-made resources, gamemodes, maps and tools for OPEN//77 servers.", path: "/workshop" }),
+      breadcrumbNode([{ name: "Home", path: "/" }, { name: "Community", path: "/workshop/discover" }, { name: "Library", path: "/workshop" }]),
     )} />
   </>;
 }

@@ -18,6 +18,7 @@ export function DraftPreview({ content, token }: { content: CommunityContent; to
   }, [content]);
   return <article className="hub-section" aria-label="Private project preview"><p className="hub-kicker">PRIVATE DRAFT PREVIEW</p>
     <h2>{content.title || "Untitled creation"}</h2><p>{content.summary}</p>
+    {content.clipMediaId && <div className="hub-media-editor"><figure><PrivateMediaPreview token={token} mediaId={content.clipMediaId} alt="Hover clip" variant="clip" /><figcaption>Hover clip</figcaption></figure></div>}
     <div className="hub-media-editor">{content.media?.map(item => <figure key={item.mediaId}><PrivateMediaPreview token={token} mediaId={item.mediaId} alt={item.altText} />{item.caption && <figcaption>{item.caption}</figcaption>}</figure>)}</div>
     {error ? <p role="alert">{error}</p> : rendered?.source !== content ? <p role="status">Rendering preview…</p> : <>
       <section><h3>Overview</h3><div className="hub-prose" dangerouslySetInnerHTML={{ __html: rendered.html[0] ?? "" }} /></section>

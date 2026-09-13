@@ -40,7 +40,7 @@ export function CommunityRankingControls({ token }: { token: string }) {
     } catch (error) { setError(error instanceof Error ? error.message : "Ranking exclusion could not be loaded or saved. Refresh before retrying."); }
     finally { setBusy(false); }
   }
-  return <details className="hub-release"><summary>Exclude test or abusive account activity from ranking</summary><p>This affects the account’s vote and attributed-download ranking contributions across the Hub. Its projects and public delivery totals remain visible.</p>
+  return <details className="hub-release"><summary>Exclude test or abusive account activity from ranking</summary><p>This affects the account’s vote and attributed-download ranking contributions across the Workshop. Its projects and public delivery totals remain visible.</p>
     <form className="hub-form" onSubmit={event => { event.preventDefault(); void act(false); }}><label>Account ID<input required pattern="[0-9a-fA-F-]{36}" maxLength={36} value={accountId} disabled={busy} onChange={event => { setAccountId(event.target.value); setSnapshot(null); setConfirmed(false); }} /></label><button className="btn btn-ghost" disabled={busy}>Load current exclusion</button></form>
     {error && <p role="alert">{error}</p>}{status && <p role="status">{status}</p>}
     {snapshot && <form className="hub-form" onSubmit={event => { event.preventDefault(); void act(true); }}><p>{snapshot.excluded ? "Activity excluded from ranking." : "Activity eligible for normal ranking checks."}</p>{snapshot.reason && <p>Previous internal reason: {snapshot.reason}</p>}

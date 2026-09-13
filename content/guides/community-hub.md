@@ -1,11 +1,11 @@
 # Share and use community resources
 
-The OPEN//77 Hub brings together Lua resources, gamemodes, mapping projects and
-showcases made for OPEN//77 servers. Start in [Resources](/resources) to find
-installable packages, or [Community](/community) for the wider collection.
+The OPEN//77 Workshop brings together Lua resources, gamemodes, mapping projects and
+showcases made for OPEN//77 servers. Start in [the Workshop](/workshop) to find
+installable packages, or [Discover](/workshop/discover) for featured and trending creations.
 Packages in this release are free. Selling packages is outside this release.
 
-This guide describes the Hub release candidate. It does not announce production
+This guide describes the Workshop release candidate. It does not announce production
 availability: the operator must enable the corresponding services. A disabled
 import or installation control means that capability is unavailable on that host.
 
@@ -16,9 +16,9 @@ import or installation control means that capability is unavailable on that host
 - **Sharing something you built:** sign in, verify your email, create your
   [creator profile](/account/profile), then open [My creations](/account/creations).
 - **Running a server:** begin with [Host a server](/docs/host-a-server), then use
-  the Hub section in [Warden](/docs/warden) to review an installation.
+  the Workshop section in [Warden](/docs/warden) to review an installation.
 - **Learning to build:** start with [Writing a gamemode](/docs/writing-a-gamemode)
-  and [the resource runtime](/docs/resource-runtime). A Hub project does not
+  and [the resource runtime](/docs/resource-runtime). A Workshop project does not
   replace a resource's `open77.lua` manifest.
 
 ## Find and download a release
@@ -52,7 +52,7 @@ For a small starting point, use the
 [newly authored MIT resource and bundle examples](https://github.com/Open2077/open77-base/tree/feat/community-hub/examples/community-hub/v1).
 Their README explains ZIP layout, configuration templates and the versioned
 metadata schema. They contain diagnostic Lua only, with no game or community
-assets. These links refer to the Hub development branch until a release is pinned.
+assets. These links refer to the Workshop development branch until a release is pinned.
 
 Create a project in [My creations](/account/creations). The editor has five steps:
 
@@ -99,7 +99,7 @@ enabled, connect GitHub through the offered authorization flow, choose the
 repository, release and eligible ZIP asset, and inspect the repository/tag, asset
 identity, size and SHA-256 before confirming redistribution rights.
 
-The import copies a specific release asset into the Hub's private inspection
+The import copies a specific release asset into the Workshop's private inspection
 pipeline. Pasting a repository URL into the source field alone does not import
 anything. A changing branch, arbitrary external download URL or automatically
 generated source archive is not a substitute for the selected release asset.
@@ -125,7 +125,7 @@ into the export form.
 Select server-discovered resource names, a release version and any explicit
 example configuration/documentation. Review included and excluded files,
 dependencies, metadata, warnings and blocking findings. Build the reviewed ZIP;
-you can download and inspect it locally before sending it to the Hub. Local
+you can download and inspect it locally before sending it to the Workshop. Local
 credential detection is heuristic and cannot guarantee that a package contains
 no secrets. Your review and redistribution confirmation are still required.
 
@@ -182,7 +182,7 @@ data may prevent cleanup even when disk space is low. Consult the canonical
 [retention policy](https://github.com/Open2077/open77-base/blob/feat/community-hub/docs/community-hub-retention.md)
 and [package metadata specification](https://github.com/Open2077/open77-base/blob/feat/community-hub/docs/community-hub-package-metadata.md)
 for exact limits and configuration-template declarations. Do not manually delete
-live Hub journals or backups to bypass a quota.
+live Workshop journals or backups to bypass a quota.
 
 ## Discuss, follow and report
 
@@ -197,7 +197,7 @@ your own comment; deletion preserves its replies. Authors can pin useful answers
 and mark threads resolved. Do not post credentials or player-private information.
 
 Unsent comments, replies, comment edits and appeals stay in this tab's memory for
-the account that wrote them when you navigate between Hub pages. Return to the
+the account that wrote them when you navigate between Workshop pages. Return to the
 same form (or choose **Edit / resume draft**) to continue. Use **Discard draft**
 to remove one explicitly. These drafts are not uploaded or saved across a reload
 or a closed tab; the browser warns before leaving while drafts remain. The tab

@@ -10,6 +10,7 @@ import * as api from "@/lib/community/client-api";
 import { categories, type CommunityContent, type CommunityPage, type CommunityProject } from "@/lib/community/types";
 import { CreatorReleases } from "./creator-releases";
 import { CreatorMedia } from "./creator-media";
+import { CreatorClip } from "./creator-clip";
 import { ActivityHistory } from "./activity-history";
 import { mergeDraft, type DraftField } from "@/lib/community/draft-merge";
 import { DraftPreview } from "./draft-preview";
@@ -53,7 +54,7 @@ function Dashboard({ session }: { session: StoredSession }) {
   return <div>{projects.map(project => <article className="hub-draft-row" key={project.projectId}><div>
     <p className="hub-kicker">{project.state.replaceAll("_", " ")} · {project.revisionStatus.replaceAll("_", " ")}</p><h2>{project.content.title}</h2><p>{project.content.summary || "Add a short description to introduce your creation."}</p>
   </div><div className="hub-actions"><Link className="btn btn-ghost" href={`/account/creations/${project.projectId}/edit`}>Edit project</Link>
-    {project.publishedAtUtc && project.state !== "suspended" && <Link href={`/resources/${project.slug}`}>View public page ↗</Link>}
+    {project.publishedAtUtc && project.state !== "suspended" && <Link href={`/workshop/${project.slug}`}>View public page ↗</Link>}
     <DraftDeletion token={session.token} accountId={session.accountId} project={project} deleted={() => { setPage(null); setAttempt(value => value + 1); }} /></div></article>)}
     {!projects.length && <p className="hub-notice">No creations remain on this page. Return to the previous page.</p>}
     <nav className="hub-actions" aria-label="Your creation pages">{trail.length > 0 && <button className="btn btn-ghost" onClick={() => { setCursor(trail[trail.length - 1]); setTrail(value => value.slice(0, -1)); }}>Previous creations</button>}
@@ -265,7 +266,8 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
       <div className="hub-actions"><button type="submit" className="btn btn-primary" disabled={busy || conflict || locked}>{busy ? "Saving…" : project ? "Save draft" : "Create draft"}</button>
         <span role="status">{dirty ? busy ? "Saving your changes…" : paused || conflict ? "Unsaved changes — autosave paused" : project ? "Unsaved changes — autosave pending" : "Create your draft to enable autosave" : project ? "All project changes saved" : ""}</span></div>
     </form>
-    {project && <fieldset className="hub-editor-fields" hidden={step !== 1} disabled={conflict || locked}><CreatorMedia token={session.token} projectId={project.projectId} media={content.media ?? []} onChange={value => change("media", value)} /></fieldset>}
+    {project && <fieldset className="hub-editor-fields" hidden={step !== 1} disabled={conflict || locked}><CreatorMedia token={session.token} projectId={project.projectId} media={content.media ?? []} onChange={value => change("media", value)} />
+      <CreatorClip token={session.token} projectId={project.projectId} clipMediaId={content.clipMediaId} onChange={value => change("clipMediaId", value)} /></fieldset>}
     {step === 1 && <DraftPreview content={content} token={session.token} />}
     {!project && step > 0 && <p className="hub-notice">Create your draft from Basics to upload media and releases. Your text stays in this tab until saved.</p>}
     {project && <div hidden={content.kind !== "resource" || (step !== 2 && step !== 3 && step !== 4)}><CreatorReleases session={session} project={project} readOnly={step === 4 || locked} onUnsavedChange={setReleaseDirty} /></div>}

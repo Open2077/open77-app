@@ -58,7 +58,7 @@ function CommentComposer({ projectId, parentId, existing, updated }: { projectId
     <textarea required maxLength={5000} rows={4} value={body} readOnly={busy || !canWrite} onChange={event => change(event.target.value)} /></label>
     {!existing && <label className="hub-review-confirm"><input type="checkbox" checked={notify} onChange={event => change(body, event.target.checked)} disabled={busy || !session?.emailVerified} />Notify me about replies to this thread</label>}
     {!session?.emailVerified && <p><Link href="/account" target="_blank">Sign in with a verified account</Link> to write a comment. Saved drafts are available only to the account that wrote them.</p>}
-    {memory.draft && <p role="status">Draft kept in this tab for your account across Hub pages. Reloading or closing the tab loses it.{existing && ` This edit uses revision ${revision}.`} <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => { if (window.confirm("Discard this unsent draft?")) memory.discard(); }}>Discard draft</button></p>}
+    {memory.draft && <p role="status">Draft kept in this tab for your account across Workshop pages. Reloading or closing the tab loses it.{existing && ` This edit uses revision ${revision}.`} <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => { if (window.confirm("Discard this unsent draft?")) memory.discard(); }}>Discard draft</button></p>}
     {error && <p className="hub-notice" role="alert">{error}</p>}<div><button className="btn btn-primary" disabled={busy || !canWrite || !body.trim()}>{busy ? "Saving…" : existing ? "Save edit" : parentId ? "Post reply" : "Post comment"}</button></div>
   </form>;
 }
@@ -68,7 +68,7 @@ function CommentEntry({ comment, project, updated, initiallyExpanded = false, ca
   const [expanded, setExpanded] = useState(initiallyExpanded); const [busy, setBusy] = useState(false); const [error, setError] = useState("");
   async function act(action: () => Promise<void>) { setBusy(true); setError(""); try { await action(); updated(); } catch (error) { setError(error instanceof Error ? error.message : "Action failed. Refresh before trying again."); } finally { setBusy(false); } }
   const own = session?.accountId === comment.authorAccountId;
-  return <article id={`comment-${comment.commentId}`} className="hub-comment"><header><strong>{comment.authorHandle ? <Link href={`/creators/${comment.authorHandle}`}>@{comment.authorHandle}</Link> : comment.state === "deleted" ? "Deleted commenter" : "Community member"}</strong>
+  return <article id={`comment-${comment.commentId}`} className="hub-comment"><header><strong>{comment.authorHandle ? <Link href={`/workshop/creators/${comment.authorHandle}`}>@{comment.authorHandle}</Link> : comment.state === "deleted" ? "Deleted commenter" : "Community member"}</strong>
     <p className="hub-release-meta"><time dateTime={comment.createdAtUtc}>{new Date(comment.createdAtUtc).toLocaleString()}</time>{comment.updatedAtUtc !== comment.createdAtUtc ? " · edited" : ""}{comment.pinned ? " · pinned by creator" : ""}{comment.resolved ? " · marked resolved" : ""}</p></header>
     {editing ? <CommentComposer projectId={project.projectId} parentId={comment.parentId} existing={editing} updated={() => { setEditing(null); updated(); }} /> : <p className="hub-activity-reason">{comment.body ?? (comment.state === "deleted" ? "This comment was deleted. Existing replies remain below." : "This comment is hidden.")}</p>}
     {error && <p className="hub-notice" role="alert">{error}</p>}

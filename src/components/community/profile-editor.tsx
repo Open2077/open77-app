@@ -69,7 +69,7 @@ function Editor({ token, active, onDirty }: { token: string; active: boolean; on
           <label>HTTPS address<input required type="url" maxLength={2048} value={link.url} onChange={event => setLinks(current => current.map((item, at) => at === index ? { ...item, url: event.target.value } : item))} /></label>
           <button type="button" className="btn btn-ghost" onClick={() => setLinks(current => current.filter((_, at) => at !== index))}>Remove link {index + 1}</button></div>)}
         {links.length < 5 && <button type="button" className="btn btn-ghost" onClick={() => setLinks(current => [...current, { label: "", url: "" }])}>Add a link</button>}
-        <div className="hub-actions"><button className="btn btn-primary">{busy ? "Saving…" : "Save public profile"}</button>{profile && <Link href={`/creators/${profile.handle}`}>View your public profile →</Link>}</div>
+        <div className="hub-actions"><button className="btn btn-primary">{busy ? "Saving…" : "Save public profile"}</button>{profile && <Link href={`/workshop/creators/${profile.handle}`}>View your public profile →</Link>}</div>
       </fieldset></form>}
     {loaded && profile && <fieldset className="hub-profile-fields" disabled={busy}><CreatorMedia token={token} projectId={null} media={avatarMediaId ? [{ mediaId: avatarMediaId, altText: "Creator avatar" }] : []} onChange={media => { setAvatarMediaId(media[0]?.mediaId ?? null); setStatus("Avatar selection changed. Save your public profile to apply it."); }} />
       <div className="hub-actions"><button type="submit" form="hub-profile-form" className="btn btn-primary">{busy ? "Saving…" : "Save profile and avatar"}</button></div></fieldset>}

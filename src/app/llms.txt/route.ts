@@ -55,7 +55,7 @@ export async function GET() {
     `- [Server browser](${absoluteUrl("/servers")}): live master directory.`,
     `- [Create a server](${absoluteUrl("/create")}): Developer Preview applications and hosting.`,
     `- [Host a server](${absoluteUrl("/host")}): Windows/Linux server downloads for approved preview accounts and staff.`,
-    `- [Community](${absoluteUrl("/community")}): preview access, updates and feedback.`,
+    `- [Workshop](${absoluteUrl("/workshop")}): community-made resources, gamemodes, maps and tools for servers, free to download.`,
     `- [Brand kit](${absoluteUrl("/brand")}): logo, mark, colours and social assets.`,
     `- [Devblog](${absoluteUrl("/devblog")}): development updates as they ship, one post per working day.`,
     "",
