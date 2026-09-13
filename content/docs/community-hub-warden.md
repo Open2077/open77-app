@@ -39,8 +39,12 @@ The search field accepts two things:
   **Copy link** button for exactly this. The short form `workshop:auto-taxi`
   also works.
 
-Press **Search Workshop**. Warden looks the creation up on the OPEN//77 master
-and lists its releases. If the address no longer points at the same creation,
+Press **Search**. Warden looks the creation up on the OPEN//77 master and shows
+it as a single tile; press **Releases & install** on the tile to list its
+releases. Search results appear as tiles with the creation's cover image (or
+its hover clip poster), category, maturity, creator, upvotes and downloads.
+The category chips and the sort menu narrow a search; a tile's
+`workshop:<name>` label is the short link you can paste later. If the address no longer points at the same creation,
 Warden says so; open the page on the website to get the current link.
 
 ## Install or update
@@ -72,7 +76,26 @@ evidence until its final state is clear.
 In the **Resources** tab, a package installed this way carries a **Workshop ·
 v1.0.1** chip (with its own version), and the tab summary counts how many
 resources come from the Workshop. Manage them under **Workshop › Installed
-resources**, not by editing their files.
+from the Workshop**, not by editing their files.
+
+## Installed from the Workshop
+
+The table under the search results lists every package Warden installed, with
+its resources, version, install date and a **Workshop status** chip:
+
+- **published**: the Workshop still lists this exact release;
+- **revoked**: the Workshop withdrew it; installs and updates are blocked, your
+  installed copy stays, and the table shows an alert so you can decide whether
+  to uninstall;
+- **not listed**: the release is no longer public, which does not confirm a
+  revocation;
+- **status unavailable**: the Workshop could not be reached to confirm; press
+  **Refresh** to retry.
+
+Tick packages and press **Review uninstall** to create a maintenance plan.
+Installation history (with rollback reviews), restart staging and private
+storage retention sit under **History, restart staging and storage**, folded
+away until you need them.
 
 ## Installed status and revoked releases
 
