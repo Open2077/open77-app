@@ -4,7 +4,9 @@ import { CodeIcon, GlobeIcon } from "@/components/icons";
 import { safeHttpUrl } from "@/components/admin/format";
 import { HubReadFailure } from "@/components/community/hub-read-failure";
 import { HubShell } from "@/components/community/hub-shell";
-import { CommunityReadError, getProject, latestRelease, listReleases } from "@/lib/community/public-api";
+import { CommunityReadError, getComments, getProject, latestRelease, listReleases } from "@/lib/community/public-api";
+import { Discussion } from "@/components/community/discussion";
+import { GlobeIcon as IssueIcon } from "@/components/icons";
 import { ReleaseList } from "@/components/community/release-list";
 import { MediaGallery } from "@/components/community/media-gallery";
 import { ExternalVideos } from "@/components/community/external-videos";
@@ -14,6 +16,7 @@ import { ProjectView } from "@/components/community/project-view";
 import { ResourceHeader } from "@/components/community/resource-header";
 import { ShareProject } from "@/components/community/share-project";
 import { DownloadButton } from "@/components/community/download-button";
+import { WardenLink } from "@/components/community/warden-link";
 import { withCommunityImage } from "@/lib/community/metadata";
 import { communityStructuredData } from "@/lib/community/structured-data";
 import { formatBytes, formatCount, formatDate, pickLatestStable } from "@/lib/community/format";
@@ -48,10 +51,11 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
   const latest: CommunityRelease | null = latestResult && typeof latestResult === "object" && "releaseId" in latestResult ? latestResult as CommunityRelease :
     releases ? pickLatestStable(releases.items) : null;
   const releasesFailed = content.kind === "resource" && !releases && latest === null;
-  const [description, installation, license, releaseNotes] = await Promise.all([
+  const [description, installation, license, releaseNotes, threads] = await Promise.all([
     communityMarkdown(content.description), communityMarkdown(content.installation), communityMarkdown(content.license ?? ""),
-    communityMarkdown(latest?.metadata.installation ?? ""),
+    communityMarkdown(latest?.metadata.installation ?? ""), getComments(project.projectId).catch((error: unknown) => error),
   ]);
+  const discussion = threads && typeof threads === "object" && "items" in threads ? threads as Awaited<ReturnType<typeof getComments>> : null;
   const sourceUrl = safeHttpUrl(content.sourceUrl), issueUrl = safeHttpUrl(content.issueUrl);
   const preload = latest?.resources.some(resource => resource.manifest.preloadMods.length > 0) ?? false;
   const permissions = [...new Set(latest?.resources.flatMap(resource => resource.manifest.permissions) ?? [])];
@@ -66,6 +70,11 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
       {content.license && <section className="hub-prose" aria-label="License"><h2>License</h2><div dangerouslySetInnerHTML={{ __html: license }} /></section>}
       {content.kind === "resource" && <section className="hub-prose" aria-label="Recent releases"><div className="hub-section-head"><h2>Recent releases</h2><Link href={`${base}/versions`}>All versions →</Link></div>
         {releases ? <ReleaseList releases={releases.items.slice(0, 3)} /> : <HubReadFailure error={releaseResult} />}</section>}
+      <section className="hub-prose ws-discussion" id="discussion" aria-label="Discussion"><div className="hub-section-head"><h2>Discussion</h2>
+        {issueUrl && <a className="hub-link-chip" href={issueUrl} target="_blank" rel="noopener noreferrer nofollow ugc"><IssueIcon size={13} />Report bugs on the author’s tracker</a>}</div>
+        {discussion ? <><Discussion project={project} page={discussion} />
+          {discussion.nextCursor && <p className="hub-panel-foot"><Link href={`${base}/discussion?cursor=${encodeURIComponent(discussion.nextCursor)}`}>Older threads →</Link></p>}</> : <HubReadFailure error={threads} />}
+      </section>
     </article>
     <aside className="hub-detail-side">
       {content.kind === "resource" && releasesFailed && <HubReadFailure error={latestResult} />}
@@ -97,6 +106,7 @@ export default async function ResourcePage({ params }: { params: Promise<{ slug:
         {content.kind === "resource" && <p className="hub-footnote">Downloads count completed file deliveries, including resumed transfers.</p>}
       </section>
       <section className="hub-panel" aria-label="Community actions"><ProjectActions project={project} /></section>
+      {content.kind === "resource" && <WardenLink url={absoluteUrl(base)} />}
       <section className="hub-panel" aria-label="Share and report"><ShareProject url={absoluteUrl(base)} title={content.title} /><ReportForm targetType="project" targetId={project.projectId} /></section>
     </aside></div></HubShell>;
 }
