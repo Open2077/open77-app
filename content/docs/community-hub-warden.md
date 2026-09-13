@@ -61,9 +61,12 @@ Warden says so; open the page on the website to get the current link.
    open, create a fresh one.
 5. Accept the displayed plan hash and follow the job.
 
-Acknowledging that a release was not tested on your exact server build is your
-decision; it is not a compatibility guarantee, and manifest and dependency
-requirements still apply. A reviewed plan cannot quietly expand to another
+If the release does not list your server build among its tested builds, plan
+creation stops and offers **Acknowledge untested build and retry**: it records
+the release ID under **Plan options › Release IDs acknowledged as untested on
+this build** and retries. Acknowledging that a release was not tested on your
+exact server build is your decision; it is not a compatibility guarantee, and
+manifest and dependency requirements still apply. A reviewed plan cannot quietly expand to another
 release or other options when you press Apply.
 
 Ordinary Lua changes activate in the running server. The package is downloaded,
