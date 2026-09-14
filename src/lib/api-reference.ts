@@ -167,6 +167,16 @@ const VEHICLE_WEAPON_READS = new Set([
 ]);
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (raw.namespace === "Open77.players" && ["setHoloCallEyes", "getHoloCallEyes"].includes(raw.name)) {
+    return { usageGuideHref: "/docs/holocall-eyes", usageGuideLabel: "Blue holocall eyes guide" };
+  }
+  if (raw.namespace === "Open77.audio") {
+    return { usageGuideHref: "/docs/package-audio", usageGuideLabel: "Package audio: 2D & 3D guide" };
+  }
+  if (runtime === "client" && raw.namespace === "Open77.players" &&
+      (/^(is|allow|freeze)[A-Z]/.test(raw.name) || ["resetControls", "getControlMask"].includes(raw.name))) {
+    return { usageGuideHref: "/docs/player-utilities", usageGuideLabel: "Player checks & controls guide" };
+  }
   if (raw.namespace === "Open77.voice") {
     return runtime === "client" && ["setLipSyncEnabled", "setPlayerLipSyncEnabled", "getLipSyncStatus", "getPlayerLipSyncState"].includes(raw.name)
       ? { usageGuideHref: "/docs/voice-lipsync", usageGuideLabel: "Voice lipsync guide" }
