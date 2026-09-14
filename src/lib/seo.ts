@@ -35,7 +35,8 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
   const canonical = absoluteUrl(input.path);
 
   return {
-    title,
+    // The root layout applies a "%s — site" template; an absolute title keeps the suffix from doubling.
+    title: { absolute: title },
     description: input.description,
     alternates: {
       canonical,
