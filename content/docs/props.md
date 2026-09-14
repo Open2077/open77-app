@@ -49,11 +49,12 @@ transform that streams and can be removed", so they share `Open77.props` and are
 >   per alias. Among the hollow ones are things that look like they should
 >   stop you — `barrier.hesco`, `container.shipping`, `street.hydrant`,
 >   `industrial.forklift`.
-> - **`collision = false` cannot be honoured.** The solid component is also the
+> - **For detached/standing physical hosts, `collision = false` cannot be honoured.** The solid component is also the
 >   visible one, so switching collision off would blank the prop. The request is
 >   refused with a warning naming the prop rather than silently ignored.
-> - **A carried prop is still teleported rather than simulated**, so carrying one
->   through a wall still works. Collision governs standing props.
+> - **Attached props use a pure visual host and follow the rendered parent**;
+>   they do not simulate collisions while attached and can intersect scenery.
+>   Collision governs detached/standing props. See [attachments](attachments.md).
 > - **Do not point `model` at a raw `.ent` path.** The entity-template back-end is
 >   refused by default with `template_backend_disabled`. The crash it guards
 >   against is specific to templates whose root chunk derives from `entEntity`,
@@ -143,7 +144,7 @@ local id, reason = Open77.props.create({
 | `appearance` | string | `""` | Template appearance name, at most 128 bytes. Empty means the template's default. |
 | `bucket` | integer | `0` | Routing bucket. A player only ever sees props in their own bucket. |
 | `physics` | string | `"static"` | `static`, `kinematic`, `dynamic` or `none`. **No effect today: the spawned object carries no `entPhysicalMeshComponent` (§Status).** |
-| `collision` | boolean | `true` | **No effect today — props are always non-blocking (§Status).** `false` is intended to leave the object visible and non-blocking. |
+| `collision` | boolean | `true` | Detached hosts retain their authored collision; disabling a solid host's collision is unsupported (§Status). Attached hosts are always visual-only and non-blocking. |
 | `visible` | boolean | `true` | `false` keeps the registry entry and hides the object. |
 | `kind` | string | `"prop"` | `prop`, `light` or `effect`. See [Lights](#lights) and [Effects in this registry](#effects-in-this-registry). |
 | `light` | table | — | Accepted only when `kind == "light"`; supplying it for any other kind is rejected. See [Lights](#lights). |
@@ -822,15 +823,9 @@ stays inert. The table is `open77_props_persisted`, created on first use.
 - `physics = "dynamic"` names a simulated prop, which is a continuously moving networked entity
   and therefore needs an authority-holder model and a binary opcode that the current JSON
   replication path does not have. Do not build on it until that lands.
-- **Attachment is a follow, not a parenting.** `Open77.props.attach` moves the prop onto its
-  target ten times a second, so it rides at the offset you gave rather than sitting in the hand,
-  and it is teleported rather than simulated. A prop parented to a *bone* — an
-  `entHardTransformBinding` on the prop's root component — is not exposed and has been declined
-  twice; see [Attachment](#attachment) and `docs/research/props-and-object-spawning.md`. For
-  something that must be in a hand, `Open77.heldItems.hold` puts a real item in a real equipment
-  slot instead.
-- **A followed prop's offset does not rotate with its target, and `trackYaw` does nothing on a
-  player.** Both wait on the same missing piece: a heading in the player position snapshot.
+- [Synchronized attachments](attachments.md) expose player/vehicle parents, skeletal slots
+  and local position/rotation. Attached props use visual-only hosts; they are not simulated
+  rigid bodies. `prop.pickup` / `prop.drop` use the binding, without a server teleport timer.
 - Interaction prompts on props are not exposed. Anchor a prompt yourself through
   [contextual interactions](interactions.md) if you need one now.
 - `persistent` is not implemented as a field on `Open77.props.create`. A gameplay resource's
@@ -842,4 +837,4 @@ stays inert. The table is `open77_props_persisted`, created on first use.
   as a promise.
 - A light prop carries the geometry of the entity its host was cloned from, so it is not
   invisible. A lightless donor with a spawnable root would fix that.
-- Pitch and roll are not exposed. A prop is placed with a yaw.
+- Standalone props are placed with a yaw. Attachments additionally expose local pitch and roll.

@@ -1,9 +1,8 @@
 # Complete server Lua API
 
 This page inventories the Lua surface installed by the dedicated server runtime. These functions
-exist only in `server_script` and server-side `shared_script` files. The generated client reference
-documents a different runtime; a function appearing on this page must not be assumed to exist on a
-client.
+exist only in `server_script` and server-side `shared_script` files. The searchable reference labels client and server cards separately; a function
+appearing on this page must not be assumed to exist on a client.
 
 Prefer the `Open77.*` names below. FiveM-style globals remain available where listed for familiar
 resource code and as the low-level implementation surface.
@@ -143,15 +142,39 @@ matters (a stop/start can occur before the next tick). Revisions increase for ev
 transition. Remember the newest revision per resource and ignore older notifications:
 scheduler order is not a lifecycle guarantee.
 
-The experimental [cyberware API](cyberware.md) separates definition, identity,
-management and read permissions. Installation completion is asynchronous.
+The [cyberware API](cyberware.md) separates definition, identity, management and
+read permissions. Use the [Gorilla Arms walkthrough](gorilla-arms.md) for a complete
+resource example; installation completion is asynchronous.
 It supports coexisting `arms` / `gorilla_arms` and `legs` / `double_jump`
 definitions. Install chooses the definition's slot; remove defaults to arms and
 accepts `options.slot="legs"`. Both use one character revision/receipt ledger.
 `onCyberwareJump(player, encodedResult)` reports second-jump admission as
 `{sequence,ok,error}`, not native movement completion. See the linked reference
 for limits, additive persistence migration, client projection APIs and the
-protocol 1.27 boundary. Live two-client double-jump acceptance is pending.
+original protocol 1.27 boundary. Current combined protocol and validation are
+recorded in the [Dash checkpoint](../docs/dash-checkpoint.md).
+
+The [Dash / Air Dash API](dash.md) adds `Open77.dash.define`, `grant`, `revoke`,
+`cancel`, `current` and `capabilities`. It uses separate `players.dash.define`,
+`players.dash.manage` and `players.dash.read` permissions, session capabilities
+and the existing cyberware identity. It never purchases or replaces an implant.
+`current(player).ownedByCaller` reports exact caller ownership across projection
+restarts without exposing the resource owner name.
+`onDashChanged` reports correlated activation phases; `onDashRejected` reports
+admission failure. Native movement and multiplayer acceptance remain pending.
+
+The [Ground Slam API](ground-slam.md) provides `Open77.abilities.define`, `grant`,
+`revoke`, `cancel` and `current`, controlled by `players.abilities.define`,
+`players.abilities.manage` and `players.abilities.read`. Combined movement
+admission includes Dash/Slam recovery and forced motion; grants compose with
+the existing implant ledger.
+
+The [hacking API](hacking.md) adds permission-controlled `Open77.hacking` and
+`Open77.statuses` services for definitions, admission, Self-ICE, purge, statuses
+and owned protection policies. Matching implants share the existing cyberware
+ledger in `operating_system`, `self_ice` and `purge` slots. The optional lab is
+disabled by default. `onHackingTransition` carries platform-owned upload/status
+notifications; it cannot be synthesized through resource/network events.
 
 The namespaced equivalents are:
 
@@ -280,6 +303,82 @@ local round = Open77.state.load() or { number = 0, scores = {} }
 round.number = round.number + 1
 Open77.state.save(round)
 ```
+
+## Cyberware and living motion
+
+Requires paired protocol **1.26** clients/server and the shipped native Gorilla
+adapter; this release supports `slot="arms"`, `profile="gorilla_arms"`. It does
+not expose an implemented legs/jump power. Server mutations are synchronous
+admission calls returning a result table or `nil, reason`, not Promises. Native
+projection, persistence and restoration complete later. Read methods return a
+table or nil when unavailable; distinguish nil readiness from an empty `arms`.
+
+| Function | Signature | Permission | Purpose |
+|---|---|---|---|
+| `Open77.cyberware.current` | `(playerId)` | `players.cyberware.read` | Read the ready durable implant record. |
+| `Open77.cyberware.effective` | `(playerId)` | `players.cyberware.read` | Read the ready implant including an active temporary loadout. |
+| `Open77.cyberware.activity` | `(playerId)` | `players.cyberware.read` | Read fresh authoritative Gorilla charge activity. |
+| `Open77.cyberware.leaseState` | `(playerId)` | `players.cyberware.read` | Read a temporary loadout lease and restoration phase. |
+| `Open77.cyberware.newOperationId` | `()` | `players.cyberware.manage` | Create an operation ID to retain across durable retries. |
+| `Open77.cyberware.define` | `(definition)` | `players.cyberware.define` | Register resource-owned Gorilla Arms grades. |
+| `Open77.cyberware.bind` | `(playerId, character)` | `players.cyberware.identity` | Bind the authenticated player to a server-selected durable character. |
+| `Open77.cyberware.unbind` | `(playerId)` | `players.cyberware.identity` | Release this resource's character binding and runtime grants. |
+| `Open77.cyberware.install` | `(playerId, definition, grade, options)` | `players.cyberware.manage` | Stage a durable Gorilla Arms installation. |
+| `Open77.cyberware.remove` | `(playerId, options)` | `players.cyberware.manage` | Stage a durable Gorilla Arms removal. |
+| `Open77.cyberware.cancel` | `(playerId, ticket)` | `players.cyberware.manage` | Cancel an owned installation/removal before durable commit. |
+| `Open77.cyberware.lease` | `(playerId, definition, grade, options?)` | `players.cyberware.temporary` | Stage a temporary implant without overwriting paid state. |
+| `Open77.cyberware.releaseLease` | `(playerId, lease)` | `players.cyberware.temporary` | Release this resource's temporary loadout and restore paid arms. |
+| `Open77.motion.current` | `(playerId)` | `players.motion.read` | Read an authoritative living-motion lease. |
+| `Open77.motion.knockdown` | `(playerId, options)` | `players.motion.control` | Request bounded native living-player motion. |
+| `Open77.motion.cancel` | `(playerId, id)` | `players.motion.control` | Cancel this resource's authoritative motion lease. |
+
+`newOperationId()` returns a string; definition/identity/manage calls return
+`{ok=true,error=nil,ticket?,lease?}`. `install` and `remove` require
+`options={expectedRevision=record.revision,operationId=retainedOperationId}`.
+Retain the same ID and contents across retries. Correlate
+`onCyberwareOperationCompleted(playerId,ticket,encodedResult)` with the pending
+player and ticket; decode the JSON result and check `ok`/`error`. A queued ticket
+is not a committed purchase or visual proof. A completed idempotent retry may
+return success without a new ticket. Do not refund submitted storage work merely
+because native presentation is delayed; `cancel` can return `operation_committing`.
+
+`current()` reads durable `{revision,arms,operationId}`; `effective()` substitutes
+an active temporary arms snapshot while retaining the durable revision/receipt.
+`lease` accepts `durationMs=1000..300000` (default300000), returns
+`{ok=true,lease,ticket}`, and restores paid state on release/expiry/lifecycle loss.
+`onCyberwareLeaseChanged(playerId,encodedState)` carries
+`id,player,phase,definition,grade,expiresAt,ticket,reason`. Wait for matching
+`active` before enabling combat; `ended` after body loss alone does not prove
+paid native restoration. Identity adapters alone select the authenticated user's
+character. Restart a stopped definition provider before expecting its persisted
+implants to grant combat again.
+
+`Open77.motion.knockdown` returns `{ok=true,id}` after admission, not damage or
+actual movement. `onPlayerMotionChanged(playerId,id,phase,reason)` reports
+`pending`, `active`, `ended`; the owner native acknowledgement starts the bounded
+six-second server ownership window. Requested travel0..6 m is collision-dependent,
+not an exact-distance teleport. Cancellation requests cleanup without instantly
+freezing momentum. The snapshot validator uses ACK-time bounds rather than the
+exact native launch origin. See the runtime-separated searchable cards for
+native client projection primitives; server scripts never send local entity
+handles over the network.
+
+The related public foundations are
+`Open77.combat.createScope({bucket,players})` / `removeScope(id)` with
+`combat.scope.control`, and `Open77.effects.attach(target,effect,options)`,
+`playOn(target,event,options?)`, `sound(target,event,options?)` with `world.effects`.
+Scopes do not bypass team/life/Lua veto rules. Effects use typed network target
+IDs and native lifetime guards. `sound` supports an opaque `actionId` and
+`excludePlayers` to avoid adding network sound for listeners already hearing the
+native contact. These are configurable presentation rules, not extra damage.
+
+Low-level globals backing related namespaced APIs:
+
+| Global | Signature | Permission and result |
+|---|---|---|
+| `AttachEffect` | `(targetId,kind,effect,slot,localAnchor,localSlot,ttlMs?,radius,hysteresis,localEvent?,soundEvent?,soundOnOwner?)` | `world.effects`; decimal effect ID or nil/reason. Prefer `Open77.effects.attach`. |
+| `SetPlayerDownedDamageable` | `(playerId,enabled)` | `players.stats.apply`; boolean/reason. Also exposed as `Open77.stats.setDownedDamageable`. |
+| `VehicleDrivingCommand` | `(operation,vehicleId,options?)` | `world.vehicles`; driving-state table or nil/reason (state may be nil when absent). Prefer [vehicle AI methods](vehicle-ai.md). |
 
 ## Cross-resource exports
 
@@ -705,6 +804,9 @@ for ownership, sequence durations, events, local TPP and development validation 
 | `Open77.animations.sequence` | `(playerId, steps, options?)` | `players.animations.control`; accepted state. |
 | `Open77.animations.stop` | `(playerId, playbackId?)` | `players.animations.control`; true or nil/error. |
 | `Open77.animations.current` | `(playerId)` | `players.animations.read`; active state or nil. |
+| `Open77.animations.clip` | `(clip)` | No permission; the profile that owns a clip name, or nil. |
+| `Open77.animations.clips` | `(query?)` | No permission; every addressable clip as `{ clip, profile }`. |
+| `Open77.animations.playClip` | `(playerId, clip, options?)` | `players.animations.control`; `play` addressed by clip name, the way `TaskPlayAnim` is. |
 
 `play` and `sequence` return `nil, error` on rejection. An accepted server action
 does not prove native rendering has started. Client methods are a separate,
@@ -1448,7 +1550,8 @@ Low-level aliases are `GetPlayerName`, `GetPlayerIdentifier`, `GetPlayerPosition
 `GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,
 `RequestPlayerLifeResync`, `GetPlayerHealth`, `DamagePlayer`, `HealPlayer`, `SetPlayerHealth`,
 `SetPlayerMaxHealth`, `SetPlayerArmor`, `SetPlayerGodMode`, `SetPlayerRegen`, `GetPlayerRead`,
-`GetPlayersNearby`, and `GetPlayerDistance`. Prefer the namespaced wrappers because they accept
+`GetPlayersNearby`, `GetPlayerDistance`, and `GetPlayerHoloCallEyes` (the read half of
+[holocall eyes](holocall-eyes.md), the same function as `Open77.players.getHoloCallEyes`). Prefer the namespaced wrappers because they accept
 structured option tables.
 
 Vehicle-seat low-level aliases are `SetPlayerIntoVehicle`, `ForcePlayerOutOfVehicle`,

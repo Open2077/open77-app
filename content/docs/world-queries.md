@@ -142,6 +142,14 @@ searched -- every "street" symbol in it is either Street Cred, the RPG stat, or 
 you are porting a script that calls `GetStreetNameAtCoord`, the district is what you have, and it
 is a real answer rather than a plausible one.
 
+For exact cursor-based selection, `Open77.camera.screenRaycast` in [screen picking](screen-picking.md)
+is the other half of the answer: it resolves the native physics owner of the proxy the ray stopped on
+rather than the nearest streamed object, and reports its network identity when it has one. Use it when
+"which entity" has to be exact, as for a context menu; use `{ entities = true }` when a nearest-object
+attribution within a tolerance is what the scenario means, as for a shot fired down a corridor.
+Do not use `world.nearest` as proof of what a ray hit: that query is centred on the player, and
+proximity is not collision ownership.
+
 ## Objects around the player
 
 `Open77.world.nearby(radius, filter?)` lists every object within `radius` metres of the local

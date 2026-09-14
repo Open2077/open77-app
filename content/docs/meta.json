@@ -323,10 +323,22 @@
           "description": "Add native Gorilla Arms to your server: normal and charged punches, synchronized knockback, configurable damage and cosmetics, plus Lua installation examples and optional doctor and arena resources."
         },
         {
+          "slug": "dash",
+          "kind": "guide",
+          "nav": "Dash / Air Dash",
+          "description": "Native ground and air dash as a server-owned session grant: definitions, charges, stamina and cooldown, one Air Dash per airtime, correlated `onDashChanged` / `onDashRejected` events, and the optional parkour example."
+        },
+        {
           "slug": "ground-slam",
           "kind": "guide",
           "nav": "Ground Slam",
           "description": "The session ability beside the durable implants: define, grant and revoke, the native support API and lifecycle, authority and geometry, and what the automated checks do not establish."
+        },
+        {
+          "slug": "hacking",
+          "kind": "guide",
+          "nav": "Hacking and counterplay",
+          "description": "Short Circuit, Overheat, Cyberware Malfunction, Cripple Movement, Reboot Optics and Weapon Glitch as kinds of one server-owned upload; Self-ICE, active purge, statuses, protection scopes and the `onHackingTransition` ledger."
         }
       ]
     },
@@ -493,6 +505,18 @@
           "kind": "guide",
           "nav": "Blocking player input",
           "description": "Take a named input away from the player and give it back — per-action blocks or the whole control stream — with the ownership and release rules that stop a crashed resource stranding somebody."
+        },
+        {
+          "slug": "context-menu",
+          "kind": "guide",
+          "nav": "Context menu",
+          "description": "The bundled ALT context menu: opt-in targeting of players, vehicles, doors, time and weather with resource-registered actions, the weapon-wheel claim it holds, and the exports a gamemode composes it from."
+        },
+        {
+          "slug": "screen-picking",
+          "kind": "guide",
+          "nav": "Screen picking",
+          "description": "`Open77.camera.screenRay`, `screenRaycast` and `Open77.input.cursor`: resolve the entity under a screen point through the native physics owner, with the identity kinds a client can and cannot promise."
         },
         {
           "slug": "cameras",

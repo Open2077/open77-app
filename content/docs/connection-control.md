@@ -223,12 +223,37 @@ Most servers need no code for this: the server keeps its own whitelist and ban l
 `access.json` next to `server.jsonc`, enforced before the resource gate and with no resource
 running. Every entry is keyed on the Master `userId` and remembers who added it and when.
 
+This is a server-enforced policy, not a launcher filter. It applies to direct connections,
+Master-ticket connections and reconnects. A valid ticket or a resource's `deferrals.done()`
+cannot override it: the server checks the verified identity before the resource gate and
+again immediately before admission.
+
 **Warden**: the *Whitelist & bans* tab (permissions `access.view` to see, `access.edit` to change)
 switches the whitelist, lists and removes identities, bans with a reason and a duration, lifts bans,
 and shows the recent refusals with the sentence each player saw, each with *Allow* and *Ban*
 buttons. The *Players* tab gains an *Allow* button per row, so a guest can be let in without
 leaving the table. Bans from this tab disconnect the player at once if they are online; they are
 local to this server, unlike `Open77.players.ban`, which records a device ban at the Master.
+
+Enabling the whitelist immediately disconnects all unlisted players, including connections
+still waiting for a Lua gate. Removing an identity while the whitelist is enabled does the
+same for **every session** using that identity. Staff and the operator's own game account
+have no automatic exemption: add those game identities before enabling it. Being logged
+into Warden is not itself permission to join the game. The refusal explains that the server
+is private and includes the identity to give to an administrator.
+
+The same policy is checked before processing further player packets and on the server tick,
+so a quiet client or a change made through Lua cannot retain gameplay authority. Lua changes
+take effect no later than the next tick; Warden and built-in console changes enforce it before
+returning. Players still listed remain connected.
+
+Changes are atomically saved before success is reported. If saving fails, the previous policy
+remains in force and the caller receives an error. An existing unreadable or malformed
+`access.json` now **stops server startup** instead of silently disabling the whitelist; repair
+or restore that file. A genuinely missing file still means a fresh server with the whitelist
+disabled. Use Warden, the console or `Open77.access` for live edits; manual disk edits are read
+at startup. Each server should have its own configuration directory, since that directory
+also owns its `access.json`.
 
 **Console** (also from Warden's live console):
 
@@ -254,7 +279,9 @@ unban <userId>
 | `unban(userId)` | `true`, or `false` when there was no ban |
 
 Every call returns `false, reason` on failure: `permission_denied:players.access`,
-`invalid_user_id`, `access_unavailable`. Entries written from Lua carry `resource:<name>` as their
+`invalid_user_id`, `access_unavailable`, `access_persistence_failed` (whitelist/allow/disallow/unban),
+or `ban_persistence_failed`. A persistence failure leaves the previous policy unchanged.
+Entries written from Lua carry `resource:<name>` as their
 author, so Warden shows which script let someone in.
 
 ```lua

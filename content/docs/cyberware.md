@@ -4,9 +4,19 @@ Cyberware connects persistent implants to native Cyberpunk equipment, multiplaye
 
 **Gorilla Arms is the implemented profile.** Start with the [Gorilla Arms tutorial](gorilla-arms.md) for a resource example and the optional clinic and arena. Other powers can build on these foundations, but defining a new name does not add a native adapter for an unsupported power.
 
+**Gorilla Arms and double-jump legs are the implemented implant slots.** Start
+with the [Gorilla Arms tutorial](gorilla-arms.md) for a resource example and the
+optional clinic and arena, and see [Double-jump legs](#double-jump-legs) below
+for the `legs` / `double_jump` workflow: finite two-client installation,
+movement, lifecycle and removal acceptance passed locally on 2026-09-13. Other
+powers can build on these foundations, but defining a new name does not add a
+native adapter for an unsupported power. The separate native abilities have
+their own guides: [Dash / Air Dash](dash.md), [Ground Slam / Quake](ground-slam.md)
+and [Hacking and counterplay](hacking.md).
+
 ## Requirements and responsibilities
 
-Use matching **protocol 1.26** client and server source builds. These guides document the integrated implementation; they do not announce a stable binary release. Earlier minor versions are rejected before authentication; downloading a Lua resource cannot upgrade an incompatible client. Native assets and scripts must match the runtime. The tested Cyberpunk build is 2.31.
+Use matching **protocol 1.33** client and server source builds. These guides document the integrated implementation; they do not announce a stable binary release. Earlier minor versions are rejected before authentication; downloading a Lua resource cannot upgrade an incompatible client. Native assets and scripts must match the runtime. The tested Cyberpunk build is 2.31.
 
 | Layer | Responsibility |
 |---|---|
@@ -114,6 +124,232 @@ end)
 ```
 
 This export is not a core `Open77.cyberware` method. Client and server registries are separate. Results declare adapter support, supported families and tested build 2.31; `actualGameBuild` and `dlcVerification` currently remain `unknown`. Client `localProjection` reports phase/reason/family/equipmentReadback, with `visualProof=false`. Server metadata has `clientReadiness="unknown"`. A ready native readback does not prove rendered appearance, storage completion or a running definition provider.
+
+## Double-jump legs
+
+Definitions select an audited slot/profile pair: `arms` / `gorilla_arms` or
+`legs` / `double_jump`. Installing chooses the slot from the definition; it
+preserves the other slot. Removal defaults to arms for existing resources:
+pass `options.slot="legs"` to remove legs. Only `arms` and `legs` are accepted;
+an explicit invalid slot returns `invalid_slot`. `install` does not select a
+slot from options. Both slots share the character's revision and operation
+ledger, so read the latest `current` record before either mutation.
+
+```lua
+assert(Open77.cyberware.define({
+  id="myserver.double_jump", version=1, slot="legs", profile="double_jump",
+  grades={
+    {id="training", normalDamage=0, chargedDamage=0, knockbackMeters=0,
+      cooldownMs=800, chargeMs=650, jumpStaminaCost=15,
+      maxAirborneMs=10000, maxFallSpeed=30},
+  },
+}))
+
+-- In your permission-controlled, consent/payment workflow:
+local current = Open77.cyberware.current(patient)
+if current then
+  local operationId = assert(Open77.cyberware.newOperationId())
+  local pending, reason = Open77.cyberware.install(patient,
+    "myserver.double_jump", "training", {
+      expectedRevision=current.revision, operationId=operationId,
+    }) -- retain operationId and original expectedRevision on retries
+end
+
+-- A separate removal procedure uses a fresh operation ID:
+local current = Open77.cyberware.current(patient)
+if current then
+  local pending, reason = Open77.cyberware.remove(patient, {
+    slot="legs", expectedRevision=current.revision,
+    operationId=assert(Open77.cyberware.newOperationId()),
+  })
+end
+```
+
+The shared grade schema still validates the existing damage/charge fields;
+use zero damage/knockback and a valid `chargeMs` for legs. These fields do not
+add punches or a charged-jump ability to a legs implant. The new limits are:
+
+| Grade field | Default | Accepted values / meaning |
+|---|---|---|
+| `jumpStaminaCost` | 0 | Finite 0-300; canonical server stamina debited once on second-jump admission. Zero is explicitly free. |
+| `maxAirborneMs` | 10000 | Integer 100-10000 ms; maximum airborne age when admitting the second jump. |
+| `maxFallSpeed` | 30 | Finite 0.1-30 m/s; maximum downward speed when admitting the second jump. |
+| `cooldownMs` | Required | Integer 100-600000 ms between accepted second jumps, in addition to one per airtime. |
+
+Limits only narrow native eligibility. They do not change jump height,
+trajectory, gravity, fall damage or native collision response. A fall may
+continue after the activation window expires. Grades are installed snapshots;
+re-registering a definition does not rewrite a paid implant. The optional
+`example.double_jump` and `lab.double_jump` definitions use training
+(15 stamina, 800 ms cooldown) and athlete (8 stamina, 500 ms cooldown) grades.
+Both request the same native jump. Doctor prices are respectively 100 and 250
+example clinic credits; legs removal costs 25. Replace those resource policies
+independently of the platform API.
+
+### Records and compatible persistence
+
+`current` and `effective` expose `{revision, arms, legs, operationId,
+operationSlot}`; absent implants decode as nil. Each implant contains
+`instanceId`, `definition`, `definitionVersion`, `profile`, `slot` and the
+installed `grade` snapshot. `operationSlot` records the most recent durable
+mutation's slot, not the only installed slot. Idempotency checks include it:
+reusing an arms-removal receipt for legs removal returns `operation_conflict`.
+
+The storage migration is additive JSON in the existing
+`open77_cyberware_v1` / `open77_cyberware_operations_v1` tables. Old records and
+receipts without `legs` or `operationSlot` load as nil legs and `"arms"`.
+Existing revisions, implant instances and receipts are retained; the next
+successful compare-and-swap writes the expanded shape atomically. No bulk
+rewrite, table deletion or removal/reinstallation of paid Gorilla Arms is
+required. Custom `ICyberwareStore` adapters must preserve both slots and the
+operation slot when implementing their atomic revision/receipt transaction.
+
+Temporary leases also use the definition's slot and preserve the other slot.
+There remains **one temporary lease per character binding**, not one per slot.
+A legs lease cannot overlap an arm lease; all paid install/remove mutations
+remain blocked until that lease ends/restores. Paid record identity is unchanged.
+
+### Native input, admission and trust boundary
+
+The adapter equips installed `Items.BoostedTendonsRare` through native `LegsCW`
+equipment. Readiness requires matching owned item and `HasDoubleJump` readback
+across three bridge polls. It refuses an unrelated leg item or a pre-existing
+unowned double-jump capability. Cleanup unequips its owned item and removes an
+inventory copy only when this adapter created it. Arms and legs have distinct
+native owners/requests and equipment areas; support starts both requests and
+acknowledges the whole staged record only after both complete/configure.
+Readiness is not rendered proof.
+
+Use the ordinary jump control: take off, release, press again while airborne.
+The native double-jump decision checks its original capability, jump-count,
+fall-speed, elevator and incompatible-state predicates. Open77 buffers an
+eligible press for at most 750 ms while the backend decides. Server admission
+requires a ready, alive, unmounted body, available matching definition version,
+fresh airborne movement (at most 750 ms old), current incarnation/implant/bucket,
+no forced-motion lease, limits, cooldown and sufficient canonical stamina.
+At least 150 ms of continuously sampled ground is required to arm/rearm; one
+accepted second jump consumes that airtime's allowance. Rejected action
+sequences are consumed too, preventing approval or charging on replay.
+
+The reliable intent can arrive before its unreliable movement sample. The host
+holds at most one pending request per player for up to 200 ms for movement to
+catch up. It then rejects with `movement_timeout` if still unresolved. These
+bounds include scheduling and transport costs; there is no guaranteed latency
+budget or high-latency playability claim. A late grant still has to pass the
+native 750 ms timeout and original predicates. Stamina is charged on server
+admission, with no refund if native execution later expires or becomes invalid.
+Only the native second-jump stamina debit is suppressed for the managed path;
+ordinary jump/movement costs remain native.
+
+The backend validates **authenticated client movement observations**, not an
+independent server simulation of the map, floor contact or collisions. A client
+approval primitive is for trusted projection resources; it is not a public
+server-side `jump()` command or a security boundary against a modified client.
+Current movement replication carries native takeoff/double-jump/air/landing
+states. This slice adds no network sound/particle overlay, avoiding an extra
+presentation producer; native sound/effect behavior and observer fidelity still
+require the live controls.
+
+`onCyberwareJump(player, encodedResult)` is a server-local outcome notification.
+The player ID follows host string conventions; decode the second argument as
+`{sequence,ok,error}`. `ok=true` means admission/stamina pricing, not native
+consumption, measured displacement or a rendered jump. Typical refusals include
+`implant_unavailable`, `stale_incarnation`, `stale_action`, `stale_movement`,
+`movement_timeout`, `bucket_changed`, `motion_busy`, `jump_unavailable`,
+`movement_limit`, `cooldown` and `insufficient_stamina`. Malformed/dropped input
+need not emit an outcome. Resources observe this event with `AddEventHandler`;
+client network messages cannot forge a server-local notification.
+
+### Client legs projector API
+
+These methods operate on the calling resource's local native owner. Use the
+bundled support resource for normal installation/activation; another resource
+cannot read or approve its private request by guessing its numeric ID.
+Failures return `nil, reason`, except `legsState` returns its phase and reason
+for a validly shaped native query.
+
+| Call | Permission | Result |
+|---|---|---|
+| `Open77.cyberware.projectLegs(enabled)` | `player.cyberware.project` | Positive native request ID; `enabled` must be a boolean. |
+| `Open77.cyberware.legsState(request)` | `player.cyberware.project` | `"pending"`, `"ready"` or `"failed"`, plus reason. |
+| `Open77.cyberware.configureLegs(request, staminaManaged, maxAirborneMs, maxFallSpeed)` | `player.cyberware.project` | true after configuring a ready owned request; argument limits match the grade table. |
+| `Open77.cyberware.legsActivity()` | `player.cyberware.read` | `{request,sequence,phase,grounded,airborneMs,verticalSpeed}` or nil/reason. |
+| `Open77.cyberware.approveLegJump(request, sequence, allowed)` | `player.cyberware.project` | true if the matching pending native intent accepted the decision; `allowed` is boolean. |
+| `Open77.cyberware.releaseLegs()` | `player.cyberware.project` | true after requesting owned cleanup; completion is asynchronous. |
+
+Activity phases are `idle`, `pending`, `granted`, `consumed` and `rejected`.
+Sequence is a positive uint32 for a pending action; idle can report zero.
+`staminaManaged=true` selects suppression of the native second-jump debit and
+requires the server pricing path. Support sets it for installed legs. It is
+not a stamina cost argument. Requests are local handles, never network IDs.
+Resource teardown invokes owned native cleanup even if Lua callbacks have ended.
+
+Other resources can observe the active support owner through its read-only
+`legsActivity` export. It returns a fresh
+`{sequence,phase,grounded,airborneMs,verticalSpeed}` table or nil/reason; it omits
+native request handles, incarnation and projection tickets. This is a resource
+export, not an additional core method:
+
+```lua
+CreateThread(function()
+  local pending, reason = Open77.exports.call("open77_cyberware", "legsActivity")
+  if not pending then print(reason); return end
+  local activity, why = pending:await()
+  if activity then print(activity.phase, activity.airborneMs)
+  else print(why) end
+end)
+```
+
+The export runs in the support VM that owns the native adapter. Calling the
+core `legsActivity()` directly from a different VM cannot inspect that owner's
+request. The optional lab uses the export for this reason. Native activity and
+`air=double_jumping` movement observations are separate from rendered proof;
+`char.state`'s `double` field describes the stand-in body, not `HasDoubleJump`.
+
+Support sends reserved `open77:cyberware:jump {incarnation,sequence}` and accepts
+only the matching owner `jumpResult {incarnation,sequence,ok,error}`. It retains
+the native request locally and checks it again before approval. Duplicate,
+newer-projection, removed-implant and retired-body results cannot grant old work.
+No custom doctor or gamemode should forge these platform events.
+
+### Doctor-to-parkour workflow and acceptance
+
+The doctor command defaults stay unchanged. Select legs explicitly with
+`/doc offer <patient> training legs` (or `athlete`),
+`/doc inspect <patient> legs` and `/doc remove <patient> legs`.
+The existing native prompt or `/implantaccept` supplies patient consent;
+inspection is private and free. Prices reserve/refund through the same public
+completion ticket as arms. Keep both participants alive, nearby and in one
+bucket. Removing legs retains the exact arm record. The example clinic wallet
+is in memory and resets to 500 credits when its resource restarts; implant
+records and operation receipts use durable storage independently.
+
+The optional lab's `cyberlab installlegs <player> <grade> <operation>`
+and `removelegs <player> <operation>` use those same server APIs.
+`jumpstate <player>` dispatches a read-only native activity log query; it does
+not activate movement or certify rendered behavior. All commands remain
+replaceable examples, disabled until their resources are explicitly started.
+Once the lab is started, `/cyberlab` opens its self/other-player implant panel.
+The panel and lab commands are intentionally open to every connected player;
+server owners can implement their own restrictions in the example resource.
+The panel creates operation IDs and waits for actual installation/removal
+completion. The doctor's separate consent/payment and ACL policy is unchanged.
+
+Actual-Lua tests cover combined projection readiness, decision matching/dedupe,
+removal/body-change/resource-stop invalidation and doctor slot/payment behavior.
+**Finite real two-client workflow passed locally on 2026-09-13**, including
+both body families, inspected observer air/landing, repeated activation and
+stamina refusal, walls/ceilings/slopes/ledge recovery, Gorilla charged contact
+and recovery, death/revive, reconnect, actual proxy streaming and core restart.
+Public doctor removal restored ordinary jumps (female 1.0612 m, male 1.0373 m)
+with four presses and no extra jump; both original arm records remained exact.
+Movement remains client-native and observer interpolation is not exact phase
+parity. A standing remote corpse reproduced even after removing legs; death
+presentation remains a separate limitation. Audio has event-correlated output
+evidence, not a controlled perceptual/spatial parity result.
+The [scenario matrix](../docs/research/cyberware-test-scenarios.md) records live
+results. Charged jump and visible metal-leg models remain subsequent slices;
+a functional native mobility implant does not establish a cosmetic model.
 
 ## Support and limits
 

@@ -40,11 +40,22 @@ the new scope.
 
 Open77 projects the server clock twice a second. It deliberately does not hold REDengine's
 `SetPausedState`: two-client runtime testing proved that this flag can also slow gameplay and
-vehicle physics. Periodic absolute correction prevents long-term clock drift without changing the
-simulation rate. At midnight,
+vehicle physics. Every pass reads the live game clock and writes it only when it has really
+drifted from the projection (more than `timeDriftToleranceSeconds`, 120 game seconds by default),
+because every write is a world time-jump. At the engine's natural rate of 8 game seconds per real
+second nothing is ever written once a player is in the world. A player who joins late receives the
+first snapshot in the main menu; the save that loads next carries its own time of day, and the next
+pass corrects it — within half a second, whatever the save said. At midnight,
 circular arithmetic turns the roll over to `00:00` into normal forward motion. A small step back
 caused by a late packet is ignored, so REDengine's "next occurrence" semantics are not triggered —
 which would jump a whole day.
+
+**`weather.time.freeze` has a cost.** Nothing native holds the clock, so the engine keeps advancing
+at 8x underneath a projection that does not move; every client re-asserts the frozen time each
+time the drift passes the tolerance — every 15 s at the defaults, a two-minute step back. Each step
+is a world time-jump, the kind that makes the streamer re-resolve world nodes and can bring back
+destroyed props. Freeze the clock for what needs a fixed sky (a pinned match, a recording); leave
+it running at `8` otherwise, where synchronisation is free.
 
 ## Configuration
 

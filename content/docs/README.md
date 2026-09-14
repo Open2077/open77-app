@@ -9,6 +9,9 @@ and manifest-driven lifecycle. Open77 APIs remain independent and reflect REDeng
 
 ## Session model
 
+New building blocks: [player checks and controls](player-utilities.md) and
+[package audio, local and networked](package-audio.md).
+
 The server selects the resource set for a session. A connecting client downloads that set, verifies
 its signature and content hashes, and activates it before entering the world. Only Open77's trusted
 bootstrap resources load outside the server-provided generation.
@@ -52,14 +55,21 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 
 ## Guides
 
+New client utilities: [screen picking](screen-picking.md) and the reusable
+[ALT/click context menu](context-menu.md).
+
 | Guide | Subject |
 |---|---|
+| [Hacking and counterplay](hacking.md) | Short Circuit, Self-ICE, active/ally purge, server authority, public definitions and an optional lab. |
+| [Ground Slam / Quake](ground-slam.md) | Native grounded/airborne slam, server-owned impact validation and permission-controlled session grants. |
 | [Server resources](server-resources.md) | Manifests, runtime separation, signing, download, and reload. |
+| [Hub resources in Warden](community-hub-warden.md) | Reviewed installation, updates, uninstall, rollback, preload restarts and retained backups. |
 | [Mods: the complete guide](mods.md) | The three layers (stack, world, own), the life of a world mod from server to game folder, declaring packages, a Nexus vehicle walkthrough, verification and troubleshooting. |
 | [Mods your server requires](server-mods.md) | The operator's reference for the same feature: trust, hosting the bytes, the master's hash vouching, Warden and review. |
 | [Sky hologram advertisements](sky-advertising.md) | Build PNG/DDS art into Towers-of-Light XBM replacers and preload it from a resource. |
 | [Complete server Lua API](server-api.md) | Every server global, `Open77.*` method, permission, constant, and low-level alias. |
 | [FiveM compatibility aliases](fivem-compatibility.md) | The `Citizen` table, `SetTick`, `promise.new`, and the shared-script helpers a copied FiveM resource calls -- plus the three places Open77 deliberately answers differently. |
+| [Dash / Air Dash](dash.md) | Permission-controlled native movement, composable grants, limits and optional parkour examples; live acceptance pending. |
 | [Connection control](connection-control.md) | Connect events and deferrals, refusing a player with a message, rejection and disconnect reasons, the built-in whitelist and ban list (Warden, console, `Open77.access`), and worked custom resources. |
 | [World queries](world-queries.md) | Client raycast, aim ray, ground height and the object search around the player (`world.query`), plus an entity's own axes, offsets and slots (`world.transform`). |
 | [Replicated state bags](state-bags.md) | `Open77.state.global` / `.player(id)` / `.entity(kind, id)` and the `Player(id).state` / `Entity(id).state` / `GlobalState` / `LocalPlayer.state` shims: keyed state that replicates itself, change handlers, the caps, and why a client submits instead of writing. |
@@ -72,13 +82,16 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Game data reference](data-reference.md) | NPC templates, vehicle records, seats, flags, weapons, appearances, VFX, SFX, animations, and sprite catalogues. |
 | [Identity and ACL](server-acl.md) | Authentication, restricted commands, and access control. |
 | [Player identity](identity.md) | Durable identifiers, display names, and rename flow. |
-| [Clothing Lua API](../docs/clothing.md) | Validated wardrobe catalogue, local/server APIs, permissions, errors, and appearance replication. |
+| [Equipment Lua API](../docs/equipment.md) | Validated wardrobe catalogue, local/server APIs, permissions, errors, and appearance replication. |
 | [Perspective](../docs/perspective.md) | First and third person: the ownership arbiter, the server policy, the player's key and persisted preference. |
 | [Photo mode](photo-mode.md) | Exclusive client-resource control of the native photo mode; stock shortcuts are disabled. |
 | [Weapon Lua API](weapons-api.md) | Assign standard weapons by TweakDB template, select slots, holster, clear every slot, snapshot, and read the server's synchronous weapon cache. |
 | [Game data catalogues](data-catalogues.md) | `Open77.data.vehicle/weapon/item/npc/localize` on both runtimes: display names, classes, seats and qualities from a record string -- live TweakDB on the client, a shipped catalogue on the server, and the measurement behind that split. |
 | [Player health and stamina](player-stats.md) | Shared client/server reads, server-only setters, maximums, regeneration, and synchronization semantics. |
 | [Freezing a player](player-freeze.md) | Server-authoritative and client-local holds on the player's body: the engine restriction used, exactly what a freeze does and does not stop, cooperative claims, and every release path. |
+| [Blue holocall eyes](holocall-eyes.md) | Native blue eye glow, server-owned Lua leases, duration, lifecycle and multiplayer presentation. |
+| [Cyberware framework](cyberware.md) | Persistent implants, permissions, transactions, temporary loadouts and native projection. |
+| [Gorilla Arms](gorilla-arms.md) | Build native arm grades, self-service installation, charge effects, clinics and practice arenas. |
 | [Loot](loot.md) | Authoritative ground drops and pickup integration. |
 | [Weather](weather.md) | Session time, weather presets, synchronization, and events. |
 | [Vehicles](vehicles.md) | Identity, streaming, authority leases, seats, and Lua APIs. |
@@ -91,6 +104,8 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [NPC AI, combat and voice](npc-behavior.md) | Server control of one spawned NPC's behavior policy: AI, combat, perception and voice, and what it deliberately does not reach. |
 | [NPC record catalogue](npc-catalogue.md) | The 6,582 `Character.*` records of 2.31, searchable. A discovery index, not a spawn allowlist. |
 | [Contextual interactions](interactions.md) | Custom world/NPC prompts, action keys, projection, ownership, and server-safe integration. |
+| [Synchronized attachments](attachments.md) | Props on player bones or vehicles, local transforms, ownership, streaming and lifecycle cleanup. |
+| [Player interactions](player-interactions.md) | Reserved two-player actions, consent, synchronized presentation and server-owned completion. |
 | [Key mappings and device input](keybindings.md) | The `RegisterKeyMapping` engine primitive: named rebindable actions, press/hold callbacks, the pause KEY BINDINGS tab, and machine-global persistence -- plus reading the mouse, the wheel, a gamepad and the cursor directly. |
 | [Proximity zones](zones.md) | Client-side enter/exit hysteresis and the server-side re-validation every caller must apply. |
 | [World-anchored POIs](worldui.md) | The marker-plus-prompt facade: one owned handle, transactional creation and cleanup. |
@@ -123,6 +138,7 @@ Start the server, connect a client, and invoke `hello` from the Open77 developer
 | [Clipboard](clipboard.md) | Write-only client clipboard API and the `/pos` and `/rot` transform commands. |
 | [Client persistent KVP](client-kvp.md) | Endpoint- and resource-isolated local key/value persistence, search, atomic operations, and quotas. |
 | [Integrated voice chat](voice.md) | Native Opus VOIP, proximity/radio/phone channels, Lua APIs, pause settings, lipsync state, and speaker nameplates. |
+| [Voice lipsync](voice-lipsync.md) | Voice-driven male/female mouths, local/F7 and remote players, client Lua controls, resource ownership and diagnostics. |
 
 ## API reference coverage
 

@@ -44,6 +44,7 @@ hard-coding names.
 | `Hub` | every RPG hub page: inventory, crafting, perks, stats, journal | `flow` | measured |
 | `FastTravel` | the player's own fast travel, with the map still usable | `flow` | measured |
 | `Attack` | firing a ranged weapon | `condition` | **inferred — verify it** |
+| `WeaponWheel` | the radial weapon wheel; the bundled context menu holds this one for its lifetime | `condition` | proven |
 
 `confidence` is reported by `blockableActions()` on purpose. `inferred` means the lever is
 compiled and wired but has never been observed refusing the action in a live session. Do
@@ -65,7 +66,7 @@ blocked; `setActionBlocked` refuses with `action_already_enforced`.
 ### Not blockable on 2.31
 
 `Jump` · `Sprint` · `Crouch` · `Dodge` · `Slide` · `Aim` · `Reload` · `Melee` ·
-`WeaponWheel` · `NextWeapon` · `Interact` · `EnterVehicle` · `ExitVehicle` ·
+`NextWeapon` · `Interact` · `EnterVehicle` · `ExitVehicle` ·
 `Consumable` · `Grenade` · `Inventory` · `Phone` · `Radio`
 
 Three reasons cover almost all of them, and each is written up with its evidence in

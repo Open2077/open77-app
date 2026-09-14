@@ -1,5 +1,9 @@
 # Ground Slam / Quake
 
+Imported final Ground Slam session evidence, snapshotted September 13 at 18:27 local.
+These findings describe the base session's baseline and captures; they do not
+establish live acceptance of the combined Dash worktree. See the Dash checkpoint (`docs/dash-checkpoint.md`) for the combined test boundary.
+
 Protocol **1.28**. This is a session ability alongside durable Gorilla Arms and
 double-jump implants; granting or revoking it does not rewrite either implant.
 Capability metadata and automated checks do **not** establish live rendering or
@@ -61,6 +65,14 @@ and blunt-weapon predicates still apply. Core does not require a legs implant or
 install a weapon for the user. Cosmetic mode still runs real native eligibility
 and contact checks. Effect/sound configuration declares presentation policy;
 rendering/audibility requires its separately validated presentation adapter.
+The shipped `open77_cyberware` client adapter lays `impactEffect` out as a
+centre instance plus a ring of three at `clamp(radius x 0.25, 0.5 m, 1.5 m)`
+around the contact point, because the native Quake dust resource behind
+`impact.ground_slam` is one small short burst; that is four bounded instances
+per impact inside the client's 32-effect cap, using the same catalog key.
+Observers within 90 m receive it; the owner only with `effectOnOwner`. The
+owner's native impact rumble and `stagger_effect` camera stagger come from the
+unmodified native landing update, not from this adapter.
 
 ## Replaceable public example
 

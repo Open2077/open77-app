@@ -2,7 +2,7 @@
 
 Give players native Gorilla Arms with server-defined grades, paid installation or temporary arena loadouts. Open77 reuses Cyberpunk's equipment, arm models, punches and hit reactions; your Lua resource chooses who receives them and how powerful they are.
 
-Read the [Cyberware framework](cyberware.md) for identity, permissions, persistence and operation completion. This guide uses the implemented `gorilla_arms` profile and matching protocol 1.26 client/server source builds. It does not assume a stable binary release is available.
+Read the [Cyberware framework](cyberware.md) for identity, permissions, persistence and operation completion. This guide uses the implemented `gorilla_arms` profile and matching protocol 1.33 client/server source builds. It does not assume a stable binary release is available.
 
 ## What players get
 

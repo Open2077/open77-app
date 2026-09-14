@@ -88,6 +88,12 @@ end)
 `setEnabled(false)` clears and suppresses the caller's notifications. `list()` returns that caller's
 active entries; resources cannot inspect, update, or dismiss another owner's handles.
 
+The read-only `readiness()` export returns `{ready=boolean}`. It becomes true only
+after the notification WebUI's readiness callback, and resets on resource teardown.
+Gameplay requiring an admitted warning should check readiness and then check the
+`show` result; disabled owners or full queues can still reject a notification.
+Readiness/acceptance indicate presentation admission, not proof of rendered pixels.
+
 ## Server-targeted notification
 
 Server resources use the owner-aware API built into the server Lua runtime. The resource name is

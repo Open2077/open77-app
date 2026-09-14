@@ -7,6 +7,25 @@ the authoritative cabin instead of opening over an empty shaft.
 
 ## Installation
 
+### Context menu administration
+
+With `open77_admin` and `open77_contextmenu`, ALT-click a streamed door to copy
+its exact ID, inspect its state, open/close it manually, change its lock/seal,
+or restore automatic proximity opening. The menu framework defines no actions;
+the admin package supplies them. See [context menu integrations](context-menu.md).
+
+Door ID/inspector access requires `command.admin.dev.doors.inspect`; controls
+require `command.admin.dev.doors.control` (and `command.admin` for the UI).
+The restricted command is `/admin.dev.doors.control <hex-id> <open|close|lock|unlock|seal|unseal|automatic>`.
+Its server-only cooperative `open77_doors.adminControl(playerId, id, action)`
+export accepts **only** `open77_admin`, rechecks the actual operator's ACL,
+and uses the server's routing bucket and 12m distance limit. It does not let a
+client choose a bucket or claim somebody else's resource-owned door.
+Manual opening still honors locks/seals and auto-close; unlock/unseal first when
+needed. Lift opening remains elevator-controlled and is not offered manually.
+
+### Runtime requirements
+
 Availability: **client and server release 2.31.13+op77.58**, published on the CDN.
 Older clients do not contain the native door projection bridge.
 Install matching client scripts/binary and the `open77_doors` system resource

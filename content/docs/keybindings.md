@@ -68,6 +68,8 @@ In the positional form, passing a fifth argument (the release callback) implies 
 Keys use the same vocabulary as `Open77.input.isDown`, normalized to upper case:
 
 - a single alphanumeric — `A`–`Z`, `0`–`9`
+- The French AZERTY number row: `&`, `é`, `"`, `'`, `(`, `-`, `è`, `_`, `ç`, `à`, `)`, `=`.
+  Common punctuation is accepted too: `+ [] {} ; : , . / \\` and `` ` ~ ! ? @ # $ % ^ * < > | ù ² ``.
 - `F1`–`F12`
 - `SPACE`, `ENTER`/`RETURN`, `TAB`, `SHIFT`, `CTRL`/`CONTROL`, `ALT`, `CAPSLOCK`, `BACKSPACE`,
   `INSERT`, `DELETE`, `HOME`, `END`, `PAGEUP`, `PAGEDOWN`, and the four arrow keys `UP`, `DOWN`,
@@ -75,6 +77,12 @@ Keys use the same vocabulary as `Open77.input.isDown`, normalized to upper case:
 
 The pause page's capture, the Lua layer, and the native dispatch all agree on this set, so a key
 chosen in the rebinding UI maps to exactly what a resource registered.
+
+Letters are normalized to uppercase; accented characters and punctuation are preserved.
+These are **logical keys on the player's current Windows layout**, not US physical labels:
+on French AZERTY, `é` and `2` refer to the same top-row key. No Shift chord is required.
+The menu displays the captured character, including when CEF provides no `event.code`.
+Use UTF-8 Lua files, for example `RegisterKeyMapping("slot2", "Second slot", "é", callback)`.
 
 **Only keyboard keys can be bound.** A mapping's key is persisted, listed in the pause menu and
 polled by the engine's own dispatcher, and that dispatcher reads keys. Mouse buttons and gamepad
@@ -92,7 +100,7 @@ permission string would only mean every menu manifest grows a line.
 |---|---|
 | `Open77.input.isDown(control)` | A key, a mouse button or a gamepad button. `boolean`, or `false, reason`. |
 | `Open77.input.axis(name)` | A stick, a trigger, the cursor, or a cumulative counter. `number`, or `nil, reason`. |
-| `Open77.input.cursor()` | `x, y, source` — the pointer as 0..1 across the image. |
+| `Open77.input.pointer()` | `x, y, source` — the pointer as 0..1 across the image, overlay-aware. |
 | `Open77.input.devices()` | Every mouse and gamepad control, and whether this machine can answer for it. |
 | `Open77.input.isCaptured()` | Whether a WebUI owns the keyboard. |
 
@@ -176,14 +184,14 @@ end)
 A consume-on-read wheel would be shorter to use and wrong: two resources reading it would each
 receive part of the same scroll, and neither could tell.
 
-### The cursor, and which space it is in
+### The pointer, and which space it is in
 
-`Open77.input.cursor()` returns `x, y` as **0..1 across the rendered image, origin top left**, plus
+`Open77.input.pointer()` returns `x, y` as **0..1 across the rendered image, origin top left**, plus
 a `source`. That is the same frame `Open77.camera.project` answers in and `Open77.camera.unproject`
 consumes, so hit-testing a projected world point is a subtraction:
 
 ```lua
-local x, y = Open77.input.cursor()
+local x, y = Open77.input.pointer()
 local target = Open77.camera.project({ x = 100.0, y = 220.0, z = 15.0 })
 if x and target and target.onScreen then
     local dx, dy = x - target.x, y - target.y
@@ -212,6 +220,11 @@ During ordinary gameplay Cyberpunk recentres the OS cursor every frame, so `syst
 The pause menu's **KEY BINDINGS** tab lists every registered action across every running resource
 and rebinds them. It is only a viewer: it reads the registry and writes back through the same
 management API any resource may call.
+
+This includes both bundled client resources and resources downloaded from the current server.
+Callbacks stay in their owning resource; the pause menu can list, rebind and reset them across
+the two client layers. Stopped/disconnected resources disappear from the list, while their saved
+choices are retained for the next session. There are no demo bindings in the shipped pause menu.
 
 | Call | Effect |
 |---|---|
@@ -252,3 +265,6 @@ outside the per-server KVP layout so a rebind follows the player to every server
 relaunch. The engine owns and validates the format; a corrupt file degrades to defaults rather than
 refusing bindings. A mapping inherits its saved key at registration time, so the player's choice is
 applied the moment the resource declares the action on the next session.
+
+If writing the preferences fails, `rebind`/`reset` returns `false, "keybind_save_failed"` and
+keeps the previous effective key. Updating one client layer does not discard the other's overrides.
