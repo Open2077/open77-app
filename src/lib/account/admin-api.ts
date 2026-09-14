@@ -166,6 +166,15 @@ export function reinstateUser(token: string, accountId: string): Promise<void> {
   return masterCall(`/api/v1/admin/users/${accountId}/reinstate`, { method: "POST", token });
 }
 
+/** Idempotent, audited admin override. The confirmed address must still match. */
+export function verifyUserEmail(token: string, accountId: string, email: string): Promise<AdminUser> {
+  return masterCall(`/api/v1/admin/users/${accountId}/verify-email`, {
+    method: "POST",
+    token,
+    body: { email },
+  });
+}
+
 export function licenses(token: string, query: string, limit = 50): Promise<AdminLicense[]> {
   const params = new URLSearchParams({ limit: String(limit) });
   if (query) params.set("query", query);
