@@ -14,10 +14,24 @@ readers, is in [the Workshop guide](https://open2077.net/docs/community-hub).
 ## Before you start
 
 Open Warden and select the **Workshop** tab (subtitle "Community resources").
-If the tab shows **Workshop not connected**, the server has no master origin
-in the `warden` section of its configuration, or that configuration is
-invalid; the message says which. Installation and maintenance also wait until
-startup recovery has finished.
+
+Two settings in `server.jsonc` decide what the tab can do:
+
+- **Browsing** uses the master your server is registered with (`masterServer`).
+  Every listed OPEN//77 server already has one, so search works out of the box.
+  **Workshop not connected** means `masterServer` is missing or invalid.
+- **Installing** needs the Workshop file gateway. Add it once and restart:
+
+  ```jsonc
+  "warden": {
+    "enabled": true,
+    "hubFileGatewayOrigin": "https://files.open2077.net"
+  }
+  ```
+
+  Without it you can browse but every **Create installation plan** answers
+  that installation is unavailable. Installation and maintenance also wait
+  until startup recovery has finished after each restart.
 
 A Warden login controls this server only; it is separate from your website
 creator account. Being a creator on the website grants no rights here.

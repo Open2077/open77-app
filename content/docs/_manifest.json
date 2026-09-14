@@ -520,10 +520,10 @@
       "target": "content/docs/community-hub-warden.md",
       "slug": "community-hub-warden",
       "title": "Manage Workshop resources with Warden",
-      "bytes": 14848,
-      "sha256": "8cbed598fd0cafc660dd894ab9b0564225002a8c6d4f60c9b0935736fa99bd66",
-      "sourceRevision": "3b3cf2d4c08f20947c6098e38f05e87faccdbd7e",
-      "sourceSyncedAt": "2026-09-14T16:49:59.751Z"
+      "bytes": 15283,
+      "sha256": "a5003adaf3047412fcfea37f8bdec1c3903554d8074744bb354814a2caa7b780",
+      "sourceRevision": "ea198be7de8c445f8f31829d92ac97619dc1057c",
+      "sourceSyncedAt": "2026-09-14T17:31:14.719Z"
     }
   ],
   "partialSync": {

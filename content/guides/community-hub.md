@@ -34,7 +34,15 @@ tab in Warden, that feature is not enabled where you are. It is not broken.
    declaration, not a promise.
 3. In the **Install with Warden** box, press **Copy link**. The link looks like
    `https://open2077.net/workshop/auto-taxi`. That is all Warden needs.
-4. Open your server's Warden and go to the **Workshop** tab.
+4. Open your server's Warden and go to the **Workshop** tab. The first time,
+   allow installs by adding the Workshop file gateway to `server.jsonc` and
+   restarting the server:
+
+   ```jsonc
+   "warden": { "enabled": true, "hubFileGatewayOrigin": "https://files.open2077.net" }
+   ```
+
+   Browsing works without it; installing does not.
 5. Paste the link into the search field and press **Search**. Warden looks the
    creation up on the OPEN//77 master, shows it as a tile and opens its
    releases. The short form `workshop:auto-taxi` works too. You can also type a
