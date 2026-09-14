@@ -484,6 +484,18 @@ An attachment does not reserve a player or transfer inventory ownership. Use
 and cancellation, then commit item ownership in your server resource after
 validated completion. The guide includes a revision-safe handoff example.
 
+If you want something genuinely **held as gear**, that is a different API:
+`Open77.heldItems.hold(playerId, record, options?)` puts a real *item* in one of
+the ten equipment slots through the engine's own transaction system, so it
+behaves as equipment in first and third person. The price is that it takes an
+item record rather than an entity path, needs `open77_helditems` running on the
+client, competes with `Open77.weapons` over `WeaponRight`, and nothing persists
+it across a world entry. `props.attach` binds a prop; `heldItems.hold` equips
+an item. The older `attach(id, { kind = , id = }, opts)` spelling still works
+and is translated onto the binding above, so a resource written against it
+keeps running; `kind = "npc"` is refused, because there is no rendered NPC
+parent yet.
+
 ## Quotas, lifetime and the three ways a prop dies
 
 | Registry | Per resource | Global |
@@ -504,9 +516,17 @@ carries which one:
 | `expired` | Its `ttlMs` came due. |
 | `resource_stopped` | Its owning resource stopped or reloaded. |
 
-There is no persistence. Nothing survives a server restart, and nothing
-survives its owning resource stopping. Keep your scene in a table and place
-it on start — the roadblock below is that pattern.
+**The registry itself has no persistence.** Nothing a resource creates through
+`Open77.props` survives a server restart, and nothing survives its owning
+resource stopping. Keep your scene in a table and place it on start — the
+roadblock below is that pattern.
+
+The one exception is not a registry feature: the bundled `open77_props` resource
+has an opt-in `persist` tunable, **off by default**, which saves the props its
+own `prop.*` and `light.*` console commands created and recreates them at boot.
+It deliberately does not persist a gamemode's programmatic props — those would
+double-spawn against the gamemode's own rebuild on start. See
+[World props](/docs/props#persistence-the-bundled-resources-opt-in).
 
 ## Worked example: a roadblock the resource owns
 
