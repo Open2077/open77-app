@@ -10,6 +10,9 @@ movement or change the player's saved eye customization. It needs a client and
 server build containing this API; a successful Lua call confirms canonical
 state, not a native rendering acknowledgement.
 
+Published in client/server **2.31.13+op77.62**, protocol **1.25**. Use matching
+updated builds for the server setter and its client-side projection.
+
 ## Quick start
 
 Declare the permissions your resource needs:

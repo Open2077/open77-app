@@ -4,6 +4,9 @@ Client Lua helpers use the player's native state, not pressed keyboard keys. Net
 player IDs are **not** entity handles. Omitting the player ID queries the local player.
 Failures return `nil, reason` for reads and `false, reason` for controls.
 
+Available in client **2.31.13+op77.62**, protocol **1.25**. These are client APIs;
+server resources request their own client's actions through permissioned events.
+
 ```lua
 permissions { 'players.read', 'players.controls' }
 ```

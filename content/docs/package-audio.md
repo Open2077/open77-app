@@ -4,6 +4,10 @@ Play a resource's own `.mp3` or PCM `.wav` assets without creating a WebUI. Audi
 decoding is asynchronous and does not run on the game thread. Engine/Wwise named
 events remain a separate feature: see [effects](effects.md).
 
+Available in client/server **2.31.13+op77.62**, protocol **1.25**. Local playback
+needs the updated client; network playback needs both the updated client and server.
+Sharing protocol 1.25 with an older build does not make these Lua APIs available there.
+
 ## Manifest and first sound
 
 ```lua
@@ -135,4 +139,4 @@ and destruction on both clients. Distance attenuation was observed in the live m
 Bucket transitions are covered by automated service tests, not a completed live
 bucket-change trial. Output-device removal/recovery and every Windows codec/device
 combination are not certified; automatic device recreation after an output failure
-is not implemented. No CDN publication is implied.
+is not implemented.
