@@ -105,12 +105,15 @@ resource 'my_emotes'
 version '1.0.0'
 dependency 'open77_animations >=1.0.0'
 client_script 'client.lua'
+permissions { 'input.actions' }
 ```
 
-`client.lua`:
+`client.lua`. A client resource may `RegisterCommand` of its own — see the
+[FiveM compatibility page](fivem-compatibility.md) — but for an emote a key is the better trigger,
+which is what `input.actions` is for:
 
 ```lua
-RegisterCommand('my_smoke', function()
+RegisterKeyMapping('my_smoke', 'Smoke', 'K', function()
     CreateThread(function()
         local pending, dispatchError = Open77.animations.request('smoke', {
             loop = false,
@@ -124,7 +127,7 @@ RegisterCommand('my_smoke', function()
 end)
 ```
 
-Join the world, stand still on foot, then run `/my_smoke`. The request schedules
+Join the world, stand still on foot, then press `K`. The request schedules
 15 seconds of smoking; no manual F7 toggle is needed. Use `/anim stop` or move to
 cancel earlier. If using your own WebUI, release its input focus before requesting
 playback, as the Freeroam **Play & Close** button does. A message saying the server
@@ -292,6 +295,92 @@ A sequence contains 1–16 steps. Each step accepts `profile`, `clip` and
 exceed 600,000 ms. The only sequence option is `loop`, default false. Different
 profiles may appear in one sequence; native profile changes require asynchronous
 workspot exit/re-entry and are not promised to be seamless blends.
+
+### Addressing a clip by name (`TaskPlayAnim`'s shape)
+
+Every other engine names an animation directly — FiveM's
+`TaskPlayAnim(dict, name, ...)` — and a caller that knows the clip should not have to
+know which action happens to carry it. `playClip` is that shape:
+
+```lua
+-- Server. Same permission, readiness, ownership and duration rules as play().
+local playback, err = Open77.animations.playClip(
+    playerId, 'stand__dance__02__dancing__03', { durationMs = 15000, loop = false })
+```
+
+```lua
+-- Client, for the local player.
+local playback, err = Open77.animations.requestClip(
+    'stand__dance__02__dancing__03', { loop = true }):await()
+```
+
+Discovery is `clips` and `clip`, on both runtimes and with no capability required:
+
+```lua
+for _, row in ipairs(Open77.animations.clips('dance') or {}) do
+    print(row.profile, row.clip)          -- dance  stand__dance__02__dancing__03
+end
+print(Open77.animations.clip('stand__dance__02__dancing__03').id)   -- dance
+```
+
+The clip is resolved to its owning profile from the same generated catalogue on
+both halves, so `playClip(id, clip, opts)` and `play(id, profile, { clip = clip })`
+start the identical action and produce the identical playback state. Nothing new
+goes on the wire.
+
+#### What "raw playback" can and cannot mean here
+
+**Cyberpunk has no play-a-clip-by-name native.** A body plays an authored clip only
+after it is mounted into a *device* — an entity carrying a
+`workWorkspotResourceComponent` — and `SendJumpToAnimEnt` then jumps it to a node
+**inside that device's workspot tree**. The device and its tree are bound together
+when the archive is built, not at runtime.
+
+So the addressable set is the **70 clips of the twelve shipped devices**, and
+`Open77.animations.clips()` is the whole of it. Two consequences worth stating
+plainly, because both have cost time before:
+
+- [`docs/data/emote-animations.txt`](../docs/data/emote-animations.txt) lists 23,044
+  clip names and
+  [`docs/data/rp-workspots.json`](../docs/data/rp-workspots.json) 4,510 more across
+  494 vanilla workspots. Both are **discovery inventories, not allowlists**. A name
+  from either that no shipped device carries is refused with `unknown_clip`.
+- The legacy client-local `Open77.animations.play(entity, clip)` looks like it takes
+  any name. It does not: it mounts the body into the single generic device
+  `cyberm\entities\workspot_anim.ent`, which binds exactly one vanilla workspot
+  (`base\workspots\common\ground\generic__stand_cigar__stand_around__01.workspot`),
+  so only that tree's nodes resolve. Anything else is a silent no-op.
+
+Adding a clip means adding a **device**: a new entry in
+`scripts/animations/rp-profiles.json`, a regenerated workspot and `.ent` from
+`scripts/animations/build-devices.ps1`, and a repacked `Open77.archive`. See
+[`scripts/animations/README.md`](../scripts/animations/README.md).
+
+#### Flags that do not exist
+
+FiveM's `TaskPlayAnim` flags have no workspot equivalent, and the service refuses
+them **by name** rather than with a blanket `invalid_options`, so a port can see
+which concept is missing instead of assuming a bad value:
+
+| Passed option | Reason returned | Why |
+| --- | --- | --- |
+| `upperBody` | `unsupported_option:upperBody` | A workspot takes the whole body. There is no bone mask on this path. |
+| `blendIn`, `blendOut`, `blendMs` | `unsupported_option:blendIn` … | The engine *jumps* a mounted body to an authored node; it does not blend a clip in over milliseconds. |
+| `holdLastFrame` | `unsupported_option:holdLastFrame` | Not measured on 2.31. Unverified behaviour is not an API. |
+| `flags`, `dict`, `playbackRate` | `unsupported_option:<key>` | No equivalent concept. |
+
+What *is* supported is `loop` and `durationMs`, described above, plus `clip` on
+`play` and on a sequence step.
+
+#### Scenarios (`TaskStartScenarioInPlace`) are not shipped
+
+There is no `Open77.animations.scenario(entity, workspotRef)`. Cyberpunk's scenario
+equivalent is a workspot, and a workspot is only playable through a device bound to
+it. Mounting a player into a *world* chair, bench or bar stool would need that
+device's engine entity handle, and nothing on 2.31 enumerates workspot-bearing world
+entities near a point — the same wall that stopped the cover commands in an earlier
+wave. Pointing the generic device at an arbitrary `.workspot` at runtime has not been
+measured and is not assumed. Tracked as I4.
 
 ### Playback state
 

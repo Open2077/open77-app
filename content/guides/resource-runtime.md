@@ -424,12 +424,16 @@ Game namespaces exist on the client host. Calling one on a host without a
 game backend returns an explicit unavailable error rather than failing
 silently.
 
+This table is the set a client resource reaches for first, not the whole
+surface: the [API reference](/docs/api) lists every client namespace and every
+function in it, generated from the runtime rather than maintained here.
+
 | Namespace | Permission | Purpose |
 |---|---|---|
 | `Open77.character` | none | Read local or registered character state |
 | `Open77.animations` | none | Play named workspot animations |
-| `Open77.camera` | none | Third-person, detached and field-of-view control; one-shot world-to-screen projection |
-| `Open77.input` | `input.actions` | Read a small allowlist of contextual action keys; suppressed while a WebUI captures keyboard input |
+| `Open77.camera` | `camera.script` | Scripted cameras: create, place, follow, look at, shake, and world-to-screen projection. See [Scripted cameras](/docs/cameras) |
+| `Open77.input` | `input.actions`, `input.blockAll` | Read a small allowlist of contextual action keys, plus mouse, gamepad and aim state; take a named input away from the player and give it back. See [Blocking player input](/docs/input-blocking) |
 | `Open77.clipboard` | `clipboard.write` | Write bounded UTF-8 text to the OS clipboard; reading is never exposed |
 | `Open77.kvp` | none | Persistent typed client storage, isolated by connection address and resource |
 | `Open77.inspector` | none | Read and highlight the current streamed-world target |
@@ -442,15 +446,33 @@ silently.
 | `Open77.loot` | `world.loot` | Project authoritative ground loot and the pickup flow |
 | `Open77.vehicles` | `vehicles.read`, optional `vehicles.presentation` | Read streamed vehicles; guarded remote-occupant presentation |
 | `Open77.environment` | `world.environment` | Apply authoritative time and weather |
-| `Open77.travel` | `player.travel` | Local-player noclip and direct teleport |
+| `Open77.travel` | `player.travel` | Local-player noclip and teleport, with a settle report that says when the body really arrived. See [Travel](/docs/travel) |
 | `Open77.clothing` | `player.clothing.read` / `player.clothing.edit` | The validated local wardrobe |
 | `Open77.assets` | declared `files` | Resolve resource-owned client assets |
 | `Open77.webui` / `WebUI` | layer-specific | Create isolated HTML/CSS/JavaScript surfaces |
+| `Open77.players` | none, `players.life.read` for life state | The other players this client can see: ids, bodies, distances, the nearest one. See [Players around you](/docs/client-players) |
+| `Open77.state` | none to read, `network.events` to subscribe | Replicated state bags on the server, a player or an entity. A client never writes one. See [State bags](/docs/state-bags) |
+| `Open77.net` / `Open77.callbacks` | `network.events` | Net events, and callbacks that ask the server a question and await the answer. See [Network callbacks](/docs/callbacks) |
+| `Open77.hud` | `ui.vanilla.hud` | The vanilla HUD components, the game's own toasts, help text and subtitles. See [HUD visibility](/docs/hud-visibility) |
+| `Open77.screen` | `screen.effects` | Native fades and transitions, plus an unowned read of the engine's own fade state |
+| `Open77.map` | `map.read`, `map.control` | The native map: the waypoint, the selected marker, open/close, pick a point |
+| `Open77.world` | `world.query`, `world.devices` | Raycasts that name what they hit, ground height, nearby entities, the district, ambient population — and taking a vanilla device prompt away |
+| `Open77.zones` | none | Shared zone geometry from the prelude: normalise a shape, test containment, read bounds |
+| `Open77.data` | none | Turn a TweakDB record string into a display name, class, manufacturer or seat count |
+| `Open77.prevention` | `world.prevention` | This client's wanted level and NCPD dispatch. World state, never player state: the units it summons are never replicated |
+| `Open77.abilities` | `player.abilities.project`, `player.abilities.read` | Project a granted session ability and read its state |
+| `Open77.chute` | `player.chute` | Arm and disarm the grav-chute |
+| `Open77.runtime` | none | Register a client command, list the registered ones, run one |
+| `Open77.session` | none, `session.menus` for menu reads | Session and menu state, including whether a vanilla menu currently owns the screen |
+| `Citizen`, `vector3`, `promise` | none | The FiveM-shaped aliases, in both runtimes. See [FiveM compatibility](/docs/fivem-compatibility) and [Vectors](/docs/vectors) |
 
-`Open77.travel` writes the transform without the respawn discipline. Prefer
-the server-side kill/respawn transaction for long-distance moves, which
-preloads streaming — see
-[Writing a gamemode](writing-a-gamemode.md#4-move-players-with-kill--respawn-never-a-transform-write).
+When the **server** decides where somebody goes, do not reach for
+`Open77.travel` at all: `Open77.players.teleport` drives the same machinery,
+carries the fade and the bucket change, and answers with a promise that
+resolves only once the client reports the body settled. The kill → respawn
+transaction is no longer the sanctioned way to move a living player — see
+[Writing a gamemode](writing-a-gamemode.md#4-move-a-living-player-with-teleport-never-a-transform-write)
+and [Travel](travel.md).
 
 The complete generated signatures for every namespace are in the
 [API reference](/docs/api).

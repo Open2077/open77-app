@@ -133,6 +133,12 @@
           "description": "What a resource actually gets: the complete manifest reference, the scheduler and lifecycle events, local and network events, modules and cross-resource exports, the core Open77 namespaces, WebUI surfaces, and every sandbox quota."
         },
         {
+          "slug": "vectors",
+          "kind": "guide",
+          "nav": "Vectors and quaternions",
+          "description": "`vector2`, `vector3`, `vector4`, `vec` and `quat` in both Lua runtimes: arithmetic, swizzles, `#` for magnitude, distance helpers — and the guarantee that plain tables keep working everywhere."
+        },
+        {
           "slug": "server-api",
           "kind": "guide",
           "nav": "Complete server Lua API",
@@ -149,6 +155,18 @@
           "kind": "guide",
           "nav": "Official resource exports",
           "description": "Every client export published by the official OPEN//77 resource packages, with signatures per package and how to call them safely across resources."
+        },
+        {
+          "slug": "callbacks",
+          "kind": "guide",
+          "nav": "Network callbacks",
+          "description": "Ask the other side a question and wait for the answer: `Open77.callbacks` in both directions, promise results, per-resource namespacing, timeouts, limits and why a callback is a request rather than a grant."
+        },
+        {
+          "slug": "state-bags",
+          "kind": "guide",
+          "nav": "Replicated state bags",
+          "description": "Key/value state attached to the server, a player or an entity that replicates itself: selectors, change handlers, who is entitled to see what, the caps, and why a client can never write a bag."
         },
         {
           "slug": "readiness-gate",
@@ -171,6 +189,12 @@
           "kind": "guide",
           "nav": "Client persistent KVP",
           "description": "Endpoint- and resource-isolated local key/value persistence: CRUD, search, atomic operations, quotas, and why it must never hold secrets."
+        },
+        {
+          "slug": "fivem-compatibility",
+          "kind": "guide",
+          "nav": "FiveM compatibility",
+          "description": "The `Citizen` table, `SetTick`, generic promises and the shared-script helpers that let a FiveM script run unchanged, the three places OPEN//77 deliberately answers differently, and what is still missing."
         }
       ]
     },
@@ -201,6 +225,24 @@
           "kind": "guide",
           "nav": "Weapons",
           "description": "Weapon templates, slots, holstering and server assignments."
+        },
+        {
+          "slug": "client-players",
+          "kind": "guide",
+          "nav": "Players around you",
+          "description": "Enumerate the other players a client can already see — ids, bodies, distances and the nearest one — with no permission at all, and why a player id does not outlive a body."
+        },
+        {
+          "slug": "player-freeze",
+          "kind": "guide",
+          "nav": "Freezing a player",
+          "description": "Hold a player's body still: the authoritative server freeze on the engine's own movement restriction, the presentation-local client hold, what a freeze stops and what it deliberately does not."
+        },
+        {
+          "slug": "travel",
+          "kind": "guide",
+          "nav": "Travel and settling",
+          "description": "Move the local player's body and know when it has really arrived: the two teleports and why there are two, what “settled” actually tests, raw settle tickets, noclip and the map pick."
         },
         {
           "slug": "npcs",
@@ -251,6 +293,12 @@
           "description": "Coordinate giving, healing, carrying and escorting: server reservations, player consent, shared animation timing, Lua examples and safe cancellation. Requires matching client/server builds and the player-interactions system resource."
         },
         {
+          "slug": "rp-kit",
+          "kind": "guide",
+          "nav": "The role-play kit",
+          "description": "`open77_rp_basics`: cuff, escort and search composed from primitives that already shipped, how a hold always ends, and why `carry` refuses instead of faking a player-to-player attachment this engine does not have."
+        },
+        {
           "slug": "photo-mode",
           "kind": "guide",
           "nav": "Photo mode",
@@ -273,6 +321,12 @@
           "kind": "guide",
           "nav": "Gorilla Arms",
           "description": "Add native Gorilla Arms to your server: normal and charged punches, synchronized knockback, configurable damage and cosmetics, plus Lua installation examples and optional doctor and arena resources."
+        },
+        {
+          "slug": "ground-slam",
+          "kind": "guide",
+          "nav": "Ground Slam",
+          "description": "The session ability beside the durable implants: define, grant and revoke, the native support API and lifecycle, authority and geometry, and what the automated checks do not establish."
         }
       ]
     },
@@ -393,6 +447,12 @@
           "description": "Custom world and NPC prompts: attaching interactions to players or NPCs, multiple actions and hold keys, the definition reference, and keeping server authority intact."
         },
         {
+          "slug": "device-interactions",
+          "kind": "guide",
+          "nav": "Vanilla device prompts",
+          "description": "Take the vanilla prompt off a vending machine, ATM, terminal or door panel and put your own shop there: naming a device, ownership, the `open77:deviceUsed` event and every refusal reason."
+        },
+        {
           "slug": "worldui",
           "kind": "guide",
           "nav": "World-anchored POIs",
@@ -417,10 +477,28 @@
           "description": "Show and hide the game's HUD elements from a client resource."
         },
         {
+          "slug": "ui-kit",
+          "kind": "guide",
+          "nav": "The UI kit",
+          "description": "`open77_uikit`: progress bars, text hints, alerts, input forms, context and keyboard menus and a radial wheel drawn from one page — with the focus rule that outranks the whole feature list."
+        },
+        {
           "slug": "keybindings",
           "kind": "guide",
           "nav": "Key bindings",
           "description": "Register rebindable actions and handle press and hold callbacks."
+        },
+        {
+          "slug": "input-blocking",
+          "kind": "guide",
+          "nav": "Blocking player input",
+          "description": "Take a named input away from the player and give it back — per-action blocks or the whole control stream — with the ownership and release rules that stop a crashed resource stranding somebody."
+        },
+        {
+          "slug": "cameras",
+          "kind": "guide",
+          "nav": "Scripted cameras",
+          "description": "Put the view where your resource wants it: create, place, follow, look at and shake a camera, spectate a player from the server, and the release rules that guarantee the player gets their own view back."
         },
         {
           "slug": "effects",
@@ -433,6 +511,12 @@
           "kind": "guide",
           "nav": "Package audio: 2D & 3D",
           "description": "Play package MP3/WAV assets locally or through server-owned network sounds. Control playback, pause, seek, volume and position with resource-owned handles, routing buckets and late-join timelines."
+        },
+        {
+          "slug": "sound",
+          "kind": "guide",
+          "nav": "Resource audio",
+          "description": "`open77_sound` plays an audio file your resource ships: spatial behaviour, server twins, ownership and lifetime, why files are never shared across resources, and how it differs from the game's own `Open77.sfx` events."
         },
         {
           "slug": "chat",
@@ -533,6 +617,12 @@
           "kind": "guide",
           "nav": "Game data reference",
           "description": "NPC templates, vehicle records, seat and door constants, items, weapons, effects, sounds, animations and sprite catalogues, with explicit support levels."
+        },
+        {
+          "slug": "data-catalogues",
+          "kind": "guide",
+          "nav": "Game data catalogues",
+          "description": "`Open77.data` turns a TweakDB record string into the facts a resource can show — display name, class, manufacturer, seats, quality — the fields each runtime can answer, and the one asymmetry on `npc`."
         },
         {
           "slug": "debug-runtime",

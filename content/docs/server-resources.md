@@ -135,6 +135,19 @@ Commands declared with `restricted=true` require the ACL permission
 `command.<lowercase-name>`. The `*` permission and namespace wildcards such as `command.garage.*`
 are accepted. See [server-acl.md](server-acl.md).
 
+A resource may also run a command, list what commands exist, and control the resource lifecycle,
+behind two capabilities that are deliberately not the same one:
+
+```lua
+permissions { "runtime.commands" }    -- invoke a SIBLING's ordinary command, and nothing else
+permissions { "resources.control" }   -- start/stop/restart, and the operator's authority for a line
+```
+
+Everything on that surface is queued for the next tick boundary and reports acceptance rather than
+completion, because Lua runs inside the server's tick and a resource stopping itself synchronously
+would free the Lua state doing the stopping. See
+[Runtime and resource control](server-api.md#runtime-and-resource-control).
+
 ## Selecting which resources load
 
 The dedicated server does not have to load every directory below `resources.root`. The

@@ -10,6 +10,8 @@ permissions { "world.effects" }
 
 This is the single easiest thing to get wrong in this API, so it comes first. Open77 has **two** effect surfaces behind the same `world.effects` permission, and picking the wrong one produces a feature that works perfectly for the person testing it and does not exist for anybody else.
 
+> **A third thing shares the word "sound" and is not either of these.** `Open77.sfx` plays the *game's own* Wwise events, by name, out of Cyberpunk's banks. [`open77_sound`](sound.md) plays audio *files a resource ships*, through a browser surface, with real `volume` and `pitch` options — which is exactly why it has them and `Open77.sfx` does not. Reach for `Open77.sfx` when you want the game's vocabulary: a weapon click, a menu blip, an alarm. Reach for `open77_sound` when you want your own audio.
+
 | | Client-local | Replicated |
 |---|---|---|
 | Tables | `Open77.vfx.*`, `Open77.sfx.*` | `Open77.effects.*` |
@@ -22,6 +24,8 @@ This is the single easiest thing to get wrong in this API, so it comes first. Op
 The two do not talk to each other. A client-local `Open77.vfx.play` is never replicated, no matter what triggered it, and a server-side `Open77.effects.play` is not a broadcast of a client call — the server decides who receives it and the projection is built independently on each client.
 
 The rest of this page keeps them apart: sections up to and including [Inspection and cleanup](#inspection-and-cleanup) are the **client-local** API, unchanged; [Replicated effects](#replicated-effects) is the server-authoritative one.
+
+[Screen effects](#screen-effects) is the one surface with a half on each side and belongs to neither column above, because a full-screen post-process belongs to exactly one pair of eyes: the client half is `Open77.vfx.screen`, the server half is `Open77.effects.screen(playerId, ...)`, and neither is replicated to anybody else.
 
 Looping replicated effects live in the same registry as [world props](props.md) — they stream, bucket and expire exactly like a prop, because they are one.
 
@@ -121,6 +125,32 @@ assert(Open77.sfx.stop(sound))
 
 Audio is attached to an existing entity and therefore follows it in 3D. `stop` queues `SoundStopEvent` for the same event name. Because REDengine stopping is name-based, two simultaneous identical events on the same entity may be stopped together; use `unique = true` where the Wwise event supports it.
 
+### Two-dimensional SFX
+
+**Client-local.** A user-interface click has nowhere in the world to come from, so `Open77.sfx.play` — which always wants an entity — is the wrong door for it.
+
+```lua
+local ok, reason = Open77.sfx.play2d("ui_menu_onpress")
+```
+
+`play2d` posts the event through `gameGameAudioSystem::Play` with no entity and no emitter, which is the same call vanilla scripts make for menu sounds. It is not spatialised, it is not attached to anything, and it does not follow the player.
+
+It returns `true` rather than a handle, and there is nothing to stop it with: a frontend one-shot has no emitter to address a stop to. It also consumes no effect quota, precisely because nothing is tracked. `Open77.sfx.clear()` and resource shutdown have nothing to release here.
+
+Refusals: `permission_denied:world.effects`, `invalid_sfx_event`, `effects_backend_unavailable`, plus `world_unavailable`, `native_unavailable` and `invocation_failed` from the facade.
+
+### There is no volume and no pitch, and that is the engine
+
+This gets asked, so here is the measurement rather than an opinion. Neither `play` nor `play2d` accepts a `volume` or a `pitch`, because REDengine's audio surface does not carry either:
+
+- `gameaudioeventsPlaySound` — the event `Open77.sfx.play` posts — has exactly five fields: `soundName`, `emitterName`, `audioTag`, `seekTime`, `playUnique`.
+- `gameGameAudioSystem::Play` — the native `play2d` calls — takes `(CName eventName, EntityID, CName emitterName)`. Three parameters, no floats.
+- No class or event in the whole `game/audio` surface declares a volume or pitch field.
+
+The one float channel that exists is `gameGameAudioSystem::Parameter(name, value, entity, emitter)`, a **Wwise RTPC**: its valid names are authored inside the sound bank that shipped the event, and they are per-family rather than general. Open77 uses it for vehicle engine curves, where the bank documents the name. There is no `volume` RTPC and no `pitch` RTPC to set.
+
+So loudness is a property of the Wwise event, chosen when the bank was authored. Pick a quieter event; there is no gain to turn down.
+
 ## Inspection and cleanup
 
 **Client-local.** This lists what one client is playing for itself; replicated effects are listed with `Open77.effects.all()` on the server.
@@ -135,6 +165,144 @@ Open77.sfx.clear() -- only this resource's SFX
 ```
 
 Handles are decimal strings so their full 64-bit identity survives Lua number conversion. A resource cannot stop another resource's handle.
+
+## Screen effects
+
+**Client-local**, permission `vfx.screen`. Cyberpunk's own full-screen
+post-process: the drunk wobble, the drugged smear, the burning edges, the
+low-health pulse, the blackout.
+
+```lua
+permissions { "vfx.screen" }
+
+local handle = Open77.vfx.screen("drunk", { strength = 0.5, duration = 30 })
+-- ... later ...
+Open77.vfx.stop(handle)
+```
+
+`vfx.screen` is **not** `world.effects`, and the split is deliberate: putting
+smoke in a street and covering somebody's eyes are different powers. Two of the
+aliases below (`blackout`, `health.critical`) hide most of what the player can
+see, so an operator has to be able to grant the first without the second.
+
+The handle is an ordinary effect handle. `Open77.vfx.stop`, `Open77.vfx.list`
+and `Open77.vfx.clear` all work on it, because there is one effect registry on
+the client rather than two, and one stop path rather than two that can each fail
+to reach a looping overlay.
+
+### The vocabulary
+
+`Open77.vfx.screenCatalog()` returns `{ [alias] = engineEffectName }`.
+
+| Alias | What it looks like | Loops? |
+|---|---|---|
+| `drunk.light` / `drunk.medium` / `drunk.heavy` | the alcohol wobble, three authored tiers | yes |
+| `drugged.light` / `drugged.medium` / `drugged.heavy` | the drug/poison smear, three tiers | yes |
+| `health.low` / `health.critical` | the vanilla low-health overlay | yes |
+| `pain` | the generic hit flinch | no |
+| `damage.fire` | the burning-damage indicator | no |
+| `damage.emp` | the EMP-damage indicator | no |
+| `burning` | the burning status overlay | yes |
+| `electrocuted` | the electrocution status overlay | yes |
+| `bleeding` | the bleeding status overlay | yes |
+| `blinded` | the flash/blind overlay | yes |
+| `drowning` | the out-of-oxygen overlay | yes |
+| `exhausted` | the stamina-exhaustion overlay | yes |
+| `blink` | eyes closing, once | no |
+| `blackout` | eyes closed and held | yes |
+
+**A looping alias needs a `duration` or a `stop`.** `duration` is in seconds,
+`0..600`; `0` means "hold it until something ends it". Resource stop, reload,
+error, world exit and disconnect all end it, so the worst case is an effect that
+lasts as long as the resource — never one that outlives the session.
+
+### `strength` picks a tier, not an intensity
+
+```lua
+Open77.vfx.screen("drunk", { strength = 0.2 })   -- drunk.light
+Open77.vfx.screen("drunk", { strength = 0.5 })   -- drunk.medium
+Open77.vfx.screen("drunk")                       -- drunk.heavy
+```
+
+`strength` is `0..1` and selects among the tiers **the game authored** for
+`drunk`, `drugged` and `health`. Omitting it means `1.0`, which is the heaviest
+tier — "the effect". An alias with only one tier ignores it.
+
+There is no continuous amount, unlike FiveM's `AnimpostfxPlay`. The drunk
+overlay's own level rides a blackboard the player's own script owns
+(`vfx_fullscreen_drunk_level`), and writing another system's blackboard on a
+guess is the class of thing that ends a process. The API promises what is true.
+
+### Unknown names are refused, never forwarded
+
+```lua
+Open77.vfx.screen("sandevistan")          --> nil, "unsupported_screen_effect"
+Open77.vfx.screen("status_drunk_level_1") --> nil, "unsupported_screen_effect"
+```
+
+Spelling the *engine's* own name is refused too — that would be exactly the way
+around the curated table. The reason the gate is this strict: an authored effect
+name the player entity does not carry is a **silent no-op** in the engine.
+Nothing renders and nothing is reported, so a typo that reached the engine would
+be indistinguishable from a broken feature, and a name that reached a dormant
+channel has already cost this project a client crash (see the notification row's
+`unsupported_channel`).
+
+Every alias in the table was read out of the installed game's own shipped data
+with no client running: the string constants in `r6/cache/final.redscripts`
+(inside the `PlayerPuppet` functions that play them) and in `r6/cache/tweakdb.bin`
+(as the VFX list of a `BaseStatusEffect` record applied to the player). The
+provenance for each one is in `kScreenFxCatalog` in
+`client/src/api/Effects.cpp`, and the measurements are in
+[`docs/research/vfx-sfx-runtime.md`](../docs/research/vfx-sfx-runtime.md).
+
+Names deliberately **left out** although they exist: `status_braindance`,
+`status_sandstorm`, `status_cement_dust`, `status_smoke_bomb`, `status_berserk`,
+`status_knockdown`, `status_wounded_*` and the `status_*_resistance` family —
+none has a player binding that could be read offline, and the only way to find
+out is to fire an unknown name into a live client. `johnny_sickness*` is left
+out for the opposite reason: Open77 actively suppresses that pipeline.
+
+### From the server
+
+**Replicated? No — and that is the point.** A drunk screen belongs to the person
+who drank. `Open77.effects.screen` takes a `playerId` rather than a position,
+and reaches that player's client directly, whether or not it is running any
+resource of its own.
+
+```lua
+-- server, permission `players.screenfx`
+Open77.effects.screen(playerId, "drunk", { strength = 0.5, duration = 30 })
+Open77.effects.screen(playerId, "blackout", { duration = 3 })
+Open77.effects.screen(playerId, false)          -- clear every one of them
+Open77.effects.clearScreen(playerId)            -- the same thing, spelled out
+Open77.effects.screenCatalog()                  -- the alias list
+```
+
+The effects the server plays are owned by the **host**, not by any resource on
+that client, so `Open77.vfx.clear()` in a client resource cannot wipe them by
+accident and no client resource can claim or inherit them. A client that changes
+session drops them; nothing on the far side would ever say to.
+
+The server validates the alias against a mirror of the client table and answers
+`unsupported_screen_effect` at the call that made the mistake. The **client's**
+table remains the authority: a server newer than a client still gets the
+refusal from that client, which is exactly right.
+
+### Failure tokens
+
+| Token | Meaning |
+|---|---|
+| `permission_denied:vfx.screen` | client: the manifest does not declare it |
+| `permission_denied:players.screenfx` | server: same |
+| `unsupported_screen_effect` | the alias is not in the table |
+| `invalid_screen_effect` | not a string, empty, or longer than 64 bytes |
+| `invalid_strength` | not a finite number in `0..1` |
+| `invalid_duration` | not a finite number in `0..600` |
+| `effects_backend_unavailable` | a host without the native |
+| `quota_exceeded` | 192 effects per resource, 512 per client |
+| `entity_unavailable` | the local body cannot be read right now |
+| `network_unavailable` | server: no route to that player |
 
 ## Replicated effects
 
@@ -171,6 +339,119 @@ local ok, reason = Open77.effects.play("explosion.frag", {
 | `sound` | string | Optional Wwise event played spatialised at the same point, at most 256 bytes. |
 
 A one-shot never enters the registry: an explosion has no state to reconcile, no revision to bump and nothing to stream back in. `range` is therefore an interest radius, not a volume control — a player outside it is never told the effect happened. Delivery is allowed to be unreliable, because a one-shot that arrives late is worse than one that does not arrive, so never build state on the assumption that every client played it.
+
+### Explosions: `Open77.effects.explosion`
+
+An explosion is not a fourth effect system. It is the one-shot above, plus the
+damage authority, plus the vehicle ledger, in one call — so that a bomb does not
+have to be assembled by hand from three APIs that can disagree about who was
+standing where.
+
+```lua
+permissions { "world.effects", "world.explosions", "world.vehicles" }
+```
+
+```lua
+local blast, reason = Open77.effects.explosion({ x = -1448.2, y = 96.1, z = 17.5 }, {
+    radius   = 12.0,
+    damage   = 120.0,
+    force    = 3.0,
+    vfx      = "explosion.frag",
+    sound    = nil,
+    bucket   = 0,
+    vehicles = true,
+    attacker = source,
+})
+
+assert(blast, reason)
+print(("%d hurt, %d wrecked"):format(#blast.players, #blast.vehicles))
+```
+
+| Option | Type | Meaning |
+|---|---|---|
+| `radius` | number | Metres. Greater than 0 and at most 200. Default `8`. |
+| `damage` | number | Damage **at the centre**, falling off linearly to zero at the rim. `0`–`10000`, default `0`. Anything above zero requires `world.explosions`. |
+| `force` | number | Scales the ragdoll impulse on a **lethal** hit. `0`–`100`, default `1`. |
+| `vfx` | string | Effect alias or depot path, default `explosion.frag`. |
+| `sound` | string | Optional Wwise event, played spatialised at the centre. |
+| `bucket` | integer | Routing bucket, default `0`. An explosion is an event in one bucket. |
+| `vehicles` | boolean | Destroy the cars in the blast. Requires `world.vehicles`, default `false`. |
+| `attacker` | integer | The player credited with the kills. Default `0`, an unattributed death. |
+
+It answers `{ players = { ids }, vehicles = { ids } }` — exactly who this call hit
+and what it wrecked — or `nil, reason`. There is no effect handle, because a
+one-shot enters no registry.
+
+#### Three grants, because the three halves are not equally dangerous
+
+| You hold | You can |
+|---|---|
+| `world.effects` | Draw the blast. `damage` must be absent or zero. |
+| `world.effects` + `world.explosions` | Hurt everyone inside the radius. |
+| `world.effects` + `world.vehicles` | Pass `vehicles = true` and destroy the cars in it. |
+
+`world.explosions` is a separate string from `players.stats.apply` on purpose.
+That one lets a resource hurt a player it has **already named**, one at a time,
+which is a relationship the operator can reason about. This one hurts everyone
+standing in a circle, including players the resource never enumerated and has no
+business knowing about — and an operator reading a manifest should see that
+difference before installing anything.
+
+The vehicle half is an explicit `vehicles = true` rather than "destroy cars if
+the caller happens to hold `world.vehicles`", because a blast that silently did
+half of what you asked is worse than one that refuses.
+
+#### What it reuses, and why that matters
+
+Nothing here is a new authority.
+
+- The picture is `EffectAuthorityService.Play`, the same one-shot
+  `Open77.effects.play` goes through. The interest radius is twice the blast
+  with a floor of 60 m, so somebody outside the damage but within earshot is
+  still told it happened.
+- The player damage is the stats authority's scripted-damage funnel, the same
+  one `Open77.players.damage` uses, with the attack kind set to `explosion`. So
+  god mode, the life-phase interlocks, `Open77.combat.setKindDamageMultiplier("explosion", …)`
+  and kill attribution all apply without being restated here. A player the
+  authority refuses — protected, downed, mid-respawn — is skipped, never fatal to
+  the blast.
+- The vehicle destruction is [`Open77.vehicles.explode`](vehicles.md), unchanged.
+  Occupants stay occupants: nobody is ejected, no seat is freed, and the server
+  sends no damage to a body inside the car. A vehicle already blown up is quietly
+  skipped rather than re-detonated, and an owner report that arrives immediately
+  afterwards claiming a pristine car does not undo it, because health merges by
+  minimum and the destruction bits by OR.
+
+Two ways to blow up a car that disagreed about occupants would be a real bug, so
+there is only one.
+
+#### Two limits worth knowing before you design around them
+
+**`force` moves nobody who survives.** The only server-to-client impulse on a
+player body is the one carried by the death transition, so `force` is the ragdoll
+direction of a *kill* and does nothing at all to somebody who walks away. That is
+a measured limitation of the platform, not a choice made here.
+
+**A stale body is not a target.** A player whose last accepted snapshot fails the
+freshness rule is skipped rather than damaged at a position the server is not
+sure of — otherwise an area weapon kills whoever used to be standing there.
+
+#### `onExplosion`
+
+Every explosion publishes one host-wide event. It is a reserved name: a resource
+that cannot cause an explosion cannot claim one happened.
+
+```lua
+AddEventHandler("onExplosion", function(x, y, z, radius, damage, bucket, by, attacker,
+                                        players, vehicles)
+    -- players and vehicles are COUNTS.
+end)
+```
+
+It carries counts rather than names, and the call's own return value carries the
+ids. A listener that is entitled to know which bodies were in the blast can run
+the same proximity read every resource already has; the event does not hand that
+out to every resource on the server just because it happened to be listening.
 
 ### Looping: `Open77.effects.create`
 
@@ -244,6 +525,7 @@ Every method requires `world.effects`.
 | Function | Signature | Result |
 |---|---|---|
 | `Open77.effects.play` | `(name, opts)` | `boolean, reason?` — one-shot, no handle to keep. |
+| `Open77.effects.explosion` | `(position, options)` | `{ players, vehicles }`, or `nil, reason`. Also needs `world.explosions` to do damage and `world.vehicles` to wreck cars. |
 | `Open77.effects.create` | `(definition)` | Effect ID as a decimal string, or `nil, reason`. |
 | `Open77.effects.attach` | `(typedTarget, effect, options)` | Owned durable attached-effect ID, or `nil, reason`. |
 | `Open77.effects.update` | `(id, patch)` | `boolean, reason?` |
@@ -255,6 +537,24 @@ Every method requires `world.effects`.
 
 IDs are decimal strings for the same reason handles are: their full 64-bit identity has to survive Lua number conversion. No low-level PascalCase aliases are published for `Open77.effects`; the namespaced table is the whole surface.
 
+### Server events
+
+```lua
+AddEventHandler("onEffectCreated", function(id, resource, effect) end)
+AddEventHandler("onEffectRemoved", function(id, reason, resource) end)
+```
+
+Both require `world.effects` — the same string reading one costs, because a lifecycle event
+that announced a effect to a resource that cannot list one would route around that capability.
+`reason` is `removed`, `expired`, `resource_stopped`, or the free text (at most 64
+characters) the caller passed to the remove call.
+
+The same two transitions also reach the generic `onEntityCreated(kind, id, resource)` and
+`onEntityRemoved(kind, id, reason)` with `kind` = `"effect"`, for a resource that additionally
+declares `world.entities.observe`. The mirror is raised by the same statement, so the two feeds
+cannot disagree; see [entity lifecycle events](server-api.md#entity-lifecycle-events) for the
+authority rule and for why there is no `Updated` counterpart.
+
 ### Failure reasons
 
 The vocabulary is shared with [world props](props.md#failure-reasons), with this permission in place of that one.
@@ -262,6 +562,9 @@ The vocabulary is shared with [world props](props.md#failure-reasons), with this
 | Reason | Meaning |
 |---|---|
 | `permission_denied:world.effects` | The manifest does not declare `world.effects`. |
+| `permission_denied:world.explosions` | `explosion` was called with a positive `damage` and the manifest does not declare `world.explosions`. |
+| `permission_denied:world.vehicles` | `explosion` was called with `vehicles = true` and the manifest does not declare `world.vehicles`. |
+| `invalid_radius` / `invalid_damage` / `invalid_force` | An explosion argument outside its range: radius in (0, 200], damage in [0, 10000], force in [0, 100]. |
 | `quota_exceeded` | The per-resource or global ceiling for registry entries or sound action identities is full. |
 | `target_unavailable` | The typed target has lost the state required to capture its lifetime. |
 | `not_found` | No looping effect with that ID, or it expired or was already removed. |

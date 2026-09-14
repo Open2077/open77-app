@@ -85,6 +85,24 @@ The pickup is atomic within the registry: two players cannot consume the same id
 `PlayerSnapshot` received less than two seconds ago, requires the same routing bucket, and accepts
 at most `radius + 0.75 m` to absorb network latency.
 
+## Server events
+
+```lua
+AddEventHandler("onLootCreated", function(id, resource, item) end)
+AddEventHandler("onLootRemoved", function(id, reason, resource) end)
+```
+
+Both require `world.loot` — the same string reading one costs, because a lifecycle event
+that announced a loot to a resource that cannot list one would route around that capability.
+`reason` is `removed`, `expired`, `resource_stopped`, `picked_up`, `moved_bucket`, or the free text (at most 64
+characters) the caller passed to the remove call.
+
+The same two transitions also reach the generic `onEntityCreated(kind, id, resource)` and
+`onEntityRemoved(kind, id, reason)` with `kind` = `"loot"`, for a resource that additionally
+declares `world.entities.observe`. The mirror is raised by the same statement, so the two feeds
+cannot disagree; see [entity lifecycle events](server-api.md#entity-lifecycle-events) for the
+authority rule and for why there is no `Updated` counterpart.
+
 ## Testing from the Open77 terminal
 
 These commands are genuinely declared in `open77_loot/server/main.lua` with `RegisterCommand`, just

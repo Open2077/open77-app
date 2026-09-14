@@ -7,7 +7,7 @@ const api = JSON.parse(await read("content/api/api.json"));
 const nav = JSON.parse(await read("content/docs/meta.json"));
 const entries = api.filter((entry) => entry.namespace === "Open77.screen");
 assert.deepEqual(entries.map((entry) => entry.name).sort(),
-  ["fadeOut", "fadeIn", "transition", "cancel", "state", "catalog"].sort());
+  ["fadeOut", "fadeIn", "transition", "cancel", "state", "catalog", "isFaded", "nativeState"].sort());
 for (const entry of entries) {
   assert.equal(entry.runtime, "client", entry.qualified);
   assert.equal(entry.inferred, false, entry.qualified);
@@ -45,4 +45,4 @@ if (origin) {
   assert.equal((await fetch(new URL("/docs/api/server/open77-screen", origin))).status,
     404, "No nonexistent server screen API page");
 }
-console.log("Native fades: six client API cards, dedicated guide, navigation and limits verified.");
+console.log("Native fades: eight client API cards, dedicated guide, navigation and limits verified.");

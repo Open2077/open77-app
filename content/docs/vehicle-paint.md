@@ -25,6 +25,9 @@ Only the server can change canonical paint. The client API is deliberately read-
 | Server | `Open77.vehicles.setPaint(id, paint)` | Apply primary and secondary RGB colors. |
 | Server | `Open77.vehicles.getPaint(id)` | Read canonical paint. |
 | Server | `Open77.vehicles.resetPaint(id)` | Restore the vehicle record's authored paint. |
+| Server | `Open77.vehicles.setLightsHue(id, hue?)` | Tint the car's own lights; `nil` restores the record's colour. |
+| Server | `Open77.vehicles.setHeadlightColor(id, color?)` | The same tint from an RGB colour. |
+| Server | `Open77.vehicles.setAppearance(id, name?)` | Swap the appearance variant. Also needs `world.vehicles.appearance`. |
 | Client | `Open77.vehicles.getPaint(id)` | Read paint for one currently streamed vehicle. |
 
 Vehicle operations are cross-resource. Any server resource granted `world.vehicles` can paint a
@@ -103,7 +106,34 @@ end)
 ```
 
 The full vehicle snapshot also exposes `paintApplied`, `primaryColor`, `secondaryColor`, and the
-nested `paint = { applied, primary, secondary }` view.
+nested `paint = { applied, primary, secondary, lightsHue }` view.
+
+## The third channel: the lights hue
+
+The engine struct behind all of this, `GenericTemplatePersistentData`, carries **three** things,
+not two: primary RGB, secondary RGB and a lights **hue**. The hue tints the vehicle's own lights,
+it is a single float in `0..1` rather than a colour, and it is written to the engine in the SAME
+event as the two body colours.
+
+Two consequences follow from that shared event, and both are visible in the API:
+
+- the hue lives inside `paint` in a property table, and `getPaint`/`getProperties` report it there;
+- it is **not** governed by `paintApplied`. A car can wear a tinted headlight over its stock body
+  paint, and `resetPaint` clears both because it resets the whole template.
+
+`nil` means the record's own colour rather than zero, because zero is a real hue -- red -- and the
+engine struct carries its own `lightsColorDefined` boolean for exactly that reason.
+
+```lua
+Open77.vehicles.setLightsHue(vehicleId, 0.55)
+Open77.vehicles.setHeadlightColor(vehicleId, "#00D8FF")  -- converted to a hue; only the hue survives
+Open77.vehicles.clearLightsHue(vehicleId)
+```
+
+**This is the closest build 2.31 has to `SetVehicleNeonLights` or `SetVehicleHeadlightsColour`, and
+it is not the same thing.** There is no underglow and no xenon palette in this game. See
+[Network vehicles](vehicles.md) for the full list of FiveM vehicle properties with no counterpart
+here, and for the `getProperties` / `setProperties` round trip that carries all of this at once.
 
 ## Native presentation and limitations
 

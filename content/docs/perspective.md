@@ -104,6 +104,88 @@ aim is released, the weapon is holstered, a menu captures input, or an engine/fi
 camera takes over. Vanilla hip-fire and first-person HUD behaviour are unchanged.
 The overlay takes no clicks and cannot swallow input.
 
+## Reading the aim from a resource
+
+`Open77.character` answers what the player is doing with a weapon, and what is in front of it. It
+works the same in both perspectives.
+
+| Call | Answers |
+|---|---|
+| `Open77.character.isAiming()` | Aiming down sights. `boolean`, or `nil, reason`. |
+| `Open77.character.isFiring()` | The trigger is **held** — the `IsPedShooting` equivalent, not a shot event. |
+| `Open77.character.aimState()` | `aiming`, `firing`, `weaponDrawn` and `stateSequence`, in one snapshot. |
+| `Open77.character.aimedEntity()` | What is under the crosshair, or a bare `nil` for scenery. |
+
+The first three require the `player.aim.read` permission. `aimedEntity()` requires **both**
+`player.aim.read` and `world.query`: where the player is looking is a fact about the player, and
+what is there is a world entity read, so granting the first must not quietly hand out the second.
+
+```lua
+permissions { "player.aim.read", "world.query" }
+```
+
+### Do not read `perspective.state().aiming` for this
+
+That field exists and is not the same thing. It has exactly two writers: a trigger pull, and the
+third-person self-view's per-frame gate — and the second is skipped entirely whenever the
+self-view session is not active, which is to say **in first person nothing writes it at all**. A
+resource reading it in FPP sees whatever the last shot said, for as long as the player does not
+shoot again. It was published so a player refused a hip-fire shot could see why; it is not an aim
+poll, and it never was one.
+
+`Open77.character.isAiming()` reads the player's own weapon animation graph instead. The call costs
+no raycast, advances no sequence and disturbs no ballistics.
+
+### `aiming` is a latched mirror, and `stateSequence` is how you tell
+
+Nothing samples the aim on a timer. The observer records whatever the animation graph last pushed,
+and between two pushes the bit simply keeps its previous value. So `aiming == true` on its own
+cannot distinguish *aiming right now* from *the last thing this feature ever said was aim, some
+minutes ago* — and the second reads exactly like the defect where an aim pose never comes down.
+
+`aimState().stateSequence` rises on every observed change. Difference it across two reads and the
+question is settled:
+
+```lua
+local before = Open77.character.aimState()
+Wait(500)
+local after = Open77.character.aimState()
+if after.aiming and after.stateSequence == before.stateSequence then
+    -- held for at least half a second, or the graph has gone quiet
+end
+```
+
+It is evidence, never a gate. Nothing times an aim out, because a player may hold one as long as
+they like.
+
+### What `aimedEntity()` answers with
+
+The engine's own look-at target, not a physics ray — a physics ray answers with geometry and carries
+no entity reference at all. Three outcomes, kept apart on purpose:
+
+| Result | Meaning |
+|---|---|
+| a table | Something is under the crosshair. |
+| a **bare** `nil`, no second value | Pointing at scenery, or at nothing. An answer. |
+| `nil, reason` | The question could not be asked — permission, or no target system. |
+
+The table carries `engineEntity`, `className`, `kind`, `family`, `position` and `distance`, plus
+`entity` and one of `playerId` / `vehicleId` / `npcId` when the thing is an Open77 body. `family` is
+the raw class family and `kind` is that family refined by ownership — the same refinement
+`Open77.camera.aimRay({ entities = true })` applies, from the same classifier, so a vanilla crowd
+ped reads `populationNpc` through both and a server-spawned one reads `npc`. A resource branching on
+`kind == "npc"` therefore never acts on a body the server does not own.
+
+```lua
+local target = Open77.character.aimedEntity()
+if target == nil then return end                     -- nothing there
+if target.kind == "player" then
+    reportAimedAt(target.playerId)
+elseif target.kind == "trafficVehicle" then
+    -- vanilla traffic: no vehicleId, and no server write will reach it
+end
+```
+
 ## Limitations
 
 These are measured, not guessed. Cyberpunk 2077 2.31.
@@ -150,3 +232,23 @@ that, and first person never shows it. Dress the character and the third-person 
 | [Vehicles](vehicles.md) | Seats, authority and the vehicle APIs. |
 | [Interactions](interactions.md) | Prompts, choices and layers. |
 | [Chat](chat.md) | Input focus, which the perspective key shares. |
+
+## `aiming` here is the older, looser read
+
+`perspective.state()` carries an `aiming` field and costs no capability, while
+`Open77.character.isAiming()` answers the same question behind
+`player.aim.read`. Both spellings ship, and which one you should use is not a
+matter of taste.
+
+**Prefer `Open77.character.isAiming()`.** The field here has two writers -- a
+trigger pull, and the third-person self-view's per-frame gate -- and the second
+is short-circuited away whenever that session is inactive, so **in first person
+nothing writes it**. A resource reading it in first person sees whatever the
+last shot said until the player shoots again. The gated read observes combat
+directly and does not have that hole.
+
+The older field stays ungated because it already shipped that way, and
+tightening a surface underneath resources that already call it would break
+installs to fix an inconsistency nobody is exploiting. The newer read is gated
+because a new surface starts closed: relaxing a capability later costs nothing,
+and adding one later breaks every manifest that was written without it.

@@ -124,6 +124,7 @@ destination but cannot change `routable`; remove and recreate it to change kind.
 | `setIcon(id, iconOrFalse)` | `boolean, reason?` | Stores a declared PNG icon or clears it; 2.31 renders the native sprite. |
 | `setActive(id, active)` | `boolean, reason?` | Enables or disables the vanilla mappin. |
 | `setVisibleThroughWalls(id, visible)` | `boolean, reason?` | Changes visibility through walls. |
+| `setRange(id, metres \| false)` | `boolean, reason?` | Switches the blip off beyond `metres` and back on when the player returns. |
 | `setTrackingAlternative(id, targetIdOrNil)` | `boolean, reason?` | Sets or clears the alternative routing blip. |
 | `track(id)` | `true, changed`, or `false, reason` | Selects this blip as the vanilla GPS destination. |
 | `untrack(id)` | `true, wasTracked`, or `false, reason` | Removes tracking only if this blip is the tracked one. |
@@ -132,8 +133,11 @@ destination but cannot change `routable`; remove and recreate it to change kind.
 | `sprites()` | `{ {name, value}, ... }` | Returns the current build's 147 variants. |
 | `remove(id)` | `boolean, reason?` | Deletes a blip. |
 | `clear()` | `true` | Deletes every blip owned by the resource. |
+| `waypoint()` | `{ x, y, z }`, `nil`, or `nil, reason` | Where the player's map waypoint is. |
+| `setWaypoint(position)` | `true`, or `false, reason` | Places the player's map waypoint. |
+| `clearWaypoint()` | `true, wasSet`, or `false, reason` | Clears the waypoint, whoever set it. |
 
-`create` options: `position` or `entity`, `sprite`, `title`, `description`, `icon`, `active`, `visibleThroughWalls`, `routable`, plus `slot` and `offset` for an entity. `label` remains an alias for `title`; do not provide both. `update` accepts the mutable fields (not `routable`), and the dedicated setters can change text at runtime. The quotas are 128 blips per resource and 512 per client. Stopping, reloading, and leaving the world clean up blips automatically.
+`create` options: `position` or `entity`, `sprite`, `title`, `description`, `icon`, `active`, `visibleThroughWalls`, `range`, `routable`, plus `slot` and `offset` for an entity. `label` remains an alias for `title`; do not provide both. `update` accepts the mutable fields (not `routable`), and the dedicated setters can change text at runtime. The quotas are 128 blips per resource and 512 per client. Stopping, reloading, and leaving the world clean up blips automatically.
 
 A resource can neither read, change, nor delete another resource's blip. The TweakDB type is fixed to `Mappins.DefaultStaticMappin`, or to the single trusted custom-position definition when `routable = true`; downloaded packages cannot inject an arbitrary UI profile.
 
@@ -218,9 +222,83 @@ Exact names are insensitive to case, spaces, hyphens, and underscores. Aliases a
 
 A variant existing in the enum does not guarantee its profile renders on every surface. The `CPO_*` variants, for instance, come from a dormant multiplayer HUD and must be checked visually in the server's context.
 
-## Colour, size, text, and tracking
+## A blip that only shows up close
 
-`gamemappinsMappinData` carries neither colour nor scale. Those properties belong to the UI/TweakDB profile the game picks. The API therefore offers no fake `color` or `scale` that would do nothing.
+`range` switches a blip off once the player is further away than the given number of metres, and
+back on when they return. It is the one styling-adjacent property of this engine that can be made
+real, and it is worth knowing exactly what it is before relying on it.
+
+```lua
+-- A shop pin that stops cluttering the map from across the city.
+local shop = assert(Open77.blips.create({
+    position = { x = -1442.2, y = 127.4, z = 18.0 },
+    sprite = "vendor",
+    title = "Kabuki Market",
+    range = 180
+}))
+
+Open77.blips.setRange(shop, 400)     -- widen it
+Open77.blips.setRange(shop, false)   -- or take the gate off entirely
+print(Open77.blips.get(shop).range)  -- 0 when there is no gate
+```
+
+**It is Open77's own doing, not an engine property.** There is no range field on a mappin. What the
+engine publishes is `SetMappinActive`, so Open77 measures the distance from the player on the game
+thread and drives that one call — only on a transition, and only for blips that asked for a range,
+so a client whose resources never use it pays nothing. An entity-following blip is measured from the
+body it follows; while that body is not streamed in, the gate keeps whatever state it last wrote
+rather than guessing a distance.
+
+**It is therefore not FiveM's `SetBlipAsShortRange`.** That one hides a blip from the minimap and
+leaves it on the world map. Cyberpunk offers no per-surface control here, so out of range means off
+on the HUD, the minimap *and* the world map. The name is `range` and not `shortRange` for exactly
+that reason, and `shortRange` is refused by name rather than quietly given these different manners.
+
+`range` composes with `active` instead of overriding it: a blip you set inactive stays inactive in
+range, and a ranged blip you re-activate while out of range stays hidden until you walk back. Limits
+are `0` (no gate, the default) to `4000` metres; anything else is `invalid_range`.
+
+## Colour, size, category, radius — and why each is refused by name
+
+Every one of these is **refused**, with its own reason token, on `create` and on `update` alike:
+
+| Option | Reason | |
+|---|---|---|
+| `color`, `colour` | `unsupported_option:color` / `:colour` | FiveM `SetBlipColour` |
+| `alpha`, `opacity` | `unsupported_option:alpha` / `:opacity` | FiveM `SetBlipAlpha` |
+| `scale` | `unsupported_option:scale` | FiveM `SetBlipScale` |
+| `shortRange` | `unsupported_option:shortRange` | FiveM `SetBlipAsShortRange` — use `range` |
+| `category` | `unsupported_option:category` | FiveM `SetBlipCategory` |
+| `kind = "radius"` | `unsupported_kind:radius` | FiveM `AddBlipForRadius` |
+| any other `kind` | `unsupported_option:kind` | |
+
+Refusing is the point. Until this row, an unknown key in the options table was simply ignored, so
+`Open77.blips.create{ sprite = "loot", color = "#ff0000" }` handed back a perfectly good blip that
+was not red and never said so. A property accepted and silently discarded is worse than one that is
+missing, because nothing in the resource can tell the difference.
+
+The measurements behind the table, all on 2.31:
+
+- **`gamemappinsMappinData` carries seven fields**, and not one of them is a colour, an opacity, a
+  scale, a category or a radius: `mappinType`, `variant`, `active`, `debugCaption`,
+  `localizedCaption`, `visibleThroughWalls`, `scriptData`. `gamemappinsMappinSystem` exposes exactly
+  five mutators to match — `ChangeMappinVariant`, `SetMappinActive`, `SetMappinDebugCaption`,
+  `SetMappinPosition`, `SetMappinScriptData`.
+- **Opacity and scale exist, but per sprite, not per pin.** They live on
+  `gamedataMappinUIRuntimeProfile_Record` (`OpacityDistanceParams`, `ScaleDistanceParams`,
+  `OpacityAngleParams`, ...), which `CreateMappinUIProfile` resolves *from the variant*. One record
+  is shared by every pin using that sprite, so a per-blip colour would restyle every other
+  resource's blips at the same time. That is not a blip property with a missing setter; it is a
+  different thing wearing the same word.
+- **`AddBlipForRadius` has no counterpart at all.** `MappinSystem` publishes no area registration,
+  and the mappin subclasses that do carry a radius — `gamemappinsPointOfInterestMappinData` has
+  `dynamicMappinRadius` — cannot be used, because `RegisterMappin` takes
+  `gamemappinsMappinData` **by value**: a subclass passed into it is sliced. For a circle in the
+  world rather than on the map, [`Open77.markers`](world-queries.md) draws a ground-aligned ring
+  with a real radius.
+
+What *is* per-blip is the sprite, and Cyberpunk's sprites carry their own colours: picking
+`danger` over `objective` is how a blip becomes red here.
 
 `title` and `description` are kept in Open77's private mappin data. The fullscreen-map tooltip reads those values after vanilla setup, so a highlighted blip can display guaranteed free-form text such as `Job Center` and a multiline description. Limits are 128 and 1024 UTF-8 bytes respectively. The HUD does not permanently draw that text next to the icon.
 
@@ -233,3 +311,50 @@ map: it changes the manually tracked id. Route calculation is a second condition
 for a blip created with `routable = true`. It returns `changed = false` when that blip is already
 tracked. `untrack(id)` first checks that the requested mappin really is the tracked one, so it cannot
 remove a vanilla objective or another resource's destination.
+
+## The player's waypoint
+
+`track` and `untrack` above act on **your** blip. The waypoint is the other half: the destination
+the player chose, which until now no resource could see or move.
+
+```lua
+-- A taxi fare: take the destination the player pinned on their own map.
+local to = Open77.blips.waypoint()
+if to then
+    Open77.events.emitServer("taxi:requestRide", to)
+end
+
+-- Or route them somewhere the job picked.
+Open77.blips.setWaypoint({ x = -1540.0, y = -2020.0, z = 24.0 })
+
+AddEventHandler("open77:waypointChanged", function(state)
+    if state.present then
+        print(("waypoint moved to %.0f, %.0f"):format(state.position.x, state.position.y))
+    else
+        print("waypoint cleared")
+    end
+end)
+```
+
+In this engine a waypoint is not a separate thing: **it is the manually tracked mappin**, the same
+selection `track` writes. `setWaypoint` registers a routable custom-position pin and tracks it, so
+the vanilla GPS calculates a road route exactly as it does for a waypoint the player set by hand.
+
+Four behaviours worth knowing, each of which exists because the alternative bites:
+
+- **`nil` and `nil, reason` are different answers.** `nil` alone means there is no waypoint; `nil`
+  with a reason means the question could not be asked. A GPS script must branch on that, because
+  cancelling a fare is correct for only the first.
+- **The pin is yours and dies with you.** It is an ordinary blip owned by the calling resource, so
+  a crashed taxi script leaves no permanent arrow on the player's map. It also counts against your
+  128-blip quota -- but calling `setWaypoint` again *moves* the same pin rather than registering
+  another, so updating a destination on a timer is safe.
+- **`clearWaypoint` is not owner-scoped, and `untrack` is.** Clearing the waypoint means the
+  player's waypoint, whoever set it, because that is what a route-cancel button does. It still
+  refuses to *destroy* another resource's pin: only the tracking selection is released.
+- **The event covers waypoints Open77 did not set.** The engine raises nothing when a player
+  right-clicks the fullscreen map, so Open77 polls the tracked mappin and publishes the difference.
+  That poll is the only channel by which a player-chosen destination reaches a resource at all.
+
+`open77:waypointChanged` carries one table, `{ present, position }`, rather than three loose
+coordinates: a cleared waypoint has to be a value a handler can read, not an absence of arguments.

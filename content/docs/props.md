@@ -49,12 +49,11 @@ transform that streams and can be removed", so they share `Open77.props` and are
 >   per alias. Among the hollow ones are things that look like they should
 >   stop you — `barrier.hesco`, `container.shipping`, `street.hydrant`,
 >   `industrial.forklift`.
-> - **For detached/standing physical hosts, `collision = false` cannot be honoured.** The solid component is also the
+> - **`collision = false` cannot be honoured.** The solid component is also the
 >   visible one, so switching collision off would blank the prop. The request is
 >   refused with a warning naming the prop rather than silently ignored.
-> - **Attached props use a pure visual host and follow the rendered parent**;
->   they do not simulate collisions while attached and can intersect scenery.
->   Collision governs detached/standing props. See [attachments](attachments.md).
+> - **A carried prop is still teleported rather than simulated**, so carrying one
+>   through a wall still works. Collision governs standing props.
 > - **Do not point `model` at a raw `.ent` path.** The entity-template back-end is
 >   refused by default with `template_backend_disabled`. The crash it guards
 >   against is specific to templates whose root chunk derives from `entEntity`,
@@ -144,7 +143,7 @@ local id, reason = Open77.props.create({
 | `appearance` | string | `""` | Template appearance name, at most 128 bytes. Empty means the template's default. |
 | `bucket` | integer | `0` | Routing bucket. A player only ever sees props in their own bucket. |
 | `physics` | string | `"static"` | `static`, `kinematic`, `dynamic` or `none`. **No effect today: the spawned object carries no `entPhysicalMeshComponent` (§Status).** |
-| `collision` | boolean | `true` | Detached hosts retain their authored collision; disabling a solid host's collision is unsupported (§Status). Attached hosts are always visual-only and non-blocking. |
+| `collision` | boolean | `true` | **No effect today — props are always non-blocking (§Status).** `false` is intended to leave the object visible and non-blocking. |
 | `visible` | boolean | `true` | `false` keeps the registry entry and hides the object. |
 | `kind` | string | `"prop"` | `prop`, `light` or `effect`. See [Lights](#lights) and [Effects in this registry](#effects-in-this-registry). |
 | `light` | table | — | Accepted only when `kind == "light"`; supplying it for any other kind is rejected. See [Lights](#lights). |
@@ -371,6 +370,150 @@ rendering nothing.
 mismatch and hands every viewer that lost the prop an explicit stream-out, while every player in
 the new bucket and inside the radius gains it.
 
+**`setTransform` is refused on an attached prop**, with `prop_attached`. The follow tick would
+overwrite the write within 100 ms, and a mutation that silently does not take is worse than one
+that says why. Detach first.
+
+## Attachment
+
+Two different things get called "attachment", they are not the same mechanism, and picking the
+wrong one is the most common way to waste an afternoon here.
+
+| You want | Use | What it really is |
+|---|---|---|
+| A crate carried by a player, a jerrycan riding on a car roof, a briefcase that follows an NPC | `Open77.props.attach` | The server recomputes the prop's transform from the target's, ten times a second, and replicates it like any other moving prop. |
+| A bottle **in the hand**, held through the animation, that looks right in first and third person | `Open77.heldItems.hold` | A real item in a real equipment slot, given to the body through the engine's own transaction system. |
+
+The dividing line is physical. `props.attach` **follows**; `heldItems.hold` **holds**. A followed
+prop hovers near the body and does not swing with an animation, because nothing binds it to a
+bone. A held item does, because the engine owns it — but it must be an *item record*, not an
+arbitrary `.ent`, and it can only go in one of ten slots.
+
+### `Open77.props.attach` — follow a target
+
+```lua
+-- A crate carried a metre above a player, dropped if they die or disconnect.
+Open77.props.attach(crateId, { kind = "player", id = source })
+
+-- A jerrycan on the roof of a car, turning with it.
+Open77.props.attach(canId, { kind = "vehicle", id = vehicleId }, {
+  offset   = { x = 0.0, y = -0.4, z = 1.6 },
+  yaw      = 90.0,
+  trackYaw = true,
+})
+
+Open77.props.detach(crateId)
+```
+
+| Option | Default | Meaning |
+|---|---|---|
+| `offset` | `{ x = 0, y = 0, z = 1 }` | Metres **in world axes**, added to the target's position. Capped at 16 m. |
+| `yaw` | the prop's current yaw | The prop's yaw while attached. |
+| `trackYaw` | `false` | Add `yaw` to the target's heading instead of using it as an absolute. |
+| `detachOnDeath` | `true` | A dead or downed target drops what it was carrying. |
+| `followBucket` | `true` | The prop follows a routing-bucket change. Turn it off and a carried prop is left behind, invisible to its carrier. |
+
+`kind` is `"player"`, `"npc"` or `"vehicle"`. A prop cannot follow another prop: that is a chain
+the tick would have to order and check for cycles, and nothing needs it yet.
+
+**Be honest with yourself about what this is.** It is the bundled resource's `prop.pickup` loop,
+promoted into the registry so every resource gets the lifecycle answers instead of re-deriving
+half of them. The crate floats at the offset you gave and follows; it does not sit in the hand.
+
+Two limitations are worth stating plainly:
+
+- **The offset is in world axes, not the target's frame.** Walk north with a crate offset one
+  metre east of you and it stays one metre east however you turn. Rotating the offset needs the
+  target's heading, and a player's position snapshot carries position and routing bucket only.
+- **`trackYaw` does nothing on a player, today.** A vehicle publishes an orientation, so a prop
+  attached to one turns with it. A player does not, so the yaw simply stays at the value you
+  gave. When the richer player read lands, `trackYaw` starts working on players with no change
+  to this API — which is why the option exists now rather than being invented later.
+
+### Lifecycle: what happens when the target goes away
+
+A detach is always possible and always happens. No attached prop is ever left following a ghost.
+
+| The target… | What the prop does | Reason reported |
+|---|---|---|
+| disconnects, despawns, or stops publishing a position (loading screen, streamed out) | stops following and **stays exactly where the last tick put it** | `target_lost` |
+| dies or is downed | same, unless the attachment set `detachOnDeath = false` | `target_down` |
+| changes routing bucket | **follows it there**, still attached | — |
+| moves somewhere the world bounds reject | stops following, prop keeps the last valid transform | `target_lost` |
+
+And on this side of the attachment:
+
+- **The prop is removed** — the attachment goes with it. Nothing to clean up.
+- **The owning resource stops or restarts** — every prop it created is removed outright,
+  attached or not. That is the existing `world.props` guarantee and it is stronger than a detach.
+- **Another resource tries to attach or detach it** — `owned_by_another_resource`. A resource may
+  read every prop in the world and may only make *its own* follow anything.
+
+A prop is never deleted by the follow tick. A lost carrier drops a crate; it does not evaporate
+one a resource paid a quota slot for.
+
+### Cost
+
+The follow tick runs at **10 Hz**, whatever the server tick rate, and writes nothing at all when
+the target has not moved more than a centimetre. A carried prop standing still costs zero
+bandwidth; a carried prop on a sprinting player costs ten upserts a second to the players who can
+actually see it, because it streams by its followed position like any other prop.
+
+### `Open77.heldItems.hold` — put an item in a hand
+
+```lua
+Open77.heldItems.hold(source, "Items.Preset_Nue_Default")            -- right hand
+Open77.heldItems.hold(source, "Items.GenericCraftingMaterial1", { slot = "Head" })
+Open77.heldItems.release(source)
+Open77.heldItems.requestSnapshot(source)
+```
+
+Held equipment is client-owned REDengine state, so this is a **relay** with the same contract as
+`Open77.clothing` and `Open77.weapons`: the call returns a request id immediately and the verified
+outcome arrives later on `open77:helditem:completed`.
+
+```lua
+local requestId = Open77.heldItems.hold(source, "Items.Preset_Nue_Default")
+
+AddEventHandler("open77:helditem:completed", function(player, id, operation, accepted, reason, result)
+  if id ~= requestId then return end
+  print(("held %s: %s %s"):format(operation, tostring(accepted), reason))
+end)
+```
+
+**The slot vocabulary is the ten equipment slots**, and only those:
+
+`Head`, `Face`, `InnerChest`, `OuterChest`, `Legs`, `Feet`, `Outfit`, `UnderwearTop`,
+`UnderwearBottom`, `WeaponRight`.
+
+`WeaponRight` is the right hand and the default. `Open77.heldItems.slots()` returns the list.
+These are the `AttachmentSlots.*` TweakDB records the client compiles in
+`client/src/game/Slot.hpp`; there is no `back` and no `hip`, and there never was.
+
+The price of being real:
+
+- **An item record, not an entity.** `Items.Something`, not `base/…/crate.ent`. If what you want
+  to show has no item record, `props.attach` is the tool, not this.
+- **The client half must be running.** `open77_helditems` owns the `open77:helditem:request`
+  handler; without it a request times out after ten seconds rather than failing fast, exactly as a
+  weapon request does without `open77_weapons`.
+- **It fights `Open77.weapons` over `WeaponRight`.** Both write the same slot. Pick one per
+  gamemode, or holster before you hand somebody a briefcase.
+- **The body must be incarnated.** A request against a player still on the "continue" screen is
+  refused with `player_not_ready` rather than written; writing equipment to a body that is not
+  there is the crash class the testing rules warn about.
+- **Nothing persists it.** A world entry rebuilds the body from the server's equipment record,
+  which knows nothing about held items. Re-assert after `open77:equipment:ready` if it must
+  survive.
+
+### What neither of these is
+
+There is no engine **parenting** of a prop to a bone — no `entHardTransformBinding` written on a
+prop's root component. That would need a new native, a field on the projection envelope and an
+answer for what happens when the carrier streams out of a watcher's range mid-carry. It has been
+scoped twice and declined twice; the reasoning is in
+`docs/research/props-and-object-spawning.md`.
+
 ## Inspection and cleanup
 
 ```lua
@@ -464,15 +607,39 @@ Every method requires `world.props`.
 | `Open77.props.update` | `(id, patch)` | `boolean, reason?` |
 | `Open77.props.setTransform` | `(id, { position?, yaw?, scale? })` | `boolean, reason?` |
 | `Open77.props.setBucket` | `(id, bucket)` | `boolean, reason?` |
+| `Open77.props.attach` | `(id, { kind, id }, { offset?, yaw?, trackYaw?, detachOnDeath?, followBucket? })` | `boolean, reason?` — the prop follows the target. See [Attachment](#attachment). |
+| `Open77.props.detach` | `(id)` | `boolean, reason?` — stops the follow and leaves the prop where it stands. Succeeds on a prop that was not attached. |
 | `Open77.props.remove` | `(id)` | `boolean, reason?` |
 | `Open77.props.get` | `(id)` | Canonical snapshot, or `nil`. |
 | `Open77.props.all` | `(bucket?)` | Array of prop snapshots, optionally filtered to one bucket. Reading is not restricted to your own props. |
 | `Open77.props.catalog` | `()` | The curated alias list: entries carrying an alias and the model it resolves to. |
 | `Open77.props.clear` | `()` | Remove every prop this resource owns. |
 
+`Open77.props.get` returns `attachment` as a table — `kind`, `id`, `offset`, `yaw`, `trackYaw`,
+`detachOnDeath`, `followBucket` — or leaves the field absent when the prop follows nothing, so a
+plain `if record.attachment then` is the whole test.
+
 Low-level aliases are `CreateProp`, `UpdateProp`, `SetPropTransform`, `SetPropBucket`,
-`RemoveProp`, `GetProp`, and `GetProps`. Prefer the namespaced wrappers: they accept structured
+`AttachProp`, `DetachProp`, `RemoveProp`, `GetProp`, and `GetProps`. Prefer the namespaced wrappers: they accept structured
 option tables and validate them.
+
+## Server events
+
+```lua
+AddEventHandler("onPropCreated", function(id, resource, model) end)
+AddEventHandler("onPropRemoved", function(id, reason, resource) end)
+```
+
+Both require `world.props` — the same string reading one costs, because a lifecycle event
+that announced a prop to a resource that cannot list one would route around that capability.
+`reason` is `removed`, `expired`, `resource_stopped`, or the free text (at most 64
+characters) the caller passed to the remove call.
+
+The same two transitions also reach the generic `onEntityCreated(kind, id, resource)` and
+`onEntityRemoved(kind, id, reason)` with `kind` = `"prop"`, for a resource that additionally
+declares `world.entities.observe`. The mirror is raised by the same statement, so the two feeds
+cannot disagree; see [entity lifecycle events](server-api.md#entity-lifecycle-events) for the
+authority rule and for why there is no `Updated` counterpart.
 
 ## Failure reasons
 
@@ -488,6 +655,14 @@ option tables and validate them.
 | `record_provisioning_failed` | A runtime TweakDB record for the template could not be minted. |
 | `entity_spawn_failed` | The record or host entity resolved but the engine produced no entity. |
 | `world_unavailable` | No world is loaded on the projecting client, or it is mid-transition. |
+| `prop_attached` | `setTransform` on a prop that is following a target. Detach first. |
+| `invalid_attachment_kind` | Not `player`, `npc` or `vehicle`. A prop cannot follow another prop. |
+| `invalid_attachment_target` | No target id was named, or it was zero. |
+| `invalid_attachment_offset` | A non-finite offset, or one further than 16 m from the target. |
+| `invalid_item_record` | `Open77.heldItems.hold` was given something that is not an item record. |
+| `invalid_slot` | Not one of the ten equipment slots. |
+| `player_not_ready` | The body is not incarnated yet, so there is no equipment system to write to. |
+| `request_timeout` | The client half of `Open77.heldItems` did not answer within ten seconds. Is `open77_helditems` running? |
 
 Failures are values, not errors: every mutating call returns `nil, reason` or `false, reason`
 rather than raising, so a caller can tell an invalid request from a temporarily unavailable
@@ -647,9 +822,15 @@ stays inert. The table is `open77_props_persisted`, created on first use.
 - `physics = "dynamic"` names a simulated prop, which is a continuously moving networked entity
   and therefore needs an authority-holder model and a binary opcode that the current JSON
   replication path does not have. Do not build on it until that lands.
-- [Synchronized attachments](attachments.md) expose player/vehicle parents, skeletal slots
-  and local position/rotation. Attached props use visual-only hosts; they are not simulated
-  rigid bodies. `prop.pickup` / `prop.drop` use the binding, without a server teleport timer.
+- **Attachment is a follow, not a parenting.** `Open77.props.attach` moves the prop onto its
+  target ten times a second, so it rides at the offset you gave rather than sitting in the hand,
+  and it is teleported rather than simulated. A prop parented to a *bone* — an
+  `entHardTransformBinding` on the prop's root component — is not exposed and has been declined
+  twice; see [Attachment](#attachment) and `docs/research/props-and-object-spawning.md`. For
+  something that must be in a hand, `Open77.heldItems.hold` puts a real item in a real equipment
+  slot instead.
+- **A followed prop's offset does not rotate with its target, and `trackYaw` does nothing on a
+  player.** Both wait on the same missing piece: a heading in the player position snapshot.
 - Interaction prompts on props are not exposed. Anchor a prompt yourself through
   [contextual interactions](interactions.md) if you need one now.
 - `persistent` is not implemented as a field on `Open77.props.create`. A gameplay resource's
@@ -661,4 +842,4 @@ stays inert. The table is `open77_props_persisted`, created on first use.
   as a promise.
 - A light prop carries the geometry of the entity its host was cloned from, so it is not
   invisible. A lightless donor with a spawnable root would fix that.
-- Standalone props are placed with a yaw. Attachments additionally expose local pitch and roll.
+- Pitch and roll are not exposed. A prop is placed with a yaw.

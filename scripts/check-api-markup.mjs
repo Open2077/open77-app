@@ -67,17 +67,34 @@ for (const entry of api) {
   if (++shown >= 8) break;
 }
 
-console.log("\nAnything other than inline code (would need a real renderer):");
+/**
+ * What `InlineMarkdown` can render, and therefore what the prose may contain.
+ *
+ * `table row` is not markup: the pattern matches any sentence carrying two
+ * pipes, which a Lua union type (`"global"|"player:<id>"`) does on its own.
+ */
+const RENDERABLE = new Set(["inline code", "bold", "link", "table row"]);
+
+console.log("\nMarkup the reference pages cannot render:");
 let other = 0;
 for (const entry of api) {
   for (const field of FIELDS) {
     const value = entry[field] ?? "";
     for (const [name, pattern] of PATTERNS) {
-      if (name === "inline code" || name === "table row") continue;
+      if (RENDERABLE.has(name)) continue;
       if (!pattern.test(value)) continue;
       console.log(`  ${entry.qualified} (${field}, ${name}): ${value.slice(0, 120)}`);
       other += 1;
     }
   }
 }
-if (other === 0) console.log("  none — inline code is the only markup used");
+if (other === 0) {
+  console.log("  none — inline code, bold and guide links are the only markup used");
+} else {
+  console.error(
+    `\n${other} prose field(s) use markup InlineMarkdown does not render; ` +
+      "they would show their own syntax on the page. Extend " +
+      "src/components/docs/inline-markdown.tsx or change the prose upstream.",
+  );
+  process.exitCode = 1;
+}

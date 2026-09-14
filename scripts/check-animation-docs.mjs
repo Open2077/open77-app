@@ -5,8 +5,8 @@ import { readFile } from "node:fs/promises";
 const read = (file) => readFile(file, "utf8");
 const api = JSON.parse(await read("content/api/api.json"));
 const entries = api.filter((entry) => entry.namespace === "Open77.animations");
-assert.equal(entries.length, 17);
-assert.equal(new Set(entries.map((entry) => entry.route_id)).size, 17);
+assert.equal(entries.length, 23);
+assert.equal(new Set(entries.map((entry) => entry.route_id)).size, 23);
 assert.ok(entries.every((entry) => !entry.name.startsWith("_") && entry.name !== "animations"));
 const find = (runtime, name) => {
   const entry = entries.find((entry) => entry.runtime === runtime && entry.name === name);
@@ -25,6 +25,19 @@ for (const name of ["list", "get", "play", "sequence", "stop", "current"]) {
   assert.equal(entry.route_id, `server:Open77.animations.${name}`);
   assert.ok(entry.summary && entry.description && entry.example && entry.returns.length);
   assert.equal(entry.inferred, false);
+}
+for (const [runtime, name, params] of [
+  ["client", "clip", ["clip"]],
+  ["client", "clips", ["query"]],
+  ["client", "requestClip", ["clip", "options"]],
+  ["server", "clip", ["clip"]],
+  ["server", "clips", ["query"]],
+  ["server", "playClip", ["playerId", "clip", "options"]],
+]) {
+  const entry = find(runtime, name);
+  assert.deepEqual(entry.params.map((param) => param.name), params, `${runtime}:${name}`);
+  assert.ok(entry.summary && entry.description && entry.returns.length, `${runtime}:${name}`);
+  assert.equal(entry.inferred, false, `${runtime}:${name}`);
 }
 assert.deepEqual(find("client", "sequence").params.map((p) => p.name), ["steps", "options"]);
 assert.deepEqual(find("server", "sequence").params.map((p) => p.name), ["playerId", "steps", "options"]);
@@ -67,4 +80,4 @@ if (origin) {
     console.log(`served OK ${path}`);
   }
 }
-console.log("Animation documentation OK: 12 synchronized APIs, 5 legacy APIs, tutorial and 73 clips.");
+console.log("Animation documentation OK: 12 synchronized APIs, 6 exact-clip APIs, 5 legacy APIs, tutorial and 73 clips.");

@@ -33,7 +33,20 @@ for (const entry of api) {
   else byQualified.set(entry.qualified, [entry]);
 }
 
+/**
+ * An overlay file, or `null` when the wiki does not carry one.
+ *
+ * An overlay is a hand-written supplement to the extractor, so upstream is free
+ * to retire one by writing the same prose into the extractor itself — which is
+ * what happened to `cyberware-api.json`. Crashing on the absent file would then
+ * report a regression that does not exist, so a missing overlay is announced
+ * and skipped; prose that silently stopped merging is still a failure.
+ */
 async function readOverlay(name) {
+  if (!existsSync(path.join(wiki, name))) {
+    console.log(`${name}: not in this wiki — skipped`);
+    return null;
+  }
   const parsed = JSON.parse(await fs.readFile(path.join(wiki, name), "utf8"));
   delete parsed._comment;
   return parsed;
@@ -79,6 +92,9 @@ function audit(file, overlay, resolve) {
 let gaps = 0;
 const descriptions = await readOverlay("api-descriptions.json");
 const notes = await readOverlay("api-notes.json");
+if (!descriptions || !notes) {
+  throw new Error("api-descriptions.json and api-notes.json are required overlays");
+}
 gaps += audit(
   "api-descriptions.json",
   descriptions,
@@ -93,20 +109,23 @@ const effectiveNotes = Object.fromEntries(Object.entries(notes).map(([name, valu
 gaps += audit("api-notes.json (effective)", effectiveNotes, (name) =>
   byQualified.get(name),
 );
-gaps += audit(
-  "server-vehicle-api.json",
-  await readOverlay("server-vehicle-api.json"),
-  (name) => byQualified.get(`Open77.vehicles.${name}`) ?? byQualified.get(name),
-);
+const serverVehicles = await readOverlay("server-vehicle-api.json");
+if (serverVehicles) {
+  gaps += audit(
+    "server-vehicle-api.json",
+    serverVehicles,
+    (name) => byQualified.get(`Open77.vehicles.${name}`) ?? byQualified.get(name),
+  );
+}
 const animations = await readOverlay("animation-api.json");
-for (const runtime of ["client", "server"]) {
+for (const runtime of animations ? ["client", "server"] : []) {
   gaps += audit(`animation-api.json (${runtime})`, animations[runtime], (name) =>
     byQualified.get(`Open77.animations.${name}`)?.filter((entry) => entry.runtime === runtime),
   );
 }
 
 const cyberware = await readOverlay("cyberware-api.json");
-for (const [runtime, namespaces] of Object.entries(cyberware)) {
+for (const [runtime, namespaces] of Object.entries(cyberware ?? {})) {
   for (const [namespace, cards] of Object.entries(namespaces)) {
     gaps += audit(`cyberware-api.json (${runtime} ${namespace})`, cards, (name) =>
       byQualified.get(`${namespace}.${name}`)?.filter((entry) => entry.runtime === runtime),

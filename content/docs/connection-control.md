@@ -21,11 +21,12 @@ A connection goes through these stages in order. Resources take part in the stag
    `Open77.access` all edit the same list. See [The built-in door list](#the-built-in-door-list).
 5. **`onPlayerConnecting`**, the resource gate. Every running resource that holds the
    `players.gate` permission and registered a handler is asked. Refuse, hold, or let through.
-6. The player is admitted: welcome packet, player id, **`onPlayerConnected(playerId)`**.
+6. The player is admitted: welcome packet, player id, **`playerJoining`** and then
+   **`onPlayerConnected(playerId)`**.
 7. The join-time readiness gate (`Open77.ready`) and **`onPlayerReady`**. That gate decides *when a
    resource may act on* an admitted player; this page is about *whether* they get in. See
    [Join-time readiness gate](server-api.md#join-time-readiness-gate).
-8. The session ends: **`onPlayerDisconnected(playerId, reason)`**.
+8. The session ends: **`onPlayerDisconnected(playerId, reason)`** and **`playerDropped(reason)`**.
 
 The gate lives in Lua rather than in configuration because the questions it answers belong to the
 server's operator: who is on the list tonight, is this account banned until Sunday, is this slot
@@ -139,6 +140,50 @@ otherwise the text the disconnect was queued with by `Open77.players.disconnect`
 ```lua
 AddEventHandler("onPlayerDisconnected", function(playerId, reason)
     print(("player %s left: %s"):format(playerId, reason))
+end)
+```
+
+## The FiveM names
+
+Three connection events exist under their FiveM spelling as well, so a resource ported from a
+FiveM server runs without being rewritten. They are additive: the Open77 events above keep their
+names, their arguments and their timing, and a resource may listen to either family or both.
+
+| FiveM name | Open77 name | What differs |
+|---|---|---|
+| `playerConnecting(name, setKickReason, deferrals)` | `onPlayerConnecting(player, deferrals)` | Same gate, same tally, same deferrals. The FiveM form receives only the display name; the Open77 form receives the whole `player` table. `source` is not set in either: no player id exists yet. |
+| `playerJoining(oldId)` with `source` | `onPlayerConnected(playerId, playerName)` | `source` is the new player id. `oldId` is always `""`. A resource sees `playerJoining` before `onPlayerConnected`. |
+| `playerDropped(reason)` with `source` | `onPlayerDisconnected(playerId, reason)` | `source` is the player who left, and `reason` is the same text. Both arrive in the same tick. |
+
+`source` is the global a network event handler already reads, set the same way and by the same
+mechanism, so the two families of events mean the same thing by it:
+
+```lua
+AddEventHandler("playerDropped", function(reason)
+    local player = source            -- the id, exactly as in a RegisterNetEvent handler
+    print(("player %s left: %s"):format(tostring(player), tostring(reason)))
+end)
+```
+
+### `setKickReason` refuses nobody
+
+In FiveM, `setKickReason(message)` only stores the sentence a following `CancelEvent()` will show;
+on its own it admits the player. Open77 has no `CancelEvent` on the server, so a stored message can
+never become a refusal, and the runtime does not pretend otherwise: it records the message, logs one
+line naming the working alternative the first time a resource calls it, and admits the player.
+
+**Refuse with `deferrals.done(message)`.** It is the only refusal the gate honours, and the message
+reaches the player's screen exactly the same way.
+
+```lua
+-- a ported whitelist, corrected in one line
+AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
+    deferrals.defer()
+    if not allowed[name] then
+        deferrals.done("You are not on the whitelist.")   -- not setKickReason + CancelEvent
+        return
+    end
+    deferrals.done()
 end)
 ```
 
@@ -383,8 +428,11 @@ end)
 | `onPlayerConnecting` (event) | `players.gate` | `(player, deferrals)` |
 | `deferrals.defer` / `update` / `done` | via the event | `()` / `(message)` / `(message?)` |
 | `onPlayerRejected` (event) | None | `(userId, name, code, message)` |
-| `onPlayerConnected` (event) | None | `(playerId)` |
+| `onPlayerConnected` (event) | None | `(playerId, playerName)` |
 | `onPlayerDisconnected` (event) | None | `(playerId, reason)` |
+| `playerConnecting` (event) | `players.gate` | `(name, setKickReason, deferrals)` |
+| `playerJoining` (event) | None | `(oldId)`, `source` = the new player id |
+| `playerDropped` (event) | None | `(reason)`, `source` = the player who left |
 | `Open77.players.identity` / `GetPlayerIdentity` | None | `(playerId) -> { userId, name, publicKey, fingerprint, joinedAt }` or `nil` |
 | `Open77.players.identifier` / `name` | None | `(playerId)` |
 | `Open77.players.disconnect` / `kick` | `players.disconnect` | `(playerId, reason?)` |

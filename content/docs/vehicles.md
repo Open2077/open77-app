@@ -53,6 +53,15 @@ Every method in this table requires `world.vehicles`.
 | `Open77.vehicles.setPaint` | `(id, paint)` | `boolean`; publishes canonical primary/secondary paint. |
 | `Open77.vehicles.getPaint` | `(id)` | `{ applied, primary, secondary }`, or `nil`. |
 | `Open77.vehicles.resetPaint` | `(id)` | `boolean`; restores the model's original paint. |
+| `Open77.vehicles.getProperties` | `(id)` | The whole property table a garage stores, or `nil, reason`. Alias: `getVehicleProperties`. |
+| `Open77.vehicles.setProperties` | `(id, props, options?)` | Applies one. Refuses a FiveM property with no counterpart **by name**. Aliases: `setVehicleProperties`, `applyProperties`. |
+| `Open77.vehicles.unsupportedProperties` | *(table)* | Every such property name, mapped to why there is nothing to map it to. |
+| `Open77.vehicles.getAppearance` | `(id)` | The entity appearance variant, or `""` for the record's default. |
+| `Open77.vehicles.setAppearance` | `(id, name?)` | Swaps the variant. Also needs `world.vehicles.appearance` to CHANGE one. |
+| `Open77.vehicles.getLightsHue` | `(id)` | CrystalCoat lights hue `0..1`, or `nil`. Alias: `getHeadlightHue`. |
+| `Open77.vehicles.setLightsHue` | `(id, hue?)` | Tints the car's own lights; `nil` restores the record's colour. |
+| `Open77.vehicles.clearLightsHue` | `(id)` | `setLightsHue(id, nil)`. |
+| `Open77.vehicles.setHeadlightColor` | `(id, color?)` | The same tint from an RGB colour. Alias: `setHeadlightColour`. |
 | `Open77.vehicles.setLocked` | `(id, locked)` | `boolean`; atomically changes the durable entry lock. |
 | `Open77.vehicles.lock` | `(id)` | Convenience alias for `setLocked(id, true)`. |
 | `Open77.vehicles.unlock` | `(id)` | Convenience alias for `setLocked(id, false)`. |
@@ -65,9 +74,86 @@ Every method in this table requires `world.vehicles`.
 | `Open77.vehicles.setPlayerIntoVehicle` | `(playerId, vehicleId, seat, options?)` | Alias of `warpPlayerIntoVehicle`. |
 | `Open77.vehicles.forcePlayerOutOfVehicle` | `(playerId, vehicleId?)` | Forces native exit and retains the seat until confirmation/timeout. |
 | `Open77.vehicles.removePlayerFromVehicle` | `(playerId, vehicleId?)` | Alias of `forcePlayerOutOfVehicle`. |
+| `Open77.vehicles.taskPlayerEnter` | `(playerId, vehicleId, seat, options?)` | Same assignment as `warpPlayerIntoVehicle`, reached through the vanilla entry animation. |
+| `Open77.vehicles.taskPlayerEnterVehicle` | `(playerId, vehicleId, seat, options?)` | Alias of `taskPlayerEnter`. |
+| `Open77.vehicles.taskPlayerLeave` | `(playerId, vehicleId?)` | Same ejection as `forcePlayerOutOfVehicle`; the leaving player's own exit is instant. |
+| `Open77.vehicles.taskPlayerLeaveVehicle` | `(playerId, vehicleId?)` | Alias of `taskPlayerLeave`. |
+| `Open77.vehicles.adopt` | `(playerId, description)` | Turns a client's description of a vanilla car into a canonical vehicle. |
+| `Open77.vehicles.setAdoptPolicy` | `(policy, options?)` | Opens a routing bucket to adoption: `none`, `driver` or `any`. |
+| `Open77.vehicles.getAdoptPolicy` | `(bucket?)` | Reads one bucket's adoption policy. |
 | `Open77.vehicles.setPlayerExitLocked` | `(playerId, locked, vehicleId?)` | Sets the durable no-exit policy. |
 | `Open77.vehicles.getPlayerSeat` | `(playerId)` | Canonical server seat assignment or `nil`. |
 | `Open77.vehicles.isPlayerExitLocked` | `(playerId)` | Whether the canonical assignment is exit-locked. |
+
+### All server engine, light and siren methods
+
+Every method in this table requires `world.vehicles`. Each writes **one named bit** of the durable
+flags and leaves the rest alone; see [engine, lights and siren](#engine-lights-and-siren) for why
+that matters and for the ten-second intent window that makes a setter stick.
+
+| Method | Signature | Return / behavior |
+|---|---|---|
+| `Open77.vehicles.setEngine` | `(id, on)` | `true`, or `false, reason`. |
+| `Open77.vehicles.startEngine` | `(id)` | Alias for `setEngine(id, true)`. |
+| `Open77.vehicles.stopEngine` | `(id)` | Alias for `setEngine(id, false)`. |
+| `Open77.vehicles.isEngineOn` | `(id)` | Canonical boolean, or `nil, reason`. |
+| `Open77.vehicles.setDrivable` | `(id, drivable)` | Out of service also cuts the engine, in one revision. |
+| `Open77.vehicles.setUndriveable` | `(id, undriveable)` | Inverted spelling of `setDrivable`. |
+| `Open77.vehicles.isDrivable` | `(id)` | Canonical boolean, or `nil, reason`. |
+| `Open77.vehicles.setLights` | `(id, mode)` | `"off"`, `"on"`, `"high"`, or a boolean. |
+| `Open77.vehicles.setHighBeams` | `(id, on)` | Raises or drops the beams without going dark. |
+| `Open77.vehicles.getLights` | `(id)` | `"off"`, `"on"` or `"high"`, or `nil, reason`. |
+| `Open77.vehicles.areLightsOn` | `(id)` | True for both `"on"` and `"high"`. |
+| `Open77.vehicles.setSiren` | `(id, on)` | Light bar **and** sound; they cannot be separated. |
+| `Open77.vehicles.isSirenOn` | `(id)` | Canonical boolean, or `nil, reason`. |
+| `Open77.vehicles.setHealth` | `(id, health)` | `0..1`; out of range is refused, not clamped. |
+| `Open77.vehicles.getHealth` | `(id)` | Canonical normalized health, or `nil, reason`. |
+| `Open77.vehicles.setEngineHealth` | `(id, health)` | The same one pool under its FiveM name. |
+| `Open77.vehicles.getEngineHealth` | `(id)` | The same one pool under its FiveM name. |
+
+### All server transform, motion and policy methods
+
+Every method in this table requires `world.vehicles`, and every one of them sees **only
+server-spawned vehicles** -- see [what `closest` can and cannot
+find](#what-closest-can-and-cannot-find).
+
+| Method | Signature | Return / behavior |
+|---|---|---|
+| `Open77.vehicles.getPosition` | `(id)` | `{ x, y, z }`, a vector3, or `nil, reason`. |
+| `Open77.vehicles.getHeading` | `(id)` | Heading in degrees, or `nil, reason`. |
+| `Open77.vehicles.getYaw` | `(id)` | Alias of `getHeading`. |
+| `Open77.vehicles.getSpeed` | `(id)` | Metres per second, or `nil, reason`. |
+| `Open77.vehicles.getSpeedKph` | `(id)` | Kilometres per hour, or `nil, reason`. |
+| `Open77.vehicles.getVelocity` | `(id)` | `{ x, y, z }` in m/s, or `nil, reason`. |
+| `Open77.vehicles.getDriver` | `(id)` | The driving player id, or `nil`. |
+| `Open77.vehicles.setPerformance` | `(id, profile)` | `boolean, reason?`; `nil` clears the ceiling. |
+| `Open77.vehicles.clearPerformance` | `(id)` | `boolean, reason?`; rated performance again. |
+| `Open77.vehicles.getPerformance` | `(id)` | `{ topSpeedKph, accelerationScale, taperKph }`, or `nil`. |
+| `Open77.vehicles.explode` | `(id)` | `boolean, reason?`; `already_exploded` the second time. |
+| `Open77.vehicles.setLockedForPlayer` | `(id, playerId, locked)` | `boolean, reason?`; `nil` clears the exception. |
+| `Open77.vehicles.clearLockedForPlayer` | `(id, playerId)` | `boolean, reason?`. |
+| `Open77.vehicles.setLockedForAll` | `(id, locked)` | `boolean, reason?`; revokes every exception. |
+| `Open77.vehicles.lockForAll` | `(id)` | Alias for `setLockedForAll(id, true)`. |
+| `Open77.vehicles.unlockForAll` | `(id)` | Alias for `setLockedForAll(id, false)`. |
+| `Open77.vehicles.isLockedForPlayer` | `(id, playerId)` | `boolean`, or `nil, reason`. |
+| `Open77.vehicles.setTimeToLive` | `(id, ttlMs)` | `boolean, reason?`; `0` or `nil` cancels. |
+| `Open77.vehicles.setTtl` | `(id, ttlMs)` | Alias of `setTimeToLive`. |
+| `Open77.vehicles.setPersistent` | `(id, persistent)` | `boolean, reason?`. |
+| `Open77.vehicles.setDespawnWhenUnobserved` | `(id, despawn)` | `boolean, reason?`. |
+
+### All server vehicle-finding methods
+
+Every method in this table requires `world.vehicles`. **They see only server-spawned vehicles** --
+see [what `closest` can and cannot find](#what-closest-can-and-cannot-find).
+
+| Method | Signature | Return / behavior |
+|---|---|---|
+| `Open77.vehicles.nearby` | `(anchor, radius?, options?)` | Array of proximity entries, nearest first. |
+| `Open77.vehicles.closest` | `(anchor, options?)` | One entry, or a bare `nil` when nothing is in range. |
+| `Open77.vehicles.seatFree` | `(id, seat)` | `boolean`, or `nil, reason`. |
+| `Open77.vehicles.occupantInSeat` | `(id, seat)` | `playerId, occupant`, or `nil` when free. |
+| `Open77.vehicles.freeSeats` | `(id)` | Canonical seat names in seat order, or `nil, reason`. |
+| `Open77.vehicles.seatName` | `(seat)` | Canonical spelling of any accepted seat form. |
 
 ### All server body-damage methods
 
@@ -166,6 +252,9 @@ The remaining `Open77.vehicles.update` fields are `health`, `flags`, `primaryCol
 | `Open77.vehicles.isWindowOpen` | `vehicles.read` | `(id, window)` | Reads the canonical four-bit opening state, not broken glass. |
 | `Open77.vehicles.warpPlayerIntoVehicle` | `vehicles.presentation` | `(playerId, vehicleId, seat)` | Instantly presents an already-authorized remote occupant. |
 | `Open77.vehicles.taskPlayerEnterVehicle` | `vehicles.presentation` | `(playerId, vehicleId, seat)` | Guarded staged entry presentation for an already-authorized remote occupant. |
+| `Open77.vehicles.adoptable` | `vehicles.read` | `(options?)` | Every engine-spawned vehicle near the player that the server does not own, nearest first. |
+| `Open77.vehicles.describeAdoptable` | `vehicles.read` | `(engineEntity)` | The same description for one named chassis. |
+| `Open77.vehicles.releaseAdopted` | `vehicles.adopt` | `(engineEntity)` | Hands one engine-spawned chassis back to the population system. |
 | `Open77.vehicles.setPerformance` | `vehicles.performance` | `(id, profile)` | Caps one vehicle's top speed and pickup. |
 | `Open77.vehicles.clearPerformance` | `vehicles.performance` | `(id)` | Removes that vehicle's cap. |
 | `Open77.vehicles.setPerformanceClass` | `vehicles.performance` | `(record, profile)` | Caps every present and future vehicle of one TweakDB record. |
@@ -174,6 +263,12 @@ The remaining `Open77.vehicles.update` fields are `health`, `flags`, `primaryCol
 | `Open77.vehicles.setControlLock` | `vehicles.performance` | `(id, locked)` | Suppresses or restores acceleration and brake/reverse input for a stationary vehicle. |
 | `Open77.vehicles.setFrozen` | `vehicles.performance` | `(id, frozen)` | Disables or restores the native chassis physics mask without changing ownership or the mounted workspot. |
 | `Open77.vehicles.ratedTopSpeed` | `vehicles.read` | `(id)` | Gearing rating of the vehicle's record in km/h, or `nil`. |
+| `Open77.vehicles.nearby` | `vehicles.read` | `(radius, options?)` | Replicated vehicles within a radius, nearest first. |
+| `Open77.vehicles.closest` | `vehicles.read` | `(radius?)` or `(options?)` | The nearest one, or `nil, "no_vehicle_in_range"`. |
+| `Open77.vehicles.aimed` | `vehicles.read` | `()` | The one the local player is looking at, or `nil, reason`. |
+| `Open77.vehicles.fromEntity` | `vehicles.read` | `(entityId)` | Snapshot for an Open77 or REDengine entity id. |
+| `Open77.vehicles.seatFree` | `vehicles.read` | `(id, seat)` | Reads the replicated occupancy ledger. |
+| `Open77.vehicles.occupantInSeat` | `vehicles.read` | `(id, seat)` | Player id in that seat, or `nil` when free. |
 
 Client constants are `Open77.vehicles.doors`, `Open77.vehicles.windows`, and
 `Open77.vehicles.seats`. They are tables, not callable methods.
@@ -284,6 +379,176 @@ an authenticated Open77 session, so a client cannot keep a private local paint o
 Arbitrary RGB display still requires the REDengine vehicle model to expose its generic paint
 component. Unsupported records keep their authored appearance; the client retries after attachment
 without turning a model limitation into divergent canonical state.
+
+### Vehicle properties, and what Cyberpunk does not have
+
+`Open77.vehicles.getProperties(id)` and `setProperties(id, props)` are the Cyberpunk form of the
+`GetVehicleProperties` / `SetVehicleProperties` pair every FiveM framework ships. **The round trip
+is the contract**: `setProperties(id, getProperties(id))` leaves the vehicle observably unchanged,
+and a table stored in a database and applied to a fresh vehicle of the same record reproduces it.
+The individual setters below are conveniences on top of that.
+
+```lua
+-- Park the car.
+local props = Open77.vehicles.getProperties(vehicleId)
+store(plate, json.encode(props))
+
+-- Fetch it back, tomorrow, on another instance.
+local stored = json.decode(load(plate))
+local id = Open77.vehicles.create({ record = stored.record, position = spot, yaw = 90.0 })
+local ok, reason = Open77.vehicles.setProperties(id, stored)
+```
+
+The table is plain data — strings, numbers, booleans and tables — so it survives `json.encode`
+and a database column unchanged:
+
+```lua
+{
+  version = 1,
+  record = "Vehicle.v_standard2_archer_hella_player",
+  appearance = "archer_hella__rayfield",   -- "" is the record's default
+  paint = {
+    applied   = true,
+    primary   = { r = 22, g = 105, b = 180 },
+    secondary = { r = 8,  g = 15,  b = 24 },
+    lightsHue = 0.55,                      -- absent when the record's own colour is used
+  },
+  health = 0.83,
+  engineOn = false, lights = "off", siren = false,
+  locked = true, drivable = true, invulnerable = false, immortal = false,
+  doors = 0, windows = 0,
+  damage = {
+    body = { --[[ 30 cells, 0..1 ]] },
+    glass = 0, lights = 0, tires = 0, detachedParts = 0,
+    destroyed = false, exploded = false,
+  },
+  performance = { topSpeedKph = 60.0, accelerationScale = 0.5, taperKph = 10.0 },
+}
+```
+
+**It deliberately does not carry where the car was standing.** Position, heading, velocity,
+occupants, routing bucket and revision are not properties of the car, and a table that carried
+them would tempt a caller into teleporting by accident. `setTransform` and `setBucket` still own
+those.
+
+#### `version` decides how absence is read
+
+This is the only rule you have to remember, and it is the one that makes both halves of the
+contract work at once.
+
+| Table | Meaning | An absent optional field |
+|---|---|---|
+| carries `version = 1` — every table `getProperties` returns | a **complete** description of a car | means *this car has none*: the lights hue and the performance ceiling are cleared |
+| no `version` | a **patch** | is left exactly as it was |
+
+So `setProperties(id, { paint = { primary = "#FF0000" } })` is a repaint and nothing else, while
+`setProperties(id, storedTable)` restores a car down to the absence of a tint.
+
+#### What Cyberpunk actually has
+
+Vehicle visual customisation on build 2.31 is one engine component,
+`vehicleVisualCustomizationComponent`, and one struct, `GenericTemplatePersistentData`, whose
+entire content is **primary RGB, secondary RGB and a lights hue**. Beside it sits the entity
+**appearance variant** — a name from the vehicle's own template, which is how the game ships one
+Quadra in several trims. That is the whole vocabulary:
+
+```text
+appearance variant  +  primary RGB  +  secondary RGB  +  lights hue
+```
+
+| Method | Signature | What it does |
+|---|---|---|
+| `Open77.vehicles.getProperties` | `(id)` | The whole table above, or `nil, reason`. Alias: `getVehicleProperties`. |
+| `Open77.vehicles.setProperties` | `(id, props, options?)` | Applies it. Aliases: `setVehicleProperties`, `applyProperties`. |
+| `Open77.vehicles.getAppearance` | `(id)` | The variant name, or `""`. |
+| `Open77.vehicles.setAppearance` | `(id, name?)` | Swaps the variant. `nil` restores the record's default. |
+| `Open77.vehicles.getLightsHue` | `(id)` | `0..1`, or `nil` for the record's own colour. Alias: `getHeadlightHue`. |
+| `Open77.vehicles.setLightsHue` | `(id, hue?)` | Tints the car's own lights. |
+| `Open77.vehicles.clearLightsHue` | `(id)` | Back to the record's colour. |
+| `Open77.vehicles.setHeadlightColor` | `(id, color?)` | The same tint from `"#RRGGBB"` or `{ r, g, b }`. Alias: `setHeadlightColour`. |
+| `Open77.vehicles.unsupportedProperties` | *(table)* | Every FiveM property name with no counterpart, mapped to why. |
+
+```lua
+Open77.vehicles.setAppearance(id, "archer_hella__rayfield")
+Open77.vehicles.setHeadlightColor(id, "#00D8FF")
+```
+
+`setAppearance` — and the `appearance` key of `setProperties` — needs `world.vehicles.appearance`
+**in addition to** `world.vehicles`. It is the one vehicle write that changes what the world looks
+like rather than what a car does: it reaches a native entity-appearance reschedule on every viewer
+at once, for every car a resource can name. The same argument gave adoption its own string.
+**The permission gates a change, never a restatement**: writing the variant a car already wears is
+accepted without it, which is what keeps `setProperties(id, getProperties(id))` working for a
+resource that never touches a look.
+
+The variant name is not validated by the server, because only the client holds the entity
+template. A name the model does not define is a no-op on each projection and the canonical value
+stays as written. `Open77.data.vehicle(record)` looks a record up but does **not** enumerate
+variants — the shipped 2.31 catalogue does not carry them.
+
+#### What Cyberpunk does not have
+
+These FiveM property names have **no counterpart in this engine**. Not "unimplemented" — absent:
+the 2.31 RTTI carries no type for any of them. `setProperties` refuses such a key by name rather
+than dropping it, because a garage that silently loses two thirds of its table is worse than one
+that fails loudly on day one:
+
+```lua
+local ok, reason = Open77.vehicles.setProperties(id, portedTable)
+-- false, "unsupported_property:modEngine"
+```
+
+| FiveM property | Why there is nothing to map it to |
+|---|---|
+| `modKit`, `mods`, `modEngine`, `modBrakes`, `modTransmission`, `modSuspension`, `modArmour`, `modTurbo` | There is no mod-slot system at all. A model's look is its appearance variant plus the two CrystalCoat colours; its performance is `setPerformance`. |
+| `wheels`, `wheelType` | No wheel-type system: wheels are meshes inside the appearance variant. |
+| `wheelColor` | No per-wheel colour channel in `GenericTemplatePersistentData`. |
+| `windowTint` | No window tint on 2.31 — the RTTI carries no type for one. |
+| `neonEnabled`, `neonColor` | No underglow. `paint.lightsHue` tints the car's **own** lights instead. |
+| `xenonColor` | No xenon index. `paint.lightsHue` is the continuous equivalent. |
+| `livery`, `roofLivery` | No livery index. The appearance variant is the nearest thing, and it is a **name**, not a number. |
+| `extras` | No numbered extras. Removable bodywork is `damage.detachedParts`, and it is one-way. |
+| `color1`, `color2`, `pearlescentColor`, `interiorColor`, `dashboardColor` | Cyberpunk paint is RGB, not palette indices, and there is one body pair and nothing else. Use `paint.primary` / `paint.secondary`. |
+| `dirtLevel` | No dirt channel. Body wear is the 30-cell `damage.body` grid. |
+| `tyreSmokeColor` | No tyre smoke colour channel. |
+| `plateText`, `plateIndex` | Cyberpunk has no readable or writable plate. Carry it in a [state bag](state-bags.md). |
+| `fuelLevel` | No fuel model. Carry it in a state bag. |
+
+`Open77.vehicles.unsupportedProperties` is the same list as a table, keyed by property name, so a
+porting script can ask before it writes:
+
+```lua
+for name in pairs(portedTable) do
+  local why = Open77.vehicles.unsupportedProperties[name]
+  if why then print(("dropping %s: %s"):format(name, why)) end
+end
+local ok, _, skipped = Open77.vehicles.setProperties(id, portedTable, { ignoreUnsupported = true })
+```
+
+#### Refusals, and the order of application
+
+`record` is checked, never applied: REDengine cannot change a spawned entity's record, so a Quadra
+table handed to a Thorton answers `record_mismatch` rather than half-restoring. Detached parts are
+one-way on a live projection — there is no validated reattach on 2.31 — so a table asking for fewer
+than the car has already lost answers `detached_parts_not_reattachable`; respawn and apply the
+table to the new car.
+
+The order inside `setProperties` is deliberate and worth knowing if you write your own:
+
+1. health, paint, doors, windows and the durable damage go in **one** `update`, so no viewer ever
+   sees a half-restored car;
+2. the electrical bits then go through `setEngine`, `setLights`, `setSiren` and `setDrivable` —
+   because those are what record the server intent that stops the physics owner's next durable
+   report from undoing them. Writing them as raw flags looks like it worked and then quietly
+   reverts about half a second later;
+3. the visual template and the performance ceiling follow on their own durable channels.
+
+The appearance and the lights hue need **no** such intent window, and that is structural rather
+than lucky: the physics owner's durable report has no appearance field and no colour field of any
+kind, so the merge that undid the sirens cannot reach either value. On the client the variant goes
+through `entEntity::ScheduleAppearanceChange` and is held on the replica until the projection
+attaches — measured at up to about 3.7 s after the create — then re-applied if the entity is torn
+down and streamed back.
 
 ### Entry lock and synchronized horn
 
@@ -504,6 +769,51 @@ assert(Open77.vehicles.setPlayerExitLocked(playerId, false, vehicleId))
 assert(Open77.vehicles.forcePlayerOutOfVehicle(playerId, vehicleId))
 ```
 
+#### Entering with the vanilla animation
+
+`Open77.vehicles.taskPlayerEnter` is `warpPlayerIntoVehicle` with one bit changed. Everything
+authoritative is identical -- the seat is reserved in the same write, the bucket moves the same
+way, and every refusal reason is the warp's, verbatim. What changes is only how the affected
+client reaches the seat: instead of being placed in it in one frame, it mounts through the
+mounting facility with its own pose preserved and plays the authored `OccupantSlots` entry, so the
+body slides in.
+
+```lua
+local ok, reason = Open77.vehicles.taskPlayerEnter(
+    playerId, vehicleId, Open77.vehicles.seats.driver,
+    { moveBucket = true, exitLocked = false })
+assert(ok, reason)
+
+-- The player-oriented alias, next to warpIntoVehicle / forceOutOfVehicle:
+Open77.players.taskEnterVehicle(playerId, vehicleId, "driver")
+```
+
+Three things this is **not**, each for a measured reason:
+
+* **It does not walk the player to the door.** The approach is an NPC behaviour
+  (`ApproachVehicleDecorator`), and the single attempt to drive an Open77 network puppet through
+  it crashed the *observing* client about three seconds after the vehicle streamed. The player is
+  mounted where they stand. The upside is that the obvious failure of a walk-to-door task -- a
+  player stuck walking toward a car that has driven off -- cannot happen here.
+* **It cannot strand anybody.** The animation is an attempt in front of the warp, never instead of
+  it. If the staged mount cannot be started, or if the native mounting relation is not readable
+  within three seconds, the client warps and the seat is reached anyway. `warpPlayerIntoVehicle`
+  remains the call that never depends on an animation at all.
+* **There is no animated exit.** `Open77.vehicles.taskPlayerLeave` exists, and it is the same
+  durable ejection as `forcePlayerOutOfVehicle`: **the leaving player's own exit is instant.**
+  Driving that player's authored exit workspot inside the mount release window faulted on the
+  engine's release-dispatch thread and the workspot never started once in any session, so the
+  client does not attempt it. Observers are unaffected -- a remote occupant's exit has always been
+  animated on their proxy, so only the ejected player's own screen skips it.
+
+Cancelling a task in flight is `forcePlayerOutOfVehicle` (or `taskPlayerLeave`): a forced exit
+overrides a pending forced entry, and the client's animated attempt ends with it. Nothing else is
+needed, because the attempt is bounded rather than open-ended.
+
+`Open77.vehicles.get(id).occupants[i].animatedEntry`, and the same field on the client's vehicle
+read, says whether a pending forced entry carries the modifier. It is a read for every client but
+the one being seated.
+
 While `exitLocked` is active, the local vanilla unmount callback is rejected and reconciliation
 remounts divergent state. A manual seat switch is rejected too because REDengine begins it by
 unmounting the current workspot. `forcePlayerOutOfVehicle` overrides that policy and keeps the
@@ -541,16 +851,34 @@ Normal failures return `false, reason`. Stable reasons are `permission_denied:wo
 | Group | Fields |
 |---|---|
 | Identity | `id`, `resource`, `record`, `appearance`, `revision` |
-| World | `bucket`, `x`, `y`, `z` |
+| World | `bucket`, `x`, `y`, `z`, `position` |
+| Transform | `heading`, `yaw`, `orientation = { x, y, z, w }` |
+| Motion | `velocity`, `angularVelocity`, `speed`, `speedKph`, `onGround`, `reversing`, `moving` |
 | Authority | `physicsOwner`, `authorityEpoch` |
-| Durable state | `health`, `flags`, `locked`, `paintApplied`, `primaryColor`, `secondaryColor`, `paint`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights`, `detachedParts` |
+| Durable state | `health`, `flags`, `locked`, `exploded`, `destroyed`, `paintApplied`, `primaryColor`, `secondaryColor`, `paint`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights`, `detachedParts` |
 | Paint | `primaryR`, `primaryG`, `primaryB`, `secondaryR`, `secondaryG`, `secondaryB` |
 | Body | `bodyDamage[1..30]` |
 | Damage view | `damage = { body, glass, lights, tires, detachedParts }` |
-| Seats | `occupants[] = { playerId, seat, flags, entering, exiting, forcedEntry, exitLocked, forcedExit }` |
+| Lifetime | `persistent`, `despawnWhenUnobserved`, `ttlMs` (absent when there is no deadline) |
+| Performance | `performance = { topSpeedKph, accelerationScale, taperKph }` (absent when uncapped) |
+| Seats | `occupants[] = { playerId, seat, flags, entering, exiting, forcedEntry, exitLocked, forcedExit }`, plus `driverPlayerId` |
 
-The current server Lua snapshot does not expose orientation. Pass an explicit `yaw` to
-`setTransform`; omitting it uses `0` rather than preserving an unreadable heading.
+`x`, `y` and `z` are unchanged; `position` is the same point as a plain `{ x, y, z }` table, which
+is what an Open77 vector3 is, so `#(a.position - b.position)` works on it without a conversion.
+`heading` and `yaw` are one value under both names -- `heading` is what the player read and
+`respawn` use, `yaw` is what `create` and `setTransform` take -- and it is extracted from the full
+quaternion rather than from `qz`/`qw` alone, so a car on a slope reports the heading it is actually
+facing.
+
+**The motion group is the last thing the physics owner reported.** A vehicle with no owner is not
+being simulated by anyone, so losing the lease -- a driver stepping out, disconnecting, or the
+lease expiring -- zeroes `velocity`, `angularVelocity`, `speed` and the dynamics bits rather than
+leaving a parked car claiming the speed it had when its driver got out. A server `setTransform`
+clears them for the same reason. `moving` is exactly `physicsOwner ~= 0 and speed > 0.1`, which is
+the check a speed camera wants to make before it reads `speedKph`.
+
+`driverPlayerId` is absent, not zero, when nobody is driving, and absent while an entry animation
+is still running: a reserved seat is not yet a driver.
 
 Validation constraints are `health = 0..1`, RGB channels `0..255`, finite world coordinates with
 an absolute maximum of 1,000,000, a record length up to 256 characters, an appearance length up to
@@ -568,6 +896,11 @@ AddEventHandler("onVehicleOccupancyChanged", function(id, revision)
     local canonical = Open77.vehicles.get(tonumber(id))
 end)
 
+-- The three derived seat transitions. Same ledger, already diffed.
+AddEventHandler("onPlayerEnteringVehicle", function(playerId, vehicleId, seat) end)
+AddEventHandler("onPlayerEnteredVehicle", function(playerId, vehicleId, seat) end)
+AddEventHandler("onPlayerLeftVehicle", function(playerId, vehicleId, seat) end)
+
 AddEventHandler("onVehicleDamageChanged", function(id, revision)
     local damage = Open77.vehicles.getDamage(tonumber(id))
 end)
@@ -577,14 +910,218 @@ AddEventHandler("onVehiclePaintChanged", function(id, revision)
 end)
 ```
 
+The same creation and removal also reach `onEntityCreated(kind, id, resource)` and
+`onEntityRemoved(kind, id, reason)` with `kind` = `"vehicle"`, for a resource that declares
+`world.entities.observe` and wants every registry under one name. The mirror is raised by the
+same statement as the event above it, so the two can never disagree — see
+[entity lifecycle events](server-api.md#entity-lifecycle-events).
+
 Server runtime event arguments arrive as strings. Preserve the ID as an opaque value unless the
 called binding explicitly requires an integer. `onVehicleUpdated` fires for every canonical state
 update; `onVehicleDamageChanged` and `onVehiclePaintChanged` are narrower channel-specific signals.
+
+#### Enter and exit, derived
+
+`onVehicleOccupancyChanged` is a *ledger* signal: it says the occupant list changed and leaves the
+resource to fetch the vehicle and diff the list itself to learn what actually happened. Every
+gamemode wrote that diff, and most of them got the same two cases wrong.
+
+The three events above are that diff, done once, in the one place the occupancy ledger is
+published. They are **derived, never authored** -- there is no second source of truth to drift
+from `onVehicleOccupancyChanged`, and any future seat mutation path gets correct transitions
+without new plumbing. The rules, each one paid for by a shape the raw ledger makes ambiguous:
+
+- **`onPlayerEnteringVehicle`** fires when an occupant appears carrying the `entering` flag: the
+  seat is *reserved* and the entry animation is running. Nobody is in the car yet, and a second
+  warp into that seat is already refused.
+- **`onPlayerEnteredVehicle`** fires when the player is actually seated -- either straight away
+  (a direct entry, or a server `warpPlayerIntoVehicle`, neither of which has an animation) or when
+  a pending `entering` is confirmed. It fires **exactly once per entry**: a client re-announcing
+  `BeginEnter` from a seat it already holds does not make it fire again.
+- **`onPlayerLeftVehicle`** fires when a seated player leaves that seat -- by exit, seat switch,
+  disconnect, incapacitation, or the vehicle being deleted out from under them.
+- **An entry that is never confirmed raises no `left`.** The reservation times out, the seat frees,
+  and because nobody was ever in the car there is nothing to report leaving it. `entered` and
+  `left` are therefore balanced pairs, which is what makes a seat map built on them safe.
+- **A seat switch is `left(old)` then `entered(new)`**, in that order, because the service frees
+  the old seat before taking the new one. Moving between two vehicles names the right vehicle in
+  each half.
+
+Arguments are `playerId, vehicleId, seat`, with the seat as the canonical `seat_front_left`
+spelling every other vehicle read uses. They deliberately carry no revision: a revision is what you
+need in order to diff a ledger, and the diff has already been done. `Open77.vehicles.get(id)` still
+answers for anything else the handler wants.
+
+The three names are reserved platform events. `TriggerEvent("onPlayerEnteredVehicle", ...)` from a
+resource answers `false, "reserved_event"` -- a forged one would tell every other resource that a
+player it does not own just took the wheel of a car it does not own.
+
+```lua
+local seatOf = {}
+
+AddEventHandler("onPlayerEnteredVehicle", function(playerId, vehicleId, seat)
+    playerId, vehicleId = tonumber(playerId), tonumber(vehicleId)
+    seatOf[playerId] = { vehicle = vehicleId, seat = seat }
+    -- A keys resource acts on the driver seat only, and acts once: this is the
+    -- moment the player is actually in, not the moment they reached for the door.
+    if seat == "seat_front_left" and not hasKeys(playerId, vehicleId) then
+        Open77.vehicles.setEngine(vehicleId, false)
+    end
+end)
+
+AddEventHandler("onPlayerLeftVehicle", function(playerId)
+    seatOf[tonumber(playerId)] = nil
+end)
+```
 
 Every resource granted `world.vehicles` can mutate, move, seat players in, or remove every canonical
 vehicle. The `resource` snapshot field is provenance, not an access-control boundary. Stopping or
 reloading the creating resource still removes the vehicles it created and clears their assignments,
 so temporary entities retain deterministic lifecycle cleanup.
+
+## Adopting a vanilla car
+
+Every read on this page so far answers from the canonical registry, which holds
+only vehicles the server created. The traffic car a player is standing next to
+was spawned by REDengine population **on that player's own machine**, has no
+canonical id, and is invisible to every other client — which is why
+`Open77.vehicles.aimed()` answers `unknown_entity` when the player is plainly
+looking at a car.
+
+Adoption is how such a car becomes real for everybody. It is what a car-theft or
+world-car RP server needs: walk up to a Hella, make it canonical, drive it, and
+have the rest of the session see you do it.
+
+### What adoption actually does
+
+**It takes the car's identity, not the engine's entity.** That is the entire
+design and it is a deliberate answer to how this could go wrong.
+
+The engine owns those cars. It spawned them, it moves them, and it deletes them
+whenever it likes, with no notification this plugin can rely on. A canonical
+vehicle bound to such an entity would quietly become a ghost the moment the
+engine took it back — and a vehicle that vanishes without a removal is worse
+than one that was never adopted.
+
+So nothing is bound. The sequence is:
+
+1. the client **describes** the car — record, pose, paint, damage;
+2. the server **creates an ordinary canonical vehicle** from that description,
+   with the same lifetime, the same reaper and the same projection path as a car
+   a garage spawned;
+3. the client **hands its vanilla chassis back** to the population system.
+
+After step 3 the engine owns nothing the server believes it owns, and the
+adopted car is a vehicle like any other: `get`, `update`, `setLocked`,
+`setPerformance`, `setTimeToLive` and `remove` all behave exactly as they do for
+a `create`. Only `get(id).adopted`, `adoptedFrom` and `adoptedEngineEntity`
+remember where it came from, and they are provenance — they grant nothing.
+
+The visible cost is a gap: the vanilla chassis goes at step 3 and the adopter's
+own projection of the canonical car attaches when it streams in. That is the
+same stream-in the whole subsystem already lives with, measured at up to 3.7 s
+for a car spawned out of nothing; here the record is already resident, so it is
+expected to be much shorter — expected, not measured.
+
+### The three calls
+
+On the **client**, with `vehicles.read`:
+
+```lua
+-- Nearest first. `radius` defaults to 25 m, `limit` to 8.
+local offered = Open77.vehicles.adoptable({ radius = 8, limit = 4 })
+for _, car in ipairs(offered or {}) do
+    print(car.record, car.distance, car.adoptable)
+end
+```
+
+An entry carries everything the server's `adopt` reads, spelled the same, so it
+can be handed over untouched. `engineEntity` and `recordId` are fixed `0x`
+strings, because a REDengine hash does not survive a Lua number.
+
+`adoptable` is false — and `record` empty — when the car's TweakDBID is not in
+the shipped reverse table. The engine hands out ids, not names: a TweakDBID is
+CRC32 of the record name plus its length, a shipping build keeps no reverse
+table, and `gamedataVehicle_Record` has no `Name` accessor. So the 1376 known
+2.31 vehicle records are carried in the client, every one of them verified by
+recomputing its own id, and a car outside that set reports its raw id and says
+it cannot be adopted rather than inventing a name.
+
+On the **server**, with `world.vehicles` *and* `world.vehicles.adopt`:
+
+```lua
+Open77.vehicles.setAdoptPolicy("driver")          -- bucket 0
+Open77.vehicles.setAdoptPolicy("any", { bucket = 7 })
+print(Open77.vehicles.getAdoptPolicy(0))          -- "driver"
+```
+
+Every bucket starts at `"none"`: nothing is adoptable until a resource says so.
+`"driver"` accepts only a car the proposing player is standing at, within six
+metres — the car-theft shape. `"any"` widens that to sixty metres; it does not
+remove the check.
+
+Back on the **client**, with `vehicles.adopt`, once the server has agreed:
+
+```lua
+Open77.vehicles.releaseAdopted(car.engineEntity)
+```
+
+That deletes the vanilla chassis through the population system — the same call
+the world sanitizer already makes every second — and it refuses a chassis this
+client was not offered in the last minute, a car the server owns, and the car
+the player is sitting in.
+
+### End to end
+
+```lua
+-- client
+local car = (Open77.vehicles.adoptable({ radius = 6, limit = 1 }) or {})[1]
+if car and car.adoptable then TriggerServerEvent("garage:adopt", car) end
+
+RegisterNetEvent("garage:adopted", function(engineEntity, vehicleId)
+    Open77.vehicles.releaseAdopted(engineEntity)
+    print("that Hella is now vehicle " .. vehicleId)
+end)
+```
+
+```lua
+-- server
+RegisterNetEvent("garage:adopt", function(description)
+    -- `source`, never a field out of the payload: the placement checks are the
+    -- entire defence, and they have to run against the real sender.
+    local id, reason = Open77.vehicles.adopt(source, description)
+    if not id then return print(reason) end
+    TriggerClientEvent("garage:adopted", source, description.engineEntity, id)
+end)
+```
+
+### What the server checks, and what it cannot
+
+Everything in a description was read on the proposing client and **none of it is
+trusted**. The server decides whether a car appears at all, in which bucket and
+where; the description only decides what it looks like, which is exactly the
+authority a resource already has through `create`. So the checks are about
+placement:
+
+* the player's bucket must have a policy other than `none`
+  (`adopt_policy_closed`);
+* the player must actually be there, within the policy's radius (`too_far`), and
+  must have a known position at all (`player_unavailable`);
+* no adopted car of the same record may already stand within three metres in
+  that bucket (`duplicate_adoption`) — traffic is spawned per client, so two
+  players on one corner are each describing their own car, and without this rule
+  the corner fills with copies;
+* the same chassis proposed twice by the same player answers with the id of the
+  first vehicle and the reason `already_adopted`, because a retry after a dropped
+  acknowledgement is the ordinary way that happens.
+
+Two things it deliberately does not do. It does not verify that the record
+exists — a made-up but well-formed record string produces a canonical vehicle no
+client can project, exactly as `create` would. And it does not know whether an
+NPC was driving the car: the only way to ask is a scripted function, and calling
+one without a script frame ends the process. `adoptable()` reports `speed` so a
+resource can prefer parked cars, and `"driver"` policy plus a player at the door
+is the shape that avoids the question.
 
 ## Client API
 
@@ -605,6 +1142,12 @@ local ok, reason = Open77.vehicles.triggerHorn(id, 300)
 ```
 
 ### Performance ceilings
+
+**This is the client-local form.** It is unchanged and still works; the server-authoritative form,
+which takes the same three numbers and replicates them to every viewer, is
+[Performance, decided by the server](#performance-decided-by-the-server). Use the server form for
+anything a player must not be able to opt out of -- a tuning shop, a speed limit inside an instance
+-- and this one for a client's own presentation.
 
 A roster of cars is only a real choice when no single car simply wins. Cyberpunk 2077 2.31 exposes
 no speed setter, no writable drive model and no writable input system, so Open77 applies a ceiling
@@ -720,11 +1263,21 @@ The client snapshot deliberately differs from the server snapshot:
 | Identity | `id`, `record`, `revision` |
 | Local projection | `entity`, `engineEntity`, `streamed`, `locallyOwned` |
 | Authority | `physicsOwner`, `authorityEpoch` |
+| World | `position` (a plain `{ x, y, z }`, which is what an Open77 vector3 is) |
+| Transform | `orientation = { x, y, z, w }`, `heading`, `yaw` |
 | Durable state | `health`, `flags`, `locked`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights`, `detachedParts` |
+| Control state | `engineOn`, `lights` (`"off"`/`"on"`/`"high"`), `sirenOn`, `undriveable`, `drivable` |
 | Body and damage | `bodyDamage[1..30]`, `damage = { body, glass, lights, tires, detachedParts }` |
-| Drivetrain | `speed`, `rpm`, `rpmMax`, `throttle`, `brake`, `gear`, `burnout` |
+| Drivetrain | `speed` (m/s), `speedKph`, `rpm`, `rpmMax`, `throttle`, `brake`, `gear`, `burnout` |
 | Wheels/suspension | `steering`, `wheelRotation`, `suspensionLongitudinal`, `suspensionTransversal`, `onGround`, `reversing` |
 | Seats | `occupants[] = { playerId, seat, flags, entering, exiting, forcedEntry, exitLocked, forcedExit }` |
+
+`position` and `orientation` come from the same source: the latest replicated motion when one
+exists, the canonical create otherwise, so a proximity query answers for a car whose REDengine
+projection has not attached yet. `heading` and `yaw` are one value derived from `orientation` with
+the same full-quaternion extraction the server uses, so the two runtimes never disagree about which
+way a car points. `speed` stays metres per second, the unit every Open77 read uses; `speedKph` is
+the same number converted once, because performance ceilings and speed limits are authored in km/h.
 
 `entity` is an ephemeral, generation-checked Open77 handle for the local projection.
 `engineEntity` is diagnostic engine identity. Neither is the durable server vehicle ID, and neither
@@ -739,6 +1292,18 @@ AddEventHandler("open77:vehicleCreated", function(id) end)
 AddEventHandler("open77:vehicleRemoved", function(id, reason) end)
 AddEventHandler("open77:vehicleAuthorityChanged", function(id, ownerPlayerId) end)
 AddEventHandler("open77:vehicleOccupancyChanged", function(id, revision) end)
+
+-- The local player's own seat transitions, derived from the same replicated
+-- ledger. Seat is a canonical `seat_*` name.
+AddEventHandler("open77:vehicleEntering", function(id, seat) end)
+AddEventHandler("open77:vehicleEntered", function(id, seat) end)
+AddEventHandler("open77:vehicleLeft", function(id, seat) end)
+
+-- Electrical edges, so a HUD does not have to keep its own copy of `flags`.
+AddEventHandler("open77:vehicleEngineChanged", function(id, state) end)   -- "on" / "off"
+AddEventHandler("open77:vehicleLightsChanged", function(id, mode) end)    -- "off" / "on" / "high"
+AddEventHandler("open77:vehicleSirenChanged", function(id, state) end)    -- "on" / "off"
+AddEventHandler("open77:vehicleDrivableChanged", function(id, state) end) -- "yes" / "no"
 AddEventHandler("open77:vehicleDamageChanged", function(id, revision) end)
 AddEventHandler("open77:vehiclePaintChanged", function(id, revision) end)
 ```
@@ -795,6 +1360,81 @@ When the driver exits, disconnects, dies, loses the lease, or is revoked, the se
 `engineOn`, `lightsOn`, `highBeams`, and `sirenOn` before publishing the new authority epoch.
 This prevents parked vehicles from retaining engine audio or headlights on one client.
 
+### Engine, lights and siren
+
+These four bits have always existed in `flags` and have always been applied by every client. What
+did not exist was a way to write one of them. A keys resource that wanted to cut an engine had to
+read `get(id).flags`, clear bit 0, and post the whole bitfield back through `update` -- a
+read-modify-write on state shared by every resource holding `world.vehicles`. Two resources doing
+it in the same tick each overwrite the other's bit, because each learned the flags before the
+other wrote them.
+
+`setEngine`, `setDrivable`, `setLights`, `setHighBeams` and `setSiren` write one named bit and
+leave every other flag exactly as it was. **`flags` and `update` are unchanged** and keep working
+as they always did; these are another way into the same canonical field, not a replacement.
+
+#### The intent window, and why a setter without one is unreliable
+
+The physics owner publishes what its own projection reads back every 500 ms, and the server merges
+the electrical bits by *replacement*. So a `setEngine(id, true)` races the report that was already
+in flight when it was called -- and loses. The bit lands, the stale report lands a moment later,
+and the API looks broken at random. This is the same mechanism that made Pursuit's cop sirens go
+dark about five seconds after every spawn for a month.
+
+Each electrical write therefore records a **ten-second intent** that outranks the owner's report
+for the bits it names. It is a window, not a lock:
+
+- the intent is **released the moment the owner reports the same value** -- proof that its
+  projection applied it -- so a driver who then flips their own headlights is obeyed immediately;
+- a bit the owner can never report (the siren) is held until the window expires, then dropped, so
+  the ledger can never get permanently stuck;
+- ten seconds is sized for the worst measured case, not for comfort: a server-created vehicle has
+  taken 3.7 s to stream in and its first owner report arrives about 5 s after that.
+
+#### What the siren can and cannot do
+
+**The light bar and the sound are one bit.** The only native this build exposes is
+`vehicleBaseObject.ToggleSiren(Bool)`, which takes no channel argument, so there is no
+`setSirenLights` that would not also make noise and no `setSirenSound` that would not also light
+the bar. Offering them separately would mean shipping two names for one switch, which is worse
+than one honest name.
+
+The siren is also the one electrical bit **no owner snapshot can read back** -- `Api::Vehicles::Snapshot`
+carries engine, locks, lights, high beams, doors, glass and tyres, and nothing for the siren. The
+client therefore echoes the canonical value in its durable report rather than reporting an
+observation, which is why the bar now stays lit.
+
+#### Indicators and the interior light are not shipped
+
+FiveM's `SetVehicleIndicatorLights` and interior-light control have **no Open77 equivalent, on
+purpose**. REDengine 2.31 exposes no verified native for either: there is no indicator or cabin
+light call in the vehicle component surface Open77 has mapped, and shipping a setter that
+silently does nothing is worse than not having one. If a native turns up, it lands as
+`setIndicators(id, left, right)` and `setInteriorLight(id, on)` with two new canonical bits.
+
+#### What `setDrivable` actually does
+
+Out of service cuts the engine **in the same canonical revision** and locks the simulated driver's
+throttle and brake on every projection. Both halves matter: a car whose engine is off but whose
+inputs are live can still be rolled along, and a car whose throttle is dead while its engine idles
+is a bug report waiting to happen. Putting it back in service does *not* restart the engine --
+that is `setEngine`.
+
+Like the entry lock, `undriveable` is server-authored and absent from every owner report, so no
+client can clear it.
+
+#### Health is one pool
+
+`setEngineHealth` and `getEngineHealth` are the FiveM-shaped names for `setHealth`/`getHealth`,
+which are the same normalized `0..1` pool `get(id).health` reads. **Cyberpunk models one vehicle
+health pool**; there is no separate engine pool to damage, so at 0 the car is a wreck rather than a
+running car with a dead engine. A car that must stay whole but refuse to move is
+`setDrivable(id, false)`.
+
+Per-vehicle gameplay data a server invents -- fuel, keys, a plate, an owner, an insurance record --
+does **not** belong in these flags. It belongs in a [state bag](state-bags.md) on the vehicle, which
+replicates to the clients that care and costs the canonical ledger nothing.
+
 Horn state is intentionally transient rather than durable. The native `VehicleComponent`
 horn latch is sampled in the realtime motion stream and observers call `ToggleHorn` only on
 edges. Receivers force it off after 350 ms without a fresh owner packet and on every authority
@@ -809,6 +1449,218 @@ destruction, immortality, and invulnerability are the scriptable vehicle `flags`
 Top speed is the one performance value that *is* scriptable, and it is scriptable in a different
 way: not as durable server state but as a client-side ceiling. See
 [Performance ceilings](#performance-ceilings).
+
+## Server-authoritative vehicle policy
+
+Four capabilities that only the server can honestly decide: a performance ceiling, an explosion,
+who a car is locked for, and how long it lives.
+
+### Performance, decided by the server
+
+`Open77.vehicles.setPerformance(id, { topSpeedKph, accelerationScale, taperKph })` is the
+server-authoritative form of the [client-local governor](#performance-ceilings). The three numbers
+are the same, and they end up in the same native throttle policy; the difference is only who
+decides them. A tuning shop, or a speed limit inside an instance, cannot be a decision the client
+makes.
+
+```lua
+-- Server. Everything inside this instance is limited to 60 km/h.
+for _, entry in ipairs(Open77.vehicles.nearby(centre, 200.0, { bucket = instanceBucket })) do
+  Open77.vehicles.setPerformance(entry.id, { topSpeedKph = 60.0, taperKph = 10.0 })
+end
+```
+
+The ceiling is replicated to **every viewer**, not only to whichever client currently owns the
+physics. Ownership changes every time a driver steps in or out, and a ceiling chased across those
+transitions would be missing for exactly the first second of every drive -- the second a speed
+limit has to hold. Each client applies it to its own projection; the native governor only has
+throttle to clamp on the machine actually simulating the car, so sending it wide costs a no-op on
+observers and removes a whole class of hand-off bug.
+
+**Why it does not need an intent window.** The [electrical
+setters](#engine-lights-and-siren) need one because the physics owner republishes those bits every
+500 ms and the server merges them by replacement, so a write racing an in-flight report loses. The
+performance ceiling is not a field that report carries at all, so there is nothing for the merge to
+overwrite. The race that *does* exist is on the client, where the ceiling routinely arrives before
+the projection has attached -- a server-created vehicle has been measured taking 3.7 s to stream in
+-- and it is answered the same way the intent window answers its race: the client holds the server
+intent on the replica and applies it when the entity appears, retrying every frame until the
+governor accepts it, and again if the projection re-attaches.
+
+**The envelope is the client governor's envelope**, enforced on the Lua boundary, in the registry
+and on both sides of the wire: `topSpeedKph` `0..1000`, `accelerationScale` in `(0, 1]`, `taperKph`
+`3..200` with a default of `12`. The taper floor is not arbitrary -- below about 3 km/h the roll-off
+is short enough that the limiter hunts around the ceiling and it reads as stutter, which is why the
+[client-local form](#performance-ceilings) has refused that band since it shipped. A server cap must
+not be a way around a rule somebody measured, so an unnamed taper takes the native default rather
+than zero.
+
+Read it back with `Open77.vehicles.getPerformance(id)`, or `get(id).performance`. Clearing it is
+`clearPerformance(id)`, `setPerformance(id, nil)`, or any profile that asks for nothing -- no
+ceiling and full throttle authority. The taper is not part of that test: a roll-off width around a
+ceiling that does not exist changes nothing, which is how the native profile decides it too.
+
+### Explode
+
+`Open77.vehicles.explode(id)` writes the canonical ledger: health to zero, `destroyed` and
+`exploded` raised, one revision. Every client that has the vehicle streamed then reconciles its own
+projection through the damage path that already replays a wreck to a late joiner, which ends in
+REDengine's own explosion on that machine. The blast, the sound and the physics are the engine's,
+on every viewer at once; the server never touches an entity.
+
+Three things it is worth being exact about, because a keys or a police resource will hit all three:
+
+- **Occupants stay occupants.** The seat ledger is not touched. Nobody is ejected, no seat is
+  freed, no life state changes, and the server sends no damage to any player -- inside the car or
+  standing next to it. What the blast does to a body is the engine's own damage model running on
+  each client, and it reaches the server the ordinary way, through the player damage report. A
+  resource that wants the occupants dead has to say so itself.
+- **It is terminal.** A second call is refused with `already_exploded` rather than re-detonating a
+  wreck. A vehicle that is merely `destroyed` -- written off by collisions, never blown up -- is
+  still a legitimate target.
+- **An owner report cannot undo it.** Health merges by minimum and the destruction bits by OR, both
+  monotone, so a report taken a moment before the explosion and claiming a pristine car does not
+  bring the vehicle back to life.
+
+### Locking a car for one player
+
+The durable entry lock has always been all-or-nothing, which is the wrong shape for keys: a car is
+locked for the street and open for the two people holding keys. Per-player exceptions express that
+directly.
+
+```lua
+Open77.vehicles.setLockedForAll(id, true)              -- the street
+for _, holder in ipairs(keyHolders) do
+  Open77.vehicles.setLockedForPlayer(id, holder, false) -- the exceptions
+end
+```
+
+The canonical bit stays `locked`, so a late joiner is told the right thing with no bookkeeping, and
+a key holder who disconnects takes their exception with them. `isLockedForPlayer(id, playerId)` is
+the single function that decides what a client is told, and the substitution happens at the point
+where state reaches a socket -- both the periodic state packet and the create a viewer gets on
+stream-in -- so no fan-out path can disagree with it. Nothing per-player is ever written into the
+canonical flags, which is also why no owner report can disturb it: `Locked` is outside the set an
+owner report is allowed to carry, and a report containing it is refused outright.
+
+`setLockedForAll` **revokes every exception** as well as moving the canonical bit. That is the
+point, not a side effect: "lock this for everyone" has to mean everyone, including the holders
+excepted a minute ago. `Open77.vehicles.setLocked` is unchanged and moves only the canonical bit,
+leaving exceptions standing.
+
+### Lifetime
+
+Props have had `ttlMs` since they shipped; vehicles had nothing, so a garage had to sweep its own.
+
+| Policy | Where | Meaning |
+|---|---|---|
+| `ttlMs` | `create` definition, `setTimeToLive(id, ms)` | Remove the vehicle this many milliseconds from now. `0` or `nil` cancels. Capped at seven days. |
+| `persistent` | `create` definition, `setPersistent(id, bool)` | **Nothing automatic removes this vehicle.** |
+| `despawnWhenUnobserved` | `create` definition, `setDespawnWhenUnobserved(id, bool)` | Remove it once nobody has had it streamed for thirty seconds. |
+
+```lua
+local id = Open77.vehicles.create({
+  record = "Vehicle.v_standard2_thorton_galena_player",
+  position = spot, yaw = 90.0,
+  ttlMs = 10 * 60 * 1000, despawnWhenUnobserved = true,
+})
+```
+
+`persistent` has one meaning, deliberately: no time-to-live takes it, the unobserved sweep does not
+take it, and it survives the stop of the resource that created it. An explicit
+`Open77.vehicles.remove` still takes it -- persistence is protection from the reapers, not from the
+owner. Taking persistence away hands the vehicle back to any deadline it still carries.
+
+The unobserved window is not zero because interest is recomputed against the last received player
+snapshot, and a loading screen or a bucket change briefly empties a viewer set that is about to
+refill; thirty seconds rides that out. The clock runs for a vehicle nobody has *ever* seen too,
+which is what a garage wants -- a car spawned for a player who never turns up still goes. A viewer
+coming back resets the clock rather than pausing it, and turning the flag off forgets it, so
+turning it back on later does not inherit a deadline from a window nobody was counting.
+
+The reaper runs once per tick, before interest is reconciled, for the same reason the prop reaper
+does: a vehicle whose lifetime ends must leave as a real removal the client tears down, not by
+quietly dropping out of the next interest pass. Its removal reason is `3`.
+
+**A deadline takes an occupied vehicle too.** A time-to-live a resource authored and then silently
+declined to honour because someone happened to be sitting in the car is a worse surprise than the
+removal, and the seat ledger is closed out properly either way -- every occupant gets their
+`onPlayerLeftVehicle`. A garage that must not yank a car from under its driver clears the deadline
+on `onPlayerEnteredVehicle`, or marks the vehicle persistent. The unobserved sweep cannot hit an
+occupied vehicle at all: a seated player always has their vehicle streamed, so it always has a
+viewer.
+
+## Finding a vehicle
+
+Every vehicle interaction in an RP server starts with "the closest vehicle", and until these
+existed there was no way to ask.
+
+| Runtime | Call | Answers |
+|---|---|---|
+| Client | `Open77.vehicles.closest(radius?)` | The nearest replicated vehicle to the local player. |
+| Client | `Open77.vehicles.nearby(radius, options?)` | All of them within a radius, nearest first. |
+| Client | `Open77.vehicles.aimed()` | The one the player is looking at, right now. |
+| Client | `Open77.vehicles.fromEntity(entityId)` | The vehicle wearing an entity id. |
+| Client | `Open77.vehicles.seatFree(id, seat)` / `occupantInSeat(id, seat)` | Seat occupancy, from the replicated ledger. |
+| Server | `Open77.vehicles.nearby(anchor, radius?, options?)` | All registered vehicles near a point or a player. |
+| Server | `Open77.vehicles.closest(anchor, options?)` | The nearest one. |
+| Server | `Open77.vehicles.seatFree(id, seat)` / `occupantInSeat(id, seat)` / `freeSeats(id)` | Canonical seat occupancy. |
+
+The server calls reuse the anchor, bucket and limit conventions of
+[`Open77.players.nearby`](server-api.md#players) exactly: the anchor is a position table (a
+vector3 is one) or a player id, a player anchor defaults to that player's own routing bucket,
+`bucket = false` opts back out to every bucket, and ties are broken by vehicle id so the order does
+not reshuffle between two calls with the same input.
+
+The two sides say "nothing in range" differently, and the difference is deliberate. The **server**
+answers a bare `nil` with no reason, matching `Open77.players.closest`: that is how a caller tells
+"the search worked and the street is empty" from "the search failed". The **client** names the case
+`no_vehicle_in_range`, because it has near neighbours a resource genuinely has to tell apart --
+`no_local_position` when the player has no body yet, `no_session` before there is a roster at all.
+
+```lua
+-- Client: the car the player is standing at, or the one they are looking at.
+local car = Open77.vehicles.closest(6.0) or Open77.vehicles.aimed()
+if car then Open77.net.emitServer("keys:tryUnlock", car.id) end
+
+-- Server: an empty seat in the nearest car in this player's own bucket.
+local nearest = Open77.vehicles.closest(playerId, { radius = 10.0, occupied = false })
+if nearest then
+    local free = Open77.vehicles.freeSeats(nearest.id)
+    if free[1] then
+        Open77.vehicles.warpPlayerIntoVehicle(playerId, nearest.id, free[1])
+    end
+end
+```
+
+### What `closest` can and cannot find
+
+**Only server-spawned vehicles are in the registry.** A player who walks up to a vanilla traffic
+car is standing next to something REDengine population spawned on their own client: it has no
+canonical id, no replica, and no entry in any of these calls. `closest()` will happily answer with
+a registered car forty metres away while the player leans on a taxi, and that is the expected
+behaviour rather than a bug.
+
+Two consequences a server creator will otherwise trip over:
+
+- a resource that must not act on the wrong car has to check `distance` itself, because "nearest
+  registered" is not "nearest";
+- `Open77.vehicles.aimed()` answers `unknown_entity` far more often than `no_target`. The player
+  really is looking at a car; that car is simply traffic nobody created.
+
+Adopting vanilla traffic into the registry is a separate capability that does not exist yet.
+
+### Seat occupancy
+
+`seatFree` and `occupantInSeat` read the **occupancy ledger**, not the local projection, so the
+client and the server agree about who is where. A seat held by an occupant whose entry animation is
+still running counts as **taken**: the seat is reserved and a second warp into it is refused, so
+reporting it free would be a lie the caller then trips over one line later.
+
+`freeSeats(id)` returns canonical seat names in `driver, frontPassenger, rearLeft, rearRight`
+order, so `freeSeats(id)[1]` is a deterministic "put them anywhere" seat. It considers all four
+seats of the standard layout; the registry does not know a two-seat record's seat count, so a
+two-seater still reports its rear seats free.
 
 ## Authority and streaming
 

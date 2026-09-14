@@ -26,6 +26,11 @@ Declare `player.weapons.read` for `slots`, `snapshot`, and `all`. Declare
 | `Open77.weapons.setAmmo(slot, amounts)` | Set exact spare rounds and/or magazine rounds. |
 | `Open77.weapons.snapshot()` / `all()` | Request every slot's verified state. |
 
+The bundled `open77_weapons` resource adds one more as an export:
+`exports.open77_weapons:clear()` empties all three slots at once. It is three
+native removals aggregated into one answer rather than three the caller has to
+correlate, and a slot that was already empty is not a failure.
+
 `assign` options are `active` (default `false`) and `addToInventory` (default
 `true`). Template-form `setActive` accepts `slot` as a placement fallback and
 `addToInventory`; if the template is already assigned, its existing slot wins.
@@ -107,7 +112,128 @@ Open77.weapons.holster(playerId)
 Open77.weapons.setAmmo(
   playerId, 1, { reserve = 120, magazine = 18, activate = true })
 Open77.weapons.requestSnapshot(playerId)
+
+-- Every slot at once: the RemoveAllPedWeapons equivalent.
+Open77.weapons.clear(playerId)
 ```
+
+`clear` is **one** request, not three `remove` calls. The owner runs the three
+native removals itself and answers once, so there is one request id to correlate
+instead of three and no way to end up half-cleared because one leg was refused. A
+slot that was already empty answers `weapon_slot_empty` natively and is **not**
+counted as a failure — "remove every weapon" succeeded on a slot that had none.
+The completion's `result` carries `cleared` and a `slots` array of
+`{ slot, accepted, reason }`.
+
+## Reading a player's weapons from the server, synchronously
+
+Everything above is a *request*: the answer comes back later, on an event. That is
+unusable inside a decision. An anticheat check, a shop validating a sale and an
+inventory sync reconciling a slot all have to conclude **now**, and an answer that
+arrives ten milliseconds later is an answer to a question nobody is still asking.
+
+`Open77.weapons.get(playerId)` answers immediately:
+
+```lua
+-- manifest: permission "player.weapons.read"
+local weapons, reason = Open77.weapons.get(playerId)
+if weapons == nil then return end                 -- "weapons_unreported" when nothing is known
+
+print(weapons.active, weapons.activeRecord, weapons.drawn, weapons.magazine)
+for _, slot in ipairs(weapons.slots) do
+  print(slot.slot, slot.record, slot.active, slot.drawn, slot.ammo and slot.ammo.magazine)
+end
+```
+
+| Field | Meaning |
+|---|---|
+| `slots` | one row per slot `1..3`, in the shape the relay's snapshot already answers with |
+| `active` | the **selected** slot, or absent when none is known |
+| `activeRecord`, `activeTweakDbId` | the selected weapon; the id uses the same `0x%016X` spelling as the relay |
+| `drawn` | the weapon is in hand. Holstering clears this without clearing `active` |
+| `magazine` | rounds in the drawn weapon; absent when the client did not report it |
+| `reportedAgeMs` | how old `active`, `drawn` and `magazine` are |
+| `loadoutAgeMs` | how old `slots` is |
+| `fresh` | `reportedAgeMs` passes the same two-second rule `Open77.players.get` applies |
+| `source` | `report`, `snapshot`, or the call fails |
+
+### It is a cache, and the staleness is yours to judge
+
+**Weapons are client-owned.** They live in the client's REDengine equipment
+system; the server keeps no copy of that state and has no way to verify one. Every
+field above is **as true as the owner's last report**, and a client can lie about
+its own weapons exactly as it always could. Read this to *decide* — refuse a sale,
+flag an anomaly, reconcile an inventory — never to *assert*.
+
+Which is why there are **two** ages rather than one, and why mixing them up is the
+first mistake a caller makes:
+
+* `reportedAgeMs` dates the drawn weapon, whether it is in hand, and the magazine.
+  Those ride the ordinary **20 Hz player snapshot**, which the client already
+  sends — no extra traffic, no request. While a player is simulating this is tens
+  of milliseconds; it stops advancing the moment they are not.
+* `loadoutAgeMs` dates the **slot list**, which the owner pushes only when the
+  loadout *changes*. An untouched loadout is legitimately minutes old and that is
+  not a fault. Rejecting it for age would reject every player who has not swapped
+  a gun since they connected.
+
+`source` tells you which halves you have. `report` means the owner has described
+its slots at least once. `snapshot` means only the packet's weapon block has
+arrived, so `activeTweakDbId` and `drawn` are real but `slots` is empty and
+`active` is unknown — the packet carries an id, not a slot number. A player nobody
+has heard anything about at all fails with `weapons_unreported`, which is
+deliberately different from a player carrying nothing.
+
+```lua
+-- The shape an anticheat actually wants.
+local weapons = Open77.weapons.get(playerId)
+if weapons and weapons.fresh and weapons.source == "report"
+   and (weapons.loadoutAgeMs or math.huge) < 60000 then
+  -- recent enough for this rule; otherwise ask, do not assume
+end
+```
+
+### `onPlayerWeaponChanged`
+
+A host-wide server event, fired **once per change** and never for a report that
+changes nothing — a player standing still resends the same weapon block twenty
+times a second, and an event that repeated it would be unusable.
+
+```lua
+AddEventHandler("onPlayerWeaponChanged", function(playerId, slot, record, drawn)
+  playerId, slot = tonumber(playerId), tonumber(slot)
+  if drawn == "true" then print(playerId .. " drew " .. record) end
+end)
+```
+
+Arguments are strings, like every other host event. It fires when a slot's
+contents change, and when the selection or `drawn` changes — reported against the
+slot concerned. The first report after a connection fires too, so a handler that
+only ever hears about changes still learns the initial loadout.
+
+### How the cache is fed
+
+Two sources, kept apart on purpose.
+
+The **drawn weapon, whether it is in hand, and the magazine** come out of the
+ordinary player snapshot: `weaponTdbId`, the `WeaponValid` / `WeaponEquipped` state
+bits and `ammoRemaining` are already in that packet, so this half costs no extra
+bandwidth and no request at all. `WeaponValid` clear means "the sender did not fill
+this block", never "unarmed" — treating the two as the same is how an anticheat
+starts accusing players who are in a loading screen.
+
+**Slot membership** has no wire field, so it is pushed by the bundled
+`open77_weapons` client resource, which reports after every accepted mutation and
+once shortly after start. It does **not** poll the engine: a snapshot is a real
+REDengine round trip, and the loadout changes a few times an hour. Instead it
+compares the locally readable drawn weapon (`Open77.character.weapon()`, a field
+read) against what it last reported, twice in a row, and only re-snapshots when
+they genuinely disagree — which is what happens when a player loots a gun or swaps
+one through the vanilla UI. An untouched loadout costs one table read a second and
+zero traffic.
+
+A disconnect forgets everything about that player, so a recycled player id never
+inherits the previous holder's loadout.
 
 `activate` and `unequip` are server aliases. Results return only to the server
 resource VM that created the namespaced request:
@@ -135,11 +261,16 @@ The official resource registers:
 /weapon.give <playerId|me> <template> [slot=1] [active=true]
 /weapon.remove <playerId|me> <slot>
 /weapon.ammo <playerId|me> <slot> <reserve> [magazine]
+/weapon.clear <playerId|me>
+/weapon.read <playerId|me>
 ```
 
-They require `command.weapon.give`, `command.weapon.remove`, and
-`command.weapon.ammo` respectively; the built-in `admin` role's `command.*`
-includes all three. `me` is available only
+They require `command.weapon.give`, `command.weapon.remove`,
+`command.weapon.ammo`, `command.weapon.clear` and `command.weapon.read`
+respectively; the built-in `admin` role's `command.*` includes all five.
+`/weapon.read` is the odd one out: it asks the client nothing and prints the
+server's cache, including both ages, which is the quickest way to see whether a
+loadout report has arrived at all. `me` is available only
 to an in-game issuer, slots are `1..3`, and `active` defaults to `true`. The
 command reports completion only after the authenticated target client verifies
 the REDengine result. `weapon.ammo` draws the slot if needed, preserves the
@@ -155,7 +286,11 @@ the target client. Never forward a client-chosen arbitrary record.
 
 Immediate failures include permission denials, `invalid_weapon_template`,
 `template_is_not_weapon`, `invalid_weapon_slot`, `player_unavailable`,
-`script_bridge_unavailable`, and `queue_full`. REDengine completion failures
+`script_bridge_unavailable`, and `queue_full`. `Open77.weapons.get` adds
+`permission_denied` (no `player.weapons.read`), `invalid_player_id`,
+`weapons_unavailable` (an embedding that does not replicate) and
+`weapons_unreported`; `clear` adds `clear_in_progress` from the owner when one is
+already running. REDengine completion failures
 include `unsupported_weapon_area`, `weapon_slot_locked`, `weapon_not_owned`,
 `item_creation_failed`, `equip_rejected`, `activation_rejected`,
 `weapon_slot_empty`, `unequip_rejected`, and `holster_rejected`.

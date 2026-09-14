@@ -28,8 +28,12 @@ closed. `setEnabled(true)` is equivalent to `open()`; `setEnabled(false)` is equ
 `isActive()` reads the engine's current state. It returns `nil, reason` when the photo-mode system
 or its RTTI query is unavailable.
 
+A client resource may `RegisterCommand` of its own -- see the
+[FiveM compatibility page](fivem-compatibility.md) -- but a key is the better trigger for a toggle.
+It also needs `permissions { "input.actions" }` in the manifest:
+
 ```lua
-RegisterCommand("photo", function()
+RegisterKeyMapping("photo", "Toggle photo mode", "F9", function()
     local active, readError = Open77.photoMode.isActive()
     if active == nil then
         print("photo mode read failed: " .. readError)
@@ -40,7 +44,7 @@ RegisterCommand("photo", function()
     if not ok then
         print("photo mode request failed: " .. error)
     end
-end, false)
+end)
 ```
 
 Photo mode is one local engine state, not a resource-owned lease. Two resources can therefore

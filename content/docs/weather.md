@@ -9,7 +9,9 @@ At server boot the canonical state is `12:00:00`, the weather is `sunny`, and th
 weather transition already in progress at its current point rather than restarting it.
 
 Use this guide if you are writing a resource that needs to read the time, react to weather, or — from
-a trusted server resource — change either.
+a trusted server resource — change either. From the server the entry point is
+[`Open77.environment.*`](#api-for-a-server-resource), which the host installs everywhere and gates
+behind `world.environment`; a routing bucket can hold an environment of its own.
 
 ## Network model
 
@@ -23,12 +25,18 @@ server monotonic clock + canonical state
                  | periodic resynchronisation
 ```
 
-The snapshot carries `authorityEpoch`, `revision`, `secondsOfDay`, `rate`, `frozen`, the weather
-name and preset, the transition, the priority, and the deadline of the next random event. The client
-measures the round trip of its own request, adds at most two seconds of half-RTT, then re-anchors
-its monotonic reference. A mutation broadcast applies immediately; a reply carrying an older
-revision of the same epoch is rejected. A new epoch lets a server hot-reload restart at revision 1
-without leaving clients stuck on the previous incarnation.
+The snapshot carries `scope`, `authorityEpoch`, `revision`, `secondsOfDay`, `rate`, `frozen`, the
+weather name and preset, the transition, the priority, and the deadline of the next random event.
+The client measures the round trip of its own request, adds at most two seconds of half-RTT, then
+re-anchors its monotonic reference. A mutation broadcast applies immediately; a reply carrying an
+older revision of the same epoch is rejected. A new epoch lets a server hot-reload restart at
+revision 1 without leaving clients stuck on the previous incarnation.
+
+`scope` names the environment the snapshot describes — `default`, or `bucket:<n>` for a routing
+bucket holding an [override](#per-bucket-overrides). A snapshot whose scope differs from the one a
+client is projecting is adopted **unconditionally**: it is another world, not a newer reading of
+the one the client was in, so the revision rule is suspended for that one packet and resumes inside
+the new scope.
 
 Open77 projects the server clock twice a second. It deliberately does not hold REDengine's
 `SetPausedState`: two-client runtime testing proved that this flag can also slow gameplay and
@@ -87,7 +95,113 @@ snapshot: no client mutation event exists.
 
 ## API for a server resource
 
-These events are local to the server runtime:
+`Open77.environment.*` is the API to write new code against. It is installed by the **host**, in
+every server VM, and is gated by the `world.environment` manifest capability:
+
+```lua
+-- permissions { "world.environment" }
+local state, reason = Open77.environment.setTime(23, 0, 0)
+if not state then return print("no environment authority here: " .. reason) end
+Open77.environment.setTimeFrozen(true)
+Open77.environment.setWeather("rain", 20)
+Open77.environment.setWeatherFrozen(true)     -- pins the preset: no more random draws
+print(("%02d:%02d %s"):format(state.hour, state.minute, state.weather))
+```
+
+| Call | Effect |
+|---|---|
+| `setTime(hour, minute, second, bucket?)` | Sets the authoritative clock. |
+| `setTimeFrozen(frozen, bucket?)` | Stops or resumes it at its current reading. |
+| `setTimeRate(rate, bucket?)` | Game seconds per real second, `0`–`120`. |
+| `setWeather(preset, transitionSeconds?, bucket?)` | Applies a preset over a `0`–`300` s transition. |
+| `setWeatherFrozen(frozen, bucket?)` | Pins or releases the weighted random scheduler. |
+| `getState(bucket?)` | The canonical state; see [the field table](server-api.md#time-and-weather). |
+| `clearBucket(bucket)` | Retires a per-bucket override. |
+
+Every call answers a state table, or `nil` plus a stable reason. The one worth branching on is
+`environment_unavailable`: it means `open77_weather` is not running on this server, which
+`resources.load` can cause silently — a resource that is not in that allowlist is never started
+and never logged.
+
+`setWeatherFrozen` deserves a word, because the name means something different on each side. On
+the **client** it is an unconditional lock that stops a vanilla controller or a quest from
+submitting its own preset, and it is not an operator choice. On the **server** it means *pin the
+preset*: the weighted random scheduler stops drawing, so the sky stays where it was put. That is
+the half a gamemode actually wants, and it is the same switch `weather.random off` throws.
+
+### Why the authority is a resource and not a host service
+
+Every other authoritative registry the platform owns — loot, vehicles, NPCs, props, effects,
+elevators — is a C# service, because the host is the only thing that can replicate it. Time and
+weather are not in that shape, and that was measured before this API was designed: **nothing in
+the host can move a sky.** The only code that touches the engine is `Open77.environment.*` in the
+*client* VM, and that projection ships as `client/main.lua` of this same resource. Lifting the
+clock into C# would therefore buy no platform guarantee it does not already have — a server whose
+`resources.load` omits `open77_weather` loses the projection along with the authority, and a
+host-held clock nobody applies is a clock nobody sees. It would only duplicate an implementation
+that already survives a reload, answers late joiners and is covered by tests.
+
+So the split is: the **host owns the surface** — always installed, capability-gated, `nil, reason`,
+and honest about the authority being absent — and the **resource owns the implementation**, which
+the facade reaches through a synchronous export call into its VM. The `environment.*` exports at
+the bottom of `server/main.lua` are that seam.
+
+### Per-bucket overrides
+
+A routing bucket is a separate world, so a race gamemode at night and a freeroam bucket at noon is
+one server. Pass `bucket` to any setter:
+
+```lua
+Open77.environment.setTime(23, 0, 0, 5)       -- bucket 5 only
+Open77.environment.setWeather("rain", 0, 5)
+local night = Open77.environment.getState(5)  -- scope = "bucket:5"
+local day   = Open77.environment.getState()   -- scope = "default", buckets = { 5 }
+Open77.environment.clearBucket(5)
+```
+
+An override is created on first use, seeded from the default environment as it reads at that
+moment — so a gamemode that only pins the time keeps whatever weather the session had, and an
+override created at dusk does not restart at noon. At most 64 exist at once
+(`too_many_environment_overrides`).
+
+Two things this costs, both measured rather than assumed:
+
+- **The revision counter is now global.** A client accepts a snapshot only when its revision is at
+  least the last one it applied. Had each scope counted for itself, a player moving from a bucket
+  sitting at revision 40 into one whose last change was revision 12 would have rejected that
+  bucket's snapshots — heartbeats included — forever, and stayed on the sky of a bucket they had
+  left. One monotonic counter shared by every scope makes every snapshot a client can receive newer
+  than every snapshot it has already applied. A player who changes bucket is additionally re-synced
+  individually, with a fresh revision drawn on the scope being entered.
+- **A broadcast becomes a fan-out.** While no override exists the authority still sends one
+  reliable broadcast to `-1` per mutation and per heartbeat, exactly as before. The moment one
+  exists a broadcast is wrong — it would reach the overridden bucket too, with a higher revision,
+  and clobber it — so the default scope switches to one send per connected player. That is the
+  price of an override, not of the feature existing, and a server that never creates one pays
+  nothing.
+
+### `onEnvironmentChanged`
+
+The authority publishes a host-wide `onEnvironmentChanged` after every real change — never on the
+heartbeat, and never on a client's sync request. It is a platform name: every resource receives it
+with no capability at all, and no resource can publish it (`TriggerEvent` answers `false,
+"reserved_event"`).
+
+```lua
+AddEventHandler("onEnvironmentChanged", function(state)
+    -- state is exactly what getState() returns, plus `reason`.
+    print(("%s in %s at %02d:%02d (%s)")
+        :format(state.weather, state.scope, state.hour, state.minute, state.reason))
+end)
+```
+
+`reason` names the door the change came through: `command_*` for a console command, `api_*` for
+`Open77.environment.*`, `server_resource_*` for the legacy events below, `random_weather` for a
+scheduler draw, and `bucket_cleared` when an override is retired.
+
+### The older doors, still open
+
+These events are local to the server runtime and are unchanged:
 
 ```lua
 TriggerEvent("open77:weather:setTime", 20, 15, 0)
@@ -109,6 +223,15 @@ TriggerEvent("open77:weather:requestState")
 
 `open77:weather:timeChanged` and `open77:weather:weatherChanged` report the precise cause. These
 APIs are meant for trusted server resources; server scripts are not distributed to players.
+
+**What `world.environment` does and does not gate, stated plainly.** It gates the platform facade,
+which is where new code is told to go. It does **not** close the two older doors: `open77:weather:*`
+is deliberately not a reserved event name — reserving it would break every resource already using
+the block above — so any server resource can still publish those, exactly as it always could. The
+`environment.*` exports the facade calls are likewise the resource's public surface and reachable
+with `Open77.exports.callSync`. Nothing was widened here; the capability is a door marked for new
+callers, not a lock on the room. Closing the older doors means reserving the `open77:weather:`
+prefix on the bus and is a breaking change with its own decision to make.
 
 ## API for a client resource
 
@@ -134,12 +257,15 @@ end)
 Available exports:
 
 - `isReady()` — has the first snapshot arrived?
-- `getState()` — time predicted at the moment of the call, and the weather state;
+- `getState()` — time predicted at the moment of the call, and the weather state, plus the `scope`
+  and `bucket` this client is currently projecting;
 - `requestSync()` — forces a reliable resynchronisation request.
 
-The native `Open77.environment` table (`getTime`, `setTime`, `setTimeFrozen`, `setWeather`,
-`setWeatherFrozen`, `isWeatherFrozen`) is guarded by the `world.environment` permission. It exists to
-implement the authority, not for ordinary gameplay scripts.
+The native **client** `Open77.environment` table (`getTime`, `setTime`, `setTimeFrozen`,
+`setWeather`, `setWeatherFrozen`, `isWeatherFrozen`) is guarded by the `world.environment`
+permission and is unchanged. It exists to implement the projection, not for ordinary gameplay
+scripts, and it is a different API from the server table of the same name: the client one drives
+the local engine, the server one drives the authority every client projects.
 
 ## Random weather events
 

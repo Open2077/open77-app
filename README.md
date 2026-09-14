@@ -167,6 +167,16 @@ namespaces to the guide in `src/lib/api-reference.ts`. Category membership is ma
 `src/lib/api-categories.ts`. Generate the platform API JSON before syncing; publish only
 implemented contracts and state the required compatible client/server build in each guide.
 
+> **Those two files are not on the platform's `main` branch.** They were published from the
+> `docs/cyberware-public-20260913` branch, which has never been merged: `main` carries an
+> internal `cyberware.md` written as an engineering status report, and no `gorilla-arms.md`
+> at all. A plain `npm run sync:wiki -- --from ../base/wiki` therefore **deletes the Gorilla
+> Arms tutorial and replaces the public cyberware page**, which is why the last sync ran from
+> a staged source: a copy of `main`'s wiki with those two files overlaid from that branch.
+> Merge the branch upstream and this whole exception disappears. Until then, after syncing
+> from `main`, restore both files with
+> `git checkout HEAD -- content/docs/cyberware.md content/docs/gorilla-arms.md`.
+
 Run `node scripts/check-hydration.mjs http://127.0.0.1:3000 --docs` for the focused browser
 checks: filters, deep links, Back, clipboard, themes, sticky navigation and mobile layout.
 This writes review screenshots under `.shots/` (ignored by Git).
@@ -196,9 +206,9 @@ same prerendered output rather than a parallel implementation.
   agents probe for. Route segments cannot carry an extension, so the handlers live under `/md/*`
   and are rewritten into place in `next.config.ts`.
 - **`llms.txt` and `llms-full.txt`.** A structured map of the site, and the entire documentation
-  set concatenated into one 320 KB document, for models that would rather read once than crawl.
+  set concatenated into one 2.4 MB document, for models that would rather read once than crawl.
 - **`robots.txt`** names the known AI crawlers explicitly instead of leaving their access to be
-  inferred, and **`sitemap.xml`** lists all 79 public URLs with `lastmod` taken from the wiki sync.
+  inferred, and **`sitemap.xml`** lists all 229 public URLs with `lastmod` taken from the wiki sync.
 - **Legacy URLs.** The static site's `.html` URLs are already indexed, so each one is a permanent
   redirect to its replacement. `docs.html` maps to `/docs/platform`, which is what that page
   actually was, and it keeps the `#how-it-works` and `#faq` anchors alive.
