@@ -22,7 +22,7 @@ export function HoverArt({ cover, media, clipMediaId, fallback, className, child
   return <span className={className} onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
     {preview?.kind === "video" ? <video src={preview.src} poster={preview.poster ?? cover?.url ?? undefined} muted autoPlay loop playsInline preload="none" aria-hidden="true" /> :
       preview?.kind === "image" ? <Image unoptimized src={preview.src} width={640} height={360} alt="" referrerPolicy="no-referrer" /> :
-      cover ? <Image unoptimized src={cover.url} width={cover.width} height={cover.height} alt="" loading="lazy" referrerPolicy="no-referrer" /> : fallback}
+      cover ? <Image unoptimized src={cover.url} width={cover.width} height={cover.height} alt="" loading="eager" referrerPolicy="no-referrer" /> : fallback}
     {children}
   </span>;
 }
