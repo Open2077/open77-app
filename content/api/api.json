@@ -14800,5 +14800,1375 @@
   "source_line": 11949,
   "qualified": "Open77.voice.setPlayerLipSyncEnabled",
   "route_id": "Open77.voice.setPlayerLipSyncEnabled"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "destroy",
+  "handler": "LuaAudioControl",
+  "summary": "DestroySound: local package audio.",
+  "description": "Requires audio.play; network=true is rejected. MP3/PCM WAV decode asynchronously off the game thread. getState reports actual decoder state and cached PCM reuse. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local result = DestroySound(id)",
+  "inferred": false,
+  "source_line": 7931,
+  "qualified": "Open77.audio.destroy",
+  "route_id": "Open77.audio.destroy"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "getState",
+  "handler": "LuaAudioState",
+  "summary": "GetSoundState: local package audio.",
+  "description": "Requires audio.play; network=true is rejected. MP3/PCM WAV decode asynchronously off the game thread. getState reports actual decoder state and cached PCM reuse. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "table, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local result = GetSoundState(id)",
+  "inferred": false,
+  "source_line": 8035,
+  "qualified": "Open77.audio.getState",
+  "route_id": "Open77.audio.getState"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "pause",
+  "handler": "LuaAudioControl",
+  "summary": "PauseSound: local package audio.",
+  "description": "Requires audio.play; network=true is rejected. MP3/PCM WAV decode asynchronously off the game thread. getState reports actual decoder state and cached PCM reuse. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local result = PauseSound(id)",
+  "inferred": false,
+  "source_line": 7953,
+  "qualified": "Open77.audio.pause",
+  "route_id": "Open77.audio.pause"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "play",
+  "handler": "LuaAudioControl",
+  "summary": "PlaySound: local package audio.",
+  "description": "Requires audio.play; network=true is rejected. MP3/PCM WAV decode asynchronously off the game thread. getState reports actual decoder state and cached PCM reuse. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local result = PlaySound(id)",
+  "inferred": false,
+  "source_line": 7953,
+  "qualified": "Open77.audio.play",
+  "route_id": "Open77.audio.play"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "play2D",
+  "handler": "LuaAudioCreate",
+  "summary": "Play2DSound: local package audio.",
+  "description": "Requires audio.play; network=true is rejected. MP3/PCM WAV decode asynchronously off the game thread. getState reports actual decoder state and cached PCM reuse. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "asset",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "integer handle, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local id = Play2DSound('audio/click.wav', {volume=0.5})",
+  "inferred": false,
+  "source_line": 8026,
+  "qualified": "Open77.audio.play2D",
+  "route_id": "Open77.audio.play2D"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "play3D",
+  "handler": "LuaAudioCreate",
+  "summary": "Play3DSound: local package audio.",
+  "description": "Requires audio.play; network=true is rejected. MP3/PCM WAV decode asynchronously off the game thread. getState reports actual decoder state and cached PCM reuse. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "asset",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "position",
+    "type": "table",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "integer handle, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local id = Play3DSound('audio/lock.mp3', {x=10,y=20,z=30}, {maxDistance=15})",
+  "inferred": false,
+  "source_line": 8026,
+  "qualified": "Open77.audio.play3D",
+  "route_id": "Open77.audio.play3D"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "seek",
+  "handler": "LuaAudioControl",
+  "summary": "SeekSound: local package audio.",
+  "description": "Requires audio.play; network=true is rejected. MP3/PCM WAV decode asynchronously off the game thread. getState reports actual decoder state and cached PCM reuse. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "seconds",
+    "type": "number",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local result = SeekSound(id, 0.2)",
+  "inferred": false,
+  "source_line": 7954,
+  "qualified": "Open77.audio.seek",
+  "route_id": "Open77.audio.seek"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "setPosition",
+  "handler": "LuaAudioControl",
+  "summary": "SetSoundPosition: local package audio.",
+  "description": "Requires audio.play; network=true is rejected. MP3/PCM WAV decode asynchronously off the game thread. getState reports actual decoder state and cached PCM reuse. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "position",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local result = SetSoundPosition(id, {x=10,y=20,z=30})",
+  "inferred": false,
+  "source_line": 8029,
+  "qualified": "Open77.audio.setPosition",
+  "route_id": "Open77.audio.setPosition"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "setVolume",
+  "handler": "LuaAudioControl",
+  "summary": "SetSoundVolume: local package audio.",
+  "description": "Requires audio.play; network=true is rejected. MP3/PCM WAV decode asynchronously off the game thread. getState reports actual decoder state and cached PCM reuse. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "volume",
+    "type": "number",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local result = SetSoundVolume(id, 0.5)",
+  "inferred": false,
+  "source_line": 8029,
+  "qualified": "Open77.audio.setVolume",
+  "route_id": "Open77.audio.setVolume"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "stop",
+  "handler": "LuaAudioControl",
+  "summary": "StopSound: local package audio.",
+  "description": "Requires audio.play; network=true is rejected. MP3/PCM WAV decode asynchronously off the game thread. getState reports actual decoder state and cached PCM reuse. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local result = StopSound(id)",
+  "inferred": false,
+  "source_line": 8028,
+  "qualified": "Open77.audio.stop",
+  "route_id": "Open77.audio.stop"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "allowAim",
+  "handler": "LuaPlayerControl",
+  "summary": "Allow or block a local-player action.",
+  "description": "Requires players.controls and a strict boolean. Freeze true acquires a block; Allow false acquires a block. The inverse releases only this resource VM's block, never another owner or vanilla restriction. Automatically released on resource stop, death and session teardown. Does not freeze vehicles, moving platforms or server teleports. See player-utilities.md for each native restriction and limitations.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "assert(AllowAim(false))",
+  "inferred": false,
+  "source_line": 8103,
+  "qualified": "Open77.players.allowAim",
+  "route_id": "Open77.players.allowAim"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "allowCrouch",
+  "handler": "LuaPlayerControl",
+  "summary": "Allow or block a local-player action.",
+  "description": "Requires players.controls and a strict boolean. Freeze true acquires a block; Allow false acquires a block. The inverse releases only this resource VM's block, never another owner or vanilla restriction. Automatically released on resource stop, death and session teardown. Does not freeze vehicles, moving platforms or server teleports. See player-utilities.md for each native restriction and limitations.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "assert(AllowCrouch(false))",
+  "inferred": false,
+  "source_line": 8105,
+  "qualified": "Open77.players.allowCrouch",
+  "route_id": "Open77.players.allowCrouch"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "allowDodge",
+  "handler": "LuaPlayerControl",
+  "summary": "Allow or block a local-player action.",
+  "description": "Requires players.controls and a strict boolean. Freeze true acquires a block; Allow false acquires a block. The inverse releases only this resource VM's block, never another owner or vanilla restriction. Automatically released on resource stop, death and session teardown. Does not freeze vehicles, moving platforms or server teleports. See player-utilities.md for each native restriction and limitations.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "assert(AllowDodge(false))",
+  "inferred": false,
+  "source_line": 8106,
+  "qualified": "Open77.players.allowDodge",
+  "route_id": "Open77.players.allowDodge"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "allowInteraction",
+  "handler": "LuaPlayerControl",
+  "summary": "Allow or block a local-player action.",
+  "description": "Requires players.controls and a strict boolean. Freeze true acquires a block; Allow false acquires a block. The inverse releases only this resource VM's block, never another owner or vanilla restriction. Automatically released on resource stop, death and session teardown. Does not freeze vehicles, moving platforms or server teleports. See player-utilities.md for each native restriction and limitations.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "assert(AllowInteraction(false))",
+  "inferred": false,
+  "source_line": 8107,
+  "qualified": "Open77.players.allowInteraction",
+  "route_id": "Open77.players.allowInteraction"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "allowJump",
+  "handler": "LuaPlayerControl",
+  "summary": "Allow or block a local-player action.",
+  "description": "Requires players.controls and a strict boolean. Freeze true acquires a block; Allow false acquires a block. The inverse releases only this resource VM's block, never another owner or vanilla restriction. Automatically released on resource stop, death and session teardown. Does not freeze vehicles, moving platforms or server teleports. See player-utilities.md for each native restriction and limitations.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "assert(AllowJump(false))",
+  "inferred": false,
+  "source_line": 8103,
+  "qualified": "Open77.players.allowJump",
+  "route_id": "Open77.players.allowJump"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "allowRunning",
+  "handler": "LuaPlayerControl",
+  "summary": "Allow or block a local-player action.",
+  "description": "Requires players.controls and a strict boolean. Freeze true acquires a block; Allow false acquires a block. The inverse releases only this resource VM's block, never another owner or vanilla restriction. Automatically released on resource stop, death and session teardown. Does not freeze vehicles, moving platforms or server teleports. See player-utilities.md for each native restriction and limitations.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "assert(AllowRunning(false))",
+  "inferred": false,
+  "source_line": 8104,
+  "qualified": "Open77.players.allowRunning",
+  "route_id": "Open77.players.allowRunning"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "allowShoot",
+  "handler": "LuaPlayerControl",
+  "summary": "Allow or block a local-player action.",
+  "description": "Requires players.controls and a strict boolean. Freeze true acquires a block; Allow false acquires a block. The inverse releases only this resource VM's block, never another owner or vanilla restriction. Automatically released on resource stop, death and session teardown. Does not freeze vehicles, moving platforms or server teleports. See player-utilities.md for each native restriction and limitations.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "assert(AllowShoot(false))",
+  "inferred": false,
+  "source_line": 8104,
+  "qualified": "Open77.players.allowShoot",
+  "route_id": "Open77.players.allowShoot"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "allowWeapons",
+  "handler": "LuaPlayerControl",
+  "summary": "Allow or block a local-player action.",
+  "description": "Requires players.controls and a strict boolean. Freeze true acquires a block; Allow false acquires a block. The inverse releases only this resource VM's block, never another owner or vanilla restriction. Automatically released on resource stop, death and session teardown. Does not freeze vehicles, moving platforms or server teleports. See player-utilities.md for each native restriction and limitations.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "assert(AllowWeapons(false))",
+  "inferred": false,
+  "source_line": 8107,
+  "qualified": "Open77.players.allowWeapons",
+  "route_id": "Open77.players.allowWeapons"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "freezePosition",
+  "handler": "LuaPlayerControl",
+  "summary": "Request or release a native local-player freeze.",
+  "description": "Requires players.controls and a strict boolean. Freeze true acquires a block; Allow false acquires a block. The inverse releases only this resource VM's block, never another owner or vanilla restriction. Automatically released on resource stop, death and session teardown. Does not freeze vehicles, moving platforms or server teleports. See player-utilities.md for each native restriction and limitations.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "assert(FreezePosition(true))",
+  "inferred": false,
+  "source_line": 8102,
+  "qualified": "Open77.players.freezePosition",
+  "route_id": "Open77.players.freezePosition"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "freezeRotation",
+  "handler": "LuaPlayerControl",
+  "summary": "Request or release a native local-player freeze.",
+  "description": "Requires players.controls and a strict boolean. Freeze true acquires a block; Allow false acquires a block. The inverse releases only this resource VM's block, never another owner or vanilla restriction. Automatically released on resource stop, death and session teardown. Does not freeze vehicles, moving platforms or server teleports. See player-utilities.md for each native restriction and limitations.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "assert(FreezeRotation(true))",
+  "inferred": false,
+  "source_line": 8102,
+  "qualified": "Open77.players.freezeRotation",
+  "route_id": "Open77.players.freezeRotation"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "getControlMask",
+  "handler": "LuaPlayerControlsState",
+  "summary": "Read the union of Open77 player-control block bits.",
+  "description": "Requires players.controls. Does not remove other resources' blocks or expose vanilla restriction state. See player-utilities.md.",
+  "params": [],
+  "returns": [
+   "integer mask, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local result = Open77.players.getControlMask()",
+  "inferred": false,
+  "source_line": 8114,
+  "qualified": "Open77.players.getControlMask",
+  "route_id": "Open77.players.getControlMask"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isAiming",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Graph-produced aiming state, including toggle aim.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerAiming()",
+  "inferred": false,
+  "source_line": 8088,
+  "qualified": "Open77.players.isAiming",
+  "route_id": "Open77.players.isAiming"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isCrouching",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Crouched locomotion state.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerCrouching()",
+  "inferred": false,
+  "source_line": 8090,
+  "qualified": "Open77.players.isCrouching",
+  "route_id": "Open77.players.isCrouching"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isDiving",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Native underwater swimming state.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerDiving()",
+  "inferred": false,
+  "source_line": 8087,
+  "qualified": "Open77.players.isDiving",
+  "route_id": "Open77.players.isDiving"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isDriver",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Mounted in the driver seat.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerDriver()",
+  "inferred": false,
+  "source_line": 8093,
+  "qualified": "Open77.players.isDriver",
+  "route_id": "Open77.players.isDriver"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isFalling",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Falling phase.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerFalling()",
+  "inferred": false,
+  "source_line": 8092,
+  "qualified": "Open77.players.isFalling",
+  "route_id": "Open77.players.isFalling"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isGrounded",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Locomotion ground contact.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerGrounded()",
+  "inferred": false,
+  "source_line": 8089,
+  "qualified": "Open77.players.isGrounded",
+  "route_id": "Open77.players.isGrounded"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isInVehicle",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Native vehicle mounting state.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerInVehicle()",
+  "inferred": false,
+  "source_line": 8093,
+  "qualified": "Open77.players.isInVehicle",
+  "route_id": "Open77.players.isInVehicle"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isJumping",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Jump or double-jump phase.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerJumping()",
+  "inferred": false,
+  "source_line": 8092,
+  "qualified": "Open77.players.isJumping",
+  "route_id": "Open77.players.isJumping"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isPassenger",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Mounted in a non-driver seat.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerPassenger()",
+  "inferred": false,
+  "source_line": 8094,
+  "qualified": "Open77.players.isPassenger",
+  "route_id": "Open77.players.isPassenger"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isReloading",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Reloading state.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerReloading()",
+  "inferred": false,
+  "source_line": 8089,
+  "qualified": "Open77.players.isReloading",
+  "route_id": "Open77.players.isReloading"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isShooting",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Graph trigger state, not confirmation of a projectile or damage.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerShooting()",
+  "inferred": false,
+  "source_line": 8088,
+  "qualified": "Open77.players.isShooting",
+  "route_id": "Open77.players.isShooting"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isSliding",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Sliding locomotion state.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerSliding()",
+  "inferred": false,
+  "source_line": 8090,
+  "qualified": "Open77.players.isSliding",
+  "route_id": "Open77.players.isSliding"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isSprinting",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Sprint state rather than a velocity threshold.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerSprinting()",
+  "inferred": false,
+  "source_line": 8091,
+  "qualified": "Open77.players.isSprinting",
+  "route_id": "Open77.players.isSprinting"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isSwimming",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Native surface-swimming or diving state.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerSwimming()",
+  "inferred": false,
+  "source_line": 8087,
+  "qualified": "Open77.players.isSwimming",
+  "route_id": "Open77.players.isSwimming"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isVaulting",
+  "handler": "LuaPlayerPredicate",
+  "summary": "Vault traversal state.",
+  "description": "Requires players.read. Omit playerId to query the local network player. Remote players must be streamed and presentation-ready; swimming/diving are local-only and return nil, state_not_replicated remotely. Unavailable is not false. Read-only, without advancing replication counters. See player-utilities.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local value, reason = IsPlayerVaulting()",
+  "inferred": false,
+  "source_line": 8091,
+  "qualified": "Open77.players.isVaulting",
+  "route_id": "Open77.players.isVaulting"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "resetControls",
+  "handler": "LuaPlayerControlsReset",
+  "summary": "Release every player-control block owned by the calling resource VM.",
+  "description": "Requires players.controls. Does not remove other resources' blocks or expose vanilla restriction state. See player-utilities.md.",
+  "params": [],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local result = Open77.players.resetControls()",
+  "inferred": false,
+  "source_line": 8113,
+  "qualified": "Open77.players.resetControls",
+  "route_id": "Open77.players.resetControls"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "destroy",
+  "handler": "LuaAudioControl",
+  "summary": "DestroySound: server-authoritative network package audio.",
+  "description": "Requires audio.network; network=false is rejected. Server owns the timeline, handles and bucket/optional-target audience. Clients cannot request broadcasts directly. getState reports intended playback, not decoder acknowledgement. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local result = DestroySound(id)",
+  "inferred": false,
+  "source_line": 6651,
+  "qualified": "Open77.audio.destroy",
+  "route_id": "server:Open77.audio.destroy"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "getState",
+  "handler": "LuaAudioState",
+  "summary": "GetSoundState: server-authoritative network package audio.",
+  "description": "Requires audio.network; network=false is rejected. Server owns the timeline, handles and bucket/optional-target audience. Clients cannot request broadcasts directly. getState reports intended playback, not decoder acknowledgement. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "table, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local result = GetSoundState(id)",
+  "inferred": false,
+  "source_line": 6652,
+  "qualified": "Open77.audio.getState",
+  "route_id": "server:Open77.audio.getState"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "pause",
+  "handler": "LuaAudioControl",
+  "summary": "PauseSound: server-authoritative network package audio.",
+  "description": "Requires audio.network; network=false is rejected. Server owns the timeline, handles and bucket/optional-target audience. Clients cannot request broadcasts directly. getState reports intended playback, not decoder acknowledgement. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local result = PauseSound(id)",
+  "inferred": false,
+  "source_line": 6646,
+  "qualified": "Open77.audio.pause",
+  "route_id": "server:Open77.audio.pause"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "play",
+  "handler": "LuaAudioControl",
+  "summary": "PlaySound: server-authoritative network package audio.",
+  "description": "Requires audio.network; network=false is rejected. Server owns the timeline, handles and bucket/optional-target audience. Clients cannot request broadcasts directly. getState reports intended playback, not decoder acknowledgement. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local result = PlaySound(id)",
+  "inferred": false,
+  "source_line": 6645,
+  "qualified": "Open77.audio.play",
+  "route_id": "server:Open77.audio.play"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "play2D",
+  "handler": "LuaAudioCreate",
+  "summary": "Play2DSound: server-authoritative network package audio.",
+  "description": "Requires audio.network; network=false is rejected. Server owns the timeline, handles and bucket/optional-target audience. Clients cannot request broadcasts directly. getState reports intended playback, not decoder acknowledgement. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "asset",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "integer handle, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local id = Play2DSound('audio/click.wav', {volume=0.5})",
+  "inferred": false,
+  "source_line": 6639,
+  "qualified": "Open77.audio.play2D",
+  "route_id": "server:Open77.audio.play2D"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "play3D",
+  "handler": "LuaAudioCreate",
+  "summary": "Play3DSound: server-authoritative network package audio.",
+  "description": "Requires audio.network; network=false is rejected. Server owns the timeline, handles and bucket/optional-target audience. Clients cannot request broadcasts directly. getState reports intended playback, not decoder acknowledgement. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "asset",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "position",
+    "type": "table",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "integer handle, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local id = Play3DSound('audio/lock.mp3', {x=10,y=20,z=30}, {maxDistance=15})",
+  "inferred": false,
+  "source_line": 6642,
+  "qualified": "Open77.audio.play3D",
+  "route_id": "server:Open77.audio.play3D"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "seek",
+  "handler": "LuaAudioControl",
+  "summary": "SeekSound: server-authoritative network package audio.",
+  "description": "Requires audio.network; network=false is rejected. Server owns the timeline, handles and bucket/optional-target audience. Clients cannot request broadcasts directly. getState reports intended playback, not decoder acknowledgement. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "seconds",
+    "type": "number",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local result = SeekSound(id, 0.2)",
+  "inferred": false,
+  "source_line": 6648,
+  "qualified": "Open77.audio.seek",
+  "route_id": "server:Open77.audio.seek"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "setPosition",
+  "handler": "LuaAudioControl",
+  "summary": "SetSoundPosition: server-authoritative network package audio.",
+  "description": "Requires audio.network; network=false is rejected. Server owns the timeline, handles and bucket/optional-target audience. Clients cannot request broadcasts directly. getState reports intended playback, not decoder acknowledgement. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "position",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local result = SetSoundPosition(id, {x=10,y=20,z=30})",
+  "inferred": false,
+  "source_line": 6650,
+  "qualified": "Open77.audio.setPosition",
+  "route_id": "server:Open77.audio.setPosition"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "setVolume",
+  "handler": "LuaAudioControl",
+  "summary": "SetSoundVolume: server-authoritative network package audio.",
+  "description": "Requires audio.network; network=false is rejected. Server owns the timeline, handles and bucket/optional-target audience. Clients cannot request broadcasts directly. getState reports intended playback, not decoder acknowledgement. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "volume",
+    "type": "number",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local result = SetSoundVolume(id, 0.5)",
+  "inferred": false,
+  "source_line": 6649,
+  "qualified": "Open77.audio.setVolume",
+  "route_id": "server:Open77.audio.setVolume"
+ },
+ {
+  "namespace": "Open77.audio",
+  "name": "stop",
+  "handler": "LuaAudioControl",
+  "summary": "StopSound: server-authoritative network package audio.",
+  "description": "Requires audio.network; network=false is rejected. Server owns the timeline, handles and bucket/optional-target audience. Clients cannot request broadcasts directly. getState reports intended playback, not decoder acknowledgement. Assets must be declared in the resource manifest files; absolute paths, URLs and traversal are rejected. Handles are scoped to the creating resource VM; stop rewinds, pause preserves position, seek uses seconds, destroy releases permanently. Volume 0..1, range <=1000m. Network loops require actual duration. See package-audio.md for options, lifecycle, quotas and errors.",
+  "params": [
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or failure, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local result = StopSound(id)",
+  "inferred": false,
+  "source_line": 6647,
+  "qualified": "Open77.audio.stop",
+  "route_id": "server:Open77.audio.stop"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "getHoloCallEyes",
+  "handler": "LuaPlayerHoloCallEyes",
+  "summary": "Read the server-replicated blue eye-glow intent in the current routing bucket.",
+  "description": "Requires players.holocall.read. Omit playerId for the local network player. Returns nil, state_unavailable before the initial server snapshot. False means absent from this client's active bucket snapshot; it is not a cross-bucket global query or proof that native pixels are rendered. There is intentionally no client setter. See holocall-eyes.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean enabled, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local enabled, reason = Open77.players.getHoloCallEyes()",
+  "inferred": false,
+  "source_line": 12425,
+  "qualified": "Open77.players.getHoloCallEyes",
+  "route_id": "Open77.players.getHoloCallEyes"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "getHoloCallEyes",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Read whether any server resource holds a player's holocall eye-glow lease.",
+  "description": "Requires players.holocall.read and an explicit connected network player ID. This reads authoritative cosmetic intent, not a native render acknowledgement. False means no lease; nil, reason means the query failed. See holocall-eyes.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean enabled, or nil, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local enabled, reason = Open77.players.getHoloCallEyes(playerId)",
+  "inferred": false,
+  "source_line": 5940,
+  "qualified": "Open77.players.getHoloCallEyes",
+  "route_id": "server:Open77.players.getHoloCallEyes"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "setHoloCallEyes",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Synchronize a player's native blue holocall eye glow.",
+  "description": "Requires players.holocall.control. Uses a network player ID, not an entity handle. Enabled must be a boolean; options may only contain durationMs (integer 0..600000, default 0). True acquires/renews this resource VM's lease; false releases only its lease. The glow remains enabled while any resource holds a lease. It clears on death, disconnect, resource stop/reload/failure or expiry. Reliable bucket snapshots cover late joins and re-stream; clients project onto native and F7 bodies. Does not open the phone UI or start a call. See holocall-eyes.md.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local ok, reason = Open77.players.setHoloCallEyes(playerId, true, { durationMs = 30000 })",
+  "inferred": false,
+  "source_line": 5934,
+  "qualified": "Open77.players.setHoloCallEyes",
+  "route_id": "server:Open77.players.setHoloCallEyes"
  }
 ]

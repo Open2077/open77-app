@@ -164,6 +164,18 @@
       "title": "Players & gameplay",
       "pages": [
         {
+          "slug": "player-utilities",
+          "kind": "guide",
+          "nav": "Player checks & controls",
+          "description": "Query native player states and apply resource-owned movement, aim and firing restrictions. Includes IsPlayer checks, FreezePosition, FreezeRotation, Allow controls, permissions and replication limits."
+        },
+        {
+          "slug": "holocall-eyes",
+          "kind": "guide",
+          "nav": "Blue holocall eyes",
+          "description": "Enable synchronized blue holocall eye glow with server-owned Lua leases, automatic cleanup, routing-bucket snapshots and local/F7 presentation."
+        },
+        {
           "slug": "player-stats",
           "kind": "guide",
           "nav": "Health and stamina",
@@ -400,6 +412,12 @@
           "kind": "guide",
           "nav": "Visual and audio effects",
           "description": "Resource-owned world and entity visual effects plus spatialised sound effects, with inspection, cleanup and the curated alias catalogues."
+        },
+        {
+          "slug": "package-audio",
+          "kind": "guide",
+          "nav": "Package audio: 2D & 3D",
+          "description": "Play package MP3/WAV assets locally or through server-owned network sounds. Control playback, pause, seek, volume and position with resource-owned handles, routing buckets and late-join timelines."
         },
         {
           "slug": "chat",
