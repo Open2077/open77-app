@@ -346,7 +346,7 @@ function ResourceTile({ project, isSaved, savingSave, isSelected, onSelect, onTo
   return <li className={`hub-tile${isSelected ? " is-selected" : ""}`} data-project-id={project.projectId} onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
     <Link className="hub-tile-art" href={href} aria-label={`Open ${content.title}`} style={shown || preview?.kind === "video" ? undefined : { backgroundImage: `url(${categoryArt(content.category)})` }}>
       {preview?.kind === "video" ? <video src={preview.src} poster={preview.poster ?? cover ?? undefined} muted autoPlay loop playsInline preload="none" aria-hidden="true" /> :
-        shown ? <Image unoptimized src={shown} width={640} height={360} alt="" referrerPolicy="no-referrer" /> : <span className="hub-tile-mark" aria-hidden="true">{mark}</span>}
+        shown ? <Image unoptimized src={shown} width={640} height={360} alt="" loading="eager" referrerPolicy="no-referrer" /> : <span className="hub-tile-mark" aria-hidden="true">{mark}</span>}
       {content.clipMediaId && !preview && <span className="hub-tile-play" aria-hidden="true">▶</span>}
       <span className="hub-tile-badges"><button type="button" className="sb-mode" onClick={event => { event.preventDefault(); event.stopPropagation(); updateFilters({ category: content.category }); }}>{categoryLabel(content.category)}</button>
         {content.kind === "showcase" ? <span className="tag hub-tile-kind">Showcase</span> : content.maturity === "stable" ? <span className="tag hub-tile-kind is-stable">Stable</span> : null}</span>
@@ -372,7 +372,7 @@ function ResourceRow({ project, isSaved, savingSave, isSelected, onSelect, onTog
   return <li className={`sb-row${isSelected ? " is-selected" : ""}`} data-project-id={project.projectId} data-selected={isSelected || undefined}
     onClick={event => { if ((event.target as HTMLElement).closest("a, button")) return; onSelect(); }}>
     <div className="sb-row-main">
-      <span className="sb-thumb hub-thumb" aria-hidden="true">{thumb ? <Image unoptimized src={thumb} width={26} height={26} alt="" referrerPolicy="no-referrer" /> : <span className="hub-thumb-mark">{mark}</span>}</span>
+      <span className="sb-thumb hub-thumb" aria-hidden="true">{thumb ? <Image unoptimized src={thumb} loading="eager" width={26} height={26} alt="" referrerPolicy="no-referrer" /> : <span className="hub-thumb-mark">{mark}</span>}</span>
       <span className="sb-id">
         <Link className="sb-row-link" href={`/workshop/${project.slug}`} aria-label={`Open ${content.title}`}><span className="sb-name">{content.title}</span></Link>
         <span className="sb-desc" title={content.summary}>{project.creatorHandle ? `@${project.creatorHandle} · ` : ""}{content.summary || "Community creation"}</span>
