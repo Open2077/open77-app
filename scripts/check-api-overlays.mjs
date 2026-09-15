@@ -147,4 +147,23 @@ console.log(`  api_set values   : ${[...new Set(api.map((e) => e.api_set))].join
 const shared = [...byQualified.entries()].filter(([, entries]) => entries.length > 1);
 console.log(`  names in both runtimes: ${shared.length}`);
 
+// Every card carries a worked example: a generated card through the wiki
+// overlays, a table-derived server global through the site's own overlay.
+// A card without one used to be the silent default; keep it a failure.
+const missingExamples = api.filter((entry) => !entry.example).map((entry) => entry.route_id);
+if (missingExamples.length > 0) {
+  console.log(`   cards without an example: ${missingExamples.join(", ")}`);
+  gaps += missingExamples.length;
+}
+const globalsExamples = JSON.parse(await fs.readFile(
+  path.join(process.cwd(), "content", "api", "server-globals-examples.json"), "utf8",
+));
+const emptyGlobals = Object.entries(globalsExamples)
+  .filter(([name, text]) => !name.startsWith("$") && (typeof text !== "string" || !text.trim()))
+  .map(([name]) => name);
+if (emptyGlobals.length > 0) {
+  console.log(`   server-globals-examples.json entries without text: ${emptyGlobals.join(", ")}`);
+  gaps += emptyGlobals.length;
+}
+
 process.exit(gaps === 0 ? 0 : 1);

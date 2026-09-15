@@ -45,6 +45,11 @@ function parameters(signature: string): ApiParam[] {
 export async function getDocumentedServerApi(existing: ApiEntryRaw[]): Promise<ApiEntryRaw[]> {
   const found = new Map<string, ApiEntryRaw>();
   const existingNames = new Set(existing.filter((entry) => entry.runtime === "server").map((entry) => entry.qualified));
+  // These cards are assembled from wiki tables, so their examples cannot come
+  // from the extractor's overlays: they live in a small file of their own.
+  const examples = JSON.parse(
+    await readFile(path.join(process.cwd(), "content/api/server-globals-examples.json"), "utf8"),
+  ) as Record<string, string>;
   for (const filename of ["server-api.md", "voice.md"]) {
     const markdown = await readFile(path.join(process.cwd(), "content/docs", filename), "utf8");
     // The wiki includes unescaped union pipes inside code in GFM table cells.
@@ -108,6 +113,7 @@ export async function getDocumentedServerApi(existing: ApiEntryRaw[]): Promise<A
             source: filename, source_line: row.position?.start.line, inferred: false,
             route_id: `server:${qualified}`, documentedSignature: signature ?? "(…)",
             signatureKnown: Boolean(signature), guideHref: `/docs/${filename.replace(/\.md$/, "")}#${sectionId(heading)}`,
+            example: examples[qualified],
           };
           if (!found.has(qualified) || (entry.signatureKnown && !found.get(qualified)?.signatureKnown)) found.set(qualified, entry);
         }
