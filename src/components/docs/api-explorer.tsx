@@ -8,7 +8,27 @@ import { InlineMarkdown } from "@/components/docs/inline-markdown";
 import { SearchIcon } from "@/components/icons";
 
 const LOCATION_EVENT = "open77:api-location";
+// A same-page navigation from the header search (`<Link href="/docs/api#…">`
+// while already on /docs/api) goes through history.pushState, which fires
+// neither hashchange nor popstate. Without this the URL moved and the panel
+// kept showing the previous function -- the "clicking a result does nothing"
+// report of 2026-09-15. Patch the two history writers once, for the lifetime of
+// the first subscriber, so any pushState reaches the store.
+let historyPatched = false;
+function patchHistory() {
+  if (historyPatched) return;
+  historyPatched = true;
+  for (const method of ["pushState", "replaceState"] as const) {
+    const original = window.history[method];
+    window.history[method] = function (this: History, ...args: Parameters<History["pushState"]>) {
+      const result = original.apply(this, args);
+      window.dispatchEvent(new Event(LOCATION_EVENT));
+      return result;
+    };
+  }
+}
 function subscribeLocation(callback: () => void) {
+  patchHistory();
   window.addEventListener("hashchange", callback);
   window.addEventListener("popstate", callback);
   window.addEventListener(LOCATION_EVENT, callback);
@@ -58,7 +78,10 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
       terms.every((term) => `${entry.qualified} ${entry.summary} ${entry.description} ${apiCategory(entry.namespace).label}`.toLowerCase().includes(term)),
     ).sort((a, b) => a.qualified.localeCompare(b.qualified) || a.runtime.localeCompare(b.runtime));
   }, [available, category, namespace, query]);
-  const selected = results.find((entry) => entryKey(entry) === selectedKey) ?? results[0];
+  // A deep link names an entry; the list filters must not be allowed to hide
+  // it. Look it up in the full set before falling back to the first row.
+  const selected = results.find((entry) => entryKey(entry) === selectedKey) ??
+    entries.find((entry) => entryKey(entry) === selectedKey) ?? results[0];
   const groups = API_CATEGORIES.map((item) => ({ ...item, entries: results.filter((entry) => apiCategory(entry.namespace).id === item.id) })).filter((item) => item.entries.length);
 
   useEffect(() => {

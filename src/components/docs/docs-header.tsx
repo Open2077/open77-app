@@ -10,7 +10,10 @@ type SearchEntry = { title: string; description: string; category: string; href:
 
 export function DocsHeader({ entries }: { entries: SearchEntry[] }) {
   const pathname = usePathname();
-  const isApi = pathname.startsWith("/docs/api");
+  // The explorer itself is /docs/api; the per-namespace pages under it are
+  // ordinary pages and keep the router.
+  const isApi = pathname === "/docs/api";
+  const isApiSection = pathname.startsWith("/docs/api");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const input = useRef<HTMLInputElement>(null);
@@ -44,8 +47,8 @@ export function DocsHeader({ entries }: { entries: SearchEntry[] }) {
     <header className="docs-header">
       <Link href="/docs" className="docs-section-label">Developer docs</Link>
       <nav className="docs-tabs" aria-label="Documentation sections">
-        <Link href="/docs" aria-current={!isApi ? "page" : undefined}>Documentation</Link>
-        <Link href="/docs/api" aria-current={isApi ? "page" : undefined}>API Reference</Link>
+        <Link href="/docs" aria-current={!isApiSection ? "page" : undefined}>Documentation</Link>
+        <Link href="/docs/api" aria-current={isApiSection ? "page" : undefined}>API Reference</Link>
       </nav>
       <div className="docs-global-search" ref={search}>
         <SearchIcon size={18} />
@@ -61,7 +64,19 @@ export function DocsHeader({ entries }: { entries: SearchEntry[] }) {
           <div className="docs-search-results" id="docs-search-results" aria-label="Search results">
             <p className="docs-search-caption" role="status">{results.length ? "Guides & API functions" : `No results for “${query}”`}</p>
             {results.map((entry) => (
-              <Link key={entry.href} href={entry.href} onClick={() => { setOpen(false); setQuery(""); }}>
+              <Link key={`${entry.category}:${entry.href}`} href={entry.href} onClick={(event) => {
+                setOpen(false); setQuery("");
+                // Already on the explorer: an API result is a hash change on this
+                // page. Routing it through the app router would refetch the whole
+                // 1.5 MB reference payload and, because pushState fires no
+                // hashchange, not always move the panel. Move the history entry
+                // ourselves; the explorer listens for exactly that.
+                if (isApi && entry.href.startsWith("/docs/api#")) {
+                  event.preventDefault();
+                  window.history.pushState(null, "", entry.href);
+                  window.dispatchEvent(new Event("open77:api-location"));
+                }
+              }}>
                 <span>{entry.title}</span><small>{entry.category}</small>
               </Link>
             ))}
