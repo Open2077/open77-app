@@ -1,45 +1,19 @@
 # Gorilla Arms
 
-Give players native Gorilla Arms with server-defined grades, paid installation or temporary arena loadouts. Open77 reuses Cyberpunk's equipment, arm models, punches and hit reactions; your Lua resource chooses who receives them and how powerful they are.
+Gorilla Arms give a player the native mechanical arms: they draw their fists and use
+the game's normal and charged punches, and the server prices every hit, applies
+knockback and keeps the implant on the character between sessions. You define the
+grades and decide who gets them; the [Cyberware framework](cyberware.md) supplies the
+transactions, permissions and persistence this page relies on.
 
-Read the [Cyberware framework](cyberware.md) for identity, permissions, persistence and operation completion. This guide uses the implemented `gorilla_arms` profile and matching protocol 1.33 client/server source builds. It does not assume a stable binary release is available.
+## Minimal example
 
-## What players get
+A self-service resource: an ACL-authorized player installs a free implant on their own
+character with `/gorilla_install` and removes it with `/gorilla_remove`. It needs a
+configured database, the `open77_appearance` character adapter and the `open77_cyberware`
+support resource (both are running by default).
 
-Installed arms use native `Items.StrongArms`. Both male and female body families have demonstrated owner first-person, owner third-person and remote appearance, including drawn/holstered transitions and removal. The patient's native skin/customization keys are captured; the game determines the mechanical hand/arm geometry. This is not a selector for arbitrary full-metal forearms or custom arm meshes.
-
-Players draw their fists and use native normal or charged attacks. The backend validates observed action identity, cooldown, charge duration, stamina and contact, then prices damage once. Native and network damage are not meant to stack. A charge that exceeds `maxChargeMs` expires until release/rearm; missing action samples do not earn charge time. Normal and charged punches can use different damage, stamina and knockback settings.
-
-Knockback requests a bounded native living reaction with collision and recovery. The victim can take valid damage while a prior motion lease prevents another throw. Nonlethal caps damage to preserve life; cosmetic sets damage and knockback to zero. These switches do not grant permission to attack: server PvP, scope, team, life and veto rules still apply.
-
-For exact signatures, use the [server API](/docs/api/server/open77-cyberware) and [client adapter API](/docs/api/client/open77-cyberware).
-
-## Define grades
-
-A definition is resource-owned, versioned and limited to 32 unique grades. The installed grade is a snapshot: editing a definition does not retroactively rewrite paid implants. Use an explicit installation/progression workflow to change them.
-
-| Grade field | Range / behavior |
-|---|---|
-| `normalDamage`, `chargedDamage` | Required, finite 0–300. |
-| `knockbackMeters` | Required, 0–6m for charged punches. Native travel can differ. |
-| `normalKnockbackMeters` | Optional 0–6m; omission uses 35% of charged distance. |
-| `cooldownMs` | Required 100–600000; minimum time between admitted attacks. |
-| `chargeMs` | Required 100–10000; server-measured minimum charge. |
-| `maxChargeMs` | Default 10000; at least `chargeMs`, at most 60000. |
-| `normalStaminaCost`, `chargedStaminaCost` | Optional finite 0–300. Omission retains native pricing; an explicit value uses authoritative pricing and suppresses the corresponding native attack debit. |
-| `nonlethal`, `cosmetic` | Optional booleans, default false. |
-| `blockDamageMultiplier` | Default 0, range 0–1; zero means full block, otherwise chip damage. |
-| `blockAngleDegrees` | Default 45, range 0–180; zero disables frontal blocking. |
-
-Blocking also requires a fresh native defender observation, melee equipment, positive server stamina and appropriate facing. Chip damage does not trigger Gorilla knockback. Block stamina pricing is not overridden by these fields.
-
-Grades do **not** currently choose arm skins, elemental damage types or attack-animation speed. `cooldownMs` controls admission; reducing it does not speed up a native punch. Installed physical/electric/chemical/thermal trail assets are research candidates, not delivered selectable elemental variants.
-
-## A minimal self-service resource
-
-This example gives ACL-authorized players a free, explicitly requested implant on their own already-bound character. It has no client script, currency, doctor role or automatic character binding. Use a configured database and your character adapter (such as `open77_appearance`), then wait for normal character readiness. Do not combine a second identity binder with the existing adapter.
-
-Create `resources/gamemodes/my_gorilla/open77.lua`:
+`resources/gamemodes/my_gorilla/open77.lua`:
 
 ```lua
 resource "my_gorilla"
@@ -54,7 +28,7 @@ permissions {
 }
 ```
 
-Create `server/main.lua`:
+`server/main.lua`:
 
 ```lua
 local ready = false
@@ -79,7 +53,7 @@ end)
 local function change(source, removing)
     local player = tonumber(source)
     if not player or player < 1 or player % 1 ~= 0 then
-        print("Run this self-service command as a connected player.")
+        print("Run this command as a connected player.")
         return
     end
     if not ready or pending[player] then return end
@@ -89,7 +63,7 @@ local function change(source, removing)
     if not removing and record.arms then print("Remove the existing implant first."); return end
     local operation, error = Open77.cyberware.newOperationId()
     if not operation then print(error); return end
-    local options = {expectedRevision = record.revision, operationId = operation}
+    local options = { expectedRevision = record.revision, operationId = operation }
     local result
     if removing then
         result, error = Open77.cyberware.remove(player, options)
@@ -98,7 +72,7 @@ local function change(source, removing)
     end
     if not result then print("Request refused: " .. tostring(error)); return end
     if result.ticket then
-        pending[player] = {ticket = result.ticket, operationId = operation, options = options}
+        pending[player] = { ticket = result.ticket, operationId = operation, options = options }
         print("Procedure pending for player " .. player)
     else
         print("Operation already completed for player " .. player)
@@ -122,15 +96,56 @@ AddEventHandler("onCyberwareOperationCompleted", function(player, ticket, encode
 end)
 ```
 
-Add the resource to your server's configured resource set and run `ensure my_gorilla` from the server console. Grant access to the two restricted commands through your [command ACL](server-acl.md), then invoke `/gorilla_install` as that player. Follow the server completion log, draw fists and test against another authorized participant. `/gorilla_remove` follows the same staged transaction and restores native base arms. Merely defining/installing this resource does not enable global PvP.
+Add the resource to your server's resource set, run `ensure my_gorilla` from the
+console, grant the two restricted commands through your [command ACL](server-acl.md),
+and type `/gorilla_install` as that player. When the completion line prints, draw fists
+(the melee weapon slot) and punch: a tap is a normal punch, a hold of at least
+`chargeMs` released before `maxChargeMs` is a charged punch. `/gorilla_remove` restores
+the native arms through the same staged transaction. Installing arms does not enable
+PvP: your server's combat scope, team and life rules decide who may be hit.
 
-The commands are self-directed consent for this free example. For a clinic, do not turn the player argument into an unchecked arbitrary target: validate doctor permission, both players' life/distance/bucket, patient consent, price and expected revision at submission. Use the shipped clinic below as the fuller workflow. For a durable paid service, persist your operation/payment reservation and correlate completion; this minimal pending table is deliberately in-memory and performs no automatic retries.
+## Grade options
+
+A definition owns up to 32 grades. The installed grade is a snapshot: editing the
+definition later does not change implants already installed.
+
+| Grade field | Range / behaviour |
+|---|---|
+| `normalDamage`, `chargedDamage` | Required, 0–300 |
+| `knockbackMeters` | Required, 0–6 m, requested reaction distance for a charged punch |
+| `normalKnockbackMeters` | Optional 0–6 m; omitted means 35% of `knockbackMeters` |
+| `cooldownMs` | Required, 100–600000 ms between admitted punches |
+| `chargeMs` | Required, 100–10000 ms of hold before a punch counts as charged |
+| `maxChargeMs` | Default 10000; at least `chargeMs`, at most 60000. A longer hold expires until released and rearmed |
+| `normalStaminaCost`, `chargedStaminaCost` | Optional 0–300. Omitted keeps the native stamina price; set, the server prices it and suppresses the native debit |
+| `nonlethal`, `cosmetic` | Default false. Nonlethal caps damage to keep the victim alive; cosmetic sets damage and knockback to zero |
+| `blockDamageMultiplier` | Default 0, range 0–1; 0 is a full block, otherwise chip damage |
+| `blockAngleDegrees` | Default 45, range 0–180; 0 disables frontal blocking |
+
+Grades do not choose arm skins, elemental damage or attack animation speed.
+`cooldownMs` gates admission; lowering it does not make the native punch faster.
+
+## Events
+
+| Event | Meaning |
+|---|---|
+| `onCyberwareOperationCompleted(player, ticket, encodedResult)` | Your install or removal finished; require `result.ok == true` |
+| `onCyberwareMeleeHit(victim, attacker, encodedSnapshot)` | An accepted, unblocked contact, including zero-damage ones |
+| `onCyberwareMeleeBlocked(victim, attacker, sequence, amount)` | An accepted block; `amount` is 0 for a full block or the chip damage |
+| `onCyberwareMotionOutcome(victim, attacker, encodedOutcome)` | Whether the hit requested, skipped or was refused a knockback |
+| `onCyberwareActionRejected(player, sequence, error)` | A punch the server refused, for example `cooldown`, `insufficient_stamina`, `cyberware_suspended`, `weapon_glitched` |
+
+Player IDs arrive as strings; decode JSON arguments with `json.decode`. The hit
+snapshot carries `sequence`, `incarnation`, `instanceId`, `definition`, `grade`,
+`charged`, `amount`, `bodyPart` and `lethal`. See [Cyberware](cyberware.md#events)
+for the motion-outcome fields.
 
 ## Charge effects and sound
 
-The native owner charge effect is `spy_perk_charge` on the held `weaponRight` object. Remote presentation uses installed industrial-arm electricity attached to the hand. Both paths have paired visual evidence; the remote graph is a documented substitute for an unproven native StrongArms world-graph presentation. Effect handles alone do not establish visibility.
-
-The support configuration at `resources/system/open77_cyberware/server/presentation-config.lua` opts in by **full definition ID**, not a generic grade name. Add this entry inside its `definitions` table to give the tutorial grade the existing presentation defaults:
+The support resource `open77_cyberware` draws a charge effect while a player holds a
+punch and plays an impact sound on an accepted hit. It opts definitions in by their
+full ID in `resources/system/open77_cyberware/server/presentation-config.lua`; the
+shipped example definitions are already listed. Add yours to its `definitions` table:
 
 ```lua
 ["myserver.gorilla"] = {
@@ -138,22 +153,49 @@ The support configuration at `resources/system/open77_cyberware/server/presentat
 },
 ```
 
-This is a configuration-table fragment, not a standalone resource export. The shipped example definitions are already opted in. Unknown definitions receive no implicit charge/impact presentation. To disable a definition, set its entry to `false`; to disable all added presentation, set the configuration's `enabled=false`.
+Set an entry to `false` to silence one definition, or the table's `enabled = false` to
+switch the extra presentation off entirely. Per-grade keys: `effect`, `slot`,
+`localAnchor`, `localSlot`, `localEvent`, `chargeSoundEvent`, `soundOnOwner`,
+`impactSoundEvent`, `impactSoundDuration`, `impactSoundOnAttacker`,
+`impactSoundOnVictim`, `soundOnZeroDamage` and `chargedOnly`. Defaults are the
+`electric.industrial_arm` effect on the observer's `RightHand`, the native
+`spy_perk_charge` event on the owner's `weaponRight`, the `w_cyb_strongarms_spy_perk_charge`
+charge sound and the `w_cyb_npc_strongarms_hit_face` impact sound for five seconds. One
+effect lease is created per hold and removed on release, rejection, holster, disconnect
+or resource stop. The whole policy is a server script on public APIs
+(`Open77.cyberware.activity`, `Open77.effects.attach/remove`): replace it without
+touching installation or damage.
 
-Per-grade overrides can select `effect`, `slot`, `localAnchor`, `localSlot`, `localEvent`, `chargeSoundEvent`, `soundOnOwner`, `impactSoundEvent`, `impactSoundDuration`, `impactSoundOnAttacker`, `impactSoundOnVictim`, `soundOnZeroDamage` and `chargedOnly`. Defaults use remote `RightHand`, local `weaponRight`/`right_hand_start` and the native local event. A world effect and native entity event are distinct mechanisms; arbitrary event names are not guaranteed to render on either anchor.
+## Optional clinic and arena
 
-Charge presentation tracks fresh authoritative activity, creates one bounded lease per hold and removes it on release/rejection or lifecycle invalidation. Native weapon replacement/holstering also cleans the captured owner anchor. Impact audio uses accepted action IDs to deduplicate network delivery. Attacker/victim sound inclusion is configurable; recording comparisons do not establish universally duplicate-free perceived audio. Server makers can replace the presentation policy using public APIs without replacing implant authority.
+`open77_ripperdoc_example` (`auto_start false`) is a consent-and-payment clinic. Grant
+doctors `command.doc`. With both players alive, in one bucket and within three metres:
+`/doc offer <patient> training` (or `industrial`, `cosmetic`), `/doc inspect <patient>`,
+`/doc remove <patient>`. The patient looks at the doctor and holds **E** to accept or
+presses **F** to decline (`/implantaccept` and `/implantcancel` do the same in chat).
+Prices, grades, range and consent time are in its `server/config.lua`; its credit
+balance is an in-memory demonstration that resets with the resource.
 
-## Optional clinic and practice arena
+`open77_cyberarena_example` (`auto_start false`) hands out temporary loadouts inside a
+configured bucket: `/cyberarena join [grade]`, `/cyberarena loadout <grade>`,
+`/cyberarena leave`. Leaving restores the paid implant. Training and industrial grades are
+nonlethal, cosmetic does no damage, lethal is an explicit choice.
 
-The [ripperdoc example](../resources/gamemodes/open77_ripperdoc_example/README.md) provides patient consent, nearby/alive checks, inspection, configurable prices, installation/removal, cancellation and payment compensation. Start `open77_ripperdoc_example` deliberately. `/doc inspect <patient>`, `/doc offer <patient> <grade>` and `/doc remove <patient>` initiate the consent workflow. Its credits are a demonstration balance, not a durable economy. Replace that policy with your jobs, inventory and payment service.
+## Limits
 
-The [arena example](../resources/gamemodes/open77_cyberarena_example/README.md) uses temporary cyberware leases and scoped combat permission. Start `open77_cyberarena_example`, reserve its configured bucket/site and use `/cyberarena join [grade]`, `/cyberarena loadout <grade>` and `/cyberarena leave`. It does not overwrite paid implants or enable global PvP. Training/industrial defaults are nonlethal; cosmetic has zero damage/knockback; lethal is an explicit optional choice. Wait for native restoration before acquiring another loadout.
-
-After stopping the core, restart the optional definition providers you need as well. If the saved implant is ready but `activity(player)` remains nil, check whether its definition provider is running before reinstalling or changing character identity.
-
-## What to expect in multiplayer
-
-Normal/charged attacks, both native body families, observer appearance, paid clinic workflows, temporary arena restoration, representative collisions and input recovery have finite two-client coverage. Charge cleanup was visually checked on holster, disconnect and core stop. Network impairment tests include 80/150/250ms profiles; delayed poses and positions can still differ, especially during recovery. The integration is not a claim of perfect frame synchronization, every outfit/terrain/team combination or large-server capacity.
-
-Use [capability discovery](cyberware.md#client-adapter-and-capability-discovery) for available APIs/readiness, and [reproducible scenarios](../docs/research/cyberware-test-scenarios.md) when validating your own balance, assets or server policies. Native readback, backend commit and an observed visual result answer different questions.
+- Installed arms are the native `Items.StrongArms` for both body families, with the
+  patient's own skin and customization keys. You cannot select other arm meshes.
+- Native and server damage do not stack: the server prices one hit per admitted action.
+  Missing action samples do not earn charge time.
+- Knockback is a bounded native reaction (0–6 m requested, collisions decide the real
+  travel). A victim still in a previous knockdown takes the damage but is not thrown
+  again (`motion_busy` in the motion outcome).
+- Blocking needs a fresh defender observation, a melee weapon drawn, positive stamina
+  and the right facing. Chip damage never triggers knockback, and block stamina is not
+  configurable.
+- Restart your definition provider after restarting the core: a saved implant stays
+  visible but cannot punch while its definition is not registered. If `activity(player)`
+  stays `nil` for a ready implant, check the provider before reinstalling.
+- A [Weapon Glitch](hacking.md) hack refuses Gorilla arming with `weapon_glitched`;
+  a Cyberware Malfunction refuses it with `cyberware_suspended`. The punch then lands
+  as an ordinary melee hit.

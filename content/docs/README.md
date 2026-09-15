@@ -69,7 +69,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [Sky hologram advertisements](sky-advertising.md) | Build PNG/DDS art into Towers-of-Light XBM replacers and preload it from a resource. |
 | [Complete server Lua API](server-api.md) | Every server global, `Open77.*` method, permission, constant, and low-level alias. |
 | [FiveM compatibility aliases](fivem-compatibility.md) | The `Citizen` table, `SetTick`, `promise.new`, and the shared-script helpers a copied FiveM resource calls -- plus the three places Open77 deliberately answers differently. |
-| [Dash / Air Dash](dash.md) | Permission-controlled native movement, composable grants, limits and optional parkour examples; live acceptance pending. |
+| [Dash / Air Dash](dash.md) | Native ground and air dash as a session grant: define, grant, the key, charges, stamina, cooldown and the optional parkour example. |
 | [Connection control](connection-control.md) | Connect events and deferrals, refusing a player with a message, rejection and disconnect reasons, the built-in whitelist and ban list (Warden, console, `Open77.access`), and worked custom resources. |
 | [World queries](world-queries.md) | Client raycast, aim ray, ground height and the object search around the player (`world.query`), plus an entity's own axes, offsets and slots (`world.transform`). |
 | [Replicated state bags](state-bags.md) | `Open77.state.global` / `.player(id)` / `.entity(kind, id)` and the `Player(id).state` / `Entity(id).state` / `GlobalState` / `LocalPlayer.state` shims: keyed state that replicates itself, change handlers, the caps, and why a client submits instead of writing. |
@@ -123,8 +123,6 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [Blocking player input](input-blocking.md) | Taking a named input away from the player and giving it back: the curated vocabulary, the five mechanisms behind it, what this engine cannot block and why, per-resource ownership and the release rule. |
 | [Scripted cameras](cameras.md) | Put the view where a resource wants it: world position, look-at, attachment, blended activation, shake and `unproject` -- plus the ownership rule, every path that gives the view back, and exactly what this engine will not give a camera. |
 | [Third person](perspective.md) | The playable third-person view: the player's key, server policy, the states that hand the view back, reading the player's aim and what it is on, and the measured limitations. |
-| [Cyberware integration](cyberware.md) | Gorilla Arms M0-M2: native both-family arms, persistent installation, combat, reactions, stamina, arena loadouts and the measured limits. |
-| [Ground slam](ground-slam.md) | The session ability beside the durable implants: definition, grant, projection and what the checks do and do not establish. |
 | [RP animations](rp-animations.md) | Synchronized actions, forced local TPP, client/server Lua APIs, commands, ownership and cancellation. |
 | [RP animation catalogue](rp-animation-catalogue.md) | All 12 profiles and 70 selectable clips, prop/placement requirements and validation status. |
 | [The role-play kit](rp-kit.md) | `open77_rp_basics`: cuff, escort and search as server exports, the leash an escort really is, the authority that stops a griefer, the twelve ways a hold ends -- and why carry refuses on this build. |

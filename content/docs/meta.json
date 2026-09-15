@@ -332,7 +332,7 @@
           "slug": "ground-slam",
           "kind": "guide",
           "nav": "Ground Slam",
-          "description": "The session ability beside the durable implants: define, grant and revoke, the native support API and lifecycle, authority and geometry, and what the automated checks do not establish."
+          "description": "A native ground or mid-air slam as a session grant: define, grant and revoke, the key the player presses, the damage and radius options, impact events and the limits."
         },
         {
           "slug": "hacking",

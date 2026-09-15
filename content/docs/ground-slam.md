@@ -1,228 +1,213 @@
 # Ground Slam / Quake
 
-Imported final Ground Slam session evidence, snapshotted September 13 at 18:27 local.
-These findings describe the base session's baseline and captures; they do not
-establish live acceptance of the combined Dash worktree. See the Dash checkpoint (`docs/dash-checkpoint.md`) for the combined test boundary.
+Ground Slam lets a player with a blunt melee weapon drawn press a key and slam the
+ground, standing or mid-air, hitting everyone in a radius. You define the slam, grant
+it to a player for the session, and the server validates every impact before any
+damage or knockback is applied. It is a session ability: granting or revoking it never
+touches the player's installed Gorilla Arms or double-jump legs.
 
-Protocol **1.28**. This is a session ability alongside durable Gorilla Arms and
-double-jump implants; granting or revoking it does not rewrite either implant.
-Capability metadata and automated checks do **not** establish live rendering or
-combat acceptance. Executed results and remaining limitations belong to the
-[current checkpoint](../docs/ground-slam-checkpoint.md) and
-[reproducible scenarios](../docs/research/cyberware-test-scenarios.md). Historical
-double-jump/Gorilla results remain separate from Ground Slam results.
+## Minimal example
 
-## Public server API
+`open77.lua`:
 
-| Call | Resource permission | Result |
-|---|---|---|
-| `Open77.abilities.define(definition)` | `players.abilities.define` | `{ok=true}` or nil/reason |
-| `Open77.abilities.grant(player, definitionId)` | `players.abilities.manage` | `{ok=true}` or nil/reason; native projection can still be pending |
-| `Open77.abilities.revoke(player)` | `players.abilities.manage` | Remove this resource's grant and cancel its action |
-| `Open77.abilities.cancel(player)` | `players.abilities.manage` | Cancel this resource's active action, retaining entitlement |
-| `Open77.abilities.current(player)` | `players.abilities.read` | Projection snapshot or nil/reason |
+```lua
+resource "my_quake"
+version "1.0.0"
+server_script "server/main.lua"
+permissions { "players.abilities.define", "players.abilities.manage", "players.abilities.read" }
+```
 
-A definition is `{id,version,profile="ground_slam",config={...}}`. IDs are 1–96
-ASCII letters/digits/`_.-`; version is a positive integer. Definitions are
-immutable versions and owned by their provider. Grant ownership is separate;
-one resource cannot revoke another's grant. Same-definition grants are
-idempotent. Regranting does not reset an active incarnation's cooldown. Provider
-stop removes its definitions and grants; session/body/bucket lifecycle changes
-invalidate active work. No implant persistence migration is involved.
-
-`current` contains `player`, `incarnation`, `revision`, `definition`, `status`
-(pending/ready/removed), `activation` and `cooldownRemainingMs`. Native readiness
-requires the support projection ACK. A grant return, ACK, handle or metadata flag
-is not proof of animation, contact, damage or visible effects.
-
-## Configuration
-
-All numbers must be finite. These are implementation policy bounds, not a promise
-that every value is supported by every native weapon, terrain or network condition.
-
-| Field | Default | Accepted bounds / meaning |
-|---|---|---|
-| `inputKey` | `"g"` | Single ASCII letter/digit, or supported named key (space, enter/return, tab, modifiers, navigation, F1–F12); case-insensitive |
-| `allowGround`, `allowAir` | true, true | At least one enabled |
-| `requiredArms`, `requiredLegs` | false, false | Optional active Gorilla / double-jump prerequisites |
-| `cosmetic`, `nonlethal` | true, true | Cosmetic requires damage and knockback both zero |
-| `damage`, `knockbackMeters` | 0, 0 | 0–300 damage; 0–6 m requested reaction distance |
-| `staminaCost`, `cooldownMs` | 20, 5000 | 0–1000 stamina; 1000–120000 ms |
-| `radius`, `innerRadius` | 4, 1 | Radius 0.5–12 m; inner radius 0 up to but excluding radius |
-| `edgeMultiplier` | 0.25 | 0–1 radial falloff |
-| `heightBonusPerMeter`, `maxHeight` | 0, 10 | Bonus 0–20; sampled height scaling cap 0–30 m |
-| `maxActivationMs` | 5000 | 1000–10000 ms |
-| `maxFallSpeed` | 30 | 1–60 m/s native descent eligibility envelope |
-| `geometryDeadlineMs` | 750 | 250–1500 ms |
-| `maxFloorDelta` | 0.75 | 0.1–1 m supporting-floor separation |
-| `reaction` | `"knockdown"` | `"knockdown"` or `"none"` |
-| `impactEffect`, `impactSound` | nil, nil | Optional effect catalog key ≤96 / sound event ≤128 characters; ASCII letters/digits/`_.-` |
-| `effectOnOwner`, `soundOnOwner` | false, false | Optional owner echo policy; preserve native owner presentation by default |
-
-`maxHeight` clamps damage scaling; it is not an allowed-fall-height setting. The
-server separately bounds movement displacement and descent; native lethal-fall
-and blunt-weapon predicates still apply. Core does not require a legs implant or
-install a weapon for the user. Cosmetic mode still runs real native eligibility
-and contact checks. Effect/sound configuration declares presentation policy;
-rendering/audibility requires its separately validated presentation adapter.
-The shipped `open77_cyberware` client adapter lays `impactEffect` out as a
-centre instance plus a ring of three at `clamp(radius x 0.25, 0.5 m, 1.5 m)`
-around the contact point, because the native Quake dust resource behind
-`impact.ground_slam` is one small short burst; that is four bounded instances
-per impact inside the client's 32-effect cap, using the same catalog key.
-Observers within 90 m receive it; the owner only with `effectOnOwner`. The
-owner's native impact rumble and `stagger_effect` camera stagger come from the
-unmodified native landing update, not from this adapter.
-
-## Replaceable public example
-
-Declare `players.abilities.define`, `players.abilities.manage`, and
-`players.abilities.read` in the server resource manifest, and depend on
-`open77_cyberware` for the client support. This minimal example grants harmless
-Ground Slam to the command issuer. It does not activate it automatically.
+`server/main.lua`:
 
 ```lua
 CreateThread(function()
     local result, reason = Open77.abilities.define({
-        id="example.quake", version=1, profile="ground_slam",
-        config={inputKey="l",allowGround=true,allowAir=true,
-            requiredArms=false,requiredLegs=false,
-            cosmetic=true,nonlethal=true,damage=0,knockbackMeters=0,
-            staminaCost=20,cooldownMs=5000,radius=4,innerRadius=1,
-            edgeMultiplier=0.25,heightBonusPerMeter=0,maxHeight=10,
-            maxActivationMs=5000,maxFallSpeed=30,
-            geometryDeadlineMs=750,maxFloorDelta=0.75,reaction="none"},
+        id = "myserver.quake", version = 1, profile = "ground_slam",
+        config = {
+            inputKey = "l",
+            damage = 35, knockbackMeters = 1.5, cosmetic = false, nonlethal = true,
+            staminaCost = 20, cooldownMs = 5000, radius = 4,
+        },
     })
     assert(result and result.ok, reason)
 end)
+
 RegisterCommand("quake", function(source, args)
-    local player=tonumber(source)
-    if not player or player<=0 then return end
+    local player = tonumber(source)
+    if not player or player <= 0 then return end
     local result, reason
-    if args[1]=="off" then result,reason=Open77.abilities.revoke(player)
-    elseif args[1]=="cancel" then result,reason=Open77.abilities.cancel(player)
-    elseif args[1]=="state" then result,reason=Open77.abilities.current(player)
-    else result,reason=Open77.abilities.grant(player,"example.quake") end
+    if args[1] == "off" then result, reason = Open77.abilities.revoke(player)
+    elseif args[1] == "cancel" then result, reason = Open77.abilities.cancel(player)
+    elseif args[1] == "state" then result, reason = Open77.abilities.current(player)
+    else result, reason = Open77.abilities.grant(player, "myserver.quake") end
     print("quake: " .. (result and json.encode(result) or tostring(reason)))
 end, false)
 ```
 
-Use `/quake`, wait for ready projection, equip a native blunt weapon, close UI
-capture, then release and press **L** on the ground or in the air. A held key
-across grant/UI capture cannot trigger it. Ordinary landing and vanilla quick
-melee are not replacement triggers. `/quake off` revokes; `/quake cancel`
-interrupts the action; `/quake state` reads the authoritative grant/cooldown.
+The player types `/quake`, waits until `/quake state` reports `status = "ready"`, draws
+a blunt melee weapon, closes any menu, then presses **L** on the ground or in the air.
+The key must be released after the grant: a key held through the grant or through a
+menu does not fire. `/quake off` revokes the grant, `/quake cancel` interrupts a slam in
+progress while keeping the grant.
 
-## Native support API and lifecycle
+Every config key is optional. Omitted keys take the defaults below; a misspelled key
+makes the whole definition `invalid_definition`. Set `cosmetic = false` whenever
+`damage` or `knockbackMeters` is not zero.
 
-These operations belong to the calling client resource VM, with automatic
-release on VM teardown. Gameplay examples should use the server API and normal
-input, not invoke the support owner's native handles.
+## Server API
 
-| Client API | Permission | Result |
+| Call | Permission | Returns |
 |---|---|---|
-| `configureSlam({ground,air,staminaManaged,maxDurationMs,maxFallSpeed})` | `player.abilities.project` | Native request handle or nil/reason |
-| `slamState(request)` | `player.abilities.read` | pending/ready/failed plus reason |
-| `requestSlam(request)` | `player.abilities.project` | Native-generated sequence or nil/reason |
-| `approveSlam(request,sequence,allowed)` | `player.abilities.project` | Boolean or nil/reason |
-| `cancelSlam(request,sequence,reason)` | `player.abilities.project` | Boolean or nil/reason |
-| `slamActivity()` | `player.abilities.read` | Owned native activity or nil/reason |
-| `presentSlam(player,activation,phaseSequence,phase,airborne,elapsedMs)` | `player.abilities.project` | Project authoritative observer / owner self-view phase; boolean or nil/reason |
-| `releaseSlam()` | `player.abilities.project` | Release owned native lease |
+| `Open77.abilities.define(definition)` | `players.abilities.define` | `{ok=true}` or `nil, reason` |
+| `Open77.abilities.grant(player, definitionId)` | `players.abilities.manage` | `{ok=true}` or `nil, reason`; the native projection can still be pending |
+| `Open77.abilities.revoke(player)` | `players.abilities.manage` | Removes this resource's grant and cancels its active slam |
+| `Open77.abilities.cancel(player)` | `players.abilities.manage` | Cancels this resource's active slam, keeps the grant |
+| `Open77.abilities.current(player)` | `players.abilities.read` | Grant snapshot or `nil, reason` |
 
-All client calls above are under `Open77.abilities`. The native adapter accepts
-500–15000 ms duration and fall speed >0–60; the server's narrower bounds apply
-for gameplay. `requestSlam` allocates the sequence, rather than trusting a
-caller-selected sequence. A request first becomes pending. Native preflight runs
-the original eligibility predicate and reports `eligible` before support emits
-any cost-bearing server intent. Pending, prerequisite rejection and preflight
-timeout do not ask the server to spend stamina. Pending/eligible/granted share
-one 750 ms deadline from the request; eligibility is rechecked before consuming
-permission. Only server-managed stamina is supported: configuring
-`staminaManaged=false` returns `server_managed_required`. The adapter suppresses its
-owned native damage/stamina paths when server managed. Cancellation suppresses
-further impact while native descent/recovery can still need time to finish.
+A definition is `{id, version, profile = "ground_slam", config = {...}}`. `id` is 1–96
+ASCII letters, digits, `_`, `.` or `-`; `version` is a positive integer. A version is
+immutable once defined: to change a slam, define a new version. Definitions belong to
+the resource that defined them, and a grant belongs to the resource that granted it.
 
-Activity contains request/sequence, phase/phaseSequence/impactSequence,
-mode, reason, elapsedMs, grounded, position/contact vectors and verticalSpeed.
-A bounded nondestructive `history` (up to 16 per-activation receipts) preserves
-phases that occur in the same native frame. Each receipt carries its own phase
-sequence, elapsed time, position, grounded flag and vertical speed. Support
-forwards each unseen receipt once instead of inventing skipped transitions.
-Actual phases are pending, eligible, granted, windup, descent, contact, impact, recovery,
-complete, cancelled and rejected. Support only forwards observed phases and
-matches body, grant revision, native request, input sequence and server activation. Native
-lease disappearance, request mismatch or loss of native ready state sends a
-negative projection ACK and releases local work, even when a replaced body's
-numeric engine ID is recycled. A server grant previously marked ready is not
-allowed to conceal that native projection failure.
+`current(player)` returns `player`, `incarnation`, `revision`, `definition`, `status`
+(`pending`, `ready` or `removed`), `activation` and `cooldownRemainingMs`. Only `ready`
+means the player can use the key.
 
-`presentSlam` uses **age within the current phase**, not the activation's total
-elapsed time. Support passes zero on receipt and advances it only for a bounded
-250 ms retry of the latest phase. It does not reconstruct missing wind-up or
-compensate unmeasured transport latency. Native state alone is not observer
-animation proof. Client presentation rejects stale sequence/incarnation context,
-cleans up on source life/bucket changes and resource stop, and projects impact
-VFX once from phase events rather than duplicate target-result messages. Optional
-server impact audio uses the existing three-second one-shot sound service with
-owner exclusion by default; that API returns dispatch success, not a stop handle.
+## Options
 
-The read-only `open77_cyberware` resource export `slamActivity` returns a fresh
-sanitized copy without the native request. Await
-`Open77.exports.call("open77_cyberware","slamActivity")` inside `CreateThread`.
-A direct native read from a lab VM cannot read the support VM's lease.
-The separate `slamPresentation` export returns the most recent bounded presentation
-receipt (reason, player, activation, phaseSequence and effect), including on an
-observer with no own grant. `native_spawn_accepted` establishes API acceptance,
-not rendered visibility. `/cyberlab slam activity <player>` awaits both exports;
-`activityAvailable=false` does not hide observer presentation evidence.
+| Field | Default | Accepted values |
+|---|---|---|
+| `inputKey` | `"g"` | One ASCII letter or digit, or a named key: `space`, `enter`, `return`, `tab`, `shift`, `ctrl`, `control`, `alt`, `capslock`, `backspace`, `insert`, `delete`, `home`, `end`, `pageup`, `pagedown`, `up`, `down`, `left`, `right`, `f1`–`f12`. Case-insensitive. |
+| `allowGround`, `allowAir` | `true`, `true` | At least one must be true |
+| `requiredArms`, `requiredLegs` | `false`, `false` | Require active Gorilla Arms / double-jump legs |
+| `cosmetic` | `true` | Requires `damage = 0` and `knockbackMeters = 0` |
+| `nonlethal` | `true` | Damage cannot kill |
+| `damage` | `0` | 0–300 |
+| `knockbackMeters` | `0` | 0–6 |
+| `staminaCost` | `20` | 0–1000 |
+| `cooldownMs` | `5000` | 1000–120000 |
+| `radius` | `4` | 0.5–12 m |
+| `innerRadius` | `1` | 0 up to, but excluding, `radius`; full damage inside it |
+| `edgeMultiplier` | `0.25` | 0–1, damage multiplier at the edge of `radius` |
+| `heightBonusPerMeter` | `0` | 0–20, extra damage per metre of fall |
+| `maxHeight` | `10` | 0–30 m, caps the height used for the bonus |
+| `maxActivationMs` | `5000` | 1000–10000 |
+| `maxFallSpeed` | `30` | 1–60 m/s, fastest descent that can still slam |
+| `geometryDeadlineMs` | `750` | 250–1500 |
+| `maxFloorDelta` | `0.75` | 0.1–1 m between the slammer's floor and a target's floor |
+| `reaction` | `"knockdown"` | `"knockdown"` or `"none"` |
+| `impactEffect`, `impactSound` | `nil`, `nil` | Effect catalogue key (up to 96 chars) / sound event (up to 128 chars); ASCII letters, digits, `_.-` |
+| `effectOnOwner`, `soundOnOwner` | `false`, `false` | Also play the effect / sound for the slammer |
 
-Capability export metadata lists `implantProfiles` separately from
-`abilityProfiles`, protocol 1.28, declared support and explicit `visualProof=false`.
+The shipped `open77_cyberware_lab` uses `impactEffect = "impact.ground_slam"` and
+`impactSound = "w_cyb_strongarms_hit_back"`.
 
-## Authority and geometry
+## Events
 
-Stamina is charged once and cooldown starts on acceptance, including interrupted
-or no-contact actions; no speculative refund writes a guessed pool value. Contact
-and delayed native impact are distinct. Server-selected candidates pass existing
-combat scope/team/PvP/god-mode/arbitration/DPS and life/body/bucket checks, with
-per-target damage and motion results rather than a fabricated all-target success.
+Five server-local events fire with `(player, encodedJson)`. Decode the second argument
+with `json.decode`.
 
-The server chooses exact ray IDs/endpoints and a nonce. An owner-only short
-contact-floor query precedes candidate work. Each damaging candidate requires
-matching owner and target-client geometry; missing, failed, stale, disagreeing
-or timed-out evidence fails closed. Lua executes at most four checked native
-queries per frame, 32 rays per challenge and 64 queued challenges. Successful
-misses differ from invocation/invalid-result failures. This is bounded client
-world evidence, not server map physics or cryptographic attestation: colluding
-clients can lie. Sampled radial floor support is not connected-mesh proof.
+| Event | When |
+|---|---|
+| `onAbilityActivation` | The server accepted a slam and charged stamina and cooldown |
+| `onAbilityPhase` | The slam moved through `windup`, `descent`, `contact`, `impact`, `recovery`, `complete` |
+| `onAbilityImpact` | Impact resolved; `targets` lists each hit player with `accepted`, `amount`, `error`, `motionId`, `motionError` |
+| `onAbilityCancelled` | The slam ended early; `reason` says why |
+| `onAbilityMotionOutcome` | A knockback reaction was requested, started or ended for a target |
 
-Server-local events `onAbilityActivation`, `onAbilityImpact`,
-`onAbilityCancelled`, `onAbilityMotionOutcome` carry player ID and correlated
-JSON. Presentation messages include immutable config, bucket, mode,
-phaseSequence, elapsedMs and serverTime. Reserved `open77:abilities:*` events
-are internal transport, not public activation or arbitrary-victim APIs.
+Every payload carries `player`, `activation`, `incarnation`, `definition`, `phase`,
+`reason`, `position`, `bucket`, `mode` (`ground` or `air`), `phaseSequence`, `elapsedMs`,
+`serverTime` and the immutable `config`.
 
-See [native research](../docs/research/native-ground-slam.md),
-[authority design](../docs/research/ground-slam-authority-design.md), and
-[wire contract](../docs/research/ground-slam-wire-contract.md) for confirmed
-source findings and remaining live validation.
+```lua
+AddEventHandler("onAbilityImpact", function(player, encoded)
+    local event = json.decode(encoded)
+    for _, target in ipairs(event.targets or {}) do
+        print(("%s slammed %s: accepted=%s amount=%s error=%s")
+            :format(player, target.player, tostring(target.accepted), tostring(target.amount), tostring(target.error)))
+    end
+end)
+```
 
-## Optional lab workflow
+## Optional lab
 
-The `open77_cyberware_lab` resource is open-access test policy, with `auto_start false`.
-It is not automatically mounted by Freeroam. Start it explicitly on an isolated
-local server; normal server owners can replace its policy. `/cyberlab` opens the
-rendered panel. Choose **My cyberware** or another player, use **Ground Slam ↓**,
-select Harmless or Combat, then Grant. Revoke removes that entitlement; Cancel
-action interrupts an activation while keeping the grant. Both basic presets have
-no implant prerequisite. Gorilla and Parkour presets add arms or legs requirements.
-The lab binds **L**, because the native default **G** overlaps other game actions.
-Close the panel before normal input; neither the UI nor the grant activates a slam.
+`open77_cyberware_lab` is off by default (`auto_start false`) and open to every connected
+player once started. It binds **L** and ships four presets: `harmless` (no damage),
+`combat` (35 nonlethal damage, 1.5 m knockback), `gorilla` (combat, requires Gorilla
+Arms) and `parkour` (combat, requires double-jump legs). All presets cost 20 stamina,
+cool down for five seconds and use a four-metre radius. `/cyberlab` opens a panel with a
+Ground Slam card; the same controls exist as commands:
 
-Equivalent public command workflow: `/cyberlab slam grant <player> harmless`,
-`/cyberlab slam state <player>`, `/cyberlab slam cancel <player>`, and
-`/cyberlab slam revoke <player>`. `diagnostics <player>` logs a bounded server
-report (at most 8 KiB); chat receives a short summary. History retains finite
-positions and at most eight target outcomes per event with an omitted count.
-Current health/stamina values are included; repeated configs are omitted.
+```text
+/cyberlab slam grant <player> harmless
+/cyberlab slam state <player>
+/cyberlab slam cancel <player>
+/cyberlab slam revoke <player>
+/cyberlab slam diagnostics <player>
+```
+
+Omit the player to target yourself; the server console must name one. The presets and
+the binding live in `resources/gamemodes/open77_cyberware_lab/server/ground-slam.lua`.
+
+## Limits
+
+**Costs are spent on acceptance.** Stamina is charged and the cooldown starts when the
+server accepts the slam, even if it is interrupted or hits nobody. There is no refund.
+
+**One grant per player per resource.** Granting the same definition twice is a no-op.
+Granting a new version replaces the projection but does not reset a running cooldown.
+A grant made by another resource cannot be revoked or replaced: the call returns
+`grant_owned`. Stopping your resource removes its definitions and grants; disconnecting,
+dying, changing body or changing routing bucket ends any slam in progress.
+
+**Grant refusals** return `nil, reason`: `definition_unavailable`, `definition_owned`,
+`grant_owned`, `grant_limit`, `body_unavailable` (dead, mounted or not ready),
+`equipment_required` (`requiredArms` / `requiredLegs` not met). **A refused tap** does
+nothing for the player and raises no server event; the reason is readable on the client
+as `lastServerError` in the `slamActivity` export below: `cooldown`,
+`insufficient_stamina`, `fall_speed_limit`, `mode_unavailable`, `motion_busy` (a
+knockdown or a dash owns the body), `cyberware_suspended` (a Cyberware Malfunction or a
+freeze from a [hack](hacking.md)) and `crippled` (a Cripple Movement hack).
+
+**Native eligibility still applies.** The player must have a blunt melee weapon drawn;
+Ground Slam does not install one. Ordinary landings and vanilla quick melee never trigger
+it. Cosmetic slams run the same eligibility and contact checks as damaging ones.
+
+**Who gets hit is the server's decision.** Targets pass the usual combat scope, team,
+PvP, god-mode and life checks, and each damaging target needs matching floor-and-contact
+geometry from both the slammer's and the target's client. Missing, stale or disagreeing
+evidence fails closed: no damage. Damage falls off from `innerRadius` to `radius` by
+`edgeMultiplier`; `heightBonusPerMeter` adds to it up to `maxHeight`. `maxHeight` caps the
+bonus, it is not a safe-fall height: native fall damage still applies. The check is
+client evidence with a bounded budget (four native queries per frame, 32 rays per
+challenge, 64 queued challenges), not a server physics simulation, so two colluding
+modified clients can lie to each other.
+
+**Presentation.** `impactEffect` is drawn by the shipped `open77_cyberware` adapter as one
+instance at the contact point plus a ring of three around it, for observers within 90 m;
+the slammer sees it only with `effectOnOwner`. `impactSound` plays once as a three-second
+spatial one-shot, excluding the slammer unless `soundOnOwner`. The slammer's own camera
+stagger and rumble come from the native landing, not from these fields.
+
+## Advanced: client adapter
+
+The client half is `open77_cyberware`, a system resource that is already running. Its
+`Open77.abilities` client methods (`configureSlam`, `slamState`, `requestSlam`,
+`approveSlam`, `cancelSlam`, `slamActivity`, `presentSlam`, `releaseSlam`) are owned by
+that resource and need `player.abilities.project` / `player.abilities.read`. Gameplay
+resources should use the server API and the player's key, not these handles. Two
+read-only exports are available to any client resource:
+
+```lua
+CreateThread(function()
+    local pending = Open77.exports.call("open77_cyberware", "slamActivity")
+    local activity = pending and pending:await()
+    if activity then print(activity.phase, activity.elapsedMs, activity.grounded) end
+end)
+```
+
+`slamActivity` returns the current native activity (`phase`, `elapsedMs`, `grounded`,
+`position`, `verticalSpeed`, a bounded `history` of phase receipts) or `nil, reason`;
+`slamPresentation` returns the most recent presentation receipt, also on an observer.
+The `open77:abilities:*` network events are the platform's own transport: a resource
+cannot forge a slam or damage an arbitrary player by sending them.
