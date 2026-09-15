@@ -50,6 +50,7 @@ const settings = { configured: true, enabled: true, destination: 'discord.com / 
       return json({ items: [{ ...row, incidentId: url.searchParams.has('before') ? secondId : id }], next: url.searchParams.has('before') ? null : { before: time, beforeId: id } });
     }
     if (p.endsWith('/preview')) return json({ incidentId: id, sha256: row.sha256, manifest: { versions: { clientPackage: '0.1.0+49', launcher: '0.1.0+46' }, description: '<img src=x onerror=alert(1)> @everyone', fault: { exceptionCode: '0xc0000005', moduleOffset: 'open77.dll+0xabc' }, server: { version: '0.1.0+48', protocol: '1.23', gameBuild: '23100' } }, files: [{ path: 'incident.json', bytes: 500 }, { path: 'launcher.log', bytes: 40 }], entry: url.searchParams.get('entry') || 'incident.json', text: '<script>window.evidenceExecuted=true</script>\nSynthetic evidence only', truncated: false });
+    if (p.endsWith('/resolution')) return route.fulfill({ status: 404, json: { code: 'not_found' }, headers: { 'Access-Control-Allow-Origin': '*' } }); // Older-master compatibility.
     if (p === `/api/v1/incidents/${id}`) return route.fulfill({ body: corrupt ? Buffer.from('tampered') : zip, contentType: 'application/zip' });
     if (p.endsWith('/overview')) return json({ usersTotal: 1248, serversActive: 4, playersOnline: 28, licensesActive: 46, bansActive: 3 });
     if (p === '/api/v1/admin/servers') return json(Array.from({ length: 6 }, (_, i) => ({ serverId: `${id}-${i}`, name: `Night City ${['Freeroam','Pursuit','Sandbox','Racing','Test','Community'][i]}`, connectEndpoint: `192.0.2.${i + 1}:11778`, connectedPlayers: 8 - i, maximumPlayers: 32, lastHeartbeatUtc: time })));
@@ -91,6 +92,7 @@ const settings = { configured: true, enabled: true, destination: 'discord.com / 
   await page.getByRole('button', { name: 'Newer', exact: true }).click();
   await page.getByRole('button', { name: 'Refresh', exact: true }).waitFor({ state: 'visible' });
   delay = 500; await page.getByRole('button', { name: 'Refresh', exact: true }).click();
+  await page.locator('.adm-progress').waitFor({ state: 'visible' });
   assert.ok(await page.locator('.adm-progress').isVisible());
   await page.waitForFunction(() => !document.querySelector('.adm-progress')); delay = 0;
   for (const viewport of [{ width: 1024, height: 800 }, { width: 390, height: 844 }]) {

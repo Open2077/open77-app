@@ -92,7 +92,20 @@ body:has(.adm-main) { overflow-x: clip; }
 .adm-incident-policy p { margin: 0; font-size: 12px; color: var(--text-dim); flex: 1; }
 .adm-incident-policy strong { color: var(--text); font-weight: 500; }
 .adm-incident-filters { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 13px; align-items: end; margin-bottom: 18px; }
-.adm-fingerprint-input { grid-column: span 3; }
+.adm-fingerprint-input { grid-column: span 2; }
+.adm-resolution { min-width: 0; margin: 18px 0; padding: 18px; border: 1px solid var(--line); border-left: 2px solid var(--accent); border-radius: var(--radius-sm); background: var(--accent-soft); }
+.adm-resolution .adm-panel-head { padding: 0; margin-bottom: 10px; }
+.adm-resolution-badges { display: flex; flex-wrap: wrap; gap: 5px; }
+.adm-resolution-resolved { background: var(--accent-soft); color: var(--accent); border: 1px solid rgba(var(--accent-rgb), .3); }
+.adm-resolution-meta { margin: 12px 0; font-size: 12px; color: var(--text-faint); overflow-wrap: anywhere; }
+.adm-resolution-notes { display: grid; gap: 12px; margin: 14px 0; }
+.adm-resolution-notes dt { font-size: 12px; font-weight: 600; color: var(--text-faint); }
+.adm-resolution-notes dd { margin: 4px 0 0; font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.adm-resolution-form fieldset { display: grid; gap: 14px; min-width: 0; padding: 0; margin: 14px 0 0; border: 0; }
+.adm-resolution-form legend { margin-bottom: 14px; font-size: 13px; }
+.adm-resolution-form textarea { width: 100%; min-width: 0; min-height: 70px; resize: vertical; line-height: 1.5; text-transform: none; letter-spacing: normal; }
+.adm-resolution-count { align-self: flex-end; font-size: 10px; color: var(--text-faint); }
+.adm-resolution .adm-action-row { display: flex; justify-content: flex-start; }
 .adm-incident-filters .ac-input { width: 100%; }
 .adm-shell .adm-primary { background: var(--accent-soft); border-color: rgba(var(--accent-rgb),.45); color: var(--accent); }
 .adm-shell .adm-primary:hover { background: rgba(var(--accent-rgb),.15); }
