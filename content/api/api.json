@@ -7960,6 +7960,128 @@
   "route_id": "Open77.cyberware.releaseLegs"
  },
  {
+  "namespace": "Open77.cyberware",
+  "name": "grantLegLease",
+  "handler": "LuaCyberwareGrantLegLease",
+  "summary": "Hold the server's double-jump activation lease on the local body.",
+  "description": "Requires player.cyberware.project and a running resource. Trusted projection primitive used by the shipped open77_cyberware client: with a lease held, a second-jump press is spent locally and the jump happens on the frame the player pressed; the server is told afterwards and reconciles at the stamp. lease is the server's lease id, epoch its uint32 epoch, budget the activations it allows (1-64) and ttlMs how much longer it is valid (1-30000) -- a remaining lifetime, never an absolute deadline, so no clock domain is mixed. Returns true when the lease is held; nil, reason otherwise (invalid_lease, cyberware_backend_unavailable). Without a lease the ask-and-wait path still runs.",
+  "params": [
+   {
+    "name": "lease",
+    "type": "string (lease id)",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "epoch",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "budget",
+    "type": "integer 1-64",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "ttlMs",
+    "type": "integer 1-30000",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true",
+   "nil, reason on rejection"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "-- Mirror the server's lease grant onto the body (open77_cyberware does this for you)\nRegisterNetEvent(\"open77:leases:grant\", function(value)\n    if value.kind ~= \"double_jump\" then return end\n    local ttl = value.deadlineMs - serverNowMs()\n    local ok, err = Open77.cyberware.grantLegLease(value.leaseId, value.epoch or 0, value.budget or 1, ttl)\n    if not ok then print(err) end\nend)",
+  "inferred": false,
+  "source_line": 20697,
+  "qualified": "Open77.cyberware.grantLegLease",
+  "route_id": "Open77.cyberware.grantLegLease"
+ },
+ {
+  "namespace": "Open77.cyberware",
+  "name": "legReportSent",
+  "handler": "LuaCyberwareLegReportSent",
+  "summary": "Mark the pending leased jump report as sent.",
+  "description": "Requires player.cyberware.project. After a leased press the activity reported by legsActivity carries reportSequence; once the resource has sent that report to the server, this returns the activation to idle. The lease keeps whatever budget it has left.",
+  "params": [
+   {
+    "name": "reportSequence",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local activity = Open77.cyberware.legsActivity()\nif activity and activity.reportSequence > 0 then\n    TriggerServerEvent(\"open77:cyberware:legReport\", { sequence = activity.reportSequence, ageMs = activity.ageMs })\n    Open77.cyberware.legReportSent(activity.reportSequence)\nend",
+  "inferred": false,
+  "source_line": 20700,
+  "qualified": "Open77.cyberware.legReportSent",
+  "route_id": "Open77.cyberware.legReportSent"
+ },
+ {
+  "namespace": "Open77.cyberware",
+  "name": "refreshLegLease",
+  "handler": "LuaCyberwareRefreshLegLease",
+  "summary": "Refresh the held double-jump lease with the server's latest budget and lifetime.",
+  "description": "Requires player.cyberware.project. Applies the 20 Hz refresh the server sends on its snapshot stream: epoch must match the held lease, remaining is the activations still allowed, ttlMs the remaining lifetime. A refresh for another epoch is ignored. Trusted projection primitive; not a public API.",
+  "params": [
+   {
+    "name": "epoch",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "remaining",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "ttlMs",
+    "type": "integer 1-30000",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "RegisterNetEvent(\"open77:leases:refresh\", function(value)\n    if value.kind ~= \"double_jump\" then return end\n    Open77.cyberware.refreshLegLease(value.epoch, value.remaining or 0, value.deadlineMs - serverNowMs())\nend)",
+  "inferred": false,
+  "source_line": 20698,
+  "qualified": "Open77.cyberware.refreshLegLease",
+  "route_id": "Open77.cyberware.refreshLegLease"
+ },
+ {
+  "namespace": "Open77.cyberware",
+  "name": "releaseLegLease",
+  "handler": "LuaCyberwareReleaseLegLease",
+  "summary": "Drop the held double-jump lease; presses go back to ask-and-wait.",
+  "description": "Requires player.cyberware.project. Called on a server revoke, on a session change and on resource stop. Idempotent.",
+  "params": [],
+  "returns": [],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "RegisterNetEvent(\"open77:leases:revoke\", function(value)\n    if value.kind == \"double_jump\" then Open77.cyberware.releaseLegLease() end\nend)",
+  "inferred": false,
+  "source_line": 20699,
+  "qualified": "Open77.cyberware.releaseLegLease",
+  "route_id": "Open77.cyberware.releaseLegLease"
+ },
+ {
   "namespace": "Open77.dash",
   "name": "call",
   "handler": "LuaDashCall",
@@ -51135,5 +51257,235 @@
   "since": "2.31.13+op77.67",
   "qualified": "promise.new",
   "route_id": "server:promise.new"
+ },
+ {
+  "namespace": "Open77.reflex",
+  "name": "clear",
+  "handler": "LuaReflexClear",
+  "summary": "Releases the reflex overdrive this resource holds on the local player.",
+  "description": "Client support primitive; requires player.reflex.overdrive. Idempotent; the boost also ends on its own deadline, on death, a vehicle, a workspot, a session change and the owning resource stopping.",
+  "params": [],
+  "returns": [
+   "true, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "Open77.reflex.clear()",
+  "inferred": false,
+  "source_line": 20757,
+  "qualified": "Open77.reflex.clear",
+  "route_id": "Open77.reflex.clear"
+ },
+ {
+  "namespace": "Open77.reflex",
+  "name": "overdrive",
+  "handler": "LuaReflexOverdrive",
+  "summary": "Applies the local reflex overdrive: a bounded real-time speed/handling buff.",
+  "description": "Client support primitive; requires player.reflex.overdrive. Kind is reflex or reflex_heavy; duration is clamped to 15 s. It applies stat modifiers through gameStatsSystem and touches no clock: the shared world stays real time, other players are never slowed and bullets are never slowed. Server creators use the separate server Open77.reflex define/grant/revoke API documented in reflex-overdrive.md. A returned request number is admission, not rendered speed. Arbitrary stat plans are unavailable. Multiplayer acceptance is pending.",
+  "params": [
+   {
+    "name": "kind",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "durationMs",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "request number, or nil",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "Open77.reflex.overdrive('reflex', 6000)",
+  "inferred": false,
+  "source_line": 20756,
+  "qualified": "Open77.reflex.overdrive",
+  "route_id": "Open77.reflex.overdrive"
+ },
+ {
+  "namespace": "Open77.reflex",
+  "name": "state",
+  "handler": "LuaReflexOverdriveState",
+  "summary": "Reads the local reflex-overdrive machine.",
+  "description": "Client support primitive; requires player.reflex.overdrive. Returns phase, kind, owner, reason, request, grantedMs, remainingMs, elapsedMs, activations, refusals, releases, watchdogRemovals, releaseOverdue and active. It is admission and lifecycle state, not proof that the engine honoured a modifier.",
+  "params": [],
+  "returns": [
+   "table, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local s = Open77.reflex.state()",
+  "inferred": false,
+  "source_line": 20758,
+  "qualified": "Open77.reflex.state",
+  "route_id": "Open77.reflex.state"
+ },
+ {
+  "namespace": "Open77.reflex",
+  "name": "cancel",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Ends a player's running overdrive now; the grant and its cooldown are unchanged.",
+  "description": "Requires `players.reflex.manage`. The client stops the boost on the next frame and every attached layer and the nameplate marker clear. No activation running answers `no_activation`.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer|string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "{ ok = true }, or nil",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "-- A referee ends a boost mid-round\nRegisterCommand(\"stopboost\", function(source, args)\n    local target = tonumber(args[1])\n    local result, reason = Open77.reflex.cancel(target)\n    print(result and \"stopped\" or reason)\nend, true)",
+  "inferred": false,
+  "source_line": 7601,
+  "qualified": "Open77.reflex.cancel",
+  "route_id": "server:Open77.reflex.cancel"
+ },
+ {
+  "namespace": "Open77.reflex",
+  "name": "capabilities",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "The supported profile, the two tiers and the advertised boundary.",
+  "description": "Requires `players.reflex.read`. Reports `profile = \"reflex_overdrive\"`, `sharedRealTimeWorld = true`, `slowsBullets = false`, `slowsOtherPlayers = false`, `touchesTimeDilation = false` and `maximumDurationMs = 15000` -- the boundary a server maker can quote to players.",
+  "params": [],
+  "returns": [
+   "capabilities table"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local caps = Open77.reflex.capabilities()\nassert(caps.touchesTimeDilation == false)\nprint(caps.profile, caps.maximumDurationMs)",
+  "inferred": false,
+  "source_line": 7603,
+  "qualified": "Open77.reflex.capabilities",
+  "route_id": "server:Open77.reflex.capabilities"
+ },
+ {
+  "namespace": "Open77.reflex",
+  "name": "current",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "The player's overdrive activity and projection, or nil without a grant.",
+  "description": "Requires `players.reflex.read`. Returns `projection` (`status` is `pending`, `ready` or `removed`, plus the `definition`), `phase`, `charges`, `remainingMs`, `cooldownUntil`, `activation` and `ownedByCaller`, a server-derived boolean for the calling resource that is accurate across projection restarts.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer|string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "activity table, or nil"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "-- Only show the HUD hint once the native side is ready\nlocal activity = Open77.reflex.current(player)\nif activity and activity.projection.status == \"ready\" then\n    Open77.chat.send(player, \"Overdrive ready: tap X\")\nend",
+  "inferred": false,
+  "source_line": 7602,
+  "qualified": "Open77.reflex.current",
+  "route_id": "server:Open77.reflex.current"
+ },
+ {
+  "namespace": "Open77.reflex",
+  "name": "define",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Registers a reflex-overdrive definition: a tier plus its economy.",
+  "description": "Requires `players.reflex.define`. `profile` is exactly `reflex_overdrive`; `config` picks `tier` (`reflex` or `reflex_heavy`), `inputKey` (the default the client registers as the rebindable `reflex_overdrive` action), `presentation` (`native`, `silent`, `none`), `durationMs` 500-15000 (never longer than `cooldownMs`), `cooldownMs` 1000-600000, `maxCharges` 1-3, `chargeRegenMs`, `staminaCost` 0-300 and `heatCost` 0-100. A definition cannot name a stat: the client owns the two tier plans and their ceilings. Out-of-range values are refused, not clamped. Versions are immutable. No clock is touched anywhere in this feature.",
+  "params": [
+   {
+    "name": "definition",
+    "type": "table {id, version, profile, config}",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "{ ok = true }, or nil",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "-- Define once at start; grant per player later\nCreateThread(function()\n    local result, reason = Open77.reflex.define({\n        id = \"myserver.overdrive\", version = 1, profile = \"reflex_overdrive\",\n        config = {\n            tier = \"reflex\", inputKey = \"x\", presentation = \"native\",\n            durationMs = 8000, cooldownMs = 20000, maxCharges = 1,\n            chargeRegenMs = 30000, staminaCost = 25,\n        },\n    })\n    assert(result and result.ok, reason)\nend)",
+  "inferred": false,
+  "source_line": 7598,
+  "qualified": "Open77.reflex.define",
+  "route_id": "server:Open77.reflex.define"
+ },
+ {
+  "namespace": "Open77.reflex",
+  "name": "grant",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Grants a defined overdrive to one player for the session.",
+  "description": "Requires `players.reflex.manage`. Acceptance is entitlement, not readiness: check `current(player).projection.status == \"ready\"` before presenting it as usable. Needs the bound cyberware character and an alive, ready, unmounted body -- a grant sent before the player is incarnated is refused `body_unavailable`. Only the granting resource may revoke or cancel it. A session capability, not purchased equipment.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer|string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "definition",
+    "type": "string (definition id)",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "{ ok = true }, or nil",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "-- Grant when the player buys the implant\nRegisterNetEvent(\"shop:buyOverdrive\", function()\n    local result, reason = Open77.reflex.grant(source, \"myserver.overdrive\")\n    if not result then Open77.chat.send(source, \"Not granted: \" .. tostring(reason)) end\nend)",
+  "inferred": false,
+  "source_line": 7599,
+  "qualified": "Open77.reflex.grant",
+  "route_id": "server:Open77.reflex.grant"
+ },
+ {
+  "namespace": "Open77.reflex",
+  "name": "revoke",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Removes this resource's overdrive grant from a player.",
+  "description": "Requires `players.reflex.manage`. Paid implants are untouched; a running boost ends on the release path. Another resource's grant answers `grant_owned_by_another_resource`.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer|string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "{ ok = true }, or nil",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "-- Lose the implant on death in a hardcore mode\nAddEventHandler(\"playerDied\", function(player)\n    Open77.reflex.revoke(player)\nend)",
+  "inferred": false,
+  "source_line": 7600,
+  "qualified": "Open77.reflex.revoke",
+  "route_id": "server:Open77.reflex.revoke"
  }
 ]
