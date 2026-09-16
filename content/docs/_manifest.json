@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-14T22:33:38.371Z",
-  "guides": 79,
-  "apiEntries": 1347,
+  "guides": 81,
+  "apiEntries": 1350,
   "files": [
     {
       "source": "wiki/README.md",
@@ -475,8 +475,10 @@
       "target": "content/docs/server-api.md",
       "slug": "server-api",
       "title": "Complete server Lua API",
-      "bytes": 189025,
-      "sha256": "92bf77377f15fe7c332ef85ed72fa7166c47680351b8924f8cbf08b57ee55d35"
+      "bytes": 190256,
+      "sha256": "9db8ab90cf9057c2d82773f3ea134d1a751da300b8e6064edcab0826e99281b5",
+      "sourceRevision": "dc0e072faa2b316367eea96c8d59d62162b429eb",
+      "sourceSyncedAt": "2026-09-16T00:25:06.373Z"
     },
     {
       "source": "wiki/server-exports.md",
@@ -619,8 +621,10 @@
       "target": "content/docs/world-queries.md",
       "slug": "world-queries",
       "title": "World queries: raycast, ground height, objects around the player, entity axes, district",
-      "bytes": 20986,
-      "sha256": "0e7300c8a44b354dcbdcb3812cfa0f64083cabb555e30f7fc3d96d6fa6160f94"
+      "bytes": 21851,
+      "sha256": "051027568666d9193c76d70d28e8798f3ec92dd69e7360f0879094dcef4bead5",
+      "sourceRevision": "dc0e072faa2b316367eea96c8d59d62162b429eb",
+      "sourceSyncedAt": "2026-09-16T00:25:06.218Z"
     },
     {
       "source": "wiki/worldui.md",
@@ -642,8 +646,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1347,
-      "bytes": 1578223,
-      "sha256": "1d298f854638c39602cc8b31760d66ff23bdc4d6697ea9cc9271828d762afe39"
+      "bytes": 1584711,
+      "sha256": "55682f76109e11845fa9ad2fd44732d5d0a6e325b96a8d5dd0897363c993bf1b"
     },
     {
       "source": "wiki/door-service-api.json",
@@ -674,6 +678,26 @@
       "records": 6582,
       "bytes": 2017795,
       "sha256": "ed9c09fd607da1e0489dbb8a09c26bb33e02972dd34f761ee50c7edae6e85f86"
+    },
+    {
+      "source": "wiki/polyzone.md",
+      "target": "content/docs/polyzone.md",
+      "slug": "polyzone",
+      "title": "PolyZone",
+      "bytes": 13071,
+      "sha256": "c3afcfa3a68c296efc7c28f61c76215bcbf26e58fbc3fb9e1b4f8cd7ddfcacc1",
+      "sourceRevision": "dc0e072faa2b316367eea96c8d59d62162b429eb",
+      "sourceSyncedAt": "2026-09-16T00:25:06.536Z"
+    },
+    {
+      "source": "wiki/lua-modules.md",
+      "target": "content/docs/lua-modules.md",
+      "slug": "lua-modules",
+      "title": "Lua modules and require",
+      "bytes": 8867,
+      "sha256": "53488a7e8018fd2b98ce0807dd5227072380c867fc3ec7e2a8b4fc4967c74ea3",
+      "sourceRevision": "dc0e072faa2b316367eea96c8d59d62162b429eb",
+      "sourceSyncedAt": "2026-09-16T00:25:06.771Z"
     }
   ]
 }

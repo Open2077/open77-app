@@ -2325,6 +2325,12 @@ the security/bandwidth model.
 
 `Open77.world.setPopulation` requires `world.population`; `getPopulation` is ungated.
 
+**A bucket nobody has configured is empty** -- no crowd, no traffic, no police -- which is what
+every client applies at world entry on its own. Vanilla streets are an explicit choice: set the
+densities, or `bucket.population <bucket> on` from the console. (Until 2026-09-15 the server's
+unconfigured default read as vanilla; replicated, it made clients spawn traffic that the vanilla
+vehicle sanitizer despawned a second later -- cars popping in, hitting players, vanishing.)
+
 | Function | Signature | Purpose |
 |---|---|---|
 | `Open77.world.setPopulation` | `(bucket, { crowd?, traffic?, police? })` | Ambient density for one routing bucket, replicated to every client in it. |
@@ -2348,9 +2354,20 @@ means vanilla traffic. `getPopulation` states this rather than leaving a caller 
 
 `police` allows or forbids vanilla prevention spawns outright.
 
-A bucket nobody has configured is the vanilla world (`crowd = 1`, `traffic = 1`, `police = true`),
-not an empty one. `enabled` is **derived** (`crowd > 0 or traffic > 0 or police`), so it can never
-claim the population is on while every density is zero.
+`enabled` is **derived** (`crowd > 0 or traffic > 0 or police`), so it can never claim the
+population is on while every density is zero -- and an unconfigured bucket reads `0 / 0 / false`,
+as the section opens with.
+
+### What the client does with it
+
+Two client mechanisms remove vanilla bodies while a session is active, and both follow the policy:
+the vehicle spawn policy (which vanilla spawns are allowed to complete) and the identity sanitizer
+(which unowned runtime NPCs and vehicles are swept, so that a body nothing owns is never mistaken
+for a replicated one). A kind the policy allows -- pedestrians when `crowd > 0`, vehicles when
+`traffic > 0` -- is scenery, replicates to nobody, and is left alone by both. Until client 67 the
+sanitizer ignored the policy, which is why a bucket with `traffic = 1` on release 65 showed cars
+that vanished half a second after they spawned; from client 68 on, `pop` in the developer console
+reports the bodies it kept for the policy as `sanitizerAllowedByPolicy`.
 `Open77.routingBuckets.setPopulationEnabled` is the same state expressed as a switch: off sets all
 three off, on restores the vanilla figures.
 

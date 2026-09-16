@@ -78,6 +78,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [Vectors and quaternions](vectors.md) | `vector2`/`vector3`/`vector4`/`vec`/`quat` on both runtimes: arithmetic, `#(a - b)`, swizzles, distance and lerp, the "plain tables still work" guarantee, and what crosses the network. |
 | [Official resource exports](resource-exports.md) | Every client export exposed by the official Lua packages and how to call it safely. |
 | [Cross-resource server exports](server-exports.md) | Publish and call asynchronous server services with caller identity, isolated data, permissions and safe reload behavior. |
+| [Lua modules and require](lua-modules.md) | Local modules, published dependency libraries, per-resource cache, permissions, reload and differences from exports. |
 | [Network callbacks](callbacks.md) | Ask the other side a question and await the answer: `Open77.net.call` / `callClient`, per-resource namespacing, timeouts, limits, failure reasons, and why a callback is still only a request. |
 | [Game data reference](data-reference.md) | NPC templates, vehicle records, seats, flags, weapons, appearances, VFX, SFX, animations, and sprite catalogues. |
 | [Identity and ACL](server-acl.md) | Authentication, restricted commands, and access control. |
@@ -108,6 +109,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [Player interactions](player-interactions.md) | Reserved two-player actions, consent, synchronized presentation and server-owned completion. |
 | [Key mappings and device input](keybindings.md) | The `RegisterKeyMapping` engine primitive: named rebindable actions, press/hold callbacks, the pause KEY BINDINGS tab, and machine-global persistence -- plus reading the mouse, the wheel, a gamepad and the cursor directly. |
 | [Proximity zones](zones.md) | Client-side enter/exit hysteresis and the server-side re-validation every caller must apply. |
+| [PolyZone](polyzone.md) | Polygons, boxes, circles/spheres, entity zones, groups, entry/exit callbacks and a native-debug/WebUI zone editor. |
 | [World-anchored POIs](worldui.md) | The marker-plus-prompt facade: one owned handle, transactional creation and cleanup. |
 | [The gamemode kernel](gamemode-kernel.md) | Shared server services through exports, local state-machine conventions, and why the scaffolder remains useful. |
 | [Deathmatch](deathmatch.md) | The shipped free-for-all and arena mode: instances, loadouts, bots, scoring and the operator surface. |

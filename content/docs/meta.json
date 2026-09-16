@@ -157,6 +157,12 @@
           "description": "Every client export published by the official OPEN//77 resource packages, with signatures per package and how to call them safely across resources."
         },
         {
+          "slug": "lua-modules",
+          "kind": "guide",
+          "nav": "Lua modules and require",
+          "description": "Local modules, published dependency libraries and `require`: the per-resource cache, the permissions a module runs under, what reload does to it, and how a module differs from an export."
+        },
+        {
           "slug": "callbacks",
           "kind": "guide",
           "nav": "Network callbacks",
@@ -475,6 +481,12 @@
           "kind": "guide",
           "nav": "Proximity zones",
           "description": "The open77_zones service: enter and exit events with hysteresis, the definition reference, the polling model and quotas, and why every containment rule must still be re-derived on the server."
+        },
+        {
+          "slug": "polyzone",
+          "kind": "guide",
+          "nav": "PolyZone",
+          "description": "Polygons, boxes, circles and spheres, entity zones and groups: containment queries, entry and exit callbacks, and the in-game zone editor with native debug drawing."
         },
         {
           "slug": "notifications",
