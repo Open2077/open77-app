@@ -22,7 +22,7 @@ import path from "node:path";
 import process from "node:process";
 import { execFileSync } from "node:child_process";
 
-import { EXCLUDED_GUIDES, isExcluded } from "./wiki-exclusions.mjs";
+import { APP_OWNED_GUIDES, EXCLUDED_GUIDES, isAppOwned, isExcluded } from "./wiki-exclusions.mjs";
 import { buildNpcCatalogue } from "./npc-catalogue.mjs";
 
 const DEFAULT_SOURCE = process.env.OPEN77_WIKI_SOURCE ?? ["CyberM", "open77-base", "base"]
@@ -149,7 +149,23 @@ async function main() {
   const records = [];
   const writes = [];
 
+  // A site-owned guide keeps the record it already has: this sync never reads
+  // or writes its file, so it has no bytes or digest of its own to compute.
+  const manifestPath = path.join(DOCS_OUT, "_manifest.json");
+  const previousManifest = existsSync(manifestPath)
+    ? JSON.parse(await readFile(manifestPath, "utf8"))
+    : null;
+
   for (const name of markdownFiles) {
+    // A guide the site maintains itself keeps its manifest record -- it is
+    // still published and still counted -- but is never written or compared:
+    // its site copy differing from the wiki is the point, not drift.
+    if (isAppOwned(name)) {
+      const target = `${DOCS_OUT}/${name}`.split(path.sep).join("/");
+      const existing = previousManifest?.files?.find((record) => record.target === target);
+      if (existing) records.push(existing);
+      continue;
+    }
     const text = await readFile(path.join(sourceDir, name), "utf8");
     const normalised = text.replace(/\r\n/g, "\n");
     const slug = name === "README.md" ? "index" : name.replace(/\.md$/, "");
@@ -191,6 +207,42 @@ async function main() {
     entries: doorExports.length, bytes: Buffer.byteLength(doorsText, "utf8"), sha256: sha256(doorsText),
   });
   writes.push({ file: path.join(API_OUT, "door-service-api.json"), text: doorsText });
+
+  // The companion catalogues the Devkit MCP reads next to api.json: enforced
+  // permissions, open77:* events and the published-build table that gives
+  // every card its `since`. Generated in base by wiki/tools; vendored verbatim
+  // so the index builder in open77-devkit needs only this public content.
+  for (const name of ["permissions.json", "events.json", "releases.json"]) {
+    const text = (await readFile(path.join(sourceDir, "data", name), "utf8")).replace(/\r\n/g, "\n");
+    const parsed = JSON.parse(text);
+    const key = name.replace(".json", "");
+    if (!Array.isArray(parsed[key]) || parsed[key].length === 0) {
+      throw new Error(`${name} must carry a non-empty "${key}" array`);
+    }
+    records.push({
+      source: `wiki/data/${name}`, target: `${API_OUT}/${name}`,
+      entries: parsed[key].length, bytes: Buffer.byteLength(text, "utf8"), sha256: sha256(text),
+    });
+    writes.push({ file: path.join(API_OUT, name), text });
+  }
+
+  // The slim game-data catalogues (names and record ids the server itself
+  // answers Open77.data.* from) and the two schemas a resource author writes
+  // against. Whole directories, vendored file by file.
+  for (const folder of ["catalogues", "schemas"]) {
+    const sourceFolder = path.join(sourceDir, "data", folder);
+    const names = (await readdir(sourceFolder)).filter((entry) => entry.endsWith(".json")).sort();
+    if (names.length === 0) throw new Error(`wiki/data/${folder} is empty`);
+    for (const name of names) {
+      const text = (await readFile(path.join(sourceFolder, name), "utf8")).replace(/\r\n/g, "\n");
+      JSON.parse(text);
+      records.push({
+        source: `wiki/data/${folder}/${name}`, target: `${API_OUT}/${folder}/${name}`,
+        bytes: Buffer.byteLength(text, "utf8"), sha256: sha256(text),
+      });
+      writes.push({ file: path.join(API_OUT, folder, name), text });
+    }
+  }
 
   // Published alongside its guide: exact typed TweakDB extraction, not a
   // hand-maintained list or a claim that every appearance has been tested.
@@ -248,10 +300,15 @@ async function main() {
       throw new Error(`${drift} vendored file(s) differ from the wiki — run \`npm run sync:wiki\``);
     }
     console.log(`up to date: ${manifest.guides} guides, ${manifest.apiEntries} API entries`);
+    for (const [name, owner] of APP_OWNED_GUIDES) {
+      console.log(`  site-owned, not compared: ${name} — ${owner}`);
+    }
     return;
   }
 
-  // Drop guides that were removed upstream so deletions propagate.
+  // Drop guides that were removed upstream so deletions propagate. A
+  // site-owned guide is kept: it is not written by this sync, but it is also
+  // not stale.
   if (existsSync(DOCS_OUT)) {
     const keep = new Set(markdownFiles);
     for (const entry of await readdir(DOCS_OUT, { withFileTypes: true })) {
@@ -266,6 +323,7 @@ async function main() {
   await mkdir(API_OUT, { recursive: true });
   await mkdir(path.dirname(VEHICLE_CATALOGUE_OUT), { recursive: true });
   for (const write of writes) {
+    await mkdir(path.dirname(write.file), { recursive: true });
     await writeFile(write.file, write.text, "utf8");
   }
   await writeFile(
@@ -277,6 +335,9 @@ async function main() {
   console.log(`synced ${manifest.guides} guides and ${manifest.apiEntries} API entries`);
   for (const [name, reason] of EXCLUDED_GUIDES) {
     console.log(`  held back: ${name} — ${reason}`);
+  }
+  for (const [name, owner] of APP_OWNED_GUIDES) {
+    console.log(`  site-owned, left untouched: ${name} — ${owner}`);
   }
   console.log(`  from ${sourceDir}`);
   const totalKb = (

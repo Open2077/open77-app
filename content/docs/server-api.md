@@ -2325,6 +2325,12 @@ the security/bandwidth model.
 
 `Open77.world.setPopulation` requires `world.population`; `getPopulation` is ungated.
 
+**A bucket nobody has configured is empty** -- no crowd, no traffic, no police -- which is what
+every client applies at world entry on its own. Vanilla streets are an explicit choice: set the
+densities, or `bucket.population <bucket> on` from the console. (Until 2026-09-15 the server's
+unconfigured default read as vanilla; replicated, it made clients spawn traffic that the vanilla
+vehicle sanitizer despawned a second later -- cars popping in, hitting players, vanishing.)
+
 | Function | Signature | Purpose |
 |---|---|---|
 | `Open77.world.setPopulation` | `(bucket, { crowd?, traffic?, police? })` | Ambient density for one routing bucket, replicated to every client in it. |

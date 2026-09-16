@@ -6,7 +6,8 @@ own equipment: Gorilla Arms (slot `arms`, profile `gorilla_arms`) and double-jum
 `self_ice`, `purge`) are installed through the same framework. You define the grades and
 decide who gets an implant and at what price; the server owns the transaction, the
 record and the combat rules. Dash and Ground Slam are session abilities rather than
-implants and have their own pages: [Dash / Air Dash](dash.md), [Ground Slam](ground-slam.md).
+implants and have their own pages: [Dash / Air Dash](dash.md), [Ground Slam](ground-slam.md),
+[Overdrive](reflex-overdrive.md).
 
 ## Minimal example
 
@@ -189,7 +190,8 @@ and 25 for a removal, from an in-memory balance of 500 that resets with the reso
 
 `open77_cyberware_lab` (`auto_start false`) is an open test panel: `/cyberlab` opens it on
 your own character, `/cyberlab ui <player>` on somebody else's; pick Gorilla Arms or
-Double Jump, a grade, and Install or Remove. The same controls exist as commands:
+Double Jump, a grade, and Install or Remove, or grant Dash, Ground Slam or Overdrive from
+their cards further down. The same controls exist as commands:
 `cyberlab installlegs <player> training <operation-id>`, `cyberlab removelegs <player>
 <operation-id>`, `cyberlab state <player>`. Add it to `resources.load` and run
 `ensure open77_cyberware_lab`; after editing its manifest run `refresh` first.

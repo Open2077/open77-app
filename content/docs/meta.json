@@ -43,6 +43,14 @@
           "nav": "The launcher",
           "title": "The OPEN//77 launcher",
           "description": "The player's guide to the OPEN//77 launcher: installing it, the SmartScreen warning on an unsigned executable and what it actually means, signing in, how it verifies your game build, the mod menu and everything it refuses to do silently, joining a world, direct-connect links, how it updates itself, and where its log is."
+        },
+        {
+          "slug": "agents",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Build with an AI agent",
+          "title": "Build resources with an AI agent",
+          "description": "Install the OPEN//77 Devkit MCP in one line and give Claude Code, Codex, Cursor or VS Code every Lua native, permission, event and game-data name, pinned to the server build you run."
         }
       ]
     },
@@ -155,6 +163,12 @@
           "kind": "guide",
           "nav": "Official resource exports",
           "description": "Every client export published by the official OPEN//77 resource packages, with signatures per package and how to call them safely across resources."
+        },
+        {
+          "slug": "lua-modules",
+          "kind": "guide",
+          "nav": "Lua modules and require",
+          "description": "Local modules, published dependency libraries and `require`: the per-resource cache, the permissions a module runs under, what reload does to it, and how a module differs from an export."
         },
         {
           "slug": "callbacks",
@@ -475,6 +489,12 @@
           "kind": "guide",
           "nav": "Proximity zones",
           "description": "The open77_zones service: enter and exit events with hysteresis, the definition reference, the polling model and quotas, and why every containment rule must still be re-derived on the server."
+        },
+        {
+          "slug": "polyzone",
+          "kind": "guide",
+          "nav": "PolyZone",
+          "description": "Polygons, boxes, circles and spheres, entity zones and groups: containment queries, entry and exit callbacks, and the in-game zone editor with native debug drawing."
         },
         {
           "slug": "notifications",
