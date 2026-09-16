@@ -21,6 +21,12 @@ chat sends `/x` to the server — and `RegisterKeyMapping` takes a **callback**,
 
 ## Rays
 
+For moving entity bounds/head transforms, see
+[`Open77.world.entityGeometry`](polyzone.md#new-engine-api-and-lifecycle).
+The [PolyZone package](polyzone.md) builds polygon, box, circle and entity-zone
+queries on top of these Open77 APIs; `Open77.debugDraw` provides resource-owned
+native debug wireframes and walls.
+
 `Open77.world.raycast(from, to, options?)` traces the segment and returns the nearest blocking
 surface. `Open77.camera.aimRay(maxDistance?, options?)` is the same trace from the camera along its
 forward vector, which is what "put it where I am looking" needs. `Open77.world.groundZ(x, y, fromZ?)`
@@ -376,6 +382,13 @@ only reads it.
 
 `applied` is worth reading. A policy can arrive and be refused by the engine, and a resource
 comparing its own expectations against the street needs to see that rather than infer it.
+
+The policy is also what the client's own clean-up obeys. While a session is active the client
+removes vanilla bodies it does not own -- through the vehicle spawn policy and through the identity
+sanitizer -- and both leave a kind the policy allows alone: pedestrians when `crowd > 0`, vehicles
+when `traffic > 0`. Those bodies are scenery; `nearby` labels them `populationNpc` and
+`trafficVehicle` so a resource can tell them from replicated ones. (Client 65 to 67 swept allowed
+traffic anyway, half a second after it spawned; client 68 keeps it.)
 
 | Reason | Meaning |
 |---|---|
