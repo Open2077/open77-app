@@ -212,7 +212,13 @@ async function main() {
   // permissions, open77:* events and the published-build table that gives
   // every card its `since`. Generated in base by wiki/tools; vendored verbatim
   // so the index builder in open77-devkit needs only this public content.
-  for (const name of ["permissions.json", "events.json", "releases.json"]) {
+  // A base checkout that predates the companion catalogues (or a branch without
+  // them) keeps the vendored copies: the sync warns instead of failing, so
+  // verify:content on main does not depend on which base branch is checked out.
+  const companionsDir = path.join(sourceDir, "data");
+  const hasCompanions = existsSync(path.join(companionsDir, "permissions.json"));
+  if (!hasCompanions) console.warn(`  companion catalogues absent in ${companionsDir}; keeping the vendored content/api copies`);
+  for (const name of hasCompanions ? ["permissions.json", "events.json", "releases.json"] : []) {
     const text = (await readFile(path.join(sourceDir, "data", name), "utf8")).replace(/\r\n/g, "\n");
     const parsed = JSON.parse(text);
     const key = name.replace(".json", "");
@@ -229,7 +235,7 @@ async function main() {
   // The slim game-data catalogues (names and record ids the server itself
   // answers Open77.data.* from) and the two schemas a resource author writes
   // against. Whole directories, vendored file by file.
-  for (const folder of ["catalogues", "schemas"]) {
+  for (const folder of hasCompanions ? ["catalogues", "schemas"] : []) {
     const sourceFolder = path.join(sourceDir, "data", folder);
     const names = (await readdir(sourceFolder)).filter((entry) => entry.endsWith(".json")).sort();
     if (names.length === 0) throw new Error(`wiki/data/${folder} is empty`);
