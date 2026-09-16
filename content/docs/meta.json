@@ -355,6 +355,13 @@
           "description": "A native ground or mid-air slam as a session grant: define, grant and revoke, the key the player presses, the damage and radius options, impact events and the limits."
         },
         {
+          "slug": "ability-activation-leases",
+          "kind": "guide",
+          "nav": "Activation leases",
+          "title": "Ability activation leases",
+          "description": "Why an ability activates the moment the key goes down: the server hands each player an expiring budget of activations, the client spends from it, and the server checks afterwards. Nothing to configure; what changes is when the waiting happens."
+        },
+        {
           "slug": "reflex-overdrive",
           "kind": "guide",
           "nav": "Overdrive",

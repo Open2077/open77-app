@@ -108,7 +108,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "AllowAim",
   "route_id": "AllowAim"
  },
@@ -139,7 +139,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "AllowCrouch",
   "route_id": "AllowCrouch"
  },
@@ -170,7 +170,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "AllowDodge",
   "route_id": "AllowDodge"
  },
@@ -201,7 +201,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "AllowInteraction",
   "route_id": "AllowInteraction"
  },
@@ -232,7 +232,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "AllowJump",
   "route_id": "AllowJump"
  },
@@ -263,7 +263,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "AllowRunning",
   "route_id": "AllowRunning"
  },
@@ -294,7 +294,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "AllowShoot",
   "route_id": "AllowShoot"
  },
@@ -325,7 +325,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "AllowWeapons",
   "route_id": "AllowWeapons"
  },
@@ -473,7 +473,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "DestroySound",
   "route_id": "DestroySound"
  },
@@ -605,7 +605,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "FreezePosition",
   "route_id": "FreezePosition"
  },
@@ -636,7 +636,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "FreezeRotation",
   "route_id": "FreezeRotation"
  },
@@ -876,7 +876,7 @@
    "permission_denied:audio.play",
    "sound_not_found"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "GetSoundState",
   "route_id": "GetSoundState"
  },
@@ -955,7 +955,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerAiming",
   "route_id": "IsPlayerAiming"
  },
@@ -990,7 +990,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerCrouching",
   "route_id": "IsPlayerCrouching"
  },
@@ -1025,7 +1025,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerDiving",
   "route_id": "IsPlayerDiving"
  },
@@ -1060,7 +1060,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerDriver",
   "route_id": "IsPlayerDriver"
  },
@@ -1095,7 +1095,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerFalling",
   "route_id": "IsPlayerFalling"
  },
@@ -1130,7 +1130,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerGrounded",
   "route_id": "IsPlayerGrounded"
  },
@@ -1165,7 +1165,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerInVehicle",
   "route_id": "IsPlayerInVehicle"
  },
@@ -1200,7 +1200,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerJumping",
   "route_id": "IsPlayerJumping"
  },
@@ -1235,7 +1235,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerPassenger",
   "route_id": "IsPlayerPassenger"
  },
@@ -1270,7 +1270,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerReloading",
   "route_id": "IsPlayerReloading"
  },
@@ -1305,7 +1305,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerShooting",
   "route_id": "IsPlayerShooting"
  },
@@ -1340,7 +1340,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerSliding",
   "route_id": "IsPlayerSliding"
  },
@@ -1375,7 +1375,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerSprinting",
   "route_id": "IsPlayerSprinting"
  },
@@ -1410,7 +1410,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerSwimming",
   "route_id": "IsPlayerSwimming"
  },
@@ -1445,7 +1445,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "IsPlayerVaulting",
   "route_id": "IsPlayerVaulting"
  },
@@ -1513,7 +1513,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "PauseSound",
   "route_id": "PauseSound"
  },
@@ -1557,7 +1557,7 @@
    "network_audio_requires_server",
    "permission_denied:audio.play"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Play2DSound",
   "route_id": "Play2DSound"
  },
@@ -1607,7 +1607,7 @@
    "network_audio_requires_server",
    "permission_denied:audio.play"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Play3DSound",
   "route_id": "Play3DSound"
  },
@@ -1638,7 +1638,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "PlaySound",
   "route_id": "PlaySound"
  },
@@ -1917,7 +1917,7 @@
    "world.query"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Screen2DPointTo3DSpace",
   "route_id": "Screen2DPointTo3DSpace"
  },
@@ -1954,7 +1954,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "SeekSound",
   "route_id": "SeekSound"
  },
@@ -2027,7 +2027,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "SetSoundPosition",
   "route_id": "SetSoundPosition"
  },
@@ -2064,7 +2064,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "SetSoundVolume",
   "route_id": "SetSoundVolume"
  },
@@ -2163,7 +2163,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "StopSound",
   "route_id": "StopSound"
  },
@@ -3047,7 +3047,7 @@
    "invalid_sequence",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.approveSlam",
   "route_id": "Open77.abilities.approveSlam"
  },
@@ -3098,7 +3098,7 @@
    "invalid_sequence",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.cancelSlam",
   "route_id": "Open77.abilities.cancelSlam"
  },
@@ -3135,7 +3135,7 @@
    "resource_not_running",
    "server_managed_required"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.configureSlam",
   "route_id": "Open77.abilities.configureSlam"
  },
@@ -3203,7 +3203,7 @@
    "permission_denied:player.abilities.project",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.presentSlam",
   "route_id": "Open77.abilities.presentSlam"
  },
@@ -3235,7 +3235,7 @@
    "invalid_sequence",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.releaseSlam",
   "route_id": "Open77.abilities.releaseSlam"
  },
@@ -3274,7 +3274,7 @@
    "invalid_sequence",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.requestSlam",
   "route_id": "Open77.abilities.requestSlam"
  },
@@ -3304,7 +3304,7 @@
    "invalid_sequence",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.slamActivity",
   "route_id": "Open77.abilities.slamActivity"
  },
@@ -3341,7 +3341,7 @@
    "invalid_sequence",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.slamState",
   "route_id": "Open77.abilities.slamState"
  },
@@ -4258,7 +4258,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.destroy",
   "route_id": "Open77.audio.destroy"
  },
@@ -4292,7 +4292,7 @@
    "permission_denied:audio.play",
    "sound_not_found"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.getState",
   "route_id": "Open77.audio.getState"
  },
@@ -4323,7 +4323,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.pause",
   "route_id": "Open77.audio.pause"
  },
@@ -4354,7 +4354,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.play",
   "route_id": "Open77.audio.play"
  },
@@ -4398,7 +4398,7 @@
    "network_audio_requires_server",
    "permission_denied:audio.play"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.play2D",
   "route_id": "Open77.audio.play2D"
  },
@@ -4448,7 +4448,7 @@
    "network_audio_requires_server",
    "permission_denied:audio.play"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.play3D",
   "route_id": "Open77.audio.play3D"
  },
@@ -4485,7 +4485,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.seek",
   "route_id": "Open77.audio.seek"
  },
@@ -4522,7 +4522,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.setPosition",
   "route_id": "Open77.audio.setPosition"
  },
@@ -4559,7 +4559,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.setVolume",
   "route_id": "Open77.audio.setVolume"
  },
@@ -4590,7 +4590,7 @@
    "audio.play"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.stop",
   "route_id": "Open77.audio.stop"
  },
@@ -6078,7 +6078,7 @@
    "world.query"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.camera.screenRay",
   "route_id": "Open77.camera.screenRay"
  },
@@ -6127,7 +6127,7 @@
    "world.query"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.camera.screenRaycast",
   "route_id": "Open77.camera.screenRaycast"
  },
@@ -7560,7 +7560,7 @@
    "permission_denied:player.cyberware.project",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.approveLegJump",
   "route_id": "Open77.cyberware.approveLegJump"
  },
@@ -7588,7 +7588,7 @@
    "cyberware_backend_unavailable",
    "permission_denied:player.cyberware.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.attackState",
   "route_id": "Open77.cyberware.attackState"
  },
@@ -7614,7 +7614,7 @@
    "player.cyberware.read"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.captureArms",
   "route_id": "Open77.cyberware.captureArms"
  },
@@ -7669,7 +7669,7 @@
    "permission_denied:player.cyberware.project",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.configureLegs",
   "route_id": "Open77.cyberware.configureLegs"
  },
@@ -7714,7 +7714,7 @@
    "permission_denied:player.cyberware.project",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.configureLocal",
   "route_id": "Open77.cyberware.configureLocal"
  },
@@ -7769,7 +7769,7 @@
    "permission_denied:player.cyberware.project",
    "resource_not_running"
   ],
-  "since": null,
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.cyberware.grantLegLease",
   "route_id": "Open77.cyberware.grantLegLease"
  },
@@ -7802,7 +7802,7 @@
    "invalid_report",
    "permission_denied:player.cyberware.project"
   ],
-  "since": null,
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.cyberware.legReportSent",
   "route_id": "Open77.cyberware.legReportSent"
  },
@@ -7830,7 +7830,7 @@
    "cyberware_backend_unavailable",
    "permission_denied:player.cyberware.read"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.legsActivity",
   "route_id": "Open77.cyberware.legsActivity"
  },
@@ -7866,7 +7866,7 @@
    "invalid_request",
    "permission_denied:player.cyberware.project"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.legsState",
   "route_id": "Open77.cyberware.legsState"
  },
@@ -7902,7 +7902,7 @@
    "invalid_request",
    "permission_denied:player.cyberware.project"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.localState",
   "route_id": "Open77.cyberware.localState"
  },
@@ -7940,7 +7940,7 @@
    "player.cyberware.project"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.presentArms",
   "route_id": "Open77.cyberware.presentArms"
  },
@@ -7977,7 +7977,7 @@
    "permission_denied:player.cyberware.project",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.projectLegs",
   "route_id": "Open77.cyberware.projectLegs"
  },
@@ -8014,7 +8014,7 @@
    "permission_denied:player.cyberware.project",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.projectLocal",
   "route_id": "Open77.cyberware.projectLocal"
  },
@@ -8059,7 +8059,7 @@
    "invalid_lease",
    "permission_denied:player.cyberware.project"
   ],
-  "since": null,
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.cyberware.refreshLegLease",
   "route_id": "Open77.cyberware.refreshLegLease"
  },
@@ -8084,7 +8084,7 @@
    "cyberware_backend_unavailable",
    "permission_denied:player.cyberware.project"
   ],
-  "since": null,
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.cyberware.releaseLegLease",
   "route_id": "Open77.cyberware.releaseLegLease"
  },
@@ -8113,7 +8113,7 @@
    "permission_denied:player.cyberware.project",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.releaseLegs",
   "route_id": "Open77.cyberware.releaseLegs"
  },
@@ -8162,7 +8162,7 @@
    "permission_denied:player.dash.project",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.dash.call",
   "route_id": "Open77.dash.call"
  },
@@ -8463,7 +8463,7 @@
   "source_line": 21043,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": null,
   "qualified": "Open77.debugDraw.clear",
   "route_id": "Open77.debugDraw.clear"
  },
@@ -8511,7 +8511,7 @@
    "invalid_debug_tag",
    "permission_denied:world.debug"
   ],
-  "since": "2.31.13+op77.67",
+  "since": null,
   "qualified": "Open77.debugDraw.set",
   "route_id": "Open77.debugDraw.set"
  },
@@ -10376,7 +10376,7 @@
   "reasons": [
    "permission_denied:player.hacking.project"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.clear",
   "route_id": "Open77.hacking.clear"
  },
@@ -10411,7 +10411,7 @@
    "invalid_kind",
    "permission_denied:player.hacking.status"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.62",
   "qualified": "Open77.hacking.clearNativeStatus",
   "route_id": "Open77.hacking.clearNativeStatus"
  },
@@ -10455,7 +10455,7 @@
    "permission_denied:player.hacking.status",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.62",
   "qualified": "Open77.hacking.nativeStatus",
   "route_id": "Open77.hacking.nativeStatus"
  },
@@ -10482,7 +10482,7 @@
    "hacking_status_backend_unavailable",
    "permission_denied:player.hacking.status"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.62",
   "qualified": "Open77.hacking.nativeStatusState",
   "route_id": "Open77.hacking.nativeStatusState"
  },
@@ -10516,7 +10516,7 @@
    "invalid_target_or_backend",
    "permission_denied:world.query"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.observe",
   "route_id": "Open77.hacking.observe"
  },
@@ -10552,7 +10552,7 @@
    "presentation_refused",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.present",
   "route_id": "Open77.hacking.present"
  },
@@ -11037,7 +11037,7 @@
    "input.actions"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.input.cursor",
   "route_id": "Open77.input.cursor"
  },
@@ -12709,7 +12709,7 @@
    "permission_denied:player.motion.project",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.motion.knockdown",
   "route_id": "Open77.motion.knockdown"
  },
@@ -12745,7 +12745,7 @@
    "motion_backend_unavailable",
    "permission_denied:player.motion.project"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.motion.state",
   "route_id": "Open77.motion.state"
  },
@@ -12781,7 +12781,7 @@
    "motion_backend_unavailable",
    "permission_denied:player.motion.project"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.motion.stop",
   "route_id": "Open77.motion.stop"
  },
@@ -12825,7 +12825,7 @@
    "permission_denied:player.movement.lock",
    "resource_not_running"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.62",
   "qualified": "Open77.movement.lock",
   "route_id": "Open77.movement.lock"
  },
@@ -12852,7 +12852,7 @@
    "movement_backend_unavailable",
    "permission_denied:player.movement.lock"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.62",
   "qualified": "Open77.movement.lockState",
   "route_id": "Open77.movement.lockState"
  },
@@ -12879,7 +12879,7 @@
    "movement_backend_unavailable",
    "permission_denied:player.movement.lock"
   ],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.62",
   "qualified": "Open77.movement.unlock",
   "route_id": "Open77.movement.unlock"
  },
@@ -13997,7 +13997,7 @@
   "reasons": [
    "open77_player_interactions"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.accept",
   "route_id": "Open77.playerInteractions.accept"
  },
@@ -14028,7 +14028,7 @@
   "reasons": [
    "open77_player_interactions"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.cancel",
   "route_id": "Open77.playerInteractions.cancel"
  },
@@ -14059,7 +14059,7 @@
   "reasons": [
    "open77_player_interactions"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.current",
   "route_id": "Open77.playerInteractions.current"
  },
@@ -14090,7 +14090,7 @@
   "reasons": [
    "open77_player_interactions"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.decline",
   "route_id": "Open77.playerInteractions.decline"
  },
@@ -14121,7 +14121,7 @@
   "reasons": [
    "open77_player_interactions"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.get",
   "route_id": "Open77.playerInteractions.get"
  },
@@ -14152,7 +14152,7 @@
   "reasons": [
    "open77_player_interactions"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.isReserved",
   "route_id": "Open77.playerInteractions.isReserved"
  },
@@ -14176,7 +14176,7 @@
   "reasons": [
    "open77_player_interactions"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.list",
   "route_id": "Open77.playerInteractions.list"
  },
@@ -14213,7 +14213,7 @@
   "reasons": [
    "open77_player_interactions"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.respond",
   "route_id": "Open77.playerInteractions.respond"
  },
@@ -14244,7 +14244,7 @@
   "reasons": [
    "open77_player_interactions"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.result",
   "route_id": "Open77.playerInteractions.result"
  },
@@ -14352,7 +14352,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.allowAim",
   "route_id": "Open77.players.allowAim"
  },
@@ -14383,7 +14383,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.allowCrouch",
   "route_id": "Open77.players.allowCrouch"
  },
@@ -14414,7 +14414,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.allowDodge",
   "route_id": "Open77.players.allowDodge"
  },
@@ -14445,7 +14445,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.allowInteraction",
   "route_id": "Open77.players.allowInteraction"
  },
@@ -14476,7 +14476,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.allowJump",
   "route_id": "Open77.players.allowJump"
  },
@@ -14507,7 +14507,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.allowRunning",
   "route_id": "Open77.players.allowRunning"
  },
@@ -14538,7 +14538,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.allowShoot",
   "route_id": "Open77.players.allowShoot"
  },
@@ -14569,7 +14569,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.allowWeapons",
   "route_id": "Open77.players.allowWeapons"
  },
@@ -14666,7 +14666,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.freezePosition",
   "route_id": "Open77.players.freezePosition"
  },
@@ -14697,7 +14697,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.freezeRotation",
   "route_id": "Open77.players.freezeRotation"
  },
@@ -14757,7 +14757,7 @@
    "game_unavailable_on_this_host",
    "permission_denied:players.controls"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.getControlMask",
   "route_id": "Open77.players.getControlMask"
  },
@@ -14819,7 +14819,7 @@
    "players.holocall.read"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.getHoloCallEyes",
   "route_id": "Open77.players.getHoloCallEyes"
  },
@@ -14940,7 +14940,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isAiming",
   "route_id": "Open77.players.isAiming"
  },
@@ -14975,7 +14975,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isCrouching",
   "route_id": "Open77.players.isCrouching"
  },
@@ -15041,7 +15041,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isDiving",
   "route_id": "Open77.players.isDiving"
  },
@@ -15076,7 +15076,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isDriver",
   "route_id": "Open77.players.isDriver"
  },
@@ -15111,7 +15111,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isFalling",
   "route_id": "Open77.players.isFalling"
  },
@@ -15146,7 +15146,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isGrounded",
   "route_id": "Open77.players.isGrounded"
  },
@@ -15181,7 +15181,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isInVehicle",
   "route_id": "Open77.players.isInVehicle"
  },
@@ -15216,7 +15216,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isJumping",
   "route_id": "Open77.players.isJumping"
  },
@@ -15251,7 +15251,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isPassenger",
   "route_id": "Open77.players.isPassenger"
  },
@@ -15286,7 +15286,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isReloading",
   "route_id": "Open77.players.isReloading"
  },
@@ -15321,7 +15321,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isShooting",
   "route_id": "Open77.players.isShooting"
  },
@@ -15356,7 +15356,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isSliding",
   "route_id": "Open77.players.isSliding"
  },
@@ -15391,7 +15391,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isSprinting",
   "route_id": "Open77.players.isSprinting"
  },
@@ -15426,7 +15426,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isSwimming",
   "route_id": "Open77.players.isSwimming"
  },
@@ -15461,7 +15461,7 @@
    "invalid_player",
    "permission_denied:players.read"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.isVaulting",
   "route_id": "Open77.players.isVaulting"
  },
@@ -15573,7 +15573,7 @@
    "players.controls"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.resetControls",
   "route_id": "Open77.players.resetControls"
  },
@@ -15734,7 +15734,7 @@
    "world.props"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.props.attach",
   "route_id": "Open77.props.attach"
  },
@@ -15771,7 +15771,7 @@
    "world.props"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.props.bones",
   "route_id": "Open77.props.bones"
  },
@@ -15858,7 +15858,7 @@
    "world.props"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.props.detach",
   "route_id": "Open77.props.detach"
  },
@@ -16269,7 +16269,7 @@
    "permission_denied:player.reflex.overdrive",
    "reflex_backend_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13+op77.63",
   "qualified": "Open77.reflex.clear",
   "route_id": "Open77.reflex.clear"
  },
@@ -16313,7 +16313,7 @@
    "reflex_backend_unavailable",
    "resource_not_running"
   ],
-  "since": null,
+  "since": "2.31.13+op77.63",
   "qualified": "Open77.reflex.overdrive",
   "route_id": "Open77.reflex.overdrive"
  },
@@ -16340,7 +16340,7 @@
    "permission_denied:player.reflex.overdrive",
    "reflex_backend_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13+op77.63",
   "qualified": "Open77.reflex.state",
   "route_id": "Open77.reflex.state"
  },
@@ -19855,7 +19855,7 @@
    "world.effects"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.vfx.attach",
   "route_id": "Open77.vfx.attach"
  },
@@ -20036,7 +20036,7 @@
    "world.effects"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.vfx.resolveTarget",
   "route_id": "Open77.vfx.resolveTarget"
  },
@@ -20266,7 +20266,7 @@
    "voice.client"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.voice.getLipSyncStatus",
   "route_id": "Open77.voice.getLipSyncStatus"
  },
@@ -20297,7 +20297,7 @@
    "voice.client"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.voice.getPlayerLipSyncState",
   "route_id": "Open77.voice.getPlayerLipSyncState"
  },
@@ -20468,7 +20468,7 @@
    "voice.client"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.voice.setLipSyncEnabled",
   "route_id": "Open77.voice.setLipSyncEnabled"
  },
@@ -20607,7 +20607,7 @@
    "voice.client"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.voice.setPlayerLipSyncEnabled",
   "route_id": "Open77.voice.setPlayerLipSyncEnabled"
  },
@@ -21486,7 +21486,7 @@
    "loaded_mesh_bounds",
    "permission_denied:world.query"
   ],
-  "since": "2.31.13+op77.67",
+  "since": null,
   "qualified": "Open77.world.entityGeometry",
   "route_id": "Open77.world.entityGeometry"
  },
@@ -21935,7 +21935,7 @@
   "source_line": 20177,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "WebUI.Page.hasFocus",
   "route_id": "WebUI.Page.hasFocus"
  },
@@ -22459,7 +22459,7 @@
    "resource_stopping",
    "world_unavailable"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "AttachEffect",
   "route_id": "server:AttachEffect"
  },
@@ -22481,7 +22481,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- BanPlayer is the low-level form of Open77.players.ban (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /ban <id> <days> <reason>: a temporary ban published through the master\nRegisterCommand(\"ban\", function(source, args)\n    local target, days = tonumber(args[1]), tonumber(args[2])\n    if not target or not days then return Open77.chat.send(source, \"Usage: /ban <id> <days> <reason>\") end\n    local reason = table.concat(args, \" \", 3)\n    local ok, err = Open77.players.ban(target, reason, days * 86400)\n    if not ok then Open77.chat.send(source, \"Ban failed: \" .. err) end\nend, true)",
   "inferred": false,
   "source_line": 881,
   "permissions": [
@@ -22551,7 +22551,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- CancelNpcTask is the low-level form of Open77.npcs.tasks.cancel (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- The player paid: the guard stops attacking\nlocal task = Open77.npcs.tasks.attack(guardId, playerId)\nAddEventHandler(\"debt:paid\", function()\n    Open77.npcs.tasks.cancel(guardId, task)\nend)",
   "inferred": false,
   "source_line": 937,
   "permissions": [],
@@ -22590,7 +22590,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- ClearNpcTasks is the low-level form of Open77.npcs.tasks.clear (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Stop everything the NPC was doing\nOpen77.npcs.tasks.clear(npcId)",
   "inferred": false,
   "source_line": 938,
   "permissions": [],
@@ -22610,7 +22610,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- ClearProps is the low-level form of Open77.props.clear (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- The event is over: remove every prop this resource placed\nAddEventHandler(\"event:ended\", function()\n    print(\"removed\", Open77.props.clear(), \"props\")\nend)",
   "inferred": false,
   "source_line": 896,
   "permissions": [
@@ -22783,7 +22783,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- CreateLootDrop is the low-level form of Open77.loot.create (wrapped by);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A dead player drops 200 eddies where they fell, gone after five minutes\nAddEventHandler(\"onPlayerLifeStateChanged\", function(playerId, revision, phase)\n    if phase ~= \"dead\" then return end\n    local pos = Open77.players.position(playerId)\n    if pos then\n        Open77.loot.create({ item = \"Items.money\", quantity = 200, position = pos, label = \"Eddies\", ttlMs = 300000 })\n    end\nend)",
   "inferred": false,
   "source_line": 906,
   "permissions": [
@@ -23097,7 +23097,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- CreateVehicle is the low-level form of Open77.vehicles.create (wrapped by);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /car: spawn a Quadra a few metres in front of the caller and put them in the driver seat\nRegisterCommand(\"car\", function(source)\n    local me = Open77.players.get(source)\n    if not me or not me.position then return end\n    local id, reason = Open77.vehicles.create({\n        record = \"Vehicle.v_sport2_quadra_turbo_r\",\n        position = { x = me.position.x + 4.0, y = me.position.y, z = me.position.z },\n        yaw = me.heading,\n        ttlMs = 30 * 60 * 1000, -- gone after 30 minutes if nobody removes it\n    })\n    if not id then return Open77.chat.send(source, \"Spawn failed: \" .. reason) end\n    Open77.vehicles.warpPlayerIntoVehicle(source, id, Open77.vehicles.seats.driver)\nend, false)",
   "inferred": false,
   "source_line": 911,
   "permissions": [
@@ -23167,7 +23167,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- DamagePlayer is the low-level form of Open77.players.damage (wrapped by);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Fall damage reported by a zone trigger: 20 points, no attacker\nRegisterNetEvent(\"parkour:badLanding\", function()\n    Open77.players.damage(source, 20, { cause = \"fall\" })\nend)",
   "inferred": false,
   "source_line": 985,
   "permissions": [
@@ -23235,7 +23235,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "DestroySound",
   "route_id": "server:DestroySound"
  },
@@ -23285,7 +23285,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- DropPlayer is the low-level form of Open77.players.disconnect (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /kick <id> <reason>\nRegisterCommand(\"kick\", function(source, args)\n    local target = tonumber(args[1])\n    if not target then return end\n    local reason = table.concat(args, \" \", 2)\n    Open77.players.disconnect(target, reason ~= \"\" and reason or \"Kicked by an admin.\")\nend, true)",
   "inferred": false,
   "source_line": 880,
   "permissions": [
@@ -23460,7 +23460,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- FadePlayerScreen is the low-level form of Open77.players.fade (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Bracket a teleport with a fade so the player never sees the streaming\nCreateThread(function()\n    Open77.players.fade(playerId, true, 400)\n    Wait(400)\n    Open77.players.teleport(playerId, { x = -1442.2, y = 127.4, z = 18.0 }, { fade = false })\n    Open77.players.fade(playerId, false, 400)\nend)",
   "inferred": false,
   "source_line": 982,
   "permissions": [
@@ -23482,7 +23482,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- ForcePlayerOutOfVehicle is the low-level form of Open77.vehicles.forcePlayerOutOfVehicle (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Police stop: pull the driver out of whatever they are driving\nRegisterCommand(\"pullout\", function(source, args)\n    local target = tonumber(args[1])\n    if not target then return end\n    local ok, reason = Open77.vehicles.forcePlayerOutOfVehicle(target)\n    if not ok then Open77.chat.send(source, \"Could not eject: \" .. reason) end\nend, true)",
   "inferred": false,
   "source_line": 926,
   "permissions": [
@@ -23629,7 +23629,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetCurrentResourceName is the low-level form of Open77.resource.name (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Prefix log lines with the resource name\nprint((\"[%s] started\"):format(Open77.resource.name()))",
   "inferred": false,
   "source_line": 829,
   "permissions": [],
@@ -23649,7 +23649,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetEffect is the low-level form of Open77.effects.get (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Is the campfire still burning?\nlocal fire = Open77.effects.get(campfireId)\nif not fire then relight() end",
   "inferred": false,
   "source_line": 901,
   "permissions": [],
@@ -23669,7 +23669,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetEffects is the low-level form of Open77.effects.all (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Count the fires still burning in the arena instance\nlocal burning = 0\nfor _, effect in ipairs(Open77.effects.all(ARENA_BUCKET)) do\n    if effect.effect:sub(1, 5) == \"fire.\" then burning = burning + 1 end\nend",
   "inferred": false,
   "source_line": 902,
   "permissions": [],
@@ -23696,7 +23696,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetElevator is the low-level form of Open77.elevators.get (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Only accept a new request when the lift is idle\nlocal lift = Open77.elevators.get(elevatorId)\nif lift and lift.phase == \"idle\" then Open77.elevators.goTo(elevatorId, 7) end",
   "inferred": false,
   "source_line": 958,
   "permissions": [],
@@ -23723,7 +23723,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetElevators is the low-level form of Open77.elevators.all (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Send every lift back to the ground floor at server start\nfor _, lift in ipairs(Open77.elevators.all()) do\n    Open77.elevators.goTo(lift.id, 0)\nend",
   "inferred": false,
   "source_line": 959,
   "permissions": [],
@@ -23750,7 +23750,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetEntityRoutingBucket is the low-level form of Open77.routingBuckets.getEntity (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Which instance is this vehicle in?\nprint(\"vehicle bucket\", Open77.routingBuckets.getEntity(vehicleEntityId))",
   "inferred": false,
   "source_line": 848,
   "permissions": [],
@@ -23868,7 +23868,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetLootDrop is the low-level form of Open77.loot.get (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Is the drop still there before paying out?\nlocal drop = Open77.loot.get(lootId)\nif not drop then print(\"already picked up\") end",
   "inferred": false,
   "source_line": 909,
   "permissions": [],
@@ -23895,7 +23895,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetLootDrops is the low-level form of Open77.loot.all (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Count the drops still lying in the arena\nprint(#Open77.loot.all(ARENA_BUCKET), \"drops on the ground\")",
   "inferred": false,
   "source_line": 910,
   "permissions": [],
@@ -23949,7 +23949,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetNpcAttitude is the low-level form of Open77.npcs.getAttitude (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Debug: print how the guard regards everyone\nlocal attitude = Open77.npcs.getAttitude(guardId)\nif attitude then print(\"default attitude:\", attitude.default) end",
   "inferred": false,
   "source_line": 946,
   "permissions": [],
@@ -23982,7 +23982,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetNpcRelationship is the low-level form of Open77.npcs.getRelationship (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Check before declaring: are the two gangs already at war?\nif Open77.npcs.getRelationship(\"maelstrom\", \"valentinos\") ~= \"hostile\" then\n    Open77.npcs.setRelationship(\"maelstrom\", \"valentinos\", \"hostile\")\nend",
   "inferred": false,
   "source_line": 949,
   "permissions": [],
@@ -24009,7 +24009,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetNpcTarget is the low-level form of Open77.npcs.target (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Is the guard fighting a player right now?\nlocal target = Open77.npcs.target(guardId)\nif target and target.kind == \"player\" then\n    Open77.chat.send(target.id, \"The guard is after you!\")\nend",
   "inferred": false,
   "source_line": 950,
   "permissions": [],
@@ -24042,7 +24042,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetNpcTask is the low-level form of Open77.npcs.tasks.get (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Wait until the walk is finished\nCreateThread(function()\n    local task = Open77.npcs.tasks.moveTo(npcId, door)\n    while Open77.npcs.tasks.get(npcId, task) do Wait(250) end\n    print(\"the NPC has arrived (or gave up)\")\nend)",
   "inferred": false,
   "source_line": 939,
   "permissions": [],
@@ -24069,7 +24069,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetNpcTasks is the low-level form of Open77.npcs.tasks.all (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Debug: what is the NPC doing?\nfor _, task in ipairs(Open77.npcs.tasks.all(npcId)) do\n    print(task.id, task.type, task.status)\nend",
   "inferred": false,
   "source_line": 940,
   "permissions": [],
@@ -24089,7 +24089,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetNpcTemplates is the low-level form of Open77.npcs.templates (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Print the legacy alias list once at startup\nfor _, template in ipairs(Open77.npcs.templates()) do\n    print(template.name, template.record)\nend",
   "inferred": false,
   "source_line": 944,
   "permissions": [],
@@ -24168,7 +24168,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.PlayerReads.cs",
-  "example": "",
+  "example": "-- GetPlayerDistance is the low-level form of Open77.players.distance (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Handcuffs only work at arm's length\nRegisterCommand(\"cuff\", function(source, args)\n    local target = tonumber(args[1])\n    if not target then return end\n    local metres = Open77.players.distance(source, target)\n    if not metres or metres > 2.0 then\n        return Open77.chat.send(source, \"Get closer.\")\n    end\n    Open77.players.setFrozen(target, true)\nend, false)",
   "inferred": false,
   "source_line": 70,
   "permissions": [],
@@ -24225,7 +24225,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerHealth is the low-level form of Open77.players.getHealth (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /hp <id>: an admin reads a player's health\nRegisterCommand(\"hp\", function(source, args)\n    local hp = Open77.players.getHealth(tonumber(args[1]) or source)\n    if hp then Open77.chat.send(source, (\"Health %d / %d\"):format(hp.health, hp.maxHealth)) end\nend, true)",
   "inferred": false,
   "source_line": 983,
   "permissions": [],
@@ -24245,7 +24245,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerHoloCallEyes is the low-level form of Open77.players.getHoloCallEyes (wrapped by);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Is the player already on a call before starting a new one?\nlocal enabled = Open77.players.getHoloCallEyes(playerId)\nif not enabled then Open77.players.setHoloCallEyes(playerId, true, { durationMs = 30000 }) end",
   "inferred": false,
   "source_line": 835,
   "permissions": [
@@ -24257,7 +24257,7 @@
    "permission_denied:players.holocall.read",
    "player_unavailable"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "GetPlayerHoloCallEyes",
   "route_id": "server:GetPlayerHoloCallEyes"
  },
@@ -24279,7 +24279,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerIdentifier is the low-level form of Open77.players.identifier (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Key the player's money on the durable identifier, never on the session id\nAddEventHandler(\"onPlayerReady\", function(playerId)\n    local key = \"money:\" .. Open77.players.identifier(playerId)\n    local balance = Open77.kvp.get(key, 500)\n    Open77.chat.send(playerId, (\"Welcome back. Balance: %d eddies\"):format(balance))\nend)",
   "inferred": false,
   "source_line": 862,
   "permissions": [],
@@ -24370,7 +24370,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerIdentity is the low-level form of Open77.players.identity (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Look up the account behind a session\nRegisterCommand(\"whois\", function(source, args)\n    local identity = Open77.players.identity(tonumber(args[1]))\n    if not identity then return Open77.chat.send(source, \"No such player.\") end\n    Open77.chat.send(source, (\"%s, account %s, joined %s\"):format(identity.name, identity.userId, identity.joinedAt))\nend, true)",
   "inferred": false,
   "source_line": 883,
   "permissions": [],
@@ -24390,7 +24390,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerLifeState is the low-level form of Open77.players.getLifeState (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Only a living player can accept a job\nRegisterCommand(\"job\", function(source)\n    local life = Open77.players.getLifeState(source)\n    if not life or life.phase ~= \"alive\" then\n        return Open77.chat.send(source, \"Come back when you are on your feet.\")\n    end\n    startJob(source)\nend, false)",
   "inferred": false,
   "source_line": 960,
   "permissions": [],
@@ -24417,7 +24417,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerName is the low-level form of Open77.players.name (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Greet the player by name in chat when they are ready\nAddEventHandler(\"onPlayerReady\", function(playerId)\n    Open77.chat.send(-1, (\"%s joined the city.\"):format(Open77.players.name(playerId)))\nend)",
   "inferred": false,
   "source_line": 861,
   "permissions": [],
@@ -24478,7 +24478,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerPosition is the low-level form of Open77.players.position (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /where: print where a player is standing\nRegisterCommand(\"where\", function(source, args)\n    local pos = Open77.players.position(tonumber(args[1]) or source)\n    if not pos then return Open77.chat.send(source, \"Unknown position.\") end\n    Open77.chat.send(source, (\"%.1f, %.1f, %.1f (bucket %d)\"):format(pos.x, pos.y, pos.z, pos.bucket))\nend, true)",
   "inferred": false,
   "source_line": 863,
   "permissions": [],
@@ -24498,7 +24498,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.PlayerReads.cs",
-  "example": "",
+  "example": "-- GetPlayerRead is the low-level form of Open77.players.get (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\nlocal read = Open77.players.get(playerId)\nif read and read.position and (read.ageMs or 0) < 5000 then\n  -- your freshness threshold, not ours\nend",
   "inferred": false,
   "source_line": 68,
   "permissions": [],
@@ -24529,7 +24529,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerRoutingBucket is the low-level form of Open77.routingBuckets.getPlayer (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Only players in the same bucket can trade\nif Open77.routingBuckets.getPlayer(a) ~= Open77.routingBuckets.getPlayer(b) then\n    return Open77.chat.send(a, \"You are not in the same instance.\")\nend",
   "inferred": false,
   "source_line": 846,
   "permissions": [],
@@ -24556,7 +24556,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerSpectateTarget is the low-level form of Open77.players.spectating (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A spectator cannot be damaged by what they are watching\nlocal watching = Open77.players.spectating(playerId)\nif watching ~= 0 then return end",
   "inferred": false,
   "source_line": 980,
   "permissions": [],
@@ -24583,7 +24583,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerSpectators is the low-level form of Open77.players.spectators (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Tell a streamer how many admins are watching them\nlocal count = #Open77.players.spectators(playerId)\nif count > 0 then\n    Open77.chat.send(playerId, (\"%d admin(s) are spectating you.\"):format(count))\nend",
   "inferred": false,
   "source_line": 981,
   "permissions": [],
@@ -24610,7 +24610,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerStats is the low-level form of Open77.stats.get (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /stats: both pools in one read\nRegisterCommand(\"stats\", function(source)\n    local stats = Open77.stats.get(source)\n    if stats then\n        Open77.chat.send(source, (\"HP %d / %d, stamina %d / %d\"):format(\n            stats.health.value, stats.health.maximum, stats.stamina.value, stats.stamina.maximum))\n    end\nend, false)",
   "inferred": false,
   "source_line": 984,
   "permissions": [],
@@ -24630,7 +24630,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayerVehicleSeat is the low-level form of Open77.vehicles.getPlayerSeat (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Only the driver may pay for fuel\nRegisterCommand(\"refuel\", function(source)\n    local seat = Open77.vehicles.getPlayerSeat(source)\n    if not seat then return Open77.chat.send(source, \"You are not in a vehicle.\") end\n    if seat.seat ~= \"seat_front_left\" then\n        return Open77.chat.send(source, \"Only the driver can refuel.\")\n    end\n    Open77.vehicles.repair(seat.vehicleId, \"mechanical\")\nend, false)",
   "inferred": false,
   "source_line": 928,
   "permissions": [],
@@ -24650,7 +24650,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.Weapons.cs",
-  "example": "",
+  "example": "-- GetPlayerWeapons is the low-level form of Open77.weapons.get (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- The shop refuses a sale to a player who already carries a Lexington (cached view)\nlocal weapons = Open77.weapons.get(source)\nif weapons and weapons.activeRecord == \"Items.Preset_Lexington_Default\" then\n    return Open77.chat.send(source, \"You already have one.\")\nend",
   "inferred": false,
   "source_line": 40,
   "permissions": [],
@@ -24675,7 +24675,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayers is the low-level form of Open77.players.all (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Announce a restart to everyone currently connected\nRegisterCommand(\"announce\", function(source, args)\n    local text = table.concat(args, \" \")\n    for _, playerId in ipairs(Open77.players.all()) do\n        Open77.notifications.send(playerId, { type = \"warning\", message = text })\n    end\nend, true)",
   "inferred": false,
   "source_line": 864,
   "permissions": [],
@@ -24702,7 +24702,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayersInBucket is the low-level form of Open77.players.inBucket (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Start the race only when the lobby instance has at least two players\nlocal racers = Open77.players.inBucket(RACE_BUCKET)\nif #racers >= 2 then\n    startRace(racers)\nend",
   "inferred": false,
   "source_line": 865,
   "permissions": [],
@@ -24724,7 +24724,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.PlayerReads.cs",
-  "example": "",
+  "example": "-- GetPlayersNearby is the low-level form of Open77.players.nearby (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\nfor _, witness in ipairs(Open77.players.nearby(robber, 40)) do\n  Open77.notifications.send(witness.playerId, { text = (\"%.0f m away\"):format(witness.distance) })\nend",
   "inferred": false,
   "source_line": 69,
   "permissions": [],
@@ -24747,7 +24747,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetPlayersPositions is the low-level form of Open77.players.positions (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Count who is inside the event zone, in one pass\nlocal inside = 0\nfor playerId, pos in pairs(Open77.players.positions()) do\n    if #(vector3(pos.x, pos.y, pos.z) - zoneCenter) < zoneRadius then\n        inside = inside + 1\n    end\nend",
   "inferred": false,
   "source_line": 866,
   "permissions": [],
@@ -24767,7 +24767,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetProp is the low-level form of Open77.props.get (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Is the crate still there before paying for its pickup?\nlocal crate = Open77.props.get(crateId)\nif not crate then return Open77.chat.send(source, \"Somebody already took it.\") end",
   "inferred": false,
   "source_line": 894,
   "permissions": [],
@@ -24787,7 +24787,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetProps is the low-level form of Open77.props.all (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Count the props in the event instance\nprint(#Open77.props.all(EVENT_BUCKET), \"props in the event\")",
   "inferred": false,
   "source_line": 895,
   "permissions": [],
@@ -24962,7 +24962,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetResourceState is the low-level form of Open77.resource.state (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Wait for a dependency to be running before using its export\nCreateThread(function()\n    while Open77.resource.state(\"bank\") ~= \"running\" do Wait(500) end\n    print(\"bank is up\")\nend)",
   "inferred": false,
   "source_line": 845,
   "permissions": [],
@@ -24982,7 +24982,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetScreenEffectCatalog is the low-level form of Open77.effects.screenCatalog (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Validate an item's screen effect at startup\nlocal known = {}\nfor _, alias in ipairs(Open77.effects.screenCatalog()) do known[alias] = true end\nassert(known[\"drunk\"], \"this server does not support the drunk effect\")",
   "inferred": false,
   "source_line": 979,
   "permissions": [],
@@ -25018,7 +25018,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "GetSoundState",
   "route_id": "server:GetSoundState"
  },
@@ -25033,7 +25033,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetUnixTime is the low-level form of Open77.time.unix (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A ban that expires in 24 hours\nbans[userId] = { until_ = Open77.time.unix() + 86400 }",
   "inferred": false,
   "source_line": 886,
   "permissions": [],
@@ -25053,7 +25053,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetUtcTimestamp is the low-level form of Open77.time.utc (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Timestamp a log line\nprint(Open77.time.utc(), \"player\", source, \"bought\", itemId)",
   "inferred": false,
   "source_line": 887,
   "permissions": [],
@@ -25080,7 +25080,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetVehicle is the low-level form of Open77.vehicles.get (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Speed camera: check every car's speed once a second\nCreateThread(function()\n    while true do\n        Wait(1000)\n        for _, entry in ipairs(Open77.vehicles.all()) do\n            local car = Open77.vehicles.get(entry.id)\n            if car and car.speedKph > 120 and car.driverPlayerId then\n                Open77.chat.send(car.driverPlayerId, (\"Slow down! %.0f km/h\"):format(car.speedKph))\n            end\n        end\n    end\nend)",
   "inferred": false,
   "source_line": 919,
   "permissions": [],
@@ -25107,7 +25107,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GetVehicles is the low-level form of Open77.vehicles.all (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /cars: how many server vehicles exist, and how many in the caller's bucket\nRegisterCommand(\"cars\", function(source)\n    local everywhere = Open77.vehicles.all()\n    local here = Open77.vehicles.all(Open77.players.get(source).bucket)\n    Open77.chat.send(source, (\"%d vehicles on the server, %d in your instance\"):format(#everywhere, #here))\nend, true)",
   "inferred": false,
   "source_line": 920,
   "permissions": [],
@@ -25174,7 +25174,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- GoToElevator is the low-level form of Open77.elevators.goTo (wrapped by);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A slow freight lift: 15 seconds to the top floor\nOpen77.elevators.goTo(elevatorId, 11, { travelMs = 15000 })",
   "inferred": false,
   "source_line": 952,
   "permissions": [],
@@ -25194,7 +25194,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- HealPlayer is the low-level form of Open77.players.heal (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A medkit pickup heals 50 points\nRegisterNetEvent(\"shop:useMedkit\", function()\n    Open77.players.heal(source, 50)\nend)",
   "inferred": false,
   "source_line": 986,
   "permissions": [
@@ -25275,7 +25275,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- IsPlayerDead is the low-level form of Open77.players.isDead (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A dead player cannot use the shop\nRegisterCommand(\"shop\", function(source)\n    if Open77.players.isDead(source) then\n        return Open77.chat.send(source, \"You are in no state to shop.\")\n    end\n    openShop(source)\nend, false)",
   "inferred": false,
   "source_line": 961,
   "permissions": [],
@@ -25302,7 +25302,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- IsPlayerFrozen is the low-level form of Open77.players.isFrozen (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Refuse a second /cuff on a player somebody already holds\nif Open77.players.isFrozen(target) then\n    return Open77.chat.send(source, \"They are already restrained.\")\nend",
   "inferred": false,
   "source_line": 971,
   "permissions": [],
@@ -25329,7 +25329,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- IsPlayerGhosted is the low-level form of Open77.players.isGhosted (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Spawn protection is still on: skip the damage report\nif Open77.players.isGhosted(victimId) then return end",
   "inferred": false,
   "source_line": 969,
   "permissions": [],
@@ -25356,7 +25356,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- IsPlayerVisible is the low-level form of Open77.players.isVisible (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A hidden admin is skipped by the scoreboard\nfor _, playerId in ipairs(Open77.players.all()) do\n    if Open77.players.isVisible(playerId) then\n        table.insert(board, Open77.players.name(playerId))\n    end\nend",
   "inferred": false,
   "source_line": 973,
   "permissions": [],
@@ -25512,7 +25512,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- PauseElevator is the low-level form of Open77.elevators.pause (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Power cut: every lift stops where it is\nfor _, lift in ipairs(Open77.elevators.all()) do Open77.elevators.pause(lift.id) end",
   "inferred": false,
   "source_line": 954,
   "permissions": [],
@@ -25548,7 +25548,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "PauseSound",
   "route_id": "server:PauseSound"
  },
@@ -25640,7 +25640,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Play2DSound",
   "route_id": "server:Play2DSound"
  },
@@ -25683,7 +25683,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Play3DSound",
   "route_id": "server:Play3DSound"
  },
@@ -25732,7 +25732,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- PlayEntityEffect is the low-level form of Open77.effects.playOn (wrapped by);\n-- the example shows the Open77.* spelling resources are told to prefer.\nlocal ok, err = Open77.effects.playOn({kind=\"player\",id=tostring(playerId)}, nativeEvent, {duration=1})\nif not ok then print(err) end",
   "inferred": false,
   "source_line": 903,
   "permissions": [
@@ -25808,7 +25808,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "PlaySound",
   "route_id": "server:PlaySound"
  },
@@ -25871,7 +25871,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- PlayerScreenEffect is the low-level form of Open77.effects.screen (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Drinking makes the screen wobble for 30 seconds\nRegisterNetEvent(\"items:drink\", function()\n    Open77.effects.screen(source, \"drunk\", { strength = 0.5, duration = 30 })\nend)",
   "inferred": false,
   "source_line": 978,
   "permissions": [
@@ -25971,7 +25971,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- RemoveEffect is the low-level form of Open77.effects.remove (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- The firefighters put the fire out\nOpen77.effects.remove(fireId)",
   "inferred": false,
   "source_line": 900,
   "permissions": [
@@ -26000,7 +26000,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- RemoveElevator is the low-level form of Open77.elevators.remove (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Hand the lift back to the engine when the resource no longer needs it\nOpen77.elevators.remove(elevatorId)",
   "inferred": false,
   "source_line": 957,
   "permissions": [],
@@ -26054,7 +26054,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- RemoveLootDrop is the low-level form of Open77.loot.remove (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Round over: clear the leftover drops\nfor _, drop in ipairs(Open77.loot.all(ARENA_BUCKET)) do Open77.loot.remove(drop.id) end",
   "inferred": false,
   "source_line": 908,
   "permissions": [],
@@ -26101,7 +26101,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- RemoveProp is the low-level form of Open77.props.remove (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- The player picked up the crate\nRegisterNetEvent(\"crates:pickup\", function(crateId)\n    if Open77.props.remove(crateId) then giveReward(source) end\nend)",
   "inferred": false,
   "source_line": 893,
   "permissions": [
@@ -26160,7 +26160,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- RemoveVehicle is the low-level form of Open77.vehicles.remove (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /dv: delete the vehicle the caller is sitting in\nRegisterCommand(\"dv\", function(source)\n    local seat = Open77.vehicles.getPlayerSeat(source)\n    if not seat then return Open77.chat.send(source, \"You are not in a vehicle.\") end\n    Open77.vehicles.remove(seat.vehicleId)\nend, true)",
   "inferred": false,
   "source_line": 918,
   "permissions": [],
@@ -26180,7 +26180,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- RequestPlayerLifeResync is the low-level form of Open77.players.requestLifeResync (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A player reports \"I look dead but I am alive\": push the canonical state again\nRegisterCommand(\"resync\", function(source)\n    Open77.players.requestLifeResync(source)\nend, false)",
   "inferred": false,
   "source_line": 967,
   "permissions": [
@@ -26258,7 +26258,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- RestorePlayerHealth is the low-level form of Open77.stats.restoreHealth (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Round start: full health for everyone in the arena\nfor _, playerId in ipairs(Open77.players.inBucket(ARENA_BUCKET)) do\n    Open77.stats.restoreHealth(playerId)\nend",
   "inferred": false,
   "source_line": 989,
   "permissions": [
@@ -26287,7 +26287,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- RestorePlayerStamina is the low-level form of Open77.stats.restoreStamina (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- An energy drink\nRegisterNetEvent(\"items:energyDrink\", function()\n    Open77.stats.restoreStamina(source)\nend)",
   "inferred": false,
   "source_line": 997,
   "permissions": [
@@ -26316,7 +26316,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- ResumeElevator is the low-level form of Open77.elevators.resume (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Power is back\nfor _, lift in ipairs(Open77.elevators.all()) do Open77.elevators.resume(lift.id) end",
   "inferred": false,
   "source_line": 955,
   "permissions": [],
@@ -26369,7 +26369,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- RevivePlayer is the low-level form of Open77.players.revive (wrapped by);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A medic revives a downed player nearby\nRegisterCommand(\"revive\", function(source)\n    local patient = Open77.players.closest(source, { radius = 3 })\n    if not patient or not Open77.players.isDead(patient.playerId) then\n        return Open77.chat.send(source, \"Nobody to revive here.\")\n    end\n    Open77.players.revive(patient.playerId, { health = 0.3, graceMs = 5000 })\nend, false)",
   "inferred": false,
   "source_line": 963,
   "permissions": [
@@ -26454,7 +26454,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "SeekSound",
   "route_id": "server:SeekSound"
  },
@@ -26469,7 +26469,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetCombatDamageMultiplier is the low-level form of Open77.combat.setDamageMultiplier (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /dmg <factor>: an admin halves or doubles all damage for the round\nRegisterCommand(\"dmg\", function(source, args)\n    local factor = tonumber(args[1])\n    if factor then Open77.combat.setDamageMultiplier(factor) end\nend, true)",
   "inferred": false,
   "source_line": 1002,
   "permissions": [
@@ -26498,7 +26498,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetCombatFriendlyFire is the low-level form of Open77.combat.setFriendlyFire (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- PvP is on everywhere on this server\nOpen77.combat.setFriendlyFire(true)",
   "inferred": false,
   "source_line": 1000,
   "permissions": [
@@ -26520,7 +26520,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetCombatHeadshotMultiplier is the low-level form of Open77.combat.setHeadshotMultiplier (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A \"one in the head\" round: headshots do five times the damage\nOpen77.combat.setHeadshotMultiplier(5)",
   "inferred": false,
   "source_line": 1003,
   "permissions": [
@@ -26542,7 +26542,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetCombatKindMultiplier is the low-level form of Open77.combat.setKindDamageMultiplier (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Fists-only round: guns and explosions do nothing, melee does double\nOpen77.combat.setKindDamageMultiplier(\"ranged\", 0)\nOpen77.combat.setKindDamageMultiplier(\"explosion\", 0)\nOpen77.combat.setKindDamageMultiplier(\"melee\", 2)",
   "inferred": false,
   "source_line": 1005,
   "permissions": [
@@ -26564,7 +26564,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetCombatTeam is the low-level form of Open77.combat.setTeam (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Split the arena players into two teams; team-mates cannot hurt each other\nfor i, playerId in ipairs(Open77.players.inBucket(ARENA_BUCKET)) do\n    Open77.combat.setTeam(playerId, (i % 2) + 1)\nend",
   "inferred": false,
   "source_line": 1001,
   "permissions": [
@@ -26586,7 +26586,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetCombatWeaponMultiplier is the low-level form of Open77.combat.setWeaponDamageMultiplier (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- The Lexington is a training pistol here: a quarter of its damage\nOpen77.combat.setWeaponDamageMultiplier(\"Items.Preset_Lexington_Default\", 0.25)",
   "inferred": false,
   "source_line": 1004,
   "permissions": [
@@ -26657,7 +26657,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetElevatorFlags is the low-level form of Open77.elevators.setFlags (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Lock the lift for the heist: keep it powered but not usable\nlocal f = Open77.elevators.flags\nOpen77.elevators.setFlags(elevatorId, f.powered | f.locked)",
   "inferred": false,
   "source_line": 956,
   "permissions": [],
@@ -26690,7 +26690,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetEntityRoutingBucket is the low-level form of Open77.routingBuckets.setEntity (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Move the entity into the arena instance\nOpen77.routingBuckets.setEntity(entityId, ARENA_BUCKET)",
   "inferred": false,
   "source_line": 849,
   "permissions": [],
@@ -26815,7 +26815,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetNpcGroup is the low-level form of Open77.npcs.setGroup (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Two spawned gang members become allies through a shared group\nOpen77.npcs.setGroup(firstId, \"maelstrom\")\nOpen77.npcs.setGroup(secondId, \"maelstrom\")",
   "inferred": false,
   "source_line": 947,
   "permissions": [
@@ -26860,7 +26860,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetNpcRelationship is the low-level form of Open77.npcs.setRelationship (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Gang war: every Maelstrom NPC this resource owns hates every Valentino\nOpen77.npcs.setRelationship(\"maelstrom\", \"valentinos\", \"hostile\")",
   "inferred": false,
   "source_line": 948,
   "permissions": [
@@ -26938,7 +26938,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerArmor is the low-level form of Open77.players.setArmor (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Buying a vest at the shop\nRegisterNetEvent(\"shop:buyArmor\", function()\n    Open77.players.setArmor(source, 100)\nend)",
   "inferred": false,
   "source_line": 990,
   "permissions": [
@@ -26973,7 +26973,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerDownedDamageable is the low-level form of Open77.players.setDownedDamageable (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Battle-royale rule: a downed player can still be finished\nAddEventHandler(\"onPlayerReady\", function(playerId)\n    Open77.players.setDownedDamageable(playerId, true)\nend)",
   "inferred": false,
   "source_line": 992,
   "permissions": [
@@ -27008,7 +27008,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerFrozen is the low-level form of Open77.players.setFrozen (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /freeze <id> toggles a hold on a player\nRegisterCommand(\"freeze\", function(source, args)\n    local target = tonumber(args[1])\n    if not target then return end\n    local frozen = Open77.players.isFrozen(target)\n    Open77.players.setFrozen(target, not frozen)\nend, true)",
   "inferred": false,
   "source_line": 970,
   "permissions": [
@@ -27049,7 +27049,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerGhosted is the low-level form of Open77.players.setGhosted (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Spawn protection: non-solid for 10 seconds or until they walk 15 m away\nAddEventHandler(\"onPlayerReady\", function(playerId)\n    Open77.players.setGhosted(playerId, true, { clearMs = 10000, clearDistance = 15.0 })\nend)",
   "inferred": false,
   "source_line": 968,
   "permissions": [
@@ -27078,7 +27078,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerGodMode is the low-level form of Open77.players.setGodMode (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /god toggles invulnerability for an admin\nRegisterCommand(\"god\", function(source)\n    godMode[source] = not godMode[source]\n    Open77.players.setGodMode(source, godMode[source])\n    Open77.chat.send(source, godMode[source] and \"God mode on.\" or \"God mode off.\")\nend, true)",
   "inferred": false,
   "source_line": 991,
   "permissions": [
@@ -27113,7 +27113,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerHealth is the low-level form of Open77.stats.setHealth (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /sethp <id> <value>\nRegisterCommand(\"sethp\", function(source, args)\n    local target, value = tonumber(args[1]), tonumber(args[2])\n    if target and value then Open77.stats.setHealth(target, value) end\nend, true)",
   "inferred": false,
   "source_line": 987,
   "permissions": [
@@ -27170,7 +27170,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerMaxHealth is the low-level form of Open77.stats.setHealthMax (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A perk: 150 maximum health\nOpen77.stats.setHealthMax(playerId, 150)",
   "inferred": false,
   "source_line": 988,
   "permissions": [
@@ -27205,7 +27205,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerMaxStamina is the low-level form of Open77.stats.setStaminaMax (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A \"runner\" class gets a bigger stamina pool\nOpen77.stats.setStaminaMax(playerId, 150)",
   "inferred": false,
   "source_line": 996,
   "permissions": [
@@ -27240,7 +27240,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerRegen is the low-level form of Open77.stats.setHealthRegenRate (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Hardcore server: health never comes back on its own\nAddEventHandler(\"onPlayerReady\", function(playerId)\n    Open77.stats.setHealthRegenRate(playerId, 0)\nend)",
   "inferred": false,
   "source_line": 993,
   "permissions": [
@@ -27275,7 +27275,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerRegenEnabled is the low-level form of Open77.stats.setHealthRegenEnabled (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Bleeding: no regeneration until bandaged\nOpen77.stats.setHealthRegenEnabled(playerId, false)\nRegisterNetEvent(\"items:bandage\", function()\n    Open77.stats.setHealthRegenEnabled(source, true)\nend)",
   "inferred": false,
   "source_line": 994,
   "permissions": [
@@ -27310,7 +27310,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerRoutingBucket is the low-level form of Open77.routingBuckets.setPlayer (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Each apartment is its own instance: bucket 1000 + house id\nRegisterNetEvent(\"house:enter\", function(houseId)\n    Open77.routingBuckets.setPlayer(source, 1000 + houseId)\nend)",
   "inferred": false,
   "source_line": 847,
   "permissions": [],
@@ -27343,7 +27343,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerStamina is the low-level form of Open77.stats.setStamina (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- The player just ran a marathon: stamina to 10\nOpen77.stats.setStamina(playerId, 10)",
   "inferred": false,
   "source_line": 995,
   "permissions": [
@@ -27378,7 +27378,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerStaminaRegen is the low-level form of Open77.stats.setStaminaRegenRate (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- A heavy backpack halves stamina regeneration\nOpen77.stats.setStaminaRegenRate(playerId, 5)",
   "inferred": false,
   "source_line": 998,
   "permissions": [
@@ -27413,7 +27413,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerStaminaRegenEnabled is the low-level form of Open77.stats.setStaminaRegenEnabled (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Exhaustion: no stamina regeneration for 20 seconds\nOpen77.stats.setStaminaRegenEnabled(playerId, false)\nSetTimeout(20000, function() Open77.stats.setStaminaRegenEnabled(playerId, true) end)",
   "inferred": false,
   "source_line": 999,
   "permissions": [
@@ -27442,7 +27442,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerVehicleExitLocked is the low-level form of Open77.vehicles.setPlayerExitLocked (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Arrest: the suspect cannot leave the cruiser until released\nOpen77.vehicles.warpPlayerIntoVehicle(suspectId, cruiserId, Open77.vehicles.seats.rearLeft)\nOpen77.vehicles.setPlayerExitLocked(suspectId, true, cruiserId)",
   "inferred": false,
   "source_line": 927,
   "permissions": [
@@ -27477,7 +27477,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPlayerVisible is the low-level form of Open77.players.setVisible (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /vanish toggles an invisible admin\nRegisterCommand(\"vanish\", function(source)\n    hidden[source] = not hidden[source]\n    Open77.players.setVisible(source, not hidden[source])\nend, true)",
   "inferred": false,
   "source_line": 972,
   "permissions": [
@@ -27499,7 +27499,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetPropBucket is the low-level form of Open77.props.setBucket (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Move the stage props into the concert instance\nfor _, propId in ipairs(stageProps) do Open77.props.setBucket(propId, CONCERT_BUCKET) end",
   "inferred": false,
   "source_line": 892,
   "permissions": [
@@ -27592,7 +27592,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetRoutingBucketEntityLockdownMode is the low-level form of Open77.routingBuckets.setLockdownMode (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Nothing client-created may exist in the competitive arena\nOpen77.routingBuckets.setLockdownMode(ARENA_BUCKET, \"strict\")",
   "inferred": false,
   "source_line": 850,
   "permissions": [],
@@ -27625,7 +27625,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetRoutingBucketPopulationEnabled is the low-level form of Open77.routingBuckets.setPopulationEnabled (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- No traffic or crowd in the arena instance\nOpen77.routingBuckets.setPopulationEnabled(ARENA_BUCKET, false)",
   "inferred": false,
   "source_line": 851,
   "permissions": [],
@@ -27667,7 +27667,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "SetSoundPosition",
   "route_id": "server:SetSoundPosition"
  },
@@ -27704,7 +27704,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "SetSoundVolume",
   "route_id": "server:SetSoundVolume"
  },
@@ -27790,7 +27790,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SetVehicleLocked is the low-level form of Open77.vehicles.setLocked (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Personal vehicles spawn locked; the owner unlocks with /unlock\nlocal id = Open77.vehicles.create({ record = record, position = spot })\nOpen77.vehicles.setLocked(id, true)\nOpen77.vehicles.setLockedForPlayer(id, ownerId, false)",
   "inferred": false,
   "source_line": 915,
   "permissions": [
@@ -27945,7 +27945,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- SpectatePlayer is the low-level form of Open77.players.spectate (documented alias);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- /spectate <id>, and /spectate alone to stop\nRegisterCommand(\"spectate\", function(source, args)\n    local target = tonumber(args[1])\n    local ok, reason = Open77.players.spectate(source, target, { distance = 5.0 })\n    if not ok then Open77.chat.send(source, \"Cannot spectate: \" .. reason) end\nend, true)",
   "inferred": false,
   "source_line": 976,
   "permissions": [
@@ -28047,7 +28047,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "StopSound",
   "route_id": "server:StopSound"
  },
@@ -28075,7 +28075,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- TeleportElevator is the low-level form of Open77.elevators.teleport (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Admin recovery for a lift stuck between floors\nRegisterCommand(\"liftfix\", function(source, args)\n    Open77.elevators.teleport(tonumber(args[1]), 0)\nend, true)",
   "inferred": false,
   "source_line": 953,
   "permissions": [],
@@ -28149,7 +28149,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- TriggerClientEvent is the low-level form of Open77.net.emitClient (bound to the same native);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Namespaced spelling of TriggerClientEvent: tell one player, or everyone with -1\nOpen77.net.emitClient(\"bank:deposit\", playerId, 250)\nOpen77.net.emitClient(\"server:announce\", -1, \"Restart in 5 minutes\")",
   "inferred": false,
   "source_line": 860,
   "permissions": [
@@ -28265,7 +28265,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- TriggerVehicleHorn is the low-level form of Open77.vehicles.triggerHorn (wrapped by);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- Honk when the player's rental is unlocked remotely\nOpen77.vehicles.unlock(vehicleId)\nOpen77.vehicles.triggerHorn(vehicleId, 200)",
   "inferred": false,
   "source_line": 916,
   "permissions": [
@@ -28287,7 +28287,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- UpdateEffect is the low-level form of Open77.effects.update (wrapped by);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- The fire moves with the burning car\nOpen77.effects.update(fireId, { position = Open77.vehicles.getPosition(carId) })",
   "inferred": false,
   "source_line": 899,
   "permissions": [
@@ -28364,7 +28364,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "",
+  "example": "-- UpdateLootDrop is the low-level form of Open77.loot.update (wrapped by);\n-- the example shows the Open77.* spelling resources are told to prefer.\n-- The wind blows the crate two metres; quantity and label stay\nOpen77.loot.update(lootId, { position = { x = -1444.2, y = 127.4, z = 18.0 } })",
   "inferred": false,
   "source_line": 907,
   "permissions": [],
@@ -29379,7 +29379,7 @@
   "source_line": 7609,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.cancel",
   "route_id": "server:Open77.abilities.cancel"
  },
@@ -29409,7 +29409,7 @@
   "source_line": 7610,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.current",
   "route_id": "server:Open77.abilities.current"
  },
@@ -29439,7 +29439,7 @@
   "source_line": 7606,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.define",
   "route_id": "server:Open77.abilities.define"
  },
@@ -29475,7 +29475,7 @@
   "source_line": 7607,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.grant",
   "route_id": "server:Open77.abilities.grant"
  },
@@ -29505,7 +29505,7 @@
   "source_line": 7608,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.abilities.revoke",
   "route_id": "server:Open77.abilities.revoke"
  },
@@ -30567,7 +30567,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.destroy",
   "route_id": "server:Open77.audio.destroy"
  },
@@ -30598,7 +30598,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.getState",
   "route_id": "server:Open77.audio.getState"
  },
@@ -30629,7 +30629,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.pause",
   "route_id": "server:Open77.audio.pause"
  },
@@ -30660,7 +30660,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.play",
   "route_id": "server:Open77.audio.play"
  },
@@ -30697,7 +30697,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.play2D",
   "route_id": "server:Open77.audio.play2D"
  },
@@ -30740,7 +30740,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.play3D",
   "route_id": "server:Open77.audio.play3D"
  },
@@ -30777,7 +30777,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.seek",
   "route_id": "server:Open77.audio.seek"
  },
@@ -30814,7 +30814,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.setPosition",
   "route_id": "server:Open77.audio.setPosition"
  },
@@ -30851,7 +30851,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.setVolume",
   "route_id": "server:Open77.audio.setVolume"
  },
@@ -30882,7 +30882,7 @@
    "audio.network"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.audio.stop",
   "route_id": "server:Open77.audio.stop"
  },
@@ -31511,7 +31511,7 @@
   "reasons": [
    "invalid_scope"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.combat.createScope",
   "route_id": "server:Open77.combat.createScope"
  },
@@ -31605,7 +31605,7 @@
   "reasons": [
    "invalid_scope"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.combat.removeScope",
   "route_id": "server:Open77.combat.removeScope"
  },
@@ -31989,7 +31989,7 @@
   "source_line": 7646,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.activity",
   "route_id": "server:Open77.cyberware.activity"
  },
@@ -32025,7 +32025,7 @@
   "source_line": 7642,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.bind",
   "route_id": "server:Open77.cyberware.bind"
  },
@@ -32061,7 +32061,7 @@
   "source_line": 7656,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.cancel",
   "route_id": "server:Open77.cyberware.cancel"
  },
@@ -32091,7 +32091,7 @@
   "source_line": 7644,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.current",
   "route_id": "server:Open77.cyberware.current"
  },
@@ -32121,7 +32121,7 @@
   "source_line": 7641,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.define",
   "route_id": "server:Open77.cyberware.define"
  },
@@ -32151,7 +32151,7 @@
   "source_line": 7645,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.effective",
   "route_id": "server:Open77.cyberware.effective"
  },
@@ -32199,7 +32199,7 @@
   "source_line": 7652,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.install",
   "route_id": "server:Open77.cyberware.install"
  },
@@ -32247,7 +32247,7 @@
   "source_line": 7648,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.lease",
   "route_id": "server:Open77.cyberware.lease"
  },
@@ -32277,7 +32277,7 @@
   "source_line": 7647,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.leaseState",
   "route_id": "server:Open77.cyberware.leaseState"
  },
@@ -32300,7 +32300,7 @@
   "source_line": 7640,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.newOperationId",
   "route_id": "server:Open77.cyberware.newOperationId"
  },
@@ -32336,7 +32336,7 @@
   "source_line": 7651,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.releaseLease",
   "route_id": "server:Open77.cyberware.releaseLease"
  },
@@ -32372,7 +32372,7 @@
   "source_line": 7655,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.remove",
   "route_id": "server:Open77.cyberware.remove"
  },
@@ -32402,7 +32402,7 @@
   "source_line": 7643,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.cyberware.unbind",
   "route_id": "server:Open77.cyberware.unbind"
  },
@@ -32438,7 +32438,7 @@
   "source_line": 7593,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.dash.cancel",
   "route_id": "server:Open77.dash.cancel"
  },
@@ -32461,7 +32461,7 @@
   "source_line": 7595,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.dash.capabilities",
   "route_id": "server:Open77.dash.capabilities"
  },
@@ -32491,7 +32491,7 @@
   "source_line": 7594,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.dash.current",
   "route_id": "server:Open77.dash.current"
  },
@@ -32521,7 +32521,7 @@
   "source_line": 7590,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.dash.define",
   "route_id": "server:Open77.dash.define"
  },
@@ -32557,7 +32557,7 @@
   "source_line": 7591,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.dash.grant",
   "route_id": "server:Open77.dash.grant"
  },
@@ -32587,7 +32587,7 @@
   "source_line": 7592,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.dash.revoke",
   "route_id": "server:Open77.dash.revoke"
  },
@@ -33216,7 +33216,7 @@
    "invalid_slot",
    "invalid_target_kind"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.effects.attach",
   "route_id": "server:Open77.effects.attach"
  },
@@ -34747,7 +34747,7 @@
   "source_line": 7618,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.action",
   "route_id": "server:Open77.hacking.action"
  },
@@ -34777,7 +34777,7 @@
   "source_line": 7626,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.cancel",
   "route_id": "server:Open77.hacking.cancel"
  },
@@ -34800,7 +34800,7 @@
   "source_line": 7616,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.capabilities",
   "route_id": "server:Open77.hacking.capabilities"
  },
@@ -34830,7 +34830,7 @@
   "source_line": 7630,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.clearProtection",
   "route_id": "server:Open77.hacking.clearProtection"
  },
@@ -34866,7 +34866,7 @@
   "source_line": 7627,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.configureProtection",
   "route_id": "server:Open77.hacking.configureProtection"
  },
@@ -34896,7 +34896,7 @@
   "source_line": 7613,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.define",
   "route_id": "server:Open77.hacking.define"
  },
@@ -34926,7 +34926,7 @@
   "source_line": 7614,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.defineIce",
   "route_id": "server:Open77.hacking.defineIce"
  },
@@ -34956,7 +34956,7 @@
   "source_line": 7615,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.definePurge",
   "route_id": "server:Open77.hacking.definePurge"
  },
@@ -35010,7 +35010,7 @@
   "source_line": 7623,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.purge",
   "route_id": "server:Open77.hacking.purge"
  },
@@ -35064,7 +35064,7 @@
   "source_line": 7620,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.start",
   "route_id": "server:Open77.hacking.start"
  },
@@ -35094,7 +35094,7 @@
   "source_line": 7617,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.state",
   "route_id": "server:Open77.hacking.state"
  },
@@ -35124,7 +35124,7 @@
   "source_line": 7619,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.hacking.statuses",
   "route_id": "server:Open77.hacking.statuses"
  },
@@ -36442,7 +36442,7 @@
   "source_line": 7581,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.motion.cancel",
   "route_id": "server:Open77.motion.cancel"
  },
@@ -36472,7 +36472,7 @@
   "source_line": 7569,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.motion.current",
   "route_id": "server:Open77.motion.current"
  },
@@ -36508,7 +36508,7 @@
   "source_line": 7574,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.motion.knockdown",
   "route_id": "server:Open77.motion.knockdown"
  },
@@ -39258,7 +39258,7 @@
   "source_line": 7566,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.cancel",
   "route_id": "server:Open77.playerInteractions.cancel"
  },
@@ -39287,7 +39287,7 @@
   "source_line": 7563,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.current",
   "route_id": "server:Open77.playerInteractions.current"
  },
@@ -39316,7 +39316,7 @@
   "source_line": 7562,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.get",
   "route_id": "server:Open77.playerInteractions.get"
  },
@@ -39345,7 +39345,7 @@
   "source_line": 7564,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.isReserved",
   "route_id": "server:Open77.playerInteractions.isReserved"
  },
@@ -39367,7 +39367,7 @@
   "source_line": 7565,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.list",
   "route_id": "server:Open77.playerInteractions.list"
  },
@@ -39416,7 +39416,7 @@
   "reasons": [
    "invalid_options"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.playerInteractions.request",
   "route_id": "server:Open77.playerInteractions.request"
  },
@@ -39956,7 +39956,7 @@
    "players.holocall.read"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.getHoloCallEyes",
   "route_id": "server:Open77.players.getHoloCallEyes"
  },
@@ -41099,7 +41099,7 @@
   "reasons": [
    "invalid_options"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.players.setHoloCallEyes",
   "route_id": "server:Open77.players.setHoloCallEyes"
  },
@@ -41887,7 +41887,7 @@
    "invalid_attachment",
    "invalid_attachment_target"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.props.attach",
   "route_id": "server:Open77.props.attach"
  },
@@ -41924,7 +41924,7 @@
    "world.props"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.props.attachedTo",
   "route_id": "server:Open77.props.attachedTo"
  },
@@ -42043,7 +42043,7 @@
    "world.props"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.props.detach",
   "route_id": "server:Open77.props.detach"
  },
@@ -42105,7 +42105,7 @@
    "world.props"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.props.getAttachment",
   "route_id": "server:Open77.props.getAttachment"
  },
@@ -42136,7 +42136,7 @@
    "world.props"
   ],
   "reasons": [],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.props.isAttached",
   "route_id": "server:Open77.props.isAttached"
  },
@@ -42220,7 +42220,7 @@
    "not_attached",
    "not_found"
   ],
-  "since": "2.31.13+op77.63",
+  "since": "2.31.13+op77.67",
   "qualified": "Open77.props.setAttachmentTransform",
   "route_id": "server:Open77.props.setAttachmentTransform"
  },
@@ -42535,7 +42535,7 @@
   "source_line": 7601,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.63",
   "qualified": "Open77.reflex.cancel",
   "route_id": "server:Open77.reflex.cancel"
  },
@@ -42557,7 +42557,7 @@
   "source_line": 7603,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.63",
   "qualified": "Open77.reflex.capabilities",
   "route_id": "server:Open77.reflex.capabilities"
  },
@@ -42586,7 +42586,7 @@
   "source_line": 7602,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.63",
   "qualified": "Open77.reflex.current",
   "route_id": "server:Open77.reflex.current"
  },
@@ -42616,7 +42616,7 @@
   "source_line": 7598,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.63",
   "qualified": "Open77.reflex.define",
   "route_id": "server:Open77.reflex.define"
  },
@@ -42652,7 +42652,7 @@
   "source_line": 7599,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.63",
   "qualified": "Open77.reflex.grant",
   "route_id": "server:Open77.reflex.grant"
  },
@@ -42682,7 +42682,7 @@
   "source_line": 7600,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.63",
   "qualified": "Open77.reflex.revoke",
   "route_id": "server:Open77.reflex.revoke"
  },
@@ -44713,7 +44713,7 @@
   "source_line": 7634,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.statuses.apply",
   "route_id": "server:Open77.statuses.apply"
  },
@@ -44743,7 +44743,7 @@
   "source_line": 7633,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.statuses.list",
   "route_id": "server:Open77.statuses.list"
  },
@@ -44773,7 +44773,7 @@
   "source_line": 7637,
   "permissions": [],
   "reasons": [],
-  "since": "2.31.13+op77.67",
+  "since": "2.31.13+op77.61",
   "qualified": "Open77.statuses.remove",
   "route_id": "server:Open77.statuses.remove"
  },
