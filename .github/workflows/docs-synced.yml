@@ -1,0 +1,44 @@
+# Tells the Devkit (Open2077/open77-devkit) that the public documentation
+# changed, so its Dev Index workflow rebuilds the index and publishes it to the
+# CDN (`repository_dispatch: docs-synced`). Runs on every push to main that
+# touches content/api or content/docs -- the two trees the index is built from.
+#
+# The default GITHUB_TOKEN cannot reach another repository, so this needs the
+# DEVKIT_DISPATCH_TOKEN secret: a fine-grained personal access token limited to
+# Open2077/open77-devkit with "Contents: read and write" (what a
+# repository_dispatch requires). Without it the job says so and exits green;
+# the Devkit still rebuilds on its schedule.
+
+name: Notify the Devkit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "content/api/**"
+      - "content/docs/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: repository_dispatch docs-synced
+        env:
+          DEVKIT_DISPATCH_TOKEN: ${{ secrets.DEVKIT_DISPATCH_TOKEN }}
+          COMMIT: ${{ github.sha }}
+        run: |
+          if [ -z "$DEVKIT_DISPATCH_TOKEN" ]; then
+            echo "DEVKIT_DISPATCH_TOKEN is not set; the Devkit index rebuilds on its schedule instead."
+            exit 0
+          fi
+          curl -fsS -X POST "https://api.github.com/repos/Open2077/open77-devkit/dispatches" \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $DEVKIT_DISPATCH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -d "{\"event_type\":\"docs-synced\",\"client_payload\":{\"commit\":\"$COMMIT\"}}"
+          echo "dispatched docs-synced for $COMMIT"
