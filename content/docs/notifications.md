@@ -24,6 +24,12 @@ client_script "client/main.lua"
 server_script "server/main.lua"
 ```
 
+`dependency` takes a resource name and, optionally, version constraints after a space (`>=`, `<=`, `>`,
+`<`, `=` / `==`, against a 1-to-3-part number such as `1.0.0`); a plain `dependency "open77_notifications"`
+is enough when any version will do. A server whose load list lacks the package refuses to start the
+resource, which is the point: a toast sent to a client without the package is dropped without a word.
+Declare it for a server-only resource too, since `Open77.notifications.*` renders through the package.
+
 Exports cross isolated Lua VMs and therefore return a promise. Call them from a scheduler coroutine.
 
 ## Local client notification
