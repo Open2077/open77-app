@@ -347,6 +347,13 @@
           "description": "A native ground or mid-air slam as a session grant: define, grant and revoke, the key the player presses, the damage and radius options, impact events and the limits."
         },
         {
+          "slug": "reflex-overdrive",
+          "kind": "guide",
+          "nav": "Overdrive",
+          "title": "Overdrive: a Sandevistan-style boost for a shared world",
+          "description": "Grant a real-time reflex overdrive: the owner moves, swings and reloads faster while nobody else is slowed and no clock is touched. Definitions, tiers, presets, the observer presentation, the rebindable key and the release paths."
+        },
+        {
           "slug": "hacking",
           "kind": "guide",
           "nav": "Hacking and counterplay",
