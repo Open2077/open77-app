@@ -383,13 +383,6 @@ only reads it.
 `applied` is worth reading. A policy can arrive and be refused by the engine, and a resource
 comparing its own expectations against the street needs to see that rather than infer it.
 
-The policy is also what the client's own clean-up obeys. While a session is active the client
-removes vanilla bodies it does not own -- through the vehicle spawn policy and through the identity
-sanitizer -- and both leave a kind the policy allows alone: pedestrians when `crowd > 0`, vehicles
-when `traffic > 0`. Those bodies are scenery; `nearby` labels them `populationNpc` and
-`trafficVehicle` so a resource can tell them from replicated ones. (Client 65 to 67 swept allowed
-traffic anyway, half a second after it spawned; client 68 keeps it.)
-
 | Reason | Meaning |
 |---|---|
 | `no_population_policy` | no server has sent one yet. **Not** the same as empty streets |

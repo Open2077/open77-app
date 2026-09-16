@@ -2354,20 +2354,9 @@ means vanilla traffic. `getPopulation` states this rather than leaving a caller 
 
 `police` allows or forbids vanilla prevention spawns outright.
 
-`enabled` is **derived** (`crowd > 0 or traffic > 0 or police`), so it can never claim the
-population is on while every density is zero -- and an unconfigured bucket reads `0 / 0 / false`,
-as the section opens with.
-
-### What the client does with it
-
-Two client mechanisms remove vanilla bodies while a session is active, and both follow the policy:
-the vehicle spawn policy (which vanilla spawns are allowed to complete) and the identity sanitizer
-(which unowned runtime NPCs and vehicles are swept, so that a body nothing owns is never mistaken
-for a replicated one). A kind the policy allows -- pedestrians when `crowd > 0`, vehicles when
-`traffic > 0` -- is scenery, replicates to nobody, and is left alone by both. Until client 67 the
-sanitizer ignored the policy, which is why a bucket with `traffic = 1` on release 65 showed cars
-that vanished half a second after they spawned; from client 68 on, `pop` in the developer console
-reports the bodies it kept for the policy as `sanitizerAllowedByPolicy`.
+A bucket nobody has configured is the vanilla world (`crowd = 1`, `traffic = 1`, `police = true`),
+not an empty one. `enabled` is **derived** (`crowd > 0 or traffic > 0 or police`), so it can never
+claim the population is on while every density is zero.
 `Open77.routingBuckets.setPopulationEnabled` is the same state expressed as a switch: off sets all
 three off, on restores the vanilla figures.
 

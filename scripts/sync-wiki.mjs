@@ -208,6 +208,24 @@ async function main() {
   });
   writes.push({ file: path.join(API_OUT, "door-service-api.json"), text: doorsText });
 
+  // The companion catalogues the Devkit MCP reads next to api.json: enforced
+  // permissions, open77:* events and the published-build table that gives
+  // every card its `since`. Generated in base by wiki/tools; vendored verbatim
+  // so the index builder in open77-devkit needs only this public content.
+  for (const name of ["permissions.json", "events.json", "releases.json"]) {
+    const text = (await readFile(path.join(sourceDir, "data", name), "utf8")).replace(/\r\n/g, "\n");
+    const parsed = JSON.parse(text);
+    const key = name.replace(".json", "");
+    if (!Array.isArray(parsed[key]) || parsed[key].length === 0) {
+      throw new Error(`${name} must carry a non-empty "${key}" array`);
+    }
+    records.push({
+      source: `wiki/data/${name}`, target: `${API_OUT}/${name}`,
+      entries: parsed[key].length, bytes: Buffer.byteLength(text, "utf8"), sha256: sha256(text),
+    });
+    writes.push({ file: path.join(API_OUT, name), text });
+  }
+
   // Published alongside its guide: exact typed TweakDB extraction, not a
   // hand-maintained list or a claim that every appearance has been tested.
   const catalogueText = (await readFile(path.resolve(sourceDir, "..", VEHICLE_CATALOGUE_SOURCE), "utf8"))
