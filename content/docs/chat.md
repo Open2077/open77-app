@@ -71,7 +71,24 @@ Open77.chat.broadcast({
 `send`, `broadcast`, `addSuggestion`, `addSuggestions`, `removeSuggestion` and `clear` return
 `true`, or `false, reason`. `onMessage` returns the handler id, so it can be passed to
 `RemoveEventHandler`; it returns `nil, "invalid_chat_handler"` for a non-function. Other reasons:
-`invalid_chat_target`, `invalid_chat_message`, `invalid_chat_command`, `invalid_chat_suggestion`.
+`invalid_chat_target`, `invalid_chat_message`, `invalid_chat_command`, `invalid_chat_suggestion`,
+and the host bus's own `resource_preparing` (the call ran at the top level of the script, before
+the chunk had loaded -- move it into `onResourceStart`, a command or an event handler) and
+`event_queue_limit`.
+
+`playerId` and `target` are **numbers**: an integer id, `-1` for everyone (`send` also takes
+`nil`). A player id that arrived through a host event -- `onPlayerReady`, `onPlayerDisconnected`,
+`onPlayerEnteredVehicle` -- is a string, and the facade refuses it with `invalid_chat_target`:
+pass `tonumber(playerId)`. `source` inside a `RegisterNetEvent` or `RegisterCommand` handler is
+already a number.
+
+### The events the chat raises for the server
+
+| Event | Payload | Raised |
+|---|---|---|
+| `chat:ready` | `()` | By the `open77_chat` client, through `TriggerServerEvent`, once its UI is up and again whenever it re-requests suggestions. Handle it with `RegisterNetEvent`: `source` is the player, there are no arguments. The usual place to `addSuggestions(source, ...)`; players already connected when a resource starts had their `chat:ready` earlier, so also publish once with `-1` from `onResourceStart`. |
+| `chat:message` | `(playerId, playerName, text)` | Every message the authority accepted, after the `chatMessage` veto ran; what `Open77.chat.onMessage` subscribes to. |
+| `chatMessage` | `(playerId, playerName, text)` | Cancellable, raised before a message is shown: a handler that calls `CancelEvent()` drops it. |
 
 ### It is transport, not a second authority
 

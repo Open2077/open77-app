@@ -90,7 +90,7 @@ AddEventHandler("onPlayerReady", function(playerId)
         Wait(5000)                                   -- the report follows world-ready by a few seconds
         local locale = Open77.players.locale(playerId)
         local language = locale and locale.code:sub(1, 2) or "en"
-        Open77.chat.send(playerId, ({ fr = "Bienvenue !", de = "Willkommen!" })[language] or "Welcome!")
+        Open77.chat.send(tonumber(playerId), ({ fr = "Bienvenue !", de = "Willkommen!" })[language] or "Welcome!")
     end)
 end)
 ```

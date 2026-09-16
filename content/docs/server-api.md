@@ -36,6 +36,17 @@ Limits are 1,024 scheduled tasks and 2,048 handlers per resource. Network events
 arguments in a 48 KiB JSON envelope. During a network handler, global `source` is set from the
 authenticated connection, never from client payload data.
 
+### What the sandbox provides
+
+A server script runs in Lua 5.4 with the standard `math`, `string`, `table`, `utf8` and `coroutine`
+libraries, the `json` table above, `print`, and the globals in this guide. It has **no** `os`, `io`,
+`debug`, `package`, `require`, `load`, `loadfile`, `dofile` or `collectgarbage`: each of those is
+`nil`, so `os.time()` raises `attempt to index a nil value`. Wall-clock time is `Open77.time.unix()` /
+`GetUnixTime()` (fractional seconds) or `Open77.time.utc()` (ISO 8601); elapsed time is
+`Open77.time.monotonic()` or `GetGameTimer()`; random numbers are `math.random`; persistence is
+`Open77.kvp` and the database API, never a file. Split a script across files with more
+`server_script` lines in the manifest, not `require`.
+
 ### The host-wide event bus
 
 `TriggerEvent` is the server counterpart of the client bus: the event reaches every running
@@ -175,6 +186,8 @@ matters (a stop/start can occur before the next tick). Revisions increase for ev
 transition. Remember the newest revision per resource and ignore older notifications:
 scheduler order is not a lifecycle guarantee.
 
+### Feature APIs at a glance
+
 The [cyberware API](cyberware.md) separates definition, identity, management and
 read permissions. Use the [Gorilla Arms walkthrough](gorilla-arms.md) for a complete
 resource example; installation completion is asynchronous.
@@ -219,7 +232,9 @@ ledger in `operating_system`, `self_ice` and `purge` slots. The optional lab is
 disabled by default. `onHackingTransition` carries platform-owned upload/status
 notifications; it cannot be synthesized through resource/network events.
 
-The namespaced equivalents are:
+### Namespaced equivalents of the globals
+
+The namespaced equivalents of the runtime globals listed at the top of this guide are:
 
 | Function | Signature |
 |---|---|
