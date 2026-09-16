@@ -297,6 +297,18 @@ export function getApiIndex(): Promise<ApiIndex> {
 async function loadApiIndex(): Promise<ApiIndex> {
   const raw = await readFile(API_FILE, "utf8");
   const generated = JSON.parse(raw) as ApiEntryRaw[];
+  // The wiki now emits the low-level server globals as real cards, and most
+  // borrow the example of their Open77.* twin. The few that have no twin keep
+  // the site-owned example the table-derived cards used to carry, from the
+  // same overlay file, so no card ships without a worked example.
+  const globalsExamples = JSON.parse(
+    await readFile(path.join(process.cwd(), "content", "api", "server-globals-examples.json"), "utf8"),
+  ) as Record<string, string>;
+  for (const entry of generated) {
+    if (entry.runtime === "server" && entry.namespace === "_G" && !entry.example && globalsExamples[entry.name]) {
+      entry.example = globalsExamples[entry.name];
+    }
+  }
   const parsed = [...generated, ...await getDocumentedServerApi(generated), ...await getDoorServiceApi()];
 
   const namespaceKeys = new Map<string, string>();

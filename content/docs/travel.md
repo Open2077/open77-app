@@ -116,11 +116,34 @@ session nor the last one to finish.
 Open77.travel.setNoclip(enabled)
 Open77.travel.isNoclip()
 Open77.travel.setNoclipSpeed(metresPerSecond)   -- 0.1 .. 500
+Open77.travel.getNoclipSpeed()                -- current base speed, including wheel changes
 Open77.travel.setMapPick(enabled)
 Open77.travel.isMapPick()
 ```
 
 Noclip moves through the same teleport facility and never takes ownership of the player's
-movement component. `setMapPick` only lets the world map publish a double-clicked point;
+movement component. It is camera-relative, uses the player's configured forward/back/left/right
+keys, and submits one bounded movement request per running game frame. Releasing a movement
+key does not leave a target that continues to converge.
+
+- Space / Ctrl: ascend / descend; mouse wheel: adjust base speed (20% per notch).
+- Shift: 4x boost; Alt: 0.25x precision; both can be combined.
+- XInput: left stick moves, right stick looks, triggers ascend/descend, LB boosts and RB slows.
+- Diagonal movement is normalized. Menus, focused WebUIs, the developer console and loss
+  of window focus suspend movement input; the held position is retained.
+- Native movement/combat restrictions belong to noclip and are released on exit. It does
+  not heal the player, pause world time or clear restrictions belonging to other resources.
+- Activation requires a living, attached player outside vehicles and workspot animations.
+  `setNoclip` returns `false, reason` if refused. Death, body replacement or entering a vehicle
+  stops flight. Stopping the owning resource releases flight on the next running frame.
+- Only the resource which enabled noclip can disable it. All travel calls still require
+  `player.travel`; a gamemode must also enforce server-side ACL before delegating admin use.
+
+The admin package retains `/admin.self.noclip`, `/admin.self.fly` and `/admin.self.speed`.
+Its compact HUD shows current speed and controls without capturing input. Native wheel
+changes are reflected in both admin interfaces. The diagnostic `noclip.state` is read-only
+and reports the controller, owning resource, paused input and safety guards.
+
+`setMapPick` only lets the world map publish a double-clicked point;
 it moves nobody, and it does not bypass the ACL-checked server command that consumes the
 point.

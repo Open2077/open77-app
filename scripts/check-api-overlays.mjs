@@ -150,7 +150,14 @@ console.log(`  names in both runtimes: ${shared.length}`);
 // Every card carries a worked example: a generated card through the wiki
 // overlays, a table-derived server global through the site's own overlay.
 // A card without one used to be the silent default; keep it a failure.
-const missingExamples = api.filter((entry) => !entry.example).map((entry) => entry.route_id);
+const overlayExamples = JSON.parse(await fs.readFile(
+  path.join(process.cwd(), "content", "api", "server-globals-examples.json"), "utf8",
+));
+// A wiki server-global card without an example is served with the site-owned
+// overlay example (src/lib/api-reference.ts); only a card neither side covers is a gap.
+const missingExamples = api
+  .filter((entry) => !entry.example && !(entry.runtime === "server" && entry.namespace === "_G" && typeof overlayExamples[entry.name] === "string" && overlayExamples[entry.name].trim()))
+  .map((entry) => entry.route_id);
 if (missingExamples.length > 0) {
   console.log(`   cards without an example: ${missingExamples.join(", ")}`);
   gaps += missingExamples.length;

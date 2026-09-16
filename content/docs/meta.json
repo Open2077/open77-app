@@ -43,6 +43,14 @@
           "nav": "The launcher",
           "title": "The OPEN//77 launcher",
           "description": "The player's guide to the OPEN//77 launcher: installing it, the SmartScreen warning on an unsigned executable and what it actually means, signing in, how it verifies your game build, the mod menu and everything it refuses to do silently, joining a world, direct-connect links, how it updates itself, and where its log is."
+        },
+        {
+          "slug": "agents",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Build with an AI agent",
+          "title": "Build resources with an AI agent",
+          "description": "Install the OPEN//77 Devkit MCP in one line and give Claude Code, Codex, Cursor or VS Code every Lua native, permission, event and game-data name, pinned to the server build you run."
         }
       ]
     },
@@ -351,6 +359,13 @@
           "kind": "guide",
           "nav": "Ground Slam",
           "description": "A native ground or mid-air slam as a session grant: define, grant and revoke, the key the player presses, the damage and radius options, impact events and the limits."
+        },
+        {
+          "slug": "ability-activation-leases",
+          "kind": "guide",
+          "nav": "Activation leases",
+          "title": "Ability activation leases",
+          "description": "Why an ability activates the moment the key goes down: the server hands each player an expiring budget of activations, the client spends from it, and the server checks afterwards. Nothing to configure; what changes is when the waiting happens."
         },
         {
           "slug": "reflex-overdrive",
