@@ -5,9 +5,12 @@ import { readFile } from "node:fs/promises";
 const read = (file) => readFile(file, "utf8");
 const api = JSON.parse(await read("content/api/api.json"));
 const nav = JSON.parse(await read("content/docs/meta.json"));
-const entries = api.filter((entry) => entry.namespace === "Open77.screen");
-assert.deepEqual(entries.map((entry) => entry.name).sort(),
-  ["fadeOut", "fadeIn", "transition", "cancel", "state", "catalog", "isFaded", "nativeState"].sort());
+// `Open77.screen` now also carries the wave-6 capture surface (`capture`,
+// `surface`, `upload`, `mugshot` -- base 4d6b81ea, guide screenshots.md); this
+// check is about the fades, so it looks at the eight fade cards only.
+const fadeNames = ["fadeOut", "fadeIn", "transition", "cancel", "state", "catalog", "isFaded", "nativeState"];
+const entries = api.filter((entry) => entry.namespace === "Open77.screen" && fadeNames.includes(entry.name));
+assert.deepEqual(entries.map((entry) => entry.name).sort(), [...fadeNames].sort());
 for (const entry of entries) {
   assert.equal(entry.runtime, "client", entry.qualified);
   assert.equal(entry.inferred, false, entry.qualified);
