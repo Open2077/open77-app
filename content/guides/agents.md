@@ -17,7 +17,7 @@ From inside your server folder, so the build is detected:
 npx -y @open2077/mcp init
 ```
 
-That registers the MCP in every agent found on the machine (Claude Code, Codex CLI, Cursor,
+That registers the MCP (as `open77-devkit`) in every agent found on the machine (Claude Code, Codex CLI, Cursor,
 VS Code, Claude Desktop, Windsurf, Gemini CLI), without overwriting an existing entry that says
 something else. Restart the agent, or reconnect its MCP servers, and ask it:
 *which OPEN//77 build are you answering for?*
@@ -35,8 +35,8 @@ https://mcp.open2077.net/mcp
 
 | Client | How |
 | --- | --- |
-| Claude Code | `claude mcp add --transport http open77 https://mcp.open2077.net/mcp` |
-| Codex CLI | in `~/.codex/config.toml`: `[mcp_servers.open77]` then `url = "https://mcp.open2077.net/mcp"` |
+| Claude Code | `claude mcp add --transport http open77-devkit https://mcp.open2077.net/mcp` |
+| Codex CLI | in `~/.codex/config.toml`: `[mcp_servers.open77-devkit]` then `url = "https://mcp.open2077.net/mcp"` |
 | Cursor | Settings › MCP › add a server with that URL |
 | claude.ai | Settings › Connectors › add a custom connector with that URL |
 
