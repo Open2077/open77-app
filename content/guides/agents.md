@@ -22,8 +22,9 @@ VS Code, Claude Desktop, Windsurf, Gemini CLI), without overwriting an existing 
 something else. Restart the agent, or reconnect its MCP servers, and ask it:
 *which OPEN//77 build are you answering for?*
 
-`npx -y @open2077/mcp uninstall` reverses it. Node 20 or newer is the only requirement; the server
-archive also ships the package under `tools/mcp` for a box without Node.
+`npx -y @open2077/mcp uninstall` reverses it. Node 20 or newer is the only requirement. The server
+archive also ships the package under `tools/mcp` with an install script, so a server box with Node
+but no npm access can register it from there.
 
 ## Without Node, or from claude.ai
 
