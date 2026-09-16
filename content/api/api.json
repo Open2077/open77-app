@@ -22041,6 +22041,210 @@
  },
  {
   "namespace": "_G",
+  "name": "AdoptElevator",
+  "handler": "AdoptElevator",
+  "summary": "`floorCount`.",
+  "description": "`floorCount`. Constants are in `Open77.elevators.flags`. Low-level aliases are `AdoptElevator`,",
+  "params": [
+   {
+    "name": "arg2",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg6",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg7",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg8",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 939,
+  "permissions": [
+   "world.elevators"
+  ],
+  "reasons": [
+   "elevators_unavailable",
+   "permission_denied:world.elevators"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "AdoptElevator",
+  "route_id": "server:AdoptElevator"
+ },
+ {
+  "namespace": "_G",
+  "name": "AttachEffect",
+  "handler": "AttachEffect",
+  "summary": "`world.effects`;",
+  "description": "`world.effects`; decimal effect ID or nil/reason. Prefer `Open77.effects.attach`.",
+  "params": [
+   {
+    "name": "targetId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "kind",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "effect",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "slot",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "localAnchor",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "localSlot",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "ttlMs?",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "radius",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "hysteresis",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "localEvent?",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "soundEvent?",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "soundOnOwner?",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 892,
+  "permissions": [
+   "world.effects"
+  ],
+  "reasons": [
+   "invalid_argument",
+   "permission_denied:world.effects",
+   "resource_stopping",
+   "world_unavailable"
+  ],
+  "since": "2.31.13+op77.63",
+  "qualified": "AttachEffect",
+  "route_id": "server:AttachEffect"
+ },
+ {
+  "namespace": "_G",
+  "name": "BanPlayer",
+  "handler": "BanPlayer",
+  "summary": "`Open77.players.ban` and `BanPlayer` resolve the player's authenticated device identity, submit a",
+  "description": "`Open77.players.ban` and `BanPlayer` resolve the player's authenticated device identity, submit a",
+  "params": [
+   {
+    "name": "seconds",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 869,
+  "permissions": [
+   "players.ban"
+  ],
+  "reasons": [
+   "ban_failed",
+   "invalid_duration",
+   "invalid_player_id",
+   "invalid_reason",
+   "permission_denied:players.ban",
+   "server_unavailable"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "BanPlayer",
+  "route_id": "server:BanPlayer"
+ },
+ {
+  "namespace": "_G",
   "name": "CancelEvent",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Server only. Vetoes the cancellable event this handler is running under.",
@@ -22060,6 +22264,106 @@
   "since": "2.31.13+op77.67",
   "qualified": "CancelEvent",
   "route_id": "server:CancelEvent"
+ },
+ {
+  "namespace": "_G",
+  "name": "CancelNpcTask",
+  "handler": "CancelNpcTask",
+  "summary": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "description": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 925,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "CancelNpcTask",
+  "route_id": "server:CancelNpcTask"
+ },
+ {
+  "namespace": "_G",
+  "name": "ClearNpcTasks",
+  "handler": "ClearNpcTasks",
+  "summary": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "description": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "channel",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 926,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "ClearNpcTasks",
+  "route_id": "server:ClearNpcTasks"
+ },
+ {
+  "namespace": "_G",
+  "name": "ClearProps",
+  "handler": "ClearProps",
+  "summary": "`AttachProp`, `DetachProp`, `RemoveProp`, `GetProp`, `GetProps`, and `ClearProps`.",
+  "description": "`AttachProp`, `DetachProp`, `RemoveProp`, `GetProp`, `GetProps`, and `ClearProps`. The namespaced API supplies validation and structured",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 884,
+  "permissions": [
+   "world.props"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "ClearProps",
+  "route_id": "server:ClearProps"
  },
  {
   "namespace": "_G",
@@ -22119,6 +22423,295 @@
  },
  {
   "namespace": "_G",
+  "name": "CreateEffect",
+  "handler": "CreateEffect",
+  "summary": "Low-level aliases are `PlayEffect`, `CreateEffect`, `UpdateEffect`, `RemoveEffect`,",
+  "description": "Low-level aliases are `PlayEffect`, `CreateEffect`, `UpdateEffect`, `RemoveEffect`,",
+  "params": [
+   {
+    "name": "arg10",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 886,
+  "permissions": [
+   "world.effects"
+  ],
+  "reasons": [
+   "invalid_argument",
+   "invalid_position",
+   "permission_denied:world.effects",
+   "world_unavailable"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "CreateEffect",
+  "route_id": "server:CreateEffect"
+ },
+ {
+  "namespace": "_G",
+  "name": "CreateLootDrop",
+  "handler": "CreateLootDrop",
+  "summary": "and `ttlMs`.",
+  "description": "and `ttlMs`. Low-level aliases are `CreateLootDrop`, `UpdateLootDrop`, `RemoveLootDrop`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg6",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg7",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg8",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg9",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg10",
+    "type": "number",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 894,
+  "permissions": [
+   "world.loot"
+  ],
+  "reasons": [
+   "loot_unavailable",
+   "permission_denied:world.loot"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "CreateLootDrop",
+  "route_id": "server:CreateLootDrop"
+ },
+ {
+  "namespace": "_G",
+  "name": "CreateNpc",
+  "handler": "CreateNpc",
+  "summary": "Low-level aliases are `CreateNpc`, `UpdateNpc`, `SetNpcTransform`, `SetNpcBucket`, `RemoveNpc`,",
+  "description": "Low-level aliases are `CreateNpc`, `UpdateNpc`, `SetNpcTransform`, `SetNpcBucket`, `RemoveNpc`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg6",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg7",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg8",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg9",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg10",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg11",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg12",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg13",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg14",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg15",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   },
+   {
+    "name": "arg16",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   },
+   {
+    "name": "arg17",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 917,
+  "permissions": [
+   "world.npcs"
+  ],
+  "reasons": [
+   "npcs_unavailable",
+   "permission_denied:world.npcs"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "CreateNpc",
+  "route_id": "server:CreateNpc"
+ },
+ {
+  "namespace": "_G",
+  "name": "CreateProp",
+  "handler": "CreateProp",
+  "summary": "Low-level aliases are `CreateProp`, `UpdateProp`, `SetPropTransform`, `SetPropBucket`,",
+  "description": "Low-level aliases are `CreateProp`, `UpdateProp`, `SetPropTransform`, `SetPropBucket`,",
+  "params": [
+   {
+    "name": "arg10",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   },
+   {
+    "name": "arg11",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 877,
+  "permissions": [
+   "world.props"
+  ],
+  "reasons": [
+   "invalid_argument",
+   "invalid_model",
+   "invalid_position",
+   "permission_denied:world.props",
+   "world_unavailable"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "CreateProp",
+  "route_id": "server:CreateProp"
+ },
+ {
+  "namespace": "_G",
   "name": "CreateThread",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Starts a coroutine this resource's scheduler manages.",
@@ -22145,6 +22738,189 @@
   "since": "2.31.13+op77.45",
   "qualified": "CreateThread",
   "route_id": "server:CreateThread"
+ },
+ {
+  "namespace": "_G",
+  "name": "CreateVehicle",
+  "handler": "CreateVehicle",
+  "summary": "Low-level aliases are `CreateVehicle`, `UpdateVehicleState`, `SetVehiclePaint`,",
+  "description": "Low-level aliases are `CreateVehicle`, `UpdateVehicleState`, `SetVehiclePaint`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg6",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg7",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg8",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg9",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg10",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg11",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg12",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg13",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg14",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg15",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 899,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [
+   "permission_denied:world.vehicles",
+   "vehicles_unavailable"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "CreateVehicle",
+  "route_id": "server:CreateVehicle"
+ },
+ {
+  "namespace": "_G",
+  "name": "DamageNpc",
+  "handler": "DamageNpc",
+  "summary": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "description": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 931,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "DamageNpc",
+  "route_id": "server:DamageNpc"
+ },
+ {
+  "namespace": "_G",
+  "name": "DamagePlayer",
+  "handler": "DamagePlayer",
+  "summary": "`RequestPlayerLifeResync`, `GetPlayerHealth`, `DamagePlayer`, `HealPlayer`, `SetPlayerHealth`,",
+  "description": "`RequestPlayerLifeResync`, `GetPlayerHealth`, `DamagePlayer`, `HealPlayer`, `SetPlayerHealth`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 973,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "DamagePlayer",
+  "route_id": "server:DamagePlayer"
  },
  {
   "namespace": "_G",
@@ -22244,6 +23020,95 @@
  },
  {
   "namespace": "_G",
+  "name": "DropPlayer",
+  "handler": "DropPlayer",
+  "summary": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "description": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 868,
+  "permissions": [
+   "players.disconnect"
+  ],
+  "reasons": [
+   "invalid_player_id",
+   "invalid_reason",
+   "permission_denied:players.disconnect",
+   "player_not_found",
+   "server_unavailable"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "DropPlayer",
+  "route_id": "server:DropPlayer"
+ },
+ {
+  "namespace": "_G",
+  "name": "EnqueueNpcTask",
+  "handler": "EnqueueNpcTask",
+  "summary": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "description": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg6",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 924,
+  "permissions": [
+   "world.npcs"
+  ],
+  "reasons": [
+   "permission_denied:world.npcs"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "EnqueueNpcTask",
+  "route_id": "server:EnqueueNpcTask"
+ },
+ {
+  "namespace": "_G",
   "name": "Entity",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Addresses one entity's state bag, FiveM style.",
@@ -22302,6 +23167,75 @@
   "since": "2.31.13+op77.67",
   "qualified": "ExecuteCommand",
   "route_id": "server:ExecuteCommand"
+ },
+ {
+  "namespace": "_G",
+  "name": "FadePlayerScreen",
+  "handler": "FadePlayerScreen",
+  "summary": "Cover (`out` true) or uncover one player's screen with the native quest fade.",
+  "description": "Cover (`out` true) or uncover one player's screen with the native quest fade. The client consumes the relay itself, so the target needs no client resource; `options.timeoutMs` (1000-60000, default 15000) is a ceiling the **client** enforces on real time, so a forgotten fade-in costs a pause, not a black screen. See [screen transitions](screen-transitions.md).",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "out",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "durationMs?",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options?",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 970,
+  "permissions": [
+   "players.screen"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "FadePlayerScreen",
+  "route_id": "server:FadePlayerScreen"
+ },
+ {
+  "namespace": "_G",
+  "name": "ForcePlayerOutOfVehicle",
+  "handler": "ForcePlayerOutOfVehicle",
+  "summary": "Vehicle-seat low-level aliases are `SetPlayerIntoVehicle`, `ForcePlayerOutOfVehicle`,",
+  "description": "Vehicle-seat low-level aliases are `SetPlayerIntoVehicle`, `ForcePlayerOutOfVehicle`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 914,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "ForcePlayerOutOfVehicle",
+  "route_id": "server:ForcePlayerOutOfVehicle"
  },
  {
   "namespace": "_G",
@@ -22410,6 +23344,167 @@
  },
  {
   "namespace": "_G",
+  "name": "GetCurrentResourceGeneration",
+  "handler": "LuaResourceRuntime",
+  "summary": "Opaque generation identity of this server VM, changed on restart/reload.",
+  "description": "Opaque generation identity of this server VM, changed on restart/reload.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Exports.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 29,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetCurrentResourceGeneration",
+  "route_id": "server:GetCurrentResourceGeneration"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetCurrentResourceName",
+  "handler": "GetCurrentResourceName",
+  "summary": "Return this manifest's resource name.",
+  "description": "Return this manifest's resource name.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 819,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetCurrentResourceName",
+  "route_id": "server:GetCurrentResourceName"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetEffect",
+  "handler": "GetEffect",
+  "summary": "`GetEffect`, `GetEffects`, `PlayEntityEffect`, and `PlayEntitySound`.",
+  "description": "`GetEffect`, `GetEffects`, `PlayEntityEffect`, and `PlayEntitySound`. The namespaced API",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 889,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetEffect",
+  "route_id": "server:GetEffect"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetEffects",
+  "handler": "GetEffects",
+  "summary": "`GetEffect`, `GetEffects`, `PlayEntityEffect`, and `PlayEntitySound`.",
+  "description": "`GetEffect`, `GetEffects`, `PlayEntityEffect`, and `PlayEntitySound`. The namespaced API",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 890,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetEffects",
+  "route_id": "server:GetEffects"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetElevator",
+  "handler": "GetElevator",
+  "summary": "`RemoveElevator`, `GetElevator`, and `GetElevators`.",
+  "description": "`RemoveElevator`, `GetElevator`, and `GetElevators`. See [elevators](elevators.md).",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 946,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetElevator",
+  "route_id": "server:GetElevator"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetElevators",
+  "handler": "GetElevators",
+  "summary": "`RemoveElevator`, `GetElevator`, and `GetElevators`.",
+  "description": "`RemoveElevator`, `GetElevator`, and `GetElevators`. See [elevators](elevators.md).",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 947,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetElevators",
+  "route_id": "server:GetElevators"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetEntityRoutingBucket",
+  "handler": "GetEntityRoutingBucket",
+  "summary": "`GetEntityRoutingBucket`, `SetEntityRoutingBucket`, `SetRoutingBucketEntityLockdownMode`, and",
+  "description": "`GetEntityRoutingBucket`, `SetEntityRoutingBucket`, `SetRoutingBucketEntityLockdownMode`, and",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 837,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetEntityRoutingBucket",
+  "route_id": "server:GetEntityRoutingBucket"
+ },
+ {
+  "namespace": "_G",
   "name": "GetGameTimer",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Process-monotonic milliseconds, the clock the server scheduler runs on.",
@@ -22461,6 +23556,331 @@
  },
  {
   "namespace": "_G",
+  "name": "GetInvokingResource",
+  "handler": "LuaResourceRuntime",
+  "summary": "Immediate caller resource name inside an exported coroutine;",
+  "description": "Immediate caller resource name inside an exported coroutine; nil outside it.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Exports.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 29,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetInvokingResource",
+  "route_id": "server:GetInvokingResource"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetInvokingResourceGeneration",
+  "handler": "LuaResourceRuntime",
+  "summary": "Immediate caller's VM generation inside an exported coroutine;",
+  "description": "Immediate caller's VM generation inside an exported coroutine; nil outside it.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Exports.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 29,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetInvokingResourceGeneration",
+  "route_id": "server:GetInvokingResourceGeneration"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetLootDrop",
+  "handler": "GetLootDrop",
+  "summary": "`GetLootDrop`, and `GetLootDrops`.",
+  "description": "`GetLootDrop`, and `GetLootDrops`. See [loot](loot.md) for pickup validation and client projection.",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 897,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetLootDrop",
+  "route_id": "server:GetLootDrop"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetLootDrops",
+  "handler": "GetLootDrops",
+  "summary": "`GetLootDrop`, and `GetLootDrops`.",
+  "description": "`GetLootDrop`, and `GetLootDrops`. See [loot](loot.md) for pickup validation and client projection.",
+  "params": [
+   {
+    "name": "bucket",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 898,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetLootDrops",
+  "route_id": "server:GetLootDrops"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetNpc",
+  "handler": "GetNpc",
+  "summary": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "description": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 922,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetNpc",
+  "route_id": "server:GetNpc"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetNpcAttitude",
+  "handler": "GetNpcAttitude",
+  "summary": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "description": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 934,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "GetNpcAttitude",
+  "route_id": "server:GetNpcAttitude"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetNpcRelationship",
+  "handler": "GetNpcRelationship",
+  "summary": "`SetNpcGroup`, `SetNpcRelationship`, `GetNpcRelationship`, and `GetNpcTarget`.",
+  "description": "`SetNpcGroup`, `SetNpcRelationship`, `GetNpcRelationship`, and `GetNpcTarget`. See",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 937,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "GetNpcRelationship",
+  "route_id": "server:GetNpcRelationship"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetNpcTarget",
+  "handler": "GetNpcTarget",
+  "summary": "`SetNpcGroup`, `SetNpcRelationship`, `GetNpcRelationship`, and `GetNpcTarget`.",
+  "description": "`SetNpcGroup`, `SetNpcRelationship`, `GetNpcRelationship`, and `GetNpcTarget`. See",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 938,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "GetNpcTarget",
+  "route_id": "server:GetNpcTarget"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetNpcTask",
+  "handler": "GetNpcTask",
+  "summary": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "description": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 927,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetNpcTask",
+  "route_id": "server:GetNpcTask"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetNpcTasks",
+  "handler": "GetNpcTasks",
+  "summary": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "description": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 928,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetNpcTasks",
+  "route_id": "server:GetNpcTasks"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetNpcTemplates",
+  "handler": "GetNpcTemplates",
+  "summary": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "description": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 932,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetNpcTemplates",
+  "route_id": "server:GetNpcTemplates"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetNpcs",
+  "handler": "GetNpcs",
+  "summary": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "description": "`GetNpc`, `GetNpcs`, `EnqueueNpcTask`, `CancelNpcTask`, `ClearNpcTasks`, `GetNpcTask`, `GetNpcTasks`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 923,
+  "permissions": [
+   "npcs.foreign"
+  ],
+  "reasons": [
+   "permission_denied:npcs.foreign"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetNpcs",
+  "route_id": "server:GetNpcs"
+ },
+ {
+  "namespace": "_G",
   "name": "GetNumResources",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "How many resources this server has discovered.",
@@ -22480,6 +23900,26 @@
   "since": "2.31.13+op77.67",
   "qualified": "GetNumResources",
   "route_id": "server:GetNumResources"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerDistance",
+  "handler": "GetPlayerDistance",
+  "summary": "`GetPlayersNearby`, `GetPlayerDistance`, and `GetPlayerHoloCallEyes` (the read half of",
+  "description": "`GetPlayersNearby`, `GetPlayerDistance`, and `GetPlayerHoloCallEyes` (the read half of",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.PlayerReads.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 70,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "GetPlayerDistance",
+  "route_id": "server:GetPlayerDistance"
  },
  {
   "namespace": "_G",
@@ -22517,6 +23957,80 @@
   "since": "2.31.13+op77.67",
   "qualified": "GetPlayerEndpoint",
   "route_id": "server:GetPlayerEndpoint"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerHealth",
+  "handler": "GetPlayerHealth",
+  "summary": "`RequestPlayerLifeResync`, `GetPlayerHealth`, `DamagePlayer`, `HealPlayer`, `SetPlayerHealth`,",
+  "description": "`RequestPlayerLifeResync`, `GetPlayerHealth`, `DamagePlayer`, `HealPlayer`, `SetPlayerHealth`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 971,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayerHealth",
+  "route_id": "server:GetPlayerHealth"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerHoloCallEyes",
+  "handler": "GetHoloCallEyes",
+  "summary": "`GetPlayersNearby`, `GetPlayerDistance`, and `GetPlayerHoloCallEyes` (the read half of",
+  "description": "`GetPlayersNearby`, `GetPlayerDistance`, and `GetPlayerHoloCallEyes` (the read half of",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 825,
+  "permissions": [
+   "players.holocall.read"
+  ],
+  "reasons": [
+   "holocall_unavailable",
+   "invalid_player",
+   "permission_denied:players.holocall.read",
+   "player_unavailable"
+  ],
+  "since": "2.31.13+op77.63",
+  "qualified": "GetPlayerHoloCallEyes",
+  "route_id": "server:GetPlayerHoloCallEyes"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerIdentifier",
+  "handler": "GetPlayerIdentifier",
+  "summary": "Low-level aliases are `GetPlayerName`, `GetPlayerIdentifier`, `GetPlayerPosition`, `GetPlayers`,",
+  "description": "Low-level aliases are `GetPlayerName`, `GetPlayerIdentifier`, `GetPlayerPosition`, `GetPlayers`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 851,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayerIdentifier",
+  "route_id": "server:GetPlayerIdentifier"
  },
  {
   "namespace": "_G",
@@ -22584,6 +24098,80 @@
  },
  {
   "namespace": "_G",
+  "name": "GetPlayerIdentity",
+  "handler": "GetPlayerIdentity",
+  "summary": "`{ userId, name, publicKey, fingerprint, joinedAt }` for an admitted player, or `nil`.",
+  "description": "`{ userId, name, publicKey, fingerprint, joinedAt }` for an admitted player, or `nil`.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 871,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayerIdentity",
+  "route_id": "server:GetPlayerIdentity"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerLifeState",
+  "handler": "GetPlayerLifeState",
+  "summary": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "description": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 948,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayerLifeState",
+  "route_id": "server:GetPlayerLifeState"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerName",
+  "handler": "GetPlayerName",
+  "summary": "Low-level aliases are `GetPlayerName`, `GetPlayerIdentifier`, `GetPlayerPosition`, `GetPlayers`,",
+  "description": "Low-level aliases are `GetPlayerName`, `GetPlayerIdentifier`, `GetPlayerPosition`, `GetPlayers`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 850,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayerName",
+  "route_id": "server:GetPlayerName"
+ },
+ {
+  "namespace": "_G",
   "name": "GetPlayerPing",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "FiveM-style alias for `Open77.players.ping`.",
@@ -22615,6 +24203,366 @@
   "since": "2.31.13+op77.67",
   "qualified": "GetPlayerPing",
   "route_id": "server:GetPlayerPing"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerPosition",
+  "handler": "GetPlayerPosition",
+  "summary": "Low-level aliases are `GetPlayerName`, `GetPlayerIdentifier`, `GetPlayerPosition`, `GetPlayers`,",
+  "description": "Low-level aliases are `GetPlayerName`, `GetPlayerIdentifier`, `GetPlayerPosition`, `GetPlayers`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 852,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayerPosition",
+  "route_id": "server:GetPlayerPosition"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerRead",
+  "handler": "GetPlayerRead",
+  "summary": "`SetPlayerMaxHealth`, `SetPlayerArmor`, `SetPlayerGodMode`, `SetPlayerRegen`, `GetPlayerRead`,",
+  "description": "`SetPlayerMaxHealth`, `SetPlayerArmor`, `SetPlayerGodMode`, `SetPlayerRegen`, `GetPlayerRead`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.PlayerReads.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 68,
+  "permissions": [],
+  "reasons": [
+   "invalid_player_id",
+   "player_not_found",
+   "sessions_unavailable"
+  ],
+  "since": "2.31.13+op77.67",
+  "qualified": "GetPlayerRead",
+  "route_id": "server:GetPlayerRead"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerRoutingBucket",
+  "handler": "GetPlayerRoutingBucket",
+  "summary": "The corresponding globals are `GetPlayerRoutingBucket`, `SetPlayerRoutingBucket`,",
+  "description": "The corresponding globals are `GetPlayerRoutingBucket`, `SetPlayerRoutingBucket`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 835,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayerRoutingBucket",
+  "route_id": "server:GetPlayerRoutingBucket"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerSpectateTarget",
+  "handler": "GetPlayerSpectateTarget",
+  "summary": "Who this player is watching, or `0`.",
+  "description": "Who this player is watching, or `0`.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 968,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "GetPlayerSpectateTarget",
+  "route_id": "server:GetPlayerSpectateTarget"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerSpectators",
+  "handler": "GetPlayerSpectators",
+  "summary": "Everyone watching this player, ascending.",
+  "description": "Everyone watching this player, ascending.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 969,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "GetPlayerSpectators",
+  "route_id": "server:GetPlayerSpectators"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerStats",
+  "handler": "GetPlayerStats",
+  "summary": "Combined canonical health/stamina snapshot or `nil`.",
+  "description": "Combined canonical health/stamina snapshot or `nil`.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 972,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayerStats",
+  "route_id": "server:GetPlayerStats"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerVehicleSeat",
+  "handler": "GetPlayerVehicleSeat",
+  "summary": "`SetPlayerVehicleExitLocked`, and `GetPlayerVehicleSeat`;",
+  "description": "`SetPlayerVehicleExitLocked`, and `GetPlayerVehicleSeat`; their full contract is documented under",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 916,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayerVehicleSeat",
+  "route_id": "server:GetPlayerVehicleSeat"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerWeapons",
+  "handler": "GetPlayerWeapons",
+  "summary": "`GetPlayerWeapons`.",
+  "description": "`GetPlayerWeapons`.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Weapons.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 40,
+  "permissions": [],
+  "reasons": [
+   "invalid_player_id",
+   "permission_denied",
+   "weapons_unavailable",
+   "weapons_unreported"
+  ],
+  "since": "2.31.13+op77.67",
+  "qualified": "GetPlayerWeapons",
+  "route_id": "server:GetPlayerWeapons"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayers",
+  "handler": "GetPlayers",
+  "summary": "Array of every authenticated player id, ascending.",
+  "description": "Array of every authenticated player id, ascending. The host's roster, so a gamemode no longer needs its own copy built from join/leave events.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 853,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayers",
+  "route_id": "server:GetPlayers"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayersInBucket",
+  "handler": "GetPlayersInBucket",
+  "summary": "Ids of the authenticated players whose routing bucket is `bucket`, ascending.",
+  "description": "Ids of the authenticated players whose routing bucket is `bucket`, ascending. `false, invalid_bucket` for a negative or oversized bucket.",
+  "params": [
+   {
+    "name": "bucket",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 854,
+  "permissions": [],
+  "reasons": [
+   "invalid_bucket"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayersInBucket",
+  "route_id": "server:GetPlayersInBucket"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayersNearby",
+  "handler": "GetPlayersNearby",
+  "summary": "`GetPlayersNearby`, `GetPlayerDistance`, and `GetPlayerHoloCallEyes` (the read half of",
+  "description": "`GetPlayersNearby`, `GetPlayerDistance`, and `GetPlayerHoloCallEyes` (the read half of",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.PlayerReads.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 69,
+  "permissions": [],
+  "reasons": [
+   "invalid_options",
+   "invalid_radius"
+  ],
+  "since": "2.31.13+op77.67",
+  "qualified": "GetPlayersNearby",
+  "route_id": "server:GetPlayersNearby"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayersPositions",
+  "handler": "GetPlayersPositions",
+  "summary": "`{ [playerId] = { x, y, z, bucket } }` for every player with a snapshot younger than two seconds.",
+  "description": "`{ [playerId] = { x, y, z, bucket } }` for every player with a snapshot younger than two seconds. Players without one are absent, not `nil` entries. One call replaces a loop of `position` over the roster.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 855,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetPlayersPositions",
+  "route_id": "server:GetPlayersPositions"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetProp",
+  "handler": "GetProp",
+  "summary": "`AttachProp`, `DetachProp`, `RemoveProp`, `GetProp`, `GetProps`, and `ClearProps`.",
+  "description": "`AttachProp`, `DetachProp`, `RemoveProp`, `GetProp`, `GetProps`, and `ClearProps`. The namespaced API supplies validation and structured",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 882,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetProp",
+  "route_id": "server:GetProp"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetProps",
+  "handler": "GetProps",
+  "summary": "`AttachProp`, `DetachProp`, `RemoveProp`, `GetProp`, `GetProps`, and `ClearProps`.",
+  "description": "`AttachProp`, `DetachProp`, `RemoveProp`, `GetProp`, `GetProps`, and `ClearProps`. The namespaced API supplies validation and structured",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 883,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetProps",
+  "route_id": "server:GetProps"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetRecordData",
+  "handler": "GetRecordData",
+  "summary": "alias behind all four is `GetRecordData`, called as `GetRecordData(kind, record)`.",
+  "description": "alias behind all four is `GetRecordData`, called as `GetRecordData(kind, record)`.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Data.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 42,
+  "permissions": [],
+  "reasons": [
+   "invalid_kind",
+   "invalid_record",
+   "record_unknown"
+  ],
+  "since": "2.31.13+op77.67",
+  "qualified": "GetRecordData",
+  "route_id": "server:GetRecordData"
  },
  {
   "namespace": "_G",
@@ -22742,6 +24690,53 @@
  },
  {
   "namespace": "_G",
+  "name": "GetResourceState",
+  "handler": "GetResourceState",
+  "summary": "Return the current server resource state.",
+  "description": "Return the current server resource state.",
+  "params": [
+   {
+    "name": "resourceName",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 834,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetResourceState",
+  "route_id": "server:GetResourceState"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetScreenEffectCatalog",
+  "handler": "GetScreenEffectCatalog",
+  "summary": "The screen-effect aliases this server accepts, ascending.",
+  "description": "The screen-effect aliases this server accepts, ascending.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 967,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "GetScreenEffectCatalog",
+  "route_id": "server:GetScreenEffectCatalog"
+ },
+ {
+  "namespace": "_G",
   "name": "GetSoundState",
   "handler": "LuaAudioState",
   "summary": "GetSoundState: server-authoritative network package audio.",
@@ -22773,6 +24768,100 @@
  },
  {
   "namespace": "_G",
+  "name": "GetUnixTime",
+  "handler": "GetUnixTime",
+  "summary": "wall-clock seconds since 1970 UTC, fractional",
+  "description": "wall-clock seconds since 1970 UTC, fractional",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 874,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetUnixTime",
+  "route_id": "server:GetUnixTime"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetUtcTimestamp",
+  "handler": "GetUtcTimestamp",
+  "summary": "the same instant as an ISO 8601 string",
+  "description": "the same instant as an ISO 8601 string",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 875,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetUtcTimestamp",
+  "route_id": "server:GetUtcTimestamp"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetVehicle",
+  "handler": "GetVehicle",
+  "summary": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "description": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 907,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetVehicle",
+  "route_id": "server:GetVehicle"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetVehicles",
+  "handler": "GetVehicles",
+  "summary": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "description": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 908,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GetVehicles",
+  "route_id": "server:GetVehicles"
+ },
+ {
+  "namespace": "_G",
   "name": "GlobalState",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "The server-wide state bag, as a table.",
@@ -22792,6 +24881,73 @@
   "since": "2.31.13+op77.67",
   "qualified": "GlobalState",
   "route_id": "server:GlobalState"
+ },
+ {
+  "namespace": "_G",
+  "name": "GoToElevator",
+  "handler": "GoToElevator",
+  "summary": "`GoToElevator`, `TeleportElevator`, `PauseElevator`, `ResumeElevator`, `SetElevatorFlags`,",
+  "description": "`GoToElevator`, `TeleportElevator`, `PauseElevator`, `ResumeElevator`, `SetElevatorFlags`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 940,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "GoToElevator",
+  "route_id": "server:GoToElevator"
+ },
+ {
+  "namespace": "_G",
+  "name": "HealPlayer",
+  "handler": "HealPlayer",
+  "summary": "`RequestPlayerLifeResync`, `GetPlayerHealth`, `DamagePlayer`, `HealPlayer`, `SetPlayerHealth`,",
+  "description": "`RequestPlayerLifeResync`, `GetPlayerHealth`, `DamagePlayer`, `HealPlayer`, `SetPlayerHealth`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 974,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "HealPlayer",
+  "route_id": "server:HealPlayer"
  },
  {
   "namespace": "_G",
@@ -22854,6 +25010,107 @@
  },
  {
   "namespace": "_G",
+  "name": "IsPlayerDead",
+  "handler": "IsPlayerDead",
+  "summary": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "description": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 949,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "IsPlayerDead",
+  "route_id": "server:IsPlayerDead"
+ },
+ {
+  "namespace": "_G",
+  "name": "IsPlayerFrozen",
+  "handler": "IsPlayerFrozen",
+  "summary": "Whether the canonical life state is currently frozen, by any resource.",
+  "description": "Whether the canonical life state is currently frozen, by any resource.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 959,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "IsPlayerFrozen",
+  "route_id": "server:IsPlayerFrozen"
+ },
+ {
+  "namespace": "_G",
+  "name": "IsPlayerGhosted",
+  "handler": "IsPlayerGhosted",
+  "summary": "Whether the canonical life state is currently ghosted.",
+  "description": "Whether the canonical life state is currently ghosted.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 957,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "IsPlayerGhosted",
+  "route_id": "server:IsPlayerGhosted"
+ },
+ {
+  "namespace": "_G",
+  "name": "IsPlayerVisible",
+  "handler": "IsPlayerVisible",
+  "summary": "Whether the canonical life state says this player is rendered.",
+  "description": "Whether the canonical life state says this player is rendered. Answered from the server bit, never probed from a client.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 961,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "IsPlayerVisible",
+  "route_id": "server:IsPlayerVisible"
+ },
+ {
+  "namespace": "_G",
   "name": "IsPrincipalAceAllowed",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "The same ACL check, addressed by account id instead of session id.",
@@ -22891,6 +25148,61 @@
  },
  {
   "namespace": "_G",
+  "name": "KillNpc",
+  "handler": "KillNpc",
+  "summary": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "description": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 929,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "KillNpc",
+  "route_id": "server:KillNpc"
+ },
+ {
+  "namespace": "_G",
+  "name": "KillPlayer",
+  "handler": "KillPlayer",
+  "summary": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "description": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 950,
+  "permissions": [
+   "players.life.kill"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "KillPlayer",
+  "route_id": "server:KillPlayer"
+ },
+ {
+  "namespace": "_G",
   "name": "LoadResourceFile",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Reads a file belonging to the calling resource.",
@@ -22925,6 +25237,33 @@
   "since": "2.31.13+op77.67",
   "qualified": "LoadResourceFile",
   "route_id": "server:LoadResourceFile"
+ },
+ {
+  "namespace": "_G",
+  "name": "PauseElevator",
+  "handler": "PauseElevator",
+  "summary": "`GoToElevator`, `TeleportElevator`, `PauseElevator`, `ResumeElevator`, `SetElevatorFlags`,",
+  "description": "`GoToElevator`, `TeleportElevator`, `PauseElevator`, `ResumeElevator`, `SetElevatorFlags`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 942,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "PauseElevator",
+  "route_id": "server:PauseElevator"
  },
  {
   "namespace": "_G",
@@ -23094,6 +25433,100 @@
  },
  {
   "namespace": "_G",
+  "name": "PlayEffect",
+  "handler": "PlayEffect",
+  "summary": "Low-level aliases are `PlayEffect`, `CreateEffect`, `UpdateEffect`, `RemoveEffect`,",
+  "description": "Low-level aliases are `PlayEffect`, `CreateEffect`, `UpdateEffect`, `RemoveEffect`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 885,
+  "permissions": [
+   "world.effects"
+  ],
+  "reasons": [
+   "invalid_argument",
+   "invalid_position",
+   "permission_denied:world.effects",
+   "world_unavailable"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "PlayEffect",
+  "route_id": "server:PlayEffect"
+ },
+ {
+  "namespace": "_G",
+  "name": "PlayEntityEffect",
+  "handler": "PlayEntityEffect",
+  "summary": "`GetEffect`, `GetEffects`, `PlayEntityEffect`, and `PlayEntitySound`.",
+  "description": "`GetEffect`, `GetEffects`, `PlayEntityEffect`, and `PlayEntitySound`. The namespaced API",
+  "params": [
+   {
+    "name": "arg4",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 891,
+  "permissions": [
+   "world.effects"
+  ],
+  "reasons": [
+   "invalid_argument",
+   "permission_denied:world.effects",
+   "world_unavailable"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "PlayEntityEffect",
+  "route_id": "server:PlayEntityEffect"
+ },
+ {
+  "namespace": "_G",
+  "name": "PlayEntitySound",
+  "handler": "PlayEntitySound",
+  "summary": "`GetEffect`, `GetEffects`, `PlayEntityEffect`, and `PlayEntitySound`.",
+  "description": "`GetEffect`, `GetEffects`, `PlayEntityEffect`, and `PlayEntitySound`. The namespaced API",
+  "params": [
+   {
+    "name": "arg3",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 893,
+  "permissions": [
+   "world.effects"
+  ],
+  "reasons": [
+   "invalid_argument",
+   "invalid_sound_exclusions",
+   "permission_denied:world.effects",
+   "world_unavailable"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "PlayEntitySound",
+  "route_id": "server:PlayEntitySound"
+ },
+ {
+  "namespace": "_G",
   "name": "PlaySound",
   "handler": "LuaAudioControl",
   "summary": "PlaySound: server-authoritative network package audio.",
@@ -23151,6 +25584,47 @@
   "since": "2.31.13+op77.67",
   "qualified": "Player",
   "route_id": "server:Player"
+ },
+ {
+  "namespace": "_G",
+  "name": "PlayerScreenEffect",
+  "handler": "PlayerScreenEffect",
+  "summary": "`boolean, reason?` — a full-screen post-process on ONE player.",
+  "description": "`boolean, reason?` — a full-screen post-process on ONE player. Not replicated; permission `players.screenfx`. `name` false clears. See [Screen effects](effects.md#screen-effects).",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "name",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "opts?",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 966,
+  "permissions": [
+   "players.screenfx"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "PlayerScreenEffect",
+  "route_id": "server:PlayerScreenEffect"
  },
  {
   "namespace": "_G",
@@ -23232,6 +25706,55 @@
  },
  {
   "namespace": "_G",
+  "name": "RemoveEffect",
+  "handler": "RemoveEffect",
+  "summary": "Low-level aliases are `PlayEffect`, `CreateEffect`, `UpdateEffect`, `RemoveEffect`,",
+  "description": "Low-level aliases are `PlayEffect`, `CreateEffect`, `UpdateEffect`, `RemoveEffect`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 888,
+  "permissions": [
+   "world.effects"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "RemoveEffect",
+  "route_id": "server:RemoveEffect"
+ },
+ {
+  "namespace": "_G",
+  "name": "RemoveElevator",
+  "handler": "RemoveElevator",
+  "summary": "`RemoveElevator`, `GetElevator`, and `GetElevators`.",
+  "description": "`RemoveElevator`, `GetElevator`, and `GetElevators`. See [elevators](elevators.md).",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 945,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "RemoveElevator",
+  "route_id": "server:RemoveElevator"
+ },
+ {
+  "namespace": "_G",
   "name": "RemoveEventHandler",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Removes a handler by id; the same function as Open77.events.off.",
@@ -23256,6 +25779,82 @@
   "since": "2.31.13+op77.45",
   "qualified": "RemoveEventHandler",
   "route_id": "server:RemoveEventHandler"
+ },
+ {
+  "namespace": "_G",
+  "name": "RemoveLootDrop",
+  "handler": "RemoveLootDrop",
+  "summary": "and `ttlMs`.",
+  "description": "and `ttlMs`. Low-level aliases are `CreateLootDrop`, `UpdateLootDrop`, `RemoveLootDrop`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 896,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "RemoveLootDrop",
+  "route_id": "server:RemoveLootDrop"
+ },
+ {
+  "namespace": "_G",
+  "name": "RemoveNpc",
+  "handler": "RemoveNpc",
+  "summary": "Low-level aliases are `CreateNpc`, `UpdateNpc`, `SetNpcTransform`, `SetNpcBucket`, `RemoveNpc`,",
+  "description": "Low-level aliases are `CreateNpc`, `UpdateNpc`, `SetNpcTransform`, `SetNpcBucket`, `RemoveNpc`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 921,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "RemoveNpc",
+  "route_id": "server:RemoveNpc"
+ },
+ {
+  "namespace": "_G",
+  "name": "RemoveProp",
+  "handler": "RemoveProp",
+  "summary": "`AttachProp`, `DetachProp`, `RemoveProp`, `GetProp`, `GetProps`, and `ClearProps`.",
+  "description": "`AttachProp`, `DetachProp`, `RemoveProp`, `GetProp`, `GetProps`, and `ClearProps`. The namespaced API supplies validation and structured",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 881,
+  "permissions": [
+   "world.props"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "RemoveProp",
+  "route_id": "server:RemoveProp"
  },
  {
   "namespace": "_G",
@@ -23286,6 +25885,244 @@
   "since": "2.31.13+op77.67",
   "qualified": "RemoveStateBagChangeHandler",
   "route_id": "server:RemoveStateBagChangeHandler"
+ },
+ {
+  "namespace": "_G",
+  "name": "RemoveVehicle",
+  "handler": "RemoveVehicle",
+  "summary": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "description": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 906,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "RemoveVehicle",
+  "route_id": "server:RemoveVehicle"
+ },
+ {
+  "namespace": "_G",
+  "name": "RequestPlayerLifeResync",
+  "handler": "RequestPlayerLifeResync",
+  "summary": "`RequestPlayerLifeResync`, `GetPlayerHealth`, `DamagePlayer`, `HealPlayer`, `SetPlayerHealth`,",
+  "description": "`RequestPlayerLifeResync`, `GetPlayerHealth`, `DamagePlayer`, `HealPlayer`, `SetPlayerHealth`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 955,
+  "permissions": [
+   "players.life.resync"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "RequestPlayerLifeResync",
+  "route_id": "server:RequestPlayerLifeResync"
+ },
+ {
+  "namespace": "_G",
+  "name": "ResetVehiclePaint",
+  "handler": "ResetVehiclePaint",
+  "summary": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "description": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 902,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "ResetVehiclePaint",
+  "route_id": "server:ResetVehiclePaint"
+ },
+ {
+  "namespace": "_G",
+  "name": "RespawnPlayer",
+  "handler": "RespawnPlayer",
+  "summary": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "description": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 952,
+  "permissions": [
+   "players.life.respawn"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "RespawnPlayer",
+  "route_id": "server:RespawnPlayer"
+ },
+ {
+  "namespace": "_G",
+  "name": "RestorePlayerHealth",
+  "handler": "RestorePlayerHealth",
+  "summary": "Fill health.",
+  "description": "Fill health.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 977,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "RestorePlayerHealth",
+  "route_id": "server:RestorePlayerHealth"
+ },
+ {
+  "namespace": "_G",
+  "name": "RestorePlayerStamina",
+  "handler": "RestorePlayerStamina",
+  "summary": "Fill stamina.",
+  "description": "Fill stamina.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 985,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "RestorePlayerStamina",
+  "route_id": "server:RestorePlayerStamina"
+ },
+ {
+  "namespace": "_G",
+  "name": "ResumeElevator",
+  "handler": "ResumeElevator",
+  "summary": "`GoToElevator`, `TeleportElevator`, `PauseElevator`, `ResumeElevator`, `SetElevatorFlags`,",
+  "description": "`GoToElevator`, `TeleportElevator`, `PauseElevator`, `ResumeElevator`, `SetElevatorFlags`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 943,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "ResumeElevator",
+  "route_id": "server:ResumeElevator"
+ },
+ {
+  "namespace": "_G",
+  "name": "ReviveNpc",
+  "handler": "ReviveNpc",
+  "summary": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "description": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "number",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 930,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "ReviveNpc",
+  "route_id": "server:ReviveNpc"
+ },
+ {
+  "namespace": "_G",
+  "name": "RevivePlayer",
+  "handler": "RevivePlayer",
+  "summary": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "description": "`GetPlayersInBucket`, `GetPlayersPositions`, `DropPlayer`, `BanPlayer`, `GetPlayerLifeState`, `IsPlayerDead`, `KillPlayer`, `RevivePlayer`, `RespawnPlayer`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 951,
+  "permissions": [
+   "players.life.revive"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "RevivePlayer",
+  "route_id": "server:RevivePlayer"
  },
  {
   "namespace": "_G",
@@ -23367,6 +26204,145 @@
  },
  {
   "namespace": "_G",
+  "name": "SetCombatDamageMultiplier",
+  "handler": "SetCombatDamageMultiplier",
+  "summary": "Low-level aliases are `SetCombatFriendlyFire`, `SetCombatTeam`, `SetCombatDamageMultiplier`,",
+  "description": "Low-level aliases are `SetCombatFriendlyFire`, `SetCombatTeam`, `SetCombatDamageMultiplier`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 990,
+  "permissions": [
+   "combat.config"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetCombatDamageMultiplier",
+  "route_id": "server:SetCombatDamageMultiplier"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetCombatFriendlyFire",
+  "handler": "SetCombatFriendlyFire",
+  "summary": "Low-level aliases are `SetCombatFriendlyFire`, `SetCombatTeam`, `SetCombatDamageMultiplier`,",
+  "description": "Low-level aliases are `SetCombatFriendlyFire`, `SetCombatTeam`, `SetCombatDamageMultiplier`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 988,
+  "permissions": [
+   "combat.config"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetCombatFriendlyFire",
+  "route_id": "server:SetCombatFriendlyFire"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetCombatHeadshotMultiplier",
+  "handler": "SetCombatHeadshotMultiplier",
+  "summary": "`SetCombatHeadshotMultiplier`, `SetCombatWeaponMultiplier`, and `SetCombatKindMultiplier`.",
+  "description": "`SetCombatHeadshotMultiplier`, `SetCombatWeaponMultiplier`, and `SetCombatKindMultiplier`.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 991,
+  "permissions": [
+   "combat.config"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetCombatHeadshotMultiplier",
+  "route_id": "server:SetCombatHeadshotMultiplier"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetCombatKindMultiplier",
+  "handler": "SetCombatKindMultiplier",
+  "summary": "`SetCombatHeadshotMultiplier`, `SetCombatWeaponMultiplier`, and `SetCombatKindMultiplier`.",
+  "description": "`SetCombatHeadshotMultiplier`, `SetCombatWeaponMultiplier`, and `SetCombatKindMultiplier`.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 993,
+  "permissions": [
+   "combat.config"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetCombatKindMultiplier",
+  "route_id": "server:SetCombatKindMultiplier"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetCombatTeam",
+  "handler": "SetCombatTeam",
+  "summary": "Low-level aliases are `SetCombatFriendlyFire`, `SetCombatTeam`, `SetCombatDamageMultiplier`,",
+  "description": "Low-level aliases are `SetCombatFriendlyFire`, `SetCombatTeam`, `SetCombatDamageMultiplier`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 989,
+  "permissions": [
+   "combat.config"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetCombatTeam",
+  "route_id": "server:SetCombatTeam"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetCombatWeaponMultiplier",
+  "handler": "SetCombatWeaponMultiplier",
+  "summary": "`SetCombatHeadshotMultiplier`, `SetCombatWeaponMultiplier`, and `SetCombatKindMultiplier`.",
+  "description": "`SetCombatHeadshotMultiplier`, `SetCombatWeaponMultiplier`, and `SetCombatKindMultiplier`.",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 992,
+  "permissions": [
+   "combat.config"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetCombatWeaponMultiplier",
+  "route_id": "server:SetCombatWeaponMultiplier"
+ },
+ {
+  "namespace": "_G",
   "name": "SetConvar",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Records a server-wide, in-memory convar override.",
@@ -23403,6 +26379,905 @@
  },
  {
   "namespace": "_G",
+  "name": "SetElevatorFlags",
+  "handler": "SetElevatorFlags",
+  "summary": "`GoToElevator`, `TeleportElevator`, `PauseElevator`, `ResumeElevator`, `SetElevatorFlags`,",
+  "description": "`GoToElevator`, `TeleportElevator`, `PauseElevator`, `ResumeElevator`, `SetElevatorFlags`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 944,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetElevatorFlags",
+  "route_id": "server:SetElevatorFlags"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetEntityRoutingBucket",
+  "handler": "SetEntityRoutingBucket",
+  "summary": "`GetEntityRoutingBucket`, `SetEntityRoutingBucket`, `SetRoutingBucketEntityLockdownMode`, and",
+  "description": "`GetEntityRoutingBucket`, `SetEntityRoutingBucket`, `SetRoutingBucketEntityLockdownMode`, and",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 838,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetEntityRoutingBucket",
+  "route_id": "server:SetEntityRoutingBucket"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetNpcAttitude",
+  "handler": "SetNpcAttitude",
+  "summary": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "description": "`KillNpc`, `ReviveNpc`, `DamageNpc`, `GetNpcTemplates`, `SetNpcAttitude`, `GetNpcAttitude`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 933,
+  "permissions": [
+   "world.npcs"
+  ],
+  "reasons": [
+   "npc_attitude_invalid",
+   "npc_attitude_target_invalid",
+   "npc_not_found",
+   "npcs_unavailable",
+   "permission_denied:world.npcs"
+  ],
+  "since": "2.31.13+op77.67",
+  "qualified": "SetNpcAttitude",
+  "route_id": "server:SetNpcAttitude"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetNpcBucket",
+  "handler": "SetNpcBucket",
+  "summary": "Low-level aliases are `CreateNpc`, `UpdateNpc`, `SetNpcTransform`, `SetNpcBucket`, `RemoveNpc`,",
+  "description": "Low-level aliases are `CreateNpc`, `UpdateNpc`, `SetNpcTransform`, `SetNpcBucket`, `RemoveNpc`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 920,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetNpcBucket",
+  "route_id": "server:SetNpcBucket"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetNpcGroup",
+  "handler": "SetNpcGroup",
+  "summary": "`SetNpcGroup`, `SetNpcRelationship`, `GetNpcRelationship`, and `GetNpcTarget`.",
+  "description": "`SetNpcGroup`, `SetNpcRelationship`, `GetNpcRelationship`, and `GetNpcTarget`. See",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 935,
+  "permissions": [
+   "world.npcs"
+  ],
+  "reasons": [
+   "npc_not_found",
+   "npcs_unavailable",
+   "permission_denied:world.npcs"
+  ],
+  "since": "2.31.13+op77.67",
+  "qualified": "SetNpcGroup",
+  "route_id": "server:SetNpcGroup"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetNpcRelationship",
+  "handler": "SetNpcRelationship",
+  "summary": "`SetNpcGroup`, `SetNpcRelationship`, `GetNpcRelationship`, and `GetNpcTarget`.",
+  "description": "`SetNpcGroup`, `SetNpcRelationship`, `GetNpcRelationship`, and `GetNpcTarget`. See",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 936,
+  "permissions": [
+   "world.npcs"
+  ],
+  "reasons": [
+   "npc_attitude_invalid",
+   "npc_relationship_not_found",
+   "npcs_unavailable",
+   "permission_denied:world.npcs"
+  ],
+  "since": "2.31.13+op77.67",
+  "qualified": "SetNpcRelationship",
+  "route_id": "server:SetNpcRelationship"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetNpcTransform",
+  "handler": "SetNpcTransform",
+  "summary": "Low-level aliases are `CreateNpc`, `UpdateNpc`, `SetNpcTransform`, `SetNpcBucket`, `RemoveNpc`,",
+  "description": "Low-level aliases are `CreateNpc`, `UpdateNpc`, `SetNpcTransform`, `SetNpcBucket`, `RemoveNpc`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "number",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 919,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetNpcTransform",
+  "route_id": "server:SetNpcTransform"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerArmor",
+  "handler": "SetPlayerArmor",
+  "summary": "`SetPlayerMaxHealth`, `SetPlayerArmor`, `SetPlayerGodMode`, `SetPlayerRegen`, `GetPlayerRead`,",
+  "description": "`SetPlayerMaxHealth`, `SetPlayerArmor`, `SetPlayerGodMode`, `SetPlayerRegen`, `GetPlayerRead`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 978,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerArmor",
+  "route_id": "server:SetPlayerArmor"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerDownedDamageable",
+  "handler": "SetPlayerDownedDamageable",
+  "summary": "`players.stats.apply`;",
+  "description": "`players.stats.apply`; boolean/reason. Also exposed as `Open77.stats.setDownedDamageable`.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 980,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerDownedDamageable",
+  "route_id": "server:SetPlayerDownedDamageable"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerFrozen",
+  "handler": "SetPlayerFrozen",
+  "summary": "Hold the player's body where it stands, or release this resource's hold.",
+  "description": "Hold the player's body where it stands, or release this resource's hold. `boolean, reason?`",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "frozen",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 958,
+  "permissions": [
+   "players.life.freeze"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "SetPlayerFrozen",
+  "route_id": "server:SetPlayerFrozen"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerGhosted",
+  "handler": "SetPlayerGhosted",
+  "summary": "Toggle the server-owned non-solid spawn state and its optional automatic clear policy.",
+  "description": "Toggle the server-owned non-solid spawn state and its optional automatic clear policy.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "ghosted",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options?",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 956,
+  "permissions": [
+   "players.life.ghost"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerGhosted",
+  "route_id": "server:SetPlayerGhosted"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerGodMode",
+  "handler": "SetPlayerGodMode",
+  "summary": "`SetPlayerMaxHealth`, `SetPlayerArmor`, `SetPlayerGodMode`, `SetPlayerRegen`, `GetPlayerRead`,",
+  "description": "`SetPlayerMaxHealth`, `SetPlayerArmor`, `SetPlayerGodMode`, `SetPlayerRegen`, `GetPlayerRead`,",
+  "params": [
+   {
+    "name": "arg2",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 979,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerGodMode",
+  "route_id": "server:SetPlayerGodMode"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerHealth",
+  "handler": "SetPlayerHealth",
+  "summary": "Explicit health setter;",
+  "description": "Explicit health setter; zero routes through life authority.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "value",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 975,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerHealth",
+  "route_id": "server:SetPlayerHealth"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerIntoVehicle",
+  "handler": "SetPlayerIntoVehicle",
+  "summary": "Vehicle-seat low-level aliases are `SetPlayerIntoVehicle`, `ForcePlayerOutOfVehicle`,",
+  "description": "Vehicle-seat low-level aliases are `SetPlayerIntoVehicle`, `ForcePlayerOutOfVehicle`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 913,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerIntoVehicle",
+  "route_id": "server:SetPlayerIntoVehicle"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerMaxHealth",
+  "handler": "SetPlayerMaxHealth",
+  "summary": "Explicit health maximum setter.",
+  "description": "Explicit health maximum setter.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "maximum",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 976,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerMaxHealth",
+  "route_id": "server:SetPlayerMaxHealth"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerMaxStamina",
+  "handler": "SetPlayerMaxStamina",
+  "summary": "Explicit stamina maximum setter.",
+  "description": "Explicit stamina maximum setter.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "maximum",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 984,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerMaxStamina",
+  "route_id": "server:SetPlayerMaxStamina"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerRegen",
+  "handler": "SetPlayerRegen",
+  "summary": "Set health regeneration rate.",
+  "description": "Set health regeneration rate.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "rate",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 981,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerRegen",
+  "route_id": "server:SetPlayerRegen"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerRegenEnabled",
+  "handler": "SetPlayerRegenEnabled",
+  "summary": "Toggle health regeneration.",
+  "description": "Toggle health regeneration.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 982,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerRegenEnabled",
+  "route_id": "server:SetPlayerRegenEnabled"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerRoutingBucket",
+  "handler": "SetPlayerRoutingBucket",
+  "summary": "The corresponding globals are `GetPlayerRoutingBucket`, `SetPlayerRoutingBucket`,",
+  "description": "The corresponding globals are `GetPlayerRoutingBucket`, `SetPlayerRoutingBucket`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 836,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerRoutingBucket",
+  "route_id": "server:SetPlayerRoutingBucket"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerStamina",
+  "handler": "SetPlayerStamina",
+  "summary": "Explicit stamina setter.",
+  "description": "Explicit stamina setter.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "value",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 983,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerStamina",
+  "route_id": "server:SetPlayerStamina"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerStaminaRegen",
+  "handler": "SetPlayerStaminaRegen",
+  "summary": "Set stamina regeneration rate.",
+  "description": "Set stamina regeneration rate.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "rate",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 986,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerStaminaRegen",
+  "route_id": "server:SetPlayerStaminaRegen"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerStaminaRegenEnabled",
+  "handler": "SetPlayerStaminaRegenEnabled",
+  "summary": "Toggle stamina regeneration.",
+  "description": "Toggle stamina regeneration.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 987,
+  "permissions": [
+   "players.stats.apply"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerStaminaRegenEnabled",
+  "route_id": "server:SetPlayerStaminaRegenEnabled"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerVehicleExitLocked",
+  "handler": "SetPlayerVehicleExitLocked",
+  "summary": "`SetPlayerVehicleExitLocked`, and `GetPlayerVehicleSeat`;",
+  "description": "`SetPlayerVehicleExitLocked`, and `GetPlayerVehicleSeat`; their full contract is documented under",
+  "params": [
+   {
+    "name": "arg2",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 915,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPlayerVehicleExitLocked",
+  "route_id": "server:SetPlayerVehicleExitLocked"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerVisible",
+  "handler": "SetPlayerVisible",
+  "summary": "Hide a player's body from every other client, or show it again.",
+  "description": "Hide a player's body from every other client, or show it again. Presentation only; see [Player visibility](#player-visibility) below.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "visible",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 960,
+  "permissions": [
+   "players.life.visibility"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "SetPlayerVisible",
+  "route_id": "server:SetPlayerVisible"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPropBucket",
+  "handler": "SetPropBucket",
+  "summary": "Low-level aliases are `CreateProp`, `UpdateProp`, `SetPropTransform`, `SetPropBucket`,",
+  "description": "Low-level aliases are `CreateProp`, `UpdateProp`, `SetPropTransform`, `SetPropBucket`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 880,
+  "permissions": [
+   "world.props"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPropBucket",
+  "route_id": "server:SetPropBucket"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPropTransform",
+  "handler": "SetPropTransform",
+  "summary": "Low-level aliases are `CreateProp`, `UpdateProp`, `SetPropTransform`, `SetPropBucket`,",
+  "description": "Low-level aliases are `CreateProp`, `UpdateProp`, `SetPropTransform`, `SetPropBucket`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 879,
+  "permissions": [
+   "world.props"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetPropTransform",
+  "route_id": "server:SetPropTransform"
+ },
+ {
+  "namespace": "_G",
   "name": "SetResourceKvp",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "FiveM-style alias for `Open77.kvp.set`.",
@@ -23436,6 +27311,72 @@
   "since": "2.31.13+op77.67",
   "qualified": "SetResourceKvp",
   "route_id": "server:SetResourceKvp"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetRoutingBucketEntityLockdownMode",
+  "handler": "SetRoutingBucketLockdownMode",
+  "summary": "`GetEntityRoutingBucket`, `SetEntityRoutingBucket`, `SetRoutingBucketEntityLockdownMode`, and",
+  "description": "`GetEntityRoutingBucket`, `SetEntityRoutingBucket`, `SetRoutingBucketEntityLockdownMode`, and",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "mode",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 839,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetRoutingBucketEntityLockdownMode",
+  "route_id": "server:SetRoutingBucketEntityLockdownMode"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetRoutingBucketPopulationEnabled",
+  "handler": "SetRoutingBucketPopulationEnabled",
+  "summary": "`SetRoutingBucketPopulationEnabled`.",
+  "description": "`SetRoutingBucketPopulationEnabled`.",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 840,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetRoutingBucketPopulationEnabled",
+  "route_id": "server:SetRoutingBucketPopulationEnabled"
  },
  {
   "namespace": "_G",
@@ -23577,6 +27518,190 @@
  },
  {
   "namespace": "_G",
+  "name": "SetVehicleLocked",
+  "handler": "SetVehicleLocked",
+  "summary": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "description": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "params": [
+   {
+    "name": "arg2",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 903,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetVehicleLocked",
+  "route_id": "server:SetVehicleLocked"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetVehiclePaint",
+  "handler": "SetVehiclePaint",
+  "summary": "Low-level aliases are `CreateVehicle`, `UpdateVehicleState`, `SetVehiclePaint`,",
+  "description": "Low-level aliases are `CreateVehicle`, `UpdateVehicleState`, `SetVehiclePaint`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg6",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg7",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 901,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetVehiclePaint",
+  "route_id": "server:SetVehiclePaint"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetVehicleTransform",
+  "handler": "SetVehicleTransform",
+  "summary": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "description": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "number",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 905,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "SetVehicleTransform",
+  "route_id": "server:SetVehicleTransform"
+ },
+ {
+  "namespace": "_G",
+  "name": "SpectatePlayer",
+  "handler": "SpectatePlayer",
+  "summary": "Put one player behind another player's shoulder: ghost, hide, and a follow camera on the target, as one transaction that fails closed.",
+  "description": "Put one player behind another player's shoulder: ghost, hide, and a follow camera on the target, as one transaction that fails closed. `targetId` false ends it and gives the body back, as do death, disconnect, reconnect, a bucket change and this resource stopping. `options`: `blendMs`, `distance`, `height`. See [Spectating](cameras.md#spectating).",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "targetId|false",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options?",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 964,
+  "permissions": [
+   "players.spectate"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.67",
+  "qualified": "SpectatePlayer",
+  "route_id": "server:SpectatePlayer"
+ },
+ {
+  "namespace": "_G",
   "name": "StartResource",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "FiveM-style alias for `Open77.resource.start`.",
@@ -23672,6 +27797,39 @@
  },
  {
   "namespace": "_G",
+  "name": "TeleportElevator",
+  "handler": "TeleportElevator",
+  "summary": "`GoToElevator`, `TeleportElevator`, `PauseElevator`, `ResumeElevator`, `SetElevatorFlags`,",
+  "description": "`GoToElevator`, `TeleportElevator`, `PauseElevator`, `ResumeElevator`, `SetElevatorFlags`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 941,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "TeleportElevator",
+  "route_id": "server:TeleportElevator"
+ },
+ {
+  "namespace": "_G",
   "name": "TriggerCancellableEvent",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Server only. Publishes a host-wide event handlers may veto, and returns a verdict handle.",
@@ -23704,6 +27862,63 @@
   "since": "2.31.13+op77.67",
   "qualified": "TriggerCancellableEvent",
   "route_id": "server:TriggerCancellableEvent"
+ },
+ {
+  "namespace": "_G",
+  "name": "TriggerClientEvent",
+  "handler": "TriggerClientEvent",
+  "summary": "Send to one session or broadcast;",
+  "description": "Send to one session or broadcast; requires `network.events`.",
+  "params": [
+   {
+    "name": "event",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "playerId|-1",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "...",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 849,
+  "permissions": [
+   "network.events"
+  ],
+  "reasons": [
+   "network_unavailable",
+   "permission_denied:network.events",
+   "reserved_ability_event",
+   "reserved_animation_event",
+   "reserved_audio_event",
+   "reserved_callback_event",
+   "reserved_cyberware_event",
+   "reserved_dash_event",
+   "reserved_effect_event",
+   "reserved_hacking_event",
+   "reserved_holocall_event",
+   "reserved_interaction_event",
+   "reserved_screen_event",
+   "reserved_sound_event",
+   "reserved_travel_event"
+  ],
+  "since": "2.31.13+op77.45",
+  "qualified": "TriggerClientEvent",
+  "route_id": "server:TriggerClientEvent"
  },
  {
   "namespace": "_G",
@@ -23774,6 +27989,381 @@
   "since": "2.31.13+op77.67",
   "qualified": "TriggerLocalEvent",
   "route_id": "server:TriggerLocalEvent"
+ },
+ {
+  "namespace": "_G",
+  "name": "TriggerVehicleHorn",
+  "handler": "TriggerVehicleHorn",
+  "summary": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "description": "`ResetVehiclePaint`, `SetVehicleLocked`, `TriggerVehicleHorn`, `SetVehicleTransform`, `RemoveVehicle`, `GetVehicle`, `GetVehicles`,",
+  "params": [
+   {
+    "name": "duration",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 904,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "TriggerVehicleHorn",
+  "route_id": "server:TriggerVehicleHorn"
+ },
+ {
+  "namespace": "_G",
+  "name": "UpdateEffect",
+  "handler": "UpdateEffect",
+  "summary": "Low-level aliases are `PlayEffect`, `CreateEffect`, `UpdateEffect`, `RemoveEffect`,",
+  "description": "Low-level aliases are `PlayEffect`, `CreateEffect`, `UpdateEffect`, `RemoveEffect`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 887,
+  "permissions": [
+   "world.effects"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "UpdateEffect",
+  "route_id": "server:UpdateEffect"
+ },
+ {
+  "namespace": "_G",
+  "name": "UpdateLootDrop",
+  "handler": "UpdateLootDrop",
+  "summary": "and `ttlMs`.",
+  "description": "and `ttlMs`. Low-level aliases are `CreateLootDrop`, `UpdateLootDrop`, `RemoveLootDrop`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg6",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg7",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg8",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg9",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 895,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "UpdateLootDrop",
+  "route_id": "server:UpdateLootDrop"
+ },
+ {
+  "namespace": "_G",
+  "name": "UpdateNpc",
+  "handler": "UpdateNpc",
+  "summary": "Low-level aliases are `CreateNpc`, `UpdateNpc`, `SetNpcTransform`, `SetNpcBucket`, `RemoveNpc`,",
+  "description": "Low-level aliases are `CreateNpc`, `UpdateNpc`, `SetNpcTransform`, `SetNpcBucket`, `RemoveNpc`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg6",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg7",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg8",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg9",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 918,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "UpdateNpc",
+  "route_id": "server:UpdateNpc"
+ },
+ {
+  "namespace": "_G",
+  "name": "UpdateProp",
+  "handler": "UpdateProp",
+  "summary": "Low-level aliases are `CreateProp`, `UpdateProp`, `SetPropTransform`, `SetPropBucket`,",
+  "description": "Low-level aliases are `CreateProp`, `UpdateProp`, `SetPropTransform`, `SetPropBucket`,",
+  "params": [],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 878,
+  "permissions": [
+   "world.props"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "UpdateProp",
+  "route_id": "server:UpdateProp"
+ },
+ {
+  "namespace": "_G",
+  "name": "UpdateVehicleState",
+  "handler": "UpdateVehicleState",
+  "summary": "Low-level aliases are `CreateVehicle`, `UpdateVehicleState`, `SetVehiclePaint`,",
+  "description": "Low-level aliases are `CreateVehicle`, `UpdateVehicleState`, `SetVehiclePaint`,",
+  "params": [
+   {
+    "name": "arg1",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg2",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg3",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg4",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg5",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg6",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg7",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg8",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg9",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg10",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg11",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg12",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg14",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg15",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "arg16",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 900,
+  "permissions": [],
+  "reasons": [],
+  "since": "2.31.13+op77.45",
+  "qualified": "UpdateVehicleState",
+  "route_id": "server:UpdateVehicleState"
+ },
+ {
+  "namespace": "_G",
+  "name": "VehicleDrivingCommand",
+  "handler": "VehicleDriving",
+  "summary": "`world.vehicles`;",
+  "description": "`world.vehicles`; driving-state table or nil/reason (state may be nil when absent). Prefer [vehicle AI methods](vehicle-ai.md).",
+  "params": [
+   {
+    "name": "operation",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "vehicleId",
+    "type": "value",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options?",
+    "type": "value",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "",
+  "inferred": false,
+  "source_line": 909,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": "2.31.13+op77.57",
+  "qualified": "VehicleDrivingCommand",
+  "route_id": "server:VehicleDrivingCommand"
  },
  {
   "namespace": "_G",
