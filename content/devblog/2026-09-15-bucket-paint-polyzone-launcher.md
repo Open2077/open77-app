@@ -1,6 +1,6 @@
 ---
 title: "Buckets, Paint, PolyZone \u2014 and a Better Launcher"
-date: "2026-9-15"
+date: "2026-09-15"
 description: "OPEN//77 improves Cyberpunk 2077 multiplayer with bucket fixes, vehicle paint syncing, PolyZone support and a redesigned launcher."
 tags: ["cyberpunk-2077-multiplayer", "cp2077-multiplayer", "cyberpunk-2077-dedicated-server", "cyberpunk-2077-rp-server", "night-city-online"]
 ---
