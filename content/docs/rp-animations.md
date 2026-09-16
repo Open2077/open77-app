@@ -12,8 +12,11 @@ Use a named profile such as `smoke`, `phone` or `dance`. Each profile binds an
 authored workspot and an explicit set of compatible clip names. Arbitrary animation
 names from the general game inventory are not accepted by this system.
 
-See the [profile and clip catalogue](rp-animation-catalogue.md) for all 12 profiles,
-70 selectable clips, source workspots, prop requirements and placement notes.
+See the [profile and clip catalogue](rp-animation-catalogue.md) for all 18 profiles,
+116 selectable clips, source workspots, prop requirements and placement notes. Three
+of them -- `chair`, `lean` and `lie` -- are *portable postures* meant to be played at
+a pose rather than where the player stands; see
+[Portable workspots](#portable-workspots-sit-lean-and-lie-anywhere).
 Male and female rig bindings exist in the selected source assets; the local male
 smoke check does not validate all clips or both remote proxy graph modes.
 
@@ -41,6 +44,7 @@ from the game's animation inventory are not supported RP profiles.
 | Start an action | `request(profileId, options?)` for yourself | `play(playerId, profileId, options?)` |
 | Chain actions | `sequence(steps, options?)` | `sequence(playerId, steps, options?)` |
 | Stop | `cancel(playbackId?)` for yourself | `stop(playerId, playbackId?)` for this resource's action |
+| Place an action at a pose | -- | `playAt(playerId, profileId, position, yaw?, options?)`, torn down by `stopAt(playbackId)` |
 | Observe state | `state(playerId?)` via a Promise | `current(playerId)` synchronously |
 
 All methods above belong to `Open77.animations`. The older client
@@ -243,6 +247,8 @@ permissions {
 | `play(playerId, profileId, options?)` | Accepted playback state | `players.animations.control` |
 | `sequence(playerId, steps, options?)` | Accepted playback state | `players.animations.control` |
 | `stop(playerId, playbackId?)` | `true`, including when already stopped | `players.animations.control` |
+| `playAt(playerId, profileId, position, yaw?, options?)` | Accepted playback state with an `anchor` | `players.animations.control` |
+| `stopAt(playbackId)` | `true`, including when the handle no longer names a running action | `players.animations.control` |
 | `current(playerId)` | Playback state, or nil when inactive | `players.animations.read` |
 
 Failures return `nil, error`. Successful lookup of a missing profile or inactive
@@ -372,15 +378,98 @@ which concept is missing instead of assuming a bad value:
 What *is* supported is `loop` and `durationMs`, described above, plus `clip` on
 `play` and on a sequence step.
 
-#### Scenarios (`TaskStartScenarioInPlace`) are not shipped
+#### Scenarios: what `playAt` covers and what it does not
 
-There is no `Open77.animations.scenario(entity, workspotRef)`. Cyberpunk's scenario
-equivalent is a workspot, and a workspot is only playable through a device bound to
-it. Mounting a player into a *world* chair, bench or bar stool would need that
-device's engine entity handle, and nothing on 2.31 enumerates workspot-bearing world
-entities near a point — the same wall that stopped the cover commands in an earlier
-wave. Pointing the generic device at an arbitrary `.workspot` at runtime has not been
-measured and is not assumed. Tracked as I4.
+`TaskStartScenarioInPlace` on a *world* chair is still not offered, and the reason has
+not changed: Cyberpunk's scenario equivalent is a workspot, a workspot is only playable
+through a device bound to it at asset-build time, and nothing on 2.31 enumerates
+workspot-bearing world entities near a point -- the same wall that stopped the cover
+commands in an earlier wave. Mounting a player into the bench they are standing next
+to would need that bench's device handle, and there is no way to ask for it.
+
+What *is* shipped is the other half of that native, `TaskStartScenarioAtPosition`:
+Open77 brings its **own** device to the pose. See the next section.
+
+### Portable workspots: sit, lean and lie anywhere
+
+Three profiles exist for one reason: the pose they carry is authored against a piece
+of furniture that will not be there. Each ships its own device and derived workspot in
+`Open77RP.archive`, like every other profile, and each is invisible -- the device is
+the chair, and it renders nothing.
+
+| Profile | Vanilla source | Body pose |
+| --- | --- | --- |
+| `chair` | `chair\generic__sit_chair_lean_back__sit_around__01.workspot` | seated at chair height, leaning back, hands on lap; 37 clips |
+| `lean` | `wall\generic__stand_wall_lean_back__stand_around__01.workspot` | standing, back against a wall, arms crossed; 4 clips |
+| `lie` | `bed\generic__lie_double_bed__lie_around__01.workspot` | lying on the back at mattress height; 2 clips |
+
+They are ordinary profiles: `play(playerId, 'chair')` sits the player down exactly
+where they stand, on nothing. What makes them *portable* is `playAt`, which moves the
+body to a pose the server chooses, spawns the device there and plays the posture on
+it -- the body arrives first, the chair appears under it, then it sits:
+
+```lua
+-- open77.lua: permissions { 'players.animations.control' }
+-- A chair prop spawned with Open77.props has no workspot of its own. Put the
+-- posture on its seat, facing the way the chair faces.
+local chairPos, chairYaw = { x = -1441.2, y = 129.6, z = 18.05 }, 90.0
+local placed, err = Open77.animations.playAt(playerId, 'chair', chairPos, chairYaw, {
+    durationMs = 30000, loop = false,
+})
+if not placed then print('cannot seat: ' .. tostring(err)); return end
+seated[playerId] = placed.playbackId      -- the handle stopAt() takes
+
+-- Later, whoever sat them down:
+Open77.animations.stopAt(seated[playerId])
+```
+
+`position` is `{ x, y, z }` (or a three-element array); `yaw` is degrees about Z, the
+same convention as `Open77.props.create`, and defaults to 0. `options` are exactly
+those of `play`: `clip`, `durationMs`, `loop`. The accepted state carries an `anchor =
+{ x, y, z, yaw }` field, and its `playbackId` is the handle.
+
+Any catalogue profile accepts a pose, not only the three above: `playAt(id, 'smoke',
+barCounter, yaw)` walks a smoker to the counter.
+
+**Limits, stated plainly:**
+
+- **Reach is bounded at 5 m** from the player's current position, refused with
+  `anchor_too_far`. A placement moves the body, and past furniture-distance that is
+  a teleport dressed as an animation, reachable with the animation permission alone.
+  Journeys belong to [`Open77.players.teleport`](server-api.md#moving-a-player), which
+  costs `players.teleport` and settles the body; call it first, then `playAt`.
+- **The body is carried by the server, not by the engine.** Measured 2026-09-16 on
+  2.31: a workspot device spawned two metres from a player does *not* pull the body
+  onto itself, under either `PlayAtResourcePosition` behaviour -- the posture sat
+  unmounted and ended `anchor_unreached` five seconds later, twice. So `playAt` first
+  moves the body through the platform's own placement channel (no fade, heading =
+  the anchor's yaw, the same gate and settle watch a Warden move gets), and only
+  publishes the posture to clients once the body stands on the anchor; the device
+  is then under its feet, which is the one case every capture proved. Resources
+  holding the handle see the accepted state at once (`onPlayerAnimationChanged`
+  fires on acceptance); clients see nothing until arrival, and the action's clock
+  starts on arrival. Proven in game 2026-09-16: `chair`, `lean` and `lie` each placed
+  two metres from where the player stood, the body seated / leaning / lying there
+  with nothing under it, the move settling in about 120 ms on loopback.
+- **The move watchdog is measured against the anchor**, not the starting point, and it
+  is armed five seconds after acceptance. A body that never reaches its anchor in
+  that window ends with reason `anchor_unreached` (the placement channel refused or
+  the client never landed); one that arrived and then left ends with `moved`, as
+  before. A placement the channel cannot even dispatch is refused at once with
+  `anchor_move_refused` (the body is not ready, not alive, or in a vehicle).
+- **The pose is the caller's problem.** `z` is where the *device* goes, and the
+  authored clip plays relative to it: for `chair` that is the floor under the seat,
+  for `lie` the floor under the bed. Put a `chair` at seat height and the body floats.
+- **Nothing is enumerated.** `playAt` does not find chairs; it accepts a pose the
+  server already knows -- a prop it spawned, a point from its own furniture table.
+- **Acceptance is server authority, not proof.** The client still mounts the anchored
+  device with `gameWorkspotSlidingBehaviour.PlayAtResourcePosition` (runtime-tunable:
+  `emote.tune anchorslide 0|1|2`, `emote.tune anchorslidetime <seconds>`), but with the
+  body already on the anchor the slide is zero either way. Observe
+  `onPlayerAnimationChanged` and the `anchor_unreached` reason, not the return value.
+- `stopAt` on a handle whose action already ended succeeds, exactly as `stop` on an
+  idle player does; another resource's handle is refused with `animation_owned`.
+  Resource stop, restart and disposal tear placed actions down like every other.
 
 ### Playback state
 
@@ -435,7 +524,9 @@ Common errors include `unknown_profile`, `invalid_clip`, `invalid_options`,
 `invalid_duration`, `invalid_sequence`, `invalid_step`, `sequence_too_long`,
 `player_unavailable`, `player_not_ready`, `player_not_alive`, `player_in_vehicle`,
 `position_unavailable`, `animation_owned`, `stale_playback`, `resource_stopping`
-and `permission_denied:<capability>`.
+and `permission_denied:<capability>`. `playAt` adds `invalid_anchor` and
+`anchor_too_far`; `stopAt` adds `invalid_playback`. A placed action can also end
+with reason `anchor_unreached`.
 
 Client-side errors also include `export_resource_unavailable`, `player_not_ready`,
 `network_unavailable`, `too_many_requests`, `request_timeout`, `cancelled`,

@@ -79,6 +79,12 @@
           "description": "Install a Workshop creation from its pasted link, review the plan, update, uninstall and roll back; the Workshop chip in the Resources tab, revoked releases, preload restart staging, local configuration and retained backups."
         },
         {
+          "slug": "warden-players",
+          "kind": "guide",
+          "nav": "Players tab in Warden",
+          "description": "The live roster in Warden — ping, health, life state, match — and the per-row admin actions: warn, kick, ban, grant rights, heal, freeze and move, plus why spectate cannot be adapted from a browser."
+        },
+        {
           "slug": "launcher-for-server-owners",
           "kind": "guide",
           "source": "authored",

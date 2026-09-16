@@ -375,6 +375,7 @@ end
 | `applied` | what the **engine** did with it: `Ok`, or a refusal name |
 | `crowdGranularity` | `continuous` |
 | `trafficGranularity` | `binary` -- 2.31 exposes no vehicle density modifier, so any positive traffic means vanilla traffic |
+| `sanitizer` | what this client's own clean-up did with the policy, cumulative since plugin load: `kept` (unowned bodies left alone because the policy allows their kind), `removedNpcs`, `removedVehicles`, `sweeps`. Compare two reads: `removedVehicles` climbing with traffic on is cars vanishing |
 
 There is no client setter, on purpose: density has to be the same for everyone in a bucket, so it is
 a server decision (`Open77.world.setPopulation`, see [the server API](server-api.md)) and this side

@@ -453,6 +453,208 @@ ids. A listener that is entitled to know which bodies were in the blast can run
 the same proximity read every resource already has; the event does not hand that
 out to every resource on the server just because it happened to be listening.
 
+### Fires: `Open77.effects.fire`
+
+A fire is an explosion that does not finish. FiveM's `StartScriptFire` /
+`RemoveScriptFire`, in one call that lights the flames, streams them to everyone
+who should see them, and burns whoever stands in them until it goes out.
+
+```lua
+permissions { "world.effects", "world.explosions", "world.vehicles" }
+```
+
+```lua
+local fireId, reason = Open77.effects.fire({ x = -1448.2, y = 96.1, z = 17.5 }, {
+    radius          = 4.0,
+    damagePerSecond = 5.0,
+    durationMs      = 30000,
+    vfx             = "fire.medium",
+    bucket          = 0,
+    vehicles        = false,
+    attacker        = source,
+})
+
+assert(fireId, reason)
+-- … later, or never: `durationMs = 0` burns until somebody puts it out.
+Open77.effects.removeFire(fireId)
+```
+
+| Option | Type | Meaning |
+|---|---|---|
+| `radius` | number | Metres. Greater than 0 and at most **50**. Default `4`. |
+| `damagePerSecond` | number | Health per second for anyone inside the radius. `0`–`1000`, default `5`. Anything above zero requires `world.explosions`. |
+| `durationMs` | integer | How long it burns. `0` means "until removed"; the ceiling is one hour. Default `30000`. |
+| `vfx` | string | Effect alias or depot path, default `fire.medium`. The catalogue ships `fire.tiny`, `fire.small`, `fire.medium`, `fire.large` and `fire.gas`. |
+| `bucket` | integer | Routing bucket, default `0`. A fire burns in one bucket. |
+| `vehicles` | boolean | Burn the cars in it too. Requires `world.vehicles`, default `false`. |
+| `attacker` | integer | The player credited with the kills. Default `0`, an unattributed death. |
+
+It answers the fire id as a **decimal string**, or `nil, reason`.
+
+#### The id is the looping effect's id, and that is the whole design
+
+A fire is not a fourth registry. It is exactly one entry from the
+[looping-effect registry](#looping-open77effectscreate) — same identity,
+ownership, revisioning and streaming, which is why a player who walks away and
+comes back still finds it burning — plus a timer on the owning resource that
+damages whoever is standing in it.
+
+So `fireId` **is** the effect id:
+
+```lua
+local fireId = Open77.effects.fire(position, { radius = 4 })
+local entry  = Open77.effects.get(fireId)   -- the flames, as a looping effect
+```
+
+`onEffectCreated` announces it, `Open77.effects.all()` lists it beside every other
+looping effect, and the bundled `open77_effects` client resource projects it
+without knowing that E7 exists. Two ids for one object would have been two things
+that could disagree about whether it is still there.
+
+The consequence is worth stating plainly: `Open77.effects.remove(fireId)` is a
+legal thing for the owning resource to do, and it **puts the fire out**. The next
+tick finds the registry entry gone and stops the burning with the reason
+`effect_removed`, rather than leaving an invisible fire hurting people. Expiry
+works the other way round — the resource's own deadline is the authority and it
+removes the entry — which is why the effect carries no TTL of its own. One clock,
+one reason, never a race between two of them.
+
+| Function | Signature | Result |
+|---|---|---|
+| `Open77.effects.fire` | `(position, options?)` | Fire id as a decimal string, or `nil, reason`. |
+| `Open77.effects.removeFire` | `(fireId)` | `true`, or `nil, reason` (`not_found`, `owned_by_another_resource`). |
+| `Open77.effects.fires` | `(bucket?)` | This resource's burning fires, ascending by id. |
+
+```lua
+for _, burning in ipairs(Open77.effects.fires()) do
+    print(burning.id, burning.radius, burning.damagePerSecond,
+          burning.hurt,             -- how many distinct players it has burned
+          burning.remainingMs)      -- nil for a fire that burns until removed
+end
+```
+
+`fires()` answers **this resource's** fires and nobody else's: they are its to put
+out, and the host-wide `onFire` below is how the rest of the server learns about
+somebody else's.
+
+#### Damage is flat inside the radius, unlike an explosion
+
+An explosion is a wavefront and [falls off linearly](#explosions-open77effectsexplosion);
+a fire is a volume you are inside or outside of. A player at the rim burns exactly
+as fast as one at the centre. A falloff would have made the edge of a fire nearly
+free, so somebody could stand in the flames taking two per cent damage while the
+picture said otherwise.
+
+Three limits follow from how the tick works, and each of them is a decision rather
+than an accident:
+
+- **One damage interval is one second**, so `damagePerSecond` is the literal unit.
+- **The clock starts on the first tick the fire is alive for**, not at the call.
+  A resource's top-level chunk runs before its VM has ever ticked, so a fire lit
+  at load dates itself from the first tick rather than from a clock reading of
+  zero — otherwise, on a server that had been up for an hour, it would expire
+  the moment it was noticed. Nothing is billed on the tick that arms it.
+- **A billed interval is capped at five seconds.** A server that hitched — a long
+  database call, a debugger, a stalled tick — must not settle a minute of burning
+  in one instant and kill everybody standing near a campfire.
+- **A stale body is not a target**, the same rule the blast follows: a player whose
+  last accepted snapshot fails the freshness test is skipped rather than burned at
+  a position the server is not sure of.
+
+Damage goes through the same scripted-damage funnel as everything else, with the
+attack kind `environment` — 2.31's damage vocabulary has no fire kind, and
+inventing one would have meant a wire change for a label. A burned body therefore
+reads as killed by the world. God mode, the life-phase interlocks, the
+`environment` damage multiplier and kill attribution all apply without being
+restated, and a player the authority refuses is skipped rather than putting the
+fire out for everybody else.
+
+#### Cars
+
+`vehicles = true` burns the cars in the radius at the same rate, converted through
+one stated rule: `damagePerSecond` is in player health points, whose full bar is
+100, and a car's health is a 0–1 pool. **A fire that takes ten seconds to kill a
+healthy player takes ten seconds to wreck a healthy car.** A car that reaches zero
+is exploded through [`Open77.vehicles.explode`](vehicles.md) — C12's call, the one
+E6 uses too. There is exactly one way to blow up a car in Open77 and this is not a
+second one.
+
+The gradual damage is the same write `Open77.vehicles.setHealth` performs, and
+canonical health merges by minimum against an owner report, so a projection that
+took its snapshot before the burn cannot undo it.
+
+#### Three grants, and deliberately no `world.fires`
+
+| You hold | You can |
+|---|---|
+| `world.effects` | Light flames that are only a picture. `damagePerSecond` must be zero. |
+| `world.effects` + `world.explosions` | Burn everyone inside the radius. |
+| `world.effects` + `world.vehicles` | Pass `vehicles = true` and burn the cars in it. |
+
+The same three strings as an explosion, and no new one. The capability describes
+the **reach** — area damage to players the resource never enumerated — and a fire
+reaches exactly as far as a blast repeated once a second. A second string for the
+same reach would let an operator believe they had withheld something they had
+already granted.
+
+One further ceiling: **64 burning fires per resource**. That is much lower than the
+looping-effect registry's 512, because every fire costs a proximity sweep over
+every player every second — the effect registry's ceiling bounds memory, this one
+bounds the tick. The reason is `fire_limit`.
+
+#### `onFire`
+
+Every fire publishes one host-wide event when it starts and one when it stops.
+Reserved, like `onExplosion`: a resource that cannot light a fire cannot claim one
+is burning.
+
+```lua
+AddEventHandler("onFire", function(fireId, state, reason, x, y, z,
+                                   radius, damagePerSecond, bucket, by, hurt)
+    -- state  is "started" or "stopped"
+    -- reason is "started", "removed", "expired" or "effect_removed"
+    -- hurt   is a COUNT of distinct players burned, never a roster
+end)
+```
+
+| `reason` | When |
+|---|---|
+| `started` | the fire was lit |
+| `removed` | `Open77.effects.removeFire` |
+| `expired` | `durationMs` elapsed |
+| `effect_removed` | the looping effect was removed out from under it, or released with the resource |
+
+The FiveM spelling **`fireEvent`** carries the same eleven values and is published
+alongside, the way `playerDropped` accompanies `onPlayerDisconnected`. Both names
+are reserved.
+
+A fire that goes out because its resource stopped publishes nothing: a resource on
+its way out cannot tell other resources anything, which is the same rule
+`onExplosion` follows. The flames still go, and `onEffectRemoved(id,
+"resource_stopped", resource)` is what announces that.
+
+#### `onParticleEffect`
+
+Every **world-positioned** server effect publishes one host-wide event: the
+one-shots of `Open77.effects.play`, the registry entries of
+`Open77.effects.create`, and the flames a fire is made of.
+
+```lua
+AddEventHandler("onParticleEffect", function(effect, x, y, z, loop, bucket, by)
+    -- loop is false for a one-shot, true for a registry entry or a fire
+end)
+```
+
+`playOn`, `attach` and `sound` raise nothing, and that is deliberate: an
+entity-bound effect has no world position the server knows, because the target owns
+the transform. Publishing an invented origin would be worse than publishing
+nothing — a listener reading it would believe the server knew where the effect was.
+A resource that wants those reads the entity.
+
+The FiveM spelling is **`ptFxEvent`**, with the same seven values, and both names
+are reserved. Publication is best-effort: a resource whose effect drew correctly is
+never told it failed because the host-wide queue was full.
+
 ### Looping: `Open77.effects.create`
 
 A looping effect is a registry entry. It streams by distance and bucket, it can be patched, and it stops when you say so or when its TTL runs out.
@@ -526,6 +728,9 @@ Every method requires `world.effects`.
 |---|---|---|
 | `Open77.effects.play` | `(name, opts)` | `boolean, reason?` — one-shot, no handle to keep. |
 | `Open77.effects.explosion` | `(position, options)` | `{ players, vehicles }`, or `nil, reason`. Also needs `world.explosions` to do damage and `world.vehicles` to wreck cars. |
+| `Open77.effects.fire` | `(position, options?)` | Fire id as a decimal string, or `nil, reason`. The id **is** the looping effect's id. Same two extra grants as `explosion`. |
+| `Open77.effects.removeFire` | `(fireId)` | `true`, or `nil, reason`. |
+| `Open77.effects.fires` | `(bucket?)` | This resource's burning fires, ascending by id. |
 | `Open77.effects.create` | `(definition)` | Effect ID as a decimal string, or `nil, reason`. |
 | `Open77.effects.attach` | `(typedTarget, effect, options)` | Owned durable attached-effect ID, or `nil, reason`. |
 | `Open77.effects.update` | `(id, patch)` | `boolean, reason?` |
@@ -555,6 +760,13 @@ declares `world.entities.observe`. The mirror is raised by the same statement, s
 cannot disagree; see [entity lifecycle events](server-api.md#entity-lifecycle-events) for the
 authority rule and for why there is no `Updated` counterpart.
 
+Three more events are host-wide rather than per-registry, and none of them can be
+published by a resource: [`onExplosion`](#onexplosion), [`onFire`](#onfire) and
+[`onParticleEffect`](#onparticleeffect), each with a FiveM-named twin
+(`explosionEvent`, `fireEvent`, `ptFxEvent`). They carry counts and coordinates
+rather than rosters, so listening to them tells a resource that something
+happened and where, never who was standing in it.
+
 ### Failure reasons
 
 The vocabulary is shared with [world props](props.md#failure-reasons), with this permission in place of that one.
@@ -562,9 +774,11 @@ The vocabulary is shared with [world props](props.md#failure-reasons), with this
 | Reason | Meaning |
 |---|---|
 | `permission_denied:world.effects` | The manifest does not declare `world.effects`. |
-| `permission_denied:world.explosions` | `explosion` was called with a positive `damage` and the manifest does not declare `world.explosions`. |
-| `permission_denied:world.vehicles` | `explosion` was called with `vehicles = true` and the manifest does not declare `world.vehicles`. |
-| `invalid_radius` / `invalid_damage` / `invalid_force` | An explosion argument outside its range: radius in (0, 200], damage in [0, 10000], force in [0, 100]. |
+| `permission_denied:world.explosions` | `explosion` was called with a positive `damage`, or `fire` with a positive `damagePerSecond`, and the manifest does not declare `world.explosions`. |
+| `permission_denied:world.vehicles` | `explosion` or `fire` was called with `vehicles = true` and the manifest does not declare `world.vehicles`. |
+| `invalid_radius` / `invalid_damage` / `invalid_force` | An explosion argument outside its range: radius in (0, 200], damage in [0, 10000], force in [0, 100]. For a fire, radius in (0, 50] and `damagePerSecond` in [0, 1000]. |
+| `invalid_duration` | A fire's `durationMs` is negative or past the one-hour ceiling. `0` is legal and means "until removed". |
+| `fire_limit` | This resource already has 64 fires burning. Lower than the effect registry's 512 because each fire costs a per-second proximity sweep. |
 | `quota_exceeded` | The per-resource or global ceiling for registry entries or sound action identities is full. |
 | `target_unavailable` | The typed target has lost the state required to capture its lifetime. |
 | `not_found` | No looping effect with that ID, or it expired or was already removed. |

@@ -1564,7 +1564,10 @@ Vehicle-seat low-level aliases are `SetPlayerIntoVehicle`, `ForcePlayerOutOfVehi
 `Open77.players.teleport(playerId, position, options?)` is the placement primitive.
 It moves a **living** player with no life transition: health, inventory, weapons and
 vehicle occupancy are untouched. It returns a promise that resolves when the client
-reports the body settled at the destination.
+reports the body settled at the destination. (Clients 65 to 67 moved the body but
+never answered: their settle watch was never ticked, so every promise ended in
+`settle_timeout` about fifteen seconds later. Client 68 answers -- `settled` or
+`near` in well under two seconds on a loaded floor.)
 
 ```lua
 CreateThread(function()
@@ -2615,7 +2618,7 @@ would let a resource that may not query the database still learn whether the ope
 ## Admin events
 
 Warden used to act in silence: a resource learned a player had been banned only by watching
-them disconnect, and learned a restart was coming not at all. Seven events now describe the
+them disconnect, and learned a restart was coming not at all. Eight events now describe the
 operator's own acts, emitted by the host and by Warden into every running resource.
 
 | Event | Signature | Raised when |
@@ -2627,6 +2630,7 @@ operator's own acts, emitted by the host and by Warden into every running resour
 | `open77:admin:playerWarned` | `(playerId, author)` | A warning was delivered to that player. |
 | `open77:admin:playerKicked` | `(playerId, author)` | A player was removed, other than as part of a ban. |
 | `open77:admin:playerBanned` | `(playerId, author, durationSeconds)` | A player was banned. `durationSeconds` is empty for a permanent ban. |
+| `open77:admin:playerHealed` | `(playerId, author)` | An operator healed a player from Warden's Players tab. Not raised by a resource's own `Open77.players.heal`. |
 
 ```lua
 AddEventHandler("open77:admin:scheduledRestart", function(secondsRemaining, reason)
@@ -2735,11 +2739,12 @@ tell an audit resource that staff removed a player nobody removed; a forged
 `serverShuttingDown` would make every resource on the server flush and stop saving.
 
 An admin **resource**'s own acts belong in its own namespace, because they are its acts and not
-the platform's. That is why there is no `open77:admin:healedPlayer`: txAdmin has one because
-healing is something its panel does, and Warden has no heal — `Open77.players.heal` is a
-gameplay native any resource may call, and announcing every call of it as an administrative act
-would be both a firehose and a lie. A resource that heals on an admin command should publish
-its own event saying so.
+the platform's. That is the line `open77:admin:playerHealed` walks: it is raised when an operator
+heals from Warden's own [Players tab](warden-players.md) — the operator's surface acting, which is
+exactly what the namespace is for — and it is **not** raised when a resource calls
+`Open77.players.heal`, because that is a gameplay native any resource may call, and announcing
+every call of it as an administrative act would be both a firehose and a lie. A resource that
+heals on its own admin command should publish its own event, under its own namespace, saying so.
 
 ## Outbound HTTP
 
