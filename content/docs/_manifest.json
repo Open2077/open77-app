@@ -678,8 +678,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1347,
-      "bytes": 1730097,
-      "sha256": "40ed82f1a5e89fdd391790f4ad386e86f23e4fc6cb27a96f3663d74a94b4f877"
+      "bytes": 1730689,
+      "sha256": "638a9487f479d91a3d51c7408f7e27baef79bb920c880fdea7f54d6c26d5a6dc"
     },
     {
       "source": "wiki/door-service-api.json",

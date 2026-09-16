@@ -13962,7 +13962,7 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "-- An MDT mugshot of the player you are looking at\nCreateThread(function()\n    local aimed = Open77.character.aimedEntity()\n    if not aimed or aimed.entity == 0 then return print(\"aim at a player first\") end\n    local shot, reason = Open77.screen.mugshot(aimed.entity, { fov = 32, crop = 0.4, quality = 90 })\n    if not shot then return print(\"mugshot refused: \" .. tostring(reason)) end\n    local picture, why = shot:await()\n    if picture then print((\"mugshot %dx%d, %d bytes\"):format(picture.width, picture.height, picture.sizeBytes)) end\nend)",
+  "example": "-- An MDT mugshot of the player you are looking at. Another player's puppet and\n-- an NPC are full bodies; the LOCAL player in first person has no body to\n-- photograph, so target somebody else or go third person before shooting one.\nCreateThread(function()\n    local aimed = Open77.character.aimedEntity()\n    if not aimed or aimed.entity == 0 then return print(\"aim at a player first\") end\n    local shot, reason = Open77.screen.mugshot(aimed.entity, { fov = 32, crop = 0.4, quality = 90 })\n    if not shot then return print(\"mugshot refused: \" .. tostring(reason)) end\n    local picture, why = shot:await()\n    if picture then print((\"mugshot %dx%d, %d bytes\"):format(picture.width, picture.height, picture.sizeBytes)) end\nend)",
   "inferred": false,
   "source_line": 20777,
   "qualified": "Open77.screen.mugshot",
@@ -28625,7 +28625,7 @@
   "namespace": "Open77.npcs",
   "name": "setEquipment",
   "handler": "LuaResourceRuntime.Bootstrap",
-  "summary": "Dresses an NPC in `Items.*` clothing records, on every client streaming it.",
+  "summary": "Sets the canonical clothing set of an owned NPC, slot to `Items.*` record. Whether a rig renders it is the client's answer, not this call's.",
   "description": "Requires `world.npcs` and ownership. FiveM's `SetPedComponentVariation` on a ped, through the same puppet equipment path the loadout's `weapon` key already uses. The table is the WHOLE desired set: keys are the nine clothing slots (`Head`, `Face`, `InnerChest`, `OuterChest`, `Legs`, `Feet`, `Outfit`, `UnderwearTop`, `UnderwearBottom` -- the held weapon stays on `setLoadout`), values are `Items.*` record names, and a slot left out is a slot you want empty; `{}` undresses. Only a slot Open77 itself filled is ever emptied, so a character's own look (its appearance) is never stripped. Published as one revision on `loadout.equipment`, reaches late joiners, and survives a later `setLoadout` that does not mention `equipment`. Existence of the record and whether the garment binds to that character's rig are decided on each client against the live game -- the client never runs `InitializeSlots` for clothing, and refuses a slot the `Character.*` record does not declare with a log line (`slot_unavailable`). Refusals: `npc_equipment_invalid`, `npc_equipment_slot_invalid`, `npc_equipment_record_invalid`, `npc_not_found`, `npc_not_owned`.",
   "params": [
    {
@@ -28648,7 +28648,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.Npcs6.cs",
-  "example": "-- A work jacket and jeans for the shop clerk.\nlocal ok, reason = Open77.npcs.setEquipment(clerkId, {\n    OuterChest = \"Items.Jacket_01_basic_01\",\n    Legs = \"Items.Pants_01_basic_01\",\n    Feet = \"Items.Shoes_01_basic_01\",\n})\nif not ok then print(\"could not dress the clerk: \" .. reason) end",
+  "example": "-- Canonical state, replicated and kept for late joiners. Whether the clerk is\n-- SEEN in these clothes is decided per client against the live game: a\n-- `Character.*` record that does not declare the slot refuses it with\n-- `slot_unavailable`, and measured on 2.31 a Character rig renders none of it.\n-- Read it back with getEquipment; do not treat a `true` here as a visible outfit.\nlocal ok, reason = Open77.npcs.setEquipment(clerkId, {\n    OuterChest = \"Items.Jacket_01_basic_01\",\n    Legs = \"Items.Pants_01_basic_01\",\n    Feet = \"Items.Shoes_01_basic_01\",\n})\nif not ok then print(\"could not dress the clerk: \" .. reason) end",
   "inferred": false,
   "source_line": 246,
   "qualified": "Open77.npcs.setEquipment",
