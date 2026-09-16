@@ -5,9 +5,12 @@ as an asynchronous client API and ships `open77_weapons` as the authenticated
 server-to-owner relay. Calls use exact TweakDB records such as
 `Items.Preset_Lexington_Default`.
 
-This surface intentionally rejects grenades (`QuickSlot`), heavy weapons
-(`WeaponHeavy`), and arm cyberware (`ArmsCW`): those equipment areas have
-different REDengine lifecycles.
+The three-slot surface intentionally rejects heavy weapons (`WeaponHeavy`) and
+arm cyberware (`ArmsCW`): those equipment areas have different REDengine
+lifecycles. Grenades are not weapon slots either — they are `QuickSlot`
+gadgets thrown from a hotkey — and have their own calls, [below](#gadgets-grenades-in-the-quick-slots).
+Parts that go *onto* a weapon (a scope, a silencer, a mod) are
+[components](#weapon-components-scopes-muzzles-and-mods).
 
 ## Client permissions and methods
 
@@ -25,6 +28,12 @@ Declare `player.weapons.read` for `slots`, `snapshot`, and `all`. Declare
 | `Open77.weapons.holster()` | Holster without changing the loadout. |
 | `Open77.weapons.setAmmo(slot, amounts)` | Set exact spare rounds and/or magazine rounds. |
 | `Open77.weapons.snapshot()` / `all()` | Request every slot's verified state. |
+| `Open77.weapons.setComponent(slot, part, options?)` | Install a scope, muzzle or mod on the weapon in a slot. |
+| `Open77.weapons.removeComponent(slot, attachmentSlot)` | Empty one attachment slot of that weapon. |
+| `Open77.weapons.components(slot)` | List that weapon's attachment slots, taken or empty. |
+| `Open77.weapons.giveGadget(record, count?, options?)` | Grant grenades and put them on the throw hotkey. |
+| `Open77.weapons.takeGadget(record?, count?)` | Take grenades back. |
+| `Open77.weapons.gadgets()` | List the quick slots. |
 
 The bundled `open77_weapons` resource adds one more as an export:
 `exports.open77_weapons:clear()` empties all three slots at once. It is three
@@ -124,6 +133,147 @@ slot that was already empty answers `weapon_slot_empty` natively and is **not**
 counted as a failure — "remove every weapon" succeeded on a slot that had none.
 The completion's `result` carries `cleared` and a `slots` array of
 `{ slot, accepted, reason }`.
+
+## Weapon components: scopes, muzzles and mods
+
+A scope, a silencer or a generic mod is a **part** sitting in an **attachment
+slot** of the weapon *item*. 2.31 installs one through the vanilla
+`ItemModificationSystem` — the scripted system the inventory screen queues
+`InstallItemPart` / `RemoveItemPart` into — over two natives,
+`TransactionSystem.ForcePartInSlot` and `RemovePart`. Open77 drives exactly that
+path from the bridge script, so a part installed here is a real part: it shows
+on the owner's weapon, it survives holstering, and the vanilla inventory screen
+sees it as its own.
+
+The vocabulary is TweakDB's, not Open77's:
+
+| What | Records | Examples |
+|---|---|---|
+| Slots | `AttachmentSlots.*` | `Scope`, `PowerModule` (muzzles), `Power_Handgun_WeaponMod1` / `..2` (generic mods, one pair per evolution and class) |
+| Parts | `Items.*` tagged `itemPart` (928 on 2.31) | `Items.w_att_scope_short_01`, `Items.w_att_scope_long_02`, `Items.w_silencer_01`, `Items.w_muzzle_brake_01` |
+
+Which slots a given weapon has comes from its blueprint, and `components` reads
+it off the live item rather than guessing: a Lexington declares `Scope`,
+`PowerModule` and the two `Power_Handgun_WeaponMod` slots beside its receiver,
+barrel and magazine; a katana declares `Blade_WeaponMod1/2` and `Grip`. The
+full tables — 59 slots, 928 parts, every `Items.*` weapon's declared slots — are
+in `docs/generated/attachment-slots-2.31.csv`, `weapon-parts-2.31.csv` and
+`weapon-part-slots-2.31.csv`.
+
+```lua
+-- Client: a short scope on the rifle in slot 1, then read the slots back.
+local requestId, reason = Open77.weapons.setComponent(1, "Items.w_att_scope_short_01")
+assert(requestId, reason)
+Open77.weapons.components(1)
+
+AddEventHandler("open77:weapons:part", function(
+  requestId, slot, attachmentSlot, attachmentSlotId, taken, base, record, tweakDbId)
+  -- one row per attachment slot; `base == "true"` is the weapon's own receiver,
+  -- barrel or magazine, which is not a mod and cannot be removed
+  print(slot, attachmentSlot, taken, base, record)
+end)
+```
+
+`setComponent` without `options.attachmentSlot` picks the first of the part's
+own placement slots that this weapon declares, empty ones first — so a generic
+mod finds the pistol slot on a pistol, where vanilla's `GetPlacementSlot` would
+name the rifle one. Naming the slot is refused by name when it is not on the
+weapon (`slot_not_on_weapon`), when the part cannot go there
+(`part_does_not_fit_slot`), or when it holds a base part (`base_part_slot`). A
+part the player does not own is created for the install, as the inventory
+screen's is consumed by it; a part already in the slot is swapped out and
+deleted, exactly as the vanilla screen does. The completion carries the changed
+slot as `result.part` and a `components` request carries `result.parts`.
+
+```lua
+-- Server: the armoury fits a silencer to whatever is in slot 1, then lists it.
+Open77.weapons.setComponent(playerId, 1, "Items.w_silencer_01",
+  { attachmentSlot = "AttachmentSlots.PowerModule" })
+Open77.weapons.requestComponents(playerId, 1)
+Open77.weapons.removeComponent(playerId, 1, "AttachmentSlots.PowerModule")
+
+-- The synchronous read, from the cache the owner keeps fed.
+local fitted = Open77.weapons.components(playerId, 1)
+for _, part in ipairs(fitted and fitted.parts or {}) do
+  print(part.attachmentSlot, part.record)
+end
+```
+
+The owner's loadout report carries the installed, non-base parts of each slot,
+so `Open77.weapons.get(playerId).slots[n].parts` and
+`Open77.weapons.components(playerId, n)` answer without a round trip, dated by
+the same `loadoutAgeMs` as the slot list.
+
+**What other players see.** A part changes the owner's own weapon and the
+server's cache. It does **not** change what other players see on the owner's
+proxy: the proxy weapon is rebuilt from the `ItemID` the 20 Hz snapshot carries
+(TweakDBID, seed, counter, structure), and parts are per-inventory-item data the
+`ItemID` does not encode. Shipping that visual is a wire change and is not in
+this release; a server that needs remote players to *see* the scope has no path
+yet, and one that needs to *know* about it has the cache.
+
+## Gadgets: grenades in the quick slots
+
+Grenades are `EquipmentArea.QuickSlot` items thrown from the RB hotkey
+(`Grenade_Record` extends `Gadget_Record`), never a weapon in a hand. `giveGadget`
+grants a counted stack and, unless `equip = false`, puts it in quick slot 1 and
+on the throw hotkey — the path the privileged `debug.grenade.grant` fixture
+measured on 2026-09-05, now public, counted and verified. Every 2.31 grenade
+record is a valid argument (`Items.GrenadeFragRegular`, `Items.GrenadeEMPRegular`,
+`Items.Preset_Grenade_Smoke_Default`, …; the catalogue rows with
+`category = grenade` in `docs/generated/weapons-2.31.csv`).
+
+```lua
+-- Client
+Open77.weapons.giveGadget("Items.GrenadeFragRegular", 3)         -- three, equipped, on RB
+Open77.weapons.takeGadget("Items.GrenadeFragRegular", 1)         -- one back
+Open77.weapons.takeGadget()                                      -- every one of the active gadget
+Open77.weapons.gadgets()
+
+AddEventHandler("open77:weapons:gadget", function(
+  requestId, quickSlot, record, tweakDbId, quantity, active, difference)
+  -- requestId "0": the engine consumed one (the player threw it); `difference`
+  -- is the change and `quantity` the count left
+end)
+```
+
+```lua
+-- Server: a medic's kit, counted.
+Open77.weapons.giveGadget(playerId, "Items.GrenadeFragRegular", 2, { equip = true })
+Open77.weapons.requestGadgets(playerId)
+
+-- And the cache: the count after the last throw, with its own age.
+local kit = Open77.weapons.gadgets(playerId)
+if kit then print(kit.active, #kit.slots, kit.reportedAgeMs) end
+
+AddEventHandler("onGadgetConsumed", function(playerId, record, remaining)
+  print(playerId .. " threw " .. record .. ", " .. remaining .. " left")
+end)
+```
+
+**The consume half, and what a server sees of the explosion.** A throw is the
+engine removing one unit from the stack. The bridge script registers an
+inventory listener on the local player (the same `InventoryScriptCallback` the
+vanilla currency and shard toasts use), reports the shrink with request id `0`,
+and the `open77_weapons` client resource — which knows whether one of its own
+`takeGadget` requests is in flight — pushes it to the server on the reserved
+`open77:weapons:gadgets` transport as a consumption. The host republishes it as
+`onGadgetConsumed(playerId, record, remaining[, tweakDbId])`, a reserved name a
+resource cannot forge, and refreshes the cache behind `gadgets()`.
+
+The explosion itself is **already replicated and priced without this API**, and
+deliberately not re-run through `Open77.effects.explosion`: every viewer's client
+renders the blast from the thrower's snapshot (`explosionSequence` and its
+position), and the engine's real blast on the thrower's client reports each proxy
+it hits to the damage arbiter as an `explosion` attack — the 2026-09-05 measurement
+priced one at 75 points and the server committed exactly that. Running E6's
+server blast on top would price the same grenade twice. What a server does *not*
+get today is an `onExplosion` for a vanilla grenade: the host does not decode the
+snapshot's explosion fields, so a resource that wants to react to the blast
+listens to `onGadgetConsumed` for the throw and to the damage feed for the hits.
+Healing inhalers and other `Consumable` items are not covered: the vanilla use
+path (`ItemActionsHelper.PerformItemAction`) is unmeasured, and a heal is already
+a stat write on the server.
 
 ## Reading a player's weapons from the server, synchronously
 
@@ -294,6 +444,17 @@ already running. REDengine completion failures
 include `unsupported_weapon_area`, `weapon_slot_locked`, `weapon_not_owned`,
 `item_creation_failed`, `equip_rejected`, `activation_rejected`,
 `weapon_slot_empty`, `unequip_rejected`, and `holster_rejected`.
+
+Components add `invalid_part_template`, `template_is_not_part`,
+`invalid_attachment_slot` (immediate) and `slot_not_on_weapon`,
+`part_does_not_fit_weapon`, `part_does_not_fit_slot`, `base_part_slot`,
+`install_rejected`, `remove_rejected` (from the owner). Gadgets add
+`invalid_gadget_template`, `template_is_not_gadget`, `invalid_gadget_count`
+(immediate) and `unsupported_gadget_area`, `gadget_not_owned`,
+`no_active_gadget`, `equip_rejected`, `hotkey_rejected`,
+`inventory_update_rejected` (from the owner). The synchronous reads add
+`gadgets_unreported`, distinct from `weapons_unreported`: a loadout report says
+nothing about the quick slots.
 
 ## The admin package's weapons screen
 

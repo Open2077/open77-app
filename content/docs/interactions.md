@@ -677,6 +677,31 @@ end)
 The WebUI never receives input focus and builds all copy with DOM `textContent`; labels cannot
 inject HTML. The service intentionally does not claim line-of-sight or server-side proximity.
 
+**One target kind already does this round trip for you.** A choice used on a `globalNpc` target
+that resolved to an Open77 NPC (the payload carries `npcId`) is also reported to the server by
+this resource, on the reserved `open77:npcs:` transport, as the minimum intent — which NPC, which
+prompt, which choice. The server re-derives the NPC, the routing bucket and the distance from its
+own copy of the player (refusing a report from a player it cannot place, from another bucket, or
+from more than 40 m away — 25 m is the widest prompt, plus a two-second snapshot at sprint speed)
+and only then publishes **`onNpcInteracted(npcId, playerId, interactionId, choiceId, distance)`**
+to every server resource, with `distance` the server measured. A shop with an NPC clerk therefore
+needs no client half and no net event of its own:
+
+```lua
+-- shop/server/main.lua
+CreateThread(function()
+    exports.open77_interactions:define({
+        { id = "clerk", kind = "globalNpc", distance = 2.0, label = "Browse", key = "E", event = "shop:browse" },
+    })
+end)
+AddEventHandler("onNpcInteracted", function(npcId, playerId, interactionId, choiceId, distance)
+    if clerks[npcId] == nil or tonumber(distance) > 3.0 then return end   -- your rule, on the server's number
+    TriggerClientEvent("shop:openMenu", tonumber(playerId), clerks[npcId].catalogue)
+end)
+```
+
+See [NPC events](npcs.md#events) for the event and its arguments.
+
 ### A target grants nothing
 
 A prompt is presentation, and a **target** makes that easy to forget, because it looks like a rule

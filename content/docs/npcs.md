@@ -183,6 +183,10 @@ record lookup and asynchronous spawning can still fail; use `onNpcReady` and `on
 | `Open77.npcs.setBucket` | `npcId, bucket` | boolean |
 | `Open77.npcs.setAppearance` | `npcId, appearance` | boolean |
 | `Open77.npcs.setLoadout` | `npcId, loadout` | boolean |
+| `Open77.npcs.setEquipment` | `npcId, { slot = "Items.*", ... }` | `true`, or `nil, reason` |
+| `Open77.npcs.getEquipment` | `npcId` | slot-to-record table, or `nil` |
+| `Open77.npcs.speak` | `npcId, voice, optional options` | `true`, or `nil, reason` |
+| `Open77.npcs.voices` | none | array of `{ name, context, source }` |
 | `Open77.npcs.setHealth` | `npcId, health, optional maxHealth` | boolean |
 | `Open77.npcs.setDamagePolicy` | `npcId, policy` | boolean |
 | `Open77.npcs.setAiMode` | `npcId, mode` | boolean |
@@ -233,10 +237,83 @@ Open77.npcs.remove(npcId)
 ```
 
 `Open77.npcs.update(id, fields)` can atomically change appearance, loadout, AI mode, damage policy,
-health, maximum health and ragdoll. The named setters above are convenience wrappers.
+health, maximum health and ragdoll, and takes an `equipment` table (below). The named setters
+above are convenience wrappers.
 
 Moving an NPC between buckets or teleporting it revokes the current simulation lease before the
 new state is broadcast.
+
+## Equipment: dressing an NPC
+
+`Open77.npcs.setEquipment(id, set)` dresses an NPC in `Items.*` clothing records, on every
+client that streams it, through the same puppet equipment path the loadout's `weapon` key
+already uses. It is the server-side counterpart of FiveM's `SetPedComponentVariation` on a
+ped — a uniform for a job NPC, a costume for an event.
+
+```lua
+-- A shopkeeper in a work jacket and jeans. The table is the WHOLE desired set.
+local npc = Open77.npcs.create({ record = "Character.Judy", position = counter })
+local ok, reason = Open77.npcs.setEquipment(npc, {
+    OuterChest = "Items.Jacket_01_basic_01",
+    Legs = "Items.Pants_01_basic_01",
+    Feet = "Items.Shoes_01_basic_01",
+})
+if not ok then print("could not dress the clerk: " .. reason) end
+
+-- Read it back; the same table also rides `json.decode(Open77.npcs.get(npc).loadout).equipment`.
+local worn = Open77.npcs.getEquipment(npc)   --> { OuterChest = ..., Legs = ..., Feet = ... }
+
+-- Swap one piece: send the set again with that slot changed. A slot you leave
+-- out is a slot you want empty.
+Open77.npcs.setEquipment(npc, { OuterChest = "Items.Jacket_02_basic_01", Legs = "Items.Pants_01_basic_01" })
+
+-- Beside other fields, in one update.
+Open77.npcs.update(npc, { equipment = { Head = "Items.Hat_01_basic_01" }, health = 100 })
+
+-- Undress what you dressed.
+Open77.npcs.setEquipment(npc, {})
+```
+
+Slots are the client's clothing vocabulary: `Head`, `Face`, `InnerChest`, `OuterChest`,
+`Legs`, `Feet`, `Outfit`, `UnderwearTop`, `UnderwearBottom`. The held weapon is **not** a
+clothing slot; it stays on `setLoadout(id, { weapon = ... })`. Values are `Items.*` record
+names (`Items.` followed by an identifier, at most 200 characters); the catalogue of clothing
+records is `docs/generated/clothing-2.31.csv`.
+
+What the server promises, and refuses by name:
+
+| Reason | Meaning |
+|---|---|
+| `npc_equipment_invalid` | The set is not a table (or, inside `update`, `equipment` is not one). |
+| `npc_equipment_slot_invalid` | A key is not one of the nine clothing slots. |
+| `npc_equipment_record_invalid` | A value is not an `Items.*` identifier of at most 200 characters. |
+| `npc_not_found`, `npc_not_owned` | The id is unknown, or belongs to another resource. |
+
+A refused set changes nothing. An accepted set is published as one revision, rides the NPC's
+loadout envelope to every viewer and to late joiners, and survives a later `setLoadout` that
+does not mention `equipment` — a resource re-sending a weapon does not strip the uniform. A
+`setLoadout` that does state `equipment` (an empty table included) replaces it.
+
+**What the client does with it.** Every viewer dresses its own puppet instance, one changed
+slot at a time (`GiveItem` + `AddItemToSlot`, the transaction-system path a vanilla puppet
+equips its own loadout with), and only ever empties a slot Open77 itself filled: a
+character's own look lives in its appearance, not in its attachment slots, so nothing native
+is stripped. The client never runs `InitializeSlots` for clothing — a `Character.*` record
+declares its attachment slots in TweakDB (`Puppet_Base` declares thirty-three, the nine
+clothing slots included) and the engine builds the container from that list at spawn;
+re-initialising it would wipe the weapon the AI holstered. A slot the record does not declare
+(a mech, an exo, a player puppet record) is refused on the client with a log line
+`[npc] equipment refused ... reason=slot_unavailable`; a record whose list cannot be read gets
+nothing (`slots_unknown`). Success is the log line
+`[npc] equipment applied npc=<id> slot=<slot> record=<record>` per slot.
+
+**Honest limits.** The server has no TweakDB: existence of the record, and whether the
+garment mesh binds to that character's rig, are decided on each client against the live
+game. Clothing records are authored for the player bodies; on a vanilla civilian body some
+garments will fit and some will clip or float, and only a look at the screen tells which —
+test the records you ship on the records you ship. There is no NPC-side equipment read on
+the client Lua surface; `Open77.npcs.getEquipment` (server) and the client log are the
+readbacks.
 
 ### Constants
 
@@ -618,6 +695,7 @@ AddEventHandler("onNpcAuthorityChanged", function(npcId, playerId, epoch, reason
 AddEventHandler("onNpcDamaged", function(npcId, source, amount, health, cause) end)
 AddEventHandler("onNpcDied", function(npcId, source, cause) end)
 AddEventHandler("onNpcTargetChanged", function(npcId, kind, targetId, previousKind, previousTargetId) end)
+AddEventHandler("onNpcInteracted", function(npcId, playerId, interactionId, choiceId, distance) end)
 ```
 
 The same creation and removal also reach `onEntityCreated(kind, id, resource)` and
@@ -632,6 +710,37 @@ resource which player another resource's bodyguard had just drawn on would be a 
 boundary. `kind` is `none`, `player` or `npc`, and `targetId` is `0` when `kind` is `none`. All five
 arguments are strings, as every server resource event's arguments are.
 
+`onNpcInteracted` is a **player's** act on an NPC — a choice used on a `globalNpc`
+[interaction target](interactions.md#event-payload-and-server-authority) — and is delivered
+host-wide like `onNpcDamaged`: the owner is not the only resource entitled to know that a player
+pressed a key on its clerk. The bundled prompt reports the use to the server; the server refuses
+a report from a player it cannot place, from another routing bucket, or from more than 40 m away,
+and publishes the event only for an accepted one, with `distance` being **its own** measurement
+between the player's last fresh snapshot and the NPC's canonical position (metres, two decimals).
+`interactionId` is the target's materialised id (`<targetId>:<matchKey>`) and `choiceId` the
+choice; a refused report produces no event at all, so a forged one can only be silent. Apply your
+own rule on `distance` — 40 m is the ceiling that keeps a sprinting player's stale snapshot from
+breaking a real prompt, not the reach of your shop.
+
+```lua
+-- A vendor: one NPC per stall, opened by the prompt the interactions resource shows on it.
+local stalls = {}   -- npcId (string) -> catalogue
+
+CreateThread(function()
+    local npcId = Open77.npcs.create({ record = "Character.Judy", position = { x = -1378.0, y = 1262.0, z = 123.0 } })
+    stalls[tostring(npcId)] = "weapons"
+    exports.open77_interactions:define({
+        { id = "stall", kind = "globalNpc", distance = 2.0, label = "Browse", key = "E", event = "market:browse" },
+    })
+end)
+
+AddEventHandler("onNpcInteracted", function(npcId, playerId, interactionId, choiceId, distance)
+    local catalogue = stalls[npcId]
+    if catalogue == nil or tonumber(distance) > 3.0 then return end
+    TriggerClientEvent("market:open", tonumber(playerId), catalogue)
+end)
+```
+
 Client resource events:
 
 ```lua
@@ -643,6 +752,31 @@ AddEventHandler("onNpcTaskChanged", function(npcId, taskId) end)
 AddEventHandler("onNpcAuthorityChanged", function(npcId, playerId) end)
 AddEventHandler("onNpcStreamOut", function(npcId, reason) end)
 ```
+
+**No `RequestModel` / `HasModelLoaded` loop is needed.** Streaming is implicit; `create` returns
+before the body exists anywhere, `isStreamedIn(id)` says whether this client has it and `onNpcReady`
+is the transition. `Open77.npcs.whenReady` folds both into one promise, on both runtimes:
+
+```lua
+-- Client, requires npcs.read. Resolves with { id, entity } the instant isStreamedIn(id)
+-- answers true (the same instant onNpcReady fires: attached AND behaving), before the call
+-- returns when it already is; rejects with `timeout` (default 15000 ms, clamped 1..120000).
+Open77.npcs.whenReady(npcId, 8000):next(function(body)
+    Open77.animations.play(body.entity, "wave")
+end, function(reason) print("vendor never appeared: " .. reason) end)
+
+-- Server, requires world.npcs. Resolves with the Open77.npcs.owner(id) table as soon as at
+-- least one client reports a ready projection (readyClients > 0) -- the election's own
+-- `onNpcAuthorityChanged(..., "projectionready")` event, with a 250 ms poll as the safety
+-- net -- and rejects with `timeout`.
+local guard = assert(Open77.npcs.create({ template = "civilian_female_relaxed_01", position = post }))
+Open77.npcs.whenReady(guard, 10000):next(function(owner)
+    Open77.npcs.tasks.patrol(guard, route, { loop = true })
+end, function(reason) print(("guard %d never streamed: %s"):format(guard, reason)) end)
+```
+
+The one-shot handler is removed on resolve, on timeout and with the resource. `nil, reason` only
+for a bad id, a bad timeout or a missing permission; an unknown id is waited for and times out.
 
 ## Client read-only API
 

@@ -19,7 +19,10 @@ print(Open77.state.global.weather)            --> rain
 
 That is the whole idea. Vehicle keys, fuel, cuffs, job, duty and engine state are all
 state-bag fields in a modern roleplay framework, and a bag replaces the ad-hoc broadcast
-each of them used to need.
+each of them used to need. Two of those are worked through on this page: the bundled
+[`open77_fuel`](#the-fuel-sample-open77_fuel) resource is the reference for a server-owned
+per-vehicle value with a consumption tick, and the [plate recipe](#recipe-a-number-plate) is
+the two-line version.
 
 The FiveM names work too, because ported code reaches for those and never for an
 `Open77.*` name:
@@ -323,6 +326,117 @@ server log, once per window, so the failure is attributable.
 | `state_unavailable` | The host has no bag registry (a fixture that does not replicate). |
 
 ---
+
+## The fuel sample (`open77_fuel`)
+
+Cyberpunk has no fuel model, so FiveM's `GetVehicleFuelLevel` / `SetVehicleFuelLevel` have no
+native to adapt. Fuel is a bag field, and `resources/system/open77_fuel` is the canonical sample
+of the pattern -- small enough to copy, and shipped so the three places that already cited it
+were telling the truth.
+
+**What it does.** The server owns one number, `fuel`, on every canonical vehicle's bag. Once a
+second it walks `Open77.vehicles.all()`, reads the replicated `speed` and the `engineOn` bit the
+physics owner already reports, and burns the tank through a pure model (`shared/fuel.lua`:
+litres per hundred kilometres while moving, litres per minute while idling, one `multiplier`
+over both). At zero it cuts the engine with `Open77.vehicles.setEngine(id, false)` -- the
+server-authored bit that is held against the owner's next report -- and keeps cutting it every
+tick until somebody refuels, and it fires `open77:fuel:empty(vehicleId)` host-wide once per
+empty. A tank the model has never seen starts full; a removed vehicle takes its bag with it.
+
+```lua
+-- Any server resource: FiveM's two natives, as exports.
+local litres = exports.open77_fuel:level(vehicleId)         -- GetVehicleFuelLevel
+exports.open77_fuel:set(vehicleId, 12.5)                    -- SetVehicleFuelLevel
+exports.open77_fuel:refuel(vehicleId)                       -- to the brim; refuel(id, 20) adds 20 L
+exports.open77_fuel:configure({ litresPerHundredKm = 9.0 }) -- or multiplier, idleLitresPerMinute, capacity
+
+-- Or the bag itself, with no export in the way.
+local litres = Open77.state.entity("vehicle", vehicleId).fuel
+Entity(vehicleId).state:set("fuel", 30)    -- the FiveM spelling; needs state.write
+```
+
+```lua
+-- Any client: a gauge is a read. No permission, no event, no request.
+local litres = Open77.state.entity("vehicle", vehicleId).fuel
+local mine = exports.open77_fuel:current()   -- the car the local player is sitting in
+AddEventHandler("open77:fuel:changed", function(vehicleId, litres, previous) gauge.set(litres) end)
+```
+
+**What it deliberately is not.** The client never writes the bag, because a fuel gauge a
+client could set is a fuel gauge a client can cheat; consumption is derived from the owner's
+replicated speed, which the server already validates. And the model lives in a shared file with
+its own Lua suite (`tests/fuel_test.lua`, run inside the server test process) so the numbers a
+server owner tunes are the numbers that are tested.
+
+Commands: `/fuel <id>` prints the tank, `/refuel <id> [litres]`, `/fuel.set <id> <litres>` and
+`/fuel.multiplier <factor>` are admin-gated. The manifest holds `world.vehicles` and `state.write`
+on the server and `vehicles.read` on the client, the last only so `current()` can map the entity
+the local body is mounted in back to its canonical id.
+
+## Recipe: a number plate
+
+Cyberpunk has no readable or writable plate -- `Open77.vehicles.setProperties(id, { plateText =
+... })` is refused by name and `Open77.vehicles.unsupportedProperties.plateText` says why -- so a
+plate is a bag key, exactly like fuel but without the tick:
+
+```lua
+-- server (needs state.write): the plate is whatever the server says it is
+Entity(vehicleId).state:set("plate", "NC-1977")
+-- the same write, natively spelled
+Open77.state.entity("vehicle", vehicleId):set("plate", "NC-1977")
+```
+
+```lua
+-- either side: read it back
+local plate = Entity(vehicleId).state.plate
+```
+
+There is no `Open77.vehicles.setLabel`, and nameplates are player-keyed, so the plate is
+**shown** the way any other per-entity text is: a client-side world anchor (`Open77.anchors.create`
+in the [API reference](index.html), with `render = "dot"` drawn natively by the plugin) pinned to
+the car's entity, whose label follows the bag.
+
+```lua
+-- client: a small dot above every streamed car that carries a plate
+local anchors = {}
+
+local function show(vehicleId, plate)
+    local car = Open77.vehicles.get(vehicleId)     -- needs vehicles.read
+    if car == nil or not car.streamed then return end
+    local presentation = { label = plate, scale = 0.8 }
+    if anchors[vehicleId] then
+        Open77.anchors.update(anchors[vehicleId], { presentation = presentation })
+        return
+    end
+    anchors[vehicleId] = Open77.anchors.create({
+        render = "dot",
+        entity = car.entity, offset = { x = 0, y = 0, z = 1.6 },
+        maxDistance = 25,
+        presentation = presentation,
+    })
+end
+
+Open77.state.onChange("vehicle", "plate", function(selector, _, plate)
+    local vehicleId = tonumber(selector.id)
+    if plate == nil then
+        if anchors[vehicleId] then Open77.anchors.remove(anchors[vehicleId]) end
+        anchors[vehicleId] = nil
+    else
+        show(vehicleId, plate)
+    end
+end)
+
+AddEventHandler("open77:vehicleRemoved", function(vehicleId)
+    if anchors[vehicleId] then Open77.anchors.remove(anchors[vehicleId]) end
+    anchors[vehicleId] = nil
+end)
+```
+
+The bag change arrives before the car has necessarily streamed in on this client; the
+`open77:vehicleCreated` event is the moment to call `show` for a plate that was set before the
+car was in range. Everything else -- late joiners, bucket changes, the car leaving -- the bag
+and the anchor already handle: the bag is re-sent with the entity, and an entity anchor whose
+entity is not streamed is simply not drawn.
 
 ## Cost
 

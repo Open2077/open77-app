@@ -100,6 +100,8 @@ that matters and for the ten-second intent window that makes a setter stick.
 | `Open77.vehicles.setDrivable` | `(id, drivable)` | Out of service also cuts the engine, in one revision. |
 | `Open77.vehicles.setUndriveable` | `(id, undriveable)` | Inverted spelling of `setDrivable`. |
 | `Open77.vehicles.isDrivable` | `(id)` | Canonical boolean, or `nil, reason`. |
+| `Open77.vehicles.setFrozen` | `(id, frozen)` | Pins the car where it stands; nothing electrical changes. See [freezing a car](#freezing-a-car). |
+| `Open77.vehicles.isFrozen` | `(id)` | Canonical boolean, or `nil, reason`. |
 | `Open77.vehicles.setLights` | `(id, mode)` | `"off"`, `"on"`, `"high"`, or a boolean. |
 | `Open77.vehicles.setHighBeams` | `(id, on)` | Raises or drops the beams without going dark. |
 | `Open77.vehicles.getLights` | `(id)` | `"off"`, `"on"` or `"high"`, or `nil, reason`. |
@@ -126,6 +128,8 @@ find](#what-closest-can-and-cannot-find).
 | `Open77.vehicles.getSpeedKph` | `(id)` | Kilometres per hour, or `nil, reason`. |
 | `Open77.vehicles.getVelocity` | `(id)` | `{ x, y, z }` in m/s, or `nil, reason`. |
 | `Open77.vehicles.getDriver` | `(id)` | The driving player id, or `nil`. |
+| `Open77.vehicles.owner` | `(id)` | Who simulates the car, in what capacity and since when; see [who owns a car](#who-owns-a-car). |
+| `Open77.vehicles.requestAuthority` | `(id, playerId)` | Asks that one client simulate the car; refused by name, never a steal. |
 | `Open77.vehicles.setPerformance` | `(id, profile)` | `boolean, reason?`; `nil` clears the ceiling. |
 | `Open77.vehicles.clearPerformance` | `(id)` | `boolean, reason?`; rated performance again. |
 | `Open77.vehicles.getPerformance` | `(id)` | `{ topSpeedKph, accelerationScale, taperKph }`, or `nil`. |
@@ -511,8 +515,8 @@ local ok, reason = Open77.vehicles.setProperties(id, portedTable)
 | `color1`, `color2`, `pearlescentColor`, `interiorColor`, `dashboardColor` | Cyberpunk paint is RGB, not palette indices, and there is one body pair and nothing else. Use `paint.primary` / `paint.secondary`. |
 | `dirtLevel` | No dirt channel. Body wear is the 30-cell `damage.body` grid. |
 | `tyreSmokeColor` | No tyre smoke colour channel. |
-| `plateText`, `plateIndex` | Cyberpunk has no readable or writable plate. Carry it in a [state bag](state-bags.md). |
-| `fuelLevel` | No fuel model. Carry it in a state bag. |
+| `plateText`, `plateIndex` | Cyberpunk has no readable or writable plate. Carry it in a [state bag](state-bags.md#recipe-a-number-plate) -- the recipe is on that page. |
+| `fuelLevel` | No fuel model. Fuel is a state-bag field owned by the bundled [`open77_fuel`](state-bags.md#the-fuel-sample-open77_fuel) sample: `exports.open77_fuel:level(id)` reads it, `:set(id, litres)` and `:refuel(id)` write it. |
 
 `Open77.vehicles.unsupportedProperties` is the same list as a table, keyed by property name, so a
 porting script can ask before it writes:
@@ -1266,7 +1270,7 @@ The client snapshot deliberately differs from the server snapshot:
 | World | `position` (a plain `{ x, y, z }`, which is what an Open77 vector3 is) |
 | Transform | `orientation = { x, y, z, w }`, `heading`, `yaw` |
 | Durable state | `health`, `flags`, `locked`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights`, `detachedParts` |
-| Control state | `engineOn`, `lights` (`"off"`/`"on"`/`"high"`), `sirenOn`, `undriveable`, `drivable` |
+| Control state | `engineOn`, `lights` (`"off"`/`"on"`/`"high"`), `sirenOn`, `undriveable`, `drivable`, `frozen` |
 | Body and damage | `bodyDamage[1..30]`, `damage = { body, glass, lights, tires, detachedParts }` |
 | Drivetrain | `speed` (m/s), `speedKph`, `rpm`, `rpmMax`, `throttle`, `brake`, `gear`, `burnout` |
 | Wheels/suspension | `steering`, `wheelRotation`, `suspensionLongitudinal`, `suspensionTransversal`, `onGround`, `reversing` |
@@ -1284,6 +1288,34 @@ the same number converted once, because performance ceilings and speed limits ar
 should be cached after stream-out. Client snapshots do not include server ownership metadata such
 as `resource`, `bucket`, or world coordinates. Paint is available both in the snapshot and through
 `Open77.vehicles.getPaint(id)`.
+
+**There is no streamer to ask, and no `RequestModel` / `HasModelLoaded` loop to write.** Streaming
+is implicit: the server registry streams a vehicle to every client inside its radius, and the
+client attaches its projection when the engine has spawned it -- measured up to 3.7 s after the
+create arrives. `create` returns before that; `get(id).streamed` says whether *this* client has the
+body, `open77:vehicleCreated` says the create arrived. `Open77.vehicles.whenStreamed` folds both into
+one promise, which is the whole of what a ported loading loop was waiting for:
+
+```lua
+-- Requires vehicles.read. Resolves with the get(id) snapshot once streamed == true --
+-- before the call returns when it already is -- and rejects with `timeout`
+-- (default 15000 ms, clamped to 1..120000).
+CreateThread(function()
+    local pending, reason = Open77.vehicles.whenStreamed(vehicleId, 10000)
+    if not pending then return print("cannot wait: " .. tostring(reason)) end
+    local car, why = pending:await()
+    if not car then return print("never streamed in: " .. tostring(why)) end
+    Open77.blips.create({ entity = car.entity, sprite = "taxi", label = "Your taxi" })
+end)
+```
+
+It listens for `open77:vehicleCreated` and polls the snapshot every 100 ms until it is attached;
+the one-shot handler is removed on resolve, on timeout and when the resource stops. `nil, reason`
+only for a bad id, a bad timeout or a missing permission -- an id this client has never seen is
+waited for and times out, because "not here yet" and "not anywhere" look the same from a client.
+There is deliberately no server counterpart: a vehicle's steward is elected by a driver's claim,
+never by a streamed report, so the server holds no signal that means "somebody has this car";
+`Open77.npcs.whenReady` exists on the server because NPCs do report readiness ([npcs.md](npcs.md)).
 
 Client events:
 
@@ -1423,6 +1455,53 @@ that is `setEngine`.
 Like the entry lock, `undriveable` is server-authored and absent from every owner report, so no
 client can clear it.
 
+#### Freezing a car
+
+`setFrozen(id, true)` is the server half of FiveM's `FreezeEntityPosition` for a vehicle, and it
+is deliberately **only** that half -- the control lock above is `setUndriveable`, and the two
+compose. Three things happen in one canonical revision:
+
+- the `frozen` bit goes up (`Open77.vehicles.flags.frozen`, bit 11, readable through `isFrozen`
+  and on the raw `flags`);
+- the motion facts are pinned: `speed`, `velocity`, `angularVelocity`, `onGround` and `reversing`
+  read as a car at rest, and stay that way;
+- the physics owner's transform reports are **discarded** while the bit is up -- not merged, and
+  not punished either. The lease is renewed and the tick consumed exactly as an accepted report
+  would be, because the owner is doing nothing wrong by reporting a car it still simulates, and
+  revoking it would put the steward election and the freeze into a two-second flap. Nothing is
+  logged for a discard: twenty a second is not a diagnostic.
+
+On every client the bit maps to the same native physics mask the observer projection already uses,
+so inertia, gravity and impulses stop too -- the car is not merely refused by the server, it does
+not move on the driver's screen. A driver pressing the throttle revs an engine that goes nowhere,
+and `undriveable` is not implied: an impound wants both bits, a starting grid wants the freeze alone
+with the engine running.
+
+```lua
+-- Impound: nobody drives it, nobody pushes it, and it survives the lot emptying.
+Open77.vehicles.setUndriveable(id, true)
+Open77.vehicles.setFrozen(id, true)
+Open77.vehicles.setPersistent(id, true)
+
+-- Release, in the order a driver expects: inputs first, then the body.
+Open77.vehicles.setFrozen(id, false)
+Open77.vehicles.setDrivable(id, true)
+```
+
+Two honest limits. The pinned transform is wherever the last *accepted* report put the car, so a car
+frozen at speed stops on the owner's screen one network latency past the canonical pin, and the two
+agree again on the first accepted report after the release; the row's use cases freeze a parked
+car, where that gap is zero. That gap is reasoned from the protocol, not measured: the live proof
+froze a car from rest under a held throttle (same pose at +0.5 s and +4.5 s, rolling again 1.5 s
+after the release) and never caught one at speed. And a freeze written through the raw bitfield -- `update(id, { flags =
+get(id).flags | Open77.vehicles.flags.frozen })` -- pins the motion facts the same way, but that is
+the read-modify-write `setFrozen` exists to spare you.
+
+Like `undriveable`, `frozen` is server-authored, absent from every owner report and preserved
+across them, so no client can clear it. **It is a wire change**: the accepted vehicle flag mask
+widened from bits 0..10 to 0..11, and a client that does not know the bit refuses the whole state
+frame as invalid, so the server and the client that carry it must be built together.
+
 #### Health is one pool
 
 `setEngineHealth` and `getEngineHealth` are the FiveM-shaped names for `setHealth`/`getHealth`,
@@ -1433,7 +1512,9 @@ running car with a dead engine. A car that must stay whole but refuse to move is
 
 Per-vehicle gameplay data a server invents -- fuel, keys, a plate, an owner, an insurance record --
 does **not** belong in these flags. It belongs in a [state bag](state-bags.md) on the vehicle, which
-replicates to the clients that care and costs the canonical ledger nothing.
+replicates to the clients that care and costs the canonical ledger nothing. The bundled
+[`open77_fuel`](state-bags.md#the-fuel-sample-open77_fuel) resource is the reference for exactly
+that pattern, and the [plate recipe](state-bags.md#recipe-a-number-plate) is the two-line version.
 
 Horn state is intentionally transient rather than durable. The native `VehicleComponent`
 horn latch is sampled in the realtime motion stream and observers call `ToggleHorn` only on
@@ -1688,6 +1769,67 @@ two-seater still reports its rear seats free.
 - Direct manipulation of a mesh `PhysicalBodyInterface` remains deliberately disabled: that
   prototype crashed the second client during stream-in. Private vehicle entry points are accepted
   only when their 2.31 relocation resolves to the exact audited executable RVA.
+
+### Who owns a car
+
+`Open77.vehicles.owner(id)` answers FiveM's `NetworkGetEntityOwner` with more than a number,
+because the lease has more than one shape. It requires `world.vehicles` and answers `nil, reason`
+for an unknown id.
+
+| Field | Meaning |
+|---|---|
+| `physicsOwner`, `authorityPlayerId` | The client simulating the car; `0` when parked. Both names carry the same value -- the vehicle read has always said `physicsOwner`, the NPC read says `authorityPlayerId`, and a script reading both should not learn two words. |
+| `driver` | The seated controller -- the front-left occupant, or any occupant of an AV -- **whether or not** they own the lease. Absent when nobody is. |
+| `steward` | The owner holds the lease without being the driver: the parked-car simulation the platform hands to the nearest occupant, or a script's own grant. |
+| `aiDriven` | An NPC drive task holds the lease. |
+| `epoch` | The authority epoch that owner holds. |
+| `since`, `ageMs` | When the owner last changed, on the `GetGameTimer()` clock, and how long ago that was. |
+| `reason` | Why it last changed: `driverclaim`, `driverrelease`, `leaseexpired`, `playerdisconnected`, `validationfailed`, `serverrevoke`, or `none` for a platform steward grant and for a car nobody has owned yet. |
+| `leaseMs` | How long the current lease still has, when there is one. |
+
+```lua
+-- A speed camera only trusts a car somebody is actually driving.
+local owner = Open77.vehicles.owner(id)
+if owner and owner.driver and not owner.aiDriven then
+    fine(owner.driver, Open77.vehicles.getSpeedKph(id))
+end
+```
+
+`Open77.vehicles.requestAuthority(id, playerId)` is `NetworkRequestControlOfEntity` as a
+**request**. It returns the owner table after the grant, or `nil, reason`, and the reasons are the
+election's own eligibility made explicit:
+
+| Reason | Means |
+|---|---|
+| `driven` | Somebody else is the seated controller. A driven car is never taken from its driver -- this is the rule that makes the call a request rather than an order. |
+| `ai_driven` | An NPC drive task holds the lease; re-granting it would strand the task. |
+| `not_streamed` | The player has no body for this car yet. A client cannot simulate what it has not spawned. |
+| `too_far` | Beyond the 350 m stream-in radius. |
+| `wrong_bucket` | The player is in another routing bucket. |
+| `player_unavailable` | No fresh position for the player -- the same two-second rule every claim applies. |
+| `already_owner` | Not a refusal: the call returns the read, and nothing is re-granted. |
+| `invalid_player_id`, `vehicle_not_found` | The usual. |
+
+The requested player being the driver already is the one case that is not a steal, and it is
+granted. A grant is a lease like any other: the client keeps it by reporting, which its parked-pose
+loop does twice a second once the car has been attached for five seconds, so a grant to a client
+that has only just streamed the car in can lapse two seconds later -- and `owner` then says so.
+That is what a lease is, not a defect of the request.
+
+```lua
+-- Hand a parked car to the player who just bought it, so their client simulates it
+-- while they walk around it. Refused by name if somebody is sitting in it.
+local read, reason = Open77.vehicles.requestAuthority(id, buyerId)
+if read == nil then print("not yet: " .. reason) end
+```
+
+There is no `Open77.vehicles.entity(id)`: the client's `Open77.vehicles.get(id).entity` **field**
+is the REDengine entity, and `Open77.vehicles.fromEntity(entity)` is the way back, which is all
+`NetworkGetNetworkIdFromEntity` ever needed. NPCs have the same read, `Open77.npcs.owner(id)`, in
+the same shape (`authorityPlayerId`, `physicsOwner`, `epoch`, `since`, `ageMs`, `reason`,
+`leaseMs`, plus `readyClients`, the election's candidates) and no request: an NPC's authority is
+elected from the clients whose projection reported ready, and a script has no better information
+than the election about which of them should simulate a body.
 
 ### Drivetrain, wheels, and engine audio
 

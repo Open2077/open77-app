@@ -317,6 +317,26 @@ by that client, never authority.
 See [Elevators](elevators.md). Elevator IDs are opaque even though this compatibility package
 currently normalizes them before calling the native API.
 
+### `open77_fuel`
+
+The canonical [state-bag sample](state-bags.md#the-fuel-sample-open77_fuel): fuel is a
+server-owned `fuel` key on every vehicle's bag, burned from the replicated speed and engine
+state, with the engine cut at zero.
+
+| Export | Signature | Result |
+|---|---|---|
+| `level` | `level(vehicleId)` | The replicated litres, read from the bag mirror; `nil, reason` for an unknown or unstreamed car. |
+| `current` | `current()` | The litres of the car the local player is sitting in, or `nil, "not_in_vehicle"`. |
+
+The client also re-emits every bag change as `open77:fuel:changed(vehicleId, litres, previous)`.
+There is no client `set`: the client never writes a bag.
+
+**Server exports**, on the same package, for scripts porting `GetVehicleFuelLevel` /
+`SetVehicleFuelLevel`: `level(vehicleId)`, `set(vehicleId, litres)`, `refuel(vehicleId, litres?)`
+(to the brim when the amount is omitted), `capacity()` and `configure({ capacity,
+litresPerHundredKm, idleLitresPerMinute, multiplier })`. Every write is clamped into the tank and
+answers `litres | nil, reason`; the host-wide `open77:fuel:empty(vehicleId)` fires once per empty.
+
 ### `open77_groundcircle`
 
 | Export | Signature | Result |
@@ -481,6 +501,13 @@ spelling fails a waiting callee with `export_yielded`. A dispatch failure is
 | `radial` | `radial(definition)` | Registers an eight-sector wheel. |
 | `showRadial` | `showRadial(id, options?)` | **Waits.** Opens it. |
 | `hideRadial` | `hideRadial()` | Closes the caller's open dialog. |
+| `drawText3D` | `drawText3D(definition)` | A string floating over a world point or entity, drawn natively through the anchor facade. Returns a handle; 8 per owner, 24 in all. |
+| `updateText3D` | `updateText3D(handle, patch)` | Changes the text, colours, scale, distance band or position of a caller-owned text. |
+| `clearText3D` | `clearText3D(handle?)` | Removes one text, or every text the caller drew (`true, count`). Idempotent. |
+| `listText3D` | `listText3D()` | The caller's texts with the host's last projection: `distance`, `onScreen`, `inRange`, `expiresIn`. |
+| `showCinematicBars` | `showCinematicBars(enabled, options?)` | Claims or releases the letterbox: two bars plus the vanilla HUD hidden under the kit's own loan. |
+| `setCinematic` | `setCinematic(enabled, options?)` | The same claim under the parity ledger's name. |
+| `cinematicState` | `cinematicState()` | `{ active, hudHidden, mine, holders, heightPct, color }`. |
 | `close` | `close()` | Cancels every widget the caller holds; returns `true, count`. |
 | `state` | `state()` | Diagnostic snapshot: surface readiness, focus, held blocks, live widgets. |
 
@@ -489,8 +516,9 @@ refused with `dialog_active` rather than queued. The kit spends exactly **one**
 WebUI surface for all of it.
 
 The server twins -- `progress`, `alert`, `input`, `context`, `menu`, `radial`,
-`textUI`, `hideTextUI` and `close`, each taking a `playerId` first -- are server
-exports, not client ones, and live on the same resource. See
+`textUI`, `hideTextUI`, `drawText3D`, `updateText3D`, `clearText3D`,
+`showCinematicBars` / `setCinematic` and `close`, each taking a `playerId`
+first -- are server exports, not client ones, and live on the same resource. See
 [The UI kit](ui-kit.md) for definitions, the focus release matrix, the styling
 tokens a resource may override, failure reasons and a worked job step.
 ### `open77_rp_basics`

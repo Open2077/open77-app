@@ -11,6 +11,12 @@ Everything here is an **alias or an addition**. No function that existed before 
 and nothing widens the sandbox: `io`, `os`, `debug`, `package` and `load` are still absent, and
 `LoadResourceFile` cannot leave the calling resource.
 
+The second half of the page is the porting notes that are *not* aliases — where a FiveM idiom maps
+onto something shaped differently here: the [damage feedback events](#damage-feedback-events-client),
+[keeping an NPC on task](#keeping-an-npc-on-task), [draw calls](#porting-fivem-draw-calls),
+[manifest keys](#manifest-keys), and the streaming loops that have
+[nothing to wait on](#what-is-missing-and-why).
+
 Three places where Open77 deliberately answers differently from FiveM are called out below in
 their own sections. Read those before porting: they are silent traps otherwise.
 
@@ -21,7 +27,7 @@ their own sections. Read those before porting: they are silent traps otherwise.
 | `Citizen.CreateThread` / `Citizen.Wait` | yes | yes | the existing `CreateThread` / `Wait` — the same function value |
 | `Citizen.SetTimeout` / `Citizen.ClearTimeout` | yes | yes | the existing `SetTimeout` / `ClearTimeout` |
 | `Citizen.SetTick` / `Citizen.ClearTick` | yes | yes | `SetTick` / `ClearTick` below |
-| `Citizen.Trace` | yes | yes | the resource log at debug level |
+| `Citizen.Trace` | yes | yes | the resource log at debug level — `DBG` on both sides. (Until A17 landed the server wrote it as `INF`; `Open77.log.debug/info/warn/error` now reach the server log as `DBG/INF/WRN/ERR`, with ANSI escapes and FiveM `^N` colour codes stripped) |
 | `Citizen.Await` | yes | yes | `promise:await()` |
 | `Citizen.CreateThreadNow` | **no** | **no** | see [What is missing](#what-is-missing-and-why) |
 | `SetTick(fn)` / `ClearTick(id)` | yes | yes | a scheduler task looping with an implicit `Wait(0)` |
@@ -32,6 +38,7 @@ their own sections. Read those before porting: they are silent traps otherwise.
 | `SaveResourceFile(res, path, data)` | no | yes | `Open77.io.write` |
 | `GetHashKey(str)` / `joaat(str)` | yes | yes | **TweakDBID**, not a Jenkins hash |
 | `DoesEntityExist(kind, id)` | yes | yes | the registry that owns that kind |
+| `SetEntityInvincible(kind, id, enabled)` | no | yes | `Open77.players.setGodMode` for `"player"`; every other kind is refused **by name** — see [below](#setentityinvinciblekind-id-enabled) |
 | `IsPlayerAceAllowed(playerId, perm)` | no | yes | `Open77.acl.isAllowed` |
 | `IsPrincipalAceAllowed(userId, perm)` | no | yes | the same check, addressed by account id |
 | `add_ace <principal> <object> allow` | no | yes | `Open77.acl.grant(userId, permission)` against a user, `Open77.acl.definePermission(role, …)` against a group. Both need a **scoped** manifest capability; see [the ACL guide](server-acl.md#changing-the-acl-from-a-resource-at-runtime) |
@@ -55,6 +62,27 @@ their own sections. Read those before porting: they are silent traps otherwise.
 | `GetResourceMetadata(name, key)` | no | yes | `Open77.resource.metadata`; no third `index` argument |
 | `StartResource` / `StopResource` | no | yes | `Open77.resource.start` / `stop`, behind `resources.control` |
 | `GetNumResources()` / `GetResourceByFindIndex(i)` | no | yes | `Open77.resource.list()`; the find index is zero-based |
+| `CancelEvent()` / `WasEventCanceled()` | no | yes | the cancellable bus (`TriggerCancellableEvent`), and inside a `playerConnecting` handler the FiveM refusal exactly: `setKickReason(msg)` then `CancelEvent()` — see [Connection control](connection-control.md#setkickreason-and-cancelevent-exactly-as-in-fivem) |
+| `TriggerLatentClientEvent(name, target, bytesPerSecond, ...)` | no | yes | the same function under the FiveM name (`Open77.net.emitLatent`): up to 4 MiB cut into paced 40 KiB frames — [Latent client events](server-api.md#latent-chunked-client-events) |
+| `SetHttpHandler(fn)` | no | yes | `Open77.http.listen("/", fn)` under the FiveM name; the listener is an operator opt-in and the route lives under `/<resource>/` — [Serving HTTP](server-api.md#serving-http) |
+| `GetPlayerTimeOnline(playerId)` / `GetPlayerLastMsg(playerId)` | no | yes | `Open77.players.sessionStats(id).sessionSeconds * 1000` and `Open77.players.get(id).ageMs` — milliseconds, the units FiveM documents |
+| `GetPlayerLocale(playerId)` | no | yes | `Open77.players.locale` under the FiveM name: the engine's own language setting, reported by the client (`Open77.session.locale()` there). `GetCurrentLanguage` has no counterpart — read `code` from the same table |
+| `SetTimeScale(scale)` | yes | per bucket | `Open77.world.setTimeScale(scale, options)` on the client — a claim per resource, eased and timed, released on stop; `Open77.world.setTimeScale(bucket, scale, options)` on the server replicates one beat to a routing bucket. Zero is refused (it freezes input with the world) — [World time](world-time.md) |
+| `SetGravityLevel` | partly | no | only `Open77.chute.arm(gravity, …)`, which rewrites the local player's gravity while airborne and shields the landing; there is no neutral world-gravity knob |
+| `FreezeEntityPosition(vehicle, true)` | yes | yes | client `Open77.vehicles.setFrozen` (local chassis physics, `vehicles.performance`); server `Open77.vehicles.setFrozen` pins the canonical pose and every client's projection follows. The control lock is the separate `setUndriveable`, and an impound wants both — [Freezing a car](vehicles.md#freezing-a-car). Players: `Open77.players.setFrozen` / `Open77.character.setFrozen` |
+| `GetGroundZFor_3dCoord(x, y, z)` | yes | yes | client `Open77.world.groundZ(x, y, fromZ?)` (a static-geometry ray); server `Open77.world.groundZ({ x, y }, options)` is an **observation relayed from the nearest connected client**, `nil, "no_observer"` when nobody is near — never an invented height — [World queries](world-queries.md) |
+| `SetPedToRagdoll(ped, ms, …)` / `ClearPedTasksImmediately(ped)` | no | yes | `Open77.players.ragdoll(id, { durationMs })` (the engine's knockdown, clamped to 3000 ms; needs the motion service, i.e. a server with a database) and `Open77.players.clearTasks(id)` — [Player freeze](player-freeze.md#putting-a-player-down-and-clearing-everything-ragdoll-and-cleartasks) |
+| fall-damage toggle (`SetPedCanRagdoll` family) | no | yes | `Open77.players.setFallDamage(id, false)` — fall damage **only**, not god mode — [Player stats](player-stats.md#fall-damage) |
+| `NetworkGetEntityOwner` / `NetworkRequestControlOfEntity` | no | yes | `Open77.vehicles.owner(id)` / `Open77.npcs.owner(id)` and `Open77.vehicles.requestAuthority(id, playerId)` — a request the election validates, refused by name (`driven`) rather than a forced steal |
+| `PlayPedAmbientSpeechNative(ped, context, …)` | no | yes | `Open77.npcs.speak(id, voice)` — a `voContext` name against the NPC's own voiceset; `true` means queued on every viewer's puppet, and a name the voiceset lacks is silent without a word — [NPC behaviour](npc-behavior.md#speech-one-line-on-demand) |
+| `SetPedComponentVariation` on an **NPC** | no | plumbing | `Open77.npcs.setEquipment(id, { slot = record })` replicates a canonical clothing set, but measured on 2.31 a `Character.*` rig renders none of it: `true` is not a visible outfit — [NPCs](npcs.md) |
+| `GiveWeaponComponentToPed` / grenades in a throwable slot | yes | yes | `Open77.weapons.setComponent` / `removeComponent` / `components` and `giveGadget` / `takeGadget` / `gadgets`, with `onGadgetConsumed` on the owner's report — [Weapon Lua API](weapons-api.md) |
+| `screenshot-basic` (`requestScreenshot`, `requestScreenshotUpload`, `requestClientScreenshot`) | yes | yes | client `Open77.screen.capture` + `Open77.screen.upload` (the game's own back buffer, never the desktop); server `Open77.players.requestScreenshot(id, { url })`, delivered by the client to a URL — the picture never crosses the game transport — [Screenshots](screenshots.md) |
+| `RegisterPedheadshot` (mugshots) | yes | no | `Open77.screen.mugshot(entity, options)` — a remote player or an NPC is a framed face; the **local player in first person has no body to photograph** — [Screenshots](screenshots.md) |
+| `RequestModel` / `HasModelLoaded` / `RequestAnimDict` / `SetModelAsNoLongerNeeded` | — | — | **not needed**, and not provided — see [What is missing](#what-is-missing-and-why) |
+| `SetBlockingOfNonTemporaryEvents` / `SetPedKeepTask` / `SetEntityAsMissionEntity` | no | yes | three NPC settings that already exist under other names — see [Keeping an NPC on task](#keeping-an-npc-on-task) |
+| `DrawText`, `DrawText3D`, `DrawMarker`, `DrawLine`, `DrawSprite` | yes | — | the UI kit and the world-drawing namespaces — see [Porting FiveM draw calls](#porting-fivem-draw-calls) |
+| `onResourceStarting` / `playerEnteredScope` / `playerLeftScope` | no | yes | the same names, host-wide and reserved: `onResourceStarting(name)` is delivered inline while the resource still reads `starting` (a `CancelEvent()` inside it is refused by name, never ignored), and the scope pair is published under both spellings (`onPlayerEnteredScope` too) — [Scope events](server-api.md#scope-events) |
 
 Failures follow the repository convention: `nil, reason` for a function that returns a value,
 `false, reason` for a predicate, with stable snake_case reason tokens.
@@ -247,6 +275,31 @@ to tell "denied" from "gone", call the namespace function directly — it return
 The client has no loot registry it can be asked about (the server owns that list), so the client
 says so instead of answering `false`, which would read as "the drop is gone".
 
+### `SetEntityInvincible(kind, id, enabled)`
+
+The same divergence, on the one write FiveM scripts make through an entity handle. Server only,
+because damage immunity is a server ledger here:
+
+```lua
+SetEntityInvincible("player", playerId, true)   --> true            (Open77.players.setGodMode)
+SetEntityInvincible("player", playerId, false)  --> true
+SetEntityInvincible(playerId, true)             --> false, "kind_required"
+SetEntityInvincible("vehicle", vehicleId, true) --> false, "unsupported_entity_kind"
+```
+
+For `"player"` it **is** `Open77.players.setGodMode` — the same `players.stats.apply` permission
+(refused as `permission_denied:players.stats.apply` before any id is looked at), the same combat
+ledger bit, read back as `Open77.players.get(id).godMode`. Every other kind is refused **by name**
+rather than accepted and ignored: a vehicle's damage is its own scopes (`setEngineHealth`, the body
+zones), an NPC's is its `damagePolicy`, and a ported script that expects an indestructible car
+should find that out here rather than on the first hit. A name that is no kind at all is
+`unknown_entity_kind`; a non-boolean `enabled`, or a player the ledger does not hold yet, is
+`invalid_argument`.
+
+Two neighbours it is not: `Open77.players.setFallDamage(id, false)` switches fall damage off and
+nothing else, and the grav-chute's shield is a blanket *Invulnerable* that lives only while the
+chute is armed — [Player stats](player-stats.md#fall-damage) draws the line.
+
 ### ACE checks (server)
 
 `IsPlayerAceAllowed(playerId, permission)` is `Open77.acl.isAllowed` under the FiveM name: same
@@ -392,6 +445,87 @@ that "the operator's surface did this" stays a claim only the platform can make.
 The full contract, including the `Open77.runtime.scheduleRestart` lever, is in
 [Admin events](server-api.md#admin-events).
 
+### Damage feedback events (client)
+
+FiveM's `gameEventTriggered` with `CEventNetworkEntityDamage` is one firehose every combat HUD
+filters. Open77 splits it into three client events, all raised from the server's authoritative
+health verdict — the `PlayerHealthState` broadcast, never the shooter's local raycast — so a
+hitmarker drawn from `hitConfirmed` is a hit the ledger credited:
+
+| Event | Raised on | Arguments |
+|---|---|---|
+| `open77:localDamaged` | the **victim's** client, when the local player lost health | `attackerId, amount, dirX, dirY, dirZ, bodyPart, health, maxHealth` |
+| `open77:hitConfirmed` | the **attacker's** client, when the server credited a hit by the local player on a *player* | `victimId, amount, bodyPart, lethal` |
+| `open77:playerDamaged` | every client that has the victim's proxy — the observer feed for nameplates and kill feeds | `victimId, attackerId, amount, bodyPart, health, maxHealth` |
+
+```lua
+AddEventHandler("open77:hitConfirmed", function(victimId, amount, bodyPart, lethal)
+    showHitmarker(lethal == "1")          -- a string, not a boolean
+end)
+AddEventHandler("open77:localDamaged", function(attackerId, amount, dirX, dirY, dirZ)
+    showDamageDirection(tonumber(dirX), tonumber(dirY), tonumber(dirZ))
+end)
+```
+
+Three traps, each found while building a combat HUD rather than imagined:
+
+- **`hitConfirmed` is attacker-side and player-victim only.** It is raised from the player-health
+  drain, so a hit on a server-owned NPC produces no hitmarker at all. For NPCs the shooter's client
+  gets `open77:npcHit(npcId, damage, hitZ, weaponTdbId, attackKind)` instead, and a gamemode that
+  credits the hit server-side emits its own marker event from there.
+- **Every argument is a string**, like every engine-raised event: `lethal` arrives as `"1"` /
+  `"0"`, and `amount`, `health`, `maxHealth` and the direction need `tonumber`.
+- **The server event of the same name has a different list.** Server-side `open77:playerDamaged`
+  carries `(victimId, attackerId, amount, attackKind, weaponTdbId, bodyPart, remainingHealth,
+  maxHealth, lethal, downedHit)`; a handler copied from one side to the other reads the wrong
+  column. Both lists live in [Player stats](player-stats.md#events).
+
+### Keeping an NPC on task
+
+Three FiveM natives keep a ped from wandering off, and each is a setting that already exists here
+under another name. Nothing was built for them:
+
+| FiveM | Open77 | What it actually does |
+|---|---|---|
+| `SetBlockingOfNonTemporaryEvents(ped, true)` | `Open77.npcs.setPerceptionEnabled(id, false)` | Stops autonomous stimulus acquisition, including Open77's own target seeding. It does **not** drop a target already acquired — add `Open77.npcs.setCombatEnabled(id, false)` for that. `setAIEnabled(id, false)` is the wider switch: the native agent stops too, and the NPC's simulation lease is revoked. |
+| `SetPedKeepTask(ped, true)` | the task's own `timeoutMs = 0` | A task without a timeout runs until it succeeds, fails or is cancelled; the channel keeps it across ownership moves. There is no separate "keep" bit because nothing here clears a task behind a script's back. |
+| `SetEntityAsMissionEntity(entity, true, true)` | `persistent = true` and `despawnWhenUnobserved = false` on `Open77.npcs.create` (and `setPersistent` on vehicles) | **Cleanup policy only**: the NPC survives its resource stopping and is not despawned when no client observes it. It is not saved anywhere — server persistence is the resource's own storage. |
+
+The three switches are documented with their side effects in
+[NPC behaviour](npc-behavior.md) and the task options in [NPCs](npcs.md#tasks).
+
+### Porting FiveM draw calls
+
+FiveM draws with per-frame natives — a thread that calls `DrawText` every tick keeps the text on
+screen. Nothing here is per-frame: every drawing surface takes a description once and returns a
+handle, and the loop goes away with the port.
+
+| FiveM | Open77 | The difference that matters |
+|---|---|---|
+| `DrawText` / `SetTextFont` / `SetTextEntry` in a tick | `exports.open77_uikit:textUI({ text, position, key, icon })` | One persistent hint slot per resource (`top` / `center` / `bottom`); a second call **replaces** it; `hideTextUI` removes it. Four resources may show one at once. |
+| the `DrawText3D` pattern (project a coordinate every frame, draw text at it) | `exports.open77_uikit:drawText3D({ position \| entity, text, sublabel, maxDistance, ttl })` → `updateText3D` / `clearText3D` | A native world anchor of render style `card`, projected by the host with the distance band, viewport cull and occlusion the interaction prompts already pay for. **Budgeted:** the kit refuses 8 per owner (`text3d_owner_limit`) and 24 in all (`text3d_limit`), under the anchor quota of 32 per resource / 128 global — draw the nearest eight, not one per entity. |
+| `DrawMarker` | `Open77.markers.*` | A shape/style vocabulary, ground circles through `open77_groundcircle`. |
+| `DrawLine`, `DrawPoly`, `DrawBox` (zone debug) | `Open77.debugDraw.set(tag, geometry)` / `clear(tag)` | Resource-owned lines and triangles under a tag, replaced atomically per call and kept until cleared; permission `world.debug`. |
+| `DrawSprite`, `DrawRect` | an `<img>` or a `<div>` on a WebUI page | Screen-space art is a page; a rectangle pair every cutscene draws for bars is `exports.open77_uikit:showCinematicBars(true)`. |
+
+`Open77.anchors` underneath can render a `card`, `ring`, `dot` or `page` at a world point when the
+kit's text is not enough. The kit's own porting notes are in
+[UI kit — porting a `DrawText3D` loop](ui-kit.md#porting-a-drawtext3d-loop).
+
+### Manifest keys
+
+A FiveM `fxmanifest.lua` ports to `open77.lua` mostly by renaming the file; the keys that carry
+meaning here are handled, the rest are named once and ignored:
+
+| FiveM key | Open77 |
+|---|---|
+| `exports { ... }` / `server_exports { ... }` | Accepted as-is: each side pre-registers the listed **global functions** before the resource is `Running`, through the same registration a scripted `exports()` call performs. A listed name with no global function refuses the start (`manifest_export_missing:<name>`). |
+| `ui_page 'html/index.html'` | An alias of `web_ui_page`, with the same rule that the file is declared in `web_files`. When both are written, the later line wins. |
+| `fx_version`, `game`, `games`, `lua54`, `use_experimental_fxv2_oal`, `author`, `description`, `provide`, `provides`, `escrow`, `escrow_ignore` | **Accepted and ignored**, and named once per start so the acceptance is never mistaken for support: `INF\|my_resource\|manifest_ignored_keys=fx_version,lua54`. |
+| `client_script '@ox_lib/init.lua'` (cross-resource includes) | **Refused by name**, `cross_resource_include_refused:@ox_lib/init.lua`, at manifest parsing on both sides. Scripts run in their own VM; share code with `dependency` plus `require('@resource/module')` on the client and exports on both. |
+
+The full manifest reference is [Server resources](server-resources.md#declarative-exports-and-ported-manifests).
+
 ## What is missing, and why
 
 **`Citizen.CreateThreadNow` is deliberately absent on both sides.** It promises to run the body
@@ -404,6 +538,24 @@ code directly if it does not need to yield.
 `Citizen.InvokeNative`, `Citizen.CreateUThread`, `Citizen.Wait` inside a non-managed coroutine, and
 the `msgpack` surface are not provided: Open77 has no GTA native table to invoke, and the event
 payload encoding is not msgpack.
+
+**`RequestModel`, `HasModelLoaded`, `RequestAnimDict`, `HasAnimDictLoaded`,
+`SetModelAsNoLongerNeeded` and `RequestNamedPtfxAsset` are not provided, because the loop they
+serve does not exist here.** There is no streamer to ask: a server registry streams a vehicle or an
+NPC to every client inside its radius, and the client attaches its projection when the engine has
+spawned it — measured up to 3.7 s after the create arrives. So `Open77.vehicles.create` and
+`Open77.npcs.create` return before the body exists, and the honest question is not "is the model
+loaded" but "does *this* client have the body yet". That question is already answered:
+
+| A ported loop waited on | Ask instead |
+|---|---|
+| `RequestModel(model)` … `while not HasModelLoaded(model) do Wait(0) end` before a vehicle | `Open77.vehicles.whenStreamed(id, timeoutMs):await()` — resolves with the `get(id)` snapshot once `streamed == true`, rejects `timeout`; the state is `Open77.vehicles.get(id).streamed`, the transition is `open77:vehicleCreated` |
+| the same before a ped | `Open77.npcs.whenReady(id, timeoutMs):await()` — resolves with `{ id, entity }` the instant `onNpcReady` fires (attached **and** behaving); the state is `Open77.npcs.isStreamedIn(id)`; the server has the same helper, resolved by the first client that reports the body |
+| `RequestAnimDict` before `TaskPlayAnim` | nothing: `Open77.animations.play` resolves a clip from the catalogue itself |
+| `RequestNamedPtfxAsset` before a particle | nothing: `Open77.vfx.*` names a curated effect and the engine owns the asset |
+
+Delete the loop rather than emulating it: a `HasModelLoaded` that always answered `true` would
+have ported code spawning a blip on an entity that is not there yet.
 
 ## Verifying a port
 

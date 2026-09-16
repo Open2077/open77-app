@@ -62,6 +62,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 |---|---|
 | [Hacking and counterplay](hacking.md) | Short Circuit, Self-ICE, active/ally purge, server authority, public definitions and an optional lab. |
 | [Ground Slam / Quake](ground-slam.md) | Native grounded/airborne slam, server-owned impact validation and permission-controlled session grants. |
+| [Ability activation leases](ability-activation-leases.md) | Why abilities no longer wait for the server at the moment a key is pressed, what a far-away player will notice, and what an owner will see in the log. |
 | [Server resources](server-resources.md) | Manifests, runtime separation, signing, download, and reload. |
 | [Hub resources in Warden](community-hub-warden.md) | Reviewed installation, updates, uninstall, rollback, preload restarts and retained backups. |
 | [The Players tab in Warden](warden-players.md) | The live roster (ping, health, life state, match), and the per-row admin actions: warn, kick, ban, grant rights, heal, freeze and move — plus why spectate is not adaptable. |
@@ -87,6 +88,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [Equipment Lua API](../docs/equipment.md) | Validated wardrobe catalogue, local/server APIs, permissions, errors, and appearance replication. |
 | [Perspective](../docs/perspective.md) | First and third person: the ownership arbiter, the server policy, the player's key and persisted preference. |
 | [Photo mode](photo-mode.md) | Exclusive client-resource control of the native photo mode; stock shortcuts are disabled. |
+| [Screenshots and mugshots](screenshots.md) | In-process captures of the game's own frame (`screen.capture`), the upload to a URL (`screen.upload`), the server-requested picture delivered by the client (`players.requestScreenshot`), and the scripted-camera mugshot (`screen.mugshot`): what is captured, the surface formats, the in-flight rule, and where the picture goes. |
 | [Weapon Lua API](weapons-api.md) | Assign standard weapons by TweakDB template, select slots, holster, clear every slot, snapshot, and read the server's synchronous weapon cache. |
 | [Game data catalogues](data-catalogues.md) | `Open77.data.vehicle/weapon/item/npc/localize` on both runtimes: display names, classes, seats and qualities from a record string -- live TweakDB on the client, a shipped catalogue on the server, and the measurement behind that split. |
 | [Player health and stamina](player-stats.md) | Shared client/server reads, server-only setters, maximums, regeneration, and synchronization semantics. |
@@ -96,6 +98,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [Gorilla Arms](gorilla-arms.md) | Build native arm grades, self-service installation, charge effects, clinics and practice arenas. |
 | [Loot](loot.md) | Authoritative ground drops and pickup integration. |
 | [Weather](weather.md) | Session time, weather presets, synchronization, and events. |
+| [Time scale](world-time.md) | Slow motion for a scripted beat: `Open77.world.setTimeScale` on the client as a claim the dilation guard stands down for, and per routing bucket from the server; measuring it against the world clock, every release path, and why it is presentation and not a Sandevistan. |
 | [Vehicles](vehicles.md) | Identity, streaming, authority leases, seats, and Lua APIs. |
 | [Vehicle AI](vehicle-ai.md) | Autonomous driving, routes, entity following, NPC drivers and authoritative task events. |
 | [Native map](native-map.md) | Player waypoints, map lifecycle, marker selection and non-travel point picking. |
