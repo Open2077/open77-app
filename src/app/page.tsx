@@ -109,7 +109,7 @@ export default async function HomePage() {
               your own multiplayer experience.
             </p>
             <div className="hero-ctas">
-              <Link className="btn btn-primary btn-lg" href="/community#alpha">
+              <Link className="btn btn-primary btn-lg" href="/download">
                 Join preview
                 <ArrowRightIcon />
               </Link>
@@ -326,7 +326,7 @@ export default async function HomePage() {
               Open it to everyone.
             </h2>
             <div className="hero-ctas finale-ctas">
-              <Link className="btn btn-primary btn-lg" href="/community#alpha">
+              <Link className="btn btn-primary btn-lg" href="/download">
                 Join preview
               </Link>
               {site.links.discord ? (

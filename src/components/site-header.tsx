@@ -108,7 +108,7 @@ export function SiteHeader() {
           >
             Account
           </Link>
-          <Link className="btn btn-small btn-primary" href="/community#alpha">
+          <Link className="btn btn-small btn-primary" href="/download">
             Join preview
           </Link>
           <button
@@ -152,7 +152,7 @@ export function SiteHeader() {
         >
           Account
         </Link>
-        <Link className="btn btn-primary" href="/community#alpha">
+        <Link className="btn btn-primary" href="/download">
           Join preview
         </Link>
         {site.links.discord ? (
