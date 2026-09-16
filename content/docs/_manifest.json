@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-14T22:33:38.371Z",
-  "guides": 85,
-  "apiEntries": 1424,
+  "guides": 86,
+  "apiEntries": 1425,
   "files": [
     {
       "source": "wiki/README.md",
@@ -215,10 +215,10 @@
       "target": "content/docs/fivem-compatibility.md",
       "slug": "fivem-compatibility",
       "title": "FiveM compatibility aliases",
-      "bytes": 25656,
-      "sha256": "1f0ac856a0099bbd326f456e6d30dd7a27a4674ad15345edf950cd8698c91832",
-      "sourceRevision": "5b83091d4f097ef81614b44815b26acb3624ef62",
-      "sourceSyncedAt": "2026-09-16T02:09:49.860Z"
+      "bytes": 42643,
+      "sha256": "10e78aeaa47519b78b454843f78818f896665ecba967ca53db992d70f6440fc4",
+      "sourceRevision": "840593f385026679ec5360d25ad4961fb633208a",
+      "sourceSyncedAt": "2026-09-16T08:59:40.462Z"
     },
     {
       "source": "wiki/gamemode-kernel.md",
@@ -347,10 +347,10 @@
       "target": "content/docs/npc-behavior.md",
       "slug": "npc-behavior",
       "title": "NPC AI, combat and voice control",
-      "bytes": 9655,
-      "sha256": "4b59abb4a3d7c9927299762c1761aa009fe6c29b0280d3571c4c828d32a91516",
-      "sourceRevision": "4d6b81ea6de04995ff15ae543534cc378b8fd2a6",
-      "sourceSyncedAt": "2026-09-16T08:17:15.376Z"
+      "bytes": 9927,
+      "sha256": "a2fa2bb7f9aed3b7e76d80f865e4b08a40955985e3bb33a3971944202973deb1",
+      "sourceRevision": "840593f385026679ec5360d25ad4961fb633208a",
+      "sourceSyncedAt": "2026-09-16T08:59:40.569Z"
     },
     {
       "source": "wiki/npc-catalogue.md",
@@ -399,8 +399,10 @@
       "target": "content/docs/player-freeze.md",
       "slug": "player-freeze",
       "title": "Freezing a player",
-      "bytes": 5110,
-      "sha256": "c497801ef73368e41412e800fb4824a84996589a952698ebca81e32adfd5e965"
+      "bytes": 10941,
+      "sha256": "b805702f65dc1b5c8f4613d28f448a81c9992ca061f87e4b42995a8a96c675d3",
+      "sourceRevision": "840593f385026679ec5360d25ad4961fb633208a",
+      "sourceSyncedAt": "2026-09-16T08:59:40.726Z"
     },
     {
       "source": "wiki/player-interactions.md",
@@ -415,8 +417,10 @@
       "target": "content/docs/player-stats.md",
       "slug": "player-stats",
       "title": "Player health and stamina",
-      "bytes": 5537,
-      "sha256": "022bccaef68748cfc0084b86cd2a1daf96e8dadcf74dc345a74289f4113f5b8c"
+      "bytes": 11286,
+      "sha256": "db42447dd08537e6929a451d85206690fa8d017357104d2ccb58e39443a0e6ec",
+      "sourceRevision": "840593f385026679ec5360d25ad4961fb633208a",
+      "sourceSyncedAt": "2026-09-16T08:59:40.849Z"
     },
     {
       "source": "wiki/player-utilities.md",
@@ -611,10 +615,10 @@
       "target": "content/docs/vehicles.md",
       "slug": "vehicles",
       "title": "Network vehicles",
-      "bytes": 115018,
-      "sha256": "7342cf1eb5da16933f1da5dde90d13383f4022cd8d5cb8a251bfd011a2030c51",
-      "sourceRevision": "4d6b81ea6de04995ff15ae543534cc378b8fd2a6",
-      "sourceSyncedAt": "2026-09-16T08:17:15.971Z"
+      "bytes": 115234,
+      "sha256": "57aac056238de1dbaa30823cf9f387f7e8576bd68d15b80ac247460a8dec8aae",
+      "sourceRevision": "840593f385026679ec5360d25ad4961fb633208a",
+      "sourceSyncedAt": "2026-09-16T08:59:40.972Z"
     },
     {
       "source": "wiki/voice-lipsync.md",
@@ -678,8 +682,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1347,
-      "bytes": 1730689,
-      "sha256": "638a9487f479d91a3d51c7408f7e27baef79bb920c880fdea7f54d6c26d5a6dc"
+      "bytes": 1733825,
+      "sha256": "e03ddc9916d6e5feca19fac2c30c6cb7cd2627ccd29f87b3e7a681f5b444a77f"
     },
     {
       "source": "wiki/door-service-api.json",
@@ -760,6 +764,16 @@
       "sha256": "ee5e213c5f49a42423ab2c652c9115efb35d2bc9f60c4263cb72ef191b909425",
       "sourceRevision": "4d6b81ea6de04995ff15ae543534cc378b8fd2a6",
       "sourceSyncedAt": "2026-09-16T08:17:15.618Z"
+    },
+    {
+      "source": "wiki/world-time.md",
+      "target": "content/docs/world-time.md",
+      "slug": "world-time",
+      "title": "Time scale: slow motion for a scripted beat",
+      "bytes": 9618,
+      "sha256": "ab48007a5bd61ef37ead9246c46ca5175220b97c8383c1a2716a26052c82e2ca",
+      "sourceRevision": "840593f385026679ec5360d25ad4961fb633208a",
+      "sourceSyncedAt": "2026-09-16T08:59:41.108Z"
     }
   ]
 }

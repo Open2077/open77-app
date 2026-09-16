@@ -40,7 +40,10 @@ if not ok then print("no slow motion: " .. tostring(reason)) end
   length.
 
 Reasons: `permission_denied:world.timescale`, `invalid_scale`, `invalid_options`,
-`invalid_timescale_option:<name>`, `timescale_unavailable_on_this_host`, `native_unavailable`.
+`invalid_timescale_option:<name>`, `timescale_unavailable_on_this_host`, `native_unavailable`,
+and `player_unavailable` while the world has no local player yet — a resource's first tick on a
+fresh client. The engine's dilation layer does not exist before the player does, and writing it
+then took a client down, so the call refuses until there is a body to slow.
 
 `getTimeScale() -> { scale, engineActive, simTime, claims }`
 

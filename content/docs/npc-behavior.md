@@ -71,8 +71,11 @@ They are not stored in client KVP and do not constitute disk persistence across 
 ## Speech: one line, on demand
 
 `Open77.npcs.speak(id, voice, options)` is the ON switch beside `setVoiceEnabled`'s OFF: one
-voice-over line from the NPC's own voiceset, heard by every player who has the body
-streamed. It is the counterpart of FiveM's `PlayPedAmbientSpeechNative`.
+voice-over line from the NPC's own voiceset, queued on every client that has the body
+streamed. It is the counterpart of FiveM's `PlayPedAmbientSpeechNative`. What is proven is the
+plumbing — the `SoundPlayVo` event reaches each viewer's puppet, and a muted NPC refuses — not
+the sound: the test loop has no audio capture, so whether a given line is *heard* on a given
+record is something to check by ear before shipping it.
 
 ```lua
 -- A guard greets whoever walks up, and warns them off when they linger.

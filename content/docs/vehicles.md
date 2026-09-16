@@ -1491,7 +1491,9 @@ Open77.vehicles.setDrivable(id, true)
 Two honest limits. The pinned transform is wherever the last *accepted* report put the car, so a car
 frozen at speed stops on the owner's screen one network latency past the canonical pin, and the two
 agree again on the first accepted report after the release; the row's use cases freeze a parked
-car, where that gap is zero. And a freeze written through the raw bitfield -- `update(id, { flags =
+car, where that gap is zero. That gap is reasoned from the protocol, not measured: the live proof
+froze a car from rest under a held throttle (same pose at +0.5 s and +4.5 s, rolling again 1.5 s
+after the release) and never caught one at speed. And a freeze written through the raw bitfield -- `update(id, { flags =
 get(id).flags | Open77.vehicles.flags.frozen })` -- pins the motion facts the same way, but that is
 the read-modify-write `setFrozen` exists to spare you.
 

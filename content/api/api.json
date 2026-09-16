@@ -18406,7 +18406,7 @@
   "name": "setTimeScale",
   "handler": "LuaWorldSetTimeScale",
   "summary": "Slows the local clock for a scripted beat: one claim per resource, eased, timed, released on stop.",
-  "description": "The FiveM `SetTimeScale` shape, bound onto the engine's own `gameTimeSystem::SetTimeDilation` under a reason named after this resource (`open77:<resource>`), on the global layer only -- so the local body slows with the world, which is what a time scale means. `scale` is 0.05..1; 1 releases this resource's claim. Zero is refused: it freezes input along with the world. `options.durationMs` holds up to an hour (0, the default, holds until released or the resource stops); `options.easeMs` ramps linearly, up to ten seconds, from wherever the clock stands to `scale` and back to 1 at the end, in your milliseconds rather than an engine curve's fixed length.\n\n**A claim, not a raw native.** A multiplayer client runs a guard that removes every dilation it can name and, after three seconds of one it cannot, exempts the player from it. A claim registered here tells that guard to stand down for exactly as long as the beat is live. Two resources holding claims are two entries the engine composes by its own rule (the slower wins); nothing here arbitrates between them. Every exit -- deadline, `setTimeScale(1)`, stop, reload, session end, plugin unload -- unsets the entry.\n\n**Not a combat mechanic.** The server and every client outside the beat run at real time; a shot at a slowed client is adjudicated in real time. The server half, `Open77.world.setTimeScale(bucket, ...)`, replicates one beat to a whole bucket; the reflex overdrive deliberately touches no clock. Requires `world.timescale`. Reasons: `permission_denied:world.timescale`, `invalid_scale`, `invalid_options`, `invalid_timescale_option:<name>`, `timescale_unavailable_on_this_host`, `native_unavailable`.",
+  "description": "The FiveM `SetTimeScale` shape, bound onto the engine's own `gameTimeSystem::SetTimeDilation` under a reason named after this resource (`open77:<resource>`), on the global layer only -- so the local body slows with the world, which is what a time scale means. `scale` is 0.05..1; 1 releases this resource's claim. Zero is refused: it freezes input along with the world. `options.durationMs` holds up to an hour (0, the default, holds until released or the resource stops); `options.easeMs` ramps linearly, up to ten seconds, from wherever the clock stands to `scale` and back to 1 at the end, in your milliseconds rather than an engine curve's fixed length.\n\n**A claim, not a raw native.** A multiplayer client runs a guard that removes every dilation it can name and, after three seconds of one it cannot, exempts the player from it. A claim registered here tells that guard to stand down for exactly as long as the beat is live. Two resources holding claims are two entries the engine composes by its own rule (the slower wins); nothing here arbitrates between them. Every exit -- deadline, `setTimeScale(1)`, stop, reload, session end, plugin unload -- unsets the entry.\n\n**Not a combat mechanic.** The server and every client outside the beat run at real time; a shot at a slowed client is adjudicated in real time. The server half, `Open77.world.setTimeScale(bucket, ...)`, replicates one beat to a whole bucket; the reflex overdrive deliberately touches no clock. Requires `world.timescale`. Reasons: `permission_denied:world.timescale`, `invalid_scale`, `invalid_options`, `invalid_timescale_option:<name>`, `timescale_unavailable_on_this_host`, `native_unavailable`, `player_unavailable` (the world has no local player yet -- a resource's first tick on a fresh client; the dilation layer does not exist before the player does, and writing it then took a client down).",
   "params": [
    {
     "name": "scale",
@@ -18919,7 +18919,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Count down on every tick until the round starts, then stop the tick\nlocal tick\ntick = SetTick(function()\n    if GetGameTimer() >= roundStartAt then\n        ClearTick(tick)\n        startRound()\n    end\nend)",
   "inferred": false,
-  "source_line": 91,
+  "source_line": 93,
   "qualified": "ClearTick",
   "route_id": "server:ClearTick"
  },
@@ -19054,7 +19054,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- The tow job stored a vehicle id an hour ago; is the car still there?\nif not DoesEntityExist(\"vehicle\", job.vehicleId) then\n    Open77.chat.send(job.playerId, \"The car you were towing is gone.\")\n    return\nend",
   "inferred": false,
-  "source_line": 258,
+  "source_line": 260,
   "qualified": "DoesEntityExist",
   "route_id": "server:DoesEntityExist"
  },
@@ -19248,7 +19248,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Compare a record name with a TweakDBID a client sent (never a FiveM/Jenkins hash)\nif GetHashKey(\"Vehicle.v_sport2_quadra_turbo_r\") == recordHash then print(\"a Quadra\") end",
   "inferred": false,
-  "source_line": 220,
+  "source_line": 222,
   "qualified": "GetHashKey",
   "route_id": "server:GetHashKey"
  },
@@ -19326,7 +19326,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- A FiveM-style bans table keyed on the account id\nlocal account = GetPlayerIdentifierByType(source, \"open77\")\nif bans[account] then Open77.players.kick(source, \"You are banned.\") end",
   "inferred": false,
-  "source_line": 302,
+  "source_line": 327,
   "qualified": "GetPlayerIdentifierByType",
   "route_id": "server:GetPlayerIdentifierByType"
  },
@@ -19352,7 +19352,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- A FiveM whitelist loop runs unchanged\nfor _, id in ipairs(GetPlayerIdentifiers(source)) do\n    if id:sub(1, 7) == \"open77:\" then print(\"account\", id:sub(8)) end\nend",
   "inferred": false,
-  "source_line": 316,
+  "source_line": 341,
   "qualified": "GetPlayerIdentifiers",
   "route_id": "server:GetPlayerIdentifiers"
  },
@@ -19636,7 +19636,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "if IsDuplicityVersion() then\n    RegisterCommand(\"give\", handler, true)\nelse\n    RegisterNetEvent(\"shop:given\", render)\nend",
   "inferred": false,
-  "source_line": 46,
+  "source_line": 48,
   "qualified": "IsDuplicityVersion",
   "route_id": "server:IsDuplicityVersion"
  },
@@ -19668,7 +19668,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- A FiveM-style permission check in a command\nRegisterCommand(\"weather\", function(source, args)\n    if not IsPlayerAceAllowed(source, \"weather.control\") then\n        return Open77.chat.send(source, \"You may not change the weather.\")\n    end\n    Open77.environment.setWeather(args[1] or \"sunny\")\nend, false)",
   "inferred": false,
-  "source_line": 280,
+  "source_line": 305,
   "qualified": "IsPlayerAceAllowed",
   "route_id": "server:IsPlayerAceAllowed"
  },
@@ -19700,7 +19700,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Check a permission by account id (the account must be connected)\nlocal allowed, reason = IsPrincipalAceAllowed(userId, \"shop.manage\")\nif not allowed then print(\"denied:\", reason) end",
   "inferred": false,
-  "source_line": 287,
+  "source_line": 312,
   "qualified": "IsPrincipalAceAllowed",
   "route_id": "server:IsPrincipalAceAllowed"
  },
@@ -19732,7 +19732,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Load a JSON price list shipped in the resource's data/ directory\nlocal text = LoadResourceFile(GetCurrentResourceName(), \"prices.json\")\nlocal prices = text and json.decode(text) or {}",
   "inferred": false,
-  "source_line": 195,
+  "source_line": 197,
   "qualified": "LoadResourceFile",
   "route_id": "server:LoadResourceFile"
  },
@@ -20089,7 +20089,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Persist the high scores as JSON in data/\nSaveResourceFile(GetCurrentResourceName(), \"scores.json\", json.encode(scores))",
   "inferred": false,
-  "source_line": 203,
+  "source_line": 205,
   "qualified": "SaveResourceFile",
   "route_id": "server:SaveResourceFile"
  },
@@ -20157,6 +20157,44 @@
   "source_line": 140,
   "qualified": "SetConvar",
   "route_id": "server:SetConvar"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetEntityInvincible",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "FiveM's invincibility toggle under its own name: `Open77.players.setGodMode` for a player, refused by name for every other kind.",
+  "description": "Requires `players.stats.apply` (or the legacy `players.damage.apply`), exactly as `setGodMode` does -- it is that function under the FiveM name, and a permission refusal comes back before any id is looked at. FiveM's native takes one opaque entity handle; here the kind is named, as `DoesEntityExist` does, and only `\"player\"` has a canonical damage immunity to switch: the combat ledger's god mode, read back as `Open77.players.get(id).godMode` or `getStats(id).godMode`. `\"vehicle\"`, `\"npc\"`, `\"prop\"`, `\"loot\"`, `\"effect\"` and `\"elevator\"` answer `false, unsupported_entity_kind` rather than accepting and ignoring the call: a vehicle's damage is its own scopes (`setEngineHealth`, the body zones) and an NPC's its `damagePolicy`, and a ported script that expects an indestructible car should learn that here rather than on the first hit. The one-argument FiveM form is `false, kind_required`; a name that is no kind at all is `unknown_entity_kind`; a missing id is `id_required`; a non-boolean `enabled` is `invalid_argument`, and so is a player the ledger does not hold yet (not spawned). This is not the fall-damage toggle (`setFallDamage`) and not the grav-chute's blanket shield.",
+  "params": [
+   {
+    "name": "kind",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "id",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean, or false, reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Compat.cs",
+  "example": "-- A ported safe zone: the FiveM line runs unchanged once the kind is named.\nAddEventHandler(\"safezone:entered\", function(playerId)\n    local ok, reason = SetEntityInvincible(\"player\", playerId, true)\n    if not ok then print(\"could not shield \" .. playerId .. \": \" .. reason) end\nend)\nAddEventHandler(\"safezone:left\", function(playerId)\n    SetEntityInvincible(\"player\", playerId, false)\nend)",
+  "inferred": false,
+  "source_line": 291,
+  "qualified": "SetEntityInvincible",
+  "route_id": "server:SetEntityInvincible"
  },
  {
   "namespace": "_G",
@@ -20304,7 +20342,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Check the zone every tick; the tick survives an occasional error\nSetTick(function()\n    for _, playerId in ipairs(Open77.players.inBucket(0)) do\n        checkZone(playerId)\n    end\nend)",
   "inferred": false,
-  "source_line": 64,
+  "source_line": 66,
   "qualified": "SetTick",
   "route_id": "server:SetTick"
  },
@@ -20626,7 +20664,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- FiveM habit, same value as GetHashKey: a TweakDBID, not a Jenkins hash\nlocal id = joaat(\"Vehicle.v_sport2_quadra_turbo_r\")",
   "inferred": false,
-  "source_line": 239,
+  "source_line": 241,
   "qualified": "joaat",
   "route_id": "server:joaat"
  },
@@ -20836,7 +20874,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Await a server export promise, FiveM spelling\nCitizen.CreateThread(function()\n    local pending = Open77.exports.call(\"bank\", \"balance\", playerId)\n    local balance = Citizen.Await(pending)\n    print(\"balance\", balance)\nend)",
   "inferred": false,
-  "source_line": 181,
+  "source_line": 183,
   "qualified": "Citizen.Await",
   "route_id": "server:Citizen.Await"
  },
@@ -20862,7 +20900,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Same function as ClearTick, FiveM spelling\nlocal tick = Citizen.SetTick(function() checkZones() end)\nAddEventHandler(\"event:ended\", function() Citizen.ClearTick(tick) end)",
   "inferred": false,
-  "source_line": 179,
+  "source_line": 181,
   "qualified": "Citizen.ClearTick",
   "route_id": "server:Citizen.ClearTick"
  },
@@ -20886,7 +20924,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Cancel the round timer when everyone left\nlocal timer = Citizen.SetTimeout(60000, function() endRound() end)\nAddEventHandler(\"arena:empty\", function() Citizen.ClearTimeout(timer) end)",
   "inferred": false,
-  "source_line": 177,
+  "source_line": 179,
   "qualified": "Citizen.ClearTimeout",
   "route_id": "server:Citizen.ClearTimeout"
  },
@@ -20912,7 +20950,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- A ported FiveM server loop runs unchanged\nCitizen.CreateThread(function()\n    while true do\n        Citizen.Wait(60000)\n        saveEverything()\n    end\nend)",
   "inferred": false,
-  "source_line": 174,
+  "source_line": 176,
   "qualified": "Citizen.CreateThread",
   "route_id": "server:Citizen.CreateThread"
  },
@@ -20938,7 +20976,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Per-tick work, FiveM spelling\nCitizen.SetTick(function()\n    for _, playerId in ipairs(Open77.players.all()) do checkZone(playerId) end\nend)",
   "inferred": false,
-  "source_line": 178,
+  "source_line": 180,
   "qualified": "Citizen.SetTick",
   "route_id": "server:Citizen.SetTick"
  },
@@ -20970,7 +21008,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Respawn 8 seconds after death, FiveM spelling\nCitizen.SetTimeout(8000, function() Open77.players.respawn(playerId, { position = hospital }) end)",
   "inferred": false,
-  "source_line": 176,
+  "source_line": 178,
   "qualified": "Citizen.SetTimeout",
   "route_id": "server:Citizen.SetTimeout"
  },
@@ -20994,7 +21032,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Debug-level log line, FiveM spelling\nCitizen.Trace(\"player\", source, \"bought\", itemId)",
   "inferred": false,
-  "source_line": 180,
+  "source_line": 182,
   "qualified": "Citizen.Trace",
   "route_id": "server:Citizen.Trace"
  },
@@ -21018,7 +21056,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- A countdown in chat\nCitizen.CreateThread(function()\n    for n = 3, 1, -1 do\n        Open77.chat.broadcast((\"%d...\"):format(n))\n        Citizen.Wait(1000)\n    end\nend)",
   "inferred": false,
-  "source_line": 175,
+  "source_line": 177,
   "qualified": "Citizen.Wait",
   "route_id": "server:Citizen.Wait"
  },
@@ -21095,7 +21133,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Await a bank export from another resource\nCreateThread(function()\n    local pending = Open77.exports.call(\"bank\", \"balance\", playerId)\n    local balance, reason = pending and pending:await()\n    print(balance or reason)\nend)",
   "inferred": false,
-  "source_line": 111,
+  "source_line": 113,
   "qualified": "Open77.Promise.await",
   "route_id": "server:Open77.Promise.await"
  },
@@ -21127,7 +21165,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Continue when the client answers, without a thread\nlocal pending = Open77.net.callClient(playerId, \"confirmPurchase\", \"ammo_box\", 50)\nif pending then\n    pending:next(function(confirmed) if confirmed then sell(playerId, \"ammo_box\") end end)\nend",
   "inferred": false,
-  "source_line": 146,
+  "source_line": 148,
   "qualified": "Open77.Promise.next",
   "route_id": "server:Open77.Promise.next"
  },
@@ -21153,7 +21191,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- A promise this resource created is rejected when the timer runs out\nlocal answer = promise.new()\nSetTimeout(10000, function() answer:reject(\"timeout\") end)",
   "inferred": false,
-  "source_line": 133,
+  "source_line": 135,
   "qualified": "Open77.Promise.reject",
   "route_id": "server:Open77.Promise.reject"
  },
@@ -21179,7 +21217,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Resolve a promise you created when the database answers\nlocal ready = promise.new()\nOpen77.database.ready(function() ready:resolve(true) end)\nCreateThread(function() print(\"db ready:\", ready:await()) end)",
   "inferred": false,
-  "source_line": 124,
+  "source_line": 126,
   "qualified": "Open77.Promise.resolve",
   "route_id": "server:Open77.Promise.resolve"
  },
@@ -21198,7 +21236,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "-- Poll a client question from a tick\nSetTick(function()\n    if pending and pending:status() ~= \"pending\" then\n        print(\"answered:\", pending:status())\n        pending = nil\n    end\nend)",
   "inferred": false,
-  "source_line": 105,
+  "source_line": 107,
   "qualified": "Open77.Promise.status",
   "route_id": "server:Open77.Promise.status"
  },
@@ -28932,8 +28970,8 @@
   "namespace": "Open77.npcs",
   "name": "speak",
   "handler": "LuaResourceRuntime.Bootstrap",
-  "summary": "Plays one voice-over line from an NPC's own voiceset, heard by every player streaming it.",
-  "description": "Requires `world.npcs` and ownership. FiveM's `PlayPedAmbientSpeechNative`: `voice` is a `voContext` name -- the same word vanilla passes to `GameObject.PlayVoiceOver` (`greeting`, `fear_beg`, `rep_ask_to_leave`) -- resolved by the engine against the puppet's voiceset (`Character.*.voiceTag`), not a Wwise event. `Open77.npcs.voices()` lists the generic barks that can be pointed at in the game's 2.31 sources; any identifier (letters, digits, underscore, at most 64) is accepted, because a record may carry lines no vanilla script calls. **A name the voiceset does not have is silent and nothing can report it** -- `true` means queued on every viewer, not heard. Rides the existing effect one-shot to the NPC's routing bucket; the bundled `open77_effects` resource queues the engine's own `SoundPlayVo` event on each viewer's puppet through `Open77.sfx.playVoice`. `options.ignoreFrustum` (default true) speaks off-screen; `options.ignoreDistance` (default false) skips the engine's distance cull. Refusals: `invalid_voice`, `invalid_npc_id`, `npc_not_found`, `npc_not_owned`, `npc_dead`, `voice_disabled` (`setVoiceEnabled(id, false)` is in force), `npc_not_streamed` (no client has reported the body ready, so nobody could hear it), `npc_voice_busy` (a line was accepted on this NPC less than 400 ms ago).",
+  "summary": "Queues one voice-over line from an NPC's own voiceset on every client streaming it. `true` is the line queued, not the line heard.",
+  "description": "Requires `world.npcs` and ownership. FiveM's `PlayPedAmbientSpeechNative`: `voice` is a `voContext` name -- the same word vanilla passes to `GameObject.PlayVoiceOver` (`greeting`, `fear_beg`, `rep_ask_to_leave`) -- resolved by the engine against the puppet's voiceset (`Character.*.voiceTag`), not a Wwise event. `Open77.npcs.voices()` lists the generic barks that can be pointed at in the game's 2.31 sources; any identifier (letters, digits, underscore, at most 64) is accepted, because a record may carry lines no vanilla script calls. **A name the voiceset does not have is silent and nothing can report it** -- `true` means queued on every viewer, not heard. Audibility was not measured in the test loop (no audio capture; the plumbing is proven as far as the `SoundPlayVo` event reaching each viewer's puppet): test the lines you ship by ear, on the records you ship. Rides the existing effect one-shot to the NPC's routing bucket; the bundled `open77_effects` resource queues the engine's own `SoundPlayVo` event on each viewer's puppet through `Open77.sfx.playVoice`. `options.ignoreFrustum` (default true) speaks off-screen; `options.ignoreDistance` (default false) skips the engine's distance cull. Refusals: `invalid_voice`, `invalid_npc_id`, `npc_not_found`, `npc_not_owned`, `npc_dead`, `voice_disabled` (`setVoiceEnabled(id, false)` is in force), `npc_not_streamed` (no client has reported the body ready, so nobody could hear it), `npc_voice_busy` (a line was accepted on this NPC less than 400 ms ago).",
   "params": [
    {
     "name": "id",
@@ -31409,7 +31447,7 @@
   "name": "ragdoll",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Puts a player's body on the ground for a bounded time; it gets up on its own.",
-  "description": "Requires `players.motion.control`. FiveM's `SetPedToRagdoll`, composed on `Open77.motion.knockdown`: the engine's own knockdown status, a physical fall the observers replicate as a hit reaction. `options.direction` defaults to the body's own facing (from the last accepted transform; a player who never reported one falls north) and accepts a heading in degrees (0 = north) or `{ x, y }`; `options.distance` (0..6 m, default 0) turns the fall into a shove; `options.durationMs` counts from the moment the owning client reports the body down and is **clamped to the native 3000 ms** -- the effective number comes back as `durationMs`. `Open77.motion.cancel(id, result.id)` stands the body up early; `onPlayerMotionChanged` reports `ended` with `reason = \"duration_elapsed\"` when the clock fires. Refusals are the knockdown's: `motion_busy` (a motion is on the body, or the 1.5 s recovery after one), `body_unavailable` (not alive, on foot and ready -- a player mid-revive or respawn can never be knocked down, which is what keeps this away from the respawn ragdoll release), `invalid_direction`, `invalid_duration`. The true physics ragdoll stays deliberately unbound; see the freeze page.",
+  "description": "Requires `players.motion.control`. FiveM's `SetPedToRagdoll`, composed on `Open77.motion.knockdown`: the engine's own knockdown status, a physical fall the observers replicate as a hit reaction. `options.direction` defaults to the body's own facing (from the last accepted transform; a player who never reported one falls north) and accepts a heading in degrees (0 = north) or `{ x, y }`; `options.distance` (0..6 m, default 0) turns the fall into a shove; `options.durationMs` counts from the moment the owning client reports the body down and is **clamped to the native 3000 ms** -- the effective number comes back as `durationMs`. `Open77.motion.cancel(id, result.id)` stands the body up early; `onPlayerMotionChanged` reports `ended` with `reason = \"duration_elapsed\"` when the clock fires. Refusals are the knockdown's: `motion_busy` (a motion is on the body, or the 1.5 s recovery after one), `body_unavailable` (not alive, on foot and ready -- a player mid-revive or respawn can never be knocked down, which is what keeps this away from the respawn ragdoll release), `invalid_direction`, `invalid_duration`; and `motion_unavailable` on a server without a database -- the motion lease is the cyberware store's, which exists only with `database.enabled`, so a bare development server answers that rather than a fall. The true physics ragdoll stays deliberately unbound; see the freeze page.",
   "params": [
    {
     "name": "playerId",
@@ -41413,7 +41451,7 @@
   "source": "LuaResourceRuntime.Compat.cs",
   "example": "local p = promise.new()\nCreateThread(function() Wait(250) p:resolve(\"done\") end)\nprint(p:await())",
   "inferred": false,
-  "source_line": 163,
+  "source_line": 165,
   "qualified": "promise.new",
   "route_id": "server:promise.new"
  }

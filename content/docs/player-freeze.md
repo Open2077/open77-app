@@ -130,7 +130,11 @@ Open77.players.ragdoll(id, { direction = { x = 0, y = 1 }, distance = 2 })  -- a
 - Refusals are the knockdown's too: `motion_busy` while a motion is already on
   the body (including the 1.5 s recovery window after one ends, so hit spam
   cannot chain ragdolls), `body_unavailable` for a player who is not alive, on
-  foot and ready, `invalid_direction` / `invalid_duration` for bad arguments.
+  foot and ready, `invalid_direction` / `invalid_duration` for bad arguments —
+  and `motion_unavailable` on a server without a database: the motion lease
+  belongs to the cyberware store, which exists only with `database.enabled`, so
+  a bare development server answers that rather than a fall (the parity probe
+  reports `SKIP` there for the same reason).
 
 **Why not a physics ragdoll.** The engine can put a body into a true physical
 ragdoll and Open77 already calls that for death (`Api::Life::ForceRagdoll`,

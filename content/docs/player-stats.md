@@ -217,3 +217,35 @@ AddEventHandler("open77:playerStatsChanged", function(
 The existing `open77:playerHealthChanged` and damage-feedback events remain
 available for compatibility. Use the new event when a system needs to react to
 either pool or to configuration-driven revisions.
+
+### Damage feedback events (client)
+
+Three client events carry the server's damage verdict to Lua — raised from the
+authoritative `PlayerHealthState` broadcast, never from the shooter's local
+raycast, so a hitmarker drawn from `hitConfirmed` is a hit the ledger credited.
+They are the counterpart of FiveM's `gameEventTriggered` /
+`CEventNetworkEntityDamage`. Arguments are scalar **strings**, like every
+engine-raised event.
+
+```lua
+-- The local player lost health: direction and amount for a damage indicator.
+-- Raised on the VICTIM's client only.
+AddEventHandler("open77:localDamaged", function(attackerId, amount, dirX, dirY, dirZ,
+        bodyPart, health, maxHealth) end)
+
+-- The server credited a hit by the local player on a PLAYER: the authoritative
+-- hitmarker. Raised on the ATTACKER's client only. `lethal` is "1" or "0".
+AddEventHandler("open77:hitConfirmed", function(victimId, amount, bodyPart, lethal) end)
+
+-- Any player whose proxy this client has took damage: nameplate bars, kill feeds.
+AddEventHandler("open77:playerDamaged", function(victimId, attackerId, amount,
+        bodyPart, health, maxHealth) end)
+```
+
+Two traps. **`hitConfirmed` is player-victim only** — it is raised from the
+player-health drain, so a hit on a server-owned NPC produces no hitmarker; the
+shooter's client gets `open77:npcHit(npcId, damage, hitZ, weaponTdbId, attackKind)`
+for that. And **the server event of the same name has a different list**:
+server-side `open77:playerDamaged` carries `(victimId, attackerId, amount,
+attackKind, weaponTdbId, bodyPart, remainingHealth, maxHealth, lethal,
+downedHit)`, so a handler copied across reads the wrong column.
