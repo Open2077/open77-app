@@ -207,6 +207,14 @@ runtime layer.
 
 ## Declaring a restricted command
 
+`RegisterCommand(name, handler, true)` declares a command that only a player holding the ACL
+right `command.<name>` may run; the server refuses the others before the handler runs, and the
+dedicated console is always allowed. Grant the right in `acl.jsonc` (`command.settime`, or
+`command.*`), or let a resource grant it at runtime as described above. The refusal is reported
+to the caller through `open77:command:result`; a resource that wants to phrase its own refusal
+in chat registers the command unrestricted and rechecks `Open77.acl.isAllowed(source,
+"command.<name>")` itself, as below.
+
 ### Reading effective rights from a server resource
 
 Declare `permission "acl.read"` in the resource manifest, then use:

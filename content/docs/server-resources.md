@@ -214,6 +214,14 @@ The dedicated server does not have to load every directory below `resources.root
 An exact list is recommended for production and gamemode profiles. Adding a new development
 resource to the library then cannot silently add it to a live server.
 
+The list is read at startup, and the first-run wizard writes an exact list (the template's
+resources, by name). To add a resource to such a server: create its directory, add its name to
+`resources.load` in `server.jsonc`, then either restart the server or -- on a running server
+-- run `refresh` (rescans the manifests on disk; only names the load rules admit are
+discovered) followed by `ensure <name>`. `refresh` does not re-read `server.jsonc`: a name that
+was not in the list when the server started needs the restart. `ensure` on an unknown name
+answers `Resource '<name>' was not found`, which is this case, not a broken manifest.
+
 ### Rule syntax
 
 | Rule | Result |
