@@ -29,6 +29,9 @@ Durations and loop timing are not inferred from clip names. All actions are stat
 | `cry` | Cry | emotions | standing | None |
 | `think` | Think | emotions | standing | None |
 | `stretch` | Stretch | relaxation | standing | None |
+| `chair` | Sit as if on a chair | postures | chair | None |
+| `lean` | Lean back against a wall | postures | wall | None |
+| `lie` | Lie down | postures | bed | None |
 
 ## Offer an item (`give`)
 
@@ -297,6 +300,88 @@ Selectable authored clips:
 - `stand__2h_on_sides__01__stretch_muscle_09`
 - `stand__2h_on_sides__01__stretch_muscle_10`
 - `stand__2h_on_sides__01__stretch_neck__01`
+
+## Sit as if on a chair (`chair`)
+
+Workspot: `base\workspots\common\chair\generic__sit_chair_lean_back__sit_around__01.workspot`.
+
+Open77 playback workspot: `cyberm\workspots\rp\chair.workspot`.
+
+Default clip: `sit_chair_lean180__2h_on_lap__01__shuffle__01`.
+
+Declared rig bindings: male and female base rigs. Status: asset verified; runtime pending.
+
+Selectable authored clips:
+
+- `sit_chair_lean180__2h_on_lap__01__deep_breath__01`
+- `sit_chair_lean180__2h_on_lap__01__long__01`
+- `sit_chair_lean180__2h_on_lap__01__rub_lips__01`
+- `sit_chair_lean180__2h_on_lap__01__rub_lips__02`
+- `sit_chair_lean180__2h_on_lap__01__rub_lips__03`
+- `sit_chair_lean180__2h_on_lap__01__rub_lips__04`
+- `sit_chair_lean180__2h_on_lap__01__rub_temples__01`
+- `sit_chair_lean180__2h_on_lap__01__rub_temples__02`
+- `sit_chair_lean180__2h_on_lap__01__rub_temples__03`
+- `sit_chair_lean180__2h_on_lap__01__scratch_ear__02`
+- `sit_chair_lean180__2h_on_lap__01__scratch_ear__03`
+- `sit_chair_lean180__2h_on_lap__01__scratch_ear__04`
+- `sit_chair_lean180__2h_on_lap__01__scratch_ear__05`
+- `sit_chair_lean180__2h_on_lap__01__scratch_ear__06`
+- `sit_chair_lean180__2h_on_lap__01__scratch_face__01`
+- `sit_chair_lean180__2h_on_lap__01__scratch_face__02`
+- `sit_chair_lean180__2h_on_lap__01__scratch_face__03`
+- `sit_chair_lean180__2h_on_lap__01__scratch_face__04`
+- `sit_chair_lean180__2h_on_lap__01__scratch_neck__01`
+- `sit_chair_lean180__2h_on_lap__01__scratch_neck__02`
+- `sit_chair_lean180__2h_on_lap__01__scratch_neck__03`
+- `sit_chair_lean180__2h_on_lap__01__scratch_neck__04`
+- `sit_chair_lean180__2h_on_lap__01__shuffle__01`
+- `sit_chair_lean180__2h_on_lap__01__shuffle__02`
+- `sit_chair_lean180__2h_on_lap__01__shuffle__03`
+- `sit_chair_lean180__2h_on_lap__01__shuffle__04`
+- `sit_chair_lean180__2h_on_lap__01__shuffle__05`
+- `sit_chair_lean180__2h_on_lap__01__shuffle__06`
+- `sit_chair_lean180__2h_on_lap__01__shuffle__07`
+- `sit_chair_lean180__2h_on_lap__01__shuffle__08`
+- `sit_chair_lean180__2h_on_lap__01__sigh__01`
+- `sit_chair_lean180__2h_on_lap__01__yawn__01`
+- `sit_chair_lean180__2h_on_lap__01__yawn__02`
+- `sit_chair_lean180__2h_on_lap__01__yawn__03`
+- `sit_chair_lean180__2h_on_lap__01__yawn__04`
+- `sit_chair_lean180__2h_on_lap__01__yawn__05`
+- `sit_chair_lean180__2h_on_lap__01__yawn__06`
+
+## Lean back against a wall (`lean`)
+
+Workspot: `base\workspots\common\wall\generic__stand_wall_lean_back__stand_around__01.workspot`.
+
+Open77 playback workspot: `cyberm\workspots\rp\lean.workspot`.
+
+Default clip: `stand_wall_lean180__arms_crossed_front__01__shuffle__02`.
+
+Declared rig bindings: male and female base rigs. Status: asset verified; runtime pending.
+
+Selectable authored clips:
+
+- `stand_wall_lean180__arms_crossed_front__01__look_around__01`
+- `stand_wall_lean180__arms_crossed_front__01__shuffle__02`
+- `stand_wall_lean180__arms_crossed_front__01__shuffle__03`
+- `stand_wall_lean180__arms_crossed_front__01__shuffle__04`
+
+## Lie down (`lie`)
+
+Workspot: `base\workspots\common\bed\generic__lie_double_bed__lie_around__01.workspot`.
+
+Open77 playback workspot: `cyberm\workspots\rp\lie.workspot`.
+
+Default clip: `lie_bed_270__sleep__01__deep_breathing__01`.
+
+Declared rig bindings: male and female base rigs. Status: asset verified; runtime pending.
+
+Selectable authored clips:
+
+- `lie_bed_270__sleep__01`
+- `lie_bed_270__sleep__01__deep_breathing__01`
 
 ## Discovery inventory
 

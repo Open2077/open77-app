@@ -39,6 +39,11 @@ their own sections. Read those before porting: they are silent traps otherwise.
 | `add_principal <child> <parent>` | no | yes | `Open77.acl.addRole(userId, role)`; `remove_principal` is `removeRole` |
 | `AddExplosion(x, y, z, type, damage, audible, invisible, shake)` | no | yes | `Open77.effects.explosion(position, options)` — server-side, because the damage goes through the stats authority. `type` is a `vfx` alias rather than a native enum |
 | `explosionEvent` | no | yes | `onExplosion`, host-wide, carrying counts rather than names |
+| `StartScriptFire(x, y, z, maxChildren, isGasFire)` | no | yes | `Open77.effects.fire(position, options)` — server-side, same reason as the blast. `maxChildren` has no equivalent: a fire is one radius, not a spreading tree. `isGasFire` is a `vfx` alias (`fire.gas`) |
+| `RemoveScriptFire(handle)` | no | yes | `Open77.effects.removeFire(fireId)`; `Open77.effects.fires()` lists what this resource still has burning |
+| `GetScriptFireCoords` / `IsEntityOnFire` | no | partly | `Open77.effects.fires()` answers the first for a resource's own fires; there is no per-entity burning flag, because nothing in the engine replicates one |
+| `fireEvent` | no | yes | `onFire`, host-wide, with `started`/`stopped` and a count rather than names |
+| `ptFxEvent` | no | yes | `onParticleEffect`, host-wide, for every world-positioned server effect. Entity-bound `playOn`/`attach` raise nothing: the target owns the transform |
 | `GetPlayerIdentifierByType(playerId, type)` | no | yes | `Open77.players.identifier` / `name` / `identity` |
 | `GetPlayerIdentifiers(playerId)` | no | yes | the three above as `"type:value"` strings |
 | `RegisterCommand(name, fn, restricted?)` | yes | yes | server: ACL `command.<name>`; client: `Open77.runtime.registerCommand` |
@@ -367,7 +372,7 @@ A ported script that listens for `txAdmin:events:scheduledRestart` or
 | `txAdmin:events:playerWarned` | `open77:admin:playerWarned(playerId, author)` | **No reason and no operator name** — see below. |
 | `txAdmin:events:playerKicked` | `open77:admin:playerKicked(playerId, author)` | Same. |
 | `txAdmin:events:playerBanned` | `open77:admin:playerBanned(playerId, author, durationSeconds)` | Same, plus the duration. |
-| `txAdmin:events:healedPlayer` | — | No counterpart; see below. |
+| `txAdmin:events:healedPlayer` | `open77:admin:playerHealed(playerId, author)` | Raised by Warden's **heal** action only — see below. |
 
 Two differences will bite a straight port. **The moderation reason is not carried**, and
 `author` is a channel (`warden` or `resource`) rather than a staff name: these events reach
@@ -375,12 +380,14 @@ every resource on the server, and a host-wide event carrying either would be a m
 for anything that cared to listen. A script that displayed the reason must get it from its own
 admin resource instead.
 
-And **there is no `healedPlayer`**. txAdmin has one because healing is something its panel does;
-Warden has no heal, and `Open77.players.heal` is a gameplay native any resource may call.
-Announcing every call of it as an administrative act would be both a firehose and a lie. An
-admin resource that heals on command should publish its own event, under its own namespace —
-`open77:admin:` is reserved to the platform precisely so that "the operator's surface did this"
-stays a claim only the platform can make.
+And **`healedPlayer` fires only for Warden's own heal**. txAdmin has it because healing is
+something its panel does — and since the [Players tab](warden-players.md) grew a heal action,
+Warden's panel does too, so `open77:admin:playerHealed(playerId, author)` is raised when an
+operator heals from it. It is **not** raised when a resource calls `Open77.players.heal`: that
+is a gameplay native any resource may call, and announcing every call of it as an administrative
+act would be both a firehose and a lie. An admin resource that heals on command should publish
+its own event, under its own namespace — `open77:admin:` is reserved to the platform precisely so
+that "the operator's surface did this" stays a claim only the platform can make.
 
 The full contract, including the `Open77.runtime.scheduleRestart` lever, is in
 [Admin events](server-api.md#admin-events).

@@ -5,8 +5,9 @@ import { readFile } from "node:fs/promises";
 const read = (file) => readFile(file, "utf8");
 const api = JSON.parse(await read("content/api/api.json"));
 const entries = api.filter((entry) => entry.namespace === "Open77.animations");
-assert.equal(entries.length, 23);
-assert.equal(new Set(entries.map((entry) => entry.route_id)).size, 23);
+// 25 since wave 5 (row I4): playAt and stopAt joined the server namespace.
+assert.equal(entries.length, 25);
+assert.equal(new Set(entries.map((entry) => entry.route_id)).size, 25);
 assert.ok(entries.every((entry) => !entry.name.startsWith("_") && entry.name !== "animations"));
 const find = (runtime, name) => {
   const entry = entries.find((entry) => entry.runtime === runtime && entry.name === name);
@@ -33,6 +34,8 @@ for (const [runtime, name, params] of [
   ["server", "clip", ["clip"]],
   ["server", "clips", ["query"]],
   ["server", "playClip", ["playerId", "clip", "options"]],
+  ["server", "playAt", ["playerId", "profileId", "position", "yaw", "options"]],
+  ["server", "stopAt", ["playbackId"]],
 ]) {
   const entry = find(runtime, name);
   assert.deepEqual(entry.params.map((param) => param.name), params, `${runtime}:${name}`);
@@ -55,7 +58,8 @@ for (const section of ["How it works", "Quick start: your first client action", 
 assert.match(guide, /Open77RP\.archive/);
 assert.match(guide, /onAnimationPlaybackFailed/);
 assert.match(guide, /known limitation/);
-assert.equal((await read("content/docs/rp-animation-catalogue.md")).match(/^- `/gm).length, 73);
+// 116 since wave 5 (row I4): the chair, lean and lie posture devices brought 43 clips.
+assert.equal((await read("content/docs/rp-animation-catalogue.md")).match(/^- `/gm).length, 116);
 
 const origin = process.argv[2];
 if (origin) {

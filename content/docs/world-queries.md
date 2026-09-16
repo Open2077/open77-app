@@ -375,6 +375,7 @@ end
 | `applied` | what the **engine** did with it: `Ok`, or a refusal name |
 | `crowdGranularity` | `continuous` |
 | `trafficGranularity` | `binary` -- 2.31 exposes no vehicle density modifier, so any positive traffic means vanilla traffic |
+| `sanitizer` | what this client's own clean-up did with the policy, cumulative since plugin load: `kept` (unowned bodies left alone because the policy allows their kind), `removedNpcs`, `removedVehicles`, `sweeps`. Compare two reads: `removedVehicles` climbing with traffic on is cars vanishing |
 
 There is no client setter, on purpose: density has to be the same for everyone in a bucket, so it is
 a server decision (`Open77.world.setPopulation`, see [the server API](server-api.md)) and this side
@@ -382,6 +383,13 @@ only reads it.
 
 `applied` is worth reading. A policy can arrive and be refused by the engine, and a resource
 comparing its own expectations against the street needs to see that rather than infer it.
+
+The policy is also what the client's own clean-up obeys. While a session is active the client
+removes vanilla bodies it does not own -- through the vehicle spawn policy and through the identity
+sanitizer -- and both leave a kind the policy allows alone: pedestrians when `crowd > 0`, vehicles
+when `traffic > 0`. Those bodies are scenery; `nearby` labels them `populationNpc` and
+`trafficVehicle` so a resource can tell them from replicated ones. (Client 65 to 67 swept allowed
+traffic anyway, half a second after it spawned; client 68 keeps it.)
 
 | Reason | Meaning |
 |---|---|

@@ -64,6 +64,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [Ground Slam / Quake](ground-slam.md) | Native grounded/airborne slam, server-owned impact validation and permission-controlled session grants. |
 | [Server resources](server-resources.md) | Manifests, runtime separation, signing, download, and reload. |
 | [Hub resources in Warden](community-hub-warden.md) | Reviewed installation, updates, uninstall, rollback, preload restarts and retained backups. |
+| [The Players tab in Warden](warden-players.md) | The live roster (ping, health, life state, match), and the per-row admin actions: warn, kick, ban, grant rights, heal, freeze and move — plus why spectate is not adaptable. |
 | [Mods: the complete guide](mods.md) | The three layers (stack, world, own), the life of a world mod from server to game folder, declaring packages, a Nexus vehicle walkthrough, verification and troubleshooting. |
 | [Mods your server requires](server-mods.md) | The operator's reference for the same feature: trust, hosting the bytes, the master's hash vouching, Warden and review. |
 | [Sky hologram advertisements](sky-advertising.md) | Build PNG/DDS art into Towers-of-Light XBM replacers and preload it from a resource. |
@@ -129,7 +130,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [RP animation catalogue](rp-animation-catalogue.md) | All 12 profiles and 70 selectable clips, prop/placement requirements and validation status. |
 | [The role-play kit](rp-kit.md) | `open77_rp_basics`: cuff, escort and search as server exports, the leash an escort really is, the authority that stops a griefer, the twelve ways a hold ends -- and why carry refuses on this build. |
 | [World props](props.md) | Server-authoritative props and lights: models, streaming, buckets, ownership, and the client projection. |
-| [Visual and audio effects](effects.md) | Client-local world/entity VFX and spatialised SFX, and the server-replicated effect registry. |
+| [Visual and audio effects](effects.md) | Client-local world/entity VFX and spatialised SFX, the server-replicated effect registry, explosions and script fires. |
 | [Resource audio](sound.md) | Playing an audio file your resource ships: 2D and world-spatial with HRTF falloff, the client exports and server twins, the caps and lifetime rules, and the honest list of what it is not. |
 | [Native screen transitions](screen-transitions.md) | Client Lua fades to black/color, native completion events, resource ownership, cancellation and recovery. |
 | [Privileged debug runtime](debug-runtime.md) | ACL-targeted client Lua execution, native lab commands, and REDscript bridge probes. |

@@ -85,6 +85,20 @@ const nextConfig: NextConfig = {
       { source: "/workshop/discover", destination: "/workshop", permanent: true },
       { source: "/resources/:path*", destination: "/workshop/:path*", permanent: true },
       { source: "/creators/:handle", destination: "/workshop/creators/:handle", permanent: true },
+      // The 2026-09-15 devblog post was first published under an unpadded date
+      // (2026-9-15), which the post loader ignores. The Discord announcements
+      // already link to that slug, so it and its Markdown twin redirect to the
+      // corrected one.
+      {
+        source: "/devblog/2026-9-15-bucket-paint-polyzone-launcher",
+        destination: "/devblog/2026-09-15-bucket-paint-polyzone-launcher",
+        permanent: true,
+      },
+      {
+        source: "/devblog/2026-9-15-bucket-paint-polyzone-launcher.md",
+        destination: "/devblog/2026-09-15-bucket-paint-polyzone-launcher.md",
+        permanent: true,
+      },
     ];
   },
 
