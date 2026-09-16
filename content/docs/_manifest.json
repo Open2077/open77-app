@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-14T22:33:38.371Z",
-  "guides": 83,
-  "apiEntries": 1368,
+  "guides": 84,
+  "apiEntries": 1380,
   "files": [
     {
       "source": "wiki/README.md",
@@ -107,8 +107,10 @@
       "target": "content/docs/connection-control.md",
       "slug": "connection-control",
       "title": "Connection control: connect events, whitelists and bans",
-      "bytes": 24067,
-      "sha256": "90888427956738294956def6d6d2d79bfbfce3ce6f0b95d812009848223b1555"
+      "bytes": 24291,
+      "sha256": "1240d7f0440b7b9a26ce04a5023d0bfdf68a93b3042bf76302fc5e3a9706c13f",
+      "sourceRevision": "459be54e72df37b58e20956581d17ebda165d1e6",
+      "sourceSyncedAt": "2026-09-16T03:33:11.880Z"
     },
     {
       "source": "wiki/context-menu.md",
@@ -195,10 +197,10 @@
       "target": "content/docs/effects.md",
       "slug": "effects",
       "title": "Visual and audio effects",
-      "bytes": 55372,
-      "sha256": "c11d0332183eebf9eaf15eb0bb31d43ef98ef742dd9e184c79d34a1798db58dc",
-      "sourceRevision": "5b83091d4f097ef81614b44815b26acb3624ef62",
-      "sourceSyncedAt": "2026-09-16T02:09:49.591Z"
+      "bytes": 55525,
+      "sha256": "f2c95cfde10f3546ac1abfbffd221aa9b0f5aa022b5d368c26bddaecf3904f14",
+      "sourceRevision": "459be54e72df37b58e20956581d17ebda165d1e6",
+      "sourceSyncedAt": "2026-09-16T03:33:20.044Z"
     },
     {
       "source": "wiki/elevators.md",
@@ -431,8 +433,10 @@
       "target": "content/docs/resource-exports.md",
       "slug": "resource-exports",
       "title": "Official resource exports",
-      "bytes": 36751,
-      "sha256": "bc6537951e6328a174c06217fb22635cfd34a9e97c3ec0a88ceb37b9ae1a90bf"
+      "bytes": 37777,
+      "sha256": "93eca42b946b9f9e8586a956ee7228e4cb7888c51c4431ee498ada9742fa7d70",
+      "sourceRevision": "459be54e72df37b58e20956581d17ebda165d1e6",
+      "sourceSyncedAt": "2026-09-16T03:33:11.996Z"
     },
     {
       "source": "wiki/rp-animation-catalogue.md",
@@ -491,10 +495,10 @@
       "target": "content/docs/server-api.md",
       "slug": "server-api",
       "title": "Complete server Lua API",
-      "bytes": 190843,
-      "sha256": "b82e12d09fe72ba0035a8811ccb21c9a8432cf7be416aec40570a23fe388986a",
-      "sourceRevision": "5b83091d4f097ef81614b44815b26acb3624ef62",
-      "sourceSyncedAt": "2026-09-16T02:09:50.639Z"
+      "bytes": 198677,
+      "sha256": "f790c83a47acd25076000d14a0c2adc77732d7ca84f12432d94821836cccdd28",
+      "sourceRevision": "459be54e72df37b58e20956581d17ebda165d1e6",
+      "sourceSyncedAt": "2026-09-16T03:33:12.124Z"
     },
     {
       "source": "wiki/server-exports.md",
@@ -557,8 +561,10 @@
       "target": "content/docs/ui-kit.md",
       "slug": "ui-kit",
       "title": "The UI kit",
-      "bytes": 38587,
-      "sha256": "88126135843162c99ea8b87f90910b7e6d1017c20294510b9755e628a4d76d71"
+      "bytes": 48166,
+      "sha256": "c8c3e519ab3d86e014be592a371a88bf787d9819a8b560178408e7cbb4db4b0c",
+      "sourceRevision": "459be54e72df37b58e20956581d17ebda165d1e6",
+      "sourceSyncedAt": "2026-09-16T03:33:12.282Z"
     },
     {
       "source": "wiki/vectors.md",
@@ -662,8 +668,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1347,
-      "bytes": 1598414,
-      "sha256": "0ac58531e573c774d05d48ebc33c496ea7ec1710898f0ca424e44015e4e491ff"
+      "bytes": 1635873,
+      "sha256": "64938c8ceb510af8e7bd01963fc5451be83f777405c8af4a1094bc702ef4215c"
     },
     {
       "source": "wiki/door-service-api.json",
@@ -724,6 +730,16 @@
       "sha256": "5e4998a294e0311a7621ad62e61248b22a00bb2464ba8ccfc60119bfa2ab5a07",
       "sourceRevision": "5b83091d4f097ef81614b44815b26acb3624ef62",
       "sourceSyncedAt": "2026-09-16T02:09:50.898Z"
+    },
+    {
+      "source": "wiki/ability-activation-leases.md",
+      "target": "content/docs/ability-activation-leases.md",
+      "slug": "ability-activation-leases",
+      "title": "Ability activation leases — what a server owner needs to know",
+      "bytes": 6868,
+      "sha256": "b37970cb6b613e31cfb8898890c5c716e7ea4a92054617a74c9c6d0c57610820",
+      "sourceRevision": "459be54e72df37b58e20956581d17ebda165d1e6",
+      "sourceSyncedAt": "2026-09-16T03:33:19.912Z"
     }
   ]
 }

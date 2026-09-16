@@ -358,6 +358,12 @@
           "kind": "guide",
           "nav": "Hacking and counterplay",
           "description": "Short Circuit, Overheat, Cyberware Malfunction, Cripple Movement, Reboot Optics and Weapon Glitch as kinds of one server-owned upload; Self-ICE, active purge, statuses, protection scopes and the `onHackingTransition` ledger."
+        },
+        {
+          "slug": "ability-activation-leases",
+          "kind": "guide",
+          "nav": "Ability activation leases",
+          "description": "Why abilities no longer wait for the server at the moment a key is pressed: the expiring activation budget, what a far-away player notices, and what an owner sees in the log."
         }
       ]
     },

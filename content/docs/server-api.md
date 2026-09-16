@@ -163,6 +163,16 @@ restarts without exposing the resource owner name.
 `onDashChanged` reports correlated activation phases; `onDashRejected` reports
 admission failure. Native movement and multiplayer acceptance remain pending.
 
+The [reflex overdrive API](reflex-overdrive.md) adds `Open77.reflex.define`,
+`grant`, `revoke`, `cancel`, `current` and `capabilities`, under separate
+`players.reflex.define`, `players.reflex.manage` and `players.reflex.read`
+permissions. It is a bounded real-time speed/handling buff on its owner: it
+slows no bullet, slows no other player, and changes no clock anywhere. A
+definition picks one of two client-owned stat tiers and its economy; it can
+never name a stat or a modifier. `onReflexChanged` reports correlated activation
+phases; `onReflexRejected` reports admission failure. Multiplayer acceptance is
+pending.
+
 The [Ground Slam API](ground-slam.md) provides `Open77.abilities.define`, `grant`,
 `revoke`, `cancel` and `current`, controlled by `players.abilities.define`,
 `players.abilities.manage` and `players.abilities.read`. Combined movement
@@ -669,6 +679,10 @@ Three reads about the link itself rather than the character on the end of it.
 | `Open77.players.identifiers(playerId)` | None, plus `players.identity.sensitive` for one field | `-> table \| nil, reason` | `open77` and `userId` (the same account GUID under both spellings), `name`, `fingerprint`, `joinedAt`, and `endpoint` only with the capability. There is deliberately no `discord`, `steam`, `license` or `xbl`: Open77 has one durable identifier and does not invent the others. |
 | `GetPlayerPing` | None | `(playerId) -> milliseconds \| nil, reason` | FiveM's spelling of `Open77.players.ping`, the same function under both names. |
 | `GetPlayerEndpoint` | `players.identity.sensitive` | `(playerId) -> "ip:port" \| nil, reason` | FiveM's spelling of `Open77.players.endpoint`, the same function under both names. |
+| `Open77.players.sessionStats(playerId)` | None, plus `players.identity.history` for the history half | `-> table \| nil, reason` | The live session: `playerId`, `userId`, `connectedAtUtc` (the same `JoinedAtUtc` `identifiers` reports as `joinedAt`), `sessionSeconds`, `lastSeenUtc`. With the capability, also `firstSeenUtc`, `previousSeenUtc`, `joinCount` and `totalPlaySeconds` from the identity directory the server already persists -- absent without it, never nil-filled. |
+| `Open77.players.lastSeen(identifier)` | `players.identity.history` | `-> table \| nil, reason` | When a durable identifier was last on this server, online or not: `userId`, `name`, `online`, `lastSeenUtc`, `firstSeenUtc`, `previousSeenUtc?`, `joinCount`, `totalPlaySeconds`, plus the live fields while connected. `identity_unknown` for somebody never admitted here, `history_unavailable` on a server without a directory. |
+| `GetPlayerTimeOnline` | None | `(playerId) -> milliseconds \| nil, reason` | FiveM's spelling of the live session length, in the milliseconds FiveM documents. |
+| `GetPlayerLastMsg` | None | `(playerId) -> milliseconds \| nil, reason` | FiveM's spelling of the age of the newest packet the server holds for the player -- the rich read's `ageMs`. `no_packet_yet` before the first snapshot. |
 
 Two things about this surface are deliberate and worth knowing before you build on it.
 
@@ -2791,10 +2805,85 @@ An exact entry matches that host only; `*.example.com` matches one level of subd
 bare host. An empty list reaches nothing. Redirects are never followed, so the list is the whole
 reachable surface.
 
+## Serving HTTP
+
+`Open77.http.listen(prefix, handler)` serves inbound HTTP under `/<resource>/<prefix>` on the
+server's own listener. It requires `http.serve` -- a different power from `http.request`: the
+network calling a resource rather than the resource calling out, and an operator reading a
+manifest should see which of the two a resource wants. The listener is a server-wide opt-in, off
+by default and loopback by default:
+
+```jsonc
+"httpHandlers": { "enabled": true, "listenUrl": "http://127.0.0.1:11781", "timeoutSeconds": 5 }
+```
+
+While it is off, every `listen` answers `http_handlers_unavailable`, the same honesty as
+`http_unavailable` on the outbound side. Put a reverse proxy with TLS in front of it before
+exposing a route to the internet; the listener itself speaks plain HTTP on the address you give it.
+
+```lua
+-- open77.lua: permissions { "http.serve" }
+-- POST /my_resource/heal { "playerId": 3 }
+local route = Open77.http.listen("/heal", function(req, res)
+    if req.method ~= "POST" then return res.json(405, { error = "method_not_allowed" }) end
+    local payload = json.decode(req.body or "") or {}
+    local ok, reason = Open77.players.setHealth(payload.playerId, 100)
+    if not ok then return res.json(404, { error = reason }) end
+    res.json({ healed = payload.playerId })
+end)
+print("serving " .. tostring(route))   -- /my_resource/heal
+```
+
+| | |
+|---|---|
+| Routing | Routes are namespaced by resource (`/<resource>/…`); a resource can never claim another's segment. The longest registered prefix wins; `listen("/", …)` -- or FiveM's `SetHttpHandler(handler)` -- takes everything under the resource. `unlisten(prefix)` removes one route; stop and reload drop them all. `routes()` lists this resource's public routes. |
+| The handler | Runs on the resource's own tick, one tick after the request landed -- never cross-thread, so it may call any other API. `req = { method, path, query, body, route, remoteAddress?, headers }`; header lookup is case-insensitive. |
+| The answer | `res.send(status, body, headers?)` -- a table body is JSON-encoded with a JSON content type -- or the sugar `res.json(status?, value)` / `res.text(status?, text)`. Exactly once: a second call answers `false, already_sent`. A handler that throws answers `500 {"error":"handler_error"}`; one that never answers is timed out by the host after `timeoutSeconds`. |
+| Bounds | Bodies over 16 KiB are refused with `body_too_large` before Lua sees them; 16 requests in flight per resource, the rest get 503; headers capped like the outbound side. |
+
+Reasons: `permission_denied:http.serve`, `http_handlers_unavailable`, `invalid_prefix`,
+`invalid_handler`, `route_not_found` (`unlisten` on a route this resource never registered).
+
 ## Logging
 
-`Open77.log.debug`, `.info`, `.warn`, and `.error` currently forward their arguments to the
-resource-prefixed server logger. Their common signature is `(...)`; no return value is produced.
+`Open77.log.debug`, `.info`, `.warn` and `.error` write to the resource-prefixed server logger at
+their own level -- `DBG`, `INF`, `WRN`, `ERR` in the log line, the same four the client has -- so an
+operator can filter a resource's warnings from its chatter. `print` stays `INF`, `Citizen.Trace` is
+`debug`. Their common signature is `(...)`, values are joined with a tab like `print`, and no value
+is returned. Control sequences (ANSI colour codes, cursor moves) are stripped from every resource
+line before it reaches the log, so a ported script that colours its output cannot corrupt the
+terminal or the log file. (Until wave 6, 2026-09-16, all four levels printed at `INF`.)
+
+## Latent (chunked) client events
+
+A net event carries at most 48 KiB of JSON. `TriggerLatentClientEvent(name, target,
+bytesPerSecond, ...)` -- alias `Open77.net.emitLatent` -- is the same call as `TriggerClientEvent`
+with FiveM's rate argument in third place, for a payload the envelope cannot carry: up to 4 MiB,
+cut into 40 KiB frames on a reserved name, paced at the requested rate, reassembled by the client
+host and delivered to `RegisterNetEvent` handlers under the **original** name. The receiving resource
+cannot tell it was latent, so a ported inventory or catalogue push needs no client change. Requires
+`network.events`.
+
+```lua
+-- Push the whole item catalogue to a joining player without stalling their session
+local id, reason = TriggerLatentClientEvent("shop:catalogue", playerId, 256 * 1024, catalogue, revision)
+if not id then return print("catalogue not sent: " .. tostring(reason)) end
+CreateThread(function()
+    while true do
+        Wait(1000)
+        local s = Open77.net.latentStatus(id)
+        if not s or s.state ~= "sending" then print("catalogue " .. (s and s.state or "gone")); return end
+    end
+end)
+```
+
+| | |
+|---|---|
+| `target` | one player id, or `-1` for every connected player (one stream per recipient, one status). |
+| Rate | clamped to 1 KiB/s .. 2.5 MiB/s; all of a resource's streams together never exceed 64 frames per second, inside the per-player event budget. |
+| `Open77.net.latentStatus(id)` | `{ id, name, target, state, sentBytes, totalBytes, sentFrames, totalFrames, progress, bytesPerSecond, elapsedMs, reason? }`; `state` is `sending`, `done`, `failed` (`player_left`) or `cancelled`. A finished stream answers for a minute, then `nil, not_found`. |
+| `Open77.net.cancelLatent(id)` | stops a stream still sending; `false, already_finished` otherwise. The client drops a partial copy on its own after a minute without a frame. |
+| Bounds | 16 streams in flight per resource (`latent_stream_limit`); a payload over 4 MiB is refused before anything is sent (`latent_payload_too_large`); the argument rules of `TriggerClientEvent` apply (`latent_payload_not_serializable`). |
 
 ## Permission summary
 
@@ -2845,6 +2934,8 @@ resource-prefixed server logger. Their common signature is `(...)`; no return va
 | `filesystem.write` | `Open77.io.write`, `writeJson`, `append`, `makeDirectory`, `remove`, `move`, and the destination side of `copy` |
 | `database.access` | `Open77.database` / `MySQL`, readiness (`ready`, `isReady`) included |
 | `http.request` | `PerformHttpRequest` / `Open77.http.request`, within the server's `http.allowedHosts` |
+| `http.serve` | `Open77.http.listen` / `unlisten` / `SetHttpHandler`: inbound HTTP under `/<resource>/`, on the server's opt-in `httpHandlers` listener. Distinct from `http.request` on purpose: the network calling a resource is a different power from the resource calling out |
+| `players.identity.history` | The history half of `Open77.players.sessionStats` (`firstSeenUtc`, `joinCount`, `totalPlaySeconds`) and all of `Open77.players.lastSeen`: what the server's identity directory remembers about a person across sessions. The live session is ungated |
 | `world.entities.observe` | Receive the generic `onEntityCreated` / `onEntityRemoved` feed. An opt-in on top of the per-kind capability, never a substitute for it: the mirror still costs `world.props`, `world.effects` or `world.loot` for those kinds, so it can only ever show a resource what it could already see |
 
 Request only the capabilities a resource actually uses. A manifest permission grants access to a

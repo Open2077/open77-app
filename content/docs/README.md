@@ -62,6 +62,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 |---|---|
 | [Hacking and counterplay](hacking.md) | Short Circuit, Self-ICE, active/ally purge, server authority, public definitions and an optional lab. |
 | [Ground Slam / Quake](ground-slam.md) | Native grounded/airborne slam, server-owned impact validation and permission-controlled session grants. |
+| [Ability activation leases](ability-activation-leases.md) | Why abilities no longer wait for the server at the moment a key is pressed, what a far-away player will notice, and what an owner will see in the log. |
 | [Server resources](server-resources.md) | Manifests, runtime separation, signing, download, and reload. |
 | [Hub resources in Warden](community-hub-warden.md) | Reviewed installation, updates, uninstall, rollback, preload restarts and retained backups. |
 | [The Players tab in Warden](warden-players.md) | The live roster (ping, health, life state, match), and the per-row admin actions: warn, kick, ban, grant rights, heal, freeze and move — plus why spectate is not adaptable. |

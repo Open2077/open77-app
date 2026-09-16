@@ -1,10 +1,12 @@
 # The UI kit
 
 `open77_uikit` is the shared dialog and HUD-widget service: a progress bar, a
-text hint, a confirmation, an input form, a context menu, a keyboard menu and a
-radial wheel. It is the thing a FiveM resource reaches for as `lib.progressBar`,
+text hint, a confirmation, an input form, a context menu, a keyboard menu, a
+radial wheel, a string floating over a world point and the cinematic letterbox.
+It is the thing a FiveM resource reaches for as `lib.progressBar`,
 `lib.inputDialog`, `lib.registerContext` / `showContext`, `lib.showTextUI`,
-`lib.alertDialog`, `lib.registerMenu` and `lib.registerRadial`.
+`lib.alertDialog`, `lib.registerMenu`, `lib.registerRadial`, the hand-rolled
+`DrawText3D` loop, and the `DrawRect` pair every cutscene script draws for bars.
 
 No serious roleplay resource ships without one, and the reason it is a
 *platform* service rather than a copied library is the screen: eight resources
@@ -54,9 +56,10 @@ style preference. `exports.open77_uikit:alert(...)` runs the callee inline on
 the game thread, and a dialog has to wait for a human; a synchronous callee that
 yields fails with `export_yielded`. The calls that never wait -- `textUI`,
 `hideTextUI`, `textUIState`, `context`, `menu`, `radial`, `hideContext`,
-`hideMenu`, `hideRadial`, `progressActive`, `cancelProgress`, `close` and
-`state` -- work either way. When in doubt use `Open77.exports.call`: it is
-correct for all of them.
+`hideMenu`, `hideRadial`, `progressActive`, `cancelProgress`, `drawText3D`,
+`updateText3D`, `clearText3D`, `listText3D`, `showCinematicBars`,
+`setCinematic`, `cinematicState`, `close` and `state` -- work either way. When
+in doubt use `Open77.exports.call`: it is correct for all of them.
 
 `await` needs a scheduler coroutine, so wrap it in `CreateThread`. See
 [Cross-resource server exports](resource-exports.md#calling-an-export).
@@ -285,15 +288,17 @@ again after a hot reload -- which a handler would have to do anyway.
 ## One page, many widgets
 
 Eight surfaces per resource is the cap, so the kit spends **one**. Every widget
-is a component on a single page and two channels carry everything:
+that is drawn in a page is a component on that single page, and two channels
+carry everything (the one exception is `drawText3D`, which is not a page at
+all -- see below):
 
 ```text
 Lua  -> page   "uikit:apply"   { widget, action, token, spec }
 page -> Lua    "uikit:event"   { widget, token, type, ... }
 ```
 
-`widget` selects the component (`progress`, `text`, `dialog`); `action` and
-`type` are that component's verbs. `token` is a monotonic integer minted on
+`widget` selects the component (`progress`, `text`, `dialog`, `cinematic`);
+`action` and `type` are that component's verbs. `token` is a monotonic integer minted on
 every open and echoed back on every event, and Lua drops a token that is no
 longer live -- so a click that raced a close cannot resolve whatever replaced
 it. The page is hidden whenever no widget is showing, because CSS opacity does
@@ -357,6 +362,154 @@ resource owns exactly one slot and four resources can show one at once
 unconditionally. `textUIState()` returns `{ open, text, position, total }`.
 
 Slots are released when the owner stops, reloads, disconnects or calls `close`.
+
+## `drawText3D` / `updateText3D` / `clearText3D` / `listText3D`
+
+A string floating over a world point. This is the FiveM `DrawText3D` pattern --
+project a coordinate every frame, draw text at the result -- with the loop
+removed: the projection is the host's, so the call that used to run every tick
+runs **once** and returns a handle.
+
+```lua
+local handle, reason = exports.open77_uikit:drawText3D({
+    position    = { x = -1442.2, y = 127.4, z = 18.8 },  -- or entity = id, offset = {...}
+    text        = 'Delivery point',                       -- <= 96 bytes, no control chars
+    sublabel    = 'Press E to drop the package',          -- optional second line
+    color       = '#F2F6F8',                              -- #RRGGBB or #RRGGBBAA
+    background  = '#0A1220B8',                            -- or 'none' for bare text
+    accent      = 'none',                                 -- the card border; none by default
+    scale       = 1.0,                                    -- 0.25..4
+    maxDistance = 50,                                     -- metres, 1..1000
+    showDistance = false,                                 -- appends "12 m" under the text
+    ttl         = 20000,                                  -- ms; omit to keep it until cleared
+})
+exports.open77_uikit:updateText3D(handle, { text = 'Delivered', color = '#22D8E2' })
+exports.open77_uikit:clearText3D(handle)     -- true; also true if it already expired
+exports.open77_uikit:clearText3D()           -- true, <count>: everything this resource drew
+```
+
+`position` takes `{ x, y, z }`, a `vector3`, or a `{ x, y, z }` array; `entity`
+(with an optional world-axis `offset`) follows a live entity instead, and
+exactly one of the two must be given (`position_or_entity_required`). The text
+is drawn **natively**, in the frame that presents it, as a
+[world anchor](../wiki/data/api.json) of render style `card` with a label and
+no keycap -- there is no page and no CEF hop, which is why it does not trail
+the world the way a web-page billboard does. Everything the interaction
+prompts already compute applies for free: the distance band (`maxDistance`,
+with a fade at the outer edge), the camera-plane cull, the viewport cull, and
+the **occlusion test** -- a string behind a wall is hidden after a few
+occluded frames and comes back the frame the wall is gone.
+
+`updateText3D` takes `text`, `sublabel`, `color`, `accent`, `background`,
+`scale`, `showDistance`, `maxDistance`, `visible`, and `position` (a point
+text) or `offset` (an entity text). Moving a text between a point and an
+entity is not a patch: clear it and draw another. A patch that is refused
+changes nothing.
+
+`listText3D()` returns the caller's texts with the host's last projection
+joined in, so a resource -- or a probe -- can ask *is it showing* without
+touching `Open77.anchors`:
+
+```lua
+{ { handle = 'text3d:7', text = 'Delivery point', maxDistance = 50, expiresIn = 12.4,
+    distance = 5.8, onScreen = true, projected = true, inRange = true } }
+```
+
+`distance` is camera-to-point. `inRange` is `distance <= maxDistance` on a
+projected point: `false` is the host telling you it will not draw it.
+
+**The quota is the kit's, and it is budgeted.** Every text is an anchor the
+host counts against *this* resource -- the caller's identity is the kit's as
+far as `Open77.anchors` is concerned -- and the per-resource ceiling is 32. So
+the kit refuses **8 per owner** (`text3d_owner_limit`) and **24 in all**
+(`text3d_limit`) before the host ever answers `quota_exceeded`, which would
+otherwise read as a fault in a caller that did nothing wrong. Twenty-four
+floating strings is already a screen nobody can read; if a resource needs more
+than eight it should be showing the nearest eight, and `listText3D` gives it
+the distances to choose by.
+
+Texts are released when the owner stops, reloads, disconnects, calls `close`,
+or when their `ttl` passes -- on the kit's own tick, whether or not the owner
+ever calls again. `drawText3D` needs no permission on the caller and none on
+the kit: `Open77.anchors` is deliberately ungated.
+
+### Porting a `DrawText3D` loop
+
+```lua
+-- Before: FiveM, a thread per string
+CreateThread(function()
+    while showing do
+        DrawText3D(x, y, z, 'Delivery point')
+        Wait(0)
+    end
+end)
+
+-- After: one handle, no thread. Clear it when `showing` would have gone false.
+local handle = exports.open77_uikit:drawText3D({
+    position = { x = x, y = y, z = z }, text = 'Delivery point',
+})
+-- ...
+exports.open77_uikit:clearText3D(handle)
+```
+
+A loop that *changed* the string every frame -- a countdown, a live price --
+becomes `updateText3D` when the value changes, not on a timer. A loop that
+tested `#(playerCoords - point) < 10` before drawing becomes `maxDistance =
+10`.
+
+## `showCinematicBars` / `setCinematic`
+
+The cinematic letterbox: two black bars, the vanilla HUD hidden, both under
+**one claim** the kit gives back on every exit path it already guards.
+
+```lua
+exports.open77_uikit:showCinematicBars(true, {
+    heightPct  = 12,      -- per bar, percent of the viewport, 1..40
+    durationMs = 350,     -- the slide in and out, 0..5000
+    color      = '#000000',
+    hideHud    = true,    -- false = bars only, the HUD stays
+})
+-- ... the scene ...
+exports.open77_uikit:showCinematicBars(false)
+```
+
+`setCinematic(enabled, opts)` is the same function under the name the parity
+ledger gives it; `cinematicState()` returns `{ active, hudHidden, mine,
+holders, heightPct, color }` for a resource that wants to assert before it
+starts a scene.
+
+The HUD half is [`Open77.hud.setVisible("all", false)`](hud-visibility.md), a
+per-owner loan the host releases with the owning resource. The kit holds that
+loan on the caller's behalf -- `open77_uikit` carries `ui.vanilla.hud`, the
+caller needs nothing -- and composes it with the bars, which are two `div`s on
+the kit's own page: no new surface, no focus, no pointer events, drawn *under*
+a dialog so a "skip cutscene?" confirmation is never covered by its own
+letterbox.
+
+Bars are a **claim per owner**, the same model as a HUD hide. They show while
+any claim stands, the most recent claim decides the look, and the last release
+restores the HUD -- so two resources composing one scene cannot pull the bars
+out from under each other, and a release of something never claimed is `true`,
+not an error. Owner stop, owner reload, `close`, disconnect and the kit's own
+stop all release; the page stays up for the length of `durationMs` after the
+last release so the slide-out is actually seen.
+
+**The camera is deliberately not part of this call.** `Open77.camera` handles
+belong to the resource that created them, and a kit that activated a caller's
+camera would own the one thing it cannot release. The shape of a cutscene is:
+
+```lua
+local cam = Open77.camera.create({ position = p, lookAt = target, fov = 40 })
+Open77.camera.activate(cam, { blendMs = 800 })
+exports.open77_uikit:showCinematicBars(true)
+-- ...
+exports.open77_uikit:showCinematicBars(false)
+Open77.camera.deactivate({ blendMs = 800 })
+Open77.camera.destroy(cam)
+```
+
+Activating a scripted camera does **not** hide the HUD by itself; this call
+is what does.
 
 ## `alert`
 
@@ -516,7 +669,7 @@ Open77.exports.call('open77_uikit', 'state')    -- a diagnostic snapshot
 ```
 
 `close` cancels everything the calling resource holds -- its dialog, its
-progress bar, its text slot -- in one call. It is the right thing in a resource's
+progress bar, its text slot, its 3D texts, its letterbox claim -- in one call. It is the right thing in a resource's
 own cleanup path even though the kit does it for you when you stop.
 
 `state()` is a diagnostic, not steady-state API. Read it when a widget "did
@@ -526,6 +679,7 @@ holds the dialog* from *focus is stuck*.
 ```lua
 { ready = true, visible = false, focusHeld = false,
   dialog = nil, progress = nil, textSlots = 0, blockAll = false,
+  texts3d = 0, cinematic = false, cinematicHudHidden = false,
   blocks = { { action = 'Movement', holders = 1 } },
   widgets = { { token = 7, owner = 'garage', widget = 'dialog', kind = 'alert', focus = true } } }
 ```
@@ -567,7 +721,14 @@ local answer, reason = promise:await()
 | `radial(playerId, definition, options?)` | as above |
 | `textUI(playerId, definition)` | shows a hint owned by the server resource |
 | `hideTextUI(playerId)` | takes it away |
+| `drawText3D(playerId, definition)` | the client `drawText3D` definition; the answer's `value` is the handle |
+| `updateText3D(playerId, handle, patch)` | the client patch |
+| `clearText3D(playerId, handle?)` | one text, or every text that server resource drew on that client |
+| `showCinematicBars(playerId, enabled, options?)` / `setCinematic(...)` | the client options; the answer's `value` is `cinematicState()` |
 | `close(playerId)` | cancels everything that server resource holds on that client |
+
+The world-text and letterbox twins never wait on the player, so they ride a
+five-second transport deadline rather than a dialog's.
 
 ## A server twin is a request, not a command
 
@@ -599,7 +760,12 @@ the real server-to-client path:
 
 ```text
 /uikit.demo progress | text | hidetext | alert | input | context | menu | radial
+/uikit.demo text3d | cinematic | nocinematic
 ```
+
+`text3d` floats `Delivery point` five metres north of the caller for sixty
+seconds with a 50 m band; `cinematic` / `nocinematic` claim and release the
+letterbox.
 
 It is what the [integrator checklist](#integrator-checklist) below runs.
 
@@ -615,6 +781,8 @@ a caller may change is the small set of tokens below.
 | Field | Where | Design token it drives |
 |---|---|---|
 | `color` (`#RRGGBB`) | `progress`, `textUI` | the leading rule, the fill, the icon glyph. Default `--op77-accent` `#22D8E2`. |
+| `color`, `background`, `accent` (`#RRGGBB`, `#RRGGBBAA`, `none`) | `drawText3D` | the text, its backdrop and its border, drawn natively. Defaults `#F2F6F8`, `#0A1220B8`, none. |
+| `heightPct`, `color` | `showCinematicBars` | the bars. Deliberately the one element with no chamfer, no rule and no accent: a letterbox is a frame around the picture, not a panel in it. |
 | `tone` | `alert` | `info` -> `--op77-accent`, `success` -> `--op77-ok`, `warning` -> `--op77-warn`, `danger` -> `--op77-danger`. Paints the eyebrow, the rule and the confirm button. |
 | `tone` | an option row | `danger` -> `--op77-danger`, `success` -> `--op77-ok` on the row title. |
 | `icon` | hints and rows | a short mono glyph in a chamfered chip, `--op77-font-mono`. Text, not an image: the page has no network and bundles no icon font. |
@@ -798,7 +966,9 @@ python scripting/tests/uikit_widgets_test.py
 The two suites load the real `client/main.lua` and `server/main.lua` into a real
 Lua 5.4 VM with the host bindings stubbed, and cover the release matrix, the
 control-block claims, each widget's promise resolving and cancelling, stale
-tokens, two resources not fighting over the page, and the server twin's timeout.
+tokens, two resources not fighting over the page, the server twin's timeout,
+the 3D-text handles (quota, ttl, owner scoping, whole-presentation patches)
+and the letterbox claims (last claim decides, last release restores).
 
 ## Integrator checklist
 
@@ -822,6 +992,10 @@ player can move, shoot and type again.
 | 12 | `/uikit.demo alert`, and **while it is open** get another player to run `/uikit.demo alert` | the second player sees their own dialog; nothing interferes | -- |
 | 13 | `/uikit.demo alert`, and while it is open **die** | the dialog closes on its own | you can click through the respawn screen |
 | 14 | `/uikit.demo alert`, and while it is open **disconnect and reconnect** | -- | you spawn with full control |
+| 15 | `/uikit.demo text3d` | `Delivery point` floating 5 m ahead on a dark chip, with `5 m` under it | walk 60 m away: it fades at the band's edge and is gone; walk back: it is there; put a wall between you and it: it goes, and returns when you step out |
+| 16 | `/uikit.demo cinematic` | two black bars, top and bottom, sliding in; **the whole vanilla HUD is gone** (minimap, health, weapon, quest tracker) | move, shoot, type -- the bars take nothing |
+| 17 | `/uikit.demo nocinematic` | the bars slide out; the HUD is back exactly as it was | -- |
+| 18 | `/uikit.demo cinematic`, then **disconnect** | -- | the main menu has no bars and the next session has its HUD |
 
 Rows 6, 13 and 14 are the ones that matter. If any of them ever leaves a player
 unable to move or type, the bug is in the release path, not in the widget.

@@ -165,27 +165,28 @@ AddEventHandler("playerDropped", function(reason)
 end)
 ```
 
-### `setKickReason` refuses nobody
+### `setKickReason` and `CancelEvent()`, exactly as in FiveM
 
-In FiveM, `setKickReason(message)` only stores the sentence a following `CancelEvent()` will show;
-on its own it admits the player. Open77 has no `CancelEvent` on the server, so a stored message can
-never become a refusal, and the runtime does not pretend otherwise: it records the message, logs one
-line naming the working alternative the first time a resource calls it, and admits the player.
-
-**Refuse with `deferrals.done(message)`.** It is the only refusal the gate honours, and the message
-reaches the player's screen exactly the same way.
+`setKickReason(message)` records the sentence and refuses nobody by itself; `CancelEvent()`
+called after it, inside the same `playerConnecting` handler, refuses the connection with that
+sentence (or `refused` when none was recorded). A cancel beats a pending deferral, as it does
+there. Until wave 6 (2026-09-16) the compat dispatch ran outside the cancellable machinery, so a
+ported `setKickReason` + `CancelEvent()` admitted everyone; the runtime now honours the pair and
+still logs one line per resource when a message is recorded and the handler then admits -- that is
+almost always a port that forgot the `CancelEvent()`.
 
 ```lua
--- a ported whitelist, corrected in one line
+-- a ported whitelist keeps its shape
 AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
-    deferrals.defer()
     if not allowed[name] then
-        deferrals.done("You are not on the whitelist.")   -- not setKickReason + CancelEvent
-        return
+        setKickReason("You are not on the whitelist.")
+        CancelEvent()
     end
-    deferrals.done()
 end)
 ```
+
+`deferrals.done(message)` remains the Open77-native refusal and works in the same handler; the two
+never disagree, because the first decision wins and the other is answered `gate_already_decided`.
 
 ## Reading an admitted player's identity
 
