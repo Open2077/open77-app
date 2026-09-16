@@ -226,6 +226,24 @@ async function main() {
     writes.push({ file: path.join(API_OUT, name), text });
   }
 
+  // The slim game-data catalogues (names and record ids the server itself
+  // answers Open77.data.* from) and the two schemas a resource author writes
+  // against. Whole directories, vendored file by file.
+  for (const folder of ["catalogues", "schemas"]) {
+    const sourceFolder = path.join(sourceDir, "data", folder);
+    const names = (await readdir(sourceFolder)).filter((entry) => entry.endsWith(".json")).sort();
+    if (names.length === 0) throw new Error(`wiki/data/${folder} is empty`);
+    for (const name of names) {
+      const text = (await readFile(path.join(sourceFolder, name), "utf8")).replace(/\r\n/g, "\n");
+      JSON.parse(text);
+      records.push({
+        source: `wiki/data/${folder}/${name}`, target: `${API_OUT}/${folder}/${name}`,
+        bytes: Buffer.byteLength(text, "utf8"), sha256: sha256(text),
+      });
+      writes.push({ file: path.join(API_OUT, folder, name), text });
+    }
+  }
+
   // Published alongside its guide: exact typed TweakDB extraction, not a
   // hand-maintained list or a claim that every appearance has been tested.
   const catalogueText = (await readFile(path.resolve(sourceDir, "..", VEHICLE_CATALOGUE_SOURCE), "utf8"))
@@ -305,6 +323,7 @@ async function main() {
   await mkdir(API_OUT, { recursive: true });
   await mkdir(path.dirname(VEHICLE_CATALOGUE_OUT), { recursive: true });
   for (const write of writes) {
+    await mkdir(path.dirname(write.file), { recursive: true });
     await writeFile(write.file, write.text, "utf8");
   }
   await writeFile(
