@@ -163,6 +163,16 @@ restarts without exposing the resource owner name.
 `onDashChanged` reports correlated activation phases; `onDashRejected` reports
 admission failure. Native movement and multiplayer acceptance remain pending.
 
+The [reflex overdrive API](reflex-overdrive.md) adds `Open77.reflex.define`,
+`grant`, `revoke`, `cancel`, `current` and `capabilities`, under separate
+`players.reflex.define`, `players.reflex.manage` and `players.reflex.read`
+permissions. It is a bounded real-time speed/handling buff on its owner: it
+slows no bullet, slows no other player, and changes no clock anywhere. A
+definition picks one of two client-owned stat tiers and its economy; it can
+never name a stat or a modifier. `onReflexChanged` reports correlated activation
+phases; `onReflexRejected` reports admission failure. Multiplayer acceptance is
+pending.
+
 The [Ground Slam API](ground-slam.md) provides `Open77.abilities.define`, `grant`,
 `revoke`, `cancel` and `current`, controlled by `players.abilities.define`,
 `players.abilities.manage` and `players.abilities.read`. Combined movement
