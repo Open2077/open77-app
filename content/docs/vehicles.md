@@ -1289,6 +1289,34 @@ should be cached after stream-out. Client snapshots do not include server owners
 as `resource`, `bucket`, or world coordinates. Paint is available both in the snapshot and through
 `Open77.vehicles.getPaint(id)`.
 
+**There is no streamer to ask, and no `RequestModel` / `HasModelLoaded` loop to write.** Streaming
+is implicit: the server registry streams a vehicle to every client inside its radius, and the
+client attaches its projection when the engine has spawned it -- measured up to 3.7 s after the
+create arrives. `create` returns before that; `get(id).streamed` says whether *this* client has the
+body, `open77:vehicleCreated` says the create arrived. `Open77.vehicles.whenStreamed` folds both into
+one promise, which is the whole of what a ported loading loop was waiting for:
+
+```lua
+-- Requires vehicles.read. Resolves with the get(id) snapshot once streamed == true --
+-- before the call returns when it already is -- and rejects with `timeout`
+-- (default 15000 ms, clamped to 1..120000).
+CreateThread(function()
+    local pending, reason = Open77.vehicles.whenStreamed(vehicleId, 10000)
+    if not pending then return print("cannot wait: " .. tostring(reason)) end
+    local car, why = pending:await()
+    if not car then return print("never streamed in: " .. tostring(why)) end
+    Open77.blips.create({ entity = car.entity, sprite = "taxi", label = "Your taxi" })
+end)
+```
+
+It listens for `open77:vehicleCreated` and polls the snapshot every 100 ms until it is attached;
+the one-shot handler is removed on resolve, on timeout and when the resource stops. `nil, reason`
+only for a bad id, a bad timeout or a missing permission -- an id this client has never seen is
+waited for and times out, because "not here yet" and "not anywhere" look the same from a client.
+There is deliberately no server counterpart: a vehicle's steward is elected by a driver's claim,
+never by a streamed report, so the server holds no signal that means "somebody has this car";
+`Open77.npcs.whenReady` exists on the server because NPCs do report readiness ([npcs.md](npcs.md)).
+
 Client events:
 
 ```lua

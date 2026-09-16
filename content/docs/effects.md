@@ -139,6 +139,23 @@ It returns `true` rather than a handle, and there is nothing to stop it with: a 
 
 Refusals: `permission_denied:world.effects`, `invalid_sfx_event`, `effects_backend_unavailable`, plus `world_unavailable`, `native_unavailable` and `invocation_failed` from the facade.
 
+### A voice-over line
+
+**Client-local.** A bark is not a sound-bank event: it is a `voContext` name the engine resolves against the entity's own voiceset — the same word vanilla scripts pass to `GameObject.PlayVoiceOver` (`greeting`, `fear_beg`, `start_combat`). `Open77.sfx.play` cannot play one, and `Open77.sfx.playVoice` plays nothing else.
+
+```lua
+-- The engine's own SoundPlayVo event, queued on the entity.
+local ok, reason = Open77.sfx.playVoice("greeting", {
+    entity = npcEntity,      -- required; a puppet, not the local player's UI
+    ignoreFrustum = true,    -- default: still speaks when off-screen
+    ignoreDistance = false,  -- default: the engine's distance cull applies
+})
+```
+
+This is the executor behind the server's `Open77.npcs.speak` (see [NPC behaviour](npc-behavior.md#speech-one-line-on-demand)): the bundled `open77_effects` resource calls it when the server's one-shot arrives, on every client that has the body streamed, because a voice-over is audible only from a puppet instance and every viewer owns its own. Used directly, it is a purely local line — nobody else hears it.
+
+It returns `true` rather than a handle; a line cannot be stopped by handle and consumes no quota. Refusals: `permission_denied:world.effects`, `invalid_voice` (not an identifier, or longer than 64), `options_must_be_a_table`, `invalid_entity`, `entity_unavailable` (not streamed on this client), `voice_disabled` (the NPC's replicated policy has its voice off — `Open77.npcs.setVoiceEnabled(id, false)` on the server), plus `world_unavailable`, `native_unavailable` and `invocation_failed` from the facade. **A name the voiceset does not carry is dropped by the engine without a word**, and `true` cannot tell you that.
+
 ### There is no volume and no pitch, and that is the engine
 
 This gets asked, so here is the measurement rather than an opinion. Neither `play` nor `play2d` accepts a `volume` or a `pitch`, because REDengine's audio surface does not carry either:

@@ -88,6 +88,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [Equipment Lua API](../docs/equipment.md) | Validated wardrobe catalogue, local/server APIs, permissions, errors, and appearance replication. |
 | [Perspective](../docs/perspective.md) | First and third person: the ownership arbiter, the server policy, the player's key and persisted preference. |
 | [Photo mode](photo-mode.md) | Exclusive client-resource control of the native photo mode; stock shortcuts are disabled. |
+| [Screenshots and mugshots](screenshots.md) | In-process captures of the game's own frame (`screen.capture`), the upload to a URL (`screen.upload`), the server-requested picture delivered by the client (`players.requestScreenshot`), and the scripted-camera mugshot (`screen.mugshot`): what is captured, the surface formats, the in-flight rule, and where the picture goes. |
 | [Weapon Lua API](weapons-api.md) | Assign standard weapons by TweakDB template, select slots, holster, clear every slot, snapshot, and read the server's synchronous weapon cache. |
 | [Game data catalogues](data-catalogues.md) | `Open77.data.vehicle/weapon/item/npc/localize` on both runtimes: display names, classes, seats and qualities from a record string -- live TweakDB on the client, a shipped catalogue on the server, and the measurement behind that split. |
 | [Player health and stamina](player-stats.md) | Shared client/server reads, server-only setters, maximums, regeneration, and synchronization semantics. |

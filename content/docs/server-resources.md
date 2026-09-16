@@ -83,6 +83,49 @@ signed resource set, downloaded before Lua starts, and recorded in the client al
 `files` entry. Empty globs, traversal paths, oversized files, and undeclared texture reads fail the
 resource instead of falling back to arbitrary disk access.
 
+### Declarative exports and ported manifests
+
+A resource may list its exports in the manifest instead of calling `exports(name, fn)`:
+
+```lua
+exports { "GetClosestDoor", "IsDoorOpen" }      -- client exports
+server_exports { "GetBalance", "AddMoney" }      -- server exports
+```
+
+Each side pre-registers its own list from the **global function of that name** after the last
+script has run and before the resource is `Running`, through exactly the registration a scripted
+`exports()` call performs -- so a sibling calling `exports.bank:GetBalance()` from its own start
+handler finds it, and a function defined in any file counts. The manifest is the later word: a
+name registered by `exports()` and listed here ends up bound to the global. A listed name with no
+global function refuses the start by name (`manifest_export_missing:<name>`), never starts a
+resource whose manifest promises what its code does not provide; a name that is not a Lua
+identifier of at most 64 characters fails the manifest at discovery
+(`invalid_manifest_export:<directive>:<name>`). `Open77.resource.metadata(name, "exports")` and
+`"serverExports"` read the lists back.
+
+`ui_page` is accepted as an alias of `web_ui_page`, with the same rules (a safe relative path that
+must also be declared in `web_files`). When a manifest carries **both**, the one written last in
+the file wins -- what a Lua-executed manifest would do -- so a ported manifest that kept its
+`ui_page` line above a new `web_ui_page` line gets the Open77 one, and vice versa.
+
+The FiveM keys that describe the FiveM runtime or metadata nothing here reads are **accepted and
+ignored**: `fx_version`, `game`, `games`, `lua54`, `use_experimental_fxv2_oal`, `author`,
+`description`, `provide`, `provides`, `escrow`, `escrow_ignore`. A ported manifest loads without
+editing them out, and so that the acceptance never passes for something done, each side names the
+ones it saw once per start, in one `INF` line:
+
+```text
+INF|my_resource|manifest_ignored_keys=fx_version,lua54
+```
+
+`@other_resource/file.lua` in a script list -- FiveM's cross-resource include -- is refused **by
+name** on both sides, `cross_resource_include_refused:@other_resource/file.lua`, at manifest
+parsing. It is a design decision, not a limitation: a resource's scripts run in its own VM, and
+sharing code across resources is `dependency` plus [`require('@resource/module')`](lua-modules.md)
+over declared `files` on the client, and [exports](resource-exports.md) on both sides. Before this
+the include matched nothing and either failed as "Resource contains no scripts." or, when the
+manifest listed other scripts too, was dropped without a word.
+
 ### Pre-boot REDengine assets
 
 `preload_mod` / `preload_mods` attach inert game assets to a selected resource when REDengine must

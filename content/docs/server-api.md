@@ -716,6 +716,8 @@ Three reads about the link itself rather than the character on the end of it.
 | `Open77.players.lastSeen(identifier)` | `players.identity.history` | `-> table \| nil, reason` | When a durable identifier was last on this server, online or not: `userId`, `name`, `online`, `lastSeenUtc`, `firstSeenUtc`, `previousSeenUtc?`, `joinCount`, `totalPlaySeconds`, plus the live fields while connected. `identity_unknown` for somebody never admitted here, `history_unavailable` on a server without a directory. |
 | `GetPlayerTimeOnline` | None | `(playerId) -> milliseconds \| nil, reason` | FiveM's spelling of the live session length, in the milliseconds FiveM documents. |
 | `GetPlayerLastMsg` | None | `(playerId) -> milliseconds \| nil, reason` | FiveM's spelling of the age of the newest packet the server holds for the player -- the rich read's `ageMs`. `no_packet_yet` before the first snapshot. |
+| `Open77.players.locale(playerId)` | `players.locale.read` | `-> { code, gameLanguage, voiceLanguage, subtitles, chromium, ageMs, revision } \| nil, reason` | The language the player's own game runs in, as their client reported it at world-ready: `code` a BCP-47 tag (`en-US`, `fr-FR`, `pt-BR`), the three raw engine codes beside it. `not_reported` until the report lands. See [identity.md](identity.md#language). |
+| `GetPlayerLocale` | `players.locale.read` | `(playerId) -> table \| nil, reason` | FiveM's spelling of `Open77.players.locale`, the same function under both names. |
 
 Two things about this surface are deliberate and worth knowing before you build on it.
 

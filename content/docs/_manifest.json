@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-14T22:33:38.371Z",
-  "guides": 84,
-  "apiEntries": 1408,
+  "guides": 85,
+  "apiEntries": 1424,
   "files": [
     {
       "source": "wiki/README.md",
@@ -197,10 +197,10 @@
       "target": "content/docs/effects.md",
       "slug": "effects",
       "title": "Visual and audio effects",
-      "bytes": 55525,
-      "sha256": "f2c95cfde10f3546ac1abfbffd221aa9b0f5aa022b5d368c26bddaecf3904f14",
-      "sourceRevision": "459be54e72df37b58e20956581d17ebda165d1e6",
-      "sourceSyncedAt": "2026-09-16T03:33:20.044Z"
+      "bytes": 57263,
+      "sha256": "f4ebae4059c6e6343ab8c73cef07aef1c610f2cb706625f319c26254d52b364d",
+      "sourceRevision": "4d6b81ea6de04995ff15ae543534cc378b8fd2a6",
+      "sourceSyncedAt": "2026-09-16T08:17:15.136Z"
     },
     {
       "source": "wiki/elevators.md",
@@ -281,8 +281,10 @@
       "target": "content/docs/identity.md",
       "slug": "identity",
       "title": "Player identity and username",
-      "bytes": 2405,
-      "sha256": "9407850215f79de9f16366ac6d0fd813c64d3a2184d9f45dd5c66c4c725247d0"
+      "bytes": 5947,
+      "sha256": "1cfcd9f130a21485072eaf81a2c915b4120a3470ecb35381065ec66690262ad8",
+      "sourceRevision": "4d6b81ea6de04995ff15ae543534cc378b8fd2a6",
+      "sourceSyncedAt": "2026-09-16T08:17:15.257Z"
     },
     {
       "source": "wiki/input-blocking.md",
@@ -345,8 +347,10 @@
       "target": "content/docs/npc-behavior.md",
       "slug": "npc-behavior",
       "title": "NPC AI, combat and voice control",
-      "bytes": 5730,
-      "sha256": "28cb61596a9dc6d4567c12098858bd789bab6ce9baab58de94c18ba54f644323"
+      "bytes": 9655,
+      "sha256": "4b59abb4a3d7c9927299762c1761aa009fe6c29b0280d3571c4c828d32a91516",
+      "sourceRevision": "4d6b81ea6de04995ff15ae543534cc378b8fd2a6",
+      "sourceSyncedAt": "2026-09-16T08:17:15.376Z"
     },
     {
       "source": "wiki/npc-catalogue.md",
@@ -361,8 +365,10 @@
       "target": "content/docs/npcs.md",
       "slug": "npcs",
       "title": "Server-owned NPCs",
-      "bytes": 35974,
-      "sha256": "5767cd57ec44ebcb9bffc8c0bb560871e70c0b771435bce4d4cbeba0ceb8dbac"
+      "bytes": 43972,
+      "sha256": "86fc7f6b93c095495ee619f115b25139cc339e179cd0e8affac49448f2ac9f52",
+      "sourceRevision": "4d6b81ea6de04995ff15ae543534cc378b8fd2a6",
+      "sourceSyncedAt": "2026-09-16T08:17:15.509Z"
     },
     {
       "source": "wiki/package-audio.md",
@@ -495,10 +501,10 @@
       "target": "content/docs/server-api.md",
       "slug": "server-api",
       "title": "Complete server Lua API",
-      "bytes": 198677,
-      "sha256": "f790c83a47acd25076000d14a0c2adc77732d7ca84f12432d94821836cccdd28",
-      "sourceRevision": "459be54e72df37b58e20956581d17ebda165d1e6",
-      "sourceSyncedAt": "2026-09-16T03:33:12.124Z"
+      "bytes": 207382,
+      "sha256": "55deb0c2628fcec8b2d7459ce1fa3c7db4921a18d2430233c3a1e7d27497d3a1",
+      "sourceRevision": "4d6b81ea6de04995ff15ae543534cc378b8fd2a6",
+      "sourceSyncedAt": "2026-09-16T08:17:15.739Z"
     },
     {
       "source": "wiki/server-exports.md",
@@ -521,8 +527,10 @@
       "target": "content/docs/server-resources.md",
       "slug": "server-resources",
       "title": "Lua resources loaded by the server",
-      "bytes": 13152,
-      "sha256": "bfc4ffe0e2bdf3dcc0e41516eee8a6341cb061367b661688d7adf8b06f0c9239"
+      "bytes": 16597,
+      "sha256": "b9547e66c17dee352a116343522468b27f2eb1032705d76c3353db15a4f90ceb",
+      "sourceRevision": "4d6b81ea6de04995ff15ae543534cc378b8fd2a6",
+      "sourceSyncedAt": "2026-09-16T08:17:15.863Z"
     },
     {
       "source": "wiki/sky-advertising.md",
@@ -603,8 +611,10 @@
       "target": "content/docs/vehicles.md",
       "slug": "vehicles",
       "title": "Network vehicles",
-      "bytes": 105575,
-      "sha256": "2c6eb64b87a2a8ce0a1bbe9fa02129f7062590666911908e5425945fae1b0317"
+      "bytes": 115018,
+      "sha256": "7342cf1eb5da16933f1da5dde90d13383f4022cd8d5cb8a251bfd011a2030c51",
+      "sourceRevision": "4d6b81ea6de04995ff15ae543534cc378b8fd2a6",
+      "sourceSyncedAt": "2026-09-16T08:17:15.971Z"
     },
     {
       "source": "wiki/voice-lipsync.md",
@@ -668,8 +678,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1347,
-      "bytes": 1694308,
-      "sha256": "b8a6a8fee89b0400bdb09ee7da1f557b3da3aee33ab5a622a91527880b0d1763"
+      "bytes": 1730097,
+      "sha256": "40ed82f1a5e89fdd391790f4ad386e86f23e4fc6cb27a96f3663d74a94b4f877"
     },
     {
       "source": "wiki/door-service-api.json",
@@ -740,6 +750,16 @@
       "sha256": "b37970cb6b613e31cfb8898890c5c716e7ea4a92054617a74c9c6d0c57610820",
       "sourceRevision": "459be54e72df37b58e20956581d17ebda165d1e6",
       "sourceSyncedAt": "2026-09-16T03:33:19.912Z"
+    },
+    {
+      "source": "wiki/screenshots.md",
+      "target": "content/docs/screenshots.md",
+      "slug": "screenshots",
+      "title": "Screenshots and mugshots",
+      "bytes": 18469,
+      "sha256": "ee5e213c5f49a42423ab2c652c9115efb35d2bc9f60c4263cb72ef191b909425",
+      "sourceRevision": "4d6b81ea6de04995ff15ae543534cc378b8fd2a6",
+      "sourceSyncedAt": "2026-09-16T08:17:15.618Z"
     }
   ]
 }

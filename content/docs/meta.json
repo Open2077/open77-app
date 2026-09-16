@@ -315,6 +315,12 @@
           "kind": "guide",
           "nav": "Photo mode",
           "description": "Control photo mode from a client resource, with exclusive ownership and cleanup."
+        },
+        {
+          "slug": "screenshots",
+          "kind": "guide",
+          "nav": "Screenshots and mugshots",
+          "description": "In-process captures of the game's own frame, the upload to a URL, the server-requested picture a client delivers, and the scripted-camera mugshot: what is captured, the surface formats, the in-flight rule, and where the picture goes."
         }
       ]
     },
