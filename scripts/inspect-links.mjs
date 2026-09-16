@@ -43,6 +43,8 @@ const PAGES = [
   "/docs/api/server/open77-animations",
   "/docs/server-exports",
   "/docs/resource-runtime",
+  "/docs/database",
+  "/docs/world-drawing",
   "/docs/gamemode-kernel",
   "/docs/api/server/open77-exports",
 ];

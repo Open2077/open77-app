@@ -16,6 +16,7 @@
     "check": "npm run typecheck && npm run lint",
     "test:hub": "node --test scripts/test-community-drafts.mjs scripts/test-community-draft-merge.mjs scripts/test-community-github-pkce.mjs scripts/test-community-seo.mjs scripts/test-community-video.mjs scripts/test-community-create.mjs scripts/test-community-read-failure.mjs scripts/test-community-format.mjs && node scripts/check-community-markdown.mjs && node scripts/test-hub-browser-guards.mjs",
     "verify:releases": "node scripts/check-release-channels.mjs",
+    "verify:webui-database": "node scripts/check-webui-database-docs.mjs",
     "sync:wiki": "node scripts/sync-wiki.mjs",
     "sync:wiki:check": "node scripts/sync-wiki.mjs --check",
     "sync:attachments": "node scripts/sync-attachment-docs.mjs",

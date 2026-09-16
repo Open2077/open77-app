@@ -802,7 +802,7 @@ let any resource act as any other.
 | `Open77.anchors` | 32 per resource, 128 across the client |
 | `open77_worldui` POIs | 128 across every resource combined (`poi_limit`) |
 | `open77_zones` zones | 256 across every resource combined (`zone_limit`) |
-| WebUI surfaces | 8 per resource |
+| WebUI surfaces | 24 per resource in the updated client; older clients allow 8. See [runtime availability and quotas](/docs/resource-runtime#sandbox-and-quotas). |
 
 A resource that can define more world points than its anchor budget has to
 decide which ones deserve a slot right now. `open77_interactions` is the

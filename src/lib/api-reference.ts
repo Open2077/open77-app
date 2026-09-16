@@ -180,6 +180,9 @@ const INPUT_BLOCKING = new Set([
  * link to a page that does not mention it is worse than no link.
  */
 const NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGuideLabel: string }> = {
+  "Open77.database": { usageGuideHref: "/docs/database", usageGuideLabel: "SQL database setup" },
+  MySQL: { usageGuideHref: "/docs/database", usageGuideLabel: "SQL database setup" },
+  "Open77.webui": { usageGuideHref: "/docs/resource-runtime#webui", usageGuideLabel: "WebUI & remote pages" },
   Citizen: { usageGuideHref: "/docs/fivem-compatibility", usageGuideLabel: "FiveM compatibility guide" },
   promise: { usageGuideHref: "/docs/fivem-compatibility#promises", usageGuideLabel: "FiveM compatibility guide" },
   "Open77.callbacks": { usageGuideHref: "/docs/callbacks", usageGuideLabel: "Network callbacks guide" },

@@ -17072,7 +17072,7 @@
   "name": "readPackedFile",
   "handler": "LuaReadPackedFile",
   "summary": "Reads a file another resource declared, as base64.",
-  "description": "Requires `resources.files.read`, which only the bundled audio service holds: every other resource reads its own files with `Open77.resource.readFile`, and a resource holding this one can read any **declared** file of any resource, which is why the grant is visible in the manifest. Only files listed in the named resource's `files` entry are reachable -- scripts, the manifest itself and anything merely present on disk are not, so a resource author publishes deliberately rather than by accident. The 1 MiB ceiling is `readFile`'s; base64 of that is 1.37 MiB, which still clears the 2 MiB JSON limit a `page:send` payload rides, and base64 rather than raw bytes because a raw audio file is not valid UTF-8 and the encoder would refuse the whole event. Refusals: `permission_denied:resources.files.read`, `invalid_resource_path`, `resource_not_found`, `file_not_declared`, `file_too_large`.",
+  "description": "Requires `resources.files.read`, which only the bundled audio service holds: every other resource reads its own files with `Open77.resource.readFile`, and a resource holding this one can read any **declared** file of any resource, which is why the grant is visible in the manifest. Only files listed in the named resource's `files` entry are reachable -- scripts, the manifest itself and anything merely present on disk are not, so a resource author publishes deliberately rather than by accident. The updated client accepts up to 3 MiB of raw file data (older clients: 1 MiB). The 2 MiB WebUI JSON message cap is unchanged: the Base64 result of a larger file may not fit in one `page:send`. See [runtime quotas and client availability](/docs/resource-runtime#sandbox-and-quotas). Base64 is used because arbitrary binary data is not valid UTF-8. Refusals: `permission_denied:resources.files.read`, `invalid_resource_path`, `resource_not_found`, `file_not_declared`, `file_too_large`.",
   "params": [
    {
     "name": "resource",
@@ -22569,7 +22569,7 @@
   "name": "create",
   "handler": "LuaWebUiCreate",
   "summary": "Creates a web surface.",
-  "description": "**Creation is asynchronous.** A `show()` issued right after `create` loses the race against the `visible` flag the request carried, and the surface then never paints at all. So a surface meant to stay up is created with `visible = true`, and the page shows or hides its own content.\n\nValid layers: `hud`, `menu`, `modal`, `system` (needs the `webui.system` permission), `debug`.",
+  "description": "**Creation is asynchronous.** A `show()` issued right after `create` loses the race against the `visible` flag the request carried, and the surface then never paints at all. So a surface meant to stay up is created with `visible = true`, and the page shows or hides its own content.\n\nValid layers: `hud`, `menu`, `modal` (requires `webui.modal`), `system` (requires `webui.system`), `debug` (requires `webui.debug`). The updated client also accepts HTTP(S) `entry` URLs without `web_files`; bundled entries still require declared files. External scripts, media, requests and embeds are allowed, while CORS and TLS remain enforced. Only the top-level configured entry origin receives the Lua bridge. See [remote WebUI and client availability](/docs/resource-runtime#remote-pages-external-content-and-hot-reload); older CDN clients may not support remote pages.",
   "params": [
    {
     "name": "options",
@@ -22603,7 +22603,7 @@
   "name": "default",
   "handler": "LuaWebUiDefault",
   "summary": "The surface declared by `web_ui_page` in the manifest.",
-  "description": "Returns the auto-created WebUI page declared by `web_ui_page` in the current manifest. It returns `nil, reason` when the resource has no live default page; the handle is generation-owned and becomes stale after destroy or reload.",
+  "description": "Returns the auto-created WebUI page declared by `ui_page` (alias `web_ui_page`) in the current manifest. The updated client accepts a declared local file or an HTTP(S) entry; see [remote WebUI and client availability](/docs/resource-runtime#remote-pages-external-content-and-hot-reload). It returns `nil, reason` when the resource has no live default page; the handle is generation-owned and becomes stale after destroy or reload.",
   "params": [],
   "returns": [
    "surface, or nil"

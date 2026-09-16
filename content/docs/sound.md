@@ -199,7 +199,7 @@ downloaded, and its audio is unreachable; the client says so on the local
 |---|---|---|
 | Simultaneous sounds, per resource | 8 | So one resource cannot spend the session budget. |
 | Simultaneous sounds, per session | 24 | 24 concurrent HRTF panners is already a heavy mix. |
-| File size | 1 MiB | The host's own cross-resource read ceiling. Base64 of 1 MiB is 1.37 MiB, which still clears the 2 MiB JSON ceiling a `page:send` rides — raising it breaks the transport before it breaks the mixer. |
+| File size | 1 MiB | The audio package keeps its own clip cap. The updated client's file-read ceiling is 3 MiB, but the 2 MiB WebUI message ceiling is unchanged; a larger Base64 result need not fit. See [runtime quotas](/docs/resource-runtime#sandbox-and-quotas). |
 | Decoded cache | 64 MiB, LRU | Decoded audio is 32-bit float per channel: a one-minute stereo clip is ~21 MiB no matter how small its file was. |
 | Clip transport | once per file | A clip crosses on its first play and is replayed from the cache afterwards. `preload(file)` moves that cost off the moment the sound has to be heard. |
 
@@ -228,9 +228,10 @@ it is the shape of the host, in two independent places:
 - `Open77.resource.readFile` / `LoadResourceFile` resolve under the **calling**
   resource's root and refuse a different resource by name
   (`cross_resource_read_denied`);
-- a WebUI surface is created with exactly one root and one allowed-file list,
-  both taken from the resource that created it, behind a per-surface origin and
-  `default-src 'self'`.
+- a bundled WebUI surface's virtual files come from its owning resource's root
+  and declared allowed-file list; requests into another resource's virtual
+  origin are refused. The updated [external-content policy](/docs/resource-runtime#remote-pages-external-content-and-hot-reload)
+  allows ordinary web hosts, not cross-resource virtual-file reads.
 
 Those two together mean the bundled service could not serve `cops/sfx/siren.mp3`
 to its own page at all. The one door that makes the service possible is a native

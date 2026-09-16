@@ -57,7 +57,7 @@ a `.lua` script.
 | `dependency` / `dependencies` | Required resources, with optional version constraints. |
 | `permission` / `permissions` | Capabilities requested by the resource. |
 | `file` / `files` | Generic files distributed to the client. |
-| `web_ui_page` | Default WebUI entry page. |
+| `ui_page` / `web_ui_page` | Default WebUI entry: a declared local file or an HTTP(S) URL. See [remote pages](#remote-pages-external-content-and-hot-reload) for client availability. |
 | `web_ui_auto_create` | Whether to create that page at resource start. |
 | `web_file` / `web_files` | Files served to this resource's WebUI origin. |
 
@@ -373,6 +373,9 @@ This is per-resource and server-side only.
 
 ### The database bridge is per-server, not per-resource
 
+For installation, credentials, connection settings and a working Lua probe,
+see [Configure a SQL database](/docs/database).
+
 There is **one** database connection for the whole server, built once from a
 single `database.connectionString`. The `database.access` permission is a
 boolean gate on reaching it — not an allocation of a private database.
@@ -534,9 +537,105 @@ const result = await Open77.invoke('shop:buy', { item: 'medkit' });
 Open77.ready();
 ```
 
-WebUI runs under an isolated virtual HTTPS origin with restricted
-navigation, downloads, popups, protocols and network access. Lua and
-JavaScript payloads pass through a bounded JSON codec.
+Bundled WebUI uses an isolated virtual HTTPS origin; remote WebUI uses the
+configured HTTP(S) origin. Lua/JavaScript payloads use a bounded JSON codec.
+
+### Remote pages, external content and hot reload
+
+**Client availability:** this section describes the updated WebUI implementation
+validated on 16 September 2026. At the time of this documentation update it is
+installed locally, not yet published on the CDN. Existing CDN clients may still
+reject remote entries and external content; a website update alone does not
+update players' clients.
+
+`ui_page` (alias `web_ui_page`) and `WebUI.create({ entry = ... })`
+accept an HTTP or HTTPS URL. No host allowlist or extra network permission is
+required for WebUI. A remotely hosted page needs no `web_files` declaration:
+
+```lua
+-- open77.lua
+resource "my_ui"
+version "1.0.0"
+ui_page "https://ui.example.dev/"
+client_script "client.lua"
+```
+
+```lua
+-- client.lua: the manifest page is automatically created.
+CreateThread(function()
+    local page = assert(WebUI.default())
+    page:on("shop:buy", function(payload, requestId)
+        -- Validate requests here, and validate purchases on the server.
+        page:reply(requestId, { accepted = true })
+    end)
+end)
+```
+
+For Vite/Vue/React/Nuxt development, use `http://localhost:5173/` as the
+entry, or create a page explicitly with
+`WebUI.create({entry = "http://localhost:5173/", layer = "menu"})`.
+Set `web_ui_auto_create false` if creating the manifest page manually.
+**localhost is the player's PC**, not the game server. Other testers need a
+reachable hostname/IP or a development tunnel. Configure the dev server's
+host and WebSocket URL to be reachable by those clients; Cloudflare must proxy
+WebSockets for HMR. A page reload reinjects the JS bridge. Register UI listeners
+and call `Open77.ready()` again so Lua can resend the initial state.
+
+Bundled and remote pages can load external scripts, styles, fonts, images,
+audio/video, HTTP(S) fetch/XHR, WS/WSS and iframe embeds. HTTP development
+content is allowed even from a bundled HTTPS page. For example:
+
+```html
+<iframe
+  src="https://www.youtube.com/embed/VIDEO_ID"
+  title="Video"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allow="autoplay; encrypted-media; picture-in-picture"
+></iframe>
+```
+
+This removes **Open77's external-content block**, not the remote site's rules:
+
+- CORS still applies to fetch/modules/fonts. Configure the API's allowed
+  origin, or use your web server's same-origin proxy. Do not ship API secrets
+  in browser JavaScript.
+- A site's own CSP, `frame-ancestors`, `X-Frame-Options`, login requirements
+  and certificate validity still apply. Use its supported embed URL, not an
+  ordinary watch page. YouTube also requires an HTTP Referer; do not set
+  `no-referrer`. Media playback depends on codecs available in the bundled CEF.
+- The Lua bridge is exposed only to the top-level page at the configured
+  entry's origin (scheme + host + port). External iframes receive no bridge;
+  cross-origin top-level navigation can display a site, but loses Lua access
+  until returning to the configured origin. Same-origin redirects and reloads
+  preserve it. Use `postMessage` with an exact origin check for trusted embeds.
+- Local assets still require `web_files`; another resource's virtual origin,
+  `file:` URLs, OS protocol execution, plugins and desktop popups stay blocked.
+  Layer permissions, message quotas and resource teardown remain enforced.
+- Remote content is downloaded by **each player's browser**, not included in
+  the signed resource archive. HTTPS is recommended in production. Remote
+  hosts and third-party embeds can see client IPs and browser requests; a
+  compromised script in the main page has that page's Lua bridge access.
+  Request contexts are isolated per surface and are not persistent login profiles.
+
+HTTP errors are reported as `webui_http_status:<status>`; DNS/TLS/connection
+errors remain visible as Chromium errors in WebUI diagnostics. CORS and
+embedding-policy errors appear in the WebHost browser console log.
+
+| Symptom | What to check |
+|---|---|
+| A dev URL works on your PC but not another player's | `localhost` points at each player's own PC. Use a reachable host; check the dev server's listening address and firewall. |
+| The page loads but HMR does not reconnect | Verify the WebSocket URL/port and proxy upgrade support. HTTPS pages normally use WSS. |
+| The page loads but `window.Open77` is missing | Check the final top-level URL. An HTTP-to-HTTPS or host/port redirect changes origin; configure the final URL as the entry. Iframes never receive the bridge. |
+| An API call is blocked by CORS | Allow the page's origin on that API, or proxy it through the page's own server. WebUI does not bypass CORS. |
+| A video or iframe refuses to display | Use the provider's embed URL, preserve its required Referer and inspect CSP, embedding, login and codec errors. |
+| The page's scale changes on Ctrl + wheel | Install the updated client. It suppresses CEF's wheel zoom, not zoom implemented by the page's own JavaScript. |
+
+Embedded WebUI pages do not use CEF's Ctrl + mouse wheel browser zoom:
+Ctrl + wheel scrolls normally, without changing the page scale. This is not
+a promise to disable keyboard shortcuts or custom page zoom code.
+
+This WebUI network policy does **not** change the dedicated server's Lua
+HTTP bridge, its `http.request` permission or its host allowlist.
 
 The `modal`, `system` and `debug` layers require `webui.modal`,
 `webui.system` and `webui.debug` respectively; the `hud` and `menu` layers
@@ -550,21 +649,33 @@ frame — see
 
 ## Sandbox and quotas
 
-Default client limits, per resource:
+The updated client uses the following default limits, per resource except
+for the host-wide frame budget. Like remote WebUI above, these increased
+defaults require the new client build; old CDN builds keep their old limits.
 
 | Limit | Value |
 |---|---|
-| Lua memory | 32 MiB |
-| Instructions per coroutine resume | 500,000 |
-| Global Lua frame budget | 2 ms |
-| Scheduled tasks | 1,024 |
-| Event handlers | 2,048 |
-| WebUI handlers | 512 |
-| WebUI surfaces | 8 |
-| Lua source size | 4 MiB per file |
-| `readFile` result | 1 MiB |
-| Lua files in a resource | 1,024 |
-| Declared `files` / `web_files` | 2,048 each |
+| Lua memory | 96 MiB |
+| Instructions per coroutine resume | 1,500,000 |
+| Lua frame budget (host-wide) | 6 ms per client host |
+| Scheduled tasks | 3,072 |
+| Event handlers | 6,144 |
+| WebUI handlers | 1,536 |
+| WebUI surfaces | 24 |
+| Lua source size | 12 MiB per file |
+| `readFile` result | 3 MiB |
+| Lua files in a resource | 3,072 (including `open77.lua`) |
+| Declared `files` / `web_files` | 6,144 each |
+
+The frame budget is shared by all resources within a client host, not granted
+to each resource. The trusted and server-downloaded hosts each have this
+ceiling. These are maximum allowances, not reserved memory or a higher tick
+rate. The dedicated server's Lua runtime has separate limits.
+
+The signed-manifest and transport/message size caps have not been tripled.
+For example, `readPackedFile` can read up to 3 MiB of raw file data, but its
+Base64 result may exceed the unchanged 2 MiB WebUI message limit. Do not use
+the larger file allowance as a promise that one `page:send` can carry it.
 
 Exceeding the instruction budget raises `Open77 script execution budget
 exceeded` from the instruction hook. That is a Lua error: it unwinds

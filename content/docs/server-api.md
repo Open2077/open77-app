@@ -2688,8 +2688,10 @@ oxmysql-compatible table.
 | `transaction` | `(statements, callback?)` | `.await(statements)` returns `true` or `false, reason`. |
 
 Callbacks and `.await` continuations resume on the owning resource's scheduler, never on the
-database worker. See the database guide in `docs/database.md` for parameter forms, limits,
-transactions, configuration, and migrations.
+database worker. See [Configure a SQL database](/docs/database) for installation, credentials,
+configuration, a Lua connection probe and troubleshooting. The
+[platform database guide](https://github.com/Open2077/open77-base/blob/main/docs/database.md)
+details parameter forms, limits and transactions.
 
 ### Waiting for the database
 
