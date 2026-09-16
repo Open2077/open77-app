@@ -97,6 +97,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [Gorilla Arms](gorilla-arms.md) | Build native arm grades, self-service installation, charge effects, clinics and practice arenas. |
 | [Loot](loot.md) | Authoritative ground drops and pickup integration. |
 | [Weather](weather.md) | Session time, weather presets, synchronization, and events. |
+| [Time scale](world-time.md) | Slow motion for a scripted beat: `Open77.world.setTimeScale` on the client as a claim the dilation guard stands down for, and per routing bucket from the server; measuring it against the world clock, every release path, and why it is presentation and not a Sandevistan. |
 | [Vehicles](vehicles.md) | Identity, streaming, authority leases, seats, and Lua APIs. |
 | [Vehicle AI](vehicle-ai.md) | Autonomous driving, routes, entity following, NPC drivers and authoritative task events. |
 | [Native map](native-map.md) | Player waypoints, map lifecycle, marker selection and non-travel point picking. |

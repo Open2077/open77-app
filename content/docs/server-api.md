@@ -68,13 +68,15 @@ signalling. `Open77.events.emitLocal` is the namespaced alias.
 **Reserved names.** The platform's own vocabulary cannot be published host-wide by a resource;
 `TriggerEvent` and `TriggerCancellableEvent` answer `false, "reserved_event"` (`nil,
 "reserved_event"` for the cancellable form). Reserved are the exact names `onResourceStart`,
-`onResourceStop`, `onPlayerConnecting`, `onPlayerConnected`, `onPlayerDisconnected`,
+`onResourceStop`, `onResourceStarting`, `onResourceListRefresh`, `onPlayerConnecting`,
+`onPlayerConnected`, `onPlayerDisconnected`,
 `onPlayerReady`, `onPlayerRejected`, `onPlayerBucketChange`, `onPlayerAnimationChanged`,
 `onPlayerMotionChanged`, `onPlayerLifeStateChanged`, `onPlayerLifeTransitionFailed`,
 `onEntityBucketChange`, `onRoutingBucketPolicyChange`, `onLootPickup`, `onTunableChanged`,
 `onEnvironmentChanged`, `onPropCreated`, `onPropRemoved`, `onEffectCreated`, `onEffectRemoved`,
 `onLootCreated`, `onLootRemoved`, `onEntityCreated`, `onEntityRemoved`,
-`playerDropped`, `playerJoining`, `open77:combatAnomaly`, plus the prefixes `__open77`,
+`playerDropped`, `playerJoining`, `onPlayerEnteredScope`, `onPlayerLeftScope`,
+`playerEnteredScope`, `playerLeftScope`, `open77:combatAnomaly`, plus the prefixes `__open77`,
 `onVehicle`, `onNpc`, `onElevator`, `onCyberware`, `onAbility`, `open77:resource:`,
 `open77:player`, `open77:clothing:`, `open77:weapons:`, `open77:vehicles:ai:` and
 `open77:admin:`. Everything a
@@ -111,17 +113,48 @@ A verdict that nobody reads is forgotten 30 seconds after it settles.
 
 ### Resource lifecycle events
 
-Four events describe a resource transition, and every running resource receives all
-four. They differ in what they carry, not in who hears them.
+Eight events describe the resource lifecycle, and every running resource receives all of
+them. They differ in what they carry and in *when* they run, not in who hears them.
 
 | Event | Signature | Emitted |
 |---|---|---|
+| `onResourceStarting` | `(resourceName)` | **Inline**, from inside the host's start of that resource, before its VM exists: `GetResourceState(resourceName)` reads `starting` inside the handler, and its dependencies are already running. Not a veto — see below. Never delivered to the resource itself (it has no VM yet; on a reload the outgoing VM is excluded). |
 | `onResourceStart` | `(resourceName)` | Once per start, into every running resource. The resource that started gets it from its own VM before any other resource is told; every other resource gets it on the next tick. |
 | `onResourceStop` | `(resourceName, reason)` | Once per stop, into every running resource. The resource that stopped gets it from its own VM, with `reason` (`manual`, `restart`, `reload`, `dependency_stopped`, `runtime_error`, `shutdown`), while it can still run code. |
+| `onResourceListRefresh` | `()` | The manifest tree was re-read: the console's `refresh`, or a change under a watched tree. No arguments, the FiveM shape. Queued like `onResourceStart`, after the starts, stops and reloads the refresh caused have announced themselves. |
+| `open77:resource:starting` | `(resourceName)` | Beside `onResourceStarting`, inline as well. |
 | `open77:resource:started` | `(resourceName, revision)` | Beside `onResourceStart`, with a revision. |
 | `open77:resource:stopped` | `(resourceName, revision)` | Beside `onResourceStop`, with a revision. |
+| `open77:resource:refreshed` | `(revision)` | Beside `onResourceListRefresh`, with the lifecycle revision current at the refresh. A refresh is a re-read, not a transition, so the revision is not incremented by it. |
 
-Guard on the name when you mean your own resource, which is the common case:
+**`onResourceStarting` is a notification, not a veto.** In FiveM a handler can `CancelEvent()`
+to refuse the start; here `CancelEvent()` inside it answers `false, "not_in_cancellable_event"`
+and the start proceeds. The reason is not the bus: every caller of a start is a cascade with no
+defined answer to a refusal in the middle of it — the boot start of every auto-start resource,
+a dependency started inside its dependent's start, `restart` bringing back the running closure
+it just stopped, a watched-tree reload. A refusal that stranded a dependent in `failed` or left a
+restart half-done would be worse than no refusal. What the inline delivery buys instead is an
+honest name: a handler observes the resource *before* it runs, which a queued event never could.
+Because it runs inline — on the host's stack, in registration order, each handler under
+`pcall` — `Wait` is not available inside it (it errors, is logged, and the next handler still
+runs), exactly as in a cancellable handler.
+
+```lua
+-- A resource that hands a shared lock to a sibling before the sibling's own scripts run.
+AddEventHandler("onResourceStarting", function(name)
+    if name ~= "shop_inventory" then return end
+    print(GetResourceState(name))   -- "starting": its VM does not exist yet
+    releaseInventoryLock()          -- runs before shop_inventory's server/main.lua
+end)
+
+-- An admin panel that re-reads the package set only when the tree was re-read.
+AddEventHandler("onResourceListRefresh", function()
+    rebuildResourceTable(Open77.resource.list())
+end)
+```
+
+Guard on the name when you mean your own resource, which is the common case (never for
+`onResourceStarting`, which a resource cannot receive about itself):
 
 ```lua
 AddEventHandler("onResourceStart", function(name)
@@ -731,6 +764,10 @@ gate that never answers refuses the player with `connection_gate_timeout`. A han
 logged and counts as an acceptance. A resource with a handler but without `players.gate` is
 ignored with one `WRN`.
 
+Who can *see* whom is a separate pair of events, `onPlayerEnteredScope` / `onPlayerLeftScope`
+(and FiveM's `playerEnteredScope` / `playerLeftScope`): see [Scope events](#scope-events) under
+routing buckets, because scope is the bucket narrowed to the interest radius.
+
 ## Operator-tunable settings
 
 Settings a server owner may retune from the Warden admin panel while the server runs, without a
@@ -881,7 +918,7 @@ the server admits the request and the owning client performs it.
 
 | Function | Permission | Signature | Result / purpose |
 |---|---|---|---|
-| `Open77.motion.knockdown` | `players.motion.control` | `(playerId, { x, y, distance })` | Request a planar knockdown; `{ok=true,id=…}`, or `nil, reason`. |
+| `Open77.motion.knockdown` | `players.motion.control` | `(playerId, { x, y, distance, durationMs? })` | Request a planar knockdown; `{ok=true,id=…}`, or `nil, reason`. `durationMs` (1-3000) ends the active lease that many milliseconds after the owner reports the body down, with `reason = "duration_elapsed"`; absent or 0 keeps the native three seconds. |
 | `Open77.motion.cancel` | `players.motion.control` | `(playerId, id)` | Cancel a request this resource owns. |
 | `Open77.motion.current` | `players.motion.read` | `(playerId)` | The current record, or `nil`. |
 
@@ -1190,6 +1227,10 @@ contract and its limits.
 | `Open77.players.isFrozen` / `IsPlayerFrozen` | `players.life.read` | `(playerId)` | Whether the canonical life state is currently frozen, by any resource. |
 | `Open77.players.setVisible` / `SetPlayerVisible` | `players.life.visibility` | `(playerId, visible)` | Hide a player's body from every other client, or show it again. Presentation only; see [Player visibility](#player-visibility) below. |
 | `Open77.players.isVisible` / `IsPlayerVisible` | `players.life.read` | `(playerId)` | Whether the canonical life state says this player is rendered. Answered from the server bit, never probed from a client. |
+| `Open77.players.setFallDamage` | `players.life.falldamage` | `(playerId, enabled)` | Switch one player's fall damage off (`false`) or back on. Fall damage **only** -- every other source of damage lands as before; this is not `setGodMode`. `boolean, reason?`. See [Fall damage](player-stats.md#fall-damage). |
+| `Open77.players.isFallDamageEnabled` | `players.life.read` | `(playerId)` | Whether landings still hurt this player. `Open77.players.get(playerId).fallDamage` carries the same bit. |
+| `Open77.players.ragdoll` | `players.motion.control` | `(playerId, { durationMs?, direction?, distance? }?)` | Put the body on the ground for up to 3 s; it gets up on its own. The engine's knockdown with a clock and a default facing; `{ok=true,id=…,durationMs=…}`, or `nil, reason`. See [ragdoll and clearTasks](player-freeze.md#putting-a-player-down-and-clearing-everything-ragdoll-and-cleartasks). |
+| `Open77.players.clearTasks` | any of `players.motion.control`, `players.animations.control`, `players.life.freeze` | `(playerId)` | End this resource's motion lease, animation playback and freeze claim on one player, reporting each half; another resource's holds are `not_owned` and untouched. `{ motion, animation, freeze, clear }`, or `nil, reason`. |
 | `Open77.players.spectate` / `SpectatePlayer` | `players.spectate` | `(playerId, targetId\|false, options?)` | Put one player behind another player's shoulder: ghost, hide, and a follow camera on the target, as one transaction that fails closed. `targetId` false ends it and gives the body back, as do death, disconnect, reconnect, a bucket change and this resource stopping. `options`: `blendMs`, `distance`, `height`. See [Spectating](cameras.md#spectating). |
 | `Open77.players.spectating` / `GetPlayerSpectateTarget` | `players.life.read` | `(playerId)` | Who this player is watching, or `0`. |
 | `Open77.players.spectators` / `GetPlayerSpectators` | `players.life.read` | `(playerId)` | Everyone watching this player, ascending. |
@@ -1720,6 +1761,67 @@ teams, alter implants or provide a temporary equipment loadout.
 The corresponding globals are `GetPlayerRoutingBucket`, `SetPlayerRoutingBucket`,
 `GetEntityRoutingBucket`, `SetEntityRoutingBucket`, `SetRoutingBucketEntityLockdownMode`, and
 `SetRoutingBucketPopulationEnabled`.
+
+### Scope events
+
+**What "scope" means here.** Player B is *in player A's scope* when A's client currently holds B
+in its roster — when the server has sent A a `PlayerJoined` for B and no `PlayerLeft` since. That
+set is A's routing bucket, narrowed to the player interest radius when the server has one:
+`simulation.playerInterestRadius` in `server.jsonc`, in metres, with
+`simulation.playerInterestHysteresis` (default 60 m) on the way out. **The radius is off by
+default (`0`)**, and every mode before Cordon runs that way; then scope is simply the whole
+bucket and the events below fire on joins, bucket transfers and disconnects only. Cordon runs a
+500 m radius — never below the longest ranged damage the server honours — and with a radius the
+same events also fire when two players walk apart or back together.
+
+Nothing is measured for these events: the server raises exactly one edge per roster message it
+already sends, so the feed is **balanced** — every `entered` has a matching `left`, from the join
+to the disconnect — and a resource that keeps a per-viewer set from it is never left holding a
+player whose client has already been told to forget them.
+
+| Event | Signature | Emitted |
+|---|---|---|
+| `onPlayerEnteredScope` | `(playerId, forPlayerId, reason)` | `playerId` entered the scope of `forPlayerId`. `reason` is `joined` (a hello: the joiner is handed the whole bucket and the bucket is handed the joiner, so it fires in both directions for every pair), `bucket` (a routing-bucket transfer, both directions for every new peer) or `interest` (the radius, only when it is on). |
+| `onPlayerLeftScope` | `(playerId, forPlayerId, reason)` | `playerId` left the scope of `forPlayerId`. `reason` is `disconnected` (one edge per viewer that still has a client; the leaver's own view is not reported), `bucket` or `interest`. |
+| `playerEnteredScope` / `playerLeftScope` | `(data)` with `data.player`, `data["for"]` | The same edges in FiveM's shape: one table, both ids as strings, exactly what a ported script indexes. |
+
+All ids are strings, as every host event's arguments are. The edges are queued by the host
+and delivered on its next tick (a bucket edge can be raised from inside a Lua
+`SetPlayerRoutingBucket`, and nothing is ever delivered from the caller's stack), so within a
+tick no order is promised between the two spellings, nor between a join's scope edges and
+`onPlayerConnected` / `onPlayerDisconnected`. A `joined` edge concerns a player already in the
+registry; a `disconnected` edge concerns one already gone from `Open77.players.get`, so a
+handler must not look them up. All four names are reserved and cannot be published by a
+resource.
+
+```lua
+-- Proximity chat that only relays to players who can actually see the speaker.
+local canSee = {}   -- canSee[viewer][player] = true
+
+AddEventHandler("onPlayerEnteredScope", function(player, viewer, reason)
+    canSee[viewer] = canSee[viewer] or {}
+    canSee[viewer][player] = true
+end)
+AddEventHandler("onPlayerLeftScope", function(player, viewer, reason)
+    if canSee[viewer] then canSee[viewer][player] = nil end
+    if reason == "disconnected" then canSee[player] = nil end   -- the leaver's own view is gone
+end)
+
+RegisterNetEvent("chat:local", function(text)
+    local speaker = tostring(source)
+    for viewer, seen in pairs(canSee) do
+        if seen[speaker] then TriggerClientEvent("chat:addMessage", tonumber(viewer), { text = text }) end
+    end
+end)
+```
+
+A ported FiveM resource needs no change:
+
+```lua
+AddEventHandler("playerEnteredScope", function(data)
+    print(("%s entered the scope of %s"):format(data.player, data["for"]))
+end)
+```
 
 ## Time and weather
 

@@ -618,6 +618,7 @@ AddEventHandler("onNpcAuthorityChanged", function(npcId, playerId, epoch, reason
 AddEventHandler("onNpcDamaged", function(npcId, source, amount, health, cause) end)
 AddEventHandler("onNpcDied", function(npcId, source, cause) end)
 AddEventHandler("onNpcTargetChanged", function(npcId, kind, targetId, previousKind, previousTargetId) end)
+AddEventHandler("onNpcInteracted", function(npcId, playerId, interactionId, choiceId, distance) end)
 ```
 
 The same creation and removal also reach `onEntityCreated(kind, id, resource)` and
@@ -631,6 +632,37 @@ it, because NPC reads are owner scoped everywhere else in this API and an event 
 resource which player another resource's bodyguard had just drawn on would be a read across that
 boundary. `kind` is `none`, `player` or `npc`, and `targetId` is `0` when `kind` is `none`. All five
 arguments are strings, as every server resource event's arguments are.
+
+`onNpcInteracted` is a **player's** act on an NPC — a choice used on a `globalNpc`
+[interaction target](interactions.md#event-payload-and-server-authority) — and is delivered
+host-wide like `onNpcDamaged`: the owner is not the only resource entitled to know that a player
+pressed a key on its clerk. The bundled prompt reports the use to the server; the server refuses
+a report from a player it cannot place, from another routing bucket, or from more than 40 m away,
+and publishes the event only for an accepted one, with `distance` being **its own** measurement
+between the player's last fresh snapshot and the NPC's canonical position (metres, two decimals).
+`interactionId` is the target's materialised id (`<targetId>:<matchKey>`) and `choiceId` the
+choice; a refused report produces no event at all, so a forged one can only be silent. Apply your
+own rule on `distance` — 40 m is the ceiling that keeps a sprinting player's stale snapshot from
+breaking a real prompt, not the reach of your shop.
+
+```lua
+-- A vendor: one NPC per stall, opened by the prompt the interactions resource shows on it.
+local stalls = {}   -- npcId (string) -> catalogue
+
+CreateThread(function()
+    local npcId = Open77.npcs.create({ record = "Character.Judy", position = { x = -1378.0, y = 1262.0, z = 123.0 } })
+    stalls[tostring(npcId)] = "weapons"
+    exports.open77_interactions:define({
+        { id = "stall", kind = "globalNpc", distance = 2.0, label = "Browse", key = "E", event = "market:browse" },
+    })
+end)
+
+AddEventHandler("onNpcInteracted", function(npcId, playerId, interactionId, choiceId, distance)
+    local catalogue = stalls[npcId]
+    if catalogue == nil or tonumber(distance) > 3.0 then return end
+    TriggerClientEvent("market:open", tonumber(playerId), catalogue)
+end)
+```
 
 Client resource events:
 

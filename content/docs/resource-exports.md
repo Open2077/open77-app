@@ -317,6 +317,26 @@ by that client, never authority.
 See [Elevators](elevators.md). Elevator IDs are opaque even though this compatibility package
 currently normalizes them before calling the native API.
 
+### `open77_fuel`
+
+The canonical [state-bag sample](state-bags.md#the-fuel-sample-open77_fuel): fuel is a
+server-owned `fuel` key on every vehicle's bag, burned from the replicated speed and engine
+state, with the engine cut at zero.
+
+| Export | Signature | Result |
+|---|---|---|
+| `level` | `level(vehicleId)` | The replicated litres, read from the bag mirror; `nil, reason` for an unknown or unstreamed car. |
+| `current` | `current()` | The litres of the car the local player is sitting in, or `nil, "not_in_vehicle"`. |
+
+The client also re-emits every bag change as `open77:fuel:changed(vehicleId, litres, previous)`.
+There is no client `set`: the client never writes a bag.
+
+**Server exports**, on the same package, for scripts porting `GetVehicleFuelLevel` /
+`SetVehicleFuelLevel`: `level(vehicleId)`, `set(vehicleId, litres)`, `refuel(vehicleId, litres?)`
+(to the brim when the amount is omitted), `capacity()` and `configure({ capacity,
+litresPerHundredKm, idleLitresPerMinute, multiplier })`. Every write is clamped into the tank and
+answers `litres | nil, reason`; the host-wide `open77:fuel:empty(vehicleId)` fires once per empty.
+
 ### `open77_groundcircle`
 
 | Export | Signature | Result |

@@ -408,6 +408,12 @@
           "description": "Synchronised session time and weather: the network model, shared configuration, ACL-gated commands, random weather events, and the server and client APIs."
         },
         {
+          "slug": "world-time",
+          "kind": "guide",
+          "nav": "Time scale",
+          "description": "Slow motion for a scripted beat: Open77.world.setTimeScale on the client as a claim the dilation guard stands down for, per routing bucket from the server, how to measure it against the world clock, every release path, and why it is presentation and not a Sandevistan."
+        },
+        {
           "slug": "elevators",
           "kind": "guide",
           "nav": "Elevators",

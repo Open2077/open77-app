@@ -261,6 +261,16 @@ resource.status <resource>
 `resource.root` shows `source=bootstrap` before the session and `source=server` once active.
 `resource.distribution` exposes phase, generation, progress, digest, and current resource.
 
+Every one of the server commands above is visible to the running resources as events.
+`start`, `ensure` and `restart` announce the resource **before** it starts with
+`onResourceStarting(name)` — delivered inline, while `GetResourceState(name)` still reads
+`starting`; it is a notification, not a veto — then `onResourceStart(name)` once it runs; `stop`
+and `restart` announce `onResourceStop(name, reason)`; `reload` is a stop and a start to every
+other resource; and `refresh` ends with `onResourceListRefresh()` once the tree has been re-read
+and the new package set published. The Open77 spellings (`open77:resource:starting`, `started`,
+`stopped`, `refreshed`) carry a lifecycle revision beside each. See
+[Resource lifecycle events](server-api.md#resource-lifecycle-events).
+
 ## Security and operations
 
 - HTTPS is mandatory for a public URL; HTTP is limited to loopback.

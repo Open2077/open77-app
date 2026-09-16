@@ -9,7 +9,9 @@ At server boot the canonical state is `12:00:00`, the weather is `sunny`, and th
 weather transition already in progress at its current point rather than restarting it.
 
 Use this guide if you are writing a resource that needs to read the time, react to weather, or — from
-a trusted server resource — change either. From the server the entry point is
+a trusted server resource — change either. The *rate* the world runs at — slow motion for a scripted
+beat — is a different lever and has its own page, [Time scale](world-time.md); nothing here slows a
+clock. From the server the entry point is
 [`Open77.environment.*`](#api-for-a-server-resource), which the host installs everywhere and gates
 behind `world.environment`; a routing bucket can hold an environment of its own.
 

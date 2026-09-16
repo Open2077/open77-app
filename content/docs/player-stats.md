@@ -107,6 +107,81 @@ real attributed soft death rather than merely writing a native pool. Direct
 damage, healing, armor and god mode remain available through the compatible
 `Open77.players.damage`, `heal`, `setArmor`, and `setGodMode` methods.
 
+## Fall damage
+
+```lua
+permission "players.life.falldamage"  -- server: switch a player's fall damage off and on
+permission "players.life.read"        -- read it back
+```
+
+| Function | Purpose |
+|---|---|
+| `Open77.players.setFallDamage(playerId, enabled)` | `false` makes landings harmless for this player; `true` restores the vanilla behaviour. `true`, or `false, reason`. |
+| `Open77.players.isFallDamageEnabled(playerId)` | Whether landings still hurt him. `Open77.players.get(playerId).fallDamage` carries the same bit. |
+
+**Fall damage only.** This is FiveM's fall-damage toggle and nothing wider: a
+player whose fall damage is off is still shot, stabbed, burned, blown up and run
+over exactly as before, and still dies from all of it. It is not `setGodMode`
+(the combat ledger's damage immunity) and it is not the grav-chute's shield
+(`Open77.chute`, a blanket *Invulnerable* god mode that exists because the
+chute needs *everything* off for the seconds it is armed). A FiveM script that
+reaches for `SetEntityInvincible` wants `setGodMode`; one that reaches for the
+fall-damage toggle wants this.
+
+**Why it is a life flag and not a stat.** On 2.31 a hard landing is not a number
+the engine subtracts from a pool. The player's own locomotion state machine
+grades the landing from its vertical speed and, for the three grades that hurt,
+fires a self-targeted area attack -- `Attacks.HardLanding`, then
+`VeryHardLanding`, then `DeathLanding` -- through the ordinary damage pipeline,
+on the landing client only. So the only place fall damage can be refused is
+that client, inside the damage pipeline, and the only honest way to refuse
+*fall* damage rather than *all* damage is to recognise those three records and
+nothing else. That is what the client does while the server's bit is up: the
+three landing records aimed at its own body are dropped before they are priced;
+every other hit is untouched; and the stumble, the camera hit and the grunt
+still play, because they come from the locomotion state and a player told "no
+fall damage" still expects to feel the fall. Observers need do nothing -- a
+landing is resolved only on the body that landed.
+
+**Release paths.** The bit rides the replicated life state, so it survives a
+proxy re-stream and travels with the player across a bucket change (it concerns
+his own client, not the observers he left). Death drops it (a dead body takes no
+landings, and the respawn starts vanilla unless asked otherwise), a reconnect
+drops it, and the resource that switched it off switches it back on when it
+stops, reloads or crashes -- nothing else could, because there is no proximity
+notion to auto-clear against. Refused with `transition_in_progress` during a
+revive or respawn, like every other life bit; **allowed while dead**, so a
+gamemode that drops players from the sky can shield them before the respawn it
+is about to issue rather than racing the first landing:
+
+```lua
+-- A parkour round: nobody dies to the course, everybody still dies to each other.
+AddEventHandler("parkour:roundStart", function()
+    for _, id in ipairs(Open77.players.all()) do
+        Open77.players.setFallDamage(id, false)
+    end
+end)
+
+-- Re-arm on death: Kill zeroed the bit, and the spawn point is a rooftop.
+AddEventHandler("onPlayerLifeStateChanged", function(playerId, revision, phase)
+    if phase ~= "dead" then return end
+    Open77.players.setFallDamage(playerId, false)   -- allowed while dead; rides the respawn
+    Open77.players.respawn(playerId, { position = spawns.rooftop, heading = 90 })
+end)
+
+AddEventHandler("parkour:roundEnd", function()
+    for _, id in ipairs(Open77.players.all()) do
+        Open77.players.setFallDamage(id, true)
+    end
+end)
+```
+
+On the wire the flag is `PlayerLifeFlags.FallShield` (`1 << 3`), beside
+`Ghosted` (`1 << 0`), `Frozen` (`1 << 1`) and `Invisible` (`1 << 2`). The flags
+field has always been serialized and never validated, so assigning the bit is
+not a protocol change: a client that predates it decodes the value and ignores
+the bit, which degrades to "vanilla fall damage" rather than a disconnect.
+
 ## Synchronization model
 
 The server sends health, stamina, maximums, regeneration configuration and the

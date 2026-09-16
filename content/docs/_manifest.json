@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-14T22:33:38.371Z",
   "guides": 84,
-  "apiEntries": 1380,
+  "apiEntries": 1408,
   "files": [
     {
       "source": "wiki/README.md",
@@ -668,8 +668,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1347,
-      "bytes": 1635873,
-      "sha256": "64938c8ceb510af8e7bd01963fc5451be83f777405c8af4a1094bc702ef4215c"
+      "bytes": 1694276,
+      "sha256": "c30da0446a34892ad6d0571ccee541ba75edc51187c22d6df9a1623be689e192"
     },
     {
       "source": "wiki/door-service-api.json",

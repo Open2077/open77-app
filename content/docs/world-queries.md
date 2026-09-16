@@ -405,7 +405,59 @@ tick. Cache what does not move (ground heights, door positions) and trace on eve
 
 The server has no physics world: none of these exist server-side. A gamemode that needs a line of
 sight on the server asks a client for it and treats the answer as an observation, never as
-authority.
+authority -- and for the one question a server asks most, the ground under a spawn, that asking is
+built in.
+
+## Ground height from the server
+
+`Open77.world.groundZ(position, options?)` on the **server** is the same downward ray, run by the
+nearest connected client and relayed back. It needs `world.query` on the server resource and
+nothing on any client: the client host answers the reserved question itself, so a player running
+no resource at all can still be the observer.
+
+```lua
+-- Drop a supply crate on the ground under a map point, or say why not.
+RegisterCommand("crate", function(source, args)
+    local x, y = tonumber(args[1]), tonumber(args[2])
+    local z, detail = Open77.world.groundZ({ x = x, y = y })
+    if z == nil then
+        print(("no ground for the crate: %s"):format(tostring(detail)))
+        return
+    end
+    Open77.props.create({ record = "Props.Crate", position = { x = x, y = y, z = z + 0.5 } })
+    print(("placed at z=%.2f, seen by player %d %.0f m away"):format(z, detail.playerId, detail.distance or 0))
+end, true)
+```
+
+It **waits** for the answer, so call it from a scheduler coroutine -- a command, an event handler,
+`CreateThread`. At file scope it refuses with `await_requires_scheduler_coroutine` rather than
+blocking the server on a client that may never reply.
+
+The answer is `z, detail` with `detail = { playerId, distance, observerAgeMs, ageMs, cached }`:
+who measured it, how far from the point they stood, how old their own position reading was, how old
+the answer is, and whether it came from the cache. A measured metre cell answers from cache for a
+minute; pass `cache = false` for a fresh ray.
+
+**"Near" is defined from what streaming guarantees.** A client's ray only sees sectors streamed
+around its own body. The static-collision streaming radius on 2.31 is unmeasured; the measured
+entity windows are 225 m (elevators) and 350 m (vehicles), and scripted cameras refuse past 250 m
+for the same reason. The default observer radius is therefore a conservative **150 m**
+(`options.radius`, capped at 300 m); a server that has measured better may widen it. Nobody within
+the radius is `nil, "no_observer"` -- **never a default height**, because a spawn placed on an
+invented height kills, which the cordon survey learned at 5.8 m against 42 m a few hundred metres
+apart. `no_ground` means the observer's ray found nothing (open water, a void, or a sector that
+client had not streamed yet) and is never cached: ask again from closer.
+
+The ground is the same in every routing bucket -- buckets instance the players, not the terrain --
+so observers are searched across every bucket unless `options.bucket` restricts them.
+`options.playerId` names the observer outright, at any distance and bypassing the cache.
+`options.maxAgeMs` (30 s) bounds how old the observer's position reading may be -- a still client
+throttles its snapshots, and a teleport refreshes the reading, so the gameplay reads' two-second rule
+is the wrong bar here. `options.timeout` (3 s) and `options.fromZ` (400) complete the set.
+
+**An observation, not a fact.** The number comes from a client; a modified client could answer
+anything. It is fit for placing a spawn, a prop or a marker, and not for adjudicating anti-cheat;
+the detail names the observer so a server that cares can weigh it.
 
 ## See also
 
