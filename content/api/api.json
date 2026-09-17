@@ -59262,5 +59262,36 @@
   "constant": false,
   "qualified": "promise.new",
   "route_id": "server:promise.new"
+ },
+ {
+  "namespace": "WebUI.Page",
+  "name": "setConsumedKeys",
+  "handler": "LuaWebPageConsumedKeys",
+  "summary": "Consume selected navigation keys while preserving gameplay input.",
+  "description": "Call page:setConsumedKeys(keys) before page:setFocus(true,false,true). Client-local, per-surface policy: selected keys still reach the browser but not Cyberpunk Raw Input or Open77 pause/scoreboard shortcuts. Accepts a dense array of at most 32 case-insensitive names: escape/esc, enter, tab, backspace, space, up/down/left/right (arrow aliases accepted), home, end, pageup, pagedown, insert and delete. Invalid input leaves the existing list unchanged; {} clears it for future presses. Active only while this visible, presentation-enabled page owns keyboard focus. Repeats and releases remain consumed if the keydown handler hides/destroys the page or changes focus. No arbitrary gameplay keys or controller-menu interception. No extra permission; keep-input still requires webui.keep_input. Requires the updated client; not yet published on the CDN. See webui-input.md for the complete lifecycle and error contract.",
+  "params": [
+   {
+    "name": "keys",
+    "type": "string[]",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean",
+   "string? reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "-- Manifest: permissions { 'webui.keep_input' }\nassert(page:setConsumedKeys({'escape'}))\nassert(page:setFocus(true, false, true))\n-- Close the menu:\npage:setFocus(false, false)\npage:hide()",
+  "inferred": false,
+  "source_line": 22543,
+  "permissions": [],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "WebUI.Page.setConsumedKeys",
+  "route_id": "WebUI.Page.setConsumedKeys"
  }
 ]

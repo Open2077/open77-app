@@ -561,6 +561,12 @@
           "description": "`open77_uikit`: progress bars, text hints, alerts, input forms, context and keyboard menus and a radial wheel drawn from one page — with the focus rule that outranks the whole feature list."
         },
         {
+          "slug": "webui-input",
+          "kind": "guide",
+          "nav": "WebUI keyboard input",
+          "description": "Consume Escape and navigation keys in a custom WebUI without opening native pause, while keeping movement and mouse look active. Client availability, supported keys and focus cleanup."
+        },
+        {
           "slug": "keybindings",
           "kind": "guide",
           "nav": "Key bindings",

@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-17T02:23:59.652Z",
-  "guides": 87,
-  "apiEntries": 1579,
+  "guides": 88,
+  "apiEntries": 1580,
   "files": [
     {
       "source": "wiki/README.md",
@@ -705,9 +705,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1579,
-      "bytes": 2209555,
-      "sha256": "f16bb677e7d28cf4d0ee7c2e7da513b0626eca69b32f5765e3c61b8663cab050"
+      "entries": 1580,
+      "bytes": 2211345,
+      "sha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
     },
     {
       "source": "wiki/door-service-api.json",
@@ -825,6 +825,25 @@
       "records": 6582,
       "bytes": 2017795,
       "sha256": "ed9c09fd607da1e0489dbb8a09c26bb33e02972dd34f761ee50c7edae6e85f86"
+    },
+    {
+      "target": "content/docs/webui-input.md",
+      "source": "wiki/webui-input.md",
+      "slug": "webui-input",
+      "title": "WebUI selective keyboard capture",
+      "bytes": 4194,
+      "sha256": "29da483896e1fccfc990f48b063c80fb695a8a63ef1a806f30881e6cb17fea27"
     }
-  ]
+  ],
+  "partialSync": {
+    "tool": "scripts/sync-webui-input-docs.mjs",
+    "syncedAt": "2026-09-17T14:52:33.296Z",
+    "guides": [
+      "webui-input"
+    ],
+    "apiRouteIds": [
+      "client:WebUI.Page.setConsumedKeys"
+    ],
+    "apiMode": "merge-selected-cards-preserve-other-site-entries"
+  }
 }

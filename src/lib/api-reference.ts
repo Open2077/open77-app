@@ -209,6 +209,10 @@ const RUNTIME_NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGu
 };
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (runtime === "client" && raw.namespace === "WebUI.Page" &&
+      ["setConsumedKeys", "setFocus", "hasFocus"].includes(raw.name)) {
+    return { usageGuideHref: "/docs/webui-input", usageGuideLabel: "WebUI keyboard input guide" };
+  }
   if (raw.namespace === "Open77.players" && ["setHoloCallEyes", "getHoloCallEyes"].includes(raw.name)) {
     return { usageGuideHref: "/docs/holocall-eyes", usageGuideLabel: "Blue holocall eyes guide" };
   }

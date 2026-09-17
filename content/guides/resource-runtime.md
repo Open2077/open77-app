@@ -516,6 +516,7 @@ Page methods are `id`, `show`, `hide`, `destroy`, `setFocus`, `send`, `on`,
 |---|---|
 | `page:reply` | `(requestId, payload, ok?)` — `ok` defaults to `true` |
 | `page:setFocus` | `(keyboard, cursor?, keepInput?)` |
+| `page:setConsumedKeys` | `(keys)` — selectively consume navigation keys while retaining gameplay input; requires the updated client. |
 | `page:send` | `(event, payload?)` — event name at most 128 bytes |
 | `page:on` | `(event, handler)` — returns a handler id |
 | `page:off` | `(handlerId)` |
@@ -539,6 +540,30 @@ Open77.ready();
 
 Bundled WebUI uses an isolated virtual HTTPS origin; remote WebUI uses the
 configured HTTP(S) origin. Lua/JavaScript payloads use a bounded JSON codec.
+
+### Escape and selective keyboard consumption
+
+`page:setFocus(true, false, true)` intentionally keeps native gameplay input alive.
+Browser `preventDefault()` and `stopPropagation()` cannot stop the native Raw Input
+stream, so Escape can also open Cyberpunk's pause menu. `Open77.session.setMenuReady`
+is platform pause readiness, not a per-page key blocker.
+
+On the updated client, configure the page before taking focus:
+
+```lua
+-- Manifest permission: "webui.keep_input"
+assert(page:setConsumedKeys({"escape"}))
+assert(page:setFocus(true, false, true))
+-- When the menu closes:
+page:setFocus(false, false)
+page:hide()
+```
+
+The browser receives Escape; native pause and Open77 pause do not. Movement and
+mouse look remain active. See [WebUI keyboard input](webui-input.md) for supported
+keys, complete examples, validation errors and closing/focus-transfer behavior.
+This API is **not yet published on the CDN**; older clients need an update before
+using it. It does not block a controller's menu button or disable pause globally.
 
 ### Remote pages, external content and hot reload
 
