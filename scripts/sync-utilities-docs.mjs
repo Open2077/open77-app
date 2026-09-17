@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { readGuideForSync, reviewApiEntries } from "./docs-editorial.mjs";
 
 const args = process.argv.slice(2);
 let source = process.env.OPEN77_WIKI_SOURCE ?? "../CyberM/wiki";
@@ -23,7 +24,7 @@ assert.equal(selectedKeys.size, 47, "Expected 47 utility/audio contracts");
 // This release also ships the previously implemented server-owned holocall glow.
 for (const id of ["server:Open77.players.setHoloCallEyes", "server:Open77.players.getHoloCallEyes", "client:Open77.players.getHoloCallEyes"]) selectedKeys.add(id);
 const selected = (entry) => selectedKeys.has(key(entry));
-const incoming = JSON.parse(await read(path.join(source, "data/api.json"))).filter(selected);
+const incoming = reviewApiEntries(JSON.parse(await read(path.join(source, "data/api.json")))).filter(selected);
 assert.equal(incoming.length, selectedKeys.size, "Missing generated utility/audio cards");
 const apiTarget = "content/api/api.json";
 const current = JSON.parse(await read(apiTarget));
@@ -34,7 +35,7 @@ const merged = [...current.map((entry) => byKey.get(key(entry)) ?? entry),
   ...incoming.filter((entry) => !currentKeys.has(key(entry)))];
 const guides = ["player-utilities", "package-audio", "holocall-eyes"];
 const writes = new Map();
-for (const slug of guides) writes.set(`content/docs/${slug}.md`, await read(path.join(source, `${slug}.md`)));
+for (const slug of guides) writes.set(`content/docs/${slug}.md`, await readGuideForSync(source, `${slug}.md`));
 writes.set(apiTarget, JSON.stringify(merged, null, 1) + "\n");
 const manifestTarget = "content/docs/_manifest.json";
 const manifest = JSON.parse(await read(manifestTarget));

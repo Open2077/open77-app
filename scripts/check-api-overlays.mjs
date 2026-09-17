@@ -13,6 +13,9 @@
 import fs from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { createHash } from "node:crypto";
+
+const editorial = JSON.parse(await fs.readFile(new URL("./doc-api-editorial.json", import.meta.url), "utf8"));
 
 const wiki = process.argv[2] ?? process.env.OPEN77_WIKI_SOURCE ?? ["CyberM", "open77-base", "base"]
   .map((directory) => path.join(process.cwd(), "..", directory, "wiki"))
@@ -63,6 +66,9 @@ function carries(entries, text) {
   if (!entries || !text) return false;
   const needle = text.replace(/\s+/g, " ").trim().slice(0, 60);
   return entries.some((entry) =>
+    editorial.some((review) => review.runtime === entry.runtime && review.qualified === entry.qualified &&
+      review.description === entry.description &&
+      [review.sourceDescriptionSha256, review.sourceOverlaySha256].includes(createHash("sha256").update(text).digest("hex"))) ||
     [entry.description, entry.summary].some((value) =>
       typeof value === "string" && value.replace(/\s+/g, " ").includes(needle),
     ),
@@ -92,9 +98,11 @@ function audit(file, overlay, resolve) {
 let gaps = 0;
 const descriptions = await readOverlay("api-descriptions.json");
 const notes = await readOverlay("api-notes.json");
-if (!descriptions || !notes) {
+if ((!descriptions || !notes) && existsSync(wiki)) {
   throw new Error("api-descriptions.json and api-notes.json are required overlays");
 }
+if (!existsSync(wiki)) console.log("No source wiki checkout: upstream overlay comparison skipped; checking vendored API coverage.");
+if (descriptions && notes) {
 gaps += audit(
   "api-descriptions.json",
   descriptions,
@@ -109,6 +117,7 @@ const effectiveNotes = Object.fromEntries(Object.entries(notes).map(([name, valu
 gaps += audit("api-notes.json (effective)", effectiveNotes, (name) =>
   byQualified.get(name),
 );
+}
 const serverVehicles = await readOverlay("server-vehicle-api.json");
 if (serverVehicles) {
   gaps += audit(

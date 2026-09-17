@@ -1,8 +1,6 @@
 # Authoritative vehicle paint
 
-Open77 keeps custom vehicle paint in the server's canonical vehicle state. A color selected by a
-gamemode, garage, or administration resource therefore remains identical for current viewers,
-stream-in, reconnects, and late joiners instead of becoming a client-local Holopaint override.
+Set vehicle paint through the server's canonical state. The selected color is replicated to current viewers, late joiners and clients that stream the vehicle back in.
 
 ## Permissions and runtime split
 

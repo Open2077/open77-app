@@ -1,8 +1,6 @@
 # WebUI notifications
 
-`open77_notifications` is the shared toast service for Open77 resources. It provides a FiveM-style
-notification API without coupling gameplay packages to their own browser surface. Notifications can
-originate locally or from an authoritative server resource and are always owned by their caller.
+`open77_notifications` displays resource-owned WebUI toasts. Client resources can create notifications directly; server resources can request them through the package's server interface.
 
 The WebUI is transparent and never captures input. Copy is inserted with DOM `textContent`, queues
 are bounded, and notifications disappear automatically when their owner stops or reloads.

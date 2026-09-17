@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
+import { readGuideForSync, reviewApiEntries } from "./docs-editorial.mjs";
 const check = process.argv.includes("--check");
 const source = process.env.OPEN77_BASE_SOURCE ?? "../CyberM";
 const read = async (file) => (await readFile(file, "utf8")).replaceAll("\r\n", "\n");
@@ -15,7 +16,7 @@ const titles = ["Player morphs", "Morph catalogue"];
 const descriptions = ["Server-owned NPC impersonation, readiness, replication, restoration and model compatibility.",
   "Search all 6,582 Character records for player morphs, with downloadable IDs and the admin menu workflow."];
 for (const [i, slug] of guides.entries()) {
-  const text = await read(`${source}/wiki/${slug}.md`);
+  const text = await readGuideForSync(`${source}/wiki`, `${slug}.md`);
   const target = `content/docs/${slug}.md`;
   const entry = {source:`wiki/${slug}.md`,target,slug,title:text.match(/^# (.+)$/m)[1],bytes:Buffer.byteLength(text),sha256:hash(text)};
   const previous = manifest.files.find((item) => item.target === target);
@@ -34,7 +35,7 @@ for (const [i, slug] of guides.entries()) {
 const modelNames = new Set(["setModel", "getModel", "resetModel", "isModelReady", "isModelValid",
   "SetPlayerModel", "GetPlayerModel", "ResetPlayerModel", "IsPlayerModelReady", "IsPlayerModelValid"]);
 const selected = (entry) => (entry.namespace === "Open77.players" || entry.namespace === "_G") && modelNames.has(entry.name);
-const incoming = JSON.parse(await read(`${source}/wiki/data/api.json`)).filter(selected);
+const incoming = reviewApiEntries(JSON.parse(await read(`${source}/wiki/data/api.json`)).filter(selected));
 assert.equal(incoming.length, 14, "Expected seven model functions and seven aliases");
 const apiTarget = "content/api/api.json";
 const currentApi = JSON.parse(await read(apiTarget));

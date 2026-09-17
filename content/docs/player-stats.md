@@ -1,9 +1,6 @@
 # Player health and stamina
 
-Open77 owns player health and stamina on the dedicated server. A gamemode does
-not need to create a separate health ledger, regeneration timer, maximum-stat
-store, or synchronization event. The built-in service keeps one versioned
-state per connected player and projects it to every client.
+The server owns player health, stamina, regeneration and maximum values. One versioned state per connected player is replicated to clients; resources do not need a separate synchronization service.
 
 The two runtimes deliberately expose the same read API. Mutations exist only
 on the server.

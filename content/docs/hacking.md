@@ -1,14 +1,6 @@
 # Hacking and counterplay
 
-Hacking lets players attack each other the way netrunners attack V: the attacker aims
-at a visible player within range and holds a key, an upload bar fills on both screens,
-and if nothing interrupts it the hack lands. Six hack kinds share that upload: Short
-Circuit (an electrical hit), Overheat (a burn over time), Cyberware Malfunction (the
-victim's Open77 abilities stop answering), Cripple Movement (a slow), Reboot Optics (a
-blind) and Weapon Glitch (a jammed weapon). Two implants answer them: Self-ICE blocks
-one upload, and active purge lets a player clear a status from themselves or an ally.
-You define the grades and install them as cyberware; the server owns timing, line of
-sight, damage and every status.
+Build multiplayer hacking abilities with server-owned definitions, grants and target validation. The following sections describe the supported implants, upload rules and Lua interfaces.
 
 Default keys: hold **F8** to upload on the aimed player, **INSERT** to purge yourself,
 **DELETE** to purge the aimed ally, **END** to cancel your own upload. Players rebind them

@@ -1,14 +1,8 @@
 # Network callbacks: asking the other side a question
 
-A net event is a shout with no answer. A **callback** is a question: one side
-asks, the other side answers, and the asker gets a `Open77.Promise` that
-resolves with the answer or rejects with a reason. Both directions exist —
-client asking the server (the common one) and server asking a client.
+Network callbacks provide asynchronous request/response communication between client and server. A call returns an `Open77.Promise` that resolves with the response or rejects with an error.
 
-This is what FiveM resources reach for as `lib.callback.await`,
-`QBCore.Functions.TriggerCallback` or `ESX.TriggerServerCallback`. Every
-inventory, shop, garage and job script needs it, because the client must be
-able to ask "what do I actually have?" and wait for the answer.
+Callbacks serve the same request/response role as FiveM framework callbacks. Validate requests on the receiving side; callbacks do not grant additional authority.
 
 Callbacks ride the existing net-event transport, so they need the same
 `network.events` manifest permission and nothing more. They are **not** a new

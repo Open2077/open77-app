@@ -1,10 +1,6 @@
 # Ground Slam / Quake
 
-Ground Slam lets a player with a blunt melee weapon drawn press a key and slam the
-ground, standing or mid-air, hitting everyone in a radius. You define the slam, grant
-it to a player for the session, and the server validates every impact before any
-damage or knockback is applied. It is a session ability: granting or revoking it never
-touches the player's installed Gorilla Arms or double-jump legs.
+Grant Ground Slam to players using blunt melee weapons. Players can activate it on the ground or in the air; the server validates each impact and controls damage, knockback and ability costs.
 
 ## Minimal example
 

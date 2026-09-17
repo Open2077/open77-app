@@ -1,8 +1,6 @@
 # Synchronised time and weather
 
-`open77_weather` is the single authority for a session's time and weather. Every player sees the
-same clock and the same sky, and neither drifts: the server holds the canonical state and clients
-project it locally.
+`open77_weather` synchronizes the session's clock and weather. The server owns the canonical state; clients apply it locally.
 
 At server boot the canonical state is `12:00:00`, the weather is `sunny`, and the clock advances at
 `timeScale`. A player joining later receives the current time, never the boot time, and joins a
@@ -154,10 +152,7 @@ clock into C# would therefore buy no platform guarantee it does not already have
 host-held clock nobody applies is a clock nobody sees. It would only duplicate an implementation
 that already survives a reload, answers late joiners and is covered by tests.
 
-So the split is: the **host owns the surface** — always installed, capability-gated, `nil, reason`,
-and honest about the authority being absent — and the **resource owns the implementation**, which
-the facade reaches through a synchronous export call into its VM. The `environment.*` exports at
-the bottom of `server/main.lua` are that seam.
+The host provides the capability-gated API and returns `nil, reason` when authority is unavailable. The resource implements the operations through synchronous `environment.*` exports in `server/main.lua`.
 
 ### Per-bucket overrides
 

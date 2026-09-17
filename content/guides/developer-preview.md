@@ -1,8 +1,6 @@
 # Developer Preview is live
 
-The OPEN//77 **Developer Preview is active**. Server owners and resource developers
-can start building and testing multiplayer experiences in Night City with the
-published launcher, dedicated server and Lua APIs.
+The OPEN//77 Developer Preview provides the launcher, dedicated server and Lua APIs for building multiplayer experiences in Cyberpunk 2077.
 
 This is an early-access developer release, not a stable release or unrestricted
 public access. Expect bugs, crashes, incomplete features and breaking API changes.
@@ -75,18 +73,11 @@ linked client/server API entries. For a working gamemode example, browse the
 
 ## Preview expectations
 
-- APIs, networking and resource formats can change. Keep backups of configuration,
-  persistence data and custom resources before updating.
-- Read the limitations on each system's guide. Availability in the API reference
-  is not a guarantee that every animation, body type or multiplayer scenario has
-  passed in-game validation.
-- RP animation playback after repeated disconnect/reconnect cycles has a known
-  proxy/camera lifecycle issue. If it occurs, close and relaunch the game, and report
-  the reproduction steps. Female and remote presentation need broader validation.
-- There is no supported player-count or all-hardware performance guarantee yet.
-  Test your own workload before depending on a server capacity target.
-- Launcher and client/server build numbers can differ: they have separate release
-  channels. Use the versions offered by the official downloads, not a guessed match.
+- APIs, network protocols and resource formats may change. Back up configuration, persistent data and custom resources before updating.
+- Check each system's limitations, including supported models, bodies and animations.
+- Repeated reconnects can leave stale RP animation proxies or a camera hold. Restart the game and report reproduction steps if this occurs.
+- Capacity depends on hardware, resources and workload; no universal player-count target is guaranteed.
+- Launcher and client/server builds have separate version numbers. Use compatible releases from the official downloads.
 
 ## Report a problem
 

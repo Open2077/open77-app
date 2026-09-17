@@ -1,14 +1,8 @@
 # Cross-resource server exports
 
-Server resources can publish and call exports **two ways** — synchronously with
-`exports.resource:name(...)`, or asynchronously with `Open77.exports.call(...)` —
-using the same Lua surface as client resources. Each resource still has its own
-Lua VM: globals, functions, handles and mutable tables are not shared.
+Publish and call cross-resource server functions synchronously with `exports.resource:name(...)` or asynchronously with `Open77.exports.call(...)`. Each resource retains its own Lua VM; calls do not share globals, functions, handles or mutable tables.
 
-This requires a server build containing the server-export runtime. Updating a
-Lua package or the website alone does not add the feature to an older server.
-No client update is required. The client and server export registries are
-separate: a server export is not a client RPC or a network event.
+Client and server export registries are separate. A server export is neither a client RPC nor a network event.
 
 ## Publish a service
 

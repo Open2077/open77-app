@@ -1,5 +1,5 @@
 {
-  "$comment": "Documentation navigation. Hand-maintained: the wiki has no ordering of its own, so this file is the single source of truth for sidebar structure, short nav labels and search-engine descriptions. `kind: \"guide\"` resolves to content/docs/<slug>.md, which the wiki sync owns; adding `\"source\": \"authored\"` reads content/guides/<slug>.md instead, which is authored in this repository and never touched by the sync. `kind: \"page\"` is a route implemented in src/app.",
+  "$comment": "Documentation navigation. Hand-maintained: the wiki has no ordering of its own, so this file is the single source of truth for sidebar structure, short nav labels and search-engine descriptions. `kind: \"guide\"` resolves to content/docs/<slug>.md, whose reviewed prose is maintained on the site; adding `\"source\": \"authored\"` reads content/guides/<slug>.md instead, which is authored in this repository and never touched by the sync. `kind: \"page\"` is a route implemented in src/app.",
   "sections": [
     {
       "id": "introduction",
@@ -576,7 +576,7 @@
           "slug": "webui-input",
           "kind": "guide",
           "nav": "WebUI keyboard input",
-          "description": "Consume Escape and navigation keys in a custom WebUI without opening native pause, while keeping movement and mouse look active. Client availability, supported keys and focus cleanup."
+          "description": "Capture Escape and navigation keys in a WebUI while keeping movement and mouse look active. Supported keys, permissions, errors and focus cleanup."
         },
         {
           "slug": "keybindings",

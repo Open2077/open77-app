@@ -1,20 +1,11 @@
 # Your server in the launcher
 
-Players can open the launcher, pick a world from the directory or their History,
-and press connect. Direct Connect also accepts a hostname/IP and port, including
-local development endpoints. Everything between "my server is running"
-and "a stranger is standing in Night City on it" happens through the launcher,
-and almost none of it is something you configure — it is a contract you either
-satisfy or you do not appear.
+Make your server available through the launcher directory, History or Direct Connect. Direct Connect accepts hostnames and IP addresses, including local development endpoints.
 
 This page is the operator's half of that contract. The player's half is
 [The OPEN//77 launcher](launcher.md).
 
-> **Developer Preview is active.** Server packages and the live directory are
-> available; joining requires approved preview accounts. Local/private endpoints
-> are excluded from the launcher's normal list but remain usable through History
-> and Direct Connect. This is not a claim of large-scale validation. Read the
-> [preview guide](/docs/developer-preview) for scope and known limitations.
+Joining requires an approved preview account. Local/private endpoints are excluded from the public directory but remain available through History and Direct Connect. See [Developer Preview](/docs/developer-preview) for access requirements.
 
 ## How a world reaches a player
 
@@ -54,30 +45,9 @@ The catalogue entry the master publishes for you carries exactly these fields:
 | `iconUrl`, `bannerUrl` | Content-addressed image URLs the master serves; both may be null |
 | `startedAtUtc`, `lastHeartbeatAtUtc` | Uptime, and proof you are still there |
 
-Four of these are worth dwelling on.
+Use the stable public `id` in server links; `connectEndpoint` can change when the server moves. Directory metadata provides the server name, description, branding, locale, tags, player counts and compatibility fields.
 
-**`id` is the public identifier, `connectEndpoint` is the private one.** The id
-is what appears in links, what the launcher resolves against, and what survives
-you moving the box. The endpoint is an implementation detail that changes when
-your hosting does. Never publish the endpoint as the way to join you — publish
-the id.
-
-**The launcher uses fewer fields than the website does.** It reads the id, name,
-description, locale, tags, player counts, endpoint, server version and expected
-game build. Your **banner is not among them** — the wide image is a website
-thing, and a server row in the launcher is drawn without it. Your icon and your
-`website` / `discord` links are likewise not surfaced on the launcher's rows
-today.
-
-**"Online" is not a measurement.** The launcher marks every row it received as
-online, because being in the directory *is* being online — liveness is decided
-by your heartbeat reaching the master, not by anything the launcher probes.
-Stop heartbeating and you leave the list; there is no half-state where you are
-listed and greyed out.
-
-**There is no latency field.** The master carries no ping, so anything showing a
-millisecond count is measuring it locally or making it up. The website renders a
-neutral dash rather than a fabricated number.
+Listing status depends on heartbeats received by the master, not a ping probe from the launcher. The master does not publish client-to-server latency.
 
 **The launcher does not enforce your `expectedGameBuild` or `protocol`.** It
 carries them and does not check a joining player against them. Version matching
@@ -183,9 +153,7 @@ keeping wrong builds off your server; the ticket is.
 
 ## Required mods and your server
 
-This is the part where honesty matters more than ambition.
-
-**What exists:** the launcher has a full mod stack — a signed index of packages,
+The launcher manages a signed index of packages,
 a mandatory floor a player cannot untick, optional packages, declared
 dependencies, path-conflict refusal, declared overrides, and a redscript
 preflight that refuses to launch a set that does not compile.
@@ -197,7 +165,7 @@ every player must load, **hosts those bytes itself**, and the launcher resolves 
 on the Connect click — before the game process exists, so a normal join needs no restart.
 OPEN//77 never holds a third-party mod: the master vouches for a SHA-256, not for a file.
 
-Three things bound what you can ask for, and they are not negotiable from your side:
+Required mods follow these rules:
 
 - **Verified / unverified / blocked.** An unreviewed package is not blocked — the player is
   told plainly that your world supplied it and OPEN//77 has not checked it, and they decide.

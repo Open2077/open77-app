@@ -3,7 +3,6 @@ import { blogMarkdownHref, getBlogPosts } from "@/lib/devblog";
 import {
   docHref,
   docMarkdownHref,
-  getDocsManifest,
   getDocsNav,
   getDocsPages,
 } from "@/lib/docs";
@@ -25,11 +24,10 @@ import { absoluteUrl, site } from "@/lib/site";
 export const dynamic = "force-static";
 
 export async function GET() {
-  const [nav, pages, api, manifest, posts] = await Promise.all([
+  const [nav, pages, api, posts] = await Promise.all([
     getDocsNav(),
     getDocsPages(),
     getApiIndex(),
-    getDocsManifest(),
     getBlogPosts(),
   ]);
 
@@ -46,7 +44,6 @@ export async function GET() {
     "- /servers reads the live master directory. Any explicitly labelled demo view is illustrative only.",
     "- Account registration or downloading the launcher does not grant approval to join worlds.",
     "- Unaffiliated with CD PROJEKT RED. Playing requires your own legal copy of Cyberpunk 2077.",
-    `- Documentation synced from the platform wiki on ${manifest.syncedAt.slice(0, 10)}.`,
     "",
     "## Site",
     "",

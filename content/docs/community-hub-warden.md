@@ -1,10 +1,6 @@
 # Manage Workshop resources with Warden
 
-The OPEN//77 Workshop is the free library of community resources. Warden, your
-server's admin console, connects it to your server: it fetches a creation, shows
-you a plan, and installs, updates, uninstalls or rolls back only after you accept
-that plan. Read every plan before accepting it, especially the permissions, the
-dependencies and the files you have customized.
+Use Warden to install, update, remove or roll back resources from the OPEN//77 Workshop. Warden displays a plan before applying changes, including dependencies, permissions and affected files.
 
 For resource manifests and the client/server split, see
 [Server resources](server-resources.md). For assets prepared before the game

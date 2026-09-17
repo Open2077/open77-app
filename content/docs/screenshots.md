@@ -1,8 +1,6 @@
 # Screenshots and mugshots
 
-In-process screenshots of the game's own rendered frame -- FiveM's `screenshot-basic`
-(`requestScreenshot`, `requestScreenshotUpload`, `requestClientScreenshot`) and the
-`RegisterPedheadshot` mugshot, on Open77's own terms. Native-parity rows G7 and D9.
+Capture the rendered game frame, upload an image or create a player mugshot. Client and server entry points have separate permissions:
 
 | Function | Runtime | Permission | What it does |
 |---|---|---|---|
@@ -53,9 +51,7 @@ conversion family (`pixel`) and whether captures are possible (`supported`):
 | `R16G16B16A16_FLOAT` | `rgba16f` | linear scRGB clamped to 0..1 and sRGB-encoded: midtones right, highlights clipped |
 | anything else | `unsupported` | every capture refuses with `format_unsupported` |
 
-Which of these Cyberpunk 2.31 presents on a given machine depends on the HDR setting; the
-client logs `Screenshot surface: WxH FORMAT (pixel)` once per format at the first Present,
-and the parity probe prints the measured one in its `[PARITY] client G7 CAPTURE` line.
+The active format depends on the game's HDR setting. The client logs `Screenshot surface: WxH FORMAT (pixel)` once per format at the first Present.
 
 ### Ceilings and the in-flight rule
 
@@ -298,9 +294,7 @@ every result, expected in the hundreds of microseconds at most. The encode runs 
 thread; a full-frame JPEG at 85 takes tens of milliseconds, a full-frame PNG a few hundred.
 Between captures nothing runs but one mutex acquisition per Present.
 
-The parity probe's `[PARITY] client G7 CAPTURE` line prints the measured `copyUs` and
-`encodeUs` on the proving machine, with the surface format; see
-`docs/research/webui-surfaces.md` for the numbers once measured.
+Use `copyMicros` and `encodeMicros` from capture results to profile cost on the target hardware. Resolution, output format and image quality affect capture latency.
 
 ---
 

@@ -1,12 +1,6 @@
 # Drawing in the world
 
-Putting something at a point in Night City — a ring on the ground, a
-"hold E" card floating over a door, a label above a player, a circle a
-player has to walk into — is one of the first things a gamemode needs and
-one of the easiest to get subtly wrong. OPEN//77 offers several mechanisms
-for it, and they are not interchangeable: they differ in who draws the
-pixels, how often the screen position is recomputed, which permission is
-required, and what happens when your resource reloads.
+Display world markers, labels, interaction prompts and overlays from client resources. Choose a mechanism by its rendering behavior, update requirements, permissions and lifecycle.
 
 This page covers all of them, with the real export names and option tables.
 Everything on it is client-side. The server never draws; it decides, and
@@ -802,7 +796,7 @@ let any resource act as any other.
 | `Open77.anchors` | 32 per resource, 128 across the client |
 | `open77_worldui` POIs | 128 across every resource combined (`poi_limit`) |
 | `open77_zones` zones | 256 across every resource combined (`zone_limit`) |
-| WebUI surfaces | 24 per resource in the updated client; older clients allow 8. See [runtime availability and quotas](/docs/resource-runtime#sandbox-and-quotas). |
+| WebUI surfaces | 24 per resource in the updated client; older clients allow 8. See [runtime quotas](/docs/resource-runtime#sandbox-and-quotas). |
 
 A resource that can define more world points than its anchor budget has to
 decide which ones deserve a slot right now. `open77_interactions` is the

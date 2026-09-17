@@ -1,8 +1,6 @@
 # Players around you (client)
 
-Client resources can ask who else is here and where they are. `Open77.players` answers with ids,
-bodies and distances, and it needs **no permission**: everything it reports is the identity and
-placement of bodies the client is already drawing on screen.
+`Open77.players` reads the identities, positions and distances of players rendered by the client. These client-side queries require no permission.
 
 ```lua
 resource "proximity_demo"
@@ -11,7 +9,7 @@ client_script "client/main.lua"
 -- no permissions block: the enumeration below is ungated
 ```
 
-## The one thing to read before using it
+## Player IDs and entity handles
 
 **This is a streaming-scoped view, not the server roster.** It holds the players *this client* has
 been told about — the same roster that draws the nameplates — and nothing more. A player the server

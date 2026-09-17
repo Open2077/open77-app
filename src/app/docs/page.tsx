@@ -3,7 +3,7 @@ import { DocsShell } from "@/components/docs/docs-shell";
 import { DocToc } from "@/components/docs/doc-toc";
 import { JsonLd } from "@/components/json-ld";
 import { getApiIndex } from "@/lib/api-reference";
-import { docHref, getDocsNav, getDocsManifest } from "@/lib/docs";
+import { docHref, getDocsNav } from "@/lib/docs";
 import { breadcrumbNode, collectionPageNode, itemListNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
@@ -11,7 +11,7 @@ const DESCRIPTION = "Build your world in Night City. Guides for players, server 
 export const metadata = pageMetadata({ title: "Documentation", description: DESCRIPTION, path: "/docs", markdownPath: "/docs.md" });
 
 export default async function DocsHomePage() {
-  const [nav, api, manifest] = await Promise.all([getDocsNav(), getApiIndex(), getDocsManifest()]);
+  const [nav, api] = await Promise.all([getDocsNav(), getApiIndex()]);
   const sections = [
     { id: "start-here", text: "Start here", depth: 2 },
     { id: "server-owners", text: "Server owners", depth: 2 },
@@ -62,7 +62,6 @@ export default async function DocsHomePage() {
               ))}
             </div>
           </section>
-          <p className="docs-updated">Based on the Open77 wiki · Updated <time dateTime={manifest.syncedAt}>{new Date(manifest.syncedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</time></p>
         </div>
       </DocsShell>
       <JsonLd data={jsonLdGraph(

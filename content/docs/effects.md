@@ -1,6 +1,6 @@
 # Visual and audio effects
 
-Client Lua resources can trigger REDengine world VFX, entity-authored VFX, and spatialised audio with the `world.effects` permission. Every returned handle is owned by the calling resource. Open77 stops and releases it on `stop`, resource reload, world exit, or plugin unload.
+Play world VFX, entity effects and spatial audio from client Lua with `world.effects`. Handles belong to the calling resource and are released on stop, reload, world exit or plugin unload.
 
 ```lua
 permissions { "world.effects" }
@@ -331,7 +331,7 @@ permissions { "world.effects" }
 
 The same permission string, declared in a `server_script` resource's manifest, grants `Open77.effects`. A server resource cannot reach `Open77.vfx` or `Open77.sfx` — those exist only in the client runtime — and a client resource cannot reach `Open77.effects`.
 
-**Status.** The bounds, defaults and ceilings below are read from the authoritative registry (`server/src/Open77.Server.Core/Effects/EffectAuthorityService.cs`), so they are facts about the code as it stands. The **behaviour** is not yet proven in a running session: the acceptance gate is a fire lit from server Lua burning on two clients, surviving one of them streaming away and back, and stopping on both when removed. Until that gate is cleared, read this section as the contract rather than as a measurement. The same caveat and its reasoning are set out in [Status of this page](props.md#status-of-this-page) on the props guide.
+Server effects use the authoritative registry's bounds, defaults and quotas below. An accepted call confirms server state, not rendered output. Effect compatibility depends on the target and its installed assets.
 
 ### One-shot: `Open77.effects.play`
 
@@ -444,10 +444,7 @@ there is only one.
 
 #### Two limits worth knowing before you design around them
 
-**`force` moves nobody who survives.** The only server-to-client impulse on a
-player body is the one carried by the death transition, so `force` is the ragdoll
-direction of a *kill* and does nothing at all to somebody who walks away. That is
-a measured limitation of the platform, not a choice made here.
+`force` controls the ragdoll direction when an explosion kills a player. It does not apply knockback to survivors.
 
 **A stale body is not a target.** A player whose last accepted snapshot fails the
 freshness rule is skipped rather than damaged at a position the server is not
@@ -723,7 +720,7 @@ Both are fire-and-forget and return acceptance, not a visual receipt or durable 
 
 For `playOn` and `sound`, the backend captures target bucket/body lifetime at acceptance and drops publication if that binding changes before fanout. When a current cyberware body binding exists, the wire target carries `lifetimeMode="cyberware"` and its incarnation. The receiver resolves immediately, then checks the public incarnation export for that already-present handle, with at most 256 pending checks and a 100 ms deadline. An independent frame task polls these checks, separate from the 125 ms attachment loop and any attachment export waits. It never awaits an unresolved export, waits for a body to stream, or retries a dropped one-shot. A mismatched binding, replaced handle, unavailable export or deadline expires without native playback. Sound action IDs are consumed before this check.
 
-Generic targets and players without a current body binding use explicit `lifetimeMode="compatibility"`: normal playback and death feedback remain available, but delayed first delivery cannot be validated against a receiver body incarnation. Server token checks still apply before fanout. Cached cyberware binding plus handle checks are not proof of the engine's exact body generation, particularly for a replaced local body whose handle remains `1`. This protection is implemented/tested offline; live deployment and full lifecycle validation are separate acceptance gates. It adds no new public options and does not change the gameplay meaning of the incarnation export.
+Targets without a current body binding use `lifetimeMode="compatibility"`. Server token checks still apply, but a delayed delivery cannot be checked against the receiver's exact body incarnation. Cached bindings and handles do not uniquely identify a replaced native body, especially the local handle `1`.
 
 The client helper `Open77.vfx.resolveTarget({kind="player", id="2"})` returns the current receiver-local handle as a decimal string, or `nil, reason`. It requires `world.effects`, distinguishes self from remote players, and does not fall through between registries. Resolve immediately before use; do not persist the returned handle.
 
@@ -906,7 +903,7 @@ Renewing a lease currently keeps the graph until its original native deadline; i
 
 The wire adds epoch, sequence, server time and chunk metadata to the existing projection events. Snapshot assembly preserves newer deltas; tombstones reject late resurrection. Effect IDs stay strings in Lua. Client expiry uses the minimum observed local-minus-server timestamp offset, which includes network latency and is not a precise synchronized clock.
 
-These paths are implemented with regression coverage; the new FPP weapon anchor and complete durable attachment lifecycle still require live acceptance. Bound characters additionally compare the cyberware projection incarnation via a soft export. Generic players work without an implant or cyberware binding: their token represents server life/readiness, not a direct native incarnation readback. Native weak-reference checks stop attachments on body/weapon replacement. NPC/vehicle/prop IDs are unique within the server epoch and local stream proxies are resolved afresh.
+Bound characters compare the cyberware projection incarnation through an optional export. Other players use server life/readiness tokens, not native incarnation readback. Native weak-reference checks stop attachments when the body or weapon changes. NPC, vehicle and prop IDs are unique within a server epoch; stream proxies are resolved again after stream-in. FPP weapon anchors and durable attachment recovery remain experimental.
 
 ## Exhaustive references
 

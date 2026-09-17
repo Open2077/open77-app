@@ -1,10 +1,6 @@
 # Gorilla Arms
 
-Gorilla Arms give a player the native mechanical arms: they draw their fists and use
-the game's normal and charged punches, and the server prices every hit, applies
-knockback and keeps the implant on the character between sessions. You define the
-grades and decide who gets them; the [Cyberware framework](cyberware.md) supplies the
-transactions, permissions and persistence this page relies on.
+Install native Gorilla Arms through the [Cyberware framework](cyberware.md). The server stores the implant, validates normal and charged punches, and controls damage and knockback.
 
 ## Minimal example
 

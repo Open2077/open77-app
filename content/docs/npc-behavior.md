@@ -1,8 +1,6 @@
 # NPC AI, combat and voice control
 
-Use `Open77.npcs` on the **server** to control the behavior of individual spawned NPCs,
-including hostile `Character.*` records. These options do not change an entire gang,
-other NPCs sharing the record, player characters, or the game's global sound settings.
+Control individual spawned NPCs from server Lua with `Open77.npcs`. Behavior settings apply to the selected NPC, not its gang, other NPCs using the same record, player characters or global audio.
 
 Available in client and server **2.31.13+op77.55**, using protocol **1.24**. Both sides must
 be updated to apply the behavior policy. Find spawn IDs in the [NPC record catalogue](npc-catalogue.md).

@@ -1,17 +1,8 @@
 # Player interactions
 
-`Open77.playerInteractions` coordinates two-player actions. The server reserves
-both participants, obtains consent, waits for presentation readiness, schedules a
-shared start, and releases both reservations on completion or cancellation.
-The resource owns the gameplay transaction: the coordinator never transfers an
-inventory item, heals a player, changes money, or grants an arbitrary client
-permission to move another player.
+`Open77.playerInteractions` coordinates two-player actions with participant reservations, consent, presentation readiness, a shared start and cleanup. Gameplay effects such as item transfer, healing or payment remain the resource's responsibility.
 
-**Validation:** giving, examination, moving carry and escort have been exercised
-on two local clients, including male/female paired bodies and release back to
-normal movement. See [the evidence log](../docs/research/synchronized-attachments-and-player-interactions.md)
-for the exact checks and remaining coverage limits.
-Do not treat an accepted request as proof that its native animation succeeded.
+An accepted interaction confirms server admission, not successful native animation playback. Handle presentation failure and cancellation events.
 
 ## Setup
 

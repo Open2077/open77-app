@@ -1,8 +1,6 @@
 # Vectors and quaternions
 
-`vector2`, `vector3`, `vector4`, `vec` and `quat` are global constructors in **both** Lua
-runtimes -- the client VM and the dedicated server VM. They give you arithmetic, `#` for
-magnitude, swizzles, distance helpers and a quaternion, so the FiveM idiom
+`vector2`, `vector3`, `vector4`, `vec` and `quat` are global constructors in both Lua runtimes. They provide arithmetic, magnitude (`#`), swizzles, distance helpers and quaternion operations:
 
 ```lua
 if #(playerPos - jobPos) < 3.0 then
@@ -10,11 +8,9 @@ if #(playerPos - jobPos) < 3.0 then
 end
 ```
 
-works here exactly as it reads.
+The expression works in both runtimes.
 
-## Plain tables still work. Everywhere. Forever.
-
-This is the guarantee to read first, because it is what the design is built around.
+## Plain-table compatibility
 
 **A vector *is* a plain Lua table carrying `x`, `y`, `z` (and `w`) as real fields.** The only
 thing a constructor adds is a shared metatable. Nothing about the table changed:
@@ -93,7 +89,7 @@ v.zyx     --> vector3(3.0, 2.0, 1.0)
 vector3(1, 2, 3).xw   --> nil, there is no w
 ```
 
-### Read-only, with one honest exception
+### Read-only fields and cached length
 
 A vector is a **value**. Assigning any key raises:
 

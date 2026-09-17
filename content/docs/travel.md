@@ -1,6 +1,6 @@
 # Travel
 
-Moving the local player's body, and knowing when it has really arrived.
+Move players with the server-owned travel APIs. Use teleportation and placement operations that coordinate client streaming instead of writing transforms directly.
 
 Everything on `Open77.travel` is client-side and requires the `player.travel` permission.
 That permission belongs only in operator-audited resources: the native lab commands these
@@ -29,10 +29,7 @@ about streaming**, and that gap is not academic:
   to the last place the engine considers safe — the save's spawn of record, which can be
   kilometres away — and nothing tells the caller.
 
-This was measured twice in production, in two different shapes, and both records live in
-`client/src/api/PlayerTravelSettle.hpp`. In the second one the same destination was
-re-requested five times and every attempt landed at the same wrong point, three kilometres
-away, identical to the centimetre.
+Use the travel APIs' streaming and settle checks for distant destinations. Repeating a raw transform write does not make an unloaded destination safe.
 
 `Open77.travel.teleportAndSettle` is the same teleport with the answer attached.
 

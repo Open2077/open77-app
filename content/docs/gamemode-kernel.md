@@ -1,17 +1,8 @@
 # The gamemode kernel and shared server services
 
-Early planning for the template system
-([`docs/gamemode-pursuit-plan.md`](../docs/gamemode-pursuit-plan.md) section
-4.2b) called for a third shared resource, `open77_gamemode`: a kernel
-owning "roster and disconnect handling, the lobby bucket, the queue, bucket
-allocation and release, the countdown, the state machine with guarded
-transitions, the scoreboard, and the return transaction" -- callable the
-same way `open77_zones` and `open77_worldui` are.
+Organize gamemode rules in server resources and expose reusable services through [server exports](server-exports.md). Open77 does not ship a universal `open77_gamemode` resource.
 
-**No universal `open77_gamemode` resource is shipped.** The original implementation
-used generated code because server exports were unavailable. That runtime
-limitation has now been removed: shared server services are supported, while
-the existing gamemodes keep their current single-resource state machines.
+Keep tightly coupled match state in one resource. Extract reusable services when they need an independent lifecycle and a clear request interface.
 
 ## Shared server resources are supported
 
@@ -20,11 +11,7 @@ The server runtime now provides `exports(name, fn)`,
 generation identity. See [server exports](server-exports.md) for a runnable
 two-resource example and the precise lifecycle contract.
 
-A service can own scores, lobbies or a bucket allocator and accept explicit
-requests from gamemodes. Each still owns its Lua state, permissions and handles.
-Values cross by copy, and calls are deferred: this is not a shared global table
-or a synchronous state-machine function call. Validate the immediate caller and
-arguments; keep operations atomic before yielding where races would matter.
+Shared services can own scores, lobbies or bucket allocation. Values cross resource boundaries by copy. Synchronous exports must not yield; asynchronous calls are deferred and awaited. Validate callers and arguments, and keep state changes atomic before yielding.
 
 `TriggerEvent` remains local to a VM. The host still fans lifecycle/player events
 into resources. Export registration does not create a network entry point.
@@ -33,12 +20,7 @@ packages; adding server exports does not move their presentation logic to the se
 
 ## The scaffolder remains useful
 
-For local gameplay patterns, `scripts/new-resource.ps1 -Kind gamemode` emits
-a correct-by-construction starting point directly into the new resource --
-a guarded state machine, roster tracking with the reload-safe adoption
-pattern below, and a `<name>.status` command. Both `resources/gamemodes/pursuit` and
-`resources/gamemodes/race` began this way and then diverged, because that is what a
-generated starting point is for.
+`scripts/new-resource.ps1 -Kind gamemode` creates a resource with a guarded state machine, reload-safe roster handling and a `<name>.status` command.
 
 Use generated code for tightly coupled state-machine rules, and server exports
 for reusable services with a clear ownership boundary. See
@@ -47,11 +29,7 @@ or new dependency is added to existing gamemodes by the runtime change.
 
 ## The contract every gamemode's server should implement
 
-Not an API to call -- a set of conventions to copy, proven across two
-gamemodes now. Each one is documented in full, with the failure it was
-measured against, in
-[writing a gamemode](../docs/writing-a-gamemode.md) section 2; this is the
-short version, with the two working examples.
+Apply these lifecycle and authority conventions to each gamemode. See [Writing a gamemode](writing-a-gamemode.md) for examples.
 
 | Convention | Why | Where it lives |
 |---|---|---|

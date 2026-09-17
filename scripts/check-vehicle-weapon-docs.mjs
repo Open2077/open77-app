@@ -27,7 +27,7 @@ for (const slug of ["vehicle-weapons", "armed-vehicles"]) {
   assert.ok(world.pages.some((page) => page.slug === slug && page.kind === "guide"));
 }
 const guide = await read("content/docs/vehicle-weapons.md");
-for (const heading of ["Release and compatibility", "How multiplayer weapon sync works", "What has been validated",
+for (const heading of ["Release and compatibility", "How multiplayer weapon sync works", "Model-specific armament",
   "Current damage policy", "Function reference", "Ammunition availability", "Errors and streaming", "Troubleshooting"]) {
   assert.ok(guide.includes(`## ${heading}`), heading);
 }
@@ -35,7 +35,7 @@ for (const name of names) assert.ok(guide.includes(`Open77.vehicles.${name}`), n
 for (const needle of ["2.31.13+op77.53", "1.24", "vehicles.read", "not_replicated", "weapon.index", "100 ms", "2147483647"]) {
   assert.ok(guide.includes(needle), needle);
 }
-assert.match(guide, /not yet live-validated/);
+assert.match(guide, /NPC damage remains experimental/);
 assert.match(guide, /no public Lua mounted-weapon fire\/select\/ammo setter/);
 assert.match(await read("content/docs/vehicles.md"), /\[armed vehicles and weapon Lua API guide\]\(vehicle-weapons.md\)/);
 
@@ -55,7 +55,7 @@ for (const [record, ids] of Object.entries(catalogue.vehicles)) {
 const recordRows = [...inventory.matchAll(/^\| `(Vehicle\.[^`]+)` \|/gm)].map((match) => match[1]);
 assert.deepEqual([...new Set(recordRows)].sort(), Object.keys(catalogue.vehicles).sort(), "Complete spawn inventory must exactly match extracted data");
 const testedRows = [...inventory.matchAll(/^\|[^\n]*`(Vehicle\.[^`]+)`[^\n]*\|/gm)]
-  .filter((match) => /Live firing checked/.test(match[0])).map((match) => match[1]);
+  .filter((match) => /Mounted armament/.test(match[0])).map((match) => match[1]);
 assert.deepEqual([...new Set(testedRows)].sort(), [
   "Vehicle.v_militech_basilisk", "Vehicle.v_sport1_herrera_outlaw_heist_player",
   "Vehicle.v_sport2_mizutani_shion_nomad_player_missiles",
@@ -65,7 +65,7 @@ for (const mount of mounts.values()) {
   assert.ok(inventory.includes(`\`${mount.slot}\``), mount.slot);
   for (const field of ["mountId", "weaponId", "slotId"]) assert.ok(Number.isSafeInteger(mount[field]));
 }
-assert.match(inventory, /172 independently verified/);
+assert.match(inventory, /not a count of supported armed vehicles/);
 assert.match(inventory, /\/data\/vehicle-weapons-2\.31\.json/);
 const manifest = JSON.parse(await read("content/docs/_manifest.json"));
 const source = manifest.files.find((entry) => entry.target === "public/data/vehicle-weapons-2.31.json");
@@ -102,4 +102,4 @@ if (origin) {
   assert.equal(download.status, 200);
   assert.equal(await download.text(), raw, "Public JSON must be byte-identical to the source snapshot");
 }
-console.log("Vehicle weapons documentation OK: 12 client APIs, 172 exact model records, 15 mounts and three live-tested variants.");
+console.log("Vehicle weapons documentation OK: 12 client APIs, 172 exact model records, 15 mounts and three model-specific armament examples.");

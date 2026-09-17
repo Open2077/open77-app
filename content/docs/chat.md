@@ -1,8 +1,6 @@
 # Chat, slash commands, and completion
 
-The official `open77_chat` package is documented in
-[`docs/chat.md`](../docs/chat.md). It provides English-only UI text, authenticated slash-command
-dispatch, automatic suggestion discovery, history, and keyboard completion.
+`open77_chat` provides chat, authenticated slash commands, command suggestions, history and keyboard completion. Its interface text is in English.
 
 Quick usage:
 

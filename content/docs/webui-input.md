@@ -1,14 +1,8 @@
 # WebUI selective keyboard capture
 
-Use `page:setConsumedKeys(keys)` when a keyboard-controlled WebUI must consume
-navigation keys while gameplay movement and mouse look remain enabled.
-This is client-local, per surface, and requires a client build containing this API.
+Use `page:setConsumedKeys(keys)` to reserve selected keyboard keys for a WebUI while keeping movement and mouse look active. Key consumption is client-local, per surface, and requires `webui.keep_input`.
 
-**Client availability:** implemented and tested locally on 17 September 2026,
-but not yet published on the CDN. Updating the website does not update a player's
-client. Older builds do not expose `setConsumedKeys`; check the method exists
-before offering this mode, or require the updated client. Do not silently fall
-back to keep-input without consumption, which would reopen the native pause.
+Check that `page.setConsumedKeys` exists before enabling this mode on clients with different API capabilities. If unavailable, disable the mode or require a compatible client. Keep-input alone does not prevent the native pause menu from opening.
 
 ```lua
 -- Manifest: permissions { "webui.keep_input" }

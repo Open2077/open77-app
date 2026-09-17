@@ -1,44 +1,8 @@
 # Zones
 
-A zone is a shape in the world and one question about it: *is this point
-inside?* Almost everything a server does is a zone underneath — a shop
-counter, a job site, a gang's turf, a safe zone, a race checkpoint, a
-delivery drop.
+Define world-space areas for shops, safe zones, checkpoints and other gameplay rules. Zone queries determine whether a position is inside a shape.
 
-Open77 answers that question in **one place**. `Open77.zones.contains` is a
-single Lua file, `scripting/lua/open77_zones.lua`, embedded by the client
-through a CMake-generated header and by the dedicated server as an assembly
-resource. Neither side owns a second copy.
-
-## Why one implementation, and not two
-
-This is the design decision the rest of the page hangs off, so it is worth
-being blunt about it.
-
-A zone gets asked the same question on two machines for two different
-purposes. The **client** check decides whether the prompt appears. The
-**server** check decides whether the shop actually sells you the gun. If
-those two are separate implementations and they disagree by a centimetre at
-the boundary, then there is a place a player can stand where exactly one of
-them is true — and nobody discovers that by playing. They discover it by
-exploiting it, and the symptom (a prompt that does nothing, or a purchase
-with no prompt) looks like a network glitch rather than a geometry bug.
-
-Writing the maths once and shipping the same bytes to both runtimes makes
-agreement a property of the build instead of a promise in a document. It is
-the same arrangement `vector3` uses (see [vectors](vectors.md)), for a
-weaker version of the same reason.
-
-It is also *tested* as a property. `scripting/lua/open77_zones_parity.lua`
-is a fixture run verbatim by the client test
-(`scripting/tests/ZoneTests.cpp`) and the server test
-(`server/tests/Open77.Server.Tests/Resources/ZoneLuaTests.cs`), and both
-compare it line for line against one golden transcript,
-`open77_zones_parity.expected.txt`. It deliberately includes points that sit
-exactly on an edge, exactly on a convex vertex and exactly on a reflex
-vertex, because those are the coordinates where two implementations drift
-first. A divergence between the runtimes cannot land without failing one of
-those two tests.
+`Open77.zones.contains` uses the same Lua implementation on the client and server, including boundary and vertex handling. Use client queries for presentation and server queries to validate gameplay.
 
 ## Presentation and validation are different jobs
 
@@ -364,24 +328,7 @@ volume** — one squared planar comparison. That is what makes a polygon
 affordable, and it is why the cost tracks *zones that overlap the player*
 rather than zones registered.
 
-Measured in the client scripting host — `Open77.Scripting.ZoneTests` prints
-these on every run, so they stay honest rather than becoming folklore. Per
-`contains` call on a **prepared** zone, on a developer machine (they move
-±20% run to run, so treat them as magnitudes):
-
-| Zone | Cost |
-|---|---|
-| cylinder | ~1.2 µs |
-| box (rotated) | ~1.4 µs |
-| polygon, 8 vertices | ~3.4 µs |
-| polygon, 32 vertices | ~9.5 µs |
-| polygon, 128 vertices | ~31 µs |
-| polygon, 512 vertices | ~135 µs |
-| **polygon, 32 vertices, player not near it** | **~1.25 µs** |
-
-A polygon costs roughly `1.2 µs + 0.25 µs per vertex` when the player is
-inside its bounding box, and about a cylinder when they are not. That last
-row is the one that matters.
+Containment queries first check the zone's bounding volume. Polygon queries outside that volume avoid per-vertex work; queries inside it scale with the polygon's vertex count. Use simple shapes where possible and profile large zone sets in your gamemode.
 
 ### The practical limit
 

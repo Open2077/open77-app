@@ -26,7 +26,8 @@ for (const spec of cases) {
   assert.ok(reference.includes(`/docs/${spec.slug}`));
   const guide = await read(`content/docs/${spec.slug}.md`);
   assert.ok(guide.includes("2.31.13+op77.54"));
-  assert.ok(guide.includes("1.24"));
+  // Native map calls are client-local; vehicle AI requires compatible runtimes.
+  if (spec.runtime === "server") assert.ok(guide.includes("compatible network protocols"));
 }
 const ai = await read("content/docs/vehicle-ai.md");
 for (const text of ["driverless", "no headless server physics", "reserved", "removeDriver", "world.vehicles", "world.npcs"]) {

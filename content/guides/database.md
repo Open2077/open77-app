@@ -1,11 +1,6 @@
 # Configure a SQL database
 
-The OPEN//77 dedicated server includes an asynchronous **MySQL/MariaDB**
-bridge for server-side Lua. Use it for persistent characters, accounts,
-inventories and other data your resources need to query. You do **not** install
-an oxmysql resource: `MySQL` and `Open77.database` are two names for the same
-built-in API. This bridge does not support PostgreSQL, SQLite or Microsoft SQL
-Server.
+Configure the built-in asynchronous **MySQL/MariaDB** bridge for server Lua. `MySQL` and `Open77.database` expose the same API; no oxmysql resource is required. PostgreSQL, SQLite and Microsoft SQL Server are not supported.
 
 SQL runs on the server side, never on a player's PC. The bridge is disabled
 by default. The server distribution does not install a database service or

@@ -1,11 +1,6 @@
 # Lua resources loaded by the server
 
-The server picks the session's resources, builds their client image, and the game downloads them
-before entering Night City — the same model FiveM uses. The local
-`red4ext/plugins/Open77/bootstrap` folder holds only the five trusted bootstrap resources —
-`open77_shell`, `open77_pause`, `open77_blips`, `open77_death` and `open77_debug` — which draw the
-server browser, the connection flow, and the loading screen. These same five are excluded from the
-server-supplied resource layer. Gameplay resources on the player's disk are never auto-discovered.
+Package server and client Lua scripts, permissions, dependencies and web assets in an Open77 resource. The server loads the declared resources and distributes their client files to joining players.
 
 Use this guide to write a resource, understand what reaches the player, and publish a change to a
 running session.

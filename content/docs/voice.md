@@ -1,9 +1,6 @@
 # Integrated voice chat
 
-Open77 voice is a native, server-authoritative VOIP stack. The client captures one 48 kHz mono
-stream, encodes it as 20 ms Opus frames, and can route that same frame through proximity and up to
-four selected channels at once. Radio and phone calls therefore do not duplicate microphone
-bandwidth. PCM and Opus payloads are never exposed to Lua.
+Open77 voice captures 48 kHz mono audio and encodes it as 20 ms Opus frames. A frame can be routed through proximity and up to four selected channels without duplicating microphone bandwidth. PCM and Opus payloads are not exposed to Lua.
 
 The server is the only component that decides who may receive a frame. It checks the authenticated
 speaker, routing bucket, proximity, channel membership, per-channel permissions, mute/deaf state,

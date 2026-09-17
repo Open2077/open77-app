@@ -1,10 +1,6 @@
 # Connection control: connect events, whitelists and bans
 
-Everything a server resource can do about *who* plays. Watch connections arrive, hold a player at
-the door while a list or a database answers, refuse them with a sentence they read on their own
-screen, learn why any connection was refused or dropped, and remove or ban a player who is already
-in. [Complete server Lua API](server-api.md#connection-control) has the one-line reference for
-each function; this page is the guide, ending with a whitelist and a ban list you can copy.
+Control server admission with connection events, deferred checks, whitelists and bans. Resources can reject a connection with a player-facing message or remove an active player. See the [server Lua API](server-api.md#connection-control) for method signatures.
 
 ## Where the gate sits
 
@@ -167,13 +163,7 @@ end)
 
 ### `setKickReason` and `CancelEvent()`, exactly as in FiveM
 
-`setKickReason(message)` records the sentence and refuses nobody by itself; `CancelEvent()`
-called after it, inside the same `playerConnecting` handler, refuses the connection with that
-sentence (or `refused` when none was recorded). A cancel beats a pending deferral, as it does
-there. Until wave 6 (2026-09-16) the compat dispatch ran outside the cancellable machinery, so a
-ported `setKickReason` + `CancelEvent()` admitted everyone; the runtime now honours the pair and
-still logs one line per resource when a message is recorded and the handler then admits -- that is
-almost always a port that forgot the `CancelEvent()`.
+`setKickReason(message)` records a refusal message but does not reject the connection. Call `CancelEvent()` in the same `playerConnecting` handler to reject it. Cancellation takes precedence over a pending deferral; without a message, the reason is `refused`. Recording a reason without cancelling logs a warning for that resource.
 
 ```lua
 -- a ported whitelist keeps its shape

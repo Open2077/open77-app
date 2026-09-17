@@ -1,9 +1,6 @@
 # Public identity, server commands, and ACL
 
-Server-side Lua commands are typed straight into the Open77 developer terminal in game (`²`). A
-command the client knows stays local; anything else is forwarded to the server over the
-authenticated network session, then looked up among the `RegisterCommand` registrations of the Lua
-resources.
+Register server commands with `RegisterCommand` and control access through ACL rules. Commands entered in the in-game developer terminal (`²`) are forwarded over the authenticated session when they are not handled locally.
 
 Use this guide to whitelist a player, restrict a command to specific people, and understand what
 identity the server actually trusts.

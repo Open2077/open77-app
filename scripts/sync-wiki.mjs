@@ -24,6 +24,7 @@ import { execFileSync } from "node:child_process";
 
 import { APP_OWNED_GUIDES, EXCLUDED_GUIDES, isAppOwned, isExcluded } from "./wiki-exclusions.mjs";
 import { buildNpcCatalogue } from "./npc-catalogue.mjs";
+import { assertEditorialProse, reviewApiEntries } from "./docs-editorial.mjs";
 
 const DEFAULT_SOURCE = process.env.OPEN77_WIKI_SOURCE ?? ["CyberM", "open77-base", "base"]
   .map((directory) => path.join("..", directory, "wiki"))
@@ -53,6 +54,12 @@ function parseArgs(argv) {
  * vendored snapshot. Full sync deliberately retains its strict source contract. */
 async function syncSelected(args, sourceDir) {
   const selected = args.only;
+  if (isAppOwned(selected)) {
+    if (!args.check) throw new Error(`${selected} is site-owned. Merge technical changes manually; see docs/documentation-style.md.`);
+    assertEditorialProse(await readFile(path.join(DOCS_OUT, selected), "utf8"), selected);
+    console.log(`Preserved reviewed guide: ${selected}`);
+    return;
+  }
   const sourceFile = path.join(sourceDir, selected);
   const markdown = (await readFile(sourceFile, "utf8")).replace(/\r\n/g, "\n");
   const target = `${DOCS_OUT}/${selected}`.replace(/\\/g, "/");
@@ -63,6 +70,7 @@ async function syncSelected(args, sourceDir) {
   const previous = manifest.files.filter((record) => record.target === target);
   if (previous.length > 1) throw new Error("Duplicate selected manifest record");
   if (existsSync(path.join("content", "guides", selected))) throw new Error("Selected guide collides with authored content");
+  assertEditorialProse(markdown, selected);
   const digest = sha256(markdown);
   const revision = execFileSync("git", ["-C", sourceDir, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
   if (!/^[a-f0-9]{40}$/.test(revision)) throw new Error("Source revision is unavailable");
@@ -168,6 +176,7 @@ async function main() {
     }
     const text = await readFile(path.join(sourceDir, name), "utf8");
     const normalised = text.replace(/\r\n/g, "\n");
+    assertEditorialProse(normalised, name);
     const slug = name === "README.md" ? "index" : name.replace(/\.md$/, "");
     records.push({
       source: `wiki/${name}`,
@@ -180,7 +189,13 @@ async function main() {
     writes.push({ file: path.join(DOCS_OUT, name), text: normalised });
   }
 
-  const apiText = (await readFile(apiSource, "utf8")).replace(/\r\n/g, "\n");
+  for (const [name] of APP_OWNED_GUIDES) {
+    if (markdownFiles.includes(name)) continue;
+    const existing = previousManifest?.files?.find((record) => record.target?.replaceAll("\\", "/") === `${DOCS_OUT}/${name}`);
+    if (existing) records.push(existing);
+  }
+
+  const apiText = JSON.stringify(reviewApiEntries(JSON.parse(await readFile(apiSource, "utf8"))), null, 1) + "\n";
   const apiEntries = JSON.parse(apiText);
   if (!Array.isArray(apiEntries)) {
     throw new Error("api.json is expected to be an array of API entries");
@@ -316,7 +331,7 @@ async function main() {
   // site-owned guide is kept: it is not written by this sync, but it is also
   // not stale.
   if (existsSync(DOCS_OUT)) {
-    const keep = new Set(markdownFiles);
+    const keep = new Set([...markdownFiles, ...APP_OWNED_GUIDES.keys()]);
     for (const entry of await readdir(DOCS_OUT, { withFileTypes: true })) {
       if (entry.isFile() && entry.name.endsWith(".md") && !keep.has(entry.name)) {
         await rm(path.join(DOCS_OUT, entry.name));

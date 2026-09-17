@@ -1,13 +1,6 @@
 # Cyberware
 
-Cyberware gives a player persistent implants that survive reconnects and use the game's
-own equipment: Gorilla Arms (slot `arms`, profile `gorilla_arms`) and double-jump legs
-(slot `legs`, profile `double_jump`). The [hacking](hacking.md) implants (`operating_system`,
-`self_ice`, `purge`) are installed through the same framework. You define the grades and
-decide who gets an implant and at what price; the server owns the transaction, the
-record and the combat rules. Dash and Ground Slam are session abilities rather than
-implants and have their own pages: [Dash / Air Dash](dash.md), [Ground Slam](ground-slam.md),
-[Overdrive](reflex-overdrive.md).
+Define and install persistent cyberware through the server-owned implant framework. Supported slots include Gorilla Arms (`arms`), double jump (`legs`) and the [hacking](hacking.md) implants (`operating_system`, `self_ice`, `purge`). Session abilities are documented separately: [Dash](dash.md), [Ground Slam](ground-slam.md) and [Overdrive](reflex-overdrive.md).
 
 ## Minimal example
 

@@ -1,8 +1,6 @@
 # Replicated state bags
 
-A **state bag** is a small key/value store attached to the server, to a player, or to a
-vehicle, NPC or prop. The server writes it; every client that is entitled to see it gets
-the change automatically, in the same tick, without anybody writing a `TriggerClientEvent`.
+Replicate structured state with server-authoritative state bags. Resources can read snapshots and subscribe to changes instead of defining separate synchronization events for each value.
 
 ```lua
 -- server

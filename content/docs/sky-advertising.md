@@ -1,8 +1,6 @@
 # Sky hologram advertisements
 
-Open77 can replace Cyberpunk's giant vertical **Towers of Light** advertisements with art owned by
-a server resource. The shipped example uses the exact Open77 logo and accepts either PNG or DDS as
-author input.
+Replace supported sky-advertising textures with a custom resource pack. The following sections describe the asset layout, build process and deployment requirements.
 
 This is a pre-boot asset pipeline. Lua declares the resulting package, but it cannot swap these
 textures while the game is running: the particle material resolves its XBM through REDengine's
@@ -130,7 +128,3 @@ After changing the source image:
 A resource `restart` is insufficient. Removing the resource from `resources.load`, restarting the
 server and launching that world again removes its package from the profile and restores vanilla,
 unless another installed replacer targets the same paths.
-
-The implementation evidence, exact hashes, texture header, particle consumers, Nexus comparison,
-and hot-mount limitations are recorded in
-[Advertising and sky holograms](../docs/research/advertising-and-sky-holograms.md).

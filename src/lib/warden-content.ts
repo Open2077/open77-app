@@ -15,16 +15,16 @@
 export const WARDEN_TITLE = "Warden";
 
 export const WARDEN_DESCRIPTION =
-  "Warden is the OPEN//77 in-server admin panel: a browser control room for your live server. Stream the console, run commands, hot-reload Lua resources, moderate players, post announcements, edit config and manage admins. Configuration and preload changes can require a restart.";
+  "Configure Warden, the built-in server administration panel, to manage logs, commands, resources, players, settings and operator roles.";
 
 export const WARDEN_LEDE =
-  "Warden is your live server control room. Open it in a browser from your own PC and run the whole server — console, resources, players and config — while it stays up. It is to an OPEN//77 server what txAdmin is to a FiveM one.";
+  "Manage the server from a browser: console, resources, players, configuration and operator permissions.";
 
 export const WARDEN_OVERVIEW =
-  "A dedicated server is a program on a box somewhere; Warden is the window into it. Open the panel in your browser to watch the live console, type commands, reload a Lua resource, manage players and send announcements. Many operations apply while the server runs; configuration and preload changes can require a restart. Follow the operation's review and status before treating a change as live. Warden is off by default; you turn it on when you want it.";
+  "Warden is bundled with the dedicated server and disabled by default. Many operations apply immediately; configuration and preload changes can require a restart. Check each operation's status before treating it as active.";
 
 export const ENABLE_INTRO =
-  "Warden ships inside the server build — there is nothing extra to download. You switch it on in server.jsonc by enabling the warden block, then restart the server once so the setting takes effect.";
+  "Enable the warden block in server.jsonc, then restart the server.";
 
 export const ENABLE_SAMPLE = `{
   "warden": {
@@ -39,10 +39,10 @@ export const ENABLE_SAMPLE = `{
 }`;
 
 export const ENABLE_NOTE =
-  "The default panel address is http://<host>:11780. On a machine you sit at, that is http://localhost:11780. On a remote box, reach it over an SSH tunnel or VPN rather than opening the port to the world — Warden is full control of your server.";
+  "The default local address is http://localhost:11780. Access remote installations through a VPN or SSH tunnel; avoid exposing the administration port publicly.";
 
 export const PIN_INTRO =
-  "The first time Warden starts, there is no admin account yet — so it prints a one-time setup PIN to the server log. This is how it proves that whoever creates the first admin actually controls the server machine.";
+  "On initial setup, Warden prints a one-time PIN in the server log. Use it to create the first administrator account.";
 
 export const PIN_STEPS = [
   {
@@ -68,7 +68,7 @@ export const PIN_STEPS = [
 ] as const;
 
 export const CAPABILITIES_INTRO =
-  "Warden is one panel over the whole running server. Everything below happens live, against the server as it is right now — no restart, no redeploy.";
+  "Warden provides the following administrative tools. Restart requirements depend on the operation.";
 
 export const CAPABILITIES = [
   {

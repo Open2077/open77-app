@@ -1,9 +1,6 @@
 # Networked world doors
 
-`open77_doors` synchronizes streamed native doors through a server-owned registry.
-Automatic doors react to players in the same routing bucket. Native opening
-animations, sounds and collision are retained. Elevator landing doors follow
-the authoritative cabin instead of opening over an empty shaft.
+`open77_doors` synchronizes native doors through a server-owned registry. Automatic doors use routing-bucket proximity; elevator landing doors follow the cabin. Native animations, sound and collision are retained.
 
 ## Installation
 
@@ -26,10 +23,7 @@ needed. Lift opening remains elevator-controlled and is not offered manually.
 
 ### Runtime requirements
 
-Availability: **client and server release 2.31.13+op77.58**, published on the CDN.
-Older clients do not contain the native door projection bridge.
-Install matching client scripts/binary and the `open77_doors` system resource
-before enabling this feature. Protocol compatibility alone is not a feature check.
+Requires client and server **2.31.13+op77.58** or later, including the native door projection bridge.
 
 Use a client containing the native door projection bridge and a server supporting
 [server exports](server-exports.md). Add this dependency to your gamemode:

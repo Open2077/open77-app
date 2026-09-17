@@ -1,14 +1,8 @@
 # Synchronized attachments
 
-A server resource attaches a prop to a canonical player or vehicle, optionally
-to a named skeletal slot, with a local position and rotation. Each client follows
-its **locally rendered** parent and animated slot every frame. The network sends
-the binding and its revisions, not ten world-space teleports per second.
+Attach a server-owned prop to a player or vehicle, optionally at a skeletal slot. Clients follow their rendered parent and animated slot; the server replicates the attachment binding and its revisions.
 
-Native validation evidence and remaining coverage limits are tracked in
-[the research log](../docs/research/synchronized-attachments-and-player-interactions.md).
-Use [player interactions](player-interactions.md) to coordinate two players;
-attaching a prop alone does not reserve a player or start an animation.
+Use [player interactions](player-interactions.md) to coordinate two players. Attaching a prop does not reserve a player or start an animation.
 
 ## Resource setup
 

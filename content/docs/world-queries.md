@@ -1,8 +1,6 @@
 # World queries: raycast, ground height, objects around the player, entity axes, district
 
-Client resources can ask the world three questions: *what is on this line*, *what is around me*,
-and *where am I*. Each runs one or two engine calls, synchronously on the game thread, behind the
-`world.query` permission.
+Query raycasts, ground height, nearby objects and district data with client-side `world.query` methods. Calls execute synchronously on the game thread.
 
 A fourth question — *which way is that thing facing, and where is a point relative to it* — is
 [further down](#an-entitys-own-axes) and behind its own `world.transform` permission.
@@ -80,8 +78,7 @@ end
 
 `entity` is `{ engineEntity, className, kind, position, distance }` plus **one** of `playerId`,
 `vehicleId` or `npcId` when the thing belongs to Open77. A vanilla NPC or a parked car gets the
-engine identity and the class name and no Open77 id, which is the honest answer rather than a
-missing one. `kind` is the same vocabulary `Open77.inspector.target` uses -- `player`, `npc`,
+engine identity and class name, without an Open77 ID. `kind` is the same vocabulary `Open77.inspector.target` uses -- `player`, `npc`,
 `vehicle`, `door`, `device`, `weapon`, `item`, `object` -- because it is the same table.
 
 `Open77.camera.aimRay(maxDistance?, { entities = true })` takes the option too, and is usually the
@@ -284,12 +281,7 @@ for one the vanilla world owns. `offsetToWorld` and `worldToOffset` also accept 
 carries `engineEntity` and a vector never does, so no shape can be read both ways. A lone table with
 `engineEntity` and no vector is `invalid_offset`, not a silent local-player read.
 
-**The basis is read from the engine, never rebuilt from the orientation.** `entEntity` publishes
-`GetWorldForward`, `GetWorldRight` and `GetWorldUp`, and `GetWorldForward` is the same native
-`Open77.character.state().forward` already answers with. So `forward()` and `state().forward` are
-one value by construction, not two derivations that agree today. Re-deriving a basis from the
-orientation quaternion would have been the second derivation, and that is exactly the bug an earlier
-wave paid for on vehicle heading.
+World axes come directly from `GetWorldForward`, `GetWorldRight` and `GetWorldUp`, rather than being reconstructed from orientation. `forward()` and `Open77.character.state().forward` use the same native value.
 
 For a vehicle on a slope, pitch and roll are in the answer, because they are in the engine's axes:
 `offsetToWorld(car, vector3(0, 3, 0))` lands ahead of the car *along the car*, following the
@@ -320,12 +312,7 @@ Names are matched case- and punctuation-insensitively, so `RightHand`, `right_ha
 | `left_hand` | `LeftHand`, `left_hand` |
 | `right_hand` | `RightHand`, `right_hand` |
 
-**`chest` and `feet` are deliberately absent, and so is `hands`.** Nothing measured on a 2.31 body
-publishes a slot under any spelling of chest or feet, so offering the names would ship words that
-always answer `unknown_bone`; and a pair of hands is not one position, so ask for `left_hand` or
-`right_hand`. An alias is a convenience and never a promise either: every candidate is checked
-against that body's own slot table, so an alias on a body that does not carry it is refused by name
-rather than quietly answered from somewhere else.
+`chest`, `feet` and `hands` are not supported aliases. Use `left_hand` or `right_hand` for individual hands. Every alias is checked against the entity's own slot table; a missing slot returns `unknown_bone`.
 
 The same call works on a **vehicle**, because occupant slots live on a `gameOccupantSlotComponent`
 and that derives from `entSlotComponent`: `bones(carEntityId)` enumerates the seats the car actually

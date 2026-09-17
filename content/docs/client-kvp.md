@@ -1,6 +1,6 @@
 # Client persistent KVP
 
-`Open77.kvp` stores small client-local values persistently. Its namespace is always:
+`Open77.kvp` persists small values on the client. Data is isolated by connection address, resource name and key:
 
 ```text
 connection address -> resource name -> key

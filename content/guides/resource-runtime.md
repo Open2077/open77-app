@@ -1,10 +1,6 @@
 # The Lua resource runtime
 
-[Server resources](server-resources.md) covers what a resource *is* and how
-it reaches a player. This page covers what a resource *gets*: the manifest
-in full, the scheduler, the event buses, modules and cross-resource exports,
-the core `Open77` namespaces, WebUI surfaces, and the sandbox that bounds all
-of it.
+Reference for resource manifests, scheduling, events, modules, exports, core namespaces, WebUI and sandbox limits. Start with [Server resources](server-resources.md) for resource structure and distribution.
 
 OPEN//77 embeds **PUC Lua 5.4.8**. Each resource receives its own Lua state,
 scheduler, memory allocator, permission set and lifecycle. Developers coming
@@ -57,7 +53,7 @@ a `.lua` script.
 | `dependency` / `dependencies` | Required resources, with optional version constraints. |
 | `permission` / `permissions` | Capabilities requested by the resource. |
 | `file` / `files` | Generic files distributed to the client. |
-| `ui_page` / `web_ui_page` | Default WebUI entry: a declared local file or an HTTP(S) URL. See [remote pages](#remote-pages-external-content-and-hot-reload) for client availability. |
+| `ui_page` / `web_ui_page` | Default WebUI entry: a declared local file or an HTTP(S) URL. See [remote pages](#remote-pages-external-content-and-hot-reload) for supported entry types. |
 | `web_ui_auto_create` | Whether to create that page at resource start. |
 | `web_file` / `web_files` | Files served to this resource's WebUI origin. |
 
@@ -115,11 +111,6 @@ exists.
 
 Scripts load in manifest order, which is what lets one file publish a table
 that a later file in the same resource consumes.
-
-> **Version note.** Manifest order has only been honoured since
-> 2026-08-26; before that scripts loaded alphabetically. See
-> [Writing a gamemode](writing-a-gamemode.md#why-the-server-is-exactly-one-resource)
-> for the symptom this produced.
 
 ## Lifecycle and scheduling
 
@@ -521,12 +512,7 @@ Page methods are `id`, `show`, `hide`, `destroy`, `setFocus`, `send`, `on`,
 | `page:on` | `(event, handler)` — returns a handler id |
 | `page:off` | `(handlerId)` |
 
-> **Argument order catches people out here.** `page:reply` takes the payload
-> second and the success flag third, `page:setFocus` takes *keyboard* first
-> rather than a general "focused" flag, and both `page:off` and
-> `Open77.events.off` take a handler id alone with no event name. The
-> [API reference](/docs/api) agrees with the table above; it did not until
-> 2026-08-26, so treat an older copy of a signature with suspicion.
+`page:reply` takes the payload second and success flag third. `page:setFocus` takes the keyboard flag first. `page:off` and `Open77.events.off` accept only a handler ID, not an event name.
 
 The JavaScript bridge is exposed as `window.Open77`:
 
@@ -559,19 +545,11 @@ page:setFocus(false, false)
 page:hide()
 ```
 
-The browser receives Escape; native pause and Open77 pause do not. Movement and
-mouse look remain active. See [WebUI keyboard input](webui-input.md) for supported
-keys, complete examples, validation errors and closing/focus-transfer behavior.
-This API is **not yet published on the CDN**; older clients need an update before
-using it. It does not block a controller's menu button or disable pause globally.
+The browser receives Escape without opening native pause or Open77 pause. Movement and mouse look remain active. See [WebUI keyboard input](webui-input.md) for keys, examples, errors and focus transfer. This does not consume a controller's menu button or disable pause globally.
 
 ### Remote pages, external content and hot reload
 
-**Client availability:** this section describes the updated WebUI implementation
-validated on 16 September 2026. At the time of this documentation update it is
-installed locally, not yet published on the CDN. Existing CDN clients may still
-reject remote entries and external content; a website update alone does not
-update players' clients.
+Remote pages require HTTP(S) entry support in the client. Browser security rules still apply to remote content.
 
 `ui_page` (alias `web_ui_page`) and `WebUI.create({ entry = ... })`
 accept an HTTP or HTTPS URL. No host allowlist or extra network permission is
@@ -674,9 +652,7 @@ frame — see
 
 ## Sandbox and quotas
 
-The updated client uses the following default limits, per resource except
-for the host-wide frame budget. Like remote WebUI above, these increased
-defaults require the new client build; old CDN builds keep their old limits.
+Default client limits apply per resource, except the frame budget, which is shared by the client host. Clients without these capabilities may use lower limits; require the appropriate runtime for resources that depend on them.
 
 | Limit | Value |
 |---|---|

@@ -1,10 +1,6 @@
 # Props and effects
 
-A roadblock across a street. A crate a player can pick up and carry. A lamp
-that lights an alley the base game left dark, and a switch that turns it off.
-A fire that keeps burning while players walk away and come back. All of that
-is one server-side API and one idea: **the server owns the object, and every
-client near it is told to draw it.**
+Create synchronized props, lights and persistent effects from server Lua. The server owns each object; nearby clients render its current state.
 
 Nothing on this page can be done from a client resource. That is deliberate,
 and it is the same rule as ground loot: a client that could mint objects
@@ -442,7 +438,7 @@ lifetime, neither returns a handle, and neither counts against the looping
 ceiling. `duration` is in seconds, 0–60, where `0` leaves the lifetime to the
 effect itself. `slot` is an optional authored attachment point.
 
-**Three naming schemes, and mixing them up costs an afternoon.** World
+**Identifier formats.** World
 effects are addressed by depot path or curated alias. `playOn` takes a name
 the *target's own template* declares — `muzzle_flash` is not a file. `sound`
 takes a Wwise event name. A depot path handed to `playOn` will not resolve,

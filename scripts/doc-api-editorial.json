@@ -1,0 +1,69 @@
+[
+  {
+    "runtime": "client",
+    "qualified": "Open77.resource.readPackedFile",
+    "sourceDescriptionSha256": "d940a8c748c6f9b202e99a5037727ec55e7bed13e9af05c6d344af4d9cf0261f",
+    "description": "Requires `resources.files.read`, reserved for the bundled audio service. Reads only files declared in the target resource's `files` list; scripts, manifests and undeclared disk files are inaccessible. Other resources use `Open77.resource.readFile` for their own files. Returns Base64 for binary-safe transport, up to 3 MiB raw data. Base64 expansion can exceed the separate 2 MiB WebUI JSON message cap; see [runtime quotas](/docs/resource-runtime#sandbox-and-quotas). Errors: `permission_denied:resources.files.read`, `invalid_resource_path`, `resource_not_found`, `file_not_declared`, `file_too_large`."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.weapons.giveGadget",
+    "sourceDescriptionSha256": "d2f9dbceacfe48f5fc568536e3e02f0b4320a874d60d4cf34960c2688edb6f12",
+    "description": "Requires `player.weapons.edit`. The record must be a `Gadget_Record` -- every 2.31 grenade is one (`Items.GrenadeFragRegular`, `Items.GrenadeEMPRegular`, `Items.Preset_Grenade_Smoke_Default`, ...; the `category = grenade` rows of `docs/generated/weapons-2.31.csv`); a weapon answers `template_is_not_gadget`. `count` is 1..999 units added to the stack. Unless `options.equip` is false, the stack is placed in quick slot 1 (`GameplayEquipRequest`) and assigned to `EHotkey.RB` (`HotkeyAssignmentRequest`) and the completion is accepted only when both took. The completion carries `result.gadget = { slot, record, tweakDbId, quantity, active }` after one `open77:weapons:gadget` row. Refused by name: `invalid_gadget_template`, `template_is_not_gadget`, `invalid_gadget_count` now; `unsupported_gadget_area`, `item_creation_failed`, `equip_rejected`, `hotkey_rejected` from the bridge. See [Weapon Lua API](weapons-api.md#gadgets-grenades-in-the-quick-slots)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.webui.create",
+    "sourceDescriptionSha256": "92a6bb93b8b0cd8ef5804cb8c495ee3ee7774e44e1d060c455950b16883615aa",
+    "description": "Creates a WebUI asynchronously. For an initially visible surface, pass `visible = true`; calling `show()` immediately can race with creation. The page can then manage its own content visibility.\n\nLayers: `hud`, `menu`, `modal` (`webui.modal`), `system` (`webui.system`), `debug` (`webui.debug`). An HTTP(S) `entry` does not require `web_files`; bundled entries must be declared. External scripts, media, requests and embeds follow browser CORS and TLS rules. Only the configured top-level entry origin receives the Lua bridge. See [remote WebUI](/docs/resource-runtime#remote-pages-external-content-and-hot-reload) for runtime requirements."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.webui.default",
+    "sourceDescriptionSha256": "0e8c1d6258cb4d26224fd0223611f0fa527b0ccc42c21045b6191450070751dd",
+    "description": "Returns the auto-created page declared by `ui_page` (alias `web_ui_page`) in the current manifest, or `nil, reason` if none is live. The entry can be a declared local file or an HTTP(S) URL. Handles belong to the resource generation and become stale after destroy or reload. See [remote WebUI](/docs/resource-runtime#remote-pages-external-content-and-hot-reload)."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.animations.playAt",
+    "sourceDescriptionSha256": "051694718881b62141099ef67c3af9983e02edfe10135dc35037e0e16c6b0a07",
+    "sourceOverlaySha256": "2f2f497d7640a1482cb7b6793d8fb4e01a6a7298bfdd1403ad2765209ef280c6",
+    "description": "Requires `players.animations.control`. Moves a player to an anchor, waits for placement, then starts a profile such as `chair`, `lean` or `lie`. Any catalogue profile accepts a pose. `position` is `{x, y, z}` or a three-element array; `yaw` is degrees about Z and defaults to 0. Options match `play`: `clip`, `durationMs`, `loop`. Anchors must be within 5 m; use `Open77.players.teleport` for longer moves. Returns accepted playback state with `anchor`; use `playbackId` with `stopAt`. The caller receives acceptance before clients receive the posture; playback timing starts on arrival. A 5-second anchor watchdog ends an unsuccessful placement with `anchor_unreached`. Observe `onPlayerAnimationChanged`; admission is not proof of rendered animation. Additional errors: `invalid_anchor`, `anchor_too_far`, `anchor_move_refused` (unready, dead or in a vehicle). Provided by the server runtime, without a resource-export dependency."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.log.debug",
+    "sourceDescriptionSha256": "0c053abc9c04b4b89d38c2ae157f1ae0ff080abc86314e916be3f9533d358bfa",
+    "description": "No permission. Writes to the resource-prefixed server logger at the `DBG` level, which a production log filter usually drops -- the place for per-tick chatter. `Citizen.Trace` is this function. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.log.error",
+    "sourceDescriptionSha256": "a9a7040f49c833472fc43f1ab7ba6872d0fe279ad61ac3eabb59104c061b64ad",
+    "description": "No permission. Writes to the resource-prefixed server logger at the `ERR` level. It does not raise, abort the handler or mark the resource unhealthy: it is a log line, not an exception. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.log.info",
+    "sourceDescriptionSha256": "5db80b9e0cea3c5a856844dd2af38d55b47fe9001238af612f5a0013cd33a648",
+    "description": "No permission. Writes to the resource-prefixed server logger at the `INF` level, the same one `print` writes at. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.log.warn",
+    "sourceDescriptionSha256": "cc95ca1e97b77236461dc6a11c4b0f3345fe2a66debdd251c52855bed71cd43a",
+    "description": "No permission. Writes to the resource-prefixed server logger at the `WRN` level, so an operator filtering a resource's warnings from its chatter sees only these. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.weapons.giveGadget",
+    "sourceDescriptionSha256": "0d4f97e2d10c64d8686df3d9733c43d3ddfb61c5723fcd41783d7f953c72410b",
+    "description": "Uses the weapon relay. `record` must be a `Gadget_Record` -- every 2.31 grenade (`Items.GrenadeFragRegular`, `Items.GrenadeEMPRegular`, `Items.Preset_Grenade_Smoke_Default`, ...; the `category = grenade` rows of `docs/generated/weapons-2.31.csv`). `count` is 1..999 units. Unless `options.equip` is false the owner places the stack in quick slot 1 and on the RB hotkey, and accepts only when both took. The completion carries `result.gadget = { slot, record, tweakDbId, quantity, active }`; the owner's gadget report follows, so `Open77.weapons.gadgets(playerId)` then answers from the cache. Refusals by name: `invalid_player`, `invalid_gadget_template`, `invalid_gadget_count`, `invalid_weapon_options` now; `template_is_not_gadget`, `unsupported_gadget_area`, `item_creation_failed`, `equip_rejected`, `hotkey_rejected`, `request_timeout` on the completion. Like `assign`, this is a presentation grant: commit ownership in your own ledger first. See [Weapon Lua API](weapons-api.md#gadgets-grenades-in-the-quick-slots)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "WebUI.Page.setConsumedKeys",
+    "sourceDescriptionSha256": "b1964f01a1fc34a97f2db2ec3af44efee5f4bb3f68227b8abb791092f4ad4dd9",
+    "description": "Call page:setConsumedKeys(keys) before page:setFocus(true,false,true). Client-local, per-surface policy: selected keys still reach the browser but not Cyberpunk Raw Input or Open77 pause/scoreboard shortcuts. Accepts a dense array of at most 32 case-insensitive names: escape/esc, enter, tab, backspace, space, up/down/left/right (arrow aliases accepted), home, end, pageup, pagedown, insert and delete. Invalid input leaves the existing list unchanged; {} clears it for future presses. Active only while this visible, presentation-enabled page owns keyboard focus. Repeats and releases remain consumed if the keydown handler hides/destroys the page or changes focus. No arbitrary gameplay keys or controller-menu interception. No extra permission; keep-input still requires webui.keep_input. Check method availability before using this mode. See webui-input.md for the complete lifecycle and error contract."
+  }
+]

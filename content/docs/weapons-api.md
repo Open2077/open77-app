@@ -1,9 +1,6 @@
 # Weapon Lua API
 
-Open77 exposes the local player's three standard `EquipmentArea.Weapon` slots
-as an asynchronous client API and ships `open77_weapons` as the authenticated
-server-to-owner relay. Calls use exact TweakDB records such as
-`Items.Preset_Lexington_Default`.
+Manage the local player's three `EquipmentArea.Weapon` slots with the asynchronous client API. Use `open77_weapons` for authenticated server-to-owner requests and exact TweakDB IDs such as `Items.Preset_Lexington_Default`.
 
 The three-slot surface intentionally rejects heavy weapons (`WeaponHeavy`) and
 arm cyberware (`ArmsCW`): those equipment areas have different REDengine
@@ -214,14 +211,7 @@ yet, and one that needs to *know* about it has the cache.
 
 ## Gadgets: grenades in the quick slots
 
-Grenades are `EquipmentArea.QuickSlot` items thrown from the RB hotkey
-(`Grenade_Record` extends `Gadget_Record`), never a weapon in a hand. `giveGadget`
-grants a counted stack and, unless `equip = false`, puts it in quick slot 1 and
-on the throw hotkey — the path the privileged `debug.grenade.grant` fixture
-measured on 2026-09-05, now public, counted and verified. Every 2.31 grenade
-record is a valid argument (`Items.GrenadeFragRegular`, `Items.GrenadeEMPRegular`,
-`Items.Preset_Grenade_Smoke_Default`, …; the catalogue rows with
-`category = grenade` in `docs/generated/weapons-2.31.csv`).
+Grenades are `EquipmentArea.QuickSlot` gadgets, not weapon slots. `giveGadget` grants a counted stack and equips quick slot 1 unless `equip = false`. Use a grenade record such as `Items.GrenadeFragRegular`, `Items.GrenadeEMPRegular` or `Items.Preset_Grenade_Smoke_Default`; catalogue entries use `category = grenade`.
 
 ```lua
 -- Client
@@ -261,19 +251,7 @@ and the `open77_weapons` client resource — which knows whether one of its own
 `onGadgetConsumed(playerId, record, remaining[, tweakDbId])`, a reserved name a
 resource cannot forge, and refreshes the cache behind `gadgets()`.
 
-The explosion itself is **already replicated and priced without this API**, and
-deliberately not re-run through `Open77.effects.explosion`: every viewer's client
-renders the blast from the thrower's snapshot (`explosionSequence` and its
-position), and the engine's real blast on the thrower's client reports each proxy
-it hits to the damage arbiter as an `explosion` attack — the 2026-09-05 measurement
-priced one at 75 points and the server committed exactly that. Running E6's
-server blast on top would price the same grenade twice. What a server does *not*
-get today is an `onExplosion` for a vanilla grenade: the host does not decode the
-snapshot's explosion fields, so a resource that wants to react to the blast
-listens to `onGadgetConsumed` for the throw and to the damage feed for the hits.
-Healing inhalers and other `Consumable` items are not covered: the vanilla use
-path (`ItemActionsHelper.PerformItemAction`) is unmeasured, and a heal is already
-a stat write on the server.
+Native grenade explosions already replicate through the thrower's snapshot and report hits to the damage arbiter. Do not also call `Open77.effects.explosion` for the same grenade: that would apply damage twice. There is no native-grenade `onExplosion` event; use `onGadgetConsumed` for the throw and the damage feed for hits. Healing inhalers and other `Consumable` items are outside this API; apply healing through server-owned stats.
 
 ## Reading a player's weapons from the server, synchronously
 

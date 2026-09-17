@@ -1,34 +1,14 @@
 # Role-play animations
 
-> September 16 native-library expansion: source catalogue, offline-verified
-> assets and local in-game samples. Eight default profiles were checked on each
-> body family, plus a two-client arms-crossed sample. Install the
-> matching client, server and RP archive before requesting the new profile IDs.
-> Workspot/rig verification is not a claim that every pose, prop or body variant
-> has been visually validated. Chairs, beds, counters and walls are not spawned
-> automatically. See [the discovery audit](../docs/data/rp-library-audit.json) for
-> sources still requiring review.
+Play named role-play profiles such as `smoke`, `phone` and `dance` through server-authoritative animation requests. Profiles bind compatible workspots, clips and rig assets.
 
-> Original API introduced with client **2.31.13+op77.45** and its RP-enabled server
-> runtime; that release does not include all the newer profiles. The default `smoke` clip, cigarette, menu, timed stop and temporary
-> third-person view were checked on the local male body. Other variants, female
-> playback outside the sampled profiles and broader two-client coverage remain
-> experimental. Server acceptance
-> does not prove a client rendered a clip. Repeated disconnect/reconnect cycles
-> can still leave a stale proxy/device and camera hold; reconnect lifecycle recovery
-> is a known limitation, not a fixed issue in this release.
+Requires matching client, server and RP archive support for the selected profile. Clip and prop compatibility can vary by body and appearance. Repeated reconnects can leave stale presentation objects or a camera hold; handle lifecycle failures. Furniture is not spawned automatically.
 
 Use a named profile such as `smoke`, `phone` or `dance`. Each profile binds an
 authored workspot and an explicit set of compatible clip names. Arbitrary animation
 names from the general game inventory are not accepted by this system.
 
-See the [profile and clip catalogue](rp-animation-catalogue.md) for all 76 profiles,
-456 selectable clips, source workspots, prop requirements and placement notes. Three
-of them -- `chair`, `lean` and `lie` -- are *portable postures* meant to be played at
-a pose rather than where the player stands; see
-[Portable workspots](#portable-workspots-sit-lean-and-lie-anywhere).
-Male and female rig bindings exist in the selected source assets; the local male
-smoke check does not validate all clips or both remote proxy graph modes.
+See the [profile and clip catalogue](rp-animation-catalogue.md) for 76 profiles and 456 selectable clips. The `chair`, `lean` and `lie` profiles support anchored placement; see [Portable workspots](#portable-workspots-sit-lean-and-lie-anywhere). Male and female bindings are included, but not every clip is compatible with every body or proxy graph.
 
 ## How it works
 
@@ -100,8 +80,7 @@ the variant arrows, then **Play**, or double-click a card. Looping and timed
 5/10/30-second playback are available. The menu releases
 input before the temporary TPP starts. **Stop** or `/anim stop` cancels the caller's
 action, including an in-flight UI request; moving also interrupts playback.
-Only the default cigarette action has a local-male visual check so far; the other
-variants are explicitly labelled experimental rather than certified for both rigs.
+Experimental variants may have body-specific presentation differences.
 Start/menu/list/info commands are limited to one every 500 ms per player.
 
 Other gamemodes can provide their own menu by receiving the server-sourced
@@ -452,19 +431,7 @@ barCounter, yaw)` walks a smoker to the counter.
   a teleport dressed as an animation, reachable with the animation permission alone.
   Journeys belong to [`Open77.players.teleport`](server-api.md#moving-a-player), which
   costs `players.teleport` and settles the body; call it first, then `playAt`.
-- **The body is carried by the server, not by the engine.** Measured 2026-09-16 on
-  2.31: a workspot device spawned two metres from a player does *not* pull the body
-  onto itself, under either `PlayAtResourcePosition` behaviour -- the posture sat
-  unmounted and ended `anchor_unreached` five seconds later, twice. So `playAt` first
-  moves the body through the platform's own placement channel (no fade, heading =
-  the anchor's yaw, the same gate and settle watch a Warden move gets), and only
-  publishes the posture to clients once the body stands on the anchor; the device
-  is then under its feet, which is the one case every capture proved. Resources
-  holding the handle see the accepted state at once (`onPlayerAnimationChanged`
-  fires on acceptance); clients see nothing until arrival, and the action's clock
-  starts on arrival. Proven in game 2026-09-16: `chair`, `lean` and `lie` each placed
-  two metres from where the player stood, the body seated / leaning / lying there
-  with nothing under it, the move settling in about 120 ms on loopback.
+- **Placement is server-controlled.** `playAt` moves the player to the anchor without a fade, using its yaw and the normal readiness/settle checks. The posture is published to clients and its duration starts only after arrival. `onPlayerAnimationChanged` reports acceptance before arrival; this is not a rendering acknowledgement.
 - **The move watchdog is measured against the anchor**, not the starting point, and it
   is armed five seconds after acceptance. A body that never reaches its anchor in
   that window ends with reason `anchor_unreached` (the placement channel refused or
@@ -514,11 +481,7 @@ Pass `playbackId` to delayed stops. A stop for an older action returns
 action owned by the calling resource. The player's self-cancellation network path
 is allowed to stop their own server-controlled animation.
 
-The server cancels on disconnect, loss of readiness, death, vehicle occupancy,
-routing-bucket changes, position changes exceeding 0.5 m from the start, and
-completion of a non-looping sequence. The client reports its native playback
-failures or interruptions (including combat) through self-cancellation. This path
-is implemented but still requires live acceptance with the native presentation.
+The server cancels on disconnect, loss of readiness, death, vehicle occupancy, routing-bucket changes, movement beyond 0.5 m from the start and completion of a non-looping sequence. The client reports native playback failures and interruptions through self-cancellation. Native interruption handling remains experimental.
 
 ```lua
 AddEventHandler('onPlayerAnimationChanged', function(playerId, stateJson)

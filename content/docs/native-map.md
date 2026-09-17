@@ -1,12 +1,6 @@
 # Native map and player waypoints
 
-`Open77.map` is a **client** API for Cyberpunk's vanilla map. It distinguishes
-the player's manual waypoint from tracked quests, POIs and Open77 resource blips.
-Available in client **2.31.13+op77.54** (network protocol **1.24**).
-For a taxi that drives to the selected destination, pair this client API with
-[networked vehicle AI](vehicle-ai.md) on a server running **2.31.13+op77.54** or later.
-Locally validated: waypoint placement/movement/removal, native focus and point
-selection returning to gameplay without teleporting the player.
+`Open77.map` reads and controls the native world map, including manually placed waypoints separately from tracked quests, POIs and resource blips. Requires client **2.31.13+op77.54** or later. Pair it with [vehicle AI](vehicle-ai.md) to use a waypoint as an autonomous driving destination.
 
 ```lua
 permissions { "map.read", "map.control", "network.events" }

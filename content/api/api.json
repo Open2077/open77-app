@@ -17393,7 +17393,7 @@
   "name": "readPackedFile",
   "handler": "LuaReadPackedFile",
   "summary": "Reads a file another resource declared, as base64.",
-  "description": "Requires `resources.files.read`, which only the bundled audio service holds: every other resource reads its own files with `Open77.resource.readFile`, and a resource holding this one can read any **declared** file of any resource, which is why the grant is visible in the manifest. Only files listed in the named resource's `files` entry are reachable -- scripts, the manifest itself and anything merely present on disk are not, so a resource author publishes deliberately rather than by accident. The updated client accepts up to 3 MiB of raw file data (older clients: 1 MiB). The 2 MiB WebUI JSON message cap is unchanged: the Base64 result of a larger file may not fit in one `page:send`. See [runtime quotas and client availability](/docs/resource-runtime#sandbox-and-quotas). Base64 is used because arbitrary binary data is not valid UTF-8. Refusals: `permission_denied:resources.files.read`, `invalid_resource_path`, `resource_not_found`, `file_not_declared`, `file_too_large`.",
+  "description": "Requires `resources.files.read`, reserved for the bundled audio service. Reads only files declared in the target resource's `files` list; scripts, manifests and undeclared disk files are inaccessible. Other resources use `Open77.resource.readFile` for their own files. Returns Base64 for binary-safe transport, up to 3 MiB raw data. Base64 expansion can exceed the separate 2 MiB WebUI JSON message cap; see [runtime quotas](/docs/resource-runtime#sandbox-and-quotas). Errors: `permission_denied:resources.files.read`, `invalid_resource_path`, `resource_not_found`, `file_not_declared`, `file_too_large`.",
   "params": [
    {
     "name": "resource",
@@ -22507,7 +22507,7 @@
   "name": "giveGadget",
   "handler": "LuaWeaponGiveGadget",
   "summary": "Grants a counted stack of grenades (or any quick-slot gadget) and puts it on the throw hotkey.",
-  "description": "Requires `player.weapons.edit`. Native-parity E4. The record must be a `Gadget_Record` -- every 2.31 grenade is one (`Items.GrenadeFragRegular`, `Items.GrenadeEMPRegular`, `Items.Preset_Grenade_Smoke_Default`, ...; the `category = grenade` rows of `docs/generated/weapons-2.31.csv`); a weapon answers `template_is_not_gadget`. `count` is 1..999 units added to the stack. Unless `options.equip` is false, the stack is placed in quick slot 1 (`GameplayEquipRequest`) and assigned to `EHotkey.RB` (`HotkeyAssignmentRequest`) -- the path the privileged grenade fixture measured on 2026-09-05 -- and the completion is accepted only when both took. The completion carries `result.gadget = { slot, record, tweakDbId, quantity, active }` after one `open77:weapons:gadget` row. Refused by name: `invalid_gadget_template`, `template_is_not_gadget`, `invalid_gadget_count` now; `unsupported_gadget_area`, `item_creation_failed`, `equip_rejected`, `hotkey_rejected` from the bridge. See [Weapon Lua API](weapons-api.md#gadgets-grenades-in-the-quick-slots).",
+  "description": "Requires `player.weapons.edit`. The record must be a `Gadget_Record` -- every 2.31 grenade is one (`Items.GrenadeFragRegular`, `Items.GrenadeEMPRegular`, `Items.Preset_Grenade_Smoke_Default`, ...; the `category = grenade` rows of `docs/generated/weapons-2.31.csv`); a weapon answers `template_is_not_gadget`. `count` is 1..999 units added to the stack. Unless `options.equip` is false, the stack is placed in quick slot 1 (`GameplayEquipRequest`) and assigned to `EHotkey.RB` (`HotkeyAssignmentRequest`) and the completion is accepted only when both took. The completion carries `result.gadget = { slot, record, tweakDbId, quantity, active }` after one `open77:weapons:gadget` row. Refused by name: `invalid_gadget_template`, `template_is_not_gadget`, `invalid_gadget_count` now; `unsupported_gadget_area`, `item_creation_failed`, `equip_rejected`, `hotkey_rejected` from the bridge. See [Weapon Lua API](weapons-api.md#gadgets-grenades-in-the-quick-slots).",
   "params": [
    {
     "name": "record",
@@ -22942,7 +22942,7 @@
   "name": "create",
   "handler": "LuaWebUiCreate",
   "summary": "Creates a web surface.",
-  "description": "**Creation is asynchronous.** A `show()` issued right after `create` loses the race against the `visible` flag the request carried, and the surface then never paints at all. So a surface meant to stay up is created with `visible = true`, and the page shows or hides its own content.\n\nValid layers: `hud`, `menu`, `modal` (requires `webui.modal`), `system` (requires `webui.system`), `debug` (requires `webui.debug`). The updated client also accepts HTTP(S) `entry` URLs without `web_files`; bundled entries still require declared files. External scripts, media, requests and embeds are allowed, while CORS and TLS remain enforced. Only the top-level configured entry origin receives the Lua bridge. See [remote WebUI and client availability](/docs/resource-runtime#remote-pages-external-content-and-hot-reload); older CDN clients may not support remote pages.",
+  "description": "Creates a WebUI asynchronously. For an initially visible surface, pass `visible = true`; calling `show()` immediately can race with creation. The page can then manage its own content visibility.\n\nLayers: `hud`, `menu`, `modal` (`webui.modal`), `system` (`webui.system`), `debug` (`webui.debug`). An HTTP(S) `entry` does not require `web_files`; bundled entries must be declared. External scripts, media, requests and embeds follow browser CORS and TLS rules. Only the configured top-level entry origin receives the Lua bridge. See [remote WebUI](/docs/resource-runtime#remote-pages-external-content-and-hot-reload) for runtime requirements.",
   "params": [
    {
     "name": "options",
@@ -22976,7 +22976,7 @@
   "name": "default",
   "handler": "LuaWebUiDefault",
   "summary": "The surface declared by `web_ui_page` in the manifest.",
-  "description": "Returns the auto-created WebUI page declared by `ui_page` (alias `web_ui_page`) in the current manifest. The updated client accepts a declared local file or an HTTP(S) entry; see [remote WebUI and client availability](/docs/resource-runtime#remote-pages-external-content-and-hot-reload). It returns `nil, reason` when the resource has no live default page; the handle is generation-owned and becomes stale after destroy or reload.",
+  "description": "Returns the auto-created page declared by `ui_page` (alias `web_ui_page`) in the current manifest, or `nil, reason` if none is live. The entry can be a declared local file or an HTTP(S) URL. Handles belong to the resource generation and become stale after destroy or reload. See [remote WebUI](/docs/resource-runtime#remote-pages-external-content-and-hot-reload).",
   "params": [],
   "returns": [
    "surface, or nil"
@@ -34165,7 +34165,7 @@
   "name": "playAt",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Play a profile at a world pose: the placed form of play (TaskStartScenarioAtPosition).",
-  "description": "Requires players.animations.control -- the same capability as play, because a placement is an animation with a pose, not a second power. The body is first moved to position with the given yaw (degrees about Z, the props convention) through the platform's own placement channel -- no fade, the same gate and settle watch a Warden move gets -- and once it stands there the workspot device is spawned under it and the posture plays: that is what sits a player on a chair that has no device of its own, leans them on a wall, or lies them on a bed. (The engine does not pull a body onto a device two metres away; measured 2026-09-16, so the server carries it.) The three portable postures are the chair, lean and lie profiles; any catalogue profile accepts a pose. The anchor must be within 5 m of the player's current position or the call is refused with anchor_too_far: past that a placement would be a teleport reachable without players.teleport, and Open77.players.teleport is the call that owns journeys. position is { x, y, z } or a three-element array; yaw is optional and defaults to 0. options are those of play (clip, durationMs, loop). Returns the accepted playback state with an anchor field; the playbackId is the handle stopAt takes. Resources see the accepted state at once; clients hear about the posture only when the body has arrived, and its clock starts then. The move watchdog is measured against the anchor and armed 5 s after acceptance; a body that never reaches its anchor in that window ends with anchor_unreached rather than moved. Acceptance is server authority, not proof -- observe onPlayerAnimationChanged. Refusals add invalid_anchor, anchor_too_far and anchor_move_refused (the body is not ready, not alive, or in a vehicle) to those of play. Provided directly by the server runtime; no animation resource export dependency is needed for this server call.",
+  "description": "Requires `players.animations.control`. Moves a player to an anchor, waits for placement, then starts a profile such as `chair`, `lean` or `lie`. Any catalogue profile accepts a pose. `position` is `{x, y, z}` or a three-element array; `yaw` is degrees about Z and defaults to 0. Options match `play`: `clip`, `durationMs`, `loop`. Anchors must be within 5 m; use `Open77.players.teleport` for longer moves. Returns accepted playback state with `anchor`; use `playbackId` with `stopAt`. The caller receives acceptance before clients receive the posture; playback timing starts on arrival. A 5-second anchor watchdog ends an unsuccessful placement with `anchor_unreached`. Observe `onPlayerAnimationChanged`; admission is not proof of rendered animation. Additional errors: `invalid_anchor`, `anchor_too_far`, `anchor_move_refused` (unready, dead or in a vehicle). Provided by the server runtime, without a resource-export dependency.",
   "params": [
    {
     "name": "playerId",
@@ -41100,7 +41100,7 @@
   "name": "debug",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Writes a resource-prefixed debug line to the server log.",
-  "description": "No permission. Writes to the resource-prefixed server logger at the `DBG` level, which a production log filter usually drops -- the place for per-tick chatter. `Citizen.Trace` is this function. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file. Until wave 6 (2026-09-16) all four levels printed at `INF`; since then the log line carries `DBG`.",
+  "description": "No permission. Writes to the resource-prefixed server logger at the `DBG` level, which a production log filter usually drops -- the place for per-tick chatter. `Citizen.Trace` is this function. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file.",
   "params": [
    {
     "name": "...",
@@ -41128,7 +41128,7 @@
   "name": "error",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Writes a resource-prefixed error line to the server log.",
-  "description": "No permission. Writes to the resource-prefixed server logger at the `ERR` level. It does not raise, abort the handler or mark the resource unhealthy: it is a log line, not an exception. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file. Until wave 6 (2026-09-16) all four levels printed at `INF`; since then the log line carries `ERR`.",
+  "description": "No permission. Writes to the resource-prefixed server logger at the `ERR` level. It does not raise, abort the handler or mark the resource unhealthy: it is a log line, not an exception. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file.",
   "params": [
    {
     "name": "...",
@@ -41156,7 +41156,7 @@
   "name": "info",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Writes a resource-prefixed informational line to the server log.",
-  "description": "No permission. Writes to the resource-prefixed server logger at the `INF` level, the same one `print` writes at. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file. Until wave 6 (2026-09-16) all four levels printed at `INF`; since then the log line carries `INF`.",
+  "description": "No permission. Writes to the resource-prefixed server logger at the `INF` level, the same one `print` writes at. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file.",
   "params": [
    {
     "name": "...",
@@ -41184,7 +41184,7 @@
   "name": "warn",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Writes a resource-prefixed warning line to the server log.",
-  "description": "No permission. Writes to the resource-prefixed server logger at the `WRN` level, so an operator filtering a resource's warnings from its chatter sees only these. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file. Until wave 6 (2026-09-16) all four levels printed at `INF`; since then the log line carries `WRN`.",
+  "description": "No permission. Writes to the resource-prefixed server logger at the `WRN` level, so an operator filtering a resource's warnings from its chatter sees only these. Values are joined with a tab like `print`; control sequences (ANSI colour codes, cursor moves) are stripped from the line before it reaches the log, so a ported script's coloured output cannot corrupt the terminal or the log file.",
   "params": [
    {
     "name": "...",
@@ -58086,7 +58086,7 @@
   "name": "giveGadget",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Grants a player a counted stack of grenades (or any quick-slot gadget), equipped and on the throw hotkey.",
-  "description": "Native-parity E4, over the weapon relay. `record` must be a `Gadget_Record` -- every 2.31 grenade (`Items.GrenadeFragRegular`, `Items.GrenadeEMPRegular`, `Items.Preset_Grenade_Smoke_Default`, ...; the `category = grenade` rows of `docs/generated/weapons-2.31.csv`). `count` is 1..999 units. Unless `options.equip` is false the owner places the stack in quick slot 1 and on the RB hotkey, the path the privileged grenade fixture measured on 2026-09-05, and accepts only when both took. The completion carries `result.gadget = { slot, record, tweakDbId, quantity, active }`; the owner's gadget report follows, so `Open77.weapons.gadgets(playerId)` then answers from the cache. Refusals by name: `invalid_player`, `invalid_gadget_template`, `invalid_gadget_count`, `invalid_weapon_options` now; `template_is_not_gadget`, `unsupported_gadget_area`, `item_creation_failed`, `equip_rejected`, `hotkey_rejected`, `request_timeout` on the completion. Like `assign`, this is a presentation grant: commit ownership in your own ledger first. See [Weapon Lua API](weapons-api.md#gadgets-grenades-in-the-quick-slots).",
+  "description": "Uses the weapon relay. `record` must be a `Gadget_Record` -- every 2.31 grenade (`Items.GrenadeFragRegular`, `Items.GrenadeEMPRegular`, `Items.Preset_Grenade_Smoke_Default`, ...; the `category = grenade` rows of `docs/generated/weapons-2.31.csv`). `count` is 1..999 units. Unless `options.equip` is false the owner places the stack in quick slot 1 and on the RB hotkey, and accepts only when both took. The completion carries `result.gadget = { slot, record, tweakDbId, quantity, active }`; the owner's gadget report follows, so `Open77.weapons.gadgets(playerId)` then answers from the cache. Refusals by name: `invalid_player`, `invalid_gadget_template`, `invalid_gadget_count`, `invalid_weapon_options` now; `template_is_not_gadget`, `unsupported_gadget_area`, `item_creation_failed`, `equip_rejected`, `hotkey_rejected`, `request_timeout` on the completion. Like `assign`, this is a presentation grant: commit ownership in your own ledger first. See [Weapon Lua API](weapons-api.md#gadgets-grenades-in-the-quick-slots).",
   "params": [
    {
     "name": "playerId",
@@ -59268,7 +59268,7 @@
   "name": "setConsumedKeys",
   "handler": "LuaWebPageConsumedKeys",
   "summary": "Consume selected navigation keys while preserving gameplay input.",
-  "description": "Call page:setConsumedKeys(keys) before page:setFocus(true,false,true). Client-local, per-surface policy: selected keys still reach the browser but not Cyberpunk Raw Input or Open77 pause/scoreboard shortcuts. Accepts a dense array of at most 32 case-insensitive names: escape/esc, enter, tab, backspace, space, up/down/left/right (arrow aliases accepted), home, end, pageup, pagedown, insert and delete. Invalid input leaves the existing list unchanged; {} clears it for future presses. Active only while this visible, presentation-enabled page owns keyboard focus. Repeats and releases remain consumed if the keydown handler hides/destroys the page or changes focus. No arbitrary gameplay keys or controller-menu interception. No extra permission; keep-input still requires webui.keep_input. Requires the updated client; not yet published on the CDN. See webui-input.md for the complete lifecycle and error contract.",
+  "description": "Call page:setConsumedKeys(keys) before page:setFocus(true,false,true). Client-local, per-surface policy: selected keys still reach the browser but not Cyberpunk Raw Input or Open77 pause/scoreboard shortcuts. Accepts a dense array of at most 32 case-insensitive names: escape/esc, enter, tab, backspace, space, up/down/left/right (arrow aliases accepted), home, end, pageup, pagedown, insert and delete. Invalid input leaves the existing list unchanged; {} clears it for future presses. Active only while this visible, presentation-enabled page owns keyboard focus. Repeats and releases remain consumed if the keydown handler hides/destroys the page or changes focus. No arbitrary gameplay keys or controller-menu interception. No extra permission; keep-input still requires webui.keep_input. Check method availability before using this mode. See webui-input.md for the complete lifecycle and error contract.",
   "params": [
    {
     "name": "keys",

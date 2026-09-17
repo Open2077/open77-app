@@ -1,11 +1,10 @@
 # Player models: NPC impersonation
 
-Find all 6,582 extracted game record IDs in the [morph catalogue](player-model-catalogue.md),
-with search, warnings, downloads and the in-game admin workflow.
+Select an NPC model as a player's visible body while retaining player identity and gameplay state.
+Find 6,582 `Character.*` IDs in the [morph catalogue](player-model-catalogue.md).
 
-> Development implementation. Native movement, special rigs, vehicle/life transitions
-> and two-client acceptance are still being validated. This page describes the API
-> contract, not a claim that every Character record has passed in-game testing.
+NPC impersonation is experimental. Movement, vehicle poses and life transitions depend on the
+model's rig; inclusion in the catalogue does not guarantee compatibility with every player action.
 
 A server resource can select a `Character.*` record as a player's visible body.
 The player retains their network identity, controls, health, equipment inventory and
@@ -25,8 +24,6 @@ every authored template or special skeleton supports every player action.
 
 ### Vehicle compatibility
 
-Humanoid driver/passenger poses have been checked with Rogue and Johnny on two
-local clients, including a moving vehicle and returning to on-foot control.
 The original player keeps the actual seat and driving authority; the visible
 NPC follows a presentation-only seat pose and never takes ownership of the car.
 
@@ -36,10 +33,9 @@ third-person fallback provides mouse orbit and three distances through the
 player's existing vehicle-camera binding. Reset restores the prior view;
 protected scenes and resource-owned scripted cameras retain priority.
 
-**Known special-rig limitation:** Adam Smasher uses `man_massive`, which has no
-matching animation binding in the tested vehicle's seat resource. He can appear
-in a T-pose or intersect the car. This is an accepted limitation for this special
-body, not verified vehicle support. The API does not silently replace his model.
+**Special rigs may not support vehicle seats.** Adam Smasher uses `man_massive`;
+seats without a matching animation binding can display a T-pose or clip the body
+through the vehicle. The API does not replace incompatible models automatically.
 
 ## Permissions and ownership
 
@@ -166,18 +162,8 @@ Native record preparation can also report `model_record_limit`,
 `proxy_record_unavailable`, `model_clone_failed`, `model_record_conflict`,
 `model_template_missing`, `model_flat_failed`, or `model_record_failed`.
 
-## Local acceptance harness
+## Integration checks
 
-`server/server.player-model-local.jsonc` selects the non-production
-`open77_player_model_test` resource and binds a private masterless test server.
-In-game: `/morphtest set Character.Rogue`, `/morphtest reset`, `/morphtest status`,
-`/modelcheck`, `/modelcheck Character.Smasher`, `/morphtest bucket 77`, and
-`/morphtest bucket 0`. Each game command modifies only its caller. Never add this
-unrestricted test resource to a public server.
-
-Completed checks and open cases are recorded in
-[the native research journal](../docs/research/player-model-morph.md). Humanoid
-seating and passenger-camera cycling/reset/exit have live two-client coverage;
-the broader action, death/respawn and resource-lifecycle matrix remains open.
-Unit tests alone are not visual acceptance.
-
+Check the intended models with the movements, vehicle seats and animations used by your gamemode.
+Handle asynchronous preparation failures and always provide a reset action. See the
+[admin morph workflow](player-model-catalogue.md#in-game-admin-menu) for model selection and restoration.

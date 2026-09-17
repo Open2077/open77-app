@@ -1,11 +1,6 @@
 # Server loot and ground drops
 
-In an Open77 session, ground loot is server-authoritative. Vanilla bodies, bags, containers,
-collectibles, and physical drops never hand an item to the player directly. An item visible on the
-ground is a local projection, presented through Cyberpunk's own interface — contents, rarity, detail
-card, `Take` and `Take All`. Selecting an item there sends a request to the server, which checks the
-drop, the dimension, and the distance before allowing the pickup. The local `TransactionSystem`
-removes nothing until the reply arrives.
+Ground loot is server-authoritative. Native containers and drops display the server's items; Take and Take All send pickup requests checked against the drop, routing bucket and player distance. The local inventory changes only after authorization.
 
 The official `open77_loot` resource must stay started. Its manifest asks for `network.events` and
 `world.loot`, and its client is distributed with the server's resource set.

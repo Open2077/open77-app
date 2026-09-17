@@ -1,10 +1,6 @@
 # Time scale: slow motion for a scripted beat
 
-`Open77.world.setTimeScale` slows the clock a client's world runs at -- everything on that client,
-the local body included -- for a countdown, a kill cam, a cinematic reveal, a round end. It is the
-FiveM `SetTimeScale` shape on the client, and on the server it is replicated per routing bucket so a
-beat every player in an instance should share is shared. It is **not** a combat mechanic, and the
-last section says exactly why.
+Use `Open77.world.setTimeScale` for local cinematic slow motion. Server-side time scale is replicated per routing bucket. It affects the client's simulation, including the local body, and is not suitable for an individual combat advantage.
 
 The day-time clock -- what hour it is, how fast the sun moves -- is a different thing and lives in
 [Weather](weather.md). This page is about the *rate*: how much simulation happens per real second.
@@ -51,7 +47,7 @@ then took a client down, so the call refuses until there is a body to slow.
   can differ from what you asked for while a vanilla producer holds a dilation of its own (a
   deflect, a menu) or while you are easing.
 * `simTime` is the engine's game clock in game seconds (`GetGameTimeStamp`). It runs at the
-  day-length multiplier -- 8x real time on the vanilla day, measured 7.97 on the proof -- and it
+  day-length multiplier (8x real time for the vanilla day), and it
   dilates with `scale`, which is how you *measure* a slow-motion instead of trusting the number:
   take its rate against `GetGameTimer()` (the steady clock, which never slows) during the hold
   and again at real time, and the dilation is the ratio of the two rates. The rate against the

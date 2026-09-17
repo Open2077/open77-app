@@ -1,7 +1,6 @@
 # Native screen transitions
 
-Introduced in client **2.31.13+op77.56** for Cyberpunk **2.31**. Network protocol
-remains **1.24**; this client-local feature does not require a server update.
+Native screen transitions require client **2.31.13+op77.56** or later. They are client-local and do not require a matching server feature.
 
 `Open77.screen` exposes Cyberpunk's **native quest fade manager** to client Lua.
 It does not create a WebUI overlay, load a quest, apply a Relic status effect or
@@ -244,7 +243,7 @@ Lua error is handled by your script; the safety deadline still applies.
   native layouts fail closed with `screen_unavailable`; no raw pointer is exposed.
 - These are the quest manager's native transitions, including its own native UI
   and input supervision. The API does not request a teleport, damage, audio
-  effect, camera change or network operation. Live tests confirm that the native
+  effect, camera change or network operation. The native
   minimap disappears during black, but Open77's CEF health HUD, watermark and
   command hints remain visible. Hide your own WebUI explicitly if your transition
   needs that; this API does not take ownership of other resources' interfaces.

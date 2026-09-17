@@ -1,10 +1,8 @@
 # Network vehicles
 
-Open77 vehicles are server entities. A server resource creates a vehicle, while any resource granted
-`world.vehicles` may control its canonical state and lifecycle. Clients only stream a REDengine
-projection around their player.
+Create and manage network vehicles on the server. Resources with `world.vehicles` control canonical state and lifecycle; clients render nearby projections.
 
-For weapon-equipped models and their exact spawn IDs, see the [armed vehicle spawn catalogue](armed-vehicles.md). It separates live-tested armament from inherited mount declarations and special-purpose variants.
+Find weapon-equipped model IDs in the [armed vehicle spawn catalogue](armed-vehicles.md), including mount declarations and special-purpose variants.
 
 For weapon replication, release compatibility, damage policy, current limitations and the twelve client-side armament, ammo, heat and selection queries, see the dedicated [armed vehicles and weapon Lua API guide](vehicle-weapons.md).
 
@@ -792,7 +790,7 @@ assert(ok, reason)
 Open77.players.taskEnterVehicle(playerId, vehicleId, "driver")
 ```
 
-Three things this is **not**, each for a measured reason:
+Three things this is **not**, due to engine limits:
 
 * **It does not walk the player to the door.** The approach is an NPC behaviour
   (`ApproachVehicleDecorator`), and the single attempt to drive an Open77 network puppet through
@@ -1021,11 +1019,7 @@ adopted car is a vehicle like any other: `get`, `update`, `setLocked`,
 a `create`. Only `get(id).adopted`, `adoptedFrom` and `adoptedEngineEntity`
 remember where it came from, and they are provenance — they grant nothing.
 
-The visible cost is a gap: the vanilla chassis goes at step 3 and the adopter's
-own projection of the canonical car attaches when it streams in. That is the
-same stream-in the whole subsystem already lives with, measured at up to 3.7 s
-for a car spawned out of nothing; here the record is already resident, so it is
-expected to be much shorter — expected, not measured.
+Adoption replaces the vanilla chassis with a network projection. A visible gap can occur while the replacement streams in; its duration depends on asset loading.
 
 ### The three calls
 
@@ -1420,29 +1414,17 @@ for the bits it names. It is a window, not a lock:
   projection applied it -- so a driver who then flips their own headlights is obeyed immediately;
 - a bit the owner can never report (the siren) is held until the window expires, then dropped, so
   the ledger can never get permanently stuck;
-- ten seconds is sized for the worst measured case, not for comfort: a server-created vehicle has
-  taken 3.7 s to stream in and its first owner report arrives about 5 s after that.
+- the ten-second window allows for stream-in and the first owner report.
 
 #### What the siren can and cannot do
 
-**The light bar and the sound are one bit.** The only native this build exposes is
-`vehicleBaseObject.ToggleSiren(Bool)`, which takes no channel argument, so there is no
-`setSirenLights` that would not also make noise and no `setSirenSound` that would not also light
-the bar. Offering them separately would mean shipping two names for one switch, which is worse
-than one honest name.
+**Siren lights and sound share one switch.** `vehicleBaseObject.ToggleSiren(Bool)` has no separate channels, so the API cannot control them independently.
 
-The siren is also the one electrical bit **no owner snapshot can read back** -- `Api::Vehicles::Snapshot`
-carries engine, locks, lights, high beams, doors, glass and tyres, and nothing for the siren. The
-client therefore echoes the canonical value in its durable report rather than reporting an
-observation, which is why the bar now stays lit.
+Owner snapshots do not include a native siren readback. Durable reports therefore echo the canonical siren value instead of reading it from the vehicle.
 
-#### Indicators and the interior light are not shipped
+#### Indicators and interior lighting
 
-FiveM's `SetVehicleIndicatorLights` and interior-light control have **no Open77 equivalent, on
-purpose**. REDengine 2.31 exposes no verified native for either: there is no indicator or cabin
-light call in the vehicle component surface Open77 has mapped, and shipping a setter that
-silently does nothing is worse than not having one. If a native turns up, it lands as
-`setIndicators(id, left, right)` and `setInteriorLight(id, on)` with two new canonical bits.
+Indicator and interior-light controls are not supported by this API.
 
 #### What `setDrivable` actually does
 
@@ -1488,14 +1470,7 @@ Open77.vehicles.setFrozen(id, false)
 Open77.vehicles.setDrivable(id, true)
 ```
 
-Two honest limits. The pinned transform is wherever the last *accepted* report put the car, so a car
-frozen at speed stops on the owner's screen one network latency past the canonical pin, and the two
-agree again on the first accepted report after the release; the row's use cases freeze a parked
-car, where that gap is zero. That gap is reasoned from the protocol, not measured: the live proof
-froze a car from rest under a held throttle (same pose at +0.5 s and +4.5 s, rolling again 1.5 s
-after the release) and never caught one at speed. And a freeze written through the raw bitfield -- `update(id, { flags =
-get(id).flags | Open77.vehicles.flags.frozen })` -- pins the motion facts the same way, but that is
-the read-modify-write `setFrozen` exists to spare you.
+Freezing pins the last accepted canonical transform. A moving owner can briefly render past that position because of network delay. Prefer `setFrozen` to a read-modify-write update of the `frozen` flag; both use the same authoritative pin.
 
 Like `undriveable`, `frozen` is server-authored, absent from every owner report and preserved
 across them, so no client can clear it. **It is a wire change**: the accepted vehicle flag mask
@@ -1688,7 +1663,7 @@ existed there was no way to ask.
 | Server | `Open77.vehicles.seatFree(id, seat)` / `occupantInSeat(id, seat)` / `freeSeats(id)` | Canonical seat occupancy. |
 
 The server calls reuse the anchor, bucket and limit conventions of
-[`Open77.players.nearby`](server-api.md#players) exactly: the anchor is a position table (a
+[`Open77.players.nearby`](server-api.md#nearby-closest-distance) exactly: the anchor is a position table (a
 vector3 is one) or a player id, a player anchor defaults to that player's own routing bucket,
 `bucket = false` opts back out to every bucket, and ties are broken by vehicle id so the order does
 not reshuffle between two calls with the same input.
@@ -1869,8 +1844,7 @@ pair of emitters per rear wheel (one centered pair on bikes) follows safe chassi
 points. When slip stops, the native effect loop is broken instead of killed: smoke fades for about
 2.5 seconds and trail decals remain for their roughly 31-second authored lifetime. Stream-out,
 despawn, or authority handoff still performs an immediate cleanup. Exact
-surface-material particles are outside the v1 contract. See
-`docs/research/vehicle-audio-and-wheel-fx-replication.md` for the evidence and limits.
+surface-material particles are outside the v1 contract.
 
 Body damage is replayed only after the streamed vehicle's authored components have attached.
 Broken-glass bits are resolved against that exact vehicle record's destruction-glass list and

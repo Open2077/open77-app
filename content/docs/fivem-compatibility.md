@@ -1,11 +1,6 @@
 # FiveM compatibility aliases
 
-Open77 already carries the FiveM runtime shape most resources depend on — `CreateThread`, `Wait`,
-`SetTimeout`, `AddEventHandler`, `TriggerEvent`, `RegisterNetEvent`, `RegisterCommand`,
-`RegisterKeyMapping`, `exports`. This page covers the layer added on top of that so a script copied
-out of a FiveM resource runs without being rewritten: the `Citizen` table, `SetTick`, generic
-promises, and the handful of shared-script helpers (`IsDuplicityVersion`, `LoadResourceFile`,
-`GetHashKey`, `DoesEntityExist`, the ACE checks and the player identifiers).
+Port FiveM resources using Open77's compatibility aliases for threads, timers, events, commands, key mappings, exports and promises. This guide lists supported aliases and the APIs needed where engine behavior differs.
 
 Everything here is an **alias or an addition**. No function that existed before changed meaning,
 and nothing widens the sandbox: `io`, `os`, `debug`, `package` and `load` are still absent, and
@@ -220,7 +215,7 @@ client actually has.
 
 ### `GetHashKey(str)` / `joaat(str)` — a TweakDBID, not a GTA hash
 
-**This is the divergence most likely to waste your afternoon.** In FiveM `GetHashKey` is the
+**Hash compatibility.** In FiveM `GetHashKey` is the
 Jenkins one-at-a-time hash (`joaat`) of a GTA model or entry name. Open77's records are TweakDB
 strings — `"Vehicle.v_sport2_quadra_turbo_r"`, `"Items.Preset_Lexington_Chrome"` — so the only
 hash that resolves to anything in this game is the one REDengine computes itself:
@@ -528,24 +523,13 @@ The full manifest reference is [Server resources](server-resources.md#declarativ
 
 ## What is missing, and why
 
-**`Citizen.CreateThreadNow` is deliberately absent on both sides.** It promises to run the body
-immediately and yield only on the first `Wait`. Neither scheduler can do that honestly: a task is
-created for the next pass, and resuming it inline from inside a running task would reset that
-task's instruction counter and deadline mid-flight, quietly breaking the budget accounting the
-whole sandbox rests on. Use `Citizen.CreateThread` and accept one frame of latency, or call the
-code directly if it does not need to yield.
+**`Citizen.CreateThreadNow` is unavailable.** Both schedulers start tasks on the next pass. Use `Citizen.CreateThread`, or call non-yielding code directly.
 
 `Citizen.InvokeNative`, `Citizen.CreateUThread`, `Citizen.Wait` inside a non-managed coroutine, and
 the `msgpack` surface are not provided: Open77 has no GTA native table to invoke, and the event
 payload encoding is not msgpack.
 
-**`RequestModel`, `HasModelLoaded`, `RequestAnimDict`, `HasAnimDictLoaded`,
-`SetModelAsNoLongerNeeded` and `RequestNamedPtfxAsset` are not provided, because the loop they
-serve does not exist here.** There is no streamer to ask: a server registry streams a vehicle or an
-NPC to every client inside its radius, and the client attaches its projection when the engine has
-spawned it — measured up to 3.7 s after the create arrives. So `Open77.vehicles.create` and
-`Open77.npcs.create` return before the body exists, and the honest question is not "is the model
-loaded" but "does *this* client have the body yet". That question is already answered:
+**`RequestModel`, `HasModelLoaded`, `RequestAnimDict`, `HasAnimDictLoaded`, `SetModelAsNoLongerNeeded` and `RequestNamedPtfxAsset` are unavailable.** The server registry controls vehicle and NPC streaming. `create` returns before the client projection is attached; check whether the entity is streamed on the current client:
 
 | A ported loop waited on | Ask instead |
 |---|---|

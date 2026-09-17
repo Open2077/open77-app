@@ -1,17 +1,8 @@
 # Writing a gamemode
 
-A gamemode is the thing that makes your server *yours*: a set of rules, a
-round structure, a scoreboard, and whatever the players are actually there
-to do. On OPEN//77 it is written in Lua, as one or more
-[resources](server-resources.md), and it is the server that decides
-everything that matters.
+Build gamemodes as one or more Lua [resources](server-resources.md). Keep shared gameplay rules, match state and scoring authoritative on the server; use client resources for presentation and input.
 
-Read this before you write a line. Most of what follows is not style advice
-— it is platform behaviour that will otherwise cost you an evening each. All
-of it is drawn from two gamemodes that exist and run: **Pursuit**, the
-worked example (`resources/pursuit`, `resources/pursuit_hud`), and **Race**,
-a deliberately small second mode with no roles, no teams and no fixed player
-count.
+Examples use Pursuit and Race to demonstrate lifecycle handling, player readiness, routing buckets and server-side validation.
 
 ## The shape of a gamemode
 
@@ -65,14 +56,7 @@ Load order follows **manifest order**, so list `main.lua` before
 one glob stays deterministic — but list scripts explicitly anyway, for the
 reason in the next section.
 
-> **Version note.** Manifest order has only been honoured since
-> 2026-08-26. Before that the parser collected scripts into a sorted set and
-> loaded them alphabetically regardless of the manifest, and the symptom was
-> brutal and misleading: a later file reaching the shared global failed with
-> `attempt to index a nil value (global 'Pursuit')` and the whole resource
-> refused to start, because `bounds` sorts before `main`. If you ever see a
-> "global is nil" error from a file that clearly runs *after* the one
-> defining it, check that this has not regressed on your build.
+Load shared definitions before scripts that use them. Manifest order determines execution order; a missing global usually indicates a missing declaration or an earlier startup error.
 
 For decoupling *inside* the resource, use a local event — same VM, so it
 works:

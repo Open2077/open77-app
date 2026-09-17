@@ -57,9 +57,9 @@ for (const section of ["How it works", "Quick start: your first client action", 
 }
 assert.match(guide, /Open77RP\.archive/);
 assert.match(guide, /onAnimationPlaybackFailed/);
-assert.match(guide, /known limitation/);
-// 116 since wave 5 (row I4): the chair, lean and lie posture devices brought 43 clips.
-assert.equal((await read("content/docs/rp-animation-catalogue.md")).match(/^- `/gm).length, 116);
+assert.match(guide, /Repeated reconnects.+camera hold/);
+// The public profile catalogue contains 456 selectable clips across 76 profiles.
+assert.equal((await read("content/docs/rp-animation-catalogue.md")).match(/^- `/gm).length, 456);
 
 const origin = process.argv[2];
 if (origin) {
@@ -84,4 +84,4 @@ if (origin) {
     console.log(`served OK ${path}`);
   }
 }
-console.log("Animation documentation OK: 12 synchronized APIs, 6 exact-clip APIs, 5 legacy APIs, tutorial and 73 clips.");
+console.log("Animation documentation OK: 25 API cards, tutorial and 456 catalogue clips.");

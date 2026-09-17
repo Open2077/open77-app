@@ -1,7 +1,6 @@
 # Blocking player input
 
-A client resource can take a named input away from the player and give it back:
-handcuffs, a cutscene, a safe zone, a progress bar, a menu that owns the screen.
+Block individual input actions or the complete control stream from a client resource. Use resource-owned claims for menus, cutscenes, progress bars and gameplay restrictions.
 
 ```lua
 permissions { "input.actions" }            -- per-action blocking
@@ -11,15 +10,11 @@ permissions { "input.blockAll" }           -- taking the whole control stream
 This is a client-only API. A server gamemode sends an event to its client resource and
 lets that resource own the claim, exactly as it does for HUD visibility and blips.
 
-## The honest part, first
+## Input paths
 
-**Cyberpunk 2077 has no single input-blocking lever.** A gameplay action reaches the game
-through one of five unrelated paths, and a large minority of actions cannot be refused from
-a mod at all — firing and aiming are *polled* by the weapon state machine rather than
-dispatched as actions, movement is polled by the locomotion state machine, and the engine
-has no per-action block list to write into.
-
-So this API refuses rather than pretends:
+Actions use different native input paths. Firing and aiming are polled by the weapon state
+machine; movement is handled by locomotion. The engine has no general per-action block list.
+The API reports unsupported or already-enforced actions explicitly:
 
 | You ask for | You get |
 |---|---|
@@ -27,11 +22,7 @@ So this API refuses rather than pretends:
 | an action this engine cannot refuse | `false, "action_not_blockable"` |
 | an action Open77 already blocks unconditionally | `false, "action_already_enforced"` |
 
-Never a silent success. A safe zone that does not actually disarm anyone reads as a
-server bug, and this is the one failure the API is built to avoid.
-
-`Open77.input.blockableActions()` is the list that really works. Read it instead of
-hard-coding names.
+Query `Open77.input.blockableActions()` for available actions instead of hard-coding names.
 
 ## The vocabulary
 
@@ -46,10 +37,8 @@ hard-coding names.
 | `Attack` | firing a ranged weapon | `condition` | **inferred — verify it** |
 | `WeaponWheel` | the radial weapon wheel; the bundled context menu holds this one for its lifetime | `condition` | proven |
 
-`confidence` is reported by `blockableActions()` on purpose. `inferred` means the lever is
-compiled and wired but has never been observed refusing the action in a live session. Do
-not make `Attack` the only rule protecting a safe zone until someone has pressed the
-trigger and watched nothing happen.
+`blockableActions()` includes a `confidence` field. Treat `inferred` actions as experimental.
+Do not rely on `Attack` input blocking alone to enforce a safe zone; validate combat rules on the server.
 
 ### Already enforced — nothing to claim
 

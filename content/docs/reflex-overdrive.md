@@ -1,9 +1,8 @@
 # Reflex overdrive
 
-A Sandevistan-inspired implant power for a **shared real-time world**. The owner
-moves, swings and reloads faster; everybody else keeps running at normal speed.
+Reflex overdrive increases the owner's movement, attack and reload speeds through temporary stat modifiers. It does not slow other players, bullets or the simulation clock.
 
-Read that sentence twice before building on it, because it is the whole design:
+The effect uses stat modifiers, not global or per-entity time dilation.
 
 - **It does not slow other players.** No packet in this feature can change
   anyone else's clock.
@@ -12,14 +11,7 @@ Read that sentence twice before building on it, because it is the whole design:
   entity's. It applies stat modifiers on the owner's own body and removes them
   again.
 
-Why it works this way is measured, not assumed. The vanilla Sandevistan grants
-no speed: its status effect carries crit chance and two stamina discounts, and
-its entire advantage is a **global** time dilation with the local player
-exempted. In a session that call slows the acting client's whole local
-simulation — every remote body, every replicated animation, the physics and the
-audio — while the server and the other clients run at 1.0. The findings, record
-ids and the vanilla `IsMultiplayer()` guards that already refuse it are in
-the research notes in the open77-base repository (`docs/research/native-sandevistan.md`).
+Do not use vanilla Sandevistan time dilation as a multiplayer speed boost. It changes the acting client's whole simulation while the server and other clients continue at normal speed.
 
 Genuine shared slow motion, in an isolated arena bucket with an authoritative
 time domain, is a separate and separately gated experiment. Nothing in this page
@@ -163,50 +155,15 @@ and `active` drops its burst and stays silent: the end cue only fires for a boos
 that really reached a body.
 
 **Be clear with your players about what this is.** It is an *Open77*
-presentation, not a recreation of anything in single-player, and the reason is
-worth knowing:
+presentation rather than single-player Sandevistan time dilation. The native preset uses the Open77 effect catalogue and does not slow the world or apply a full-screen observer effect. The owner sees the same body effects in first and third person.
 
-- **Cyberpunk 2077 2.31 contains no player-facing Sandevistan visual.** The
-  string `sandevistan` matches none of the 101 553 cooked asset paths. The
-  afterimage trails everyone remembers are authored on Adam Smasher and are
-  broken by name in his own script; the screen grade is a *time-dilation* camera
-  curve, meaningless without the slowdown this feature refuses to create.
-- So the layers above are built from Open77's existing effect catalogue. They
-  say "this body is running an implant", they do not say "Sandevistan".
-- **Nothing is drawn on an observer's own screen.** Every layer lives on the
-  boosted player's body, where it belongs. A full-screen effect would tell the
-  watcher something about himself.
-- The owner sees the same body layers in first and third person. There is no
-  extra overlay for him, deliberately: the two candidate native names
-  (`berserk`, `perk_edgerunner`) could turn out to be a full-screen berserk
-  grade, and a fifteen-second unverified overlay is worse than none.
+### Visual cues
 
-### The cues, as measured
-
-The layers above were not chosen by their names. Nine catalog candidates were
-attached one at a time to a body 5 m from a second client and photographed, in
-fog and under clear night. Exactly one reads unmistakably in a still: the blue
-glow (`neon.loot_drop`), which is a light rather than a particle. The chest
-energy and heel sparks show a few bright sparks at close range; the character
-status-effect sheets, the EMP sizes and the blade idles -- everything that
-sounded like cyberware -- render nothing visible on a slot. Sheets:
-the candidate sweep captures kept with the repository.
-
-On a live 8 s `combat` boost the observer holds seven handles from the first
-sample to the last, and the plate stays amber the whole way. The trails are the
-one layer a still cannot judge: a katana trail draws only while its emitter
-moves, so it is carried at nil cost and judged in motion.
-
-One honest gap: this proves the sounds are **emitted and live on the body with
-real durations**, not that they were heard. No audio has been captured from this
-feature yet.
+The body effects combine blue light, close-range sparks and motion-dependent trails. Visibility varies with movement, distance and lighting. Audio cues are emitted on the body; audibility depends on the game's mix and listener position.
 
 ### At a distance, the plate does the work
 
-Body effects stop reading long before players stop mattering to each other. We
-measured it from a second client on open ground: unmistakable at 4 m, still clear
-at 10 m, and **invisible at 20 m** -- an observer across a street saw only a
-normal nameplate over someone slightly too quick.
+Body VFX may become difficult to see at a distance. Use the nameplate marker to communicate overdrive state beyond the effect's visible range.
 
 So a boosted player's nameplate is marked for as long as the boost runs:
 
@@ -320,51 +277,20 @@ stamina cost, the default key and where to rebind it, and Grant / Revoke / Cance
 boost. It rides the same request-and-action route as the slam card, rate-limited
 per issuer, with a data push after every action.
 
-## What is proven, and what is not
+## Behavior and limitations
 
-Measured live, not inferred. What follows is what has actually been observed in a
-running game, and what has not.
+A `MaxSpeed` multiplier above 1 increases locomotion speed without changing the clock. Modifiers are removed on expiry, cancellation, death, vehicle entry, reconnect, resource stop or a suspended-cyberware refusal.
 
-**Proven in-game.** A `MaxSpeed` multiplier above 1 does raise locomotion: sprint
-measured 7.10 -> 9.38 m/s (x1.25) on open ground, with `clock=untouched`. All
-seven release paths end the boost — deadline, cancel, death, vehicle, reconnect,
-resource stop and a suspended-cyberware refusal. Over 38 activations the ledger
-balanced at 190 modifier adds against 190 removes, no drops.
-
-**Proven on other people's screens.** The attached presentation reads at 4 m and
-10 m and **failed at 20 m**, which is this feature's own criterion; that gap is
-closed by the nameplate marker. The full matrix is measured: first person at 4,
-10 and 20 m, and third person at 10 m and at 20 m, the last one in **daylight**
-with a male boosted player and a female observer 20.00 m apart. The captures are kept with the repository.
+The nameplate marker supplements body effects for distant observers and in bright lighting.
 
 Know what that means before you tune a preset: **beyond about 10 m, and in
 daylight sooner, the particles are gone and the plate is the entire signal.** The
 attached layers are a close-range affair. If you replace the plate with something
 of your own, you have replaced the only thing an observer can read at range.
 
-**Proven about the clock — and this is the part worth reading carefully.** The
-guard that protects a shared session is a REDscript wrapper that arms *only*
-inside a multiplayer session: `script.state` reads `armed=no` in solo and
-`armed=yes` in a session. A control run in a solo lab therefore tests the native
-detour, not the guard real players are behind. Re-run inside a session, a live
-caller asked for a time scale of `1e-06` across 4725 frames — one episode of 10.3
-seconds — on the two native setters a Sandevistan drives, and the effective scale
-never left 1 while the world clock advanced.
+The multiplayer time-dilation guard releases native dilation while a session is active. It is inactive in single-player. A zero `dilationSetsRefused` counter is normal: the guard releases dilation rather than rejecting the original call.
 
-Note the counter that trips people up: in a session `dilationSetsRefused=0` is the
-**healthy** reading. The guard does not refuse the call, it releases the dilation
-as fast as it is applied. Refusal is a solo-lab hammer armed by
-`session.dilationrefuse`; release is what ships, and it is why single-player is
-left alone.
-
-**Not proven, and named rather than glossed.** The in-session caller above was the
-hub menu, not a vanilla Sandevistan: `equipment.equip` answers `invalid_record`
-for `Items.AdvancedSandevistanApogee`, and nothing on the development rig installs
-a cyberware operating system onto a player. So "a shared clock survives a live
-in-session caller at `1e-06`" is measured; "a Sandevistan record is refused by
-name" is not. Section 12 of
-the research notes in the open77-base repository (`docs/research/native-sandevistan.md`)
-records the gap and what would close it.
+The weapon equipment API does not install cyberware operating systems: equipping `Items.AdvancedSandevistanApogee` through `equipment.equip` returns `invalid_record`. Use the supported cyberware APIs instead.
 
 **Still absent by design**, so nobody goes looking: no shared slow motion, no
 dodgeable bullets, no zones. Other players are never slowed and no bullet is ever

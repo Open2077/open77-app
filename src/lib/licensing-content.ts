@@ -11,13 +11,13 @@
 export const LICENSING_TITLE = "Server licensing";
 
 export const LICENSING_DESCRIPTION =
-  "How a server joins the OPEN//77 platform: create an account, mint a license key in the keymaster, put the key in your server config, and how the master authorises the server on boot.";
+  "Create, configure and revoke server license keys. Understand Master enrollment, account ownership and run leases.";
 
 export const LICENSING_LEDE =
-  "Every server on the platform belongs to an account. You create a license key on open2077.net, put it in your server's configuration, and the master authorises the server when it starts — no key, no listing.";
+  "A platform license associates a dedicated server with its owner's account. Create a key, configure it on the server and authenticate with the Master at startup.";
 
 export const LICENSING_OVERVIEW =
-  "OPEN//77 works like FiveM's keymaster: a server exists on the platform because a logged-in owner created a key for it. The key ties the server to your account, puts it in the public server browser under your name, and is the switch you use to pull it back off. Anonymous servers are not part of the platform — a server with no valid key is refused by the master and never appears in the browser.";
+  "Servers need a valid license for Master enrollment, directory registration and run leases. Manage keys in your account. An invalid or revoked key prevents enrollment.";
 
 export const ONBOARDING_STEPS = [
   {
@@ -73,7 +73,7 @@ export const KEY_FACTS = [
 ] as const;
 
 export const LINKING_INTRO =
-  "The server reads the key from its configuration when it starts. There are two ways to supply it; the environment variable is preferred because it keeps the key out of any file you might commit or hand to someone else.";
+  "Supply the key through the server environment or configuration. Prefer the environment variable to keep secrets out of shared files.";
 
 export const ENV_INTRO =
   "Set OP77_LICENSE_KEY in the server's environment and leave the config credential-free:";
@@ -103,7 +103,7 @@ export const LINKING_OUTRO =
   "Never commit a real key. The tracked server.jsonc should keep licenseKey null and rely on the environment variable; a leaked key should be revoked in the keymaster, not merely rotated in the file.";
 
 export const AUTH_INTRO =
-  "When the server starts with a valid key, the master authorises it and keeps it authorised for as long as it stays healthy. You never touch the platform database — everything goes through the key.";
+  "The Master checks the key at enrollment and renews the server's run lease through heartbeats.";
 
 export const AUTH_STEPS = [
   {
@@ -125,10 +125,10 @@ export const AUTH_STEPS = [
 ] as const;
 
 export const AUTH_NOTE =
-  "Player-side enforcement — official clients refusing to complete a handshake with a server whose lease has expired — is still being built. Today the master side is live: no license means no enrolment, no listing and no lease.";
+  "Master-side licensing controls enrollment, directory listing and run leases. Do not rely on it as the sole client-admission control; configure server access rules separately.";
 
 export const MANAGE_INTRO =
-  "Your account lists every key you hold, with its label, fingerprint and creation date, and a control to revoke it. Revoking is how you take a server off the platform, retire a community, or respond to a leaked key.";
+  "Your account shows each key's label, fingerprint and creation date. Revoke keys for retired servers or compromised credentials.";
 
 /** Markdown twin of the page, projected from the same constants. */
 export function licensingToMarkdown(): string {

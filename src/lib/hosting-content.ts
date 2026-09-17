@@ -14,13 +14,13 @@
 export const HOSTING_TITLE = "Host your own server";
 
 export const HOSTING_DESCRIPTION =
-  "A step-by-step guide to running your own OPEN//77 dedicated server: get the Windows or Linux build, mint a license key, walk the first-run setup, edit server.jsonc, launch it, and watch it appear automatically in the launcher.";
+  "Install and configure an OPEN//77 dedicated server on Windows or Linux: downloads, license keys, first-run setup, network endpoints and startup.";
 
 export const HOSTING_LEDE =
-  "Host your own Night City in the active Developer Preview. Download the server, configure your license and reachable endpoints, and invite approved preview accounts. The host does not need Cyberpunk 2077 installed.";
+  "Run a dedicated server for the Developer Preview. Configure its license and reachable endpoints, then invite approved accounts. Cyberpunk 2077 is not required on the host.";
 
 export const HOSTING_OVERVIEW =
-  "An OPEN//77 server is a small, self-contained program you run on any Windows or Linux box. You point it at a license key so the platform knows it is yours, tell it its name and public address, and start it. From there it enrols with the master, registers itself, and shows up in every player's launcher within a heartbeat — no manual listing, no ticket, no waiting for approval. This guide walks the whole path, from an empty folder to open doors.";
+  "The dedicated server is a self-contained Windows or Linux application. It uses a platform license to register with the Master and publish its name, endpoint and status. Public, eligible servers appear in the directory; private or hidden servers do not.";
 
 export const HOSTING_STEPS = [
   {
@@ -105,16 +105,16 @@ export const BUILD_NOTE =
   "Only ever download the server from the Host a Server page or the official CDN — nowhere else. Each release publishes a SHA-256 for every archive; compare it against the file you downloaded before you run it.";
 
 export const FIRSTRUN_INTRO =
-  "The very first launch is designed to be friendly. If the server finds no server.jsonc next to it, it does not error out or make you learn the config format up front — it opens a first-run setup wizard in your browser.";
+  "If server.jsonc is absent on first launch, a browser-based setup wizard creates it.";
 
 export const FIRSTRUN_BODY =
-  "The wizard collects the essentials — the server's display name, your license key, its public address and whether it should be listed publicly — and writes a valid server.jsonc for you. When it finishes, the server is configured and ready to start. You can re-open the config any time afterwards to fine-tune it, either by editing the file directly or, once the server is running, from the Warden admin panel.";
+  "Enter the server name, license key, public endpoint and visibility. Review the generated server.jsonc before starting. Later changes can be made in the file or through Warden.";
 
 export const FIRSTRUN_NOTE =
-  "Prefer to skip the wizard? Drop a server.jsonc into the folder before the first launch and the server uses it directly. The next section lists the fields that matter.";
+  "To skip the wizard, place a valid server.jsonc beside the server executable before launch.";
 
 export const CONFIG_INTRO =
-  "server.jsonc is a commented JSON file — you can leave notes to yourself with // comments. Most defaults are sensible; these are the fields you actually set to get listed.";
+  "server.jsonc supports JSON with // comments. Configure the following fields for enrollment and directory visibility.";
 
 export const CONFIG_SAMPLE = `{
   // How your server presents itself in the launcher and server list.
@@ -181,7 +181,7 @@ dotnet Open77.Server.dll
 ./Open77.Server`;
 
 export const APPEARS_INTRO =
-  "You do not submit your server anywhere or wait for it to be approved. On start-up it does three things on its own:";
+  "On startup, the server enrolls and registers automatically:";
 
 export const APPEARS_STEPS = [
   {
@@ -199,10 +199,10 @@ export const APPEARS_STEPS = [
 ] as const;
 
 export const APPEARS_NOTE =
-  "Not showing up? The usual cause is reachability — if network.publicEndpoint is a LAN address or the port is not forwarded, players cannot connect even though the server is enrolled. Check that visibility is \"public\", the master is enabled, and the endpoint is reachable from outside your network.";
+  "If the server is missing from the directory, check its license, public visibility, master connection and endpoint. LAN and loopback endpoints are not public listings. A platform administrator can also hide a server. For connection failures, check external port reachability.";
 
 export const NEXT_INTRO =
-  "Once your server is live, the next step is running it day to day — streaming the console, managing players and reloading resources without a restart. That is what the Warden admin panel is for.";
+  "Use Warden to view logs, manage players and control resources. Some configuration and preload changes require a server restart.";
 
 /** Markdown twin of the page, projected from the same constants. */
 export function hostingToMarkdown(): string {

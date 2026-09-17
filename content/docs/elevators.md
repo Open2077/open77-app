@@ -1,16 +1,13 @@
 # Network elevators
 
-Open77 keeps Cyberpunk 2077's native moving-platform motion, sounds, collision and floor markers,
-but makes the dedicated server authoritative over every registered elevator.
+Synchronize elevators through the dedicated server while retaining native platform movement, sounds, collision and floor markers.
 
 For synchronized landing doors, enable [networked doors](doors.md). The
 `open77_doors` service discovers each landing's native lift/floor relationship
 and projects its server-approved state; it never opens a landing just because a
 player is near an empty shaft. Cabin inner-door animation stays with the lift.
 
-> **Status:** protocol 1.7, server authority, bucket/chunk streaming, late-join catch-up, Lua APIs
-> and the `open77_elevators` reference package are implemented. Two-client runtime acceptance is
-> still required for quest-specific elevators and landing-door variants.
+> Quest-specific elevators and landing-door variants may require additional configuration. Use the reference package and validate the selected lift before exposing it to players.
 
 ## Architecture
 
@@ -234,6 +231,3 @@ landing door; access has already been decided by the server request path.
 - At most 2048 elevators can be adopted per server.
 - Floor indexes are vanilla per-lift indexes in `0..floorCount-1`; they are not universal floor IDs.
 - Quest lifts may have extra workspots, layers or scripted doors and need explicit runtime testing.
-
-Implementation evidence, Ghidra handlers, known risks and the acceptance matrix are recorded in
-[the elevator research note](../docs/research/elevators-and-moving-platform-replication.md).

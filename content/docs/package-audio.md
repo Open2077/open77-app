@@ -1,8 +1,6 @@
 # Package audio: 2D and spatial sounds
 
-Play a resource's own `.mp3` or PCM `.wav` assets without creating a WebUI. Audio
-decoding is asynchronous and does not run on the game thread. Engine/Wwise named
-events remain a separate feature: see [effects](effects.md).
+Play `.mp3` and PCM `.wav` files bundled with a resource, without a WebUI surface. Decoding is asynchronous. For named engine/Wwise events, see [Visual and audio effects](effects.md).
 
 Available in client/server **2.31.13+op77.62**, protocol **1.25**. Local playback
 needs the updated client; network playback needs both the updated client and server.
@@ -131,12 +129,6 @@ client has working speakers or decoded the asset.
 - Resource stop, disconnect and game-world teardown release owned playback. Server
   non-looping sounds are collected 30 seconds after their configured duration ends.
 
-## Validation status
+## Compatibility limits
 
-Eight server tests, client Lua validation and real MP3/WAV device smoke tests pass.
-Two live clients verified late-join playback, pause/seek at the same cursor, resume,
-and destruction on both clients. Distance attenuation was observed in the live mixer.
-Bucket transitions are covered by automated service tests, not a completed live
-bucket-change trial. Output-device removal/recovery and every Windows codec/device
-combination are not certified; automatic device recreation after an output failure
-is not implemented.
+Output-device recovery is not automatic after an audio output failure. Decoder and device support depends on the installed Windows media components.

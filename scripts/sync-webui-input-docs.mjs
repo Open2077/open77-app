@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { readGuideForSync, reviewApiEntries } from "./docs-editorial.mjs";
 
 const args = process.argv.slice(2);
 let source = process.env.OPEN77_WIKI_SOURCE ?? "../CyberM/wiki";
@@ -17,7 +18,7 @@ for (let i = 0; i < args.length; i++) {
 const read = async (file) => (await readFile(file, "utf8")).replaceAll("\r\n", "\n");
 const hash = (text) => createHash("sha256").update(text).digest("hex");
 const selected = (entry) => entry.runtime === "client" && entry.qualified === "WebUI.Page.setConsumedKeys";
-const incoming = JSON.parse(await read(path.join(source, "data/api.json"))).filter(selected);
+const incoming = reviewApiEntries(JSON.parse(await read(path.join(source, "data/api.json")))).filter(selected);
 assert.equal(incoming.length, 1, "Regenerate the wiki API before syncing");
 const apiTarget = "content/api/api.json";
 const current = JSON.parse(await read(apiTarget));
@@ -26,7 +27,7 @@ const merged = current.some(selected)
   ? current.map((entry) => selected(entry) ? incoming[0] : entry)
   : [...current, incoming[0]];
 const writes = new Map([
-  ["content/docs/webui-input.md", await read(path.join(source, "webui-input.md"))],
+  ["content/docs/webui-input.md", await readGuideForSync(source, "webui-input.md")],
   [apiTarget, JSON.stringify(merged, null, 1) + "\n"],
 ]);
 const manifestTarget = "content/docs/_manifest.json";

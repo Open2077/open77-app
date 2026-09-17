@@ -21,7 +21,7 @@ assert.equal(pages.findIndex((page) => page.slug === "voice-lipsync"),
 const guide = await read("content/docs/voice-lipsync.md");
 for (const text of [...names, "voice.client", "audio-envelope", "male and female", "F7",
   "local presentation controls", "facial_graph_unavailable", "resource's", "not recognize phonemes",
-  "Do not infer CDN availability"]) assert.ok(guide.includes(text), text);
+  "Open77.archive"]) assert.ok(guide.includes(text), text);
 assert.ok((await read("content/docs/voice.md")).includes("(voice-lipsync.md)"));
 assert.ok((await read("src/lib/api-reference.ts")).includes('"/docs/voice-lipsync"'));
 const origin = process.argv[2];

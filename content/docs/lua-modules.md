@@ -1,8 +1,6 @@
 # Lua modules and require
 
-`require` loads a Lua library and returns the value that library exposes, usually
-a table of functions. Use it to split a resource into smaller files or reuse a
-library such as [PolyZone](polyzone.md), without copying its code into every job.
+Split resource code into modules with `require`. A module returns its public value, typically a function table. Libraries such as [PolyZone](polyzone.md) execute inside the importing resource.
 
 ```lua
 local PZ = assert(require('@polyzone'))

@@ -1,10 +1,6 @@
 # Build resources with an AI agent
 
-OPEN//77 natives are not in any model's training data. An assistant that has not looked them up
-writes FiveM code with OPEN//77 names, and the resource fails the first time it loads. The
-**Devkit MCP** fixes that: it gives Claude Code, Codex, Cursor, VS Code and claude.ai the whole Lua
-surface, pinned to the server build you run, plus a validator that catches a client native in a
-server script before the server does.
+Use the OPEN//77 Devkit MCP to give a coding assistant access to the Lua API for your server build. It supports API lookup and resource validation, including client/server runtime checks.
 
 It is one package, `@open2077/mcp`, open source at
 [github.com/Open2077/open77-devkit](https://github.com/Open2077/open77-devkit).

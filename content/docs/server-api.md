@@ -1,8 +1,6 @@
 # Complete server Lua API
 
-This page inventories the Lua surface installed by the dedicated server runtime. These functions
-exist only in `server_script` and server-side `shared_script` files. The searchable reference labels client and server cards separately; a function
-appearing on this page must not be assumed to exist on a client.
+Reference for the dedicated server's Lua runtime. These methods are available in `server_script` files and the server half of `shared_script` files. Client APIs are listed separately in the [API reference](/docs/api).
 
 Prefer the `Open77.*` names below. FiveM-style globals remain available where listed for familiar
 resource code and as the low-level implementation surface.
@@ -138,17 +136,7 @@ them. They differ in what they carry and in *when* they run, not in who hears th
 | `open77:resource:stopped` | `(resourceName, revision)` | Beside `onResourceStop`, with a revision. |
 | `open77:resource:refreshed` | `(revision)` | Beside `onResourceListRefresh`, with the lifecycle revision current at the refresh. A refresh is a re-read, not a transition, so the revision is not incremented by it. |
 
-**`onResourceStarting` is a notification, not a veto.** In FiveM a handler can `CancelEvent()`
-to refuse the start; here `CancelEvent()` inside it answers `false, "not_in_cancellable_event"`
-and the start proceeds. The reason is not the bus: every caller of a start is a cascade with no
-defined answer to a refusal in the middle of it — the boot start of every auto-start resource,
-a dependency started inside its dependent's start, `restart` bringing back the running closure
-it just stopped, a watched-tree reload. A refusal that stranded a dependent in `failed` or left a
-restart half-done would be worse than no refusal. What the inline delivery buys instead is an
-honest name: a handler observes the resource *before* it runs, which a queued event never could.
-Because it runs inline — on the host's stack, in registration order, each handler under
-`pcall` — `Wait` is not available inside it (it errors, is logged, and the next handler still
-runs), exactly as in a cancellable handler.
+**`onResourceStarting` cannot cancel a start.** `CancelEvent()` returns `false, "not_in_cancellable_event"`. Handlers execute inline, in registration order, under `pcall`, before the resource runs. `Wait` is not available: an attempted yield is logged as an error and delivery continues to the next handler.
 
 ```lua
 -- A resource that hands a shared lock to a sibling before the sibling's own scripts run.
@@ -207,7 +195,7 @@ and the existing cyberware identity. It never purchases or replaces an implant.
 `current(player).ownedByCaller` reports exact caller ownership across projection
 restarts without exposing the resource owner name.
 `onDashChanged` reports correlated activation phases; `onDashRejected` reports
-admission failure. Native movement and multiplayer acceptance remain pending.
+admission failure.
 
 The [reflex overdrive API](reflex-overdrive.md) adds `Open77.reflex.define`,
 `grant`, `revoke`, `cancel`, `current` and `capabilities`, under separate
@@ -216,8 +204,7 @@ permissions. It is a bounded real-time speed/handling buff on its owner: it
 slows no bullet, slows no other player, and changes no clock anywhere. A
 definition picks one of two client-owned stat tiers and its economy; it can
 never name a stat or a modifier. `onReflexChanged` reports correlated activation
-phases; `onReflexRejected` reports admission failure. Multiplayer acceptance is
-pending.
+phases; `onReflexRejected` reports admission failure.
 
 The [Ground Slam API](ground-slam.md) provides `Open77.abilities.define`, `grant`,
 `revoke`, `cancel` and `current`, controlled by `players.abilities.define`,
@@ -633,7 +620,7 @@ start, stop or restart one.
 `ExecuteCommand`, `GetRegisteredCommands`, `GetResourceMetadata`, `StartResource`, `StopResource`,
 `GetNumResources` and `GetResourceByFindIndex` are the FiveM spellings of the same functions.
 
-### Two capabilities, and the split is the design
+### Runtime control permissions
 
 **`runtime.commands` grants a plain resource's authority.** A resource holding it may invoke another
 resource's ordinary command — reusing something a sibling already wrote, which is the common and
@@ -1292,16 +1279,7 @@ if read and read.position and (read.ageMs or 0) < 5000 then
 end
 ```
 
-`read.fresh` carries exactly the predicate `position` enforces, so a caller that
-wants the old semantics still gets them from one reading: `read.fresh` is true
-precisely when `Open77.players.position` would have answered. A player who has
-**never** sent an accepted snapshot -- just connected, or moved routing bucket
-and not reported since -- has no `position` and no `ageMs` at all, which is
-distinguishable from a reading that is merely old. The readiness gate measured,
-in production on 2026-08-27, why position freshness must never be a liveness test
-on its own: it read true for a player sitting in the character creator with no
-world, and false for a player genuinely standing in Night City behind a late
-tick. `get` reports; it does not judge.
+`read.fresh` is true exactly when `Open77.players.position` would return a position. A player without an accepted snapshot has neither `position` nor `ageMs`, which differs from a stale reading. Position freshness is not a readiness or liveness check: use the player's readiness gate before placement or gameplay actions.
 
 #### `Open77.players.get(playerId)`
 
@@ -1632,7 +1610,6 @@ Vehicle-seat low-level aliases are `SetPlayerIntoVehicle`, `ForcePlayerOutOfVehi
 `SetPlayerVehicleExitLocked`, and `GetPlayerVehicleSeat`; their full contract is documented under
 [Vehicles](#player-seats).
 
-
 ## Moving a player
 
 `Open77.players.teleport(playerId, position, options?)` is the placement primitive.
@@ -1667,7 +1644,7 @@ Rejects, all stable snake_case:
 
 | Reason | Meaning |
 |---|---|
-| `player_not_ready` | No life record, or the join readiness gate is still closed. A player with no life record is on the "press any key to continue" screen, and **a server-side placement received there crashes the client** — measured, not theoretical. |
+| `player_not_ready` | The player has no life record or the readiness gate is closed. Placement is refused to prevent a client crash before the body is ready. |
 | `player_not_alive` | The life phase is not `alive`. A move is not a resurrection; use `revive` or `respawn`. |
 | `player_in_vehicle` | The body is mounted. See below. |
 | `dismount_failed` | `dismount = true` was asked for and the body was still in its seat when the ejection budget closed. Refused rather than teleporting a mounted body. |
@@ -1700,7 +1677,7 @@ there is no way to carry the car along. Moving the occupant alone leaves the sea
 and the platform's older kill → respawn primitive dealt with a mounted player by
 **unmounting first** — that is, by losing the vehicle.
 
-So the honest answers are "refuse" or "eject, then move", and the caller picks:
+Choose whether to reject mounted players or eject them before placement:
 
 ```lua
 Open77.players.teleport(source, point, { dismount = true })
@@ -1719,7 +1696,6 @@ Silently ejecting by default would destroy the vehicle state this API promises t
 cheap half: a heading streams nothing and cannot fall through a floor, so it dispatches
 and returns `true` rather than confirming. It refuses with the same `player_not_ready` /
 `player_not_alive` rules, plus `invalid_heading`.
-
 
 ## Combat policy
 
@@ -1998,8 +1974,7 @@ report can clear it.
 
 **The siren's light bar and sound cannot be separated**: the only native this build exposes is
 `vehicleBaseObject.ToggleSiren(Bool)`, with no channel argument. **Indicators and the interior
-light are deliberately not shipped** -- REDengine 2.31 exposes no verified native for either, and a
-setter that silently does nothing is worse than no setter. An authority release or revoke switches
+light are not supported by this API**. An authority release or revoke switches
 every electrical bit off by platform design, so re-assert on `onVehicleAuthorityChanged` if a
 parked car must stay lit. Full reasoning and the worked examples are in the
 [vehicle guide](vehicles.md#engine-lights-and-siren).
@@ -2463,11 +2438,7 @@ the security/bandwidth model.
 
 `Open77.world.setPopulation` requires `world.population`; `getPopulation` is ungated.
 
-**A bucket nobody has configured is empty** -- no crowd, no traffic, no police -- which is what
-every client applies at world entry on its own. Vanilla streets are an explicit choice: set the
-densities, or `bucket.population <bucket> on` from the console. (Until 2026-09-15 the server's
-unconfigured default read as vanilla; replicated, it made clients spawn traffic that the vanilla
-vehicle sanitizer despawned a second later -- cars popping in, hitting players, vanishing.)
+An unconfigured bucket has no ambient crowd, traffic or police. Enable population explicitly with the density settings or `bucket.population <bucket> on`.
 
 | Function | Signature | Purpose |
 |---|---|---|
@@ -2940,9 +2911,7 @@ by default and loopback by default:
 "httpHandlers": { "enabled": true, "listenUrl": "http://127.0.0.1:11781", "timeoutSeconds": 5 }
 ```
 
-While it is off, every `listen` answers `http_handlers_unavailable`, the same honesty as
-`http_unavailable` on the outbound side. Put a reverse proxy with TLS in front of it before
-exposing a route to the internet; the listener itself speaks plain HTTP on the address you give it.
+When disabled, `listen` returns `http_handlers_unavailable`. The listener uses plain HTTP; place a TLS reverse proxy in front of any publicly exposed route.
 
 ```lua
 -- open77.lua: permissions { "http.serve" }
@@ -2975,7 +2944,7 @@ operator can filter a resource's warnings from its chatter. `print` stays `INF`,
 `debug`. Their common signature is `(...)`, values are joined with a tab like `print`, and no value
 is returned. Control sequences (ANSI colour codes, cursor moves) are stripped from every resource
 line before it reaches the log, so a ported script that colours its output cannot corrupt the
-terminal or the log file. (Until wave 6, 2026-09-16, all four levels printed at `INF`.)
+terminal or the log file.
 
 ## Latent (chunked) client events
 
@@ -3065,25 +3034,8 @@ Request only the capabilities a resource actually uses. A manifest permission gr
 binding; it does not replace validation of player identity, distance, ownership, revision, bucket,
 or gameplay state.
 
-## Audit status
+## Reference coverage
 
-This page covers every public global installed by `LuaResourceRuntime`, all 118 low-level bindings,
-and every namespaced helper and constant installed by the server bootstrap. `wiki/tools/audit-api.py`
-compares the public globals with this page and fails when a new binding is undocumented. It reads
-both spellings — `SetGlobal("name")` and the array the export bootstrap installs its nine globals
-from — because until it read the second, nine public globals were invisible to it.
+Use the [API reference](/docs/api) for individual signatures. This guide groups server APIs by task and describes permissions, lifecycle and multi-call workflows.
 
-The generated API reference covers the same surface from the other direction. Since the extractor
-learned to read the server Lua prelude, every `Open77.*` server function produces a card whose
-**membership is read from `LuaResourceRuntime.cs`**, and a registered function with no written
-description fails the build. This page is the narrative companion: permissions, worked examples, and
-the contracts that span several functions live here, and the per-function cards live in the
-reference.
-
-The [World props](#world-props) and [World effects](#world-effects) sections once carried a caveat
-saying their Lua bindings were specified but not yet installed. That is no longer true: both the
-namespaced tables and the low-level aliases (`CreateProp`, `UpdateProp`, `SetPropTransform`,
-`SetPropBucket`, `RemoveProp`, `GetProp`, `GetProps`, `ClearProps`, and the effect aliases) are
-installed and audited. What remains true of the client side is the distinction the effects section
-already makes: the client-local `Open77.vfx` and `Open77.sfx` tables are a different API in a
-different runtime and are not replicated.
+Server world props and effects are replicated. Client-local `Open77.vfx` and `Open77.sfx` calls are separate APIs and do not replicate.

@@ -1,8 +1,6 @@
 # Open77 resource documentation
 
-Open77 turns Cyberpunk 2077 into a server-driven multiplayer platform. Gameplay and UI features are
-packaged as **resources**: self-contained directories with a manifest, Lua scripts, declared
-permissions, dependencies, and optional web interfaces.
+Build multiplayer gameplay and interfaces as resources: directories containing a manifest, Lua scripts, declared permissions, dependencies and optional web assets.
 
 Developers familiar with FiveM will recognize the client/server split, events, exports, commands,
 and manifest-driven lifecycle. Open77 APIs remain independent and reflect REDengine constraints.

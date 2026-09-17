@@ -1,8 +1,6 @@
 # Scripted cameras
 
-For the **playable F7 camera**, shoulder framing, movement FOV and collision-safe
-shake, see [Third-person camera styles](third-person-camera.md). That API uses
-`camera.style`, not the cinematic camera ownership described below.
+Use `camera.script` to control cinematic cameras. For the playable F7 view, shoulder framing, movement FOV and camera shake, use [Third-person camera styles](third-person-camera.md) with `camera.style`.
 
 Put the view where your resource wants it — a character creator orbiting the
 player's face, a shop that frames the rack, a dealership turntable, a cinematic
@@ -65,9 +63,7 @@ with a stable snake_case token. The complete list is at the bottom of this page.
 
 ## What is reachable, and what is not
 
-This matters more than usual here, because the shape a camera API *looks* like
-it should have is not the shape this engine supports. The evidence is in
-[`docs/research/scripted-cameras.md`](../docs/research/scripted-cameras.md).
+Camera controls are limited to the native capabilities listed below.
 
 **Reachable.** A world position, a world orientation, a look-at that tracks a
 point or an entity every frame, an attachment that follows a moving parent, a
@@ -461,9 +457,7 @@ has to be able to grant one without the other.
 
 ## Worked example: a character creator
 
-The shape the row was measured against. Two shots — a face camera and a
-full-body camera — a blended cut between them, and a hand-back that cannot be
-skipped.
+This example blends between a face camera and a full-body camera, then restores player control.
 
 ```lua
 -- open77_creator/client.lua
@@ -558,102 +552,10 @@ permissions { 'camera.script' }
 
 ---
 
-## Integrator checklist
+## Integration checklist
 
-This row cannot be proved by reading and it was not run in game. Every item
-below is a thing to look at, in order; the recovery cases are the ones that
-matter and they come first.
-
-**Setup.** One client, connected, alive on foot in a street (not an interior).
-A test resource with `camera.script`, exposing `/cam on`, `/cam off`,
-`/cam shake` and `/cam kill` chat commands.
-
-### Recovery — do these first
-
-1. **Kill the holder.** With a camera held, `stop open77_camtest` from the
-   server console. **The player must be back behind their own eyes within one
-   frame.** Not a second, not after a blend — the restore is synchronous on the
-   next tick. If the view stays put, stop here and report it.
-2. **Error the holder.** Make the resource throw while holding (`/cam kill`
-   calling `error('boom')`). Same result, plus `resource_error` in the log.
-3. **Reload the holder.** `restart open77_camtest`. View returns; the new
-   generation starts with no cameras; the old id now answers `camera_not_owned`.
-4. **Die.** Take a camera, then jump off something high enough. The view must
-   leave the scripted shot the moment the death screen begins — not after it.
-   `Open77.camera.cameras()` then reads `held = false`.
-5. **Respawn and re-take.** `activate` the same camera id again; it must work
-   without a `create`.
-6. **Disconnect while holding.** Reconnect. No camera, no leftover
-   `detached=yes` in `camera.state`, and `perspective.state` shows
-   `single_camera` with zero new violations.
-7. **Two resources.** Start a second resource that also asks for the camera.
-   Its `activate` must answer `camera_held_by:open77_camtest`. Stop the first;
-   the second can then take it.
-
-### The shot itself
-
-8. **It goes where it is told.** `create` a camera at a known world position
-   with a known `lookAt`, `activate` with `blendMs = 0`, and compare
-   `Open77.camera.view().position` against what you asked for. They must agree
-   to centimetres. *(This is the one inference in the whole row: the write is
-   the shipped AV-chase write, but it has not been observed on foot.)*
-9. **The blend is a move, not a jump.** `activate` with `blendMs = 1500` and
-   watch. The view must travel; the promise must resolve at the end, not at the
-   start.
-10. **The hand-back does not snap.** `deactivate({ blendMs = 800 })` must slide
-    back to the player's eyes and finish exactly on them.
-11. **Look-at tracks.** Point at a moving NPC and walk around; it stays centred.
-12. **Attach follows.** `attach` to a vehicle and drive it; the camera rides
-    with it and does not drift or telescope over a minute of driving.
-13. **Field of view.** `fov = 20` then `fov = 90`; both must take, and
-    `deactivate` must leave the player's own field of view as it was.
-14. **Shake stops.** `explosion`, 1.0, 400 ms. It must decay and come **exactly**
-    to rest — a shake that leaves a permanent offset is the failure to look for.
-15. **Distance refusal.** `create` a camera 400 m away and `activate` it:
-    `invalid_argument`. Then place one 200 m away and look — this is where to
-    check whether the streaming ceiling is really 250 m, and to replace the
-    number with a measurement.
-16. **`unproject` round-trips.** `project` a world point, `unproject` the result,
-    and raycast along the ray: it must hit that point. Record which branch ran
-    (the native or the pinhole fallback) — that is an open question in
-    `docs/research/scripted-cameras.md`.
-
-### Spectating — two clients, two accounts
-
-None of these means anything on one machine, and that is the whole note: with
-one client you can prove the refusals and that the body comes back, and nothing
-else. Run the second client under its own identity profile so the two are
-different accounts.
-
-21. **The shot is of somebody else.** Spectate from A to B, screenshot A. The
-    frame must show B, from behind and above. This is the check a single client
-    cannot make.
-22. **B cannot see A.** Screenshot B while A is spectating. A's body must be
-    absent, and A's nameplate with it.
-23. **A cannot block B.** Walk B through where A is standing. No collision.
-24. **Stop gives both halves back.** `spectate(A, false)` — A is back behind his
-    own eyes, visible to B, and solid again.
-25. **B dies.** A must be handed back automatically, without anybody calling
-    stop. Same for B disconnecting, B changing bucket, and A dying.
-26. **The resource stops.** `stop` the spectating resource while a session is
-    live. A must come back — this is the path that would otherwise leave an
-    invisible admin with nobody left to show him.
-27. **Distance.** Spectate a target 400 m away. Expect an empty frame, then
-    `Open77.players.teleport(A, Open77.players.position(B))` and expect the shot
-    to fill in. Record the distance at which it actually degrades; the 250 m in
-    this page is a limit on world-anchored cameras, not a measurement of this.
-28. **Re-stream.** Have B drive away and come back until his proxy re-streams.
-    The shot must follow him across it rather than freezing on an old entity.
-
-### Composition
-
-17. **Third person.** Engage third person, then take a camera. `perspective.state`
-    must read `camera=engine reason=scripted_camera`. Release; third person must
-    come back on its own.
-18. **Mid-transition refusal.** Press the perspective key and `activate` in the
-    same frame; one of the two attempts must answer `camera_unavailable`.
-19. **Vehicle.** Take a camera while driving. The vehicle row outranks nothing
-    here — both are engine-owned — but the AV chase and a scripted camera must
-    not fight; whichever wins must win consistently.
-20. **Photo mode.** Open photo mode while holding. Untested and expected to be
-    the messiest case; record what happens.
+- Restore the player camera, input, HUD and FOV on completion, cancellation, errors and resource stop.
+- Handle camera ownership refusals instead of overriding another resource's view.
+- Keep targets inside the supported streaming range.
+- For spectating, restore visibility and collision when either player dies, disconnects or changes bucket.
+- Avoid simultaneous control by photo mode, vehicle cameras and scripted cameras.

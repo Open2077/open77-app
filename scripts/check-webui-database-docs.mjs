@@ -13,7 +13,7 @@ const manifest = JSON.parse(await read("content/docs/_manifest.json"));
 for (const value of ["96 MiB", "1,500,000", "6 ms per client host", "3,072", "6,144", "1,536", "24", "12 MiB per file", "3 MiB"]) {
   assert.ok(runtime.includes(value), `Missing client limit: ${value}`);
 }
-for (const value of ["not yet published on the CDN", "http://localhost:5173/", "https://ui.example.dev/", "CORS", "certificate validity", "iframe", "WS/WSS", "Ctrl + wheel", "2 MiB WebUI message limit", "dedicated server's Lua"]) {
+for (const value of ["http://localhost:5173/", "https://ui.example.dev/", "CORS", "certificate validity", "iframe", "WS/WSS", "Ctrl + wheel", "2 MiB WebUI message limit", "dedicated server's Lua"]) {
   assert.ok(runtime.includes(value), `Missing WebUI contract: ${value}`);
 }
 const page = meta.sections.flatMap((section) => section.pages).filter((entry) => entry.slug === "database");
@@ -35,7 +35,7 @@ assert.equal(settings.connectionStringEnvironmentVariable.default, "OP77_DATABAS
 for (const name of ["Open77.webui.create", "Open77.webui.default", "Open77.resource.readPackedFile"]) {
   const entries = api.filter((entry) => entry.runtime === "client" && entry.qualified === name);
   assert.equal(entries.length, 1, `${name}: one API card`);
-  assert.match(entries[0].description, /client availability/, `${name}: link build-dependent behavior`);
+  assert.match(entries[0].description, /resource-runtime/, `${name}: link runtime requirements`);
 }
 for (const target of ["content/docs/debug-runtime.md", "content/docs/server-api.md", "content/docs/sound.md", "content/api/api.json", "content/api/schemas/server-config.schema.json"]) {
   const record = manifest.files.find((entry) => entry.target.replaceAll("\\", "/") === target);
@@ -43,7 +43,10 @@ for (const target of ["content/docs/debug-runtime.md", "content/docs/server-api.
   assert.ok(record, `${target}: provenance record missing`);
   assert.equal(record.bytes, Buffer.byteLength(data), `${target}: byte count`);
   assert.equal(record.sha256, createHash("sha256").update(data).digest("hex"), `${target}: hash`);
-  assert.ok(record.siteAmendment, `${target}: scoped amendment must not claim a full upstream sync`);
+  assert.ok(record.source, `${target}: preserve upstream provenance`);
+  if (target.endsWith(".md") || target === "content/api/api.json") {
+    assert.equal(record.siteEditorial?.owner, "website", `${target}: record the site-owned amendment`);
+  }
 }
 assert.equal(api.length, manifest.apiEntries, "No unrelated API cards removed");
 
@@ -54,7 +57,7 @@ if (origin) {
     ["/docs/database.md", ["# Configure a SQL database", "MySQL.scalar.await"]],
     ["/docs/resource-runtime", ["remote-pages-external-content-and-hot-reload", "96 MiB"]],
     ["/docs/resource-runtime.md", ["Ctrl + wheel", "6 ms per client host"]],
-    ["/docs/api/client/open77-webui.md", ["HTTP(S)", "client availability"]],
+    ["/docs/api/client/open77-webui.md", ["HTTP(S)", "remote WebUI"]],
     ["/sitemap.xml", ["/docs/database"]],
     ["/llms.txt", ["/docs/database"]],
   ]) {

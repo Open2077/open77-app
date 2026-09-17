@@ -1,8 +1,6 @@
 # Official resource exports
 
-Open77's native Lua API and resource exports are two separate surfaces. Native methods such as
-`Open77.vehicles.get` are registered by the client or server runtime. The exports below are owned by
-official Lua resources and add lifecycle isolation, WebUI ownership, or higher-level behavior.
+Use official resource exports for shared services such as interfaces, lifecycle management and gameplay helpers. These exports are separate from runtime-native methods such as `Open77.vehicles.get`.
 
 The package catalogue on this page lists **client exports**. Server resources can
 also publish and call their own exports using the same asynchronous surface; see
@@ -684,13 +682,6 @@ The same `preview_owner_denied` and `presentation_not_ready` guards apply.
 Stopping the preview owner also restores authoritative state. These coordination
 exports do not create a persistent outfit or expose arbitrary preview ownership.
 
-## Audit status
+## Reference coverage
 
-This catalogue is checked against literal `exports("name", ...)` declarations in
-`resources/*/client/*.lua`, the root-level client packages. System-resource exports
-are documented in their feature guides. Dynamic exports
-are intentionally discouraged because they cannot be audited or completed reliably by tooling.
-
-`resources/gamemodes/race` is intentionally absent from this catalogue: it declares no `exports("name", ...)`
-of its own and only calls the two entries above, so `wiki/tools/audit-api.py`'s
-`resources/*/client/*.lua` scan has nothing new to require here.
+This catalogue covers official client-resource exports. Additional system-resource exports are documented in their feature guides. Use explicit export names so resource tooling can discover them.

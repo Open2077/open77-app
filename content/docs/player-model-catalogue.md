@@ -32,14 +32,14 @@ their assets on every observing client.
 
 ## Choosing a body
 
-| Starting point | Record | Verified scope / warning |
+| Starting point | Record | Model notes |
 | --- | --- | --- |
 | Rogue | `Character.Rogue` | Humanoid local/remote presentation and vehicle seating. |
 | Johnny | `Character.JohnnyNPC_Puppet_Photomode` | Humanoid local/remote presentation and vehicle seating. |
 | Adam Smasher | `Character.Smasher` | Special skeleton; vehicle poses can T-pose or intersect the car. |
 
-Quest, scene, player-body, child, animal and robot records need additional
-testing. Extraction labels describe the records, not tested morph compatibility.
+Quest, scene, player-body, child, animal and robot records can have incompatible rigs or behavior.
+Extraction labels describe database records, not supported player actions.
 The visual body does not grant NPC AI, faction, boss powers, health or weapons.
 Appearance names are not record IDs. The extracted database source is not a
 reliable per-record DLC indicator: `tweakdb_ep1.bin` contains base-game entries too.
@@ -71,4 +71,3 @@ The admin index and Markdown list are generated from the same CSV by
 `resources/system/open77_admin/tools/build-models.py`. Their source SHA-256 is
 recorded in the generated files. Run the generator with `--check` to detect drift.
 Neither the documentation nor the menu is a runtime allowlist.
-

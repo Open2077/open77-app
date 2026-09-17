@@ -1,9 +1,6 @@
 # Resource audio
 
-`open77_sound` plays **an audio file your resource ships**. A phone ringing, a
-siren on a parked car, a boombox on a street corner, a doorbell, a shop jingle,
-a radio behind a counter — the sounds an RP server makes constantly and that the
-game itself has no event for.
+`open77_sound` plays audio files bundled with a resource, with controls for volume and pitch. Use it for custom interface sounds, ambient audio, radios and positional emitters.
 
 It is a different thing from [`Open77.sfx.*`](effects.md), and both stay. `sfx`
 plays **the game's own Wwise events** through the game's own mixer; it is the

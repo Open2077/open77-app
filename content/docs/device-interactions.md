@@ -1,7 +1,6 @@
 # Overriding a vanilla device prompt
 
-A vending machine, an ATM, a terminal, a computer, a door panel — Cyberpunk already draws a prompt
-on all of them, and a server that wants its own shop there has to get rid of the vanilla one first.
+Disable a native device prompt before replacing it with a resource-owned interaction. Supported targets include vending machines, ATMs, terminals, computers and door panels.
 
 ```lua
 permissions { "world.devices" }
@@ -22,11 +21,9 @@ Open77.world.clearDeviceInteraction("VendingMachine")
 Then draw your own with [contextual interactions](interactions.md) — `open77_interactions` has a
 `class` target that takes the same class name, so the two halves of this row line up by design.
 
-## The honest part, first
+## Interaction policy
 
-**There is no per-device "interactive" flag in this engine.** Nothing a mod can write turns one
-vending machine off. What there *is* is a single scripted choke point that every device controller
-passes through, and that is what this API wraps:
+The API intercepts the native method that builds a device's interaction choices:
 
 ```
 ScriptableDeviceComponentPS::DetermineInteractionState(
@@ -34,28 +31,7 @@ ScriptableDeviceComponentPS::DetermineInteractionState(
     context: script_ref<gameGetActionsContext>) -> Void
 ```
 
-That method builds the choice set and publishes it to the interaction component. The load-bearing
-fact is that **no device controller overrides it**: it is declared on `gameDeviceComponentPS`,
-overridden exactly once on `ScriptableDeviceComponentPS`, and otherwise only on `ScriptedPuppetPS`,
-which is not a device. One wrapper covers every interactive device in the game.
-
-`GetActions` — the obvious candidate — is overridden by some sixty controller subclasses
-(`VendingMachineControllerPS`, `ComputerControllerPS`, `TerminalControllerPS`, `DoorControllerPS`,
-…), so a wrapper on the base would miss almost everything. That is the difference between a switch
-that works and one that silently does nothing on the devices you care about.
-
-When a policy refuses, the wrapper does not skip silently. It publishes an **empty choice set**
-through the class's own `PushChoicesToInteractionComponent` — the same call vanilla makes for a
-device that has no valid actions — so the engine clears the prompt on the layer it picked itself.
-No layer name is guessed, and nothing is left standing from the frame before.
-
-A second wrapper, on `InteractiveDevice::OnInteractionUsed`, refuses the **use** as well. With the
-prompt gone there is nothing to press, so this is belt and braces; it exists because a scene, a
-quest or a subclass nobody has met could reach the action another way, and a policy that says off
-has to mean off.
-
-Both signatures were verified with the game's own `scc.exe` against 2.31's `final.redscripts`,
-including a negative control that produced `[UNRESOLVED_METHOD]` for a deliberately wrong name.
+A denied policy publishes an empty choice set through `PushChoicesToInteractionComponent` and rejects use through `InteractiveDevice::OnInteractionUsed`. The policy affects interaction prompts and actions, not the device's power state or quickhacks.
 
 ## What it is not
 
@@ -149,35 +125,9 @@ AddEventHandler("open77_devices:used", function(playerId, engineEntity, classNam
 end)
 ```
 
-## Human verification
+## Presentation limits
 
-**The visual half of this row cannot be proven from Lua.** Every assertion a script can make --
-the claim is taken, the effective read follows it, a typo is refused, the claim comes back -- is
-covered by `Open77.Scripting.Tests` and by the `I3` rows of `resources/dev/open77_parity_probe`.
-What no test can see is whether the prompt actually disappeared on screen, because that is a
-picture. Two minutes, one client, from a resource holding `world.devices`:
-
-| # | Do this | Must happen |
-|---|---|---|
-| 1 | Stand in front of a vending machine and note the vanilla prompt | it is there |
-| 2 | `Open77.world.setDeviceInteractionEnabled("VendingMachine", false)` | **the prompt disappears**, on this machine and on every other vending machine |
-| 3 | Press the interact key anyway | nothing happens: no purchase, no menu |
-| 4 | Walk away and back | the prompt is still gone -- it is a policy, not a one-frame clear |
-| 5 | `Open77.world.clearDeviceInteraction("VendingMachine")` | the prompt comes back |
-| 6 | Repeat 2-5 with `machine.engineEntity` from `Open77.world.nearby(8, "device")` | the same, on that one machine only -- its neighbour keeps its prompt |
-| 7 | Stop the resource while it still holds a policy | every prompt comes back within a frame |
-| 8 | With the policy on, press the machine and read the log | `open77:deviceUsed` carried the entity, the class and `allowed = "false"` |
-
-Step 2 is the one that matters, and it is the one the offline work could not settle. The hook is
-installed at the right method -- that is established, and `scc.exe` proved the signature against
-this build's own bundle -- and the refusal publishes an empty choice set through the class's own
-publisher. Whether the engine *renders* that as "no prompt" is the picture only a person can see.
-If it does not, the next thing to try is `interactionComponent.ResetChoices(<layer>, false)`, with
-the layer name **read from a running game** rather than guessed; there is a note to that effect at
-the exact line in `client/redscript/Open77DevicePolicy.reds`.
-
-Step 3 is independent of step 2 and is expected to hold either way: the use gate on
-`InteractiveDevice::OnInteractionUsed` refuses the action whether or not the prompt was drawn.
+The use policy and prompt rendering are separate. Lua can report the effective policy and rejected actions, but cannot confirm that the native prompt disappeared. Check the intended device classes in your gamemode; enforce gameplay permissions again on the server.
 
 ## Refusal reasons
 

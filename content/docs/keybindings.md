@@ -1,9 +1,6 @@
 # Key mappings
 
-`RegisterKeyMapping` is an **engine primitive**, not a resource. A resource declares a named action
-bound to a default key and supplies the callback to run; the engine owns the registry, the
-per-frame dispatch, and the persistence of rebinds. The player rebinds any registered action from
-**Pause → Settings → KEY BINDINGS**, and the new key is remembered across servers and relaunches.
+Register a named action, default key and Lua callback with `RegisterKeyMapping`. Players can rebind it under **Pause → Settings → KEY BINDINGS**. Bindings persist across servers and launcher restarts.
 
 Developers coming from FiveM will recognize the call. Open77 has no client command bus, so the
 mapping runs a Lua callback the resource supplies directly, rather than a registered command string.
@@ -199,11 +196,7 @@ if x and target and target.onScreen then
 end
 ```
 
-It is a ratio and not pixels on purpose. A client-rect read and the engine's own back-buffer size
-disagree on a display with DPI scaling — measured on an ultrawide at 125%, a client rect said
-1024x576 while the engine was rendering 1280x720 — so every pixel answer would need a qualifier the
-caller cannot see. A ratio needs none, because the position and the rectangle it is divided by come
-from the same measurement.
+Coordinates are normalized rather than pixel-based. DPI scaling can make the window's client rectangle differ from the render buffer; normalized values use a consistent coordinate space.
 
 `source` says which regime produced it:
 

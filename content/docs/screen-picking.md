@@ -1,8 +1,6 @@
 # Screen picking and cursor utilities
 
-Client-only helpers for pointing at the 3D world from a 2D interface. These APIs
-are introduced with the context-menu work and require a client containing that
-implementation; the previously published `.62` client does not contain them.
+Use client-side screen-picking and cursor APIs to select a world point or entity from a 2D interface. Check API availability when supporting clients without these helpers.
 
 For a ready-made ALT/click interface, use [open77_contextmenu](context-menu.md).
 

@@ -1,8 +1,6 @@
 # The role-play kit
 
-`open77_rp_basics` is a bundled sample resource that composes primitives which already shipped —
-the server freeze, client control blocking, synchronised animations, the weapons read and the
-placement primitive — into the three player-to-player verbs a role-play server actually needs:
+`open77_rp_basics` is a sample role-play resource combining player freeze, input blocking, synchronized animations, weapon queries and placement. It exposes cuff, escort and search actions:
 
 ```lua
 exports.open77_rp_basics:cuff(officerId, targetId)
@@ -16,10 +14,7 @@ and one that this engine cannot do, which is therefore present and refuses:
 exports.open77_rp_basics:carry(officerId, targetId)   --> false, "carry_unsupported"
 ```
 
-It is deliberately a *sample*. The interesting part is not the four functions — a gamemode could
-write those in an afternoon — it is the bookkeeping underneath them, because a cuffed player whose
-cuffing resource errored is a player who cannot move and cannot be freed. Copy it, read it, or
-depend on it; all three are supported uses.
+Use the resource as a dependency or adapt its source. Preserve ownership tracking and cleanup so an interrupted action cannot leave a player frozen.
 
 ## What each verb is, physically
 
@@ -30,9 +25,7 @@ depend on it; all three are supported uses.
 | `search` | held, for `searchMs` (4 s by default) | the whole stream, for the same beat | on its own, or by any of the same paths |
 | `carry` | — | — | it never starts |
 
-`cuff` also plays the `handsup` RP profile in a loop. `escort` does **not**, and that is not an
-oversight: RP profiles are stationary and walking cancels playback, so a hands-up pose cannot
-survive a walk. Stating that is better than shipping a pose that flickers off at the first step.
+`cuff` loops the `handsup` RP profile. `escort` does not play a profile because walking cancels stationary RP animations. Stating that is better than shipping a pose that flickers off at the first step.
 
 ### `escort` is a leash
 
@@ -41,10 +34,7 @@ target walks under his own power with everything but movement taken away, and a 
 the gap: past `tetherDistance` (5 m) he is placed back `tetherPullDistance` (1.6 m) from his
 escort, at the escort's height, and not again for `tetherCooldownMs` (2 s).
 
-The cooldown is not cosmetic. A pull is `Open77.players.teleport`, which resolves only once the
-client reports the body settled and refuses a second placement for the same player with
-`settle_superseded`. One pull at a time, with a floor between them, is what keeps that promise
-honest.
+A tether pull uses `Open77.players.teleport`, which resolves after the client reports the body settled. The cooldown prevents overlapping placements and `settle_superseded` refusals.
 
 Two tether outcomes end the hold rather than retrying:
 
@@ -91,11 +81,7 @@ Grant `rp.*` to a police role once. Until something is granted, every verb answe
 player still on another player's say-so does not arrive switched on. It is also `auto_start false`
 for the same reason.
 
-Authority is not the only gate. Before anything is taken, the server checks — from its own reads,
-never from the caller's claims — that both players are ready, alive, in the same routing bucket,
-and within `maxDistance` (3 m) of one another, with positions no older than two seconds. A dead
-target is refused outright: a server-side action on a client that is not alive crashes that
-client, measured, not theoretical.
+Before an action, the server checks that both players are ready, alive, in the same routing bucket and within `maxDistance` (3 m), using positions no older than two seconds. Dead or unready targets are rejected to avoid unsafe native actions.
 
 ## How a hold ends
 

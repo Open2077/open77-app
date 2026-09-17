@@ -1,8 +1,6 @@
 # The Workshop: install and share resources
 
-The [Workshop](/workshop) is where OPEN//77 creators publish what they built and
-where server owners pick it up. It holds Lua resources, gamemodes, maps, interface
-packs and tools. Everything in it is free. Nothing is for sale.
+The [Workshop](/workshop) hosts free community resources, gamemodes, maps, interfaces and tools. Creators publish packages; server owners install and manage them through Warden.
 
 The [front page](/workshop) shows featured, trending, new and recently updated
 creations. The [full library](/workshop/browse) has the filters. Every creation

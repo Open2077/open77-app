@@ -1,22 +1,12 @@
 # Deathmatch — running the Kabuki Arena PvP mode
 
-For the person who owns the server. What the mode is, how to start one, every
-number you can change and what changing it does, and the handful of failures
-that look like something else.
+Configure and run the Kabuki Arena PvP mode. This guide covers installation, match settings, dependencies and troubleshooting.
 
 The mode is two resources: `open77_deathmatch` (authoritative) and
 `open77_deathmatch_hud` (presentation). The template that installs them is
 `templates/deathmatch`.
 
-> **This page describes the mode as the rebuild on `feat/pvp-arena` defines it,
-> and the rebuild is in progress.** Settings and behaviour below are declared;
-> not all of them are wired yet. The resource README carries the phase-by-phase
-> status, the plan is
-> [`docs/gamemode-pvp-arena-plan.md`](../docs/gamemode-pvp-arena-plan.md), and the
-> measurements the design rests on are in
-> [`docs/research/pvp-arena-and-bots.md`](../docs/research/pvp-arena-and-bots.md).
-> Where this page and `resources/gamemodes/open77_deathmatch/shared/config.lua` disagree,
-> the config is right: it is what the server reads.
+The configuration reference includes options that may not be connected to gameplay in every package. Use `resources/gamemodes/open77_deathmatch/shared/config.lua` as the authoritative configuration schema; do not treat an option's presence as a gameplay guarantee.
 
 ## What players get
 
@@ -90,7 +80,7 @@ The four in the middle are the way into the mode, and each one is load-bearing:
 | Resource | What breaks without it |
 |---|---|
 | [`open77_worldui`](worldui.md) | No station at all. It owns the ring, the prompt card and the action key. |
-| [`open77_interactions`](interactions.md) | `open77_deathmatch` declares it as a hard dependency, so the gamemode is refused outright with `missing_dependency:open77_interactions`. Left out of a set that still lists `open77_worldui`, the failure is worse than a refusal: `open77_worldui` declares the same dependency, the server does not start the set partially and does not stop retrying, and it logs `Automatic resource start failed: Resource 'open77_interactions' was not found` **once a second, indefinitely** (measured 2026-08-31). If your log is scrolling one line per second, this is why. |
+| [`open77_interactions`](interactions.md) | Required by both the gamemode and `open77_worldui`. If missing, startup fails with `missing_dependency:open77_interactions` or a repeated `Automatic resource start failed` message. Add it to the resource set. |
 | [`open77_groundcircle`](../resources/system/open77_groundcircle/README.md) | The station works and is invisible. On 2.31 the native 3D interaction ring **does not draw at all**; the ground circle is the entire visual, and it follows real ground per vertex. |
 | [`open77_zones`](zones.md) | No client-side boundary hysteresis. The server still re-derives every containment claim, so this is a smoothness loss rather than an authority one. |
 
@@ -128,11 +118,7 @@ carry a prop perimeter, and props are capped at 256 per resource, which would
 have capped instances too. The wall turned out to be client-side (below), so the
 quota stopped gating anything.
 
-Bucket isolation is measured, not assumed: six props created in one bucket and
-six in the next rendered only for the bucket the player was in, with open ground
-where the others stood. World objects belonging to an instance — decoration,
-boundary markers, bots — cannot leak into another instance running the same
-geometry.
+Objects belonging to a match—props, markers and NPCs—must use that match's routing bucket. This keeps instances using the same world coordinates isolated.
 
 **Reap.** An instance that reaches zero players is not torn down at once: a
 player crossing between rounds or a single reconnect would churn the bucket.
@@ -205,7 +191,7 @@ something to do without measuring first.
 
 | Key | Type | Default | Range | What it does |
 |---|---|---|---|---|
-| `fillWithBots` | boolean | **`false`** | — | Quietly add bots to a thin free-for-all instance. **Off in production, deliberately.** Bots make an empty server feel alive and a busy one feel fake, and which of those you are is not a decision this mode should make for you. |
+| `fillWithBots` | boolean | **`false`** | — | Fill underpopulated free-for-all instances with bots. Disabled by default. |
 | `botFillTarget` | integer | `6` | 0 – 23 | How many bodies — players plus bots — a backfilled instance aims for. Bots give way as humans arrive. |
 | `botDifficulty` | enum | `standard` | `relaxed` · `standard` · `veteran` | Reaction delay, hit chance by range band, burst length and aggression. The first thing anyone says about a new bot is that it is too good or too stupid; this is the answer to both. |
 
@@ -358,11 +344,7 @@ The mode plays completely with `database.enabled: false`, and nothing is gated
 behind persistence — no unlocks, no power curve. Career stats and per-format ELO
 are additive.
 
-**The database bridge is per-server, not per-resource.** Turning it on for a
-ladder is what turned on appearance persistence and took the live Pursuit server
-down on 2026-08-27. Enable it deliberately, knowing every other resource on the
-server woke up at the same moment, and test the join path with it on — some bugs
-exist only in that shape.
+The database bridge is configured per server, not per resource. Enabling it also activates database-backed behavior in other resources, including character persistence. Check their configuration and join flows together.
 
 ## When something looks broken
 

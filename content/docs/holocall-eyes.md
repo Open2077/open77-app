@@ -1,9 +1,6 @@
 # Blue holocall eyes
 
-Enable the game's authored **blue eye-glow effect** on a multiplayer player.
-The server owns the state; clients display it on streamed player bodies and the
-local third-person/F7 body. This is a cosmetic building block for phone, taxi,
-dispatch or RP resources, not a complete phone-call system.
+Apply the native blue eye-glow effect to multiplayer players, including the local third-person body. The server owns this cosmetic state; clients display it on streamed bodies.
 
 It does not open the vanilla phone, play phone audio, set quest facts, restrict
 movement or change the player's saved eye customization. It needs a client and

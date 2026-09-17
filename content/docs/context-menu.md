@@ -1,9 +1,6 @@
 # Generic context menu — open77_contextmenu
 
-A standalone, resource-extensible ALT/click menu for any Open77 gamemode.
-No Freeroam dependency and no built-in admin powers. Version **1.1.0** is a
-framework for other client resources: **it intentionally supplies no gameplay
-actions on its own**. Install a consumer or the opt-in example to populate it.
+`open77_contextmenu` provides a resource-extensible ALT/click menu. It has no Freeroam dependency, built-in admin permissions or default gameplay actions; consumer resources register the available actions.
 
 ## Built-in consumers, not built-in actions
 
@@ -88,10 +85,7 @@ enable the example's manifest when trying it on a private server. Starting only
 its server runtime with `ensure` does not automatically start a client script
 whose manifest still has `auto_start false`.
 
-Requires a client with the [screen-picking APIs](screen-picking.md), not the
-previous `.62` release. The package refuses to activate on older clients instead
-of interfering with other interfaces. Keep the complete `client`, `shared` and
-`web` directories and manifest together. Reconnect clients after updating it.
+Requires the [screen-picking APIs](screen-picking.md). The package refuses activation if they are unavailable. Deploy the manifest and complete `client`, `shared` and `web` directories together, then reconnect clients.
 
 The package declares `world.query`, `input.actions`, `players.controls` and
 `local.events`. A consuming resource needs only the permissions used by its own

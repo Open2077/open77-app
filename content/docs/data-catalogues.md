@@ -1,11 +1,6 @@
 # Game data catalogues — `Open77.data`
 
-Open77 records are **TweakDB strings**: `Items.Preset_Lexington_Default`,
-`Vehicle.v_sport1_rayfield_caliburn_player`. They identify a thing exactly, and
-they are unreadable. `Open77.data` turns one into the facts a resource needs to
-show it — a display name, a class, a manufacturer, a seat count, a quality —
-without every shop, garage and inventory shipping its own copy of the game's
-data.
+`Open77.data` resolves TweakDB IDs such as `Items.Preset_Lexington_Default` and `Vehicle.v_sport1_rayfield_caliburn_player` into display names and structured metadata for inventories, shops and garages.
 
 ```lua
 local car = Open77.data.vehicle("Vehicle.v_sport1_rayfield_caliburn_player")
@@ -60,55 +55,9 @@ host, generated from `docs/generated/` by `scripts/build-data-catalogue.py` and
 parsed lazily — a server whose resources never call `Open77.data.item` never
 parses the item catalogue.
 
-### The measurement behind that split
+### Performance
 
-The obvious design — ship the catalogues to both sides so both answer the same
-way — was rejected on numbers, not taste. Reduced to just the fields these calls
-return, the four catalogues are **6 812 rows**. Shipped to the client as Lua
-tables they would cost:
-
-| | |
-|---|---|
-| interned Lua string heap | 576.3 KiB |
-| parallel arrays (the cheapest possible shape) | 529.1 KiB |
-| record → index hashes | 256.2 KiB |
-| **total, cheapest shape** | **1 361.6 KiB** |
-| total, one table per record (the natural shape) | 2 650.8 KiB |
-| load-time VM instructions | ~59 800 |
-
-That last row is the one that decides it. The scripting host aborts a script load
-that crosses a **10 000-instruction** hook stride on a stalled frame, and
-`resources/system/open77_admin/shared/catalog.lua` records in its own header what
-that costs: one catalogue of 1 372 vehicles executed ~13 700 instructions, crossed
-the stride once, and twice on 2026-08-28 made the host silently roll back a
-25-resource candidate set — so a deploy appeared to succeed while clients kept
-running the old code. Four catalogues are roughly six times that.
-
-And the shipped copy would be **worse data**. No repository source holds a
-localised vehicle name; the existing admin catalogue's names are title-cased
-record paths ("Playerbike Playerbike"), and the weapon names extracted into
-`docs/generated/weapons-2.31.csv` are French. The client has the real ones.
-
-So: **1 361.6 KiB and a load-time hazard per player, for worse answers — against
-643.3 KiB of embedded text parsed at most once in one server process.** The client
-reads live.
-
-On the server side the catalogue is indexed by record at parse time rather than
-scanned. Measured over the 1 925-row weapon catalogue, 100 000 lookups each:
-
-| | per lookup |
-|---|---|
-| indexed | 308 ns |
-| linear scan, keys spread through the file | 3 324 ns |
-| linear scan, first row | 10 ns |
-| linear scan, last row | 6 758 ns |
-
-The honest reading is that a scan **is** fast enough for a single lookup. What it
-is not is *predictable*: its cost is where in the file the record sits, and a shop
-rendering fifty rows pays that spread fifty times. The index is built anyway
-because it is free — the parse has to walk every row to resolve the file's
-dictionary columns regardless, so the index costs one insert per row on work
-already being done.
+Client queries read the live TweakDB and use the player's localization. The server lazily loads an embedded catalogue and indexes records for lookup. Avoid distributing duplicate catalogues as Lua tables: they consume each resource's memory and startup instruction budget.
 
 ## Fields
 

@@ -1,6 +1,6 @@
 # Player identity and username
 
-Open77 gives every installation a durable cryptographic identity. The username shown in chat, nameplates, presence events, and server scripts belongs to that identity and is verified by the Master.
+Each installation has a persistent cryptographic identity. The Master verifies the username used by chat, nameplates, presence events and server scripts.
 
 ## Stable id and display name
 

@@ -1,7 +1,6 @@
 # Freezing a player
 
-Hold a player's body where it stands. This is the primitive behind cuffs, a menu that must not be
-walked out of, a progress bar, a safe zone, a cutscene and a dead state.
+Freeze a player's position with a server-authoritative state or a client-local claim. Use this for restraints, cutscenes and interfaces that require the player to remain stationary.
 
 There are two halves, and they are not alternatives:
 
@@ -131,19 +130,10 @@ Open77.players.ragdoll(id, { direction = { x = 0, y = 1 }, distance = 2 })  -- a
   the body (including the 1.5 s recovery window after one ends, so hit spam
   cannot chain ragdolls), `body_unavailable` for a player who is not alive, on
   foot and ready, `invalid_direction` / `invalid_duration` for bad arguments —
-  and `motion_unavailable` on a server without a database: the motion lease
-  belongs to the cyberware store, which exists only with `database.enabled`, so
-  a bare development server answers that rather than a fall (the parity probe
-  reports `SKIP` there for the same reason).
+  and `motion_unavailable` when the database is disabled. Motion leases use the
+  cyberware store and require `database.enabled`.
 
-**Why not a physics ragdoll.** The engine can put a body into a true physical
-ragdoll and Open77 already calls that for death (`Api::Life::ForceRagdoll`,
-proven 129/129), but it stays deliberately unbound to Lua: the life replication
-takes the body *out* of ragdoll on the respawn path, and a scripted ragdoll
-racing that proven revive was judged the wrong trade. The knockdown path never
-meets the race -- it is admitted only while the life phase is `alive`, and the
-lease is dropped the moment the phase leaves it, so a body mid-revive can
-neither be knocked down nor stay down.
+**Physics ragdoll is not exposed to Lua.** Scripted knockdowns use an alive-only motion lease, separate from the death and respawn ragdoll path. The lease ends as soon as the player leaves the `alive` phase.
 
 ```lua
 -- A stun grenade: everybody within 6 m goes down for two seconds.

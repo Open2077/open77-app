@@ -1,6 +1,6 @@
 # Vanilla blips and mappins
 
-`Open77.blips` creates real Cyberpunk 2077 mappins. Depending on the vanilla profile attached to the sprite, the same blip can appear in the HUD, the minimap, and the world map. The API requires this permission:
+`Open77.blips` creates native mappins for the HUD, minimap and world map. Visibility depends on the sprite's native profile. Client resources require `ui.vanilla.map`:
 
 ```lua
 permissions { "ui.vanilla.map" }

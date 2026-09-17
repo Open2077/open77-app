@@ -1,9 +1,6 @@
 # The Players tab in Warden
 
-Warden is your server's in-process admin console. Its **Players** tab (subtitle
-"Online sessions") is the live roster of everyone connected, with the actions an
-operator takes on a row: warn, kick, ban, grant in-game rights, heal, freeze and
-move. It refreshes every few seconds on its own.
+Manage connected players in Warden's **Players** tab. The live roster refreshes automatically and provides warnings, kicks, bans, in-game permissions, healing, freezing and movement controls.
 
 This page covers the roster columns and the per-row actions. The whitelist and ban
 door list has its own tab and its own page — see

@@ -22,7 +22,7 @@ assert.ok(nav.sections.find((section) => section.id === "interfaces").pages
 assert.ok((await read("src/lib/api-categories.ts")).includes('"Open77.screen"'));
 assert.ok((await read("src/lib/api-reference.ts")).includes("/docs/screen-transitions"));
 const guide = await read("content/docs/screen-transitions.md");
-for (const text of ["2.31.13+op77.56", "1.24", "screen.effects", "open77:screen:black",
+for (const text of ["2.31.13+op77.56", "client-local", "screen.effects", "open77:screen:black",
   "unsupported_screen_preset", "screen_busy", "native_screen_busy", "timeoutMs",
   "CEF", "blurred/tinted", "not a GPU presentation fence", "not authorization"]) {
   assert.ok(guide.includes(text), text);

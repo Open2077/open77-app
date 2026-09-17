@@ -1,11 +1,6 @@
 # Contextual world interactions
 
-`open77_interactions` is the shared client service for contextual actions attached to a world
-position or a streamed Open77 entity. It projects the target through REDengine's active camera and
-draws a transparent WebUI marker at the corresponding screen position. At `markerDistance` the player
-sees only the world point and its distance; once they enter `distance` and look at the point, the
-marker expands into the custom action card. The service then reads an allowlisted action key and
-emits a local event owned by the calling resource.
+`open77_interactions` attaches client-side action prompts to world positions or streamed entities. A transparent WebUI displays the marker, distance and action card; an allowlisted input key triggers the calling resource's local event.
 
 This is not Cyberpunk's native interaction prompt. The point, distance label, action card, colours,
 copy and hold progress are rendered by the package WebUI while the target remains anchored to its
@@ -267,9 +262,7 @@ must not be able to hand this service a pattern that backtracks for a millisecon
 
 ### What `model` can really see
 
-This is the one place where the honest answer is smaller than the FiveM one, so it is worth being
-exact about it. FiveM's `addModel` takes a model hash, and every entity has one. On Cyberpunk 2.31,
-what the client can read depends on where the candidate came from:
+Unlike FiveM's uniform model hash, model identity in Cyberpunk 2.31 depends on the candidate's source:
 
 | Source | RTTI class name | TweakDB record |
 |---|---|---|
@@ -292,8 +285,7 @@ If you want a record match and only a record match, put the record in `canIntera
 
 ### Global vehicles, and why there are no bones
 
-ox_target lets an option name a bone — trunk, hood, a door — and draws the prompt on it. Open77
-cannot honestly offer that, and the reasons were measured rather than assumed:
+Vehicle interaction prompts cannot target arbitrary named bones such as trunk, hood or doors. Use the part-targeting support described below.
 
 1. **Cyberpunk authors slot names per entity.** An earlier row in this campaign established it, and
    nothing in the client Lua surface lists an entity's slots. The only native slot walk in the
@@ -481,11 +473,7 @@ Containment is the gate on whether the prompt exists at all; `distance`, `requir
 part of the zone you want the card readable from (it is capped at 25 m, like any interaction), or
 give the target its own `position` to anchor the card somewhere other than the volume's centre.
 
-Containment lives in **one function** in this resource, on purpose. `open77_zones` is today a
-client-only sphere poller with enter/exit events and no shared containment module; when a shared
-module lands, that one call site is what changes. The interface it must offer is a pure,
-synchronous `contains(shape, point) -> boolean` over a normalised shape table — not a promise and
-not an export round trip, because it is called inside the resolve pass, once per zone target.
+Zone targets use synchronous `contains(shape, point)` queries over normalized shape tables during the resolve pass. Avoid asynchronous export calls in this path.
 
 ### Declaring targets from the server
 

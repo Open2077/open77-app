@@ -1,19 +1,8 @@
 # The UI kit
 
-`open77_uikit` is the shared dialog and HUD-widget service: a progress bar, a
-text hint, a confirmation, an input form, a context menu, a keyboard menu, a
-radial wheel, a string floating over a world point and the cinematic letterbox.
-It is the thing a FiveM resource reaches for as `lib.progressBar`,
-`lib.inputDialog`, `lib.registerContext` / `showContext`, `lib.showTextUI`,
-`lib.alertDialog`, `lib.registerMenu`, `lib.registerRadial`, the hand-rolled
-`DrawText3D` loop, and the `DrawRect` pair every cutscene script draws for bars.
+`open77_uikit` provides shared dialogs and HUD widgets: progress bars, hints, confirmations, input forms, context and keyboard menus, radial wheels, world text and letterboxing.
 
-No serious roleplay resource ships without one, and the reason it is a
-*platform* service rather than a copied library is the screen: eight resources
-each drawing their own confirmation dialog is eight different products in one
-window. This kit renders every widget from one page, in the Open77 design
-system, so a garage written by one author and a job script written by another
-look like the same server.
+Widgets share one WebUI surface and a common design system. Resources do not need a separate browser page for each dialog.
 
 `lib.notify` already exists and is not here: toasts are
 [`open77_notifications`](notifications.md). Use that.
@@ -147,12 +136,7 @@ that survives death leaves a respawn screen the player cannot click through.
 
 ### A dialog is refused, never queued
 
-**One focus-taking dialog at a time, across every resource.** A second request
-is refused with `dialog_active`. It is not queued: a dialog that appears seconds
-later over a scene the player has moved on from is worse than an honest refusal,
-and two resources fighting for one keyboard is the failure this kit exists to
-prevent. A dialog can only be closed by the resource that opened it
-(`not_owner`).
+**Only one focus-taking dialog can be open across all resources.** Additional requests return `dialog_active` and are not queued. Only the owning resource can close it; other resources receive `not_owner`.
 
 The other widgets are not exclusive. `textUI` gives each resource its own slot,
 four at once. `progress` is one at a time and refuses with `progress_active`,
@@ -942,18 +926,8 @@ Plus everything [`Open77.exports.call`](resource-exports.md) and
 
 # Not in this kit
 
-- **`notify`** -- toasts already exist as [`open77_notifications`](notifications.md).
-  Duplicating them would give the platform two toast stacks with different
-  queue rules.
-- **`skillCheck`** -- **dropped, deliberately.** The timing minigame needs
-  frame-accurate input while gameplay input is blocked, and getting the window,
-  the tick and the input latency right is a measurement problem in the live
-  game, not a design problem on a page. Shipping a rough one would mean every
-  resource that used it inherited a minigame that feels wrong, and a bad
-  skill check is worse than none. The extension point is clean: it is one more
-  `kind` in `client/main.lua`'s dialog dispatch and one more renderer in
-  `web/app.js`, with the focus ledger, the timeout, the token discipline and the
-  release matrix already done and tested.
+- **`notify`**: use [`open77_notifications`](notifications.md) for toasts.
+- **`skillCheck`**: not provided by this kit.
 
 # Verification
 

@@ -1,10 +1,6 @@
 # Native Dash and Air Dash
 
-Dash gives a player a short native burst of movement: hold a direction, tap a key, and
-the body dashes that way on the ground, in the air, or both. You define the dash and
-grant it for the session; the server owns stamina, charges, cooldown and the one Air
-Dash per airtime. A grant composes with installed Gorilla Arms and double-jump legs and
-never rewrites them.
+Grant native ground or air dashes for a player session. The server controls stamina, charges, cooldowns and the one-Air-Dash-per-airtime limit. Dash grants do not replace installed cyberware.
 
 ## Minimal example
 

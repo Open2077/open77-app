@@ -1,11 +1,6 @@
 # NPC record catalogue
 
-Browse **6,582 `Character.*` records** extracted from Cyberpunk 2077 **2.31**, including
-Phantom Liberty. Search, filter and copy a record ID in the interactive catalogue.
-This is a discovery index, **not a spawn allowlist or a list of multiplayer-tested NPCs**.
-Custom records are also accepted when their assets are installed on every client.
-The full CSV contains 6,668 entries; 86 internal `TEST.*` IDs are excluded from the browser
-and compact JSON because the spawn API accepts the `Character.*` namespace only.
+Browse **6,582 `Character.*` records** from Cyberpunk 2077 **2.31**, including Phantom Liberty. The index describes game data, not guaranteed multiplayer compatibility. The downloadable CSV also includes 86 internal `TEST.*` records, which the spawn API does not accept. Custom `Character.*` records require their assets on every client.
 
 ## Use a record
 

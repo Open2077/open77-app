@@ -1,75 +1,21 @@
 # Server-owned world props
 
-Open77 props are canonical server objects projected into REDengine only for the players near
-them. A server resource creates and owns the prop; the server owns its identity, transform,
-routing bucket and lifetime. A client resource reads what it is currently projecting and may
-place purely local decorations of its own, but **it cannot create a prop that anybody else
-sees**. This is the ground-loot model, and it is the safe one: an unbounded client-side spawn
-API is a cheat vector.
+Create server-owned props, lights and effects that stream to nearby players. The server controls identity, transform, routing bucket and lifetime. Client resources can query projections or create local-only decorations.
 
 One registry holds three kinds. A prop, a light and a looping effect are all "a thing at a
 transform that streams and can be removed", so they share `Open77.props` and are told apart by
 `kind`. Looping effects keep their own author-facing entry point in
 [Visual and audio effects](effects.md) and land in this same registry regardless.
 
-## Status of this page
+## Model and collision limits
 
-> ### Measured 2026-08-28: props, lights and effects work; two limits remain
->
-> An earlier version of this block warned that props drew the wrong model and that
-> the API did not do what this page described. That was true when it was written
-> and is no longer. What changed, and what did not, is below; the evidence is in
-> [the research note](../docs/research/props-and-object-spawning.md).
->
-> **Working, and proven in game on two clients:**
->
-> - **A prop draws the model you ask for.** Geometry cannot be chosen at runtime on
->   2.31 — `entMeshComponent::mesh` cannot be redirected once the component is
->   attached — so one host entity is authored per curated alias at asset-build
->   time. `prop.catalog` lists what the running client actually hosts. A raw
->   `.mesh` depot path also works.
-> - **Create, move and remove replicate**, a late joiner receives props in its
->   snapshot, and an out-of-range prop is not projected.
-> - **Lights** are visible, correctly coloured, and `enabled` toggles in place
->   without respawning the prop.
-> - **Effects** play as one-shots and loops, survive a client leaving and
->   returning, and stop on every client when removed.
-> - **Carrying** (`prop.pickup` / `prop.drop`) moves a prop with its carrier and
->   both players see every step.
->
-> **Still true, and worth planning around:**
->
-> - **116 of the 184 generated hosts are solid; the other 68 are not.** Measured
->   2026-08-29. The host now carries `entPhysicalMeshComponent` rather than
->   `entMeshComponent`, so a prop whose mesh ships collision shapes stops a
->   player. The 67 that do not are not a bug in the spawner: their meshes carry
->   no `meshMeshParamPhysics` at all, and they are solid in the vanilla world
->   only because a level author placed a separate collision node beside them.
->   `prop.catalog` and `docs/generated/prop-hosts.json` record which is which
->   per alias. Among the hollow ones are things that look like they should
->   stop you — `barrier.hesco`, `container.shipping`, `street.hydrant`,
->   `industrial.forklift`.
-> - **For detached/standing physical hosts, `collision = false` cannot be honoured.** The solid component is also the
->   visible one, so switching collision off would blank the prop. The request is
->   refused with a warning naming the prop rather than silently ignored.
-> - **Attached props use a pure visual host and follow the rendered parent**;
->   they do not simulate collisions while attached and can intersect scenery.
->   Collision governs detached/standing props. See [attachments](attachments.md).
-> - **Do not point `model` at a raw `.ent` path.** The entity-template back-end is
->   refused by default with `template_backend_disabled`. The crash it guards
->   against is specific to templates whose root chunk derives from `entEntity`,
->   which is most decorative props; a game-object root spawns safely, and that is
->   how the light host is built. The guard stays because the distinction is not
->   something a `model` string can express.
-> - **An alias whose target resolves to no mesh falls back to the marker
->   cylinder**, silently; only `Open77.props.catalog()` on the **client** — and
->   `docs/generated/prop-hosts.json` after an asset build — will tell you. Four aliases
->   used to do this — `furniture.cabinet.industrial`, `barrier.gate.swinging`,
->   `light.lantern.japanese` and `industrial.forklift` — because they named
->   `.ent` files whose only `mesh` field held a `.physicalscene`. All four now
->   name the `.mesh` the vanilla entity was wrapping. The failure mode remains,
->   so compare `prop.catalog` against the configured list after any catalogue
->   change.
+- Use a curated alias or raw `.mesh` depot path. Each curated mesh uses a generated host; `prop.catalog` shows the models available to the running client.
+- Create, move, remove and carry state is replicated. Late joiners receive a snapshot; out-of-range props are not projected.
+- Lights update color and enabled state without respawning. Persistent effects resume after stream-in and stop when removed.
+- Collision depends on the mesh. Of 184 generated hosts, 116 contain collision; the remaining hosts are visual only. Check `prop.catalog` or `docs/generated/prop-hosts.json` per alias. Objects such as `barrier.hesco`, `container.shipping`, `street.hydrant` and `industrial.forklift` may not block movement.
+- Detached physical hosts reject `collision = false`: their visible component also provides collision. Attached props use visual hosts without physics and can intersect scenery.
+- Raw `.ent` templates are disabled by default with `template_backend_disabled` because some decorative entity roots can crash the client.
+- An alias without a resolvable mesh falls back to a marker cylinder. Inspect the client catalogue after changing model data.
 
 ## Manifest permissions
 
@@ -143,7 +89,7 @@ local id, reason = Open77.props.create({
 | `scale` | `{ x, y, z }` | `{1,1,1}` | Each axis 0.01–100. Non-unit scale is honoured by the mesh back-end only; see [Models](#models-aliases-and-raw-depot-paths). |
 | `appearance` | string | `""` | Template appearance name, at most 128 bytes. Empty means the template's default. |
 | `bucket` | integer | `0` | Routing bucket. A player only ever sees props in their own bucket. |
-| `physics` | string | `"static"` | `static`, `kinematic`, `dynamic` or `none`. **No effect today: the spawned object carries no `entPhysicalMeshComponent` (§Status).** |
+| `physics` | string | `"static"` | `static`, `kinematic`, `dynamic` or `none`. No effect: the spawned object has no `entPhysicalMeshComponent`. See [model limits](#model-and-collision-limits). |
 | `collision` | boolean | `true` | Detached hosts retain their authored collision; disabling a solid host's collision is unsupported (§Status). Attached hosts are always visual-only and non-blocking. |
 | `visible` | boolean | `true` | `false` keeps the registry entry and hides the object. |
 | `kind` | string | `"prop"` | `prop`, `light` or `effect`. See [Lights](#lights) and [Effects in this registry](#effects-in-this-registry). |
@@ -206,11 +152,9 @@ device template. Rather than reproduce all 185 here, the families and their size
 | `tool.*` | 3 | shovel, welder, fire axe |
 | `race.*` | 2 | the visual-only sq024 road chevron host and the authored two-sided checkpoint gate |
 
-### Two things about scale, before you file a bug
+### Model scale
 
-Every alias was measured before shipping, by reading each mesh's own `boundingBox`
-out of the depot rather than by spawning it. Two results are worth knowing, because
-both look like faults and only one was.
+Catalogue dimensions come from each mesh's authored `boundingBox`. Some assets are much smaller than their names suggest.
 
 **`sign.*` direction signage is wall-mounted and small.** `sign.arrow.left` is
 8 x 0 x 10 cm — a flat plate with no thickness, because the whole `directions_*`
@@ -357,9 +301,7 @@ Open77.props.remove(id)
 left alone. Passing `ttlMs = 0` clears an expiry that was already set, which is how you cancel a
 TTL without recreating the prop.
 
-**`model` and `kind` are not patchable.** Changing either means a different object, so remove the
-prop and create a new one; the new prop gets a new ID, which is the honest outcome. `scale` goes
-through `setTransform`, next to the position it belongs with.
+**`model` and `kind` are immutable.** Remove the prop and create a replacement to change either field; the replacement receives a new ID. Change scale with `setTransform`.
 
 **One of these mutations is cheap and the rest are not.** Position and yaw are the one change the
 engine will take on a live entity, so moving a prop is a transform write with no respawn and no
@@ -377,8 +319,7 @@ that says why. Detach first.
 
 ## Attachment
 
-Two different things get called "attachment", they are not the same mechanism, and picking the
-wrong one is the most common way to waste an afternoon here.
+Choose between transform following and equipment-slot attachment:
 
 | You want | Use | What it really is |
 |---|---|---|
@@ -417,19 +358,14 @@ Open77.props.detach(crateId)
 `kind` is `"player"`, `"npc"` or `"vehicle"`. A prop cannot follow another prop: that is a chain
 the tick would have to order and check for cycles, and nothing needs it yet.
 
-**Be honest with yourself about what this is.** It is the bundled resource's `prop.pickup` loop,
-promoted into the registry so every resource gets the lifecycle answers instead of re-deriving
-half of them. The crate floats at the offset you gave and follows; it does not sit in the hand.
+`props.attach` follows the target at an offset. It does not place the prop in a hand or bind it to the target's animation.
 
 Two limitations are worth stating plainly:
 
 - **The offset is in world axes, not the target's frame.** Walk north with a crate offset one
   metre east of you and it stays one metre east however you turn. Rotating the offset needs the
   target's heading, and a player's position snapshot carries position and routing bucket only.
-- **`trackYaw` does nothing on a player, today.** A vehicle publishes an orientation, so a prop
-  attached to one turns with it. A player does not, so the yaw simply stays at the value you
-  gave. When the richer player read lands, `trackYaw` starts working on players with no change
-  to this API — which is why the option exists now rather than being invented later.
+- **`trackYaw` has no effect on player targets.** Their heading is not available to the attachment path. The prop keeps its specified yaw. Vehicle targets provide orientation and support yaw tracking.
 
 ### Lifecycle: what happens when the target goes away
 
@@ -800,11 +736,7 @@ The contract, measured against a real server-process restart:
 - A saved row that no longer restores (say its alias left the catalogue) is kept and named in
   the boot log, once per boot, rather than silently discarded.
 
-**Scope is deliberate**: only props created through the bundled resource's commands persist. A
-gamemode's programmatic props are the gamemode's to recreate — persisting them here would
-double-spawn them at every boot, since the gamemode rebuilds its own scene on start. Server
-resources are isolated, so this resource could not see those creates anyway; the honest rule
-and the implementable one coincide.
+Only props created through the bundled resource's commands are persisted here. Gamemodes must save and restore their own programmatic props to avoid duplicate spawns.
 
 Persistence needs the server's database bridge (`database.enabled` plus
 `OP77_DATABASE_CONNECTION`); with the tunable on and no database, the resource says so once and

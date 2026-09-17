@@ -1,8 +1,6 @@
 # Server-owned NPCs
 
-Open77 NPCs are canonical server entities projected into REDengine only for nearby players. A Lua
-resource creates and owns the canonical NPC; the server controls identity, routing bucket, health,
-tasks and simulation authority. Clients cannot create or mutate canonical NPCs.
+Create server-owned NPCs and control their identity, routing bucket, health, tasks and simulation authority. Clients project nearby NPCs into the world but cannot create or mutate their canonical state.
 
 The reference implementation is [`resources/system/open77_npcs`](../resources/system/open77_npcs/README.md).
 
@@ -65,13 +63,7 @@ end
 An alias contains its predefined record, observer record and capability list. An advertised
 capability describes the underlying rig/template; it does not make an unstable task public.
 
-**`civilian_female_relaxed_01` cannot be shot, and this is not a bug to work around.** It
-resolves to `Character.Panam`, which carries the TweakDB tag `Invulnerable` — vanilla quest
-protection that no attitude change, no `damagePolicy` and no Lua call can lift. Measured in
-game on 2026-08-03: *impossible à viser/frapper*. It is also unsafe to arm — driving the
-weapon path against her native graph corrupts a component vtable
-(`NpcReplication.cpp`, `Cyberpunk2077.exe+0x336376`). Use it for a passive background body
-and nothing else.
+`civilian_female_relaxed_01` resolves to `Character.Panam`, whose `Invulnerable` tag prevents normal combat targeting and damage. Do not arm this template: its weapon graph can crash the client. Use it only as a passive background character; use combat-compatible records for damageable NPCs.
 
 **Native combat relations are explicit.** A native gang record runs engine combat AI on
 every client streaming it. For `aiMode = Open77.npcs.ai.native`, the client makes native
@@ -342,7 +334,6 @@ For native AI pause, passive NPCs, sensory acquisition and per-NPC voice suppres
 `behavior = {...}` at creation or `Open77.npcs.setBehavior(id, {...})` later; snapshots expose
 the current `behavior` table. They survive loadout changes and stream-out/stream-in.
 
-
 Tasks are server queues partitioned into movement, look, action and full-body channels. Priority is
 evaluated within a channel. One task may execute in each channel at the same time. A timeout of `0`
 means no timeout. Task/channel combinations are validated server-side; for example `moveTo` is
@@ -456,10 +447,7 @@ composing with it. Seats use the `Open77.vehicles.seats` numbering (`-1` driver,
 passenger, `1` rear left, `2` rear right) and also accept `driver`, `frontPassenger`, `rearLeft`,
 `rearRight` by name.
 
-The body walks to the car and mounts once it is within `approachDistance` (3 m by default);
-`warp = true` skips the walk. Either way the task reports `executing` first and succeeds only once
-the mounting relation can be **read back off the body** -- the relation is established
-asynchronously, so that read is the only honest proof it is seated.
+The NPC approaches to within `approachDistance` (default 3 m), then mounts. `warp = true` skips the approach. The task reports `executing` until the native mounting relation confirms the NPC is seated.
 
 `exitVehicle` is idempotent: a body already out of the car has done what was asked and the task
 succeeds with reason `not_in_vehicle`. Passing `vehicleId` narrows it to one car, and a body
@@ -658,14 +646,7 @@ that body once, which is best-effort and deliberately shallow: the attitude is u
 still-hostile NPC may re-acquire the same target by perception.
 `setAttitude(npcId, "neutral", { towards = ... })` before the flee is the composable answer.
 
-**There is no `cover` task**, and that is an honest gap rather than an oversight. Both engine
-commands for cover -- `AIUseCoverCommand` and `AIMoveToCoverCommand` -- address a cover position by
-`NodeRef`, a reference to a node authored into a streaming sector. Open77 cannot mint one at runtime
-and cannot enumerate the cover nodes near a point, so a `cover` task could only ever have sent an
-empty reference. A task that exists and does nothing is worse than no task, so it is not there. In
-practice the engine takes cover by itself once an NPC is in a fight; `guard` exists partly so that
-Open77 stops pulling it back out of one. The same `NodeRef` wall blocks `AIAssignGuardAreaCommand`,
-which is why `guard` is a leash built on `moveTo` rather than an engine guard area.
+**There is no `cover` task.** Native cover commands require authored `NodeRef` positions that Open77 cannot create or enumerate. NPCs can use native cover during combat. The `guard` task uses a `moveTo` leash rather than a native guard-area command, which has the same `NodeRef` restriction.
 
 ## Health, damage and death
 
