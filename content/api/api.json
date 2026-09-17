@@ -59293,5 +59293,527 @@
   "constant": false,
   "qualified": "WebUI.Page.setConsumedKeys",
   "route_id": "WebUI.Page.setConsumedKeys"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerModel",
+  "handler": "LuaPlayerModel",
+  "summary": "Read this client's NPC presentation state for a player.",
+  "description": "Requires players.model.read. Omit playerId or pass nil for the local player; an explicit ID must be a positive integer. Returns nil without an error for the original character, or a table with player, record, appearance, revision, entity, ready, status and optional failure. The entity handle is local and disposable, never a network player ID. Status is preparing, active, parked, not_streamed or failed. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "table? state",
+   "string? reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local model, reason = Open77.players.getModel()\nif model then print(model.record, model.ready, model.status) end",
+  "inferred": false,
+  "source_line": 23272,
+  "permissions": [
+   "players.model.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "GetPlayerModel",
+  "route_id": "GetPlayerModel"
+ },
+ {
+  "namespace": "_G",
+  "name": "IsPlayerModelReady",
+  "handler": "LuaPlayerModel",
+  "summary": "Check whether the model is ready on this client.",
+  "description": "Requires players.model.read. Omitted/nil playerId selects the local player; explicit IDs must be positive integers. False means no active ready model, including the original character; nil, reason indicates failure. This is local projection readiness, not an acknowledgement from every observer. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean? ready",
+   "string? reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local ready, reason = Open77.players.isModelReady()\nif ready then print('Local presentation ready') end",
+  "inferred": false,
+  "source_line": 23274,
+  "permissions": [
+   "players.model.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "IsPlayerModelReady",
+  "route_id": "IsPlayerModelReady"
+ },
+ {
+  "namespace": "_G",
+  "name": "IsPlayerModelValid",
+  "handler": "LuaPlayerModelValid",
+  "summary": "Validate a Character record in the client's installed game data.",
+  "description": "Requires players.model.read. Does not spawn or animate the model. True confirms an existing Character record, not compatibility of its rig, locomotion, seats or authored appearances. Invalid inputs and absent records return false, reason; permission failures return nil, reason. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "record",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean? valid",
+   "string? reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local ok, reason = Open77.players.isModelValid('Character.Rogue')\nif not ok then print(reason) end",
+  "inferred": false,
+  "source_line": 23276,
+  "permissions": [
+   "players.model.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "IsPlayerModelValid",
+  "route_id": "IsPlayerModelValid"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "getModel",
+  "handler": "LuaPlayerModel",
+  "summary": "Read this client's NPC presentation state for a player.",
+  "description": "Requires players.model.read. Omit playerId or pass nil for the local player; an explicit ID must be a positive integer. Returns nil without an error for the original character, or a table with player, record, appearance, revision, entity, ready, status and optional failure. The entity handle is local and disposable, never a network player ID. Status is preparing, active, parked, not_streamed or failed. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "table? state",
+   "string? reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local model, reason = Open77.players.getModel()\nif model then print(model.record, model.ready, model.status) end",
+  "inferred": false,
+  "source_line": 23272,
+  "permissions": [
+   "players.model.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.getModel",
+  "route_id": "Open77.players.getModel"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isModelReady",
+  "handler": "LuaPlayerModel",
+  "summary": "Check whether the model is ready on this client.",
+  "description": "Requires players.model.read. Omitted/nil playerId selects the local player; explicit IDs must be positive integers. False means no active ready model, including the original character; nil, reason indicates failure. This is local projection readiness, not an acknowledgement from every observer. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean? ready",
+   "string? reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local ready, reason = Open77.players.isModelReady()\nif ready then print('Local presentation ready') end",
+  "inferred": false,
+  "source_line": 23274,
+  "permissions": [
+   "players.model.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.isModelReady",
+  "route_id": "Open77.players.isModelReady"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isModelValid",
+  "handler": "LuaPlayerModelValid",
+  "summary": "Validate a Character record in the client's installed game data.",
+  "description": "Requires players.model.read. Does not spawn or animate the model. True confirms an existing Character record, not compatibility of its rig, locomotion, seats or authored appearances. Invalid inputs and absent records return false, reason; permission failures return nil, reason. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "record",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean? valid",
+   "string? reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local ok, reason = Open77.players.isModelValid('Character.Rogue')\nif not ok then print(reason) end",
+  "inferred": false,
+  "source_line": 23276,
+  "permissions": [
+   "players.model.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.isModelValid",
+  "route_id": "Open77.players.isModelValid"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetPlayerModel",
+  "handler": "GetPlayerModel",
+  "summary": "Read the authoritative model selection and owner's readiness.",
+  "description": "Requires players.model.read and a connected positive integer player ID. Returns nil without an error for the original model, or a table with player, record, appearance, revision, ready, resetOnDeath and optional remainingMs. Ready is the subject's presentation acknowledgement, not proof that every observer has streamed the body. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "table? state",
+   "string? reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local state, reason = GetPlayerModel(playerId)\nif state then print(state.record, state.revision, state.ready) end",
+  "inferred": false,
+  "source_line": 919,
+  "permissions": [
+   "players.model.read"
+  ],
+  "reasons": [
+   "invalid_player",
+   "permission_denied:players.model.read",
+   "player_models_unavailable",
+   "player_unavailable"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "GetPlayerModel",
+  "route_id": "server:GetPlayerModel"
+ },
+ {
+  "namespace": "_G",
+  "name": "IsPlayerModelReady",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Read the model owner's native presentation acknowledgement.",
+  "description": "Requires players.model.read and a connected positive integer player ID. Returns false for the original character or a model still preparing; nil, reason is an error. Observe onPlayerModelReady(player, revision) for asynchronous readiness and match the requested revision. This does not certify observer rendering or every animation. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean? ready",
+   "string? reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "if IsPlayerModelReady(playerId) then print('Owner model ready') end",
+  "inferred": false,
+  "source_line": 7623,
+  "permissions": [
+   "players.model.read"
+  ],
+  "reasons": [
+   "invalid_player",
+   "permission_denied:players.model.read",
+   "player_models_unavailable",
+   "player_unavailable"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "IsPlayerModelReady",
+  "route_id": "server:IsPlayerModelReady"
+ },
+ {
+  "namespace": "_G",
+  "name": "ResetPlayerModel",
+  "handler": "ResetPlayerModel",
+  "summary": "Release this resource's model override and restore the original character.",
+  "description": "Requires players.model.control and a connected positive integer player ID. Returns true when already original. Refuses model_owned_by_other_resource if another resource generation owns the override. Broadcasts restoration in the player's bucket and emits onPlayerModelChanged with a nil record and reason reset. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean",
+   "string? reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local ok, reason = ResetPlayerModel(playerId)\nif not ok then print(reason) end",
+  "inferred": false,
+  "source_line": 920,
+  "permissions": [
+   "players.model.control"
+  ],
+  "reasons": [
+   "invalid_player",
+   "permission_denied:players.model.control",
+   "player_models_unavailable",
+   "resource_stopping"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "ResetPlayerModel",
+  "route_id": "server:ResetPlayerModel"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetPlayerModel",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Select a server-owned NPC body for a connected player.",
+  "description": "Requires players.model.control. The player must be connected, alive and gameplay-ready. This resource generation exclusively owns the override; another owner fails with model_owned_by_other_resource. Options: appearance (ASCII CName up to 128 characters, default empty), durationMs (integer 0–86400000, default 0), resetOnDeath (boolean, default false); unknown fields are rejected. True, revision means accepted, not visible. Observe onPlayerModelReady/onPlayerModelFailed; a missing record fails asynchronously and restores the original body. Identical options extend the lease without respawn. Stopping the owner, timeout or disconnect releases state. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "record",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean accepted",
+   "integer revision or string reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local ok, revision = SetPlayerModel(playerId, 'Character.Rogue', { durationMs = 60000, resetOnDeath = true })",
+  "inferred": false,
+  "source_line": 7610,
+  "permissions": [
+   "players.model.control"
+  ],
+  "reasons": [
+   "invalid_argument",
+   "invalid_options",
+   "permission_denied:players.model.control",
+   "player_models_unavailable",
+   "resource_stopping"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "SetPlayerModel",
+  "route_id": "server:SetPlayerModel"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "getModel",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Read the authoritative model selection and owner's readiness.",
+  "description": "Requires players.model.read and a connected positive integer player ID. Returns nil without an error for the original model, or a table with player, record, appearance, revision, ready, resetOnDeath and optional remainingMs. Ready is the subject's presentation acknowledgement, not proof that every observer has streamed the body. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "table? state",
+   "string? reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local state, reason = GetPlayerModel(playerId)\nif state then print(state.record, state.revision, state.ready) end",
+  "inferred": false,
+  "source_line": 8437,
+  "permissions": [
+   "players.model.read"
+  ],
+  "reasons": [
+   "invalid_player",
+   "permission_denied:players.model.read",
+   "player_models_unavailable",
+   "player_unavailable"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.getModel",
+  "route_id": "server:Open77.players.getModel"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isModelReady",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Read the model owner's native presentation acknowledgement.",
+  "description": "Requires players.model.read and a connected positive integer player ID. Returns false for the original character or a model still preparing; nil, reason is an error. Observe onPlayerModelReady(player, revision) for asynchronous readiness and match the requested revision. This does not certify observer rendering or every animation. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean? ready",
+   "string? reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "if IsPlayerModelReady(playerId) then print('Owner model ready') end",
+  "inferred": false,
+  "source_line": 8439,
+  "permissions": [
+   "players.model.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.isModelReady",
+  "route_id": "server:Open77.players.isModelReady"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "resetModel",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Release this resource's model override and restore the original character.",
+  "description": "Requires players.model.control and a connected positive integer player ID. Returns true when already original. Refuses model_owned_by_other_resource if another resource generation owns the override. Broadcasts restoration in the player's bucket and emits onPlayerModelChanged with a nil record and reason reset. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean",
+   "string? reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local ok, reason = ResetPlayerModel(playerId)\nif not ok then print(reason) end",
+  "inferred": false,
+  "source_line": 8438,
+  "permissions": [
+   "players.model.control"
+  ],
+  "reasons": [
+   "invalid_player",
+   "permission_denied:players.model.control",
+   "player_models_unavailable",
+   "resource_stopping"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.resetModel",
+  "route_id": "server:Open77.players.resetModel"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "setModel",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Select a server-owned NPC body for a connected player.",
+  "description": "Requires players.model.control. The player must be connected, alive and gameplay-ready. This resource generation exclusively owns the override; another owner fails with model_owned_by_other_resource. Options: appearance (ASCII CName up to 128 characters, default empty), durationMs (integer 0–86400000, default 0), resetOnDeath (boolean, default false); unknown fields are rejected. True, revision means accepted, not visible. Observe onPlayerModelReady/onPlayerModelFailed; a missing record fails asynchronously and restores the original body. Identical options extend the lease without respawn. Stopping the owner, timeout or disconnect releases state. Cosmetic NPC presentation only: the real player retains identity, controls, health, equipment and saved appearance. Character.* records resolve against each client's installed game data, not a virtual allowlist. See player-models.md for ownership, events, cleanup and the known special-rig/vehicle limitations.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "record",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean accepted",
+   "integer revision or string reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local ok, revision = SetPlayerModel(playerId, 'Character.Rogue', { durationMs = 60000, resetOnDeath = true })",
+  "inferred": false,
+  "source_line": 8436,
+  "permissions": [
+   "players.model.control"
+  ],
+  "reasons": [
+   "invalid_argument",
+   "permission_denied:players.model.control",
+   "player_models_unavailable",
+   "resource_stopping"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.setModel",
+  "route_id": "server:Open77.players.setModel"
  }
 ]

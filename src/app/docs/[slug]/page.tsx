@@ -105,7 +105,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         }
         toc={<DocToc entries={guide.toc} />}
       >
-        {slug === "npc-catalogue" ? <NpcCatalogue /> : null}
+        {slug === "npc-catalogue" || slug === "player-model-catalogue" ? <NpcCatalogue /> : null}
         <div className="dx-prose" dangerouslySetInnerHTML={{ __html: guide.html }} />
         <AgentNote markdownHref={docMarkdownHref(slug)} />
         <DocPager {...neighbours} />

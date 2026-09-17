@@ -337,6 +337,18 @@
           "kind": "guide",
           "nav": "Screenshots and mugshots",
           "description": "In-process captures of the game's own frame, the upload to a URL, the server-requested picture a client delivers, and the scripted-camera mugshot: what is captured, the surface formats, the in-flight rule, and where the picture goes."
+        },
+        {
+          "slug": "player-models",
+          "kind": "guide",
+          "nav": "Player morphs",
+          "description": "Server-owned NPC impersonation, readiness, replication, restoration and model compatibility."
+        },
+        {
+          "slug": "player-model-catalogue",
+          "kind": "guide",
+          "nav": "Morph catalogue",
+          "description": "Search all 6,582 Character records for player morphs, with downloadable IDs and the admin menu workflow."
         }
       ]
     },

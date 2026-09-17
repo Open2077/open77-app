@@ -209,6 +209,10 @@ const RUNTIME_NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGu
 };
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if ((raw.namespace === "Open77.players" && ["setModel", "getModel", "resetModel", "isModelReady", "isModelValid"].includes(raw.name)) ||
+      (raw.namespace === "_G" && ["SetPlayerModel", "GetPlayerModel", "ResetPlayerModel", "IsPlayerModelReady", "IsPlayerModelValid"].includes(raw.name))) {
+    return { usageGuideHref: "/docs/player-models", usageGuideLabel: "Player morphs and model lifecycle guide" };
+  }
   if (runtime === "client" && raw.namespace === "WebUI.Page" &&
       ["setConsumedKeys", "setFocus", "hasFocus"].includes(raw.name)) {
     return { usageGuideHref: "/docs/webui-input", usageGuideLabel: "WebUI keyboard input guide" };
