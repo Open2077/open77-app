@@ -508,7 +508,7 @@
           "slug": "native-map",
           "kind": "guide",
           "nav": "Native map & waypoints",
-          "description": "Read the player's vanilla-map waypoint separately from quests and POIs, observe placement and selection events, focus the native map and pick a destination without fast travel. Includes a taxi-sharing example."
+          "description": "Customize the native map title, accent and resource WebUI tabs with Lua and JavaScript lifecycle events. Control map views, read player waypoints and pick destinations without fast travel."
         },
         {
           "slug": "world-drawing",

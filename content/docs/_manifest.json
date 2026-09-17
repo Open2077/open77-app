@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-17T02:23:59.652Z",
   "guides": 90,
-  "apiEntries": 1594,
+  "apiEntries": 1607,
   "files": [
     {
       "source": "wiki/README.md",
@@ -491,11 +491,47 @@
       "target": "content/docs/native-map.md",
       "slug": "native-map",
       "title": "Native map and player waypoints",
-      "bytes": 4403,
-      "sha256": "31ab69762fb6e7983cf2a669dc9708c946a8dacc9ba1eb9859033a0a164209e1",
+      "bytes": 18427,
+      "sha256": "c25570a0597a8303e8a3e99775d50a02608e9f476ae988e17a16a250d76dbd12",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "9311287adb14fe4282f62c147f53b450a877af2076abce840cf43f443e39df5a"
+        "upstreamSnapshotSha256": "9311287adb14fe4282f62c147f53b450a877af2076abce840cf43f443e39df5a",
+        "nativeMapAmendment": {
+          "tool": "scripts/sync-native-map-docs.mjs",
+          "syncedAt": "2026-09-17T23:14:05.153Z",
+          "sourceRevision": "816b98a47c4bb95b4013d0e96e6b4437a46ce9fc",
+          "sourceWorkingTreeDirty": true,
+          "sourceGuideSha256": "52ea59377396739fcf4bc82d694283e01477153f7cef93edc581797420c805d3",
+          "sourceApiSha256": "7d3350ab53302f62213f8bd9c8afeb0073f72f85e49d7d6dab540320cb2c21f3",
+          "guides": [
+            "native-map"
+          ],
+          "apiRouteIds": [
+            "client:Open77.map.addTab",
+            "client:Open77.map.cancelPick",
+            "client:Open77.map.close",
+            "client:Open77.map.focus",
+            "client:Open77.map.getScreen",
+            "client:Open77.map.getSelectedMarker",
+            "client:Open77.map.getView",
+            "client:Open77.map.getWaypoint",
+            "client:Open77.map.isOpen",
+            "client:Open77.map.open",
+            "client:Open77.map.pickPoint",
+            "client:Open77.map.recenter",
+            "client:Open77.map.removeTab",
+            "client:Open77.map.resetAppearance",
+            "client:Open77.map.selectTab",
+            "client:Open77.map.setAccentColor",
+            "client:Open77.map.setCameraMode",
+            "client:Open77.map.setTabLabel",
+            "client:Open77.map.setTitle",
+            "client:Open77.map.setZoomLevel",
+            "client:Open77.map.state"
+          ],
+          "guideMode": "site-owned-technical-amendment",
+          "apiMode": "merge-selected-cards-preserve-other-site-entries"
+        }
       }
     },
     {
@@ -1053,9 +1089,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1594,
-      "bytes": 2231228,
-      "sha256": "032947cb1d3436b6034c85b8043738fbffd7498500320f5a40545743cb8f7deb",
+      "entries": 1607,
+      "bytes": 2243839,
+      "sha256": "c5107f85efb5f419c4f5c0f87189c1c65bcc55b57abecd3f510f86053066ac68",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
@@ -1224,5 +1260,41 @@
     ],
     "apiMode": "merge-selected-model-cards",
     "syncedAt": "2026-09-17T15:15:19.053Z"
+  },
+  "nativeMapSync": {
+    "tool": "scripts/sync-native-map-docs.mjs",
+    "syncedAt": "2026-09-17T23:14:05.153Z",
+    "sourceRevision": "816b98a47c4bb95b4013d0e96e6b4437a46ce9fc",
+    "sourceWorkingTreeDirty": true,
+    "sourceGuideSha256": "52ea59377396739fcf4bc82d694283e01477153f7cef93edc581797420c805d3",
+    "sourceApiSha256": "7d3350ab53302f62213f8bd9c8afeb0073f72f85e49d7d6dab540320cb2c21f3",
+    "guides": [
+      "native-map"
+    ],
+    "apiRouteIds": [
+      "client:Open77.map.addTab",
+      "client:Open77.map.cancelPick",
+      "client:Open77.map.close",
+      "client:Open77.map.focus",
+      "client:Open77.map.getScreen",
+      "client:Open77.map.getSelectedMarker",
+      "client:Open77.map.getView",
+      "client:Open77.map.getWaypoint",
+      "client:Open77.map.isOpen",
+      "client:Open77.map.open",
+      "client:Open77.map.pickPoint",
+      "client:Open77.map.recenter",
+      "client:Open77.map.removeTab",
+      "client:Open77.map.resetAppearance",
+      "client:Open77.map.selectTab",
+      "client:Open77.map.setAccentColor",
+      "client:Open77.map.setCameraMode",
+      "client:Open77.map.setTabLabel",
+      "client:Open77.map.setTitle",
+      "client:Open77.map.setZoomLevel",
+      "client:Open77.map.state"
+    ],
+    "guideMode": "site-owned-technical-amendment",
+    "apiMode": "merge-selected-cards-preserve-other-site-entries"
   }
 }

@@ -239,6 +239,35 @@ try {
     }
   }
 
+  if (process.argv.includes("--native-map")) {
+    for (const width of [1440, 390]) {
+      await session.send("Emulation.setDeviceMetricsOverride", {
+        width, height: 900, deviceScaleFactor: 1, mobile: width < 600,
+      });
+      await visit("/docs/native-map");
+      check(`native map ${width}px guide and ready handshake render`, await session.evaluate(`
+        return !!document.querySelector('#customize-the-map-screen') &&
+          document.querySelector('main').textContent.includes("Open77.emit('open77:map:ready'") &&
+          !!document.querySelector('a[href="/docs/api/client/open77-map"]');
+      `));
+      check(`native map ${width}px fits viewport`, await session.evaluate(
+        "return document.documentElement.scrollWidth <= innerWidth;",
+      ));
+      reportConsole(`native map ${width}px`);
+      await visit("/docs/api?side=client&namespace=Open77.map#client/open77-map/addtab");
+      const api = await session.evaluate(`
+        const detail = document.querySelector('.api-detail');
+        return { name: detail?.querySelector('h2')?.textContent,
+          count: document.querySelectorAll('.api-function-row').length,
+          guide: detail?.querySelector('a[href="/docs/native-map"]')?.getAttribute('href'),
+          text: detail?.textContent ?? '' };
+      `);
+      check(`native map ${width}px deep link selects addTab among 21 functions`,
+        api.name === "addTab" && api.count === 21 && api.guide === "/docs/native-map" &&
+        api.text.includes("map.control") && api.text.includes("id, page"), JSON.stringify(api));
+      reportConsole(`native map API ${width}px`);
+    }
+  } else {
   if (process.argv.includes("--npcs")) {
     await fs.mkdir(".shots", { recursive: true });
     await session.send("Network.enable");
@@ -917,6 +946,7 @@ try {
     JSON.stringify(menu.afterNav),
   );
   reportConsole("client navigation to /create");
+  }
   }
 } finally {
   child.kill();

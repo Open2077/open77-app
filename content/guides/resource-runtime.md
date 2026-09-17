@@ -433,6 +433,7 @@ function in it, generated from the runtime rather than maintained here.
 | `Open77.inspector` | none | Read and highlight the current streamed-world target |
 | `Open77.nameplates` | `ui.nameplates` | Customise remote-player labels; native per-frame delivery or drawing |
 | `Open77.blips` | `ui.vanilla.map` | Create resource-owned vanilla mappins |
+| `Open77.map` | `map.read`, `map.control` | Read player waypoints, pick destinations and customize the native map screen with resource WebUI tabs. See [Native map & waypoints](native-map.md). |
 | `Open77.markers` | `world.markers` | Create resource-owned 3D world markers |
 | `Open77.anchors` | ownership of the target page (none for a native `render` style) | Anchor a world point or a followed entity; the plugin projects it every frame |
 | `Open77.vfx`, `Open77.sfx` | `world.effects` | Resource-owned REDengine visual and spatial audio effects |
@@ -526,6 +527,12 @@ Open77.ready();
 
 Bundled WebUI uses an isolated virtual HTTPS origin; remote WebUI uses the
 configured HTTP(S) origin. Lua/JavaScript payloads use a bounded JSON codec.
+
+### WebUI tabs in the native map
+
+On clients with map-tab support, `Open77.map.addTab({id, label, url})` creates a resource-local page inside the native map's content area. Use `page` instead of `url` to register an existing owned, hidden and unfocused page. Register after resource preparation with `map.control`. The screen manages focus, visibility and bounds: bound pages cannot use `show`, `hide` or `setFocus` directly.
+
+Use `Open77.map.selectTab` to activate an owned tab on an open map. Listen to Lua `open77:map:tabEntered` / `tabLeft` or JavaScript `open77:map:tabState` for lifecycle updates. JavaScript should install listeners before emitting `open77:map:ready` to receive the current state. Pages retain state between visits; pause timers and audio when inactive. See [Native map customization](native-map.md#customize-the-map-screen) for the complete example, title/accent overrides, limits and cleanup.
 
 ### Escape and selective keyboard consumption
 
