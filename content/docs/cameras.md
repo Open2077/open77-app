@@ -1,5 +1,9 @@
 # Scripted cameras
 
+For the **playable F7 camera**, shoulder framing, movement FOV and collision-safe
+shake, see [Third-person camera styles](third-person-camera.md). That API uses
+`camera.style`, not the cinematic camera ownership described below.
+
 Put the view where your resource wants it — a character creator orbiting the
 player's face, a shop that frames the rack, a dealership turntable, a cinematic
 intro — and be certain the player gets their own view back.

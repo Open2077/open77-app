@@ -11,6 +11,15 @@ This is a client-only presentation API. It does not grant a server resource dire
 player's HUD; a server gamemode should send an event to its client resource and let that resource
 own the visibility claim.
 
+## Cinematic display
+
+For a clean cinematic view including resource WebUIs, watermark, world labels
+and letterbox bars, use **`Open77.hud.setCinematic(true[, height])`**, then
+`Open77.hud.setCinematic(false)` to release your resource's claim. This requires
+the same `ui.vanilla.hud` permission. See [cinematic display](third-person-camera.md#cinematic-display)
+for ranges, ownership, cleanup and the deliberate focused-menu exception.
+Freeroam exposes this as `/cinematic [on|off]`.
+
 ## Multiplayer defaults
 
 During an authenticated Open77 session, the platform automatically removes solo-game input hints,
@@ -86,7 +95,7 @@ at least one component is hidden by someone — not necessarily by you.
 invisible scanner still holding aim snap and the movement restriction — a player walking slowly
 with no UI explaining why. So the claim hides the scan overlay **and** refuses scanner activation,
 exactly as the multiplayer policy does. If you want to refuse the input without hiding anything,
-use the `Scanner` entry of [`Open77.actions`](input-blocking.md) instead.
+use the `Scanner` entry of `Open77.actions` instead.
 
 `vanillaNotifications` is the same stack [`Open77.hud.notify`](#vanilla-toasts) writes to. A
 resource that hides this component is hiding its own vanilla toasts too.
