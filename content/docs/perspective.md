@@ -9,7 +9,7 @@ Nothing changes for other players. The stand-in body is local: nobody else ever 
 same bytes leave your client whether you are in first or third person.
 
 ```lua
-permissions { "perspective.policy" }   -- server side, to impose a view
+permissions { "perspective.policy" }   -- server policy, or a client-side forced view
 ```
 
 ## The player's side
@@ -23,6 +23,59 @@ permissions { "perspective.policy" }   -- server side, to impose a view
 | While a panel has the keyboard | The key does nothing while chat, the pause menu or an admin surface owns input, so it can never fire underneath a text field. |
 
 A player who has never asked gets first person.
+
+## Enable, disable or temporarily force a view (client)
+
+Requires the client update introducing `setThirdPerson` and
+`clearThirdPersonOverride`. On older clients, check that the function exists
+before calling it. Configuring a [camera style](third-person-camera.md) does
+not enable or lock the perspective by itself.
+
+```lua
+-- Ordinary switch: the player can still change the view with F7.
+Open77.perspective.setThirdPerson(true)         -- request third person
+Open77.perspective.setThirdPerson(false)        -- request first person
+
+-- Requires permissions { "perspective.policy" } in the resource manifest.
+Open77.perspective.setThirdPerson(true, true)   -- force third person, block F7 -> FPP
+Open77.perspective.setThirdPerson(false, true)  -- force first person, block F7 -> TPP
+
+-- Release only this resource's lock, keeping the player's previous preference.
+Open77.perspective.clearThirdPersonOverride()
+```
+
+`setThirdPerson(enabled[, force])` takes strict booleans (`force=false` by
+default). It returns `true` when the request is accepted, or `false, reason`.
+`force=false` also releases this resource's previous lock before requesting the
+new view. It does **not** unlock another resource's lock or override server
+policy. To forbid third person rather than merely switch away, use
+`setThirdPerson(false, true)`.
+
+A forced view is temporary and exclusive to the requesting resource instance.
+Another resource's forced request returns `perspective_owned`. Ordinary
+opposing requests (including F7) are refused without changing the pre-lock
+preference. `clearThirdPersonOverride()` is idempotent, needs no capability,
+and cannot clear someone else's lock. Stop/reload, coroutine error and host
+teardown release the owner's lock automatically; the selected camera **style**
+and the server policy are separate and are not changed by this API.
+
+World safety and native vehicle/cutscene cameras, then the server's
+`disabled`/`forced` policy, take priority over this local override. A conflicting
+server policy rejects a new lock with `refused_by_policy`. If the server policy
+changes while a lock exists, the policy wins; the still-owned lock resumes when
+the policy permits it again. No Lua per-frame loop is needed.
+
+`Open77.perspective.state()` includes `resourceForced` and
+`resourcePerspective` (`"tps"`, `"fpp"`, or `"none"`). These describe the
+requested lock, not a guarantee that it currently owns a vehicle/cutscene
+camera; inspect `mode`, `camera`, `reason` and `settled` for the actual view.
+An active local lock reports `reason="resource_forced"` and `allowed=false`.
+
+Other errors include `invalid_perspective_arguments`,
+`permission_denied:perspective.policy` (forced calls only), and
+`perspective_unavailable_on_this_host`. The API is client-local: use the existing
+server `setPolicy` API below for all players, or a server event to ask a selected
+client resource to apply a local lock. It is not a networked player animation.
 
 ## Server policy
 

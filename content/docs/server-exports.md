@@ -170,9 +170,11 @@ it changes on reload and returns `0` if the provider is no longer running. With
 no argument it returns this VM's generation. These identities are local to the
 server process, not durable IDs to persist across a server restart.
 
-`TriggerEvent` remains local to one server VM. This feature does **not** turn it
-into a cross-resource event bus. Host lifecycle/player events retain their existing
-fan-out; client/server communication still uses authenticated network events.
+Exports and events are different tools. `TriggerEvent` publishes on the host-wide
+bus (every running resource that handles the name receives it on the next tick,
+see [the host-wide event bus](server-api.md#the-host-wide-event-bus)); an export is
+a synchronous call with a return value. Client/server communication still uses
+authenticated network events.
 
 ## Values, limits and lifecycle
 

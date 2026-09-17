@@ -869,8 +869,10 @@ for ownership, sequence durations, events, local TPP and development validation 
 | `Open77.animations.list` | `(query?)` | No permission; profile array. |
 | `Open77.animations.get` | `(profileId)` | No permission; profile or nil. |
 | `Open77.animations.play` | `(playerId, profileId, options?)` | `players.animations.control`; accepted state. |
+| `Open77.animations.playAt` | `(playerId, profileId, position, yaw?, options?)` | `players.animations.control`; place a nearby player at a world pose and start the profile, returning accepted state with `playbackId` and `anchor`. |
 | `Open77.animations.sequence` | `(playerId, steps, options?)` | `players.animations.control`; accepted state. |
 | `Open77.animations.stop` | `(playerId, playbackId?)` | `players.animations.control`; true or nil/error. |
+| `Open77.animations.stopAt` | `(playbackId)` | `players.animations.control`; stop an owned placed action by its playback handle. |
 | `Open77.animations.current` | `(playerId)` | `players.animations.read`; active state or nil. |
 | `Open77.animations.clip` | `(clip)` | No permission; the profile that owns a clip name, or nil. |
 | `Open77.animations.clips` | `(query?)` | No permission; every addressable clip as `{ clip, profile }`. |
@@ -2384,7 +2386,7 @@ Constants are `Open77.npcs.flags`, `.ai`, `.damage`, and `.channels`.
 | `guard` | `(id, position, radius?, options?)` | Hold an area, returning to the anchor only when not already in a fight. |
 | `flee` | `(id, from, options?)` | Break contact with a player, NPC or fixed point. |
 | `workspot` | `(id, reference, options?)` | Play an authored scenario: a catalogue profile id or a raw clip, with `durationMs` or `loop`. |
-| `workspots` | `(query?)` | The twelve shipped scenario profiles -- the same catalogue `Open77.animations.list()` serves. |
+| `workspots` | `(query?)` | The shipped scenario profiles -- the same catalogue `Open77.animations.list()` serves. |
 | `enterVehicle` | `(id, vehicleId, seat?, options?)` | Walk to a vehicle and take a seat; `warp` skips the walk. |
 | `exitVehicle` | `(id, options?)` | Leave the seat. Idempotent; `vehicleId` narrows it to one car. |
 

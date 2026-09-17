@@ -1,9 +1,19 @@
 # Role-play animations
 
-> Available with client **2.31.13+op77.45** and the matching RP-enabled server
-> runtime. The default `smoke` clip, cigarette, menu, timed stop and temporary
+> September 16 native-library expansion: source catalogue, offline-verified
+> assets and local in-game samples. Eight default profiles were checked on each
+> body family, plus a two-client arms-crossed sample. Install the
+> matching client, server and RP archive before requesting the new profile IDs.
+> Workspot/rig verification is not a claim that every pose, prop or body variant
+> has been visually validated. Chairs, beds, counters and walls are not spawned
+> automatically. See [the discovery audit](../docs/data/rp-library-audit.json) for
+> sources still requiring review.
+
+> Original API introduced with client **2.31.13+op77.45** and its RP-enabled server
+> runtime; that release does not include all the newer profiles. The default `smoke` clip, cigarette, menu, timed stop and temporary
 > third-person view were checked on the local male body. Other variants, female
-> playback and two-client visual acceptance remain experimental. Server acceptance
+> playback outside the sampled profiles and broader two-client coverage remain
+> experimental. Server acceptance
 > does not prove a client rendered a clip. Repeated disconnect/reconnect cycles
 > can still leave a stale proxy/device and camera hold; reconnect lifecycle recovery
 > is a known limitation, not a fixed issue in this release.
@@ -12,8 +22,8 @@ Use a named profile such as `smoke`, `phone` or `dance`. Each profile binds an
 authored workspot and an explicit set of compatible clip names. Arbitrary animation
 names from the general game inventory are not accepted by this system.
 
-See the [profile and clip catalogue](rp-animation-catalogue.md) for all 18 profiles,
-116 selectable clips, source workspots, prop requirements and placement notes. Three
+See the [profile and clip catalogue](rp-animation-catalogue.md) for all 76 profiles,
+456 selectable clips, source workspots, prop requirements and placement notes. Three
 of them -- `chair`, `lean` and `lie` -- are *portable postures* meant to be played at
 a pose rather than where the player stands; see
 [Portable workspots](#portable-workspots-sit-lean-and-lie-anywhere).
@@ -81,9 +91,13 @@ With the official chat package, players can use:
 `info` lists the exact clips and their 1-based variant numbers. Omitting a variant
 uses the profile's default, which need not be its first alphabetically sorted clip.
 Commands always target the authenticated caller, not a player ID in the arguments.
-`/anim` (or `/anim menu`) opens the Freeroam **Animations** tab. It shares the
-existing menu WebUI: search 70 variants across five categories, save favourites,
-choose a loop or a 5/10/30-second duration, then **Play & Close**. The menu releases
+`/anim` (or `/anim menu`) opens Freeroam's compact **Animations** library. It shares
+the existing WebUI surface but has its own layout: 76 families, 456 variants and
+11 categories. Search by label, exact clip or common RP terms; save exact variants
+as favourites, revisit successfully started actions in Recent, or enable All
+variants. The browser renders at most 60 cards per page. Select a family and use
+the variant arrows, then **Play**, or double-click a card. Looping and timed
+5/10/30-second playback are available. The menu releases
 input before the temporary TPP starts. **Stop** or `/anim stop` cancels the caller's
 action, including an in-flight UI request; moving also interrupts playback.
 Only the default cigarette action has a local-male visual check so far; the other
@@ -342,7 +356,7 @@ after it is mounted into a *device* — an entity carrying a
 **inside that device's workspot tree**. The device and its tree are bound together
 when the archive is built, not at runtime.
 
-So the addressable set is the **70 clips of the twelve shipped devices**, and
+So the addressable set is the **456 clips of the 76 catalogue devices**, and
 `Open77.animations.clips()` is the whole of it. Two consequences worth stating
 plainly, because both have cost time before:
 
@@ -538,7 +552,14 @@ failures are reported separately through `onAnimationPlaybackFailed`.
 The curated native local path requests third person temporarily and reuses the F7
 presentation body. It waits for that body to be active before starting the workspot;
 its walking, aiming and combat presentation stand down while the workspot owns it.
-Stopping waits for workspot detachment before releasing the temporary view priority.
+Stopping releases the temporary animation-camera priority immediately. Returning
+to first person restores the real player before hiding the animation proxy; an
+existing F7 or resource-owned third-person request is preserved. Native workspot
+detachment and safe device cleanup continue independently in the background.
+An already-playing local RP pose uses the native instant exit when cancelled;
+F7 locomotion resumes after confirmed detachment, without waiting for the separate
+callback-lifetime quarantine. This avoids leaving the visible body behind when
+the player starts moving. Pending mounts retain conservative cleanup.
 The player's stored first/third-person preference is not overwritten. Native safety
 states still take priority, and a forced-first-person server policy is refused.
 

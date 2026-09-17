@@ -591,6 +591,12 @@
           "description": "Put the view where your resource wants it: create, place, follow, look at and shake a camera, spectate a player from the server, and the release rules that guarantee the player gets their own view back."
         },
         {
+          "slug": "third-person-camera",
+          "kind": "guide",
+          "nav": "Third-person camera styles",
+          "description": "Client-side customization of the playable F7 camera: classic or over-the-shoulder framing, custom pivots, movement FOV and temporary shake; not a scripted camera."
+        },
+        {
           "slug": "effects",
           "kind": "guide",
           "nav": "Visual and audio effects",
