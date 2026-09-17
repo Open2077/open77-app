@@ -65,6 +65,8 @@ function guideFile(page: Pick<DocNavPage, "slug" | "file" | "source">): string {
 export type DocNavSection = {
   id: string;
   title: string;
+  group: string;
+  description: string;
   pages: DocNavPage[];
 };
 

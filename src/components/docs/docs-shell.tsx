@@ -16,6 +16,7 @@ async function buildNavGroups(): Promise<DocsNavGroup[]> {
   return nav.sections.map((section) => ({
     id: section.id,
     title: section.title,
+    group: section.group,
     items: section.pages.map((page) => ({
       href: docHref(page.slug),
       label: page.nav,

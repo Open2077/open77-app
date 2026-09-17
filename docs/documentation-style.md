@@ -11,6 +11,12 @@ Public guides are maintained in this repository. The platform wiki remains the t
 - Preserve exact symbols, signatures, record IDs, examples and units. A prose edit must not change runtime behavior.
 - Dates inside configuration or data examples, release metadata and internal provenance are not editorial notes and can remain.
 
+## Navigation
+
+`content/docs/meta.json` defines the shared sidebar, home directory, breadcrumbs and agent index. Give each page exactly one topic; keep related APIs, guides and catalogues together. Topics belong to one of four collections: Start & host, Build resources, Game systems, or Reference & tools. Keep topics small (at most nine pages) instead of adding unrelated systems to a broad catch-all category. Keep existing slugs and URLs when reorganizing labels.
+
+Home and the Lua API explorer have dedicated sidebar shortcuts, so they are not repeated in the topic lists. Run `npm run verify:navigation` for coverage and `npm run verify:navigation:browser` against the built site on port 3113 for keyboard, search, current-page and mobile behavior.
+
 ## Wiki updates
 
 The reviewed guides are listed in `scripts/curated-docs.json`. Full and scoped wiki sync preserve their site copies. Merge relevant upstream technical changes manually and review the resulting public text. New guides still pass the editorial checks before import.

@@ -21,8 +21,10 @@ for (const entry of entries) {
 }
 
 const nav = JSON.parse(await read("content/docs/meta.json"));
-const world = nav.sections.find((section) => section.id === "world");
-assert.deepEqual(world.pages.slice(0, 3).map((page) => page.slug), ["vehicles", "vehicle-weapons", "armed-vehicles"]);
+const world = nav.sections.find((section) => section.id === "vehicles");
+assert.equal(world.pages[0].slug, "vehicles");
+assert.equal(world.pages.findIndex((page) => page.slug === "armed-vehicles"),
+  world.pages.findIndex((page) => page.slug === "vehicle-weapons") + 1);
 for (const slug of ["vehicle-weapons", "armed-vehicles"]) {
   assert.ok(world.pages.some((page) => page.slug === slug && page.kind === "guide"));
 }

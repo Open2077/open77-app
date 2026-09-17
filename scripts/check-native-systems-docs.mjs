@@ -7,11 +7,11 @@ const read = (file) => readFile(file, "utf8");
 const api = JSON.parse(await read("content/api/api.json"));
 const nav = JSON.parse(await read("content/docs/meta.json"));
 const cases = [
-  { namespace: "Open77.map", runtime: "client", slug: "native-map", section: "interfaces",
+  { namespace: "Open77.map", runtime: "client", slug: "native-map", section: "map",
     names: ["getWaypoint", "getSelectedMarker", "isOpen", "state", "open", "pickPoint", "close", "cancelPick",
       "getView", "focus", "recenter", "setZoomLevel", "setCameraMode", "getScreen", "setTitle", "setAccentColor",
       "resetAppearance", "addTab", "removeTab", "selectTab", "setTabLabel"] },
-  { namespace: "Open77.vehicles.ai", runtime: "server", slug: "vehicle-ai", section: "world",
+  { namespace: "Open77.vehicles.ai", runtime: "server", slug: "vehicle-ai", section: "vehicles",
     names: ["attachDriver", "removeDriver", "state", "driveTo", "followRoute", "follow", "chase", "joinTraffic", "stop", "setSpeed", "setBehavior", "on"] },
 ];
 const categories = await read("src/lib/api-categories.ts");

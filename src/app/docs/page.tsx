@@ -56,11 +56,20 @@ export default async function DocsHomePage() {
           </section>
           <section id="explore">
             <h2>Explore the documentation</h2>
-            <div className="docs-category-directory">
-              {nav.sections.filter((section) => section.id !== "introduction").map((section) => (
-                <div key={section.id}><h3>{section.title}</h3><ul>{section.pages.map((page) => <li key={page.slug}><Link href={docHref(page.slug)}>{page.nav}</Link></li>)}</ul></div>
-              ))}
-            </div>
+            <p>Find a system by theme. Each guide has one home, shared with the sidebar.</p>
+            {[...new Set(nav.sections.map((section) => section.group))].map((group) => (
+              <div className="docs-topic-directory" key={group}>
+                <h3>{group}</h3>
+                <div className="docs-category-directory">
+                  {nav.sections.filter((section) => section.group === group).map((section) => (
+                    <div key={section.id} id={`topic-${section.id}`}>
+                      <h4>{section.title}</h4><p>{section.description}</p>
+                      <ul>{section.pages.filter((page) => page.slug !== "index").map((page) => <li key={page.slug}><Link href={docHref(page.slug)}>{page.nav}</Link></li>)}</ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </section>
         </div>
       </DocsShell>

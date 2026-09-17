@@ -47,7 +47,7 @@ assert.deepEqual(find("server", "sequence").params.map((p) => p.name), ["playerI
 assert.deepEqual(find("client", "play").params.map((p) => p.name), ["entity", "animation"]);
 assert.deepEqual(find("server", "play").params.map((p) => p.name), ["playerId", "profileId", "options"]);
 const meta = JSON.parse(await read("content/docs/meta.json"));
-const players = meta.sections.find((section) => section.id === "players");
+const players = meta.sections.find((section) => section.id === "animations");
 for (const slug of ["rp-animations", "rp-animation-catalogue"]) {
   assert.ok(players.pages.some((page) => page.slug === slug && page.kind === "guide"));
 }

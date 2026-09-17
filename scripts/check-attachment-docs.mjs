@@ -43,7 +43,7 @@ for (const token of ["open77_player_interactions", "players.interactions.control
   "resource's responsibility", "Death, disconnect", "Client API", "Server API"]) {
   assert.ok(interactions.includes(token), `interactions: ${token}`);
 }
-for (const [section, slug] of [["world", "attachments"], ["players", "player-interactions"]]) {
+for (const [section, slug] of [["animations", "attachments"], ["animations", "player-interactions"]]) {
   assert.ok(nav.sections.find((item) => item.id === section).pages.some((page) => page.slug === slug && page.kind === "guide"));
 }
 assert.ok((await read("src/lib/api-categories.ts")).match(/id: "players"[^\n]+"Open77.playerInteractions"/));

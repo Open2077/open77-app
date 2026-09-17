@@ -239,7 +239,90 @@ try {
     }
   }
 
-  if (process.argv.includes("--native-map")) {
+  if (process.argv.includes("--navigation")) {
+    await session.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
+    await visit("/docs");
+    check("sidebar has four collections, 18 topics and one API shortcut", await session.evaluate(`
+      const nav = document.querySelector('.dx-nav');
+      return nav.querySelectorAll('.docs-nav-collection').length === 4 &&
+        nav.querySelectorAll('.docs-group-toggle').length === 18 &&
+        nav.querySelectorAll('a[href="/docs/api"]').length === 1 &&
+        nav.querySelectorAll('.docs-group-toggle[aria-expanded="true"]').length === 1;
+    `));
+    check("home directory matches sidebar themes", await session.evaluate(`
+      return document.querySelectorAll('.docs-topic-directory').length === 4 &&
+        document.querySelectorAll('.docs-category-directory h4').length === 18;
+    `));
+    await session.send("Page.bringToFront");
+    await session.evaluate(`document.querySelector('[aria-controls="nav-vehicles"]').focus();`);
+    await session.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", text: "\r", unmodifiedText: "\r", windowsVirtualKeyCode: 13 });
+    await session.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 });
+    await session.evaluate("await new Promise(r => setTimeout(r, 150));");
+    const keyboardTopic = await session.evaluate(`
+      return { expanded: document.querySelector('[aria-controls="nav-vehicles"]').getAttribute('aria-expanded'),
+        height: document.querySelector('#nav-vehicles').getBoundingClientRect().height,
+        focused: document.activeElement.getAttribute('aria-controls') };
+    `);
+    check("keyboard opens the vehicle topic", keyboardTopic.expanded === 'true' && keyboardTopic.height > 0, JSON.stringify(keyboardTopic));
+    await fs.mkdir(".shots", { recursive: true });
+    const screenshot = async (name) => {
+      const shot = await session.send("Page.captureScreenshot", { format: "png" });
+      await fs.writeFile(path.join(".shots", name + ".png"), Buffer.from(shot.data, "base64"));
+    };
+    await screenshot("docs-navigation-desktop");
+    await visit("/docs/native-map");
+    check("deep link opens only its topic and marks current guide", await session.evaluate(`
+      return document.querySelectorAll('.docs-group-toggle[aria-expanded="true"]').length === 1 &&
+        document.querySelector('[aria-controls="nav-map"]').getAttribute('aria-expanded') === 'true' &&
+        document.querySelector('.dx-nav a[aria-current="page"]').getAttribute('href') === '/docs/native-map';
+    `));
+    const filter = async (value) => session.evaluate(`
+      const input = document.querySelector('[aria-label="Filter documentation topics"]');
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, ${JSON.stringify(value)});
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 150));
+    `);
+    await filter("vehicles");
+    check("filter finds the whole vehicle theme", await session.evaluate(`
+      return document.querySelectorAll('.docs-group-toggle').length === 1 &&
+        document.querySelectorAll('#nav-vehicles a').length === 5 &&
+        document.querySelector('.docs-nav-results').textContent === '5 pages found';
+    `));
+    await filter("nothingmatcheszz");
+    check("filter has an explicit empty state", await session.evaluate(`return !!document.querySelector('.docs-nav-empty');`));
+    await session.evaluate(`document.querySelector('[aria-label="Clear topic filter"]').click(); await new Promise(r => setTimeout(r, 100));`);
+    check("clearing filter restores topics and input focus", await session.evaluate(`
+      return document.querySelectorAll('.docs-group-toggle').length === 18 &&
+        document.activeElement.getAttribute('aria-label') === 'Filter documentation topics';
+    `));
+    reportConsole("desktop topic navigation");
+    await session.evaluate(`document.querySelector('.docs-theme-toggle').click(); await new Promise(r => setTimeout(r, 100));`);
+    await screenshot("docs-navigation-dark");
+    await session.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+    await visit("/docs/native-map");
+    await session.evaluate(`document.querySelector('.docs-mobile-nav').click(); await new Promise(r => setTimeout(r, 100));`);
+    check("mobile navigation opens and fits viewport", await session.evaluate(`
+      return document.querySelector('.docs-mobile-nav').getAttribute('aria-expanded') === 'true' &&
+        document.documentElement.scrollWidth <= innerWidth;
+    `));
+    await filter("NPC");
+    check("mobile filter finds NPCs and player models", await session.evaluate(`
+      return document.querySelectorAll('#nav-characters a').length === 5 &&
+        document.querySelectorAll('.docs-group-toggle').length === 1;
+    `));
+    await screenshot("docs-navigation-mobile");
+    await session.evaluate(`document.querySelector('#nav-characters a[href="/docs/npcs"]').click();`);
+    for (let i = 0; i < 50; i++) {
+      if (await session.evaluate(`return location.pathname === '/docs/npcs' && document.querySelector('.docs-mobile-nav')?.getAttribute('aria-expanded') === 'false';`)) break;
+      await new Promise(r => setTimeout(r, 100));
+    }
+    check("mobile guide navigation closes drawer and clears filter", await session.evaluate(`
+      return location.pathname === '/docs/npcs' &&
+        document.querySelector('.docs-mobile-nav').getAttribute('aria-expanded') === 'false' &&
+        document.querySelector('[aria-label="Filter documentation topics"]').value === '';
+    `));
+    reportConsole("mobile topic navigation");
+  } else if (process.argv.includes("--native-map")) {
     for (const width of [1440, 390]) {
       await session.send("Emulation.setDeviceMetricsOverride", {
         width, height: 900, deviceScaleFactor: 1, mobile: width < 600,

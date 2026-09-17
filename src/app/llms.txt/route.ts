@@ -68,8 +68,13 @@ export async function GET() {
     lines.push("");
   }
 
+  let previousGroup = "";
   for (const section of nav.sections) {
-    lines.push(`## ${section.title}`, "");
+    if (section.group !== previousGroup) {
+      lines.push(`## ${section.group}`, "");
+      previousGroup = section.group;
+    }
+    lines.push(`### ${section.title}`, "", section.description, "");
     for (const page of section.pages) {
       lines.push(
         `- [${page.title ?? page.nav}](${absoluteUrl(docMarkdownHref(page.slug))}): ${page.description}`,

@@ -17,7 +17,7 @@ for (const entry of entries) {
   assert.ok(entry.summary && entry.description && entry.returns.length, entry.qualified);
   assert.ok(entry.description.includes("screen.effects"), entry.qualified);
 }
-assert.ok(nav.sections.find((section) => section.id === "interfaces").pages
+assert.ok(nav.sections.find((section) => section.id === "cameras").pages
   .some((page) => page.slug === "screen-transitions" && page.kind === "guide"));
 assert.ok((await read("src/lib/api-categories.ts")).includes('"Open77.screen"'));
 assert.ok((await read("src/lib/api-reference.ts")).includes("/docs/screen-transitions"));

@@ -15,7 +15,7 @@ for (const card of cards) {
   assert.ok(card.summary && card.returns.length && card.example, card.qualified);
 }
 const nav = JSON.parse(await read("content/docs/meta.json"));
-const pages = nav.sections.find((section) => section.id === "interfaces").pages;
+const pages = nav.sections.find((section) => section.id === "audio").pages;
 assert.equal(pages.findIndex((page) => page.slug === "voice-lipsync"),
   pages.findIndex((page) => page.slug === "voice") + 1);
 const guide = await read("content/docs/voice-lipsync.md");
