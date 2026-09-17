@@ -16,6 +16,7 @@ export type AdminOverview = {
 };
 
 export type AdminServer = {
+  hidden?: boolean;
   official?: boolean;
   featured?: boolean;
   featuredOrder?: number;
@@ -157,11 +158,11 @@ export function servers(token: string): Promise<AdminServer[]> {
   return masterCall("/api/v1/admin/servers", { token });
 }
 
-export type ServerDirectoryLabels = { official: boolean; featured: boolean; featuredOrder: number; directoryRevision: number };
+export type ServerDirectoryLabels = { official: boolean; featured: boolean; featuredOrder: number; directoryRevision: number; hidden: boolean };
 export function setServerDirectory(token: string, serverId: string, labels: ServerDirectoryLabels): Promise<ServerDirectoryLabels> {
   return masterCall(`/api/v1/admin/servers/${serverId}/directory`, {
     method: "PUT", token,
-    body: { official: labels.official, featured: labels.featured, featuredOrder: labels.featuredOrder, revision: labels.directoryRevision },
+    body: { official: labels.official, featured: labels.featured, featuredOrder: labels.featuredOrder, revision: labels.directoryRevision, hidden: labels.hidden },
   });
 }
 

@@ -431,7 +431,7 @@ a.ac-iconbtn { text-decoration: none; }
 .adm-directory-toolbar label { display: grid; gap: 7px; min-width: 180px; }
 .adm-directory-toolbar label:first-child { flex: 1; }
 .adm-directory-notice { min-height: 22px; margin-bottom: 12px; font-size: 13px; }
-.adm-directory-table { min-width: 1000px; }
+.adm-directory-table { min-width: 1120px; }
 .adm-directory-table td:first-child { max-width: 340px; overflow-wrap: anywhere; }
 .adm-directory-toggle { display: flex; gap: 8px; align-items: center; cursor: pointer; white-space: nowrap; }
 .adm-directory-toggle input { width: 17px; height: 17px; accent-color: #12cfe3; cursor: pointer; }
