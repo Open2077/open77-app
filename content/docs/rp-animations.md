@@ -10,7 +10,7 @@ names from the general game inventory are not accepted by this system.
 
 See the [profile and clip catalogue](rp-animation-catalogue.md) for 76 profiles and 456 selectable clips. The `chair`, `lean` and `lie` profiles support anchored placement; see [Portable workspots](#portable-workspots-sit-lean-and-lie-anywhere). Male and female bindings are included, but not every clip is compatible with every body or proxy graph.
 
-To build a job action out of a profile, a prop attached to the hands and a progress bar, with complete server examples, see [Animated actions](animated-actions.md).
+To build a job action out of a profile, a prop attached to the hands and a progress bar, with complete server examples, see [Animated actions](animated-actions.md); a whole roleplay server built on these profiles is published at [Open2077/open77-rp-examples](https://github.com/Open2077/open77-rp-examples).
 
 ## How it works
 

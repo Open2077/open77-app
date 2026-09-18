@@ -4,7 +4,10 @@ Your mechanic types `/repair` and the car is fixed. Nothing happened on screen. 
 turns that into: the mechanic kneels at the wheel, a welder in hand, for fifteen seconds —
 and everyone around sees it.
 
-Three server calls do it. Copy the examples, change the names.
+Three server calls do it. Copy the examples, change the names. Both examples come from a
+complete roleplay server you can read and run:
+[Open2077/open77-rp-examples](https://github.com/Open2077/open77-rp-examples) — the crate
+convoy is `rp_nomade`, the repair is `rp_mecano`.
 
 ## The three calls
 
@@ -221,4 +224,6 @@ the platform's catalogue.
 ## See also
 
 [Synchronized animations](rp-animations.md) · [Synchronized attachments](attachments.md) ·
-[Props and effects](props-and-effects.md) · [The UI kit](ui-kit.md)
+[Props and effects](props-and-effects.md) · [The UI kit](ui-kit.md) ·
+[open77-rp-examples on GitHub](https://github.com/Open2077/open77-rp-examples) — 35 resources
+using all of this for real
