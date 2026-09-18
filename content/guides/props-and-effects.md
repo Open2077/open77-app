@@ -480,6 +480,11 @@ An attachment does not reserve a player or transfer inventory ownership. Use
 and cancellation, then commit item ownership in your server resource after
 validated completion. The guide includes a revision-safe handoff example.
 
+To put a pose and a duration around the carried object, so that a pick-up looks
+like a pick-up, see [Animated actions](animated-actions.md): it pairs this
+binding with the catalogue's `carry` profiles and the UI-kit progress bar, with
+the offset numbers for `crate.small` and a command to tune them live.
+
 If you want something genuinely **held as gear**, that is a different API:
 `Open77.heldItems.hold(playerId, record, options?)` puts a real *item* in one of
 the ten equipment slots through the engine's own transaction system, so it
