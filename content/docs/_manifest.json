@@ -498,8 +498,8 @@
       "target": "content/docs/lua-modules.md",
       "slug": "lua-modules",
       "title": "Lua modules and require",
-      "bytes": 8817,
-      "sha256": "51594584ebb9e22d038d3e100a2ecedd49f050e7f54947f92ec08f92adebe952",
+      "bytes": 10387,
+      "sha256": "76a6c935152606bbf008013bd7b37c0f93cc80d2f917f05c3a3cae5f25a9ea1a",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "53488a7e8018fd2b98ce0807dd5227072380c867fc3ec7e2a8b4fc4967c74ea3"
@@ -871,8 +871,8 @@
       "target": "content/docs/server-resources.md",
       "slug": "server-resources",
       "title": "Lua resources loaded by the server",
-      "bytes": 16875,
-      "sha256": "d3d80aee5bddf8e20619cfdbdb94bc200cf1648051c81b20c3e7269ac9faa44f",
+      "bytes": 17806,
+      "sha256": "76473a28bb3c2b475b8abd0244a24a85ea228e8e705b7a3a79b8703567c109c3",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "f1bf24b0a89a6070bc40e8f70fc47765e4b30e7cd3799cd6cb4098e44fa7c457"
