@@ -828,7 +828,7 @@ export function ServerBrowser({
           <kbd>↓</kbd> select · <kbd>Enter</kbd> connect · <kbd>/</kbd> search
         </span>
         <span className="directory-footnote-stage">
-          Developer Preview · approved account required to play
+          Alpha · Alpha access required to play and host
         </span>
         <Link href="/download">Need the launcher? ↗</Link>
       </footer>

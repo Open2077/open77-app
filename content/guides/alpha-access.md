@@ -1,20 +1,23 @@
-# Developer Preview is live
+# Alpha access: play, host and build
 
-The OPEN//77 Developer Preview provides the launcher, dedicated server and Lua APIs for building multiplayer experiences in Cyberpunk 2077.
+Everyone with Alpha access can download the OPEN//77 dedicated server and start building a custom Cyberpunk 2077 gamemode. Roleplay, PvP, Battle Royale, Racing, Survival or something entirely your own: use the Lua APIs and resources to create your experience in Night City.
 
-This is an early-access developer release, not a stable release or unrestricted
-public access. Expect bugs, crashes, incomplete features and breaking API changes.
+No separate developer application, project review or special developer access is required. Alpha remains an early-access release, not a stable release or unrestricted public access. Expect bugs, crashes, incomplete features and breaking API changes.
 
 ## Get access
 
-1. [Apply for Developer Preview access](/create#developer-alpha) with your project
-   and the work you want to test.
-2. Create or sign into your [OPEN//77 account](/account). Applications are reviewed;
-   creating an account or downloading the launcher does not automatically grant access.
-3. Once your account is approved, sign into that same account in the launcher.
+**Already have Alpha access?** Sign into your [OPEN//77 account](/account), [download the server](/host) and start building. You do not need to apply again.
+
+If you do not have Alpha access yet:
+
+1. Join the [official Discord](https://discord.open2077.net).
+2. Use the bot command `/alpha apply` in any channel and follow its instructions.
+3. Once Alpha access is enabled on your account, use that account on the site and in the launcher.
+
+Creating an account or downloading the launcher alone does not grant Alpha access. Alpha members also have access to the Discord changelog channel for release updates.
 
 Approval is checked when joining a world. The live directory and launcher download
-are available before approval; `/host` enables server downloads for approved preview
+are available before approval; `/host` enables server downloads for Alpha
 accounts and staff. A server license identifies a hosted server;
 it does not grant player access to the account using it. Individual servers can
 also enforce their own admission rules.
@@ -55,10 +58,10 @@ system packages such as chat, voice, weather and administration. You still need 
 configure your server and access rules; the download does not include a license or
 anyone else's player data.
 
-Use the official master-backed setup for this preview. The private/offline startup
+Use the official master-backed setup during Alpha. The private/offline startup
 path remains experimental; do not disable authentication to work around setup errors.
 For Linux service wrappers, use `SIGINT` for a graceful shutdown: `SIGTERM` shutdown
-of the game loop is a known preview limitation.
+of the game loop is a known limitation.
 
 ## Build with Lua and WebUI
 
@@ -71,7 +74,7 @@ For character actions, read the [RP animation guide](/docs/rp-animations) and it
 linked client/server API entries. For a working gamemode example, browse the
 [Freeroam source](https://github.com/Open2077/freeroam).
 
-## Preview expectations
+## Alpha expectations
 
 - APIs, network protocols and resource formats may change. Back up configuration, persistent data and custom resources before updating.
 - Check each system's limitations, including supported models, bodies and animations.

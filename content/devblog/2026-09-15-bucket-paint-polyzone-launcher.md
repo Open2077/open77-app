@@ -49,7 +49,7 @@ For a project like OPEN//77, the launcher is not just a downloader. It is the fr
 
 ## Website fixes and workshop polish
 
-A small but important website fix also landed: the site’s “Join preview” buttons now lead to the launcher instead of the Workshop area. That means new visitors are less likely to take a wrong turn when they are trying to sign in and prepare for the preview.
+A small but important website fix also landed: the site's player download buttons lead to the launcher instead of the Workshop area. That means new visitors are less likely to take a wrong turn when they are trying to sign in and prepare to play.
 
 The Workshop library and its cards also now load cover images eagerly, which prevents blank-looking tiles on first view. It is a modest change, but it makes the resource library feel much more complete and readable.
 

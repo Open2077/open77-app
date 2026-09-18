@@ -25,7 +25,7 @@ export default async function DocsHomePage() {
         toc={<DocToc entries={sections} />}>
         <div className="docs-home">
           <p className="docs-home-intro">OPEN//77 is a multiplayer platform for Cyberpunk 2077. Start with a guide, explore the built-in systems, or look up a function in the API reference.</p>
-          <div className="docs-notice"><span className="docs-notice-icon" aria-hidden="true">i</span><p>{site.previewNotice} <Link href="/docs/developer-preview">Read the preview guide →</Link></p></div>
+          <div className="docs-notice"><span className="docs-notice-icon" aria-hidden="true">i</span><p>{site.alphaNotice} <Link href="/docs/alpha-access">Start building →</Link></p></div>
           <section id="start-here">
             <h2>Start here</h2>
             <div className="docs-start-grid">

@@ -4,10 +4,10 @@ Use the Windows launcher to locate Cyberpunk 2077, verify compatibility, sign in
 
 The launcher checks the game build, required files and account identity before starting a multiplayer session.
 
-> **Developer Preview is active.** The launcher, multiplayer updates and live
-> server directory are available now. Joining requires an approved OPEN//77
-> account; downloading alone does not grant access. Start with the
-> [Developer Preview guide](/docs/developer-preview) for access and known limitations.
+> **Play and build with Alpha access.** The launcher, multiplayer updates and live
+> server directory are available now. Everyone with Alpha access can also download
+> the server without a separate developer application. Need access? Use `/alpha apply`
+> in any channel on the official Discord. Read the [Alpha guide](/docs/alpha-access).
 
 ## What you need
 
@@ -273,10 +273,9 @@ comes up already joining that world instead of dropping you on the server browse
 If a client is already running, it joins in place rather than launching a second
 one.
 
-The directory is live during Developer Preview. Joining requires an approved
-account. If the list is empty, clear filters, refresh it and check the selected
-master and your connection; an empty list is not a statement that the preview
-has not launched. Local/private addresses are deliberately hidden from this list.
+The directory is live. Joining requires Alpha access on your account. If the list
+is empty, clear filters, refresh it and check the selected master and your connection.
+Local/private addresses are deliberately hidden from this list.
 
 ### History and Direct Connect
 
@@ -385,7 +384,7 @@ launcher found and what it hashed to, without touching the network or your files
 | You were signed in yesterday and are signed out today | Sessions expire. An expired one is treated as signed out rather than half-working; sign in again |
 | The game starts but there is no OPEN//77 in it | Almost always a failed redscript compile reverting to vanilla scripts. The preflight exists to stop this, so check whether anything was installed outside the launcher |
 | The server list is empty | Clear filters, refresh and check the selected master/network; use History or Direct Connect for local servers |
-| Preview access is required | Sign in with the approved account; downloading the launcher alone does not grant access |
+| Alpha access is required | Sign in with your Alpha account; request access with `/alpha apply` on Discord if needed. Downloading the launcher alone does not grant access |
 
 ## See also
 

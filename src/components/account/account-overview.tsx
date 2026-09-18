@@ -202,7 +202,7 @@ export function AccountOverview({ session }: { session: StoredSession }) {
                   <ServerRackIcon size={18} />
                   Server downloads
                 </h2>
-                <span className="ac-badge ac-badge-ok">Preview access approved</span>
+                <span className="ac-badge ac-badge-ok">Alpha access enabled</span>
               </div>
               <p className="ac-lead">
                 Your account can download and run the Windows and Linux dedicated server.

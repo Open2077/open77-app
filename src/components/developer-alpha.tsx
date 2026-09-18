@@ -9,39 +9,39 @@ export function DeveloperAlpha({ compact = false }: { compact?: boolean }) {
   const Heading = compact ? "h3" : "h2";
 
   return (
-    <aside className={styles.panel} id="developer-alpha" aria-labelledby="developer-alpha-title">
-      <Eyebrow>DEVELOPER PREVIEW · ACTIVE</Eyebrow>
-      <Heading className={styles.title} id="developer-alpha-title">
-        Build your own Night City.
+    <aside className={styles.panel} id="alpha-access" aria-labelledby="alpha-access-title">
+      <span id="developer-alpha" aria-hidden="true" />
+      <Eyebrow>ALPHA ACCESS · BUILD NOW</Eyebrow>
+      <Heading className={styles.title} id="alpha-access-title">
+        It&apos;s time to build.
       </Heading>
       <p className={styles.description}>
-        Planning an RP server, a custom game mode, or a new multiplayer experience?
-        Developer Preview is live. Apply for access and start building and testing
-        your community&apos;s Cyberpunk 2077 experience once your account is approved.
+        Everyone with Alpha access can now download the server and start building.
+        Roleplay, PvP, Battle Royale, Racing, Survival — create your own gamemode
+        and your own experience in Night City.
       </p>
       <div className={styles.actions}>
         <Link className="btn btn-primary" href="/host">
           Download server
           <ArrowRightIcon />
         </Link>
-        <a className="btn btn-ghost" href={site.links.developerAlpha} target="_blank" rel="noreferrer noopener">
-          Apply for preview access
-        </a>
-        <Link className="btn btn-ghost" href="/docs/developer-preview">Preview guide</Link>
+        <Link className="btn btn-ghost" href="/docs/host-a-server">Hosting guide</Link>
+        <Link className="btn btn-ghost" href="/docs/api">Explore the Lua APIs</Link>
       </div>
       <p className={styles.note}>
-        <strong>Already have alpha access?</strong> Download the Windows or Linux server
-        with your approved account — no new application or staff role is required.
+        <strong>Already have Alpha access?</strong> Sign in and download the Windows or Linux
+        server. No separate developer application or special access is required.
       </p>
       <p className={styles.note}>
-        <strong>Very limited launch slots.</strong> For server owners and developers.
-        Applications are reviewed, with priority given to serious, well-defined projects.
+        <strong>Need Alpha access?</strong> Use <code>/alpha apply</code> with the bot in any
+        channel on our{" "}
+        <a href={site.links.discord ?? "https://discord.open2077.net"} target="_blank" rel="noreferrer noopener">official Discord</a>.
       </p>
       {!compact && (
         <p className={styles.note}>
-          Tell us about your concept, your team, and what you want to build in the application.
-          This is an early developer preview: expect bugs, crashes, and incomplete features.
-          Share reproducible issues and feedback with the team on the official Discord.
+          Build your gamemode, experiment with the APIs and share your resources.
+          Alpha members can also follow updates in the Discord changelog channel.
+          Alpha software can still have bugs, crashes and API changes; share reproducible issues with the team.
         </p>
       )}
     </aside>

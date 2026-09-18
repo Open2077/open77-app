@@ -29,10 +29,10 @@ export const metadata: Metadata = {
   ...pageMetadata({
     title: "Host a Server",
     description:
-      "Download the official OPEN//77 dedicated server for Windows or Linux and host your own Cyberpunk 2077 multiplayer world. No game install required on the host.",
+      "Everyone with Alpha access can download the OPEN//77 server for Windows or Linux and build a custom Cyberpunk 2077 gamemode. No separate developer application or game install on the host.",
     path: "/host",
   }),
-  // Preview downloads are exposed to approved accounts and staff. Keep this
+  // Server downloads are exposed to Alpha accounts and staff. Keep this
   // account-gated page out of search results until access is unrestricted.
   robots: { index: false, follow: false },
 };
@@ -81,7 +81,7 @@ const SETUP_STEPS = [
     body: (
       <>
         Open the game and resource-download ports, then start the configured server. Public
-        servers register with the master so approved preview accounts can discover and join them.
+        servers register with the master so Alpha players can discover and join them.
       </>
     ),
   },
@@ -107,8 +107,9 @@ export default async function HostPage() {
               OPEN//77 server.
             </h1>
             <p className="section-lead">
-              Download the official dedicated server, license it to your account, and open your
-              Night City to players. The host machine never needs Cyberpunk 2077 installed.
+              Everyone with Alpha access can download the dedicated server and start building.
+              No separate developer application. License it to your account and create your own
+              gamemode — the host machine never needs Cyberpunk 2077 installed.
             </p>
             <div className="hero-ctas">
               <a className="btn btn-primary" href="#download">
@@ -122,7 +123,7 @@ export default async function HostPage() {
           </div>
         </section>
 
-        {/* Preview approval or staff role is checked against the current account. */}
+        {/* Alpha access or staff role is checked against the current account. */}
         <HostGate>
           <section className="section" id="download">
             <div className="section-inner">

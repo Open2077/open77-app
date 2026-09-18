@@ -9,9 +9,10 @@ import { ShieldIcon } from "@/components/icons";
 import { me, MasterApiError } from "@/lib/account/api";
 import { useSession } from "@/lib/account/session";
 import { canDownloadServer } from "@/lib/account/host-access";
+import { site } from "@/lib/site";
 
 /**
- * Developer Preview downloads are available to approved accounts and admins.
+ * Server downloads are available to all Alpha accounts and admins.
  * Consult /me rather than a role/entitlement cached at login. This is a
  * presentation gate, not CDN authorization: the versioned archives are public.
  */
@@ -52,7 +53,7 @@ export function HostGate({ children }: { children: ReactNode }) {
     return (
       <section className="section" aria-busy="true">
         <div className="section-inner">
-          <p className="ac-loading">Checking preview access…</p>
+          <p className="ac-loading">Checking Alpha access…</p>
         </div>
       </section>
     );
@@ -69,13 +70,15 @@ export function HostGate({ children }: { children: ReactNode }) {
           <span className="hud-corners" aria-hidden="true" />
           <p className="host-locked-tag">
             <ShieldIcon size={15} />
-            DEVELOPER PREVIEW
+            ALPHA ACCESS
           </p>
-          <h2>{check?.token === token && check?.failed ? "Unable to verify preview access." : "Server downloads for approved preview accounts."}</h2>
+          <h2>{check?.token === token && check?.failed ? "Unable to verify Alpha access." : "Server downloads for everyone with Alpha access."}</h2>
           <p className="host-locked-body">
-            Accounts approved for alpha access can download the Windows and Linux server builds;
-            a staff role is not required. Apply through <Link href="/create#developer-alpha">Create a Server</Link>
-            {" "}if you do not have access yet, and follow the{" "}
+            Already have Alpha access? Sign in to download the Windows or Linux server and start
+            building. No separate developer application or staff role is required. Need access?
+            Use <code>/alpha apply</code> in any channel on our{" "}
+            <a href={site.links.discord ?? "https://discord.open2077.net"} target="_blank" rel="noreferrer noopener">Discord</a>.
+            {" "}Follow the{" "}
             <Link href="/docs/server-licensing">licensing guide</Link> to configure your server.
           </p>
           {session ? (
@@ -83,7 +86,7 @@ export function HostGate({ children }: { children: ReactNode }) {
               You are signed in as <strong>{session.email ?? session.displayName}</strong>, which
               {check?.token === token && check?.failed
                 ? " could not be checked. Please retry when the master is reachable."
-                : " has not been granted preview access yet."}
+                : " does not have Alpha access yet."}
             </p>
           ) : null}
           {session ? (
@@ -96,7 +99,7 @@ export function HostGate({ children }: { children: ReactNode }) {
           <div className="host-locked-auth">
             <p className="ac-notice">
               <ShieldIcon size={15} />
-              <span>Sign in with your approved preview account to reach the downloads.</span>
+              <span>Sign in with your Alpha account to reach the downloads.</span>
             </p>
             <AuthPanel />
           </div>

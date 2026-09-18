@@ -263,7 +263,7 @@ npm run verify:served    # the built site, over HTTP and in a real browser
 ### Download release freshness
 
 `/download` shows the **launcher** and **dedicated server** as separate channels.
-`/host` keeps the approved-preview account gate and offers the Windows/Linux
+`/host` keeps the Alpha account gate and offers the Windows/Linux
 archives. Each channel reads its own CDN `latest.json` at request time, with
 `no-store` and a bounded timeout. These two pages are not build-time/ISR release
 snapshots; publishing a pointer updates them without redeploying the website.

@@ -29,7 +29,7 @@ const HERO_FACTS = [
   { key: "Model", value: "Community-run dedicated servers" },
   { key: "Requires", value: PLAYER_REQUIREMENT_SHORT },
   { key: "Game modes", value: "Whatever creators build" },
-  { key: "Stage", value: "Developer Preview · Active" },
+  { key: "Stage", value: "Alpha · Build your server" },
 ];
 
 const PILLAR_ICONS = {
@@ -106,15 +106,16 @@ export default async function HomePage() {
             </h1>
             <p className="hero-sub">
               Play Cyberpunk&nbsp;2077 online on community servers — or create your own server and
-              your own multiplayer experience.
+              your own multiplayer experience. Everyone with Alpha access can download the server
+              and start building now.
             </p>
             <div className="hero-ctas">
               <Link className="btn btn-primary btn-lg" href="/download">
-                Join preview
+                Download launcher
                 <ArrowRightIcon />
               </Link>
-              <Link className="btn btn-light btn-lg" href="/create#developer-alpha">
-                Build a server · Dev preview
+              <Link className="btn btn-light btn-lg" href="/create">
+                Build your server
               </Link>
             </div>
             <ul className="hero-facts" aria-label="Platform facts">
@@ -327,7 +328,7 @@ export default async function HomePage() {
             </h2>
             <div className="hero-ctas finale-ctas">
               <Link className="btn btn-primary btn-lg" href="/download">
-                Join preview
+                Download launcher
               </Link>
               {site.links.discord ? (
                 <a

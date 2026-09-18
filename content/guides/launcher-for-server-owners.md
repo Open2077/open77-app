@@ -5,7 +5,7 @@ Make your server available through the launcher directory, History or Direct Con
 This page is the operator's half of that contract. The player's half is
 [The OPEN//77 launcher](launcher.md).
 
-Joining requires an approved preview account. Local/private endpoints are excluded from the public directory but remain available through History and Direct Connect. See [Developer Preview](/docs/developer-preview) for access requirements.
+Everyone with Alpha access can download the server and start building without a separate developer application. Joining requires an Alpha account. Local/private endpoints are excluded from the public directory but remain available through History and Direct Connect. See [Alpha access](/docs/alpha-access) for setup and the Discord `/alpha apply` command.
 
 ## How a world reaches a player
 

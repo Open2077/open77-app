@@ -6,7 +6,7 @@ Read mounted armament from client Lua for vehicle HUDs and diagnostics. The API 
 
 Requires client and server **2.31.13+op77.53** or later, with compatible network protocols, on Cyberpunk 2077 **2.31 / build 23100**. The feature was introduced with protocol **1.24**; protocol **1.23** cannot join a **1.24** session.
 
-This is **Developer Preview** functionality, not a claim that every armed model
+This is **experimental** functionality, not a claim that every armed model
 or visual effect is fully validated. Keep `open77_vehicles` loaded for the shared
 vehicle helpers and diagnostic commands. Native replication runs in the client
 and server binaries; a HUD resource does not need to forward shots itself.

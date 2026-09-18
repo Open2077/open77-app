@@ -184,10 +184,12 @@ export default async function DownloadPage() {
             <p className="status-note" role="note">
               <InfoIcon size={18} />
               <span>
-                <strong>Developer Preview is active.</strong> Install the launcher and browse{" "}
-                <Link href="/servers">live servers</Link>. Joining requires an approved OPEN//77
-                account; downloading does not grant access. Read the{" "}
-                <Link href="/docs/developer-preview">preview guide</Link> before your first connection.
+                <strong>Play and build with Alpha access.</strong> Install the launcher and browse{" "}
+                <Link href="/servers">live servers</Link>. Joining requires an Alpha-enabled OPEN//77
+                account; downloading does not grant access. All Alpha members can also{" "}
+                <Link href="/host">download the server</Link> and start building without an extra
+                application. Read the{" "}
+                <Link href="/docs/alpha-access">Alpha guide</Link> before your first connection.
               </span>
             </p>
           </div>
@@ -276,7 +278,7 @@ export default async function DownloadPage() {
             <p className="status-note" role="note">
               <DiscordIcon size={18} />
               <span>
-                <strong>This is a Developer Preview, not a stable release.</strong> Expect bugs,
+                <strong>This is Alpha software, not a stable release.</strong> Expect bugs,
                 crashes, incomplete features and updates that change APIs. The{" "}
                 {site.links.discord ? (
                   <a href={site.links.discord} target="_blank" rel="noreferrer noopener">
@@ -285,7 +287,8 @@ export default async function DownloadPage() {
                 ) : (
                   "Discord"
                 )}{" "}
-                is where you can report reproducible issues and follow preview updates.
+                is where you can request access with <code>/alpha apply</code>, report reproducible
+                issues and follow the changelog once you have Alpha access.
               </span>
             </p>
           </div>
@@ -390,7 +393,7 @@ function ServerReleasePanel({ release }: { release: ServerRelease | null }) {
       </p>
       <div className="dl-cta">
         <Link className="btn btn-primary" href="/host">Get the server <DownloadIcon size={16} /></Link>
-        <span className="dl-cta-meta">Platform downloads and checksums · approved preview accounts</span>
+        <span className="dl-cta-meta">Windows &amp; Linux · available to everyone with Alpha access</span>
       </div>
     </div>
   );

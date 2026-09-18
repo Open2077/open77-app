@@ -64,6 +64,10 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // Preserve links to the retired access guide, including Markdown consumers.
+      { source: "/docs/developer-preview", destination: "/docs/alpha-access", permanent: true },
+      { source: "/docs/developer-preview.md", destination: "/docs/alpha-access.md", permanent: true },
+      { source: "/md/docs/developer-preview", destination: "/docs/alpha-access.md", permanent: true },
       ...Object.entries(LEGACY_PAGES).map(([source, destination]) => ({
         source,
         destination,

@@ -59,7 +59,7 @@ export function SiteFooter({ fineprint }: { fineprint?: string }) {
       <div className="footer-legal">
         <p>{site.disclaimer}</p>
         <p className="footer-fine">
-          {fineprint ?? site.previewNotice}
+          {fineprint ?? site.alphaNotice}
         </p>
       </div>
     </footer>

@@ -2,7 +2,7 @@ import type { GameServer } from "@/lib/servers";
 
 /**
  * INVENTED DATA. None of these servers, communities, owners, player counts or
- * pings are real. These fixtures are separate from the active Developer Preview
+ * pings are real. These fixtures are separate from the active Alpha
  * and its live master directory.
  *
  * They exist so the server browser — the product experience the whole platform

@@ -61,7 +61,7 @@ export const LANGUAGES: ServerLanguage[] = ["EN", "FR", "DE", "ES"];
  * The server directory.
  *
  * Legacy empty data source for the old demo browser. Production uses the live
- * master catalog API below; this placeholder says nothing about preview access
+ * master catalog API below; this placeholder says nothing about Alpha access
  * or the availability of actual servers. Demo fixtures remain separate.
  */
 export const serverDirectory = {

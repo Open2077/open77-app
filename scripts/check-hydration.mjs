@@ -449,13 +449,24 @@ try {
     await session.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
   }
 
-  if (process.argv.includes("--preview")) {
+  if (process.argv.includes("--alpha")) {
+    await fs.mkdir(".shots", { recursive: true });
     for (const width of [1440, 1100, 420]) {
       await session.send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
-      for (const route of ["/", "/docs/developer-preview", "/host"]) {
+      for (const route of ["/", "/create", "/download", "/docs/alpha-access", "/host"]) {
         await visit(route);
-        check(`preview ${route} ${width}px has no page overflow`, await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
-        reportConsole(`preview ${route} ${width}px`);
+        check(`Alpha ${route} ${width}px has no page overflow`, await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
+        check(`Alpha ${route} ${width}px has current access guidance`, await session.evaluate(`
+          const text = document.body.innerText;
+          return text.includes('/alpha apply') && !/developer[ -]?preview|preview access|join preview/i.test(text) &&
+            !document.querySelector('a[href*="docs.google.com/forms"]');
+        `));
+        reportConsole(`Alpha ${route} ${width}px`);
+        if (route === "/create" && width !== 1100) {
+          await session.evaluate("document.getElementById('alpha-access').scrollIntoView({ block: 'center', behavior: 'instant' }); await new Promise(r => requestAnimationFrame(r)); return true;");
+          const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+          await fs.writeFile(`.shots/alpha-build-${width}.png`, Buffer.from(data, "base64"));
+        }
       }
     }
     await session.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
@@ -476,16 +487,16 @@ try {
           if (!fixture.signedOut) localStorage.setItem('open77.session', JSON.stringify({
             token: 'host-access-browser-fixture', accountId: 'host-fixture',
             expiresAtUtc: new Date(Date.now() + 3600000).toISOString(),
-            displayName: 'Preview test', role: fixture.storedRole, emailVerified: true
+            displayName: 'Alpha test', role: fixture.storedRole, emailVerified: true
           }));
           const originalFetch = window.fetch.bind(window);
           window.fetch = async (input, init) => {
             const url = typeof input === 'string' ? input : input.url;
             if (new URL(url, location.href).pathname === '/api/v1/accounts/me') {
               if (fixture.offline) throw new TypeError('Simulated unavailable master');
-              return new Response(JSON.stringify({accountId:'host-fixture', displayName:'Preview test',
+              return new Response(JSON.stringify({accountId:'host-fixture', displayName:'Alpha test',
                 role:fixture.role, alphaAccess:fixture.alphaAccess, alphaGateActive:true,
-                email:'preview@example.test', emailVerified:true, identities:[]}),
+                email:'alpha@example.test', emailVerified:true, identities:[]}),
                 {status:200, headers:{'Content-Type':'application/json'}});
             }
             return originalFetch(input, init);
@@ -500,7 +511,8 @@ try {
             locked: !!document.querySelector('.host-locked'), text: document.body.innerText };
         `);
         check(`host gate: ${fixture.name}`, fixture.allowed ? access.downloads >= 2 && !access.locked : access.downloads === 0 && access.locked);
-        if (fixture.offline) check("host gate reports an availability error", access.text.includes("Unable to verify preview access."));
+        if (fixture.offline) check("host gate reports an availability error", access.text.includes("Unable to verify Alpha access."));
+        if (!fixture.allowed) check(`host gate ${fixture.name} explains Discord access`, access.text.includes('/alpha apply'));
         reportConsole(`host gate ${fixture.name}`);
       } finally {
         await session.send("Page.removeScriptToEvaluateOnNewDocument", { identifier });
@@ -509,6 +521,7 @@ try {
     await session.evaluate("localStorage.removeItem('open77.session');");
   }
 
+  if (!process.argv.includes("--alpha")) {
   /* ---------------------------------------------------------------- home --- */
 
   if (!process.argv.includes("--docs")) {
@@ -1057,6 +1070,7 @@ try {
     JSON.stringify(menu.afterNav),
   );
   reportConsole("client navigation to /create");
+  }
   }
   }
 } finally {

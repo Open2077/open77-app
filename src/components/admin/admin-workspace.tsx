@@ -17,7 +17,7 @@ const NAV = [
   { href: "/admin/resources", label: "Workshop review", group: "Access & safety", icon: ShieldIcon, note: "Review community project pages and inspected package releases." },
   { href: "/admin/resources/reports", label: "Workshop reports", group: "Access & safety", icon: ShieldIcon, note: "Investigate community reports and record moderation outcomes." },
   { href: "/admin/users", label: "Accounts", group: "Access & safety", icon: PeopleIcon, note: "Find accounts, inspect roles and manage access to the network." },
-  { href: "/admin/alpha-access", label: "Preview access", group: "Access & safety", icon: ShieldIcon, note: "Manage Developer Preview grants and inspect the current access gate." },
+  { href: "/admin/alpha-access", label: "Alpha access", group: "Access & safety", icon: ShieldIcon, note: "Manage Alpha grants and inspect the current access gate." },
   { href: "/admin/licenses", label: "Licenses", group: "Access & safety", icon: KeyIcon, note: "Server ownership, license status and revocation controls." },
   { href: "/admin/bans", label: "Bans", group: "Access & safety", icon: ShieldIcon, note: "Platform and server enforcement with explicit scope and expiry." },
   { href: "/admin/audit", label: "Audit log", group: "Access & safety", icon: CodeIcon, note: "Trace platform changes, access and administrative actions." },
@@ -84,7 +84,7 @@ export function AdminWorkspace({ children, operator }: { children: ReactNode; op
         <div className="adm-workspace-content">
           <header className="adm-page-heading"><p className="adm-eyebrow">{current.group}</p><h1>{current.label}<span>.</span></h1><p>{current.note}</p></header>
           <div className="adm-page-content" key={pathname}>{children}</div>
-          <footer className="adm-workspace-footer"><span>OPEN//77 · Developer Preview</span><span><ShieldIcon size={12} /> Private operations workspace</span></footer>
+          <footer className="adm-workspace-footer"><span>OPEN//77 · Alpha</span><span><ShieldIcon size={12} /> Private operations workspace</span></footer>
         </div>
       </div>
     </div>

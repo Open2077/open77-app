@@ -19,7 +19,7 @@ import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Create a Server",
-  description: `Build an RP server or custom Cyberpunk 2077 multiplayer experience in the active OPEN//77 Developer Preview. Access requires account approval. Players need ${PLAYER_REQUIREMENT_SHORT}.`,
+  description: `Everyone with Alpha access can download the OPEN//77 server and build a custom Cyberpunk 2077 gamemode. No separate developer application. Players need ${PLAYER_REQUIREMENT_SHORT}.`,
   path: "/create",
 });
 
@@ -87,15 +87,16 @@ export default function CreatePage() {
             </h1>
             <p className="section-lead">
               A dedicated Cyberpunk&nbsp;2077 server that stays online for your community — with
-              your rules, your identity, and gameplay you design. {CREATE_REQUIREMENTS_NOTE}
+              your rules, your identity, and gameplay you design. Everyone with Alpha access can
+              download it and start building now. {CREATE_REQUIREMENTS_NOTE}
             </p>
             <div className="hero-ctas">
               <Link className="btn btn-primary" href="/host">
                 Download server
                 <ArrowRightIcon />
               </Link>
-              <a className="btn btn-ghost" href="#developer-alpha">
-                Apply for preview access
+              <a className="btn btn-ghost" href="#alpha-access">
+                Get Alpha access
               </a>
               <Link className="btn btn-ghost" href="/docs/platform#dedicated-servers">
                 Technical docs
@@ -104,7 +105,7 @@ export default function CreatePage() {
           </div>
         </section>
 
-        <section className="section" aria-label="Developer Preview applications">
+        <section className="section" aria-label="Build with Alpha access">
           <div className="section-inner">
             <DeveloperAlpha />
           </div>
@@ -195,12 +196,10 @@ export default function CreatePage() {
             <p className="status-note" role="note">
               <InfoIcon />
               <span>
-                <strong>Developer Preview is active.</strong> Applications are open for a limited
-                number of server owners and developers. <a href="#developer-alpha">Apply for access</a>.
-                Approved accounts can <Link href="/host">download and run the server now</Link>;
-                applying does not grant immediate access.
-                See the{" "}
-                <Link href="/docs/platform#roadmap">roadmap</Link>.
+                <strong>Alpha access is all you need.</strong> No separate developer application,
+                project review or staff role. <Link href="/host">Download and run the server now</Link>,
+                or <a href="#alpha-access">request Alpha access through Discord</a>.
+                Read the <Link href="/docs/alpha-access">Alpha guide</Link> for setup and limitations.
               </span>
             </p>
           </div>

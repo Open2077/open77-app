@@ -136,7 +136,7 @@ export default async function DevblogIndexPage() {
         </section>
       </main>
 
-      <SiteFooter fineprint="Developer Preview is active. Posts are dated records; older entries describe the project at that time." />
+      <SiteFooter />
 
       <JsonLd
         data={jsonLdGraph(

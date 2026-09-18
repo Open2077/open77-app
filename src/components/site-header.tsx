@@ -109,7 +109,7 @@ export function SiteHeader() {
             Account
           </Link>
           <Link className="btn btn-small btn-primary" href="/download">
-            Join preview
+            Download launcher
           </Link>
           <button
             className="nav-toggle"
@@ -153,7 +153,7 @@ export function SiteHeader() {
           Account
         </Link>
         <Link className="btn btn-primary" href="/download">
-          Join preview
+          Download launcher
         </Link>
         {site.links.discord ? (
           <a

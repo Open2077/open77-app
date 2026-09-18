@@ -76,7 +76,7 @@ export const SERVER_POINTS = [
   },
   {
     title: "Operated by communities",
-    body: "Server owners can download the Windows or Linux build, configure their platform license, and run their own worlds. Joining worlds during Developer Preview requires an approved player account.",
+    body: "Everyone with Alpha access can download the Windows or Linux server, configure their platform license and build their own worlds. No separate developer application is required. Players need Alpha access to join.",
   },
 ];
 
@@ -158,17 +158,17 @@ export const SERVER_SAMPLE = `RegisterCommand("hello", function(source, args)
 end, false)`;
 
 export const RESOURCES_OUTRO =
-  "Every registered function is listed in the Lua API reference at /docs/api, separated by runtime so a client projection is never mistaken for server authority. APIs can change during Developer Preview; read each guide's limitations before depending on a feature.";
+  "Every registered function is listed in the Lua API reference at /docs/api, separated by runtime so a client projection is never mistaken for server authority. APIs can change during Alpha; read each guide's limitations before depending on a feature.";
 
 export const ROADMAP_INTRO =
-  "Developer Preview is active. Joining requires an approved account. Development priorities include reliability, compatibility and the resource ecosystem; release dates are not guaranteed.";
+  "Alpha members can play, download the server and build custom gamemodes now. Development priorities include reliability, compatibility and the resource ecosystem; release dates are not guaranteed.";
 
 export const ROADMAP = [
   {
     stage: "NOW",
-    chip: "DEVELOPER PREVIEW",
+    chip: "ALPHA",
     title: "Build and test today",
-    body: "Published launcher and server packages, Freeroam with integrated activities, a live server browser, WebUI and documented client/server Lua APIs. Access is approved per account.",
+    body: "Launcher and Windows/Linux server packages, Freeroam, a live server browser, WebUI and documented client/server Lua APIs. Everyone with Alpha access can start building without a separate developer application.",
   },
   {
     stage: "NEXT",
@@ -228,12 +228,12 @@ export const FAQ = [
   {
     question: "Can I play it right now?",
     answer:
-      "Developer Preview is active. You can download the launcher and browse live servers now; joining requires approval for your OPEN//77 account. Apply through the creator page, then sign into the launcher with your approved account. Expect bugs, crashes and incomplete features — this is not a stable release.",
+      "Yes, with Alpha access. Download the launcher and sign in with your approved OPEN//77 account to join a server. Need access? Use the bot command /alpha apply in any channel on our official Discord. Alpha can still have bugs, crashes and incomplete features; this is not a stable release.",
   },
   {
     question: "Can I host my own server?",
     answer:
-      "Yes. Windows and Linux server packages are available now, with the Freeroam template and system resources included. Follow the hosting guide, configure your server license and reachable endpoints, and connect through the production master. Your players still need approved Developer Preview accounts.",
+      "Yes. Everyone with Alpha access can download the Windows or Linux server and start developing, with no separate developer application or special access required. The Freeroam template and system resources are included. Follow the hosting guide, configure your license and reachable endpoints, and invite other Alpha players.",
   },
   {
     question: "What can server creators actually customize?",

@@ -606,11 +606,12 @@
       "target": "content/docs/npcs.md",
       "slug": "npcs",
       "title": "Server-owned NPCs",
-      "bytes": 43021,
-      "sha256": "4e7a20f0d1dfea91d8f541fd2be2de1dc799859f8be640f3456c12b902ef2f16",
+      "bytes": 42998,
+      "sha256": "946c6d0f6d130d97beae3e177d3b7d30b919f801948f72ce4fb857bc4b9b1c78",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "86fc7f6b93c095495ee619f115b25139cc339e179cd0e8affac49448f2ac9f52"
+        "upstreamSnapshotSha256": "86fc7f6b93c095495ee619f115b25139cc339e179cd0e8affac49448f2ac9f52",
+        "alphaAccessAmendment": "Removed retired access-programme wording; native contracts unchanged."
       }
     },
     {
@@ -990,11 +991,12 @@
       "target": "content/docs/vehicle-weapons.md",
       "slug": "vehicle-weapons",
       "title": "Armed vehicles and weapon Lua API",
-      "bytes": 16989,
-      "sha256": "df7fef782fbe86de7d2c20287ab48f2c70442e33e19088d87e58f9ab36b59941",
+      "bytes": 16984,
+      "sha256": "808b48da7837afbb9b9be316a44c9ade83d88248dbfab3a05fbedaf57c34eaf5",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "cd8c45353f8c847f48f5a10491dd1b52d46a482c9ef837739364e2a37c3ed0a0"
+        "upstreamSnapshotSha256": "cd8c45353f8c847f48f5a10491dd1b52d46a482c9ef837739364e2a37c3ed0a0",
+        "alphaAccessAmendment": "Replaced retired access-programme label with experimental; compatibility limits unchanged."
       }
     },
     {

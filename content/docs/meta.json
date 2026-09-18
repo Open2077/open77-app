@@ -16,12 +16,12 @@
           "description": "How OPEN//77 packages gameplay as resources: the session model, the authoritative server, a hello-world manifest, and the conventions shared by every Lua API."
         },
         {
-          "slug": "developer-preview",
+          "slug": "alpha-access",
           "kind": "guide",
           "source": "authored",
-          "nav": "Developer Preview",
-          "title": "Developer Preview is live",
-          "description": "Start using the active OPEN//77 Developer Preview: account approval, downloads, hosting, the Lua API, experimental features and reporting bugs."
+          "nav": "Alpha access & building",
+          "title": "Alpha access: play, host and build",
+          "description": "Everyone with Alpha access can download the server and build a custom gamemode. Request Alpha access with /alpha apply on Discord, then explore hosting, Lua APIs and the changelog."
         },
         {
           "slug": "platform",

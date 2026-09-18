@@ -4,7 +4,7 @@ Create server-owned NPCs and control their identity, routing bucket, health, tas
 
 The reference implementation is [`resources/system/open77_npcs`](../resources/system/open77_npcs/README.md).
 
-**Developer preview:** spawn directly from `Character.*` record IDs, without registering a
+Spawn directly from `Character.*` record IDs, without registering a
 virtual template. Browse the [NPC record catalogue](npc-catalogue.md) for IDs, appearances
 and compatibility warnings. See [AI, combat and voice control](npc-behavior.md) to make a
 hostile NPC passive, disable its perception or silence combat/search voice lines.
