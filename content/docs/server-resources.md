@@ -267,6 +267,17 @@ Only selected resources that reach `Running` are packaged and signed for clients
 resource from `load` therefore stops it server-side and removes its client scripts, WebUI, and
 declared files from the next resource generation.
 
+A resource is delivered to clients whenever it has client content: `shared_script`,
+`client_script` or `files`. A `server_script` never reaches a client and does not require a
+`client_script` beside it. A library that declares `files` and no client script is delivered as a
+**passive library**: the client gives it an idle VM, marks it `Running`, and dependants
+`require('@name/...')` its files (see [Lua modules](lua-modules.md)). What a manifest cannot be is
+empty: with no script and no `files` it is refused on both sides, `no_client_scripts` on the
+client and "Resource contains no scripts or files." on the server. `web_files` alone do not count.
+Builds up to 2.31.13+op77.82 refused every delivered resource without a client or shared script,
+and one such refusal failed the whole activation (`resource_activation_failed`, client stuck on
+"Verifying resources"); on those builds an empty `client_script` is the workaround.
+
 Selected `preload_mod` declarations are resolved earlier, during dedicated-server boot, because
 the launcher needs their digest before it can start the game. They are not silently pulled in from
 an excluded resource and they are not added by a dependency that `load` omitted.
