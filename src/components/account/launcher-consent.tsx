@@ -4,6 +4,8 @@ import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { AuthPanel } from "@/components/account/auth-panel";
+import { AuthLoading } from "@/components/account/auth-scene";
+import { AuthIcon } from "@/components/account/auth-icon";
 import { ShieldIcon } from "@/components/icons";
 import { authorizeLauncher, MasterApiError } from "@/lib/account/api";
 import { useSession } from "@/lib/account/session";
@@ -102,7 +104,9 @@ export function LauncherConsent() {
   // A bad or hostile launcher link — never redirect, just explain.
   if (linkError) {
     return (
-      <div className="ac-card">
+      <div className="auth-panel ac-card">
+        <span className="auth-state-icon"><AuthIcon name="shield" size={24} /></span>
+        <div className="auth-panel-heading"><h2>Connection stopped.</h2></div>
         <p className="ac-error" role="alert">
           <ShieldIcon size={15} />
           <span>{linkError}</span>
@@ -112,7 +116,7 @@ export function LauncherConsent() {
     );
   }
 
-  if (!ready) return <p className="ac-loading">Loading…</p>;
+  if (!ready) return <AuthLoading />;
 
   if (!session) {
     return (
@@ -134,7 +138,8 @@ export function LauncherConsent() {
 
   if (handedOff) {
     return (
-      <div className="ac-card">
+      <div className="auth-panel ac-card">
+        <span className="auth-state-icon"><AuthIcon name="link" size={24} /></span>
         <div className="ac-success" role="status">
           <h2 className="ac-reveal-title">
             <ShieldIcon size={19} />
@@ -150,7 +155,8 @@ export function LauncherConsent() {
   }
 
   return (
-    <div className="ac-card">
+    <div className="auth-panel ac-card">
+      <span className="auth-state-icon"><AuthIcon name="link" size={24} /></span>
       <div className="ac-card-head">
         <h2 className="ac-card-title">
           <ShieldIcon size={19} />

@@ -10,6 +10,7 @@ import { me, MasterApiError } from "@/lib/account/api";
 import { useSession } from "@/lib/account/session";
 import { canDownloadServer } from "@/lib/account/host-access";
 import { site } from "@/lib/site";
+import styles from "@/components/downloads/download-surface.module.css";
 
 /**
  * Server downloads are available to all Alpha accounts and admins.
@@ -51,11 +52,9 @@ export function HostGate({ children }: { children: ReactNode }) {
 
   if (!ready || (token && check?.token !== token)) {
     return (
-      <section className="section" aria-busy="true">
-        <div className="section-inner">
-          <p className="ac-loading">Checking Alpha access…</p>
-        </div>
-      </section>
+      <div className={styles.loading} aria-busy="true" role="status">
+        <span className={styles.spinner} aria-hidden="true" />Checking Alpha access…
+      </div>
     );
   }
 
@@ -64,16 +63,15 @@ export function HostGate({ children }: { children: ReactNode }) {
   }
 
   return (
-    <section className="section" id="download">
-      <div className="section-inner">
-        <div className="host-locked">
-          <span className="hud-corners" aria-hidden="true" />
-          <p className="host-locked-tag">
+    <div className={`${styles.gate} host-locked`}>
+      <div className={!session ? styles.gateGrid : undefined}>
+        <div className={styles.gateCopy}>
+          <p className={styles.eyebrow}>
             <ShieldIcon size={15} />
             ALPHA ACCESS
           </p>
           <h2>{check?.token === token && check?.failed ? "Unable to verify Alpha access." : "Server downloads for everyone with Alpha access."}</h2>
-          <p className="host-locked-body">
+          <p>
             Already have Alpha access? Sign in to download the Windows or Linux server and start
             building. No separate developer application or staff role is required. Need access?
             Use <code>/alpha apply</code> in any channel on our{" "}
@@ -82,7 +80,7 @@ export function HostGate({ children }: { children: ReactNode }) {
             <Link href="/docs/server-licensing">licensing guide</Link> to configure your server.
           </p>
           {session ? (
-            <p className="host-locked-note">
+            <p className={styles.gateNote}>
               You are signed in as <strong>{session.email ?? session.displayName}</strong>, which
               {check?.token === token && check?.failed
                 ? " could not be checked. Please retry when the master is reachable."
@@ -90,13 +88,13 @@ export function HostGate({ children }: { children: ReactNode }) {
             </p>
           ) : null}
           {session ? (
-            <button className="btn btn-ghost" type="button" onClick={() => { setCheck(null); setRevision((value) => value + 1); }}>
+            <button className={styles.secondary} type="button" onClick={() => { setCheck(null); setRevision((value) => value + 1); }}>
               Check access again
             </button>
           ) : null}
         </div>
         {!session ? (
-          <div className="host-locked-auth">
+          <div className={styles.gateAuth}>
             <p className="ac-notice">
               <ShieldIcon size={15} />
               <span>Sign in with your Alpha account to reach the downloads.</span>
@@ -105,6 +103,6 @@ export function HostGate({ children }: { children: ReactNode }) {
           </div>
         ) : null}
       </div>
-    </section>
+    </div>
   );
 }

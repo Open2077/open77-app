@@ -2,6 +2,8 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
 import type { Root as MdastRoot } from "mdast";
+import type { Root as HastRoot, Element, Text } from "hast";
+import { visit } from "unist-util-visit";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeShikiFromHighlighter from "@shikijs/rehype/core";
 import rehypeSlug from "rehype-slug";
@@ -59,6 +61,7 @@ export type BlogPost = BlogPostMeta & {
   html: string;
   markdown: string;
   wordCount: number;
+  headings: { id: string; title: string }[];
 };
 
 export function blogHref(slug: string): string {
@@ -192,6 +195,15 @@ async function renderPost(slug: string): Promise<BlogPost | null> {
 
   const { meta, body } = parseFrontmatter(raw, filename);
   const highlighter = await getHighlighter();
+  const headings: BlogPost["headings"] = [];
+  const headingText = (node: Element | Text): string => node.type === "text" ? node.value : node.children.map(child => child.type === "element" || child.type === "text" ? headingText(child) : "").join("");
+  function collectHeadings() {
+    return (tree: HastRoot) => {
+      visit(tree, "element", node => {
+        if (node.tagName === "h2" && typeof node.properties.id === "string") headings.push({ id: node.properties.id, title: headingText(node) });
+      });
+    };
+  }
 
   const file = await unified()
     .use(remarkParse)
@@ -199,6 +211,7 @@ async function renderPost(slug: string): Promise<BlogPost | null> {
     .use(remarkStripLeadingHeading)
     .use(remarkRehype)
     .use(rehypeSlug)
+    .use(collectHeadings)
     .use(rehypeAutolinkHeadings, AUTOLINK_OPTIONS)
     .use(rehypeWrapTables)
     .use(rehypeShikiFromHighlighter, highlighter, {
@@ -214,6 +227,7 @@ async function renderPost(slug: string): Promise<BlogPost | null> {
     html: String(file),
     markdown: raw,
     wordCount: countWords(body),
+    headings,
   };
 }
 

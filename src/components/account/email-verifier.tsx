@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { CheckIcon, InfoIcon } from "@/components/icons";
+import { AuthLoading } from "@/components/account/auth-scene";
+import { AuthIcon } from "@/components/account/auth-icon";
 import * as master from "@/lib/account/api";
 import { MasterApiError } from "@/lib/account/api";
 
@@ -63,12 +65,14 @@ export function EmailVerifier() {
   }
 
   if (phase.kind === "verifying") {
-    return <p className="ac-loading">Verifying your e-mail…</p>;
+    return <AuthLoading>Verifying your e-mail…</AuthLoading>;
   }
 
   if (phase.kind === "verified") {
     return (
-      <div className="ac-card">
+      <div className="auth-panel ac-card">
+        <span className="auth-state-icon"><AuthIcon name="shield" size={24} /></span>
+        <div className="auth-panel-heading"><h2>Address confirmed.</h2></div>
         <div className="ac-success" role="status">
           <CheckIcon size={17} />
           <span>
@@ -87,7 +91,9 @@ export function EmailVerifier() {
 
   if (phase.kind === "bad-link") {
     return (
-      <div className="ac-card">
+      <div className="auth-panel ac-card">
+        <span className="auth-state-icon"><AuthIcon name="mail" size={24} /></span>
+        <div className="auth-panel-heading"><h2>Check your link.</h2></div>
         <p className="ac-error" role="alert">
           <InfoIcon />
           <span>
@@ -107,7 +113,9 @@ export function EmailVerifier() {
   }
 
   return (
-    <div className="ac-card">
+    <div className="auth-panel ac-card">
+      <span className="auth-state-icon"><AuthIcon name="mail" size={24} /></span>
+      <div className="auth-panel-heading"><h2>Let&apos;s try again.</h2></div>
       <p className="ac-error" role="alert">
         <InfoIcon />
         <span>{phase.message}</span>

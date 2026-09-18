@@ -1,252 +1,85 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Eyebrow, SlashMark } from "@/components/brand";
+import { DownloadSurface, QuickFacts, SurfaceEyebrow, SurfaceHeading } from "@/components/downloads/download-surface";
+import styles from "@/components/downloads/download-surface.module.css";
+import { ArrowRightIcon, CheckIcon, CodeIcon, GlobeIcon, LinuxIcon, PeopleIcon, ServerRackIcon, ShieldIcon, WindowsIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
-import { DeveloperAlpha } from "@/components/developer-alpha";
-import {
-  ArrowRightIcon,
-  CodeIcon,
-  InfoIcon,
-  PeopleIcon,
-  ServerRackIcon,
-  ShieldIcon,
-} from "@/components/icons";
-import { SiteFooter } from "@/components/site-footer";
-import { cssBackgrounds, images } from "@/lib/images";
-import { CREATE_REQUIREMENTS_NOTE, PLAYER_REQUIREMENT_SHORT } from "@/lib/requirements";
+import { PLAYER_REQUIREMENT_SHORT } from "@/lib/requirements";
 import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
+import { site } from "@/lib/site";
 
 export const metadata = pageMetadata({
   title: "Create a Server",
-  description: `Everyone with Alpha access can download the OPEN//77 server and build a custom Cyberpunk 2077 gamemode. No separate developer application. Players need ${PLAYER_REQUIREMENT_SHORT}.`,
+  description: `Everyone with Alpha access can host an OPEN//77 server and build a custom Cyberpunk 2077 gamemode. Windows and Linux server downloads, Lua APIs and Warden. Players need ${PLAYER_REQUIREMENT_SHORT}.`,
   path: "/create",
 });
 
-const BENEFITS = [
-  {
-    Icon: ServerRackIcon,
-    title: "A dedicated, persistent world",
-    body: "Your server keeps running when players log off. Economies, factions and stories continue — the world remembers, because you host it.",
-  },
-  {
-    Icon: ShieldIcon,
-    title: "Your rules & moderation",
-    body: "Whitelist or open door, hardcore or casual — you set the rules, pick the staff, and shape the culture of your community.",
-  },
-  {
-    Icon: CodeIcon,
-    title: "Custom gameplay & resources",
-    body: "Add jobs, economies, missions, vehicles and UI through resources — drop-in packages of gameplay. Use what the community shares, or script your own.",
-  },
-  {
-    Icon: PeopleIcon,
-    title: "A front door for your community",
-    body: "Your server page in the public browser shows your world, mode, language and player count — discovery is built into the platform.",
-  },
-];
-
-const MODE_SHOTS = [
-  { image: images.roleplay, caption: "ROLEPLAY CITIES" },
-  { image: images.racing, caption: "RACING LEAGUES" },
-  { image: images.combat, caption: "COMBAT & SURVIVAL" },
-];
-
-const STEPS = [
-  {
-    num: "01",
-    title: "Get the server",
-    body: "Download the dedicated server software and run it on your own hardware or a rented machine. It is a normal server process — it does not need Cyberpunk 2077 installed, and you own it entirely.",
-  },
-  {
-    num: "02",
-    title: "License it to your account",
-    body: "Create a free account, mint a license key in the keymaster, and put it in your server config. The key ties the server to you and is what the master checks before it lets the server onto the platform.",
-  },
-  {
-    num: "03",
-    title: "Open the doors",
-    body: "Shape your slots, rules, language and mode, add the resources you want, and your licensed server appears in the public browser — players' clients auto-download everything your world needs.",
-  },
+const FEATURES = [
+  { icon: CodeIcon, title: "Make the gameplay.", body: "Build with Lua APIs for players, vehicles, NPCs, interfaces and world interactions.", href: "/docs/api", action: "Explore the APIs" },
+  { icon: ShieldIcon, title: "Set your rules.", body: "Manage players, access and moderation through Warden and your own resources.", href: "/docs/warden", action: "Meet Warden" },
+  { icon: ServerRackIcon, title: "Shape your world.", body: "Start with Freeroam, add packages or create a gamemode from the ground up.", href: "/docs/server-resources", action: "Build a resource" },
+  { icon: PeopleIcon, title: "Find your community.", body: "List your public server in the launcher, or keep access limited to your players.", href: "/docs/host-a-server", action: "Plan your server" },
 ];
 
 export default function CreatePage() {
   return (
     <>
-      <link rel="preload" as="image" href={cssBackgrounds.createHero} fetchPriority="high" />
-
-      <main id="main">
-        <section className="page-hero page-hero-create">
-          <div className="page-hero-bg" aria-hidden="true" />
-          <div className="section-inner page-hero-inner">
-            <Eyebrow>CREATE A SERVER</Eyebrow>
-            <h1 className="page-title">
-              Run your own
-              <br />
-              Night City.
-            </h1>
-            <p className="section-lead">
-              A dedicated Cyberpunk&nbsp;2077 server that stays online for your community — with
-              your rules, your identity, and gameplay you design. Everyone with Alpha access can
-              download it and start building now. {CREATE_REQUIREMENTS_NOTE}
-            </p>
-            <div className="hero-ctas">
-              <Link className="btn btn-primary" href="/host">
-                Download server
-                <ArrowRightIcon />
-              </Link>
-              <a className="btn btn-ghost" href="#alpha-access">
-                Get Alpha access
-              </a>
-              <Link className="btn btn-ghost" href="/docs/platform#dedicated-servers">
-                Technical docs
-              </Link>
+      <DownloadSurface active="server" artwork="/assets/home/night-city-v2.webp">
+        <section className={styles.hero} aria-labelledby="create-title">
+          <div className={styles.heroCopy}>
+            <SurfaceEyebrow>Built for the worlds you imagine</SurfaceEyebrow>
+            <h1 id="create-title">Same city.<em>Your own rules.</em></h1>
+            <p className={styles.intro}>A roleplay community. A racing league. A world nobody has made yet. Host your own Cyberpunk 2077 server and build the experience you want to play.</p>
+            <div className={styles.actions}>
+              <Link className={styles.primary} href="/host">Download server <ArrowRightIcon size={17} /></Link>
+              <Link className={styles.secondary} href="/docs/host-a-server">Read the setup guide</Link>
             </div>
+            <p className={styles.heroNote}><CheckIcon size={15} />Everyone with Alpha access can start building. No extra application.</p>
+          </div>
+          <aside className={styles.serverIntro}>
+            <SurfaceEyebrow>Your starting point</SurfaceEyebrow>
+            <h2>The platform is here.<br />The next idea is yours.</h2>
+            <p>A dedicated server, a ready-to-play Freeroam and the tools to go beyond it. Run locally while you build, then bring your community online.</p>
+            <div className={styles.modes}><span>Roleplay</span><span>Racing</span><span>PvP</span><span>Survival</span><span>Your next idea</span></div>
+          </aside>
+        </section>
+        <QuickFacts facts={[
+          { icon: WindowsIcon, label: "Windows host", value: "Self-contained · 64-bit" },
+          { icon: LinuxIcon, label: "Linux host", value: "Self-contained · 64-bit" },
+          { icon: CodeIcon, label: "Scripting", value: "Lua resources & custom WebUI" },
+          { icon: GlobeIcon, label: "Ownership", value: "Your infrastructure. Your rules." },
+        ]} />
+
+        <section className={styles.section} id="benefits">
+          <SurfaceHeading label="Tools, not a template" title="Start with a server. Make it a world." />
+          <div className={styles.features}>{FEATURES.map(({ icon: Icon, title, body, href, action }) => <article className={styles.feature} key={title}><Icon size={29} /><h3>{title}</h3><p>{body}</p><Link className={styles.textLink} href={href}>{action}<ArrowRightIcon size={15} /></Link></article>)}</div>
+        </section>
+
+        <section className={styles.section} id="how">
+          <SurfaceHeading label="From idea to first connection" title="Your first server, step by step." />
+          <ol className={styles.steps}>
+            <li><h3>Get your build.</h3><p>Sign in with your Alpha account and <Link href="/host">download the Windows or Linux server</Link>. Use your own computer for development or a rented machine for hosting.</p></li>
+            <li><h3>Make it yours.</h3><p>Create a <Link href="/account/keys">server license</Link>, complete Warden setup and choose your name, visibility and resources. Freeroam gives you a starting point.</p></li>
+            <li><h3>Bring your players.</h3><p>Configure reachable endpoints and test your resources. When you are ready, open your public listing so players can find you in the launcher.</p></li>
+          </ol>
+          <div className={styles.notice}><ShieldIcon size={18} /><p><strong>Hosting and playing have different requirements.</strong> Your server does not need the game installed. Players need {PLAYER_REQUIREMENT_SHORT} and Alpha access. Software is in Alpha; test updates and back up your work.</p></div>
+        </section>
+
+        <section className={styles.section} id="alpha-access">
+          <div className={styles.resourceBanner}>
+            <Image src="/assets/home/build-v2.webp" alt="" fill sizes="100vw" />
+            <div><SurfaceEyebrow>Alpha is open to builders</SurfaceEyebrow><h2>You have access. You can build.</h2><p>Everyone with Alpha access can download the server. No separate developer application or project review. Need access? Use <code>/alpha apply</code> in any channel on our Discord.</p></div>
+            <div className={styles.actions}><a className={styles.primary} href={site.links.discord ?? "https://discord.open2077.net"} target="_blank" rel="noreferrer noopener">Join our Discord <ArrowRightIcon size={16} /></a><Link className={styles.secondary} href="/docs/alpha-access">Read the Alpha guide</Link></div>
           </div>
         </section>
 
-        <section className="section" aria-label="Build with Alpha access">
-          <div className="section-inner">
-            <DeveloperAlpha />
-          </div>
+        <section className={styles.section}>
+          <SurfaceHeading label="Go a little deeper" title="Your next stop: the documentation."><p>Practical guides for hosting and scripting, plus the native APIs to build your own systems.</p></SurfaceHeading>
+          <div className={styles.actions}><Link className={styles.primary} href="/docs/server-resources">Create your first resource <ArrowRightIcon size={16} /></Link><Link className={styles.secondary} href="/docs/api">Browse Lua APIs</Link><Link className={styles.textLink} href="/docs/server-licensing">License your server <ArrowRightIcon size={16} /></Link></div>
         </section>
-
-        <section className="section" id="benefits">
-          <div className="section-inner">
-            <Eyebrow>WHAT A SERVER GIVES YOU</Eyebrow>
-            <h2 className="section-title">Your world, your call.</h2>
-            <div className="benefit-grid">
-              {BENEFITS.map(({ Icon, title, body }) => (
-                <article className="benefit-card" key={title}>
-                  <Icon className="feat-icon" />
-                  <h3>{title}</h3>
-                  <p>{body}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section" id="modes">
-          <div className="section-inner section-inner-wide">
-            <div className="split-head">
-              <div>
-                <Eyebrow>FROM RP TO RACING TO UNKNOWN</Eyebrow>
-                <h2 className="section-title">
-                  Any experience
-                  <br />
-                  you can script.
-                </h2>
-              </div>
-              <p className="split-head-lead">
-                OPEN//77 doesn&apos;t ship a game mode — it ships the platform. A hardcore roleplay
-                city, a ranked racing league, a survival district, a social hub with zero combat, or
-                something nobody has built yet: they&apos;re all just servers.
-              </p>
-            </div>
-            <div className="mode-strip">
-              {MODE_SHOTS.map(({ image, caption }) => (
-                <figure className="mode-shot" key={caption}>
-                  <span className="hud-corners" aria-hidden="true" />
-                  <Image
-                    src={image.src}
-                    width={image.width}
-                    height={image.height}
-                    alt={image.alt}
-                    sizes="(max-width: 1080px) 100vw, 420px"
-                  />
-                  <figcaption>
-                    <SlashMark /> {caption}
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section" id="how">
-          <div className="section-inner">
-            <Eyebrow>HOW IT WORKS</Eyebrow>
-            <h2 className="section-title">Three steps to open the doors.</h2>
-            <ol className="steps steps-3">
-              {STEPS.map((step) => (
-                <li className="step" key={step.num}>
-                  <span className="step-num">{step.num}</span>
-                  <h3>{step.title}</h3>
-                  <p>{step.body}</p>
-                </li>
-              ))}
-            </ol>
-            <p className="status-note" role="note">
-              <InfoIcon />
-              <span>
-                <strong>Requirements.</strong> {CREATE_REQUIREMENTS_NOTE} See{" "}
-                <Link href="/docs/platform#requirements">platform requirements</Link>.
-              </span>
-            </p>
-            <p className="status-note" role="note">
-              <InfoIcon />
-              <span>
-                <strong>Licensing.</strong> Every server on the platform belongs to an account. The{" "}
-                <Link href="/docs/server-licensing">server licensing guide</Link> walks through
-                creating an account, getting a license key, and linking it to your server so the
-                master authorises it.
-              </span>
-            </p>
-            <p className="status-note" role="note">
-              <InfoIcon />
-              <span>
-                <strong>Alpha access is all you need.</strong> No separate developer application,
-                project review or staff role. <Link href="/host">Download and run the server now</Link>,
-                or <a href="#alpha-access">request Alpha access through Discord</a>.
-                Read the <Link href="/docs/alpha-access">Alpha guide</Link> for setup and limitations.
-              </span>
-            </p>
-          </div>
-        </section>
-
-        <section className="section" id="deeper">
-          <div className="section-inner">
-            <div className="deeper-band light-zone">
-              <span className="lz-corner" aria-hidden="true">
-                <i />
-                <i />
-              </span>
-              <div>
-                <Eyebrow>FOR BUILDERS</Eyebrow>
-                <h2 className="browser-cta-title">Want the technical details?</h2>
-                <p>
-                  Architecture, dedicated servers, the resource format and the complete Lua API live
-                  in the documentation — written for people who build.
-                </p>
-              </div>
-              <div className="deeper-links">
-                <Link className="btn btn-primary" href="/docs/server-resources">
-                  Server docs
-                  <ArrowRightIcon />
-                </Link>
-                <Link className="btn btn-ghost" href="/docs/server-licensing">
-                  Server licensing
-                </Link>
-                <Link className="btn btn-ghost" href="/docs/api">
-                  Lua API reference
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      <SiteFooter />
-
-      <JsonLd
-        data={jsonLdGraph(
-          breadcrumbNode([
-            { name: "Home", path: "/" },
-            { name: "Create a Server", path: "/create" },
-          ]),
-        )}
-      />
+      </DownloadSurface>
+      <JsonLd data={jsonLdGraph(breadcrumbNode([{ name: "Home", path: "/" }, { name: "Create a Server", path: "/create" }]))} />
     </>
   );
 }

@@ -3,7 +3,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { safeHttpUrl } from "@/components/admin/format";
 import { GlobeIcon } from "@/components/icons";
 import { HubReadFailure } from "@/components/community/hub-read-failure";
-import { HubShell } from "@/components/community/hub-shell";
+import { WorkshopShell as HubShell } from "@/components/community/workshop-shell";
 import { Discussion } from "@/components/community/discussion";
 import { ResourceHeader } from "@/components/community/resource-header";
 import { CommunityReadError, getComment, getComments, getProject, latestRelease, listReleases } from "@/lib/community/public-api";

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { DownloadIcon, FilterIcon, SearchIcon, StarIcon } from "@/components/icons";
 import { useToast } from "@/components/toast";
@@ -14,6 +13,7 @@ import { formatBytes, formatCount, formatDate, pickLatestStable } from "@/lib/co
 import { categories, categoryLabel, type CommunityDirectoryPage, type CommunityProject, type CommunityRelease } from "@/lib/community/types";
 import { DownloadButton } from "./download-button";
 import { useDerivative, useHoverPreview } from "./use-hover-media";
+import { WorkshopIcon } from "./workshop-icon";
 
 /** One API page: the master ranks, the browser filters what it has loaded. */
 const PAGE_SIZE = 100;
@@ -25,11 +25,9 @@ type Filters = { query: string; category: string; kind: string; source: string; 
 /** Wide art per category, for a selected creation without screenshots. */
 function categoryArt(category: string): string {
   switch (category) {
-    case "gamemodes": return "/assets/exp-roleplay.jpg";
-    case "maps": return "/assets/exp-exploration.jpg";
-    case "ui": return "/assets/play-together.jpg";
-    case "tools": return "/assets/create-server.jpg";
-    default: return "/assets/exp-custom.jpg";
+    case "gamemodes": return "/assets/home/play-v2.webp";
+    case "maps": return "/assets/home/worlds-v2.webp";
+    default: return "/assets/home/build-v2.webp";
   }
 }
 
@@ -59,7 +57,7 @@ function parseFilters(search: string): Filters {
   const source = p.get("source") ?? p.get("hasSource") ?? "";
   const sort = p.get("sort") ?? "new";
   return {
-    query: p.get("query") ?? p.get("q") ?? "",
+    query: (p.get("query") ?? p.get("q") ?? "").slice(0, 200),
     category: categories.some(item => item.id === category) ? category : "",
     kind: kind === "resource" || kind === "showcase" ? kind : "",
     source: source === "true" || source === "false" ? source : "",
@@ -81,24 +79,21 @@ function haystack(project: CommunityProject): string {
 }
 
 function insideControl(target: EventTarget | null): boolean {
-  return Boolean((target as HTMLElement | null)?.closest("input, textarea, select, [contenteditable=true], dialog"));
+  return Boolean((target as HTMLElement | null)?.closest("a, button, input, textarea, select, [contenteditable=true], dialog"));
 }
 
 /**
- * The community library as a full-window directory, the launcher's desktop
- * kit at the server browser's density: command bar, filter rail, dense rows,
- * an inspector beside the list. The master ranks the catalog (sort is a
+ * A document-scrolling catalog with a filter rail and modal quick view.
+ * The master ranks the catalog (sort is a
  * server parameter); everything else filters instantly over what is loaded,
  * and the URL is the only source of truth for filters.
  */
 export function ResourceDirectory({ initial, initialSort, initialSearch }: { initial: CommunityDirectoryPage | null; initialSort: string; initialSearch: string }) {
   const filters = useLibraryFilters(initialSearch);
-  const router = useRouter();
   const { session } = useSession();
   const { show: showToast, node: toastNode } = useToast();
   const filterPanelId = useId();
   const searchRef = useRef<HTMLInputElement>(null);
-  const listRef = useRef<HTMLElement>(null);
   const [catalog, setCatalog] = useState<{ sort: string; items: CommunityProject[]; nextCursor: string | null; error: string | null; loading: boolean }>({
     sort: initialSort, items: initial?.items ?? [], nextCursor: initial?.nextCursor ?? null, error: initial ? null : "The resource hub could not be reached.", loading: false,
   });
@@ -107,16 +102,25 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
   const [savedState, setSaved] = useState<{ accountId: string; map: Record<string, boolean> } | null>(null);
   const saved = useMemo(() => session?.emailVerified && savedState?.accountId === session.accountId ? savedState.map : {}, [session, savedState]);
   const [busySave, setBusySave] = useState<string | null>(null);
+  const requestRef = useRef<AbortController | null>(null);
+  const filterButtonRef = useRef<HTMLButtonElement>(null);
+  const closeFilters = () => { setFiltersOpen(false); filterButtonRef.current?.focus(); };
+  useEffect(() => () => requestRef.current?.abort(), []);
 
   /* Sort is ranked by the master: a change reloads the first page. */
   const fetchPage = useCallback(async (sort: string, cursor: string | null) => {
-    setCatalog(current => ({ ...current, loading: true, error: null }));
+    requestRef.current?.abort();
+    const controller = new AbortController();
+    requestRef.current = controller;
+    setCatalog(current => ({ ...current, sort, ...(current.sort !== sort ? { items: [], nextCursor: null } : {}), loading: true, error: null }));
     const query = new URLSearchParams({ sort, limit: String(PAGE_SIZE) });
     if (cursor) query.set("cursor", cursor);
     try {
-      const page = await api.listPublicProjects(query, AbortSignal.timeout(15000));
-      setCatalog(current => ({ sort, items: cursor && current.sort === sort ? [...current.items, ...page.items] : page.items, nextCursor: page.nextCursor, error: null, loading: false }));
+      const page = await api.listPublicProjects(query, AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]));
+      if (controller.signal.aborted) return;
+      setCatalog(current => ({ sort, items: cursor && current.sort === sort ? [...new Map([...current.items, ...page.items].map(item => [item.projectId, item])).values()] : page.items, nextCursor: page.nextCursor, error: null, loading: false }));
     } catch (error) {
+      if (controller.signal.aborted) return;
       setCatalog(current => ({ ...current, sort, loading: false, error: error instanceof MasterApiError ? error.message : "The resource hub could not be reached." }));
     }
   }, []);
@@ -194,46 +198,34 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
   const railFilters = active.filter(item => item.key !== "query" && item.key !== "category").length;
   const reset = () => updateFilters({}, true);
 
-  /* Keyboard: `/` searches, ↑/↓ walk the list, Enter opens the page, Escape clears. */
-  const keyState = useRef({ visible, selected, filtersOpen });
-  useEffect(() => { keyState.current = { visible, selected, filtersOpen }; });
+  /* Keep native Tab/Enter activation; never steal keys from a modal or control. */
+  const keyState = useRef({ filtersOpen });
+  useEffect(() => { keyState.current = { filtersOpen }; });
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
-      const { visible, selected, filtersOpen } = keyState.current;
+      if (event.defaultPrevented || (event.target as HTMLElement)?.closest('dialog')) return;
+      const { filtersOpen } = keyState.current;
       const inControl = insideControl(event.target);
       if (event.key === "/" && !event.ctrlKey && !event.metaKey && !inControl) { event.preventDefault(); searchRef.current?.focus(); return; }
       if (event.key === "Escape") {
-        if (filtersOpen) setFiltersOpen(false);
+        if (filtersOpen) { setFiltersOpen(false); filterButtonRef.current?.focus(); }
         else if (document.activeElement === searchRef.current) searchRef.current?.blur();
         else setSelectedId(null);
         return;
       }
-      if (inControl && event.target !== searchRef.current) return;
-      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-        if (!visible.length) return;
-        event.preventDefault();
-        const index = selected ? visible.findIndex(project => project.projectId === selected.projectId) : -1;
-        const next = event.key === "ArrowDown" ? Math.min(visible.length - 1, index + 1) : Math.max(0, index - 1);
-        const id = visible[next]?.projectId;
-        if (!id) return;
-        setSelectedId(id);
-        listRef.current?.querySelector<HTMLElement>(`[data-project-id="${CSS.escape(id)}"]`)?.scrollIntoView({ block: "nearest" });
-        return;
-      }
-      if (event.key === "Enter" && selected && !inControl) { event.preventDefault(); router.push(`/workshop/${selected.slug}`); }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [router]);
+  }, []);
 
   const readout = catalog.loading ? "Loading…" : catalog.error ? "Workshop unavailable" : `${catalog.items.length} loaded${catalog.nextCursor ? " · more available" : ""}`;
 
   return <div className={`directory-workspace directory-dense hub-directory${filtersOpen ? " filters-open" : ""}${selected ? " has-selection" : ""}`}>
     <div className="directory-command" role="search">
-      <button className="directory-tool directory-filter-toggle" aria-expanded={filtersOpen} aria-controls={filterPanelId} onClick={() => setFiltersOpen(open => !open)}>
+      <button ref={filterButtonRef} className="directory-tool directory-filter-toggle" aria-label="Toggle filters" aria-expanded={filtersOpen} aria-controls={filterPanelId} onClick={() => setFiltersOpen(open => !open)}>
         <FilterIcon size={15} /><span>Filters</span>{railFilters ? <b>{railFilters}</b> : null}</button>
       <div className="sb-search"><SearchIcon size={16} />
-        <input ref={searchRef} type="search" aria-label="Search resources" placeholder="Search resources, gamemodes, maps, tools, creators…" value={filters.query} onChange={event => updateFilters({ query: event.target.value })} />
+        <input ref={searchRef} type="search" maxLength={200} aria-label="Search resources" placeholder="Search resources, creators, ideas…" value={filters.query} onChange={event => updateFilters({ query: event.target.value })} />
         <kbd aria-hidden="true">/</kbd></div>
       <div className="directory-modes" role="group" aria-label="Filter by category">
         <button className={`filter-chip${!filters.category ? " is-active" : ""}`} aria-pressed={!filters.category} onClick={() => updateFilters({ category: "" })}>All<small>{catalog.items.length}</small></button>
@@ -258,18 +250,13 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
     <div className="directory-body">
       <aside className="directory-rail" aria-label="Library filters" id={filterPanelId}>
         <div className="directory-rail-heading"><span className="directory-kicker">Library</span>
-          <button className="directory-filter-close" onClick={() => setFiltersOpen(false)} aria-label="Close filters">×</button></div>
+          <button className="directory-filter-close" onClick={closeFilters} aria-label="Close filters">×</button></div>
         <nav aria-label="Collections" className="directory-collections">
           <button className={`directory-nav${!filters.saved && active.length === 0 ? " is-active" : ""}`} aria-pressed={!filters.saved && active.length === 0} onClick={reset}><SearchIcon size={15} /> All creations <small>{catalog.items.length}</small></button>
           <button className={`directory-nav${filters.kind === "resource" ? " is-active" : ""}`} aria-pressed={filters.kind === "resource"} onClick={() => updateFilters({ kind: filters.kind === "resource" ? "" : "resource" })}><DownloadIcon size={14} /> Downloadable <small>{facets.resources}</small></button>
           <button className={`directory-nav${filters.kind === "showcase" ? " is-active" : ""}`} aria-pressed={filters.kind === "showcase"} onClick={() => updateFilters({ kind: filters.kind === "showcase" ? "" : "showcase" })}><span className="hub-nav-mark" aria-hidden="true">◇</span> Showcases <small>{facets.showcases}</small></button>
           {session?.emailVerified && <button className={`directory-nav${filters.saved ? " is-active" : ""}`} aria-pressed={filters.saved} onClick={() => updateFilters({ saved: !filters.saved })}><StarIcon size={15} /> Saved <small>{savedCount}</small></button>}
         </nav>
-        <div className="directory-filter-section client-filters" role="group" aria-label="Filter by category"><h2>Category</h2>
-          <button className={`directory-mode-row${!filters.category ? " is-active" : ""}`} aria-pressed={!filters.category} onClick={() => updateFilters({ category: "" })}><span>All categories</span><small>{catalog.items.length}</small></button>
-          {categories.map(category => <button key={category.id} className={`directory-mode-row${filters.category === category.id ? " is-active" : ""}`} aria-pressed={filters.category === category.id} onClick={() => updateFilters({ category: category.id })}>
-            <span>{category.label}</span><small>{facets.byCategory.get(category.id) ?? 0}</small></button>)}
-        </div>
         <div className="directory-filter-section" role="group" aria-label="Source code"><h2>Source code</h2>
           <label className="directory-checkbox"><input type="checkbox" checked={filters.source === "true"} onChange={event => updateFilters({ source: event.target.checked ? "true" : "" })} /> Source link provided <small className="directory-muted">({facets.withSource})</small></label>
           <label className="directory-checkbox"><input type="checkbox" checked={filters.source === "false"} onChange={event => updateFilters({ source: event.target.checked ? "false" : "" })} /> No source link</label>
@@ -284,10 +271,11 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
         </div>
       </aside>
       <section className="directory-main" aria-label="Workshop">
+        {catalog.error && catalog.items.length > 0 && <p className="hub-notice" role="alert">{catalog.error} Your loaded creations are still shown. Use Refresh to try again.</p>}
         {active.length ? <div className="directory-results-bar"><span className="directory-kicker">Filters</span>
           <div className="directory-active-filters">{active.map(item => <button key={item.key} onClick={() => updateFilters({ [item.key]: item.key === "saved" ? false : "" })} aria-label={`Remove ${item.label} filter`}>{item.label}<span aria-hidden="true">×</span></button>)}
             <button className="sb-clear" onClick={reset}>Reset all</button></div></div> : null}
-        <section className="sb-col-main" aria-label="Creations" ref={listRef}>
+        <section className="sb-col-main" aria-label="Creations">
           {catalog.items.length === 0 ? <div className="sb-offline" role="status" aria-busy={catalog.loading}>
             <span className="directory-kicker">{catalog.error ? "HUB UNREACHABLE" : "WORKSHOP"}</span>
             <h2>{catalog.error ? "Unable to load the library" : catalog.loading ? "Reading the library…" : "Nothing published yet"}</h2>
@@ -295,9 +283,9 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
             {catalog.error ? <button className="btn btn-primary btn-small" type="button" disabled={catalog.loading} onClick={() => void fetchPage(filters.sort, null)}>Try again</button> :
               catalog.loading ? <div className="directory-loading" aria-hidden="true"><i /><i /><i /></div> : <Link className="btn btn-primary btn-small" href="/account/creations/new">Share a creation</Link>}
           </div> : filters.view === "tiles" ? <>
-            <div className="hub-tiles-head"><h1><span>{filters.saved ? "Saved" : filters.category ? categoryLabel(filters.category) : "Creations"}</span>
-              <b role="status">{visible.length}{active.length ? ` of ${catalog.items.length}` : ""}</b><i>· {directorySorts.find(sort => sort.id === filters.sort)?.label.toLowerCase()}</i></h1>
-              <span className="directory-muted">Hover a tile to flip through its screenshots</span></div>
+            <div className="hub-tiles-head"><h2><span>{filters.saved ? "Saved" : filters.category ? categoryLabel(filters.category) : "All creations"}</span>
+              <b role="status">{visible.length}{active.length ? ` of ${catalog.items.length}` : ""}</b></h2>
+              <span className="directory-muted">{catalog.nextCursor ? "Search applies to loaded creations" : directorySorts.find(sort => sort.id === filters.sort)?.label}</span></div>
             <ul className="hub-tiles">
               {visible.map(project => <ResourceTile key={project.projectId} project={project} isSaved={!!saved[project.projectId]} savingSave={busySave === project.projectId}
                 isSelected={selected?.projectId === project.projectId} onSelect={() => setSelectedId(id => id === project.projectId ? null : project.projectId)} onToggleSave={() => void toggleSave(project)} />)}
@@ -307,8 +295,8 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
             </ul>
           </> : <>
             <div className="sb-col-head">
-              <h1><span>{filters.saved ? "Saved" : filters.category ? categoryLabel(filters.category) : "Creations"}</span>
-                <b role="status">{visible.length}{active.length ? ` of ${catalog.items.length}` : ""}<i> · {directorySorts.find(sort => sort.id === filters.sort)?.label.toLowerCase()}</i></b></h1>
+              <h2><span>{filters.saved ? "Saved" : filters.category ? categoryLabel(filters.category) : "Creations"}</span>
+                <b role="status">{visible.length}{active.length ? ` of ${catalog.items.length}` : ""}</b></h2>
               <span>Category · tags</span><span>Status</span><span>Popularity</span><span />
             </div>
             <ul className="sb-list">
@@ -325,7 +313,7 @@ export function ResourceDirectory({ initial, initialSort, initialSearch }: { ini
     </div>
     <footer className="directory-footnote">
       <span>OPEN//77 WORKSHOP</span>
-      <span className="directory-list-hint" aria-hidden="true"><kbd>↑</kbd><kbd>↓</kbd> select · <kbd>Enter</kbd> open · <kbd>/</kbd> search</span>
+      <span className="directory-list-hint" aria-hidden="true"><kbd>Tab</kbd> explore · <kbd>Enter</kbd> open · <kbd>/</kbd> search</span>
       <span className="directory-footnote-stage">Free resources · reviewed before publication</span>
       <Link href="/account/creations/new">Share a creation ↗</Link>
     </footer>
@@ -342,17 +330,16 @@ function ResourceTile({ project, isSaved, savingSave, isSelected, onSelect, onTo
   const preview = useHoverPreview(content.media, content.clipMediaId, hovering);
   const shown = preview?.kind === "image" ? preview.src : cover;
   const href = `/workshop/${project.slug}`;
-  const mark = categories.find(category => category.id === content.category)?.mark ?? "//";
   return <li className={`hub-tile${isSelected ? " is-selected" : ""}`} data-project-id={project.projectId} onMouseEnter={() => setHovering(true)} onMouseLeave={() => setHovering(false)}>
-    <Link className="hub-tile-art" href={href} aria-label={`Open ${content.title}`} style={shown || preview?.kind === "video" ? undefined : { backgroundImage: `url(${categoryArt(content.category)})` }}>
+    <Link className="hub-tile-art" href={href} aria-label={`Open ${content.title}`}>
       {preview?.kind === "video" ? <video src={preview.src} poster={preview.poster ?? cover ?? undefined} muted autoPlay loop playsInline preload="none" aria-hidden="true" /> :
-        shown ? <Image unoptimized src={shown} width={640} height={360} alt="" loading="eager" referrerPolicy="no-referrer" /> : <span className="hub-tile-mark" aria-hidden="true">{mark}</span>}
+        shown ? <Image unoptimized src={shown} width={640} height={360} alt="" loading="lazy" referrerPolicy="no-referrer" /> : <span className="workshop-placeholder" data-category={content.category} aria-hidden="true"><WorkshopIcon category={content.category} size={44} /><small>{categoryLabel(content.category)}</small></span>}
       {content.clipMediaId && !preview && <span className="hub-tile-play" aria-hidden="true">▶</span>}
-      <span className="hub-tile-badges"><button type="button" className="sb-mode" onClick={event => { event.preventDefault(); event.stopPropagation(); updateFilters({ category: content.category }); }}>{categoryLabel(content.category)}</button>
+      <span className="hub-tile-badges"><span className="sb-mode">{categoryLabel(content.category)}</span>
         {content.kind === "showcase" ? <span className="tag hub-tile-kind">Showcase</span> : content.maturity === "stable" ? <span className="tag hub-tile-kind is-stable">Stable</span> : null}</span>
       {(content.media?.length ?? 0) > 1 && <span className="hub-tile-count" aria-hidden="true">{content.media?.length} shots</span>}
-      <span className="hub-tile-caption"><span className="hub-tile-title">{content.title}</span><span className="hub-tile-author">{project.creatorHandle ? `@${project.creatorHandle}` : "Community creator"}</span></span>
     </Link>
+    <div className="hub-tile-copy"><h3><Link href={href}>{content.title}</Link></h3><span className="hub-tile-author">{project.creatorHandle ? `by @${project.creatorHandle}` : "Community creator"}</span><p>{content.summary}</p></div>
     <div className="hub-tile-foot">
       <span className="hub-tile-stats"><span title="Upvotes">▲ {formatCount(project.upvotes)}</span>{content.kind === "resource" && <span title="Downloads">⤓ {formatCount(project.downloads)}</span>}<span title="Updated">{formatDate(project.updatedAtUtc)}</span></span>
       <span className="hub-tile-actions">
@@ -392,6 +379,15 @@ function ResourceRow({ project, isSaved, savingSave, isSelected, onSelect, onTog
 }
 
 function ResourceInspector({ project, isSaved, onToggleSave, onClose }: { project: CommunityProject | null; isSaved: boolean; onToggleSave: () => void; onClose: () => void }) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!project || !dialog) return;
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    dialog.showModal();
+    return () => { dialog.close(); if (opener?.isConnected) opener.focus({ preventScroll: true }); };
+  }, [project]);
   const cover = useDerivative(project?.content.media?.[0]?.mediaId ?? project?.content.clipMediaId, project?.content.media?.[0] ? "gallery" : "poster");
   const [latest, setLatest] = useState<{ projectId: string; release: CommunityRelease | null; failed: boolean } | null>(null);
   useEffect(() => {
@@ -402,17 +398,24 @@ function ResourceInspector({ project, isSaved, onToggleSave, onClose }: { projec
       .catch(() => { if (!controller.signal.aborted) setLatest({ projectId: project.projectId, release: null, failed: true }); });
     return () => controller.abort();
   }, [project]);
-  if (!project) return <aside className="directory-detail is-idle" aria-label="Selected creation"><div className="directory-detail-empty">
-    <span className="directory-detail-reticle" aria-hidden="true" /><strong>Select a creation</strong><small>Choose a resource to inspect it and download.</small></div></aside>;
+  if (!project) return null;
   const { content } = project;
   const release = latest?.projectId === project.projectId ? latest : null;
-  return <aside className="directory-detail" aria-label={`Selected creation: ${content.title}`}>
+  return <dialog ref={dialogRef} className="directory-detail workshop-quickview" aria-labelledby={titleId} onCancel={onClose}
+    onKeyDown={event => {
+      if (event.key !== "Tab") return;
+      const stops = [...event.currentTarget.querySelectorAll<HTMLElement>('a[href],button:not(:disabled),input:not(:disabled),[tabindex="0"]')].filter(el => el.getClientRects().length);
+      const first = stops[0], last = stops.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    }}
+    onClick={event => { if (event.target === event.currentTarget) { const rect = event.currentTarget.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) onClose(); } }}>
     <div className="directory-detail-cover" style={{ backgroundImage: `url(${cover ?? categoryArt(content.category)})` }}>
       <button className="directory-detail-close" onClick={onClose} aria-label="Close creation details">×</button>
       <span className="directory-detail-mode">{categoryLabel(content.category)}</span>
     </div>
     <div className="directory-detail-body">
-      <div className="directory-detail-head"><div><span className="directory-kicker">{content.kind === "showcase" ? "// Showcase" : "// Resource"}</span><h2 className="directory-detail-name">{content.title}</h2></div></div>
+      <div className="directory-detail-head"><div><span className="directory-kicker">{content.kind === "showcase" ? "// Showcase" : "// Resource"}</span><h2 id={titleId} className="directory-detail-name">{content.title}</h2></div></div>
       <div className="directory-detail-actions hub-detail-actions">
         {content.kind === "resource" && release?.release ? <DownloadButton releaseId={release.release.releaseId} version={release.release.version} /> :
           <Link className="btn btn-primary directory-detail-connect" href={`/workshop/${project.slug}${content.kind === "resource" ? "/versions" : ""}`}>{content.kind === "resource" ? (release ? "Browse versions" : "Checking releases…") : "View showcase"}</Link>}
@@ -436,5 +439,5 @@ function ResourceInspector({ project, isSaved, onToggleSave, onClose }: { projec
         {content.kind === "resource" && <Link href={`/workshop/${project.slug}/versions`}>All versions</Link>}
       </div>
     </div>
-  </aside>;
+  </dialog>;
 }

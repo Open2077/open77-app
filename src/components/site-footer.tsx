@@ -16,13 +16,13 @@ const SOCIAL_ICONS: Record<string, ComponentType<{ size?: number }>> = {
  * `fineprint` is the one line that changes per page: each surface states which
  * of its own contents are not real yet, next to the content in question.
  */
-export function SiteFooter({ fineprint }: { fineprint?: string }) {
+export function SiteFooter({ fineprint, tone = "light" }: { fineprint?: string; tone?: "light" | "dark" }) {
   return (
     <footer className="site-footer">
       <div className="footer-inner">
         <div className="footer-brand">
           <Link className="wordmark" href="/" aria-label="OPEN//77 home">
-            <Logotype />
+            <Logotype tone={tone} />
           </Link>
           <p className="footer-tag">{site.tagline}</p>
         </div>

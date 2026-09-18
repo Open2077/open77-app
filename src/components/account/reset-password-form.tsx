@@ -4,7 +4,9 @@ import Link from "next/link";
 import { type FormEvent, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { CheckIcon, InfoIcon } from "@/components/icons";
+import { ArrowRightIcon, CheckIcon, InfoIcon } from "@/components/icons";
+import { PasswordField } from "@/components/account/auth-fields";
+import { AuthIcon } from "@/components/account/auth-icon";
 import * as master from "@/lib/account/api";
 import { MasterApiError } from "@/lib/account/api";
 
@@ -28,6 +30,7 @@ export function ResetPasswordForm() {
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
+    if (busy) return;
     setError(null);
     if (password.length < 8) {
       setError("The new password must be at least 8 characters.");
@@ -59,7 +62,9 @@ export function ResetPasswordForm() {
 
   if (!email || !token || linkDead) {
     return (
-      <div className="ac-card">
+      <div className="auth-panel ac-card">
+        <span className="auth-state-icon"><AuthIcon name="shield" size={24} /></span>
+        <div className="auth-panel-heading"><h2>Link unavailable.</h2></div>
         <p className="ac-error" role="alert">
           <InfoIcon />
           <span>
@@ -82,7 +87,9 @@ export function ResetPasswordForm() {
 
   if (done) {
     return (
-      <div className="ac-card">
+      <div className="auth-panel ac-card">
+        <span className="auth-state-icon"><AuthIcon name="shield" size={24} /></span>
+        <div className="auth-panel-heading"><h2>You&apos;re all set.</h2></div>
         <div className="ac-success" role="status">
           <CheckIcon size={17} />
           <span>
@@ -99,7 +106,8 @@ export function ResetPasswordForm() {
   }
 
   return (
-    <div className="ac-card">
+    <div className="auth-panel ac-card">
+      <span className="auth-state-icon"><AuthIcon name="lock" size={24} /></span>
       <h2 className="ac-card-title">Choose a new password</h2>
       <p className="ac-lead" style={{ margin: "10px 0 18px" }}>
         Setting a new password for <strong>{email}</strong>.
@@ -110,41 +118,12 @@ export function ResetPasswordForm() {
           {error}
         </p>
       ) : null}
-      <form className="ac-form" onSubmit={onSubmit}>
-        <label className="ac-label">
-          New password
-          <input
-            className="ac-input"
-            type="password"
-            name="new-password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="8–128 characters"
-            autoComplete="new-password"
-            minLength={8}
-            maxLength={128}
-            required
-          />
-          <span className="ac-hint">At least 8 characters. A passphrase works best.</span>
-        </label>
-        <label className="ac-label">
-          Confirm new password
-          <input
-            className="ac-input"
-            type="password"
-            name="confirm-password"
-            value={confirm}
-            onChange={(event) => setConfirm(event.target.value)}
-            placeholder="Same password again"
-            autoComplete="new-password"
-            minLength={8}
-            maxLength={128}
-            required
-          />
-        </label>
+      <form className="ac-form" onSubmit={onSubmit} aria-busy={busy}>
+        <PasswordField label="New password" name="new-password" value={password} onChange={event => setPassword(event.target.value)} placeholder="Choose a strong password" autoComplete="new-password" minLength={8} maxLength={128} required disabled={busy} hint="8–128 characters. A unique passphrase works well." />
+        <PasswordField label="Confirm new password" name="confirm-password" value={confirm} onChange={event => setConfirm(event.target.value)} placeholder="Same password again" autoComplete="new-password" minLength={8} maxLength={128} required disabled={busy} />
         <div className="ac-form-actions">
           <button className="btn btn-primary" type="submit" disabled={busy}>
-            {busy ? "Working…" : "Set new password"}
+            {busy ? <><span className="auth-spinner" aria-hidden="true" />Updating…</> : <>Set new password <ArrowRightIcon /></>}
           </button>
         </div>
       </form>

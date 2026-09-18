@@ -4,7 +4,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { safeHttpUrl } from "@/components/admin/format";
 import { GlobeIcon } from "@/components/icons";
 import { HubReadFailure } from "@/components/community/hub-read-failure";
-import { HubShell } from "@/components/community/hub-shell";
+import { WorkshopShell as HubShell } from "@/components/community/workshop-shell";
 import { ProjectCard } from "@/components/community/project-card";
 import { CommunityReadError, getCreator, getMedia } from "@/lib/community/public-api";
 import { formatDate } from "@/lib/community/format";

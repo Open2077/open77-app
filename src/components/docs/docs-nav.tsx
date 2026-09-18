@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { SearchIcon } from "@/components/icons";
+import { DocsIcon } from "@/components/docs/docs-icon";
 import { site } from "@/lib/site";
 
 export type DocsNavItem = { href: string; label: string };
@@ -48,14 +49,14 @@ export function DocsNav({ groups }: { groups: DocsNavGroup[] }) {
   return (
     <nav className="dx-nav" aria-label="Documentation" ref={navRef}>
       <button className="docs-mobile-nav" aria-expanded={mobileOpen} aria-controls="docs-guide-navigation" onClick={() => setMobileOpen(!mobileOpen)}>
-        <span>☰ &nbsp; Browse documentation</span><span>{mobileOpen ? "−" : "+"}</span>
+        <span><DocsIcon name="introduction" size={17} /> Browse documentation</span><span aria-hidden="true">{mobileOpen ? "−" : "+"}</span>
       </button>
       <div className={`docs-guide-navigation${mobileOpen ? " is-open" : ""}`} id="docs-guide-navigation">
         <Link className="docs-nav-home" href="/docs" aria-current={pathname === "/docs" ? "page" : undefined}>
-          <span aria-hidden="true">⌂</span> Documentation home
+          <DocsIcon name="home" /> Documentation home
         </Link>
         <Link className="docs-nav-api" href="/docs/api" aria-current={pathname.startsWith("/docs/api") ? "page" : undefined}>
-          <span>⌘ &nbsp; Lua API reference</span><span aria-hidden="true">↗</span>
+          <span><DocsIcon name="scripting" /> Lua API reference</span><span aria-hidden="true">↗</span>
         </Link>
         <div className="docs-nav-filter">
           <SearchIcon size={15} />
@@ -78,7 +79,7 @@ export function DocsNav({ groups }: { groups: DocsNavGroup[] }) {
                   <button className="docs-group-toggle" aria-expanded={expanded} aria-controls={`nav-${group.id}`}
                     disabled={terms.length > 0}
                     onClick={() => setOverrides({ ...overrides, [group.id]: !expanded })}>
-                    <span className="docs-topic-label">{group.title}</span>
+                    <DocsIcon name={group.id} size={17} /><span className="docs-topic-label">{group.title}</span>
                     <span className="docs-topic-count" aria-hidden="true">{group.items.length}</span>
                     <span className="docs-topic-chevron" aria-hidden="true">›</span>
                   </button>

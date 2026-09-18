@@ -1,7 +1,7 @@
-import { HubPageHead, HubShell } from "@/components/community/hub-shell";
+import { AuthScene } from "@/components/account/auth-scene";
 import { WardenConnections } from "@/components/community/warden-connections";
 
 export const metadata = { title: "Approve Warden", robots: { index: false, follow: false } };
 export default function ApproveWardenPage() {
-  return <HubShell><HubPageHead kicker="CREATOR CONNECTIONS" title="Connect your Warden" /><WardenConnections approve /></HubShell>;
+  return <AuthScene kind="warden"><WardenConnections approve /></AuthScene>;
 }

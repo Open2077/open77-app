@@ -20,6 +20,8 @@ import path from "node:path";
 
 const origin = process.argv[2] ?? "http://127.0.0.1:3000";
 const DEBUG_PORT = 9333;
+const apiCards = JSON.parse(await fs.readFile(new URL("../content/api/api.json", import.meta.url), "utf8"));
+const namespaceCount = (runtime, namespace) => apiCards.filter(entry => entry.runtime === runtime && entry.namespace === namespace).length;
 
 const CHROME_CANDIDATES = [
   "C:/Program Files/Google/Chrome/Application/chrome.exe",
@@ -664,16 +666,21 @@ try {
   await session.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
   await visit("/docs");
   reportConsole("/docs");
-  check("main site navigation and official logo remain available", await session.evaluate(`
-    return !!document.querySelector('.site-header a[href="/servers"]') &&
-      !!document.querySelector('.site-header img[src="/brand/logo/open77-logo-light.png"]');
+  check("docs use a single header with official logo and a way back to the site", await session.evaluate(`
+    return !document.querySelector('.site-header') &&
+      !!document.querySelector('.docs-header a[href="/"]') &&
+      !!document.querySelector('.docs-header img[src="/brand/logo/open77-logo-dark.png"]');
   `));
-  const theme = await session.evaluate(`
+  check("documentation starts in the new dark theme", await session.evaluate("return document.querySelector('.docs-site').dataset.theme === 'dark';"));
+  const lightTheme = await session.evaluate(`
     document.querySelector('.docs-theme-toggle').click();
     await new Promise(r => setTimeout(r, 150));
     return document.querySelector('.docs-site').dataset.theme;
   `);
-  check("theme switches to dark", theme === "dark", theme);
+  check("light reading theme remains available", lightTheme === "light", lightTheme);
+  await visit("/docs");
+  check("light preference survives reload", await session.evaluate("return document.querySelector('.docs-site').dataset.theme === 'light';"));
+  await session.evaluate("document.querySelector('.docs-theme-toggle').click();");
   await visit("/docs");
   check("theme survives reload", await session.evaluate("return document.querySelector('.docs-site').dataset.theme === 'dark';"));
   if (process.argv.includes("--docs")) {
@@ -685,14 +692,12 @@ try {
     document.documentElement.style.scrollBehavior = 'auto';
     window.scrollTo(0, 900);
     await new Promise(r => setTimeout(r, 200));
-    const site = document.querySelector('.site-header').getBoundingClientRect();
     const docs = document.querySelector('.docs-header').getBoundingClientRect();
     const nav = document.querySelector('.dx-nav').getBoundingClientRect();
-    return { y: scrollY, site: site.top, docs: docs.top, siteBottom: site.bottom, nav: nav.top, docsBottom: docs.bottom };
+    return { y: scrollY, docs: docs.top, nav: nav.top, docsBottom: docs.bottom };
   `);
-  check("site header stays at viewport top when scrolled", sticky.y > 0 && Math.abs(sticky.site) < 2, JSON.stringify(sticky));
-  check("docs header stays below site navigation", Math.abs(sticky.docs - sticky.siteBottom) < 2, JSON.stringify(sticky));
-  check("sidebar stays below both headers", Math.abs(sticky.nav - sticky.docsBottom) < 2, JSON.stringify(sticky));
+  check("single docs header stays at viewport top when scrolled", sticky.y > 0 && Math.abs(sticky.docs) < 2, JSON.stringify(sticky));
+  check("sidebar stays below the single header", Math.abs(sticky.nav - sticky.docsBottom) < 2, JSON.stringify(sticky));
   await session.evaluate("window.scrollTo(0, 0); document.querySelector('.docs-theme-toggle').click();");
   const docsSearch = await session.evaluate(`
     const input = document.querySelector('.docs-global-search input');
@@ -715,8 +720,8 @@ try {
     await visit(`/docs/${slug}`);
     reportConsole(`${slug} guide`);
     check(`${slug} guide exposes both runtime references`, await session.evaluate(`
-      return !!document.querySelector('.dx-prose a[href="/docs/api/server/open77-cyberware"]') &&
-        !!document.querySelector('.dx-prose a[href="/docs/api/client/open77-cyberware"]');
+      return !!document.querySelector('.dx-meta a[href="/docs/api/server/open77-cyberware"]') &&
+        !!document.querySelector('.dx-meta a[href="/docs/api/client/open77-cyberware"]');
     `));
     if (process.argv.includes("--docs")) {
       const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
@@ -792,8 +797,8 @@ try {
     await fs.writeFile(".shots/rp-animation-guide.png", Buffer.from(data, "base64"));
   }
   for (const [runtime, method, count, expected] of [
-    ["client", "request", 11, "Open77.Promise"],
-    ["server", "play", 6, "players.animations.control"],
+    ["client", "request", namespaceCount("client", "Open77.animations"), "Open77.Promise"],
+    ["server", "play", namespaceCount("server", "Open77.animations"), "players.animations.control"],
   ]) {
     await visit(`/docs/api?side=${runtime}&category=players&namespace=Open77.animations#${runtime}/open77-animations/${method}`);
     reportConsole(`RP ${runtime} API`);
@@ -819,8 +824,8 @@ try {
     await visit(route);
     reportConsole(route);
     check(`${route} is in the vehicle navigation with working reference links`, await session.evaluate(`
-      return !document.getElementById('nav-world').hidden &&
-        !!document.querySelector('#nav-world a[aria-current="page"]') &&
+      return !document.getElementById('nav-vehicles').hidden &&
+        !!document.querySelector('#nav-vehicles a[aria-current="page"]') &&
         !!document.querySelector('a[href="/docs/api/client/open77-vehicles"]') &&
         !!document.querySelector('a[href="/data/vehicle-weapons-2.31.json"]') &&
         document.documentElement.scrollWidth <= innerWidth;
@@ -852,7 +857,7 @@ try {
   check("export explorer separates the server runtime", await session.evaluate(`
     return document.querySelector('.api-detail h2').textContent === 'call' &&
       document.querySelector('.api-detail-meta .api-side').textContent === 'server' &&
-      document.querySelectorAll('.api-function-row').length === 1 &&
+      document.querySelectorAll('.api-function-row').length === ${namespaceCount("server", "Open77.exports")} &&
       document.querySelector('.api-detail').textContent.includes('Promise');
   `));
   if (process.argv.includes("--docs")) {
@@ -924,7 +929,8 @@ try {
     return { hash: location.hash, title: document.querySelector('.api-detail h2').textContent,
       source: document.querySelector('.api-source').textContent, groups: document.querySelectorAll('.api-function-group').length };
   `);
-  check("category filter selects a documented server function", category.title === "disconnect" && category.groups === 1 && category.source.includes("server-api.md"), JSON.stringify(category));
+  const disconnectSource = apiCards.find(entry => entry.namespace === "Open77.players" && entry.name === "disconnect" && entry.runtime === "server").source;
+  check("category filter selects a documented server function", category.title === "disconnect" && category.groups === 1 && category.source.includes(disconnectSource), JSON.stringify(category));
   await visit("/docs/api?side=server&category=players#server/open77-players/disconnect");
   check("filters and selection survive a direct visit", await session.evaluate(`
     return document.querySelector('.api-detail h2').textContent === 'disconnect' &&

@@ -43,5 +43,10 @@ export function ResourceHeader({ project, latest, tab }: { project: CommunityPro
         {tab === "overview" && <p className="ws-head-jump"><a href="#discussion">Jump to discussion ↓</a></p>}
       </div>
     </header>
+    <nav className="workshop-resource-tabs" aria-label="Creation sections">
+      <Link href={base} aria-current={tab === "overview" ? "page" : undefined}>Overview</Link>
+      {content.kind === "resource" && <Link href={`${base}/versions`} aria-current={tab === "versions" ? "page" : undefined}>Versions</Link>}
+      <Link href={`${base}/discussion`} aria-current={tab === "discussion" ? "page" : undefined}>Discussion</Link>
+    </nav>
   </>;
 }

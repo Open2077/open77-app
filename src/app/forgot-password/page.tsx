@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 
 import { ForgotPasswordForm } from "@/components/account/forgot-password-form";
-import { Eyebrow } from "@/components/brand";
-import { SiteFooter } from "@/components/site-footer";
+import { AuthScene } from "@/components/account/auth-scene";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -16,21 +15,5 @@ export const metadata: Metadata = {
 };
 
 export default function ForgotPasswordPage() {
-  return (
-    <>
-      <main className="ac-main" id="main">
-        <div className="ac-inner">
-          <header className="ac-head">
-            <Eyebrow>PLATFORM ACCOUNT</Eyebrow>
-            <h1 className="ac-title">Forgot your password?</h1>
-            <p className="ac-lead">
-              It happens. We&apos;ll e-mail you a single-use link to choose a new one.
-            </p>
-          </header>
-          <ForgotPasswordForm />
-        </div>
-      </main>
-      <SiteFooter fineprint="Accounts run against the OPEN//77 master server." />
-    </>
-  );
+  return <AuthScene kind="forgot"><ForgotPasswordForm /></AuthScene>;
 }

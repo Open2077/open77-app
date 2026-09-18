@@ -85,7 +85,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={site.lang} className={`${rajdhani.variable} ${saira.variable} ${chakra.variable} ${plexMono.variable}`}>
+    <html lang={site.lang} data-scroll-behavior="smooth" className={`${rajdhani.variable} ${saira.variable} ${chakra.variable} ${plexMono.variable}`}>
       <body>
         <a className="skip-link" href="#main">
           Skip to content

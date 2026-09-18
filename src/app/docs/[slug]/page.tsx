@@ -70,6 +70,12 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <span>{guide.readingMinutes} min read</span>
             <span>{guide.wordCount.toLocaleString("en-GB")} words</span>
             <a href={docMarkdownHref(slug)}>Markdown</a>
+            {slug === "cyberware" || slug === "gorilla-arms" ? (
+              <>
+                <Link href="/docs/api/server/open77-cyberware">Server Lua API</Link>
+                <Link href="/docs/api/client/open77-cyberware">Client Lua API</Link>
+              </>
+            ) : null}
             {slug === "attachments" || slug === "player-interactions" ? (
               <>
                 <Link href={`/docs/api/server/${slug === "attachments" ? "open77-props" : "open77-playerinteractions"}`}>Server Lua API</Link>

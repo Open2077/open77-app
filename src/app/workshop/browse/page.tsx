@@ -1,5 +1,6 @@
 import { JsonLd } from "@/components/json-ld";
 import { ResourceDirectory } from "@/components/community/resource-directory";
+import { WorkshopShell } from "@/components/community/workshop-shell";
 import { listProjects } from "@/lib/community/public-api";
 import { directorySorts } from "@/lib/community/directory";
 import { breadcrumbNode, collectionPageNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
@@ -13,8 +14,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
 }
 
 /**
- * The library is a full-window directory like the server browser: the first
- * ranked page is rendered here so the HTML carries real rows, then the
+ * The first ranked page is rendered here so the HTML carries real cards, then the
  * browser takes over filtering, selection and further pages.
  */
 export default async function ResourcesPage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -25,7 +25,8 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Pr
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(search)) if (typeof value === "string" && value) query.set(key, value);
   return <>
-    <main id="main" className="sb-page"><ResourceDirectory initial={initial} initialSort={sort} initialSearch={query.toString() ? `?${query}` : ""} /></main>
+    <WorkshopShell><header className="workshop-browse-head"><p className="hub-kicker">THE WORKSHOP</p><h1>Find your next <em>idea.</em></h1><p>Resources, tools and inspiration for a Night City of your own.</p></header>
+      <ResourceDirectory initial={initial} initialSort={sort} initialSearch={query.toString() ? `?${query}` : ""} /></WorkshopShell>
     <JsonLd data={jsonLdGraph(
       collectionPageNode({ name: "OPEN//77 Workshop library", description: "Community-made resources, gamemodes, maps and tools for OPEN//77 servers.", path: "/workshop/browse" }),
       breadcrumbNode([{ name: "Home", path: "/" }, { name: "Workshop", path: "/workshop" }, { name: "Browse", path: "/workshop/browse" }]),

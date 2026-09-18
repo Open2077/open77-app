@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { HubReadFailure } from "@/components/community/hub-read-failure";
-import { HubShell } from "@/components/community/hub-shell";
+import { WorkshopShell as HubShell } from "@/components/community/workshop-shell";
 import { ReleaseList } from "@/components/community/release-list";
 import { ResourceHeader } from "@/components/community/resource-header";
 import { CommunityReadError, getProject, latestRelease, listReleases } from "@/lib/community/public-api";

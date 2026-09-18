@@ -1,25 +1,31 @@
 "use client";
 
 import { useSyncExternalStore, type ReactNode } from "react";
+import { Wordmark } from "@/components/brand";
 
 const KEY = "open77.docs.theme";
 const EVENT = "open77:docs-theme";
-let memoryTheme: "light" | "dark" = "light";
+let memoryTheme: "light" | "dark" = "dark";
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback);
   window.addEventListener(EVENT, callback);
   return () => { window.removeEventListener("storage", callback); window.removeEventListener(EVENT, callback); };
 }
 function snapshot() {
-  try { return window.localStorage.getItem(KEY) === "dark" ? "dark" : "light"; }
+  try { return window.localStorage.getItem(KEY) === "light" ? "light" : "dark"; }
   catch { return memoryTheme; }
 }
-function serverSnapshot() { return "light"; }
+function serverSnapshot() { return "dark"; }
 function useDocsTheme() { return useSyncExternalStore(subscribe, snapshot, serverSnapshot); }
 
 export function DocsTheme({ children }: { children: ReactNode }) {
   const theme = useDocsTheme();
   return <div className="docs-site" data-theme={theme}>{children}</div>;
+}
+
+export function DocsWordmark() {
+  const theme = useDocsTheme();
+  return <Wordmark tone={theme === "light" ? "light" : "dark"} />;
 }
 
 export function DocsThemeToggle() {

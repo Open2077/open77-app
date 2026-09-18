@@ -38,6 +38,7 @@ export async function DocsShell({
   meta,
   toc,
   children,
+  landing = false,
 }: {
   breadcrumbs: Breadcrumb[];
   title: string;
@@ -45,15 +46,16 @@ export async function DocsShell({
   meta?: ReactNode;
   toc?: ReactNode;
   children: ReactNode;
+  landing?: boolean;
 }) {
   const groups = await buildNavGroups();
 
   return (
-    <div className={`section-inner section-inner-wide dx-grid${toc ? "" : " dx-grid-wide"}`}>
+    <div className={`section-inner section-inner-wide dx-grid${toc ? "" : " dx-grid-wide"}${landing ? " dx-grid-home" : ""}`}>
       <DocsNav groups={groups} />
 
       <div className="dx-main">
-        <header className="dx-head">
+        {!landing && <header className="dx-head">
           <nav className="dx-crumbs" aria-label="Breadcrumb">
             {breadcrumbs.map((crumb, index) => (
               <span key={`${crumb.label}-${index}`}>
@@ -65,7 +67,7 @@ export async function DocsShell({
           <h1 className="dx-title">{title}</h1>
           {lede ? <p className="dx-lede">{lede}</p> : null}
           {meta ? <div className="dx-meta">{meta}</div> : null}
-        </header>
+        </header>}
         {children}
       </div>
 

@@ -1,0 +1,23 @@
+{
+  "provenance": "Artwork files supplied and selected by the user on 2026-09-18. Originals copied unchanged; responsive delivery is handled by next/image.",
+  "assets": [
+    {
+      "asset": "public/assets/artwork/workshop-street-v1.webp",
+      "source": "C:/Users/Nightwolf/Downloads/some-artwork-for-cyberpunk-this-one-is-my-personal-favorite-v0-wpqiu3z1qo851.webp",
+      "usage": "Workshop discovery hero",
+      "width": 1920, "height": 973
+    },
+    {
+      "asset": "public/assets/artwork/devblog-nightdrive-v1.webp",
+      "source": "C:/Users/Nightwolf/Downloads/cyberpunk-2077-1-hour-of-lo-fi-music-and-auto-drive-4k-gamep_kp7a.1280.webp",
+      "usage": "Devblog index hero only; article cards and headers are text-only",
+      "width": 1280, "height": 720
+    },
+    {
+      "asset": "public/assets/artwork/docs-retro-v1.jpg",
+      "source": "C:/Users/Nightwolf/Downloads/cyberpunk-girl-retro-art-4k-0w.jpg",
+      "usage": "Documentation home hero",
+      "width": 4320, "height": 2430
+    }
+  ]
+}
