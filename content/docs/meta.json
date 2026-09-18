@@ -699,6 +699,12 @@
           "description": "Client-side customization of the playable F7 camera: classic or over-the-shoulder framing, custom pivots, movement FOV and temporary shake; not a scripted camera."
         },
         {
+          "slug": "remote-camera",
+          "kind": "guide",
+          "nav": "Remote cameras & screens",
+          "description": "Independent render cameras: client Lua API, server access and streaming, HUD/WebUI feeds, world screens, placement editor and experimental limits."
+        },
+        {
           "slug": "screen-transitions",
           "kind": "guide",
           "nav": "Native fades & transitions",

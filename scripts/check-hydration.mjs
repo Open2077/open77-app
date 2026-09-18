@@ -239,7 +239,35 @@ try {
     }
   }
 
-  if (process.argv.includes("--navigation")) {
+  if (process.argv.includes("--remote-camera")) {
+    for (const width of [1440, 390]) {
+      await session.send("Emulation.setDeviceMetricsOverride", {
+        width, height: 900, deviceScaleFactor: 1, mobile: width < 600,
+      });
+      await visit("/docs/remote-camera");
+      check(`remote camera ${width}px guide, contracts and warnings render`, await session.evaluate(`
+        return !!document.querySelector('#server-service') &&
+          !!document.querySelector('#limits-and-troubleshooting') &&
+          document.querySelector('main').textContent.includes('intermittent engine crashes') &&
+          !!document.querySelector('a[href="/docs/api/client/open77-remotecamera"]') &&
+          document.querySelector('.dx-nav a[aria-current="page"]')?.getAttribute('href') === '/docs/remote-camera';
+      `));
+      check(`remote camera ${width}px fits viewport`, await session.evaluate(
+        "return document.documentElement.scrollWidth <= innerWidth;",
+      ));
+      reportConsole(`remote camera guide ${width}px`);
+      await visit("/docs/api?side=client&namespace=Open77.remoteCamera#client/open77-remotecamera/bindwebui");
+      const api = await session.evaluate(`
+        const detail = document.querySelector('.api-detail');
+        return { name: detail?.querySelector('h2')?.textContent,
+          count: document.querySelectorAll('.api-function-row').length,
+          guide: detail?.querySelector('a[href="/docs/remote-camera"]')?.getAttribute('href') };
+      `);
+      check(`remote camera ${width}px explorer exposes 15 cards and guide`,
+        api.name === "bindWebUI" && api.count === 15 && api.guide === "/docs/remote-camera", JSON.stringify(api));
+      reportConsole(`remote camera explorer ${width}px`);
+    }
+  } else if (process.argv.includes("--navigation")) {
     await session.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
     await visit("/docs");
     check("sidebar has four collections, 18 topics and one API shortcut", await session.evaluate(`

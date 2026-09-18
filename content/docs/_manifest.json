@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-17T02:23:59.652Z",
-  "guides": 90,
-  "apiEntries": 1607,
+  "guides": 91,
+  "apiEntries": 1622,
   "files": [
     {
       "source": "wiki/README.md",
@@ -95,11 +95,42 @@
       "target": "content/docs/cameras.md",
       "slug": "cameras",
       "title": "Scripted cameras",
-      "bytes": 23886,
-      "sha256": "272070ec46a4f812aaac76a381925a252904d938e371d4ee81bc8a903888f212",
+      "bytes": 24062,
+      "sha256": "14cfa96352c42df20d40d6fb5a779e6b3054aae817951f15e15731b97f54c020",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "6c54e370a7376dac061a3dc912d72415430d905629bc7cafd41abb314da54fab"
+        "upstreamSnapshotSha256": "6c54e370a7376dac061a3dc912d72415430d905629bc7cafd41abb314da54fab",
+        "remoteCameraAmendment": {
+          "tool": "scripts/sync-remote-camera-docs.mjs",
+          "syncedAt": "2026-09-18T13:28:32.057Z",
+          "sourceRevision": "9114f38eb7c71512fa3520d874231e489073e7a0",
+          "sourceWorkingTreeDirty": false,
+          "sourceGuideSha256": "c1bec95ed2a0d9c329e8f5aafc5544b8979c262c2b9c1751455b4ba6421b2504",
+          "sourceApiSha256": "1d504636839327655db8d4737c9cd867648b998f423c3b8267d19d8b36d56e9a",
+          "guides": [
+            "remote-camera",
+            "cameras"
+          ],
+          "apiRouteIds": [
+            "client:Open77.remoteCamera.bindHud",
+            "client:Open77.remoteCamera.bindWebUI",
+            "client:Open77.remoteCamera.bindWorld",
+            "client:Open77.remoteCamera.bindings",
+            "client:Open77.remoteCamera.budget",
+            "client:Open77.remoteCamera.capabilities",
+            "client:Open77.remoteCamera.create",
+            "client:Open77.remoteCamera.destroy",
+            "client:Open77.remoteCamera.get",
+            "client:Open77.remoteCamera.getBinding",
+            "client:Open77.remoteCamera.list",
+            "client:Open77.remoteCamera.unbind",
+            "client:Open77.remoteCamera.update",
+            "client:Open77.remoteCamera.updateBinding",
+            "client:Open77.remoteCamera.worldModels"
+          ],
+          "guideMode": "site-owned-technical-amendment",
+          "apiMode": "merge-selected-cards-preserve-other-site-entries"
+        }
       }
     },
     {
@@ -1089,9 +1120,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1607,
-      "bytes": 2243839,
-      "sha256": "c5107f85efb5f419c4f5c0f87189c1c65bcc55b57abecd3f510f86053066ac68",
+      "entries": 1622,
+      "bytes": 2266156,
+      "sha256": "d42dcae1d8d3160892ad7d960b5ed0dc6a18db03c883259d2f604b23959aed6d",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
@@ -1107,9 +1138,9 @@
     {
       "source": "wiki/data/permissions.json",
       "target": "content\\api/permissions.json",
-      "entries": 134,
-      "bytes": 124632,
-      "sha256": "7740d103bbdf2d08b9effc109a83ba58c4a788d3e188bd680094e40ad01997e6"
+      "entries": 135,
+      "bytes": 125562,
+      "sha256": "9913303252d8caf2b1003d4eea4ae21f6e6ff706688317d13700e81e437402f4"
     },
     {
       "source": "wiki/data/events.json",
@@ -1250,6 +1281,48 @@
         "owner": "website",
         "upstreamSnapshotSha256": "011a004dd56e24027cc19aa84ce08b3a402d439593d0e47f3113997a63b0fb33"
       }
+    },
+    {
+      "source": "wiki/remote-camera.md",
+      "target": "content/docs/remote-camera.md",
+      "slug": "remote-camera",
+      "bytes": 17758,
+      "sha256": "7ec9d68f24199556d22a4df517845a0037f1adf021a986a22a960c55b79a4611",
+      "title": "Remote cameras and world screens",
+      "siteEditorial": {
+        "owner": "website",
+        "remoteCameraAmendment": {
+          "tool": "scripts/sync-remote-camera-docs.mjs",
+          "syncedAt": "2026-09-18T13:28:32.057Z",
+          "sourceRevision": "9114f38eb7c71512fa3520d874231e489073e7a0",
+          "sourceWorkingTreeDirty": false,
+          "sourceGuideSha256": "c1bec95ed2a0d9c329e8f5aafc5544b8979c262c2b9c1751455b4ba6421b2504",
+          "sourceApiSha256": "1d504636839327655db8d4737c9cd867648b998f423c3b8267d19d8b36d56e9a",
+          "guides": [
+            "remote-camera",
+            "cameras"
+          ],
+          "apiRouteIds": [
+            "client:Open77.remoteCamera.bindHud",
+            "client:Open77.remoteCamera.bindWebUI",
+            "client:Open77.remoteCamera.bindWorld",
+            "client:Open77.remoteCamera.bindings",
+            "client:Open77.remoteCamera.budget",
+            "client:Open77.remoteCamera.capabilities",
+            "client:Open77.remoteCamera.create",
+            "client:Open77.remoteCamera.destroy",
+            "client:Open77.remoteCamera.get",
+            "client:Open77.remoteCamera.getBinding",
+            "client:Open77.remoteCamera.list",
+            "client:Open77.remoteCamera.unbind",
+            "client:Open77.remoteCamera.update",
+            "client:Open77.remoteCamera.updateBinding",
+            "client:Open77.remoteCamera.worldModels"
+          ],
+          "guideMode": "site-owned-technical-amendment",
+          "apiMode": "merge-selected-cards-preserve-other-site-entries"
+        }
+      }
     }
   ],
   "partialSync": {
@@ -1293,6 +1366,37 @@
       "client:Open77.map.setTitle",
       "client:Open77.map.setZoomLevel",
       "client:Open77.map.state"
+    ],
+    "guideMode": "site-owned-technical-amendment",
+    "apiMode": "merge-selected-cards-preserve-other-site-entries"
+  },
+  "remoteCameraSync": {
+    "tool": "scripts/sync-remote-camera-docs.mjs",
+    "syncedAt": "2026-09-18T13:28:32.057Z",
+    "sourceRevision": "9114f38eb7c71512fa3520d874231e489073e7a0",
+    "sourceWorkingTreeDirty": false,
+    "sourceGuideSha256": "c1bec95ed2a0d9c329e8f5aafc5544b8979c262c2b9c1751455b4ba6421b2504",
+    "sourceApiSha256": "1d504636839327655db8d4737c9cd867648b998f423c3b8267d19d8b36d56e9a",
+    "guides": [
+      "remote-camera",
+      "cameras"
+    ],
+    "apiRouteIds": [
+      "client:Open77.remoteCamera.bindHud",
+      "client:Open77.remoteCamera.bindWebUI",
+      "client:Open77.remoteCamera.bindWorld",
+      "client:Open77.remoteCamera.bindings",
+      "client:Open77.remoteCamera.budget",
+      "client:Open77.remoteCamera.capabilities",
+      "client:Open77.remoteCamera.create",
+      "client:Open77.remoteCamera.destroy",
+      "client:Open77.remoteCamera.get",
+      "client:Open77.remoteCamera.getBinding",
+      "client:Open77.remoteCamera.list",
+      "client:Open77.remoteCamera.unbind",
+      "client:Open77.remoteCamera.update",
+      "client:Open77.remoteCamera.updateBinding",
+      "client:Open77.remoteCamera.worldModels"
     ],
     "guideMode": "site-owned-technical-amendment",
     "apiMode": "merge-selected-cards-preserve-other-site-entries"

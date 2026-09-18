@@ -2,6 +2,8 @@
 
 Use `camera.script` to control cinematic cameras. For the playable F7 view, shoulder framing, movement FOV and camera shake, use [Third-person camera styles](third-person-camera.md) with `camera.style`.
 
+For an independent feed on a HUD, WebUI or world screen without taking over the player's view, use [Remote cameras and world screens](remote-camera.md) with `camera.capture`.
+
 Put the view where your resource wants it — a character creator orbiting the
 player's face, a shop that frames the rack, a dealership turntable, a cinematic
 intro — and be certain the player gets their own view back.

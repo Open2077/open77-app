@@ -204,6 +204,7 @@ const NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGuideLabel
 const RUNTIME_NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGuideLabel: string }> = {
   "client:Open77.players": { usageGuideHref: "/docs/client-players", usageGuideLabel: "Players around you (client)" },
   "client:Open77.camera": { usageGuideHref: "/docs/cameras", usageGuideLabel: "Scripted cameras guide" },
+  "client:Open77.remoteCamera": { usageGuideHref: "/docs/remote-camera", usageGuideLabel: "Remote cameras & world screens guide" },
   "client:Open77.travel": { usageGuideHref: "/docs/travel", usageGuideLabel: "Travel & settling guide" },
   "client:Open77.hud": { usageGuideHref: "/docs/hud-visibility", usageGuideLabel: "HUD visibility guide" },
 };
