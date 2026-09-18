@@ -177,7 +177,7 @@ the server. `web_files` alone do not count; nothing could open them.
 delivered resource without a `client_script` or `shared_script`, logs
 `no_client_scripts`, and that single refusal fails the whole activation:
 `server resource activation failed: discovery:... failed=1`, and the client
-stays on "Verifying resources". Fixed on 2026-09-18 for the next release. Until
+stays on "Verifying resources". Fixed in the release that follows op77.82. Until
 your players run it, add an empty `client_script 'client/noop.lua'` to the
 library; it costs nothing and can be removed afterwards.
 
