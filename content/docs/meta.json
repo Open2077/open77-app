@@ -367,6 +367,14 @@
           "description": "Attach props to player slots or vehicles with local position and rotation. Learn server authority, client rendering, bone discovery, revision-safe handoffs and lifecycle cleanup. Requires matching attachment-capable client/server builds and assets."
         },
         {
+          "slug": "animated-actions",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Animated actions",
+          "title": "Animated actions: a pose, a prop in the hands, a real duration",
+          "description": "Making a server-side job action look like something: a catalogue pose through Open77.animations, an object attached to a hand or the chest through Open77.props.attach, and a UI-kit progress bar for the time it takes. Workspot versus layer profiles, a carried crate with measured numbers and a live tuning command, a stationary repair with its cancel path, hand-sized prop aliases and the refusals to expect."
+        },
+        {
           "slug": "rp-kit",
           "kind": "guide",
           "nav": "Roleplay utilities",
