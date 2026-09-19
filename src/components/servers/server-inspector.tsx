@@ -106,7 +106,7 @@ export function ServerInspector({
           <StarIcon size={16} filled={isFavorite} />
         </button>
         {!preview && <Link className="directory-detail-more" href={`/servers/${server.id}`} onNavigate={onOpen ? (event) => { event.preventDefault(); onOpen(); } : undefined}>
-          Full details ↗
+          View details ↗
         </Link>}
         </div>
         <p className="directory-detail-desc">

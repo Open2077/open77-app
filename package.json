@@ -14,7 +14,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run lint && npm run verify:docs",
-    "test:hub": "node --test scripts/test-community-drafts.mjs scripts/test-community-draft-merge.mjs scripts/test-community-github-pkce.mjs scripts/test-community-seo.mjs scripts/test-community-video.mjs scripts/test-community-create.mjs scripts/test-community-read-failure.mjs scripts/test-community-format.mjs && node scripts/check-community-markdown.mjs && node scripts/test-hub-browser-guards.mjs",
+    "test:hub": "node --test scripts/test-server-profile-seo.mjs scripts/test-community-drafts.mjs scripts/test-community-draft-merge.mjs scripts/test-community-github-pkce.mjs scripts/test-community-seo.mjs scripts/test-community-video.mjs scripts/test-community-create.mjs scripts/test-community-read-failure.mjs scripts/test-community-format.mjs && node scripts/check-community-markdown.mjs && node scripts/test-hub-browser-guards.mjs",
     "verify:releases": "node scripts/check-release-channels.mjs",
     "verify:alpha": "node scripts/check-alpha-access.mjs && node scripts/check-host-access.mjs",
     "verify:alpha:browser": "node scripts/check-hydration.mjs http://127.0.0.1:3113 --alpha --docs",

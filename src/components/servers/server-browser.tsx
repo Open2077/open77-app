@@ -802,11 +802,7 @@ export function ServerBrowser({
                       near={proximity(server, me) >= 4}
                       isFavorite={isFavorite(server.id)}
                       isSelected={selected?.id === server.id}
-                      onSelect={() => onOpenServer && !preview ? onOpenServer(server.id) :
-                        setSelectedId((id) =>
-                          id === server.id ? null : server.id,
-                        )
-                      }
+                      onSelect={() => setSelectedId(server.id)}
                       onToggleFavorite={() => toggle(server.id)}
                       onConnect={() => join(server)}
                     />
@@ -889,6 +885,13 @@ function ServerRow({
         if ((event.target as HTMLElement).closest("a, button")) return;
         onSelect();
       }}
+      onDoubleClick={(event) => {
+        if (preview || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        // Row actions keep their own behavior; the server name also opens the profile.
+        const control = (event.target as HTMLElement).closest("a, button");
+        if (control && !control.matches(".sb-row-link")) return;
+        onOpen?.();
+      }}
     >
       <div className="sb-row-main">
         <ServerImage
@@ -903,8 +906,8 @@ function ServerRow({
           </button> : <Link
             className="sb-row-link"
             href={`/servers/${server.id}`}
-            aria-label={`View ${server.name}`}
-            onNavigate={onOpen ? (event) => { event.preventDefault(); onOpen(); } : undefined}
+            aria-label={`Select ${server.name}`}
+            onNavigate={(event) => { event.preventDefault(); onSelect(); }}
           >
             <span className="sb-name">{server.name}</span>
           </Link>}

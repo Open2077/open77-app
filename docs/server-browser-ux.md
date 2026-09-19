@@ -22,7 +22,7 @@ The workspace has four parts:
   with a capacity bar (amber when full), favorite, and a quiet Connect that lights
   up on hover or selection. Only the list and the rail scroll.
 - **Inspector** — the launcher's detail pane. Idle with "Select a world" until a
-  row is selected with the keyboard, then cover, description, capacity, locale facts, tags,
+  row is selected with a click or the keyboard, then cover, description, capacity, locale facts, tags,
   community links, Connect, favorite and the link to the full page. Nothing is
   selected on the player's behalf. Below 1200px it is an overlay that appears
   only for a selected server.
@@ -39,13 +39,22 @@ default.
 Keyboard: ↑/↓ walk the list, Enter connects, Escape clears the selection or
 closes the filter drawer. Filters, sort and search live in the URL so links,
 reload and Back restore the same view; result scroll is restored when returning
-from a profile. Clicking a row or its name replaces the directory interior with
-the redesigned profile, retaining the full-window frame. Native History API
+from a profile. A single click on a row or its name selects the server and shows
+its inspector; clicking the selected row again keeps it selected. Double-clicking
+the row/name or choosing **View details** in the inspector replaces the directory
+interior with the redesigned profile, retaining the full-window frame. Row actions
+(favorites, tags and Connect) do not open the profile on double-click. Native History API
 updates the shareable `/servers/{id}` URL without a route reload. The mounted
 list retains filters and scroll; Back to server list and browser Back/Forward
 restore it. Directory data renders immediately while the detail request fills
-in the roster. Direct profile links use the same workspace and preserve their
-existing canonical, noindex metadata and breadcrumb markup.
+in the roster. Direct profile links use the same workspace. Public profiles are prerendered
+with their real name, description, banner (or icon), canonical and breadcrumb
+markup. They are indexable in production and included in the sitemap. Static
+profiles and the sitemap revalidate every five minutes; new IDs generate on
+first visit. Unknown/offline IDs remain noindex. The browser fetches fresh
+players/status after hydration, using a serialized snapshot clock to avoid
+hydration mismatches on cached pages. Temporary API failures preserve a previous
+successful ISR profile. Offline builds defer profiles to on-demand generation.
 
 The list stays mounted across the 30-second background
 refresh, and a failed refresh keeps the last results. Connect still uses the

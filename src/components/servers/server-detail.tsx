@@ -28,20 +28,20 @@ type State =
   | { status: "loading" }
   | { status: "error"; message: string }
   | { status: "missing" }
-  | { status: "ok"; server: CatalogServer };
+  | { status: "ok"; server: CatalogServer; now: number };
 
 /**
  * The live server detail page, driven by the master's single-server endpoint.
  *
- * Fetched in the browser for the same Cloudflare/CORS reason as the browser list
- * (see `lib/servers`). Every outcome gets an honest, themed state: loading, not
+ * Direct visits start with a prerendered snapshot; browser reads refresh it.
+ * Every outcome gets an honest, themed state: loading, not
  * found / offline (the id is not in the catalog), master unreachable (with a
  * working retry), and the full detail view. Nothing is invented while the
  * request is in flight or has failed.
  */
-export function ServerDetail({ id, initialServer }: { id: string; initialServer?: CatalogServer }) {
+export function ServerDetail({ id, initialServer, initialNow }: { id: string; initialServer?: CatalogServer; initialNow?: number }) {
   const [state, setState] = useState<State>(() => initialServer
-    ? { status: "ok", server: initialServer }
+    ? { status: "ok", server: initialServer, now: initialNow ?? Date.now() }
     : { status: "loading" });
   const [reload, setReload] = useState(0);
 
@@ -57,7 +57,7 @@ export function ServerDetail({ id, initialServer }: { id: string; initialServer?
     fetchServer(id)
       .then((server) => {
         if (cancelled) return;
-        setState(server ? { status: "ok", server } : { status: "missing" });
+        setState(server ? { status: "ok", server, now: Date.now() } : { status: "missing" });
       })
       .catch((error: unknown) => {
         if (cancelled) return;
@@ -126,13 +126,13 @@ export function ServerDetail({ id, initialServer }: { id: string; initialServer?
     );
   }
 
-  return <ServerCard server={state.server} />;
+  return <ServerCard server={state.server} now={state.now} />;
 }
 
-function ServerCard({ server }: { server: CatalogServer }) {
+function ServerCard({ server, now }: { server: CatalogServer; now: number }) {
   const view = catalogToGameServer(server);
-  const live = isServerLive(server);
-  const uptime = formatUptime(server.startedAtUtc);
+  const live = isServerLive(server, now);
+  const uptime = formatUptime(server.startedAtUtc, now);
   const website = view.links?.website;
   const discord = view.links?.discord;
   const initial = server.name.trim().charAt(0).toUpperCase() || "?";
@@ -271,7 +271,7 @@ function ServerCard({ server }: { server: CatalogServer }) {
         </div>
 
         <aside className="sv-side">
-          <PlayersOnline server={server} />
+          <PlayersOnline server={server} now={now} />
 
           <section className="sv-section">
             <h2 className="sv-h2">
@@ -285,7 +285,7 @@ function ServerCard({ server }: { server: CatalogServer }) {
               <InfoRow k="Protocol" v={formatProtocol(server.protocol)} />
               <InfoRow k="Game build" v={server.expectedGameBuild ? String(server.expectedGameBuild) : "—"} />
               <InfoRow k="Locale" v={formatLocaleTag(server.locale)} />
-              <InfoRow k="Last heartbeat" v={formatRelative(server.lastHeartbeatAtUtc)} />
+              <InfoRow k="Last heartbeat" v={formatRelative(server.lastHeartbeatAtUtc, now)} />
             </dl>
           </section>
         </aside>
@@ -314,7 +314,7 @@ const ROSTER_VISIBLE_ROWS = 10;
  * build, or an owner who turned it off — so that case gets a sentence of its own
  * instead of an empty box or a spinner that never resolves.
  */
-function PlayersOnline({ server }: { server: CatalogServer }) {
+function PlayersOnline({ server, now }: { server: CatalogServer; now: number }) {
   const roster = normaliseRoster(server.players);
 
   return (
@@ -326,7 +326,7 @@ function PlayersOnline({ server }: { server: CatalogServer }) {
         </span>
       </h2>
       {roster ? (
-        <PlayerRoster roster={roster} />
+        <PlayerRoster roster={roster} now={now} />
       ) : (
         <p className="sv-links-empty">This server does not publish its player list.</p>
       )}
@@ -343,8 +343,8 @@ function PlayersOnline({ server }: { server: CatalogServer }) {
  * scroll box, because a sidebar that grows with the population would push
  * everything else a screen and a half down the page.
  */
-function PlayerRoster({ roster }: { roster: ServerRoster }) {
-  const stamp = roster.sampledAtUtc ? `as of ${formatRelative(roster.sampledAtUtc)}` : null;
+function PlayerRoster({ roster, now }: { roster: ServerRoster; now: number }) {
+  const stamp = roster.sampledAtUtc ? `as of ${formatRelative(roster.sampledAtUtc, now)}` : null;
   const hidden = roster.total - roster.entries.length;
 
   if (roster.entries.length === 0) {
@@ -377,7 +377,7 @@ function PlayerRoster({ roster }: { roster: ServerRoster }) {
               <span className="live-dot" aria-hidden="true" />
               <span className="sv-player-name">{entry.name}</span>
               {entry.joinedAtUtc ? (
-                <span className="sv-player-since">{formatUptime(entry.joinedAtUtc) ?? "—"}</span>
+                <span className="sv-player-since">{formatUptime(entry.joinedAtUtc, now) ?? "—"}</span>
               ) : null}
             </li>
           ))}
@@ -419,10 +419,10 @@ function displayHost(url: string): string {
 }
 
 /** "12s ago", "4m ago", "2h ago" — for the last-heartbeat readout. */
-function formatRelative(iso: string): string {
+function formatRelative(iso: string, now: number): string {
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return "—";
-  const s = Math.max(0, Math.floor((Date.now() - then) / 1000));
+  const s = Math.max(0, Math.floor((now - then) / 1000));
   if (s < 60) return `${s}s ago`;
   const m = Math.floor(s / 60);
   if (m < 60) return `${m}m ago`;

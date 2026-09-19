@@ -170,7 +170,12 @@ try {
   await resize(1440,900);await visit('/servers?mode=Roleplay');
   await session.evaluate(`window.__listNode=document.querySelector('.sb-list');document.querySelector('.sb-col-main').scrollTop=200;window.__listScroll=document.querySelector('.sb-col-main').scrollTop;document.querySelector('.sb-row-link').click();`);
   await delay(80);
-  check('detail opens in place immediately without loading flash',await session.evaluate(`return !!document.querySelector('.sv-name')&&!document.querySelector('.directory-profile-view .sb-offline')&&window.__listNode===document.querySelector('.sb-list')&&location.pathname==='/servers/fixture-0';`));
+  check('single name click selects the inspector without navigation',await session.evaluate(`return location.pathname==='/servers'&&!document.querySelector('.directory-profile-view')&&document.querySelector('.directory-detail-name')?.textContent==='Night City Roleplay'&&document.querySelector('.sb-row').dataset.selected==='true';`));
+  await click('.sb-row-link');
+  check('repeat click keeps the same server selected',await session.evaluate(`return !!document.querySelector('.directory-detail-name')&&location.pathname==='/servers';`));
+  await session.evaluate(`document.querySelector('.sb-row-link').dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));`);
+  await delay(80);
+  check('name double-click opens detail in place immediately without loading flash',await session.evaluate(`return !!document.querySelector('.sv-name')&&!document.querySelector('.directory-profile-view .sb-offline')&&window.__listNode===document.querySelector('.sb-list')&&location.pathname==='/servers/fixture-0';`));
   await delay(450);
   check('full details complete the directory snapshot',await session.evaluate(`return document.querySelectorAll('.sv-playerlist li').length===16;`));
   check('long roster is keyboard scrollable',await session.evaluate(`const r=document.querySelector('.sv-playerlist-box');return r.tabIndex===0&&r.scrollHeight>r.clientHeight;`));
@@ -181,7 +186,14 @@ try {
   check('browser Forward restores profile',await session.evaluate(`return location.pathname==='/servers/fixture-0'&&!!document.querySelector('.sv-name');`));
   await session.evaluate('history.back();');await delay(150);
   await click('.sb-row');
-  check('whole row opens profile',await session.evaluate(`return !!document.querySelector('.sv-name');`));
+  check('single row click keeps inspector visible',await session.evaluate(`return !document.querySelector('.directory-profile-view')&&!!document.querySelector('.directory-detail-name');`));
+  await session.evaluate(`document.querySelector('.sb-row .fav-btn').dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));`);
+  check('row action double-click does not open profile',await session.evaluate(`return !document.querySelector('.directory-profile-view');`));
+  await session.evaluate(`document.querySelector('.sb-row').dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));`);await delay(100);
+  check('whole row double-click opens profile',await session.evaluate(`return !!document.querySelector('.sv-name');`));
+  await click('.directory-profile-toolbar button');
+  await click('.directory-detail-more');
+  check('View details opens profile in place',await session.evaluate(`return !!document.querySelector('.sv-name')&&window.__listNode===document.querySelector('.sb-list');`));
   await delay(350);
   for(const width of [1920,1440,1024,800,640,420,375,320]){
     await resize(width,900);await delay(100);
@@ -193,6 +205,8 @@ try {
   check('direct detail URL renders same workspace',await session.evaluate(`return !!document.querySelector('.directory-profile-view .sv-name');`));
   await click('.directory-profile-toolbar button');
   check('direct detail URL can return to populated list',await session.evaluate(`return location.pathname==='/servers'&&document.querySelectorAll('.sb-row').length===32;`));
+  await visit('/servers/6b611fe7-f168-4959-8b28-2a7cdb673b24');
+  check('static server snapshot hydrates and receives browser data',await session.evaluate(`return !!document.querySelector('.directory-profile-view .sv-name');`));
   for(const scenario of ['missing','error']){
     await session.evaluate(`sessionStorage.setItem('scenario',${JSON.stringify(scenario)});`);await visit('/servers/fixture-0');
     check('detail '+scenario+' state',await session.evaluate(`return !!document.querySelector('.directory-profile-view .sb-offline h1');`));

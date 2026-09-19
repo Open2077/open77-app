@@ -8,7 +8,7 @@ import { ArrowLeftIcon } from "@/components/icons";
 import profileStyles from "@/app/servers/[id]/server-profile.module.css";
 import { DemoDataNotice } from "@/components/servers/demo-data-notice";
 import { MasterApiError } from "@/lib/account/api";
-import { fetchServers, type GameServer } from "@/lib/servers";
+import { fetchServers, type GameServer, type CatalogServer } from "@/lib/servers";
 import { DEMO_SERVERS } from "@/lib/servers-demo";
 
 /** How often the directory re-reads the master while the tab is visible. */
@@ -17,10 +17,9 @@ const REFRESH_MS = 30_000;
 /**
  * The server browser, driven by the live master directory.
  *
- * The directory is fetched in the browser rather than on the server: the master
- * sits behind Cloudflare, which serves CORS for this origin but challenges
- * non-browser fetches, so a server-component fetch would be unreliable. This
- * mirrors how the account surfaces call the master (see `lib/account/api`).
+ * The directory refreshes in the browser. Direct profile visits also receive a
+ * static snapshot so their name, description and metadata are readable before
+ * JavaScript runs; fresh detail data replaces that snapshot after hydration.
  *
  * The browser stays mounted across refreshes so filters, selection, favorites
  * and scroll survive them. A failed refresh keeps the last good list and says
@@ -44,7 +43,9 @@ const PREVIEW_SERVERS: GameServer[] = DEMO_SERVERS.slice(0, 1).map((server) => (
   links: null,
 }));
 
-export function LiveServerBrowser({ initialId }: { initialId?: string }) {
+type BrowserProps = { initialId?: string; initialSnapshot?: { server: CatalogServer; capturedAt: number } };
+
+export function LiveServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
   const preview = useSyncExternalStore(subscribeDirectoryUrl, () =>
     ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname) &&
     new URLSearchParams(window.location.search).get("preview") === "1",
@@ -59,10 +60,10 @@ export function LiveServerBrowser({ initialId }: { initialId?: string }) {
       <div className="directory-preview-notice"><DemoDataNotice /><a href="/servers">Live directory ↗</a></div>
     } />
     </div>
-  ) : <MasterServerBrowser initialId={initialId} />;
+  ) : <MasterServerBrowser initialId={initialId} initialSnapshot={initialSnapshot} />;
 }
 
-function MasterServerBrowser({ initialId }: { initialId?: string }) {
+function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
   const detailId = useSyncExternalStore(subscribeDirectoryUrl, () =>
     window.location.pathname.match(/^\/servers\/([^/]+)\/?$/)?.[1] ?? null,
   () => initialId ?? null);
@@ -201,7 +202,7 @@ function MasterServerBrowser({ initialId }: { initialId?: string }) {
         </div>
         <div className={`directory-profile-scroll ${profileStyles.profile} ${profileStyles.embedded}`}>
           <div className="section-inner">
-            <ServerDetail key={detailId} id={detailId} initialServer={servers.find(server => server.id === detailId)?.catalog} />
+            <ServerDetail key={detailId} id={detailId} initialServer={servers.find(server => server.id === detailId)?.catalog ?? (initialSnapshot?.server.id === detailId ? initialSnapshot.server : undefined)} initialNow={initialSnapshot?.server.id === detailId ? initialSnapshot.capturedAt : undefined} />
           </div>
         </div>
       </section>}

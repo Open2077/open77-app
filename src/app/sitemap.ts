@@ -3,7 +3,9 @@ import type { MetadataRoute } from "next";
 import { getApiIndex } from "@/lib/api-reference";
 import { blogHref, getBlogPosts } from "@/lib/devblog";
 import { docHref, getDocsManifest, getDocsPages } from "@/lib/docs";
-import { serverDirectory } from "@/lib/servers";
+import { listPublicServers } from "@/lib/server-catalog";
+
+export const revalidate = 300;
 import { absoluteUrl } from "@/lib/site";
 
 /**
@@ -23,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [pages, api, servers, manifest, posts] = await Promise.all([
     getDocsPages(),
     getApiIndex(),
-    serverDirectory.list(),
+    listPublicServers().catch(() => []),
     getDocsManifest(),
     getBlogPosts(),
   ]);
@@ -73,12 +75,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "weekly",
   }));
 
-  // The listings are demo data, so the detail pages are included but marked as
-  // rarely changing: they are real URLs with real content, they just are not
-  // live statistics.
+  // Public server profiles have real prerendered content and their own metadata.
   const serverPages: MetadataRoute.Sitemap = servers.map((server) => ({
     url: absoluteUrl(`/servers/${server.id}`),
-    changeFrequency: "monthly",
+    changeFrequency: "daily",
   }));
 
   return [...marketing, ...devblog, ...docs, ...apiPages, ...serverPages];
