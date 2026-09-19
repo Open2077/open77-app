@@ -567,6 +567,12 @@
           "description": "Vanilla map markers and mappins: creating and updating blips, attaching them to entities, custom icon metadata, stable aliases, and the complete sprite catalogue."
         },
         {
+          "slug": "markers",
+          "kind": "guide",
+          "nav": "3D world markers",
+          "description": "Eight native mesh shapes, RGBA colors, dimensions and rotation. Lua creation, updates, loading diagnostics, resource ownership and cleanup."
+        },
+        {
           "slug": "world-drawing",
           "kind": "guide",
           "source": "authored",

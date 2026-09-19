@@ -13134,7 +13134,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- The race is over: remove every checkpoint marker\nAddEventHandler(\"race:finished\", function()\n    Open77.markers.clear()\nend)",
   "inferred": false,
-  "source_line": 23038,
+  "source_line": 24486,
   "permissions": [
    "world.markers"
   ],
@@ -13149,7 +13149,7 @@
   "name": "create",
   "handler": "LuaMarkerCreate",
   "summary": "Creates a resource-owned 3D world marker.",
-  "description": "Requires `world.markers`. Options require `position` and accept `shape`, `style`, `radius`, `maxDistance`, `minDistance`, and `visible`. The returned decimal-string handle preserves its full 64-bit identity.",
+  "description": "Requires `world.markers`. Options require `position` and accept `shape`, `style`, `radius`, `height`, `scale = {x,y,z}`, `rotation = {x,y,z}` in degrees, `color = {r,g,b,a}`, `maxDistance`, `minDistance`, and `visible`. Color channels are integers from 0 to 255; omitted alpha defaults to 180. Eight native mesh shapes are listed by `shapes()`. The returned decimal-string handle preserves its full 64-bit identity. Creation is asynchronous: inspect `get(id).failed` and `error` for loading failures. Markers are local, resource-owned and cleaned up when their resource stops; they do not provide collision or gameplay authority.",
   "params": [
    {
     "name": "options",
@@ -13167,7 +13167,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- A cylinder marker at the delivery point, visible within 80 m\nlocal marker = Open77.markers.create({\n    position = { x = -1442.2, y = 127.4, z = 18.0 },\n    shape = \"cylinder\",\n    radius = 1.5,\n    maxDistance = 80,\n})",
   "inferred": false,
-  "source_line": 23035,
+  "source_line": 24483,
   "permissions": [
    "world.markers"
   ],
@@ -13185,10 +13185,10 @@
   "name": "list",
   "handler": "LuaMarkerList",
   "summary": "Lists the calling resource's 3D markers.",
-  "description": "Requires `world.markers`. Each snapshot includes its requested definition and whether the native renderer currently presents it.",
+  "description": "Requires `world.markers`. Each snapshot includes its requested definition, effective color, and native loading state. `rendered` means attached and enabled, not necessarily on-screen or unoccluded. `failed` and optional `error` expose asynchronous asset or streaming failures.",
   "params": [],
   "returns": [
-   "array of { id, shape, style, radius, maxDistance, minDistance, visible, rendered, position }, or nil",
+   "array of { id, shape, style, radius, height, scale, rotation, color, customColor, maxDistance, minDistance, visible, rendered, failed, error?, position }, or nil",
    "reason"
   ],
   "api_set": "game",
@@ -13196,7 +13196,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- Debug: are our markers actually rendered?\nfor _, marker in ipairs(Open77.markers.list() or {}) do\n    print(marker.id, marker.rendered)\nend",
   "inferred": false,
-  "source_line": 23039,
+  "source_line": 24487,
   "permissions": [
    "world.markers"
   ],
@@ -13232,7 +13232,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- The player reached the checkpoint: remove its marker\nOpen77.markers.remove(checkpointMarker)",
   "inferred": false,
-  "source_line": 23037,
+  "source_line": 24485,
   "permissions": [
    "world.markers"
   ],
@@ -13247,7 +13247,7 @@
   "name": "update",
   "handler": "LuaMarkerUpdate",
   "summary": "Patches a resource-owned 3D marker.",
-  "description": "Requires `world.markers`. Only supplied fields are changed, and ownership prevents mutation of another resource's marker.",
+  "description": "Requires `world.markers`. Only supplied fields are changed, and ownership prevents mutation of another resource's marker. Accepts the create options, including height, scale, rotation and RGBA color. `color = false` restores the named style palette; alpha zero hides the marker. Invalid patches are rejected atomically. Color and shape changes replace the native entity asynchronously while preserving the handle; avoid per-frame color updates.",
   "params": [
    {
     "name": "id",
@@ -13271,7 +13271,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- Move the marker to the next checkpoint\nRegisterNetEvent(\"race:checkpoint\", function(position)\n    Open77.markers.update(checkpointMarker, { position = position })\nend)",
   "inferred": false,
-  "source_line": 23036,
+  "source_line": 24484,
   "permissions": [
    "world.markers"
   ],
@@ -60697,5 +60697,66 @@
   "constant": false,
   "qualified": "Open77.remoteCamera.worldModels",
   "route_id": "Open77.remoteCamera.worldModels"
+ },
+ {
+  "namespace": "Open77.markers",
+  "name": "get",
+  "handler": "LuaMarkerGet",
+  "summary": "Reads one 3D marker owned by the calling resource.",
+  "description": "Requires `world.markers`. Returns the same snapshot fields as `list()`, including height, scale, rotation, color, customColor, rendered, failed and optional error. Unknown or foreign handles return `nil, not_found`; a malformed handle returns `nil, invalid_marker_id`. A valid handle can still be loading: rendered does not certify on-screen visibility.",
+  "params": [
+   {
+    "name": "id",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "marker snapshot, or nil",
+   "reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local state, reason = Open77.markers.get(marker)\nif state and state.failed then\n    print(state.error)\nend",
+  "inferred": false,
+  "source_line": 24488,
+  "permissions": [
+   "world.markers"
+  ],
+  "reasons": [
+   "invalid_marker_id",
+   "markers_backend_unavailable",
+   "not_found",
+   "permission_denied:world.markers"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.markers.get",
+  "route_id": "Open77.markers.get"
+ },
+ {
+  "namespace": "Open77.markers",
+  "name": "shapes",
+  "handler": "LuaMarkerShapes",
+  "summary": "Lists the eight supported native 3D marker shapes.",
+  "description": "Returns ring, cylinder, checkpoint, arrow, chevron, cone, diamond and sphere. These are stable string identifiers, not numeric marker types from another game. Reading this static catalogue needs no permission; creating or inspecting markers requires `world.markers`.",
+  "params": [],
+  "returns": [
+   "array of shape names"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "for _, shape in ipairs(Open77.markers.shapes()) do\n    print(shape)\nend",
+  "inferred": false,
+  "source_line": 24489,
+  "permissions": [],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.markers.shapes",
+  "route_id": "Open77.markers.shapes"
  }
 ]
