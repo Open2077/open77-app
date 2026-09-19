@@ -44,7 +44,7 @@ export default async function HostPage() {
 
   return (
     <>
-      <DownloadSurface active="server" artwork="/assets/home/night-city-v2.webp">
+      <DownloadSurface active="server" artwork="/assets/home/night-city-wallpaper-v3.webp">
         <section className={styles.hero} aria-labelledby="host-title">
           <div className={styles.heroCopy}>
             <SurfaceEyebrow>HOST A SERVER</SurfaceEyebrow>

@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import { ServerBrowser } from "@/components/servers/server-browser";
+import { DemoDataNotice } from "@/components/servers/demo-data-notice";
 import { MasterApiError } from "@/lib/account/api";
 import { fetchServers, type GameServer } from "@/lib/servers";
+import { DEMO_SERVERS } from "@/lib/servers-demo";
 
 /** How often the directory re-reads the master while the tab is visible. */
 const REFRESH_MS = 30_000;
@@ -22,7 +24,39 @@ const REFRESH_MS = 30_000;
  * so in the freshness readout; only a first load with nothing to show becomes
  * the unreachable state. Nothing is invented while a request is in flight.
  */
+function subscribePreview(listener: () => void) {
+  window.addEventListener("popstate", listener);
+  window.addEventListener("open77-directory-url", listener);
+  return () => {
+    window.removeEventListener("popstate", listener);
+    window.removeEventListener("open77-directory-url", listener);
+  };
+}
+
+const PREVIEW_SERVERS: GameServer[] = DEMO_SERVERS.slice(0, 1).map((server) => ({
+  ...server,
+  country: "FR",
+  locale: "fr-FR",
+  lang: "FR",
+  links: null,
+}));
+
 export function LiveServerBrowser() {
+  const preview = useSyncExternalStore(subscribePreview, () =>
+    ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname) &&
+    new URLSearchParams(window.location.search).get("preview") === "1",
+  () => false);
+
+  return preview ? (
+    <ServerBrowser servers={PREVIEW_SERVERS} preview status={
+      // A full navigation unmounts the local preview and resets its filter state.
+      // eslint-disable-next-line @next/next/no-html-link-for-pages
+      <div className="directory-preview-notice"><DemoDataNotice /><a href="/servers">Live directory ↗</a></div>
+    } />
+  ) : <MasterServerBrowser />;
+}
+
+function MasterServerBrowser() {
   const [servers, setServers] = useState<GameServer[]>([]);
   const [updated, setUpdated] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);

@@ -1,13 +1,15 @@
 # Server browser
 
-The server browser follows the launcher's desktop kit (`launcher/docs/desktop-design.md`,
-`launcher-native.css`): near-black panels, cyan actions, hairlines, cut corners,
-Chakra Petch controls, mono labels, quiet motion. `src/styles/server-directory.css`
-owns it and is scoped to `/servers`; the rest of the site keeps its own design.
+The server browser follows the landing page's visual system: a `#050e16` night
+background, `#08dfec` cyan accents, blue panels and rounded
+controls, Saira body text, Rajdhani headings and mono data labels.
+`src/styles/server-directory.css` owns the styles scoped to the directory.
 
 ## The directory is a full-window application
 
-`/servers` fills the viewport below the header, at FiveM density, with four parts:
+`/servers` fills the entire viewport below the shared glass header, edge to edge,
+without an introductory section or outer gutters. Only its internal panes scroll.
+The workspace has four parts:
 
 - **Command bar** — search (`/` focuses it), the game-type segmented control with
   live counts, a language filter, sort, the freshness readout and Refresh. The status dot on Refresh
@@ -15,7 +17,7 @@ owns it and is scoped to `/servers`; the rest of the site keeps its own design.
 - **Filter rail** — All servers / Favorites, game type, region, language,
   country, availability and the most common tags. Collapsible on desktop and
   remembered per browser; a drawer on narrow screens.
-- **List** — 40px rows (FiveM density, first row about 126px from the top of the window): icon, name (link to the full page) and description, game
+- **List** — 64px desktop rows, with two-line 96px rows on mobile: icon, name (link to the full page) and description, game
   type and tags as clickable filters, flag and `US · EN` locale, cyan player count
   with a capacity bar (amber when full), favorite, and a quiet Connect that lights
   up on hover or selection. Only the list and the rail scroll.
@@ -53,3 +55,8 @@ npm run dev -- --hostname 127.0.0.1 --port 3100
 ```
 
 Then open `http://127.0.0.1:3100/servers`.
+
+For a local visual review with one illustrative server, open
+`/servers?preview=1` on localhost. The preview displays a demo-data notice,
+opens the inspector from the server name, and disables launcher handoff and
+full-detail navigation. Production hosts always use the live directory.

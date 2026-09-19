@@ -121,7 +121,11 @@ function updateFilters(
   reset = false,
 ) {
   const url = new URL(window.location.href);
-  if (reset) url.search = "";
+  if (reset) {
+    const preview = url.searchParams.get("preview");
+    url.search = "";
+    if (preview === "1") url.searchParams.set("preview", preview);
+  }
   for (const [key, value] of Object.entries(patch)) {
     if (value === "" || value === "all" || value === false || value === 0)
       url.searchParams.delete(key);
@@ -208,10 +212,12 @@ export function ServerBrowser({
   servers,
   status,
   emptyState,
+  preview = false,
 }: {
   servers: GameServer[];
   status?: ReactNode;
   emptyState?: ReactNode;
+  preview?: boolean;
 }) {
   const filters = useDirectoryFilters();
   const { query, mode, sort, favorites: favsOnly } = filters;
@@ -336,6 +342,10 @@ export function ServerBrowser({
   );
 
   const join = (server: GameServer) => {
+    if (preview) {
+      showToast("Demo server — connections are disabled in this preview.");
+      return;
+    }
     showToast("Opening the OPEN//77 launcher…");
     joinServer(server.id);
   };
@@ -754,7 +764,7 @@ export function ServerBrowser({
             ) : (
               <>
                 <div className="sb-col-head">
-                  <h1>
+                  <h2>
                     <span>{favsOnly ? "Favorites" : "Servers"}</span>
                     <b role="status">
                       {visible.length}
@@ -763,7 +773,7 @@ export function ServerBrowser({
                         {" "}· {onlinePlayers} {onlinePlayers === 1 ? "player" : "players"} online
                       </i>
                     </b>
-                  </h1>
+                  </h2>
                   <span>Game type · tags</span>
                   <span>Locale</span>
                   <button
@@ -782,6 +792,7 @@ export function ServerBrowser({
                     <ServerRow
                       key={server.id}
                       server={server}
+                      preview={preview}
                       near={proximity(server, me) >= 4}
                       isFavorite={isFavorite(server.id)}
                       isSelected={selected?.id === server.id}
@@ -813,6 +824,7 @@ export function ServerBrowser({
           </section>
         </section>
         <ServerInspector
+          preview={preview}
           server={selected}
           nearYou={selected ? proximity(selected, me) >= 4 : false}
           isFavorite={selected ? isFavorite(selected.id) : false}
@@ -839,6 +851,7 @@ export function ServerBrowser({
 
 function ServerRow({
   server,
+  preview,
   near,
   isFavorite,
   isSelected,
@@ -847,6 +860,7 @@ function ServerRow({
   onConnect,
 }: {
   server: GameServer;
+  preview: boolean;
   /** Same country as the player: the locale cell lights up. */
   near: boolean;
   isFavorite: boolean;
@@ -875,13 +889,15 @@ function ServerRow({
           fallback={<BrandTile />}
         />
         <span className="sb-id">
-          <Link
+          {preview ? <button className="sb-row-link" onClick={onSelect}>
+            <span className="sb-name">{server.name}</span>
+          </button> : <Link
             className="sb-row-link"
             href={`/servers/${server.id}`}
             aria-label={`View ${server.name}`}
           >
             <span className="sb-name">{server.name}</span>
-          </Link>
+          </Link>}
           <span className="sb-desc" title={server.desc}>
             {server.desc || "Community server"}
           </span>

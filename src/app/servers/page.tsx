@@ -12,9 +12,8 @@ export const metadata = pageMetadata({
 export default function ServersPage() {
   return (
     <>
-      {/* The directory is a full-window application: no page chrome around it,
-          and the site footer is folded into its own status strip. */}
       <main id="main" className="sb-page">
+        <h1 className="sr-only">Server browser</h1>
         <LiveServerBrowser />
       </main>
 

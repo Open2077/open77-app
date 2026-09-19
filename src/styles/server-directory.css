@@ -1,43 +1,24 @@
-/* Player directory — the launcher's desktop kit at FiveM density.
-   Scoped to `.directory-dense` so the marketing pages keep their own voice. */
-.directory-header .header-inner {
-  max-width: none;
-  min-height: 44px;
-  padding: 4px 20px;
-}
-.directory-header .header-actions .btn {
-  min-height: 30px;
-  padding-block: 4px;
-  font-size: 12px;
-}
-.directory-header .main-nav a {
-  padding: 6px 9px;
-  font-size: 12px;
-}
-.directory-header .header-rule {
-  height: 2px;
-}
-.directory-header .stage-chip {
-  display: none;
-}
+/* Community directory — the shared nocturnal palette, rounded surfaces and
+   cyan controls. Layout and interaction styles stay scoped to the directory. */
 .sb-page {
+  height: calc(100dvh - var(--header-h, 94px));
+  min-height: 0;
   padding: 0;
-  height: calc(100dvh - var(--header-h, 57px));
-  min-height: 420px;
+  background: #050e16;
 }
 .directory-dense {
-  --ink: #0b0e14;
-  --ink-deep: #05070b;
-  --panel: #0d131d;
-  --panel-raised: #12161f;
-  --panel-hover: #171c26;
-  --dline: rgba(138, 148, 162, 0.18);
-  --dline-hot: rgba(138, 148, 162, 0.34);
-  --cyan: #22d8e2;
+  --ink: #071520;
+  --ink-deep: #050e16;
+  --panel: #0b1c29;
+  --panel-raised: #102635;
+  --panel-hover: #153344;
+  --dline: rgba(146, 208, 224, 0.14);
+  --dline-hot: rgba(146, 208, 224, 0.3);
+  --cyan: #08dfec;
   --cyan-soft: rgba(34, 216, 226, 0.08);
-  --white: #e6eaec;
-  --body: #b3bbc6;
-  --muted: #8a94a2;
+  --white: #f2f7fa;
+  --body: #c2d3df;
+  --muted: #98b1c2;
   --ok: #2be58b;
   --warn: #ffb020;
   --bad: #ff3b4e;
@@ -49,18 +30,22 @@
     8px 100%,
     0 calc(100% - 8px)
   );
-  --rail-w: 216px;
+  --rail-w: 224px;
   --detail-w: 300px;
-  --directory-columns: minmax(240px, 1fr) minmax(170px, 0.55fr) 88px 104px 120px;
+  --directory-columns: minmax(180px, 1fr) minmax(100px, 0.5fr) 80px 90px 126px;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
   grid-template-columns: minmax(0, 1fr);
   height: 100%;
+  width: 100%;
+  min-height: 0;
+  border-top: 1px solid var(--dline-hot);
+  border-radius: 0;
   min-width: 0;
   overflow: hidden;
   background: var(--ink);
   color: var(--body);
-  font: 500 12px/1.4 var(--font-display);
+  font: 400 12px/1.5 var(--font-body);
 }
 .directory-dense button,
 .directory-dense input,
@@ -91,8 +76,8 @@
   align-items: center;
   gap: 10px;
   min-width: 0;
-  min-height: 44px;
-  padding: 5px 16px;
+  min-height: 64px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--dline);
   background: var(--ink);
 }
@@ -101,14 +86,14 @@
   align-items: center;
   gap: 8px;
   box-sizing: border-box;
-  height: 34px;
+  height: 38px;
   min-height: 0;
   padding: 0 10px;
   line-height: 1;
   background: var(--panel-raised);
   border: 1px solid var(--dline-hot);
   color: var(--body);
-  font: 600 11px/1 var(--font-ui);
+  font: 600 11px/1 var(--font-body);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -140,10 +125,10 @@
   align-items: center;
   gap: 10px;
   min-width: 200px;
-  height: 34px;
+  height: 38px;
   padding: 0 10px;
   border: 1px solid var(--dline-hot);
-  box-shadow: inset 3px 0 0 var(--cyan);
+  box-shadow: none;
   background: var(--panel);
   color: var(--muted);
 }
@@ -151,7 +136,7 @@
   border-color: var(--cyan);
   outline: 1px solid var(--cyan);
   outline-offset: -1px;
-  box-shadow: inset 3px 0 0 var(--cyan);
+  box-shadow: none;
 }
 .directory-dense .sb-search input {
   flex: 1;
@@ -160,7 +145,7 @@
   background: transparent;
   border: 0;
   color: var(--white);
-  font: 500 13px/1.4 var(--font-display);
+  font: 400 13px/1.5 var(--font-body);
 }
 .directory-dense .sb-search input::placeholder {
   color: var(--muted);
@@ -193,11 +178,11 @@
   border-bottom: 2px solid transparent;
   background: transparent;
   color: var(--muted);
-  font: 600 10.5px/1 var(--font-ui);
+  font: 600 10.5px/1 var(--font-body);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   white-space: nowrap;
-  border-radius: 0;
+  border-radius: 8px;
 }
 .directory-dense .filter-chip small {
   font: 10px/1 var(--font-mono);
@@ -247,7 +232,7 @@
   background-repeat: no-repeat;
   background-position: right 9px center;
   appearance: none;
-  font: 500 12px/1 var(--font-display);
+  font: 400 12px/1.4 var(--font-body);
   letter-spacing: 0.02em;
 }
 .directory-dense select:focus-visible {
@@ -264,11 +249,11 @@
 }
 .directory-dense .sb-lang select {
   width: 128px;
-  height: 34px;
+  height: 38px;
 }
 .directory-dense .sb-sort select {
   width: 148px;
-  height: 34px;
+  height: 38px;
 }
 .directory-dense .directory-freshness {
   display: flex;
@@ -288,18 +273,18 @@
   align-items: center;
   gap: 8px;
   box-sizing: border-box;
-  height: 34px;
+  height: 38px;
   min-height: 0;
   padding: 0 10px;
   line-height: 1;
   background: var(--panel-raised);
   border: 1px solid var(--dline-hot);
   color: var(--body);
-  font: 600 11px/1 var(--font-ui);
+  font: 600 11px/1 var(--font-body);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
-  border-radius: 0;
+  border-radius: 8px;
 }
 .directory-dense .sb-tool:hover {
   color: var(--white);
@@ -341,10 +326,10 @@
 .directory-dense .directory-rail {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
   min-height: 0;
   overflow-y: auto;
-  padding: 10px 12px;
+  padding: 18px 14px;
   background: var(--panel);
   border-right: 1px solid var(--dline);
   scrollbar-width: thin;
@@ -364,13 +349,13 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  min-height: 32px;
+  min-height: 38px;
   padding: 0 10px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--muted);
   text-align: left;
-  font: 600 11.5px/1 var(--font-ui);
+  font: 600 11.5px/1 var(--font-body);
   letter-spacing: 0.02em;
 }
 .directory-dense .directory-nav small {
@@ -385,11 +370,11 @@
   color: var(--cyan);
   background: var(--cyan-soft);
   border-color: rgba(34, 216, 226, 0.22);
-  border-bottom: 2px solid var(--cyan);
+  border-bottom: 1px solid rgba(34, 216, 226, 0.22);
 }
 .directory-filter-section {
   border-top: 1px solid var(--dline);
-  padding-top: 8px;
+  padding-top: 14px;
 }
 .directory-filter-section h2 {
   margin: 0 4px 5px;
@@ -407,12 +392,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 26px;
+  min-height: 38px;
   padding: 0 10px;
   border: 0;
   background: transparent;
   color: var(--body);
-  font: 500 12px/1 var(--font-display);
+  font: 400 12px/1.4 var(--font-body);
   text-align: left;
 }
 .directory-mode-row small {
@@ -549,7 +534,7 @@
   flex-wrap: wrap;
   gap: 6px 12px;
   flex: none;
-  min-height: 32px;
+  min-height: 38px;
   padding: 3px 16px;
   border-bottom: 1px solid var(--dline);
   background: var(--ink);
@@ -626,16 +611,16 @@
   grid-template-columns: var(--directory-columns);
   align-items: center;
   gap: 12px;
-  min-height: 28px;
+  min-height: 38px;
   padding: 0 16px;
-  background: #101620;
+  background: #102432;
   border-bottom: 1px solid var(--dline);
   color: var(--muted);
   font: 500 9px/1 var(--font-mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.directory-dense .sb-col-head h1 {
+.directory-dense .sb-col-head h2 {
   display: flex;
   align-items: baseline;
   gap: 10px;
@@ -645,13 +630,13 @@
   text-transform: inherit;
   color: inherit;
 }
-.directory-dense .sb-col-head h1 b {
+.directory-dense .sb-col-head h2 b {
   font-weight: 600;
   color: var(--white);
   text-transform: none;
   letter-spacing: 0.02em;
 }
-.directory-dense .sb-col-head h1 i {
+.directory-dense .sb-col-head h2 i {
   font-style: normal;
   font-weight: 500;
   color: var(--muted);
@@ -684,7 +669,7 @@
   gap: 12px;
   align-items: center;
   position: relative;
-  height: 40px;
+  height: 64px;
   padding: 0 16px;
   border: 0;
   border-bottom: 1px solid var(--dline);
@@ -699,7 +684,7 @@
 }
 .directory-dense .sb-row.is-selected {
   background: var(--cyan-soft);
-  box-shadow: inset 3px 0 0 var(--cyan);
+  box-shadow: none;
 }
 .directory-dense .sb-row-main {
   display: flex;
@@ -708,16 +693,17 @@
   min-width: 0;
 }
 .directory-dense .sb-thumb {
-  width: 26px;
-  height: 26px;
-  flex: 0 0 26px;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 10px;
   clip-path: none;
   transform: none;
   grid-area: auto;
   border: 1px solid var(--dline);
 }
 .directory-dense .svimg-initial {
-  font: 700 12px/1 var(--font-ui);
+  font: 700 12px/1 var(--font-body);
 }
 .directory-dense .svimg-fallback {
   background: var(--panel-raised);
@@ -754,7 +740,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font: 600 12px/1.2 var(--font-ui);
+  font: 600 13px/1.4 var(--font-body);
   letter-spacing: 0.01em;
 }
 .directory-dense .sb-desc {
@@ -762,7 +748,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  font: 500 11px/1.2 var(--font-display);
+  font: 400 11px/1.5 var(--font-body);
   color: var(--muted);
 }
 .sb-row-tags {
@@ -789,7 +775,7 @@
   text-transform: uppercase;
   white-space: nowrap;
   transform: none;
-  border-radius: 0;
+  border-radius: 8px;
 }
 .directory-dense .sb-mode {
   color: var(--cyan);
@@ -870,12 +856,12 @@
   width: 26px;
   min-width: 26px;
   height: 26px;
-  min-height: 26px;
+  min-height: 38px;
   padding: 0;
   border: 1px solid transparent;
   background: transparent;
   color: var(--muted);
-  border-radius: 0;
+  border-radius: 8px;
 }
 .directory-dense .fav-btn:hover {
   color: var(--white);
@@ -895,10 +881,10 @@
   border: 1px solid var(--dline-hot);
   background: transparent;
   color: var(--muted);
-  font: 600 10px/1 var(--font-ui);
+  font: 600 10px/1 var(--font-body);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  border-radius: 0;
+  border-radius: 8px;
   transition:
     background 90ms var(--ease),
     color 90ms var(--ease),
@@ -945,7 +931,7 @@
 .directory-dense .server-empty p {
   max-width: 44ch;
   margin: 0;
-  font: 500 14px/1.6 var(--font-display);
+  font: 400 13px/1.7 var(--font-body);
 }
 .directory-dense .sb-offline .btn,
 .directory-dense .server-empty .btn {
@@ -959,7 +945,7 @@
 }
 .directory-loading i {
   display: block;
-  height: 40px;
+  height: 64px;
   background: var(--panel-raised);
   animation: directory-shimmer 1.4s var(--ease) infinite;
 }
@@ -979,18 +965,17 @@
   }
 }
 
-/* Buttons inside the directory follow the launcher kit; the site's own .btn
-   skin stays untouched everywhere else. */
+/* Directory actions share the site's rounded cyan treatment. */
 .directory-dense .btn {
-  border-radius: 0;
-  font-family: var(--font-ui);
+  border-radius: 8px;
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 12px;
   letter-spacing: 0.1em;
   box-shadow: none;
 }
 .directory-dense .btn-primary {
-  clip-path: var(--cut);
+  clip-path: none;
 }
 .directory-dense .btn-primary:hover {
   background: #4ee6ee;
@@ -1026,7 +1011,7 @@
   height: 54px;
   margin-bottom: 14px;
   background: var(--cyan-soft);
-  clip-path: var(--cut);
+  clip-path: none;
 }
 .directory-detail-reticle::before,
 .directory-detail-reticle::after {
@@ -1043,7 +1028,7 @@
   transform: translate(-50%, -50%) rotate(-45deg);
 }
 .directory-detail-empty strong {
-  font: 600 12px/1 var(--font-ui);
+  font: 600 12px/1 var(--font-body);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--white);
@@ -1070,7 +1055,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  border-radius: 0;
+  border-radius: 8px;
 }
 .directory-detail-cover .svimg-img {
   width: 100%;
@@ -1138,13 +1123,13 @@
   margin: 4px 0 0;
   font: 800 20px/1.05 var(--font-body);
   letter-spacing: -0.01em;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--white);
   overflow-wrap: anywhere;
 }
 .directory-detail-desc {
   margin: 0;
-  font: 500 14px/1.6 var(--font-display);
+  font: 400 13px/1.7 var(--font-body);
   color: var(--body);
 }
 .directory-detail-capacity {
@@ -1277,7 +1262,7 @@
   align-items: center;
   gap: 16px;
   flex: none;
-  min-height: 26px;
+  min-height: 38px;
   padding: 0 16px;
   border-top: 1px solid var(--dline);
   color: var(--muted);
@@ -1296,6 +1281,47 @@
   display: none;
 }
 
+/* Surface details shared with the site's navigation and content panels. */
+.directory-dense .directory-command {
+  background: linear-gradient(120deg, #15344770, #0b1c2980);
+  flex-wrap: wrap;
+}
+.directory-dense .sb-search,
+.directory-dense .directory-tool,
+.directory-dense select,
+.directory-dense .directory-nav,
+.directory-dense .directory-mode-row,
+.directory-dense .directory-detail-capacity,
+.directory-dense .directory-detail-links a,
+.directory-dense .directory-detail-icon,
+.directory-dense .directory-loading i { border-radius: 8px; }
+.directory-dense .directory-modes { border-radius: 10px; }
+.directory-dense .filter-chip { height: 30px; border-bottom: 0; }
+.directory-dense .directory-kicker { color: #98bdca; }
+.directory-dense .directory-tag-filters button,
+.directory-dense .directory-active-filters button { border-radius: 6px; }
+.directory-dense .directory-detail-reticle { border: 1px solid var(--dline-hot); border-radius: 16px; }
+.directory-dense .directory-detail-empty strong { font-size: 14px; letter-spacing: .02em; text-transform: none; }
+.directory-dense .directory-detail-empty small { line-height: 1.7; }
+.directory-dense .directory-detail-close,
+.directory-dense .directory-filter-close { width: 36px; height: 36px; border-radius: 8px; }
+.directory-dense .sb-col-head h2 { flex-wrap: wrap; gap: 3px 10px; padding-block: 8px; line-height: 1.5; }
+.directory-dense .sb-col-head h2 b { font-size: 9px; }
+.directory-dense .sb-row { border-radius: 0; }
+.directory-dense .sb-connect { height: 32px; color: var(--body); letter-spacing: .02em; text-transform: none; }
+.directory-dense .fav-btn { width: 32px; min-width: 32px; height: 32px; min-height: 32px; }
+.directory-dense .directory-detail-fav { width: 44px; height: 44px; }
+.directory-dense .btn-primary {
+  border: 1px solid #5affff99;
+  background: linear-gradient(115deg, #19e7ed, #00cfe4);
+  color: #001a21;
+  box-shadow: inset 0 1px 0 #fff4, 0 6px 24px #00dded14;
+  letter-spacing: .03em;
+}
+.directory-dense .directory-freshness .sb-tool::before { border-radius: 50%; }
+.directory-dense .directory-footnote { min-height: 36px; font-size: 8px; }
+.directory-dense :is(button, a, input, select):focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
 /* ------------------------------------------------------------ responsive --- */
 @media (min-width: 1900px) {
   .directory-dense {
@@ -1313,6 +1339,9 @@
     max-width: 120px;
   }
 }
+@media (min-width: 1151px) and (max-width: 1500px) {
+  .directory-dense .directory-modes { order: 5; flex: 1 1 100%; }
+}
 @media (max-width: 1400px) {
   .directory-dense .filter-chip {
     padding-inline: 8px;
@@ -1323,7 +1352,7 @@
   }
   .directory-dense {
     --detail-w: 276px;
-    --directory-columns: minmax(210px, 1fr) minmax(140px, 0.5fr) 82px 96px 116px;
+    --directory-columns: minmax(150px, 1fr) minmax(80px, 0.4fr) 76px 80px 116px;
   }
 }
 @media (max-width: 1200px) {
@@ -1389,7 +1418,7 @@
   .directory-tool,
   .directory-dense .sb-tool,
   .directory-dense .sb-sort select {
-    height: 34px;
+    height: 38px;
   }
   .directory-dense .sb-search {
     flex-basis: 100%;
@@ -1452,10 +1481,6 @@
   }
 }
 @media (max-width: 640px) {
-  .directory-header .header-inner {
-    min-height: 48px;
-    padding: 5px 14px;
-  }
   .directory-command {
     gap: 6px;
     padding: 6px 10px;
@@ -1508,9 +1533,9 @@
   }
   .directory-dense .sb-col-head {
     display: flex;
-    min-height: 26px;
+    min-height: 38px;
   }
-  .directory-dense .sb-col-head > :not(h1) {
+  .directory-dense .sb-col-head > :not(h2) {
     display: none;
   }
   .directory-dense .sb-row-main {
@@ -1569,3 +1594,52 @@
     padding-top: 6px;
   }
 }
+
+@media (max-width: 1200px) {
+  .directory-dense .directory-detail {
+    top: calc(var(--header-h, 94px) + 8px);
+    right: 12px;
+    bottom: 12px;
+    border: 1px solid var(--dline-hot);
+    border-radius: 16px;
+    background: #0b1c29;
+  }
+}
+@media (max-width: 1000px) {
+  .directory-dense.filters-open .directory-rail {
+    top: calc(var(--header-h, 94px) + 8px);
+    left: 12px;
+    bottom: 12px;
+    border: 1px solid var(--dline-hot);
+    border-radius: 16px;
+  }
+}
+@media (max-width: 760px) {
+  .directory-dense .directory-detail { width: min(360px, calc(100vw - 24px)); }
+  .directory-dense.filters-open .directory-rail { width: min(320px, calc(100vw - 24px)); }
+}
+@media (max-width: 640px) {
+  .directory-dense .sb-row { height: 96px; gap: 6px 10px; padding: 10px; }
+  .directory-dense .sb-thumb { width: 32px; height: 32px; flex-basis: 32px; border-radius: 8px; }
+  .directory-dense .sb-name { font-size: 12px; }
+  .directory-dense .sb-connect,
+  .directory-dense .fav-btn { height: 32px; min-height: 32px; }
+  .directory-dense .sb-connect { font-size: 10px; }
+  .directory-dense .directory-footnote { gap: 8px; font-size: 7px; }
+  .directory-dense .sb-lang { order: 0; }
+  .directory-dense .directory-modes { order: 2; }
+  .directory-dense .sb-sort select,
+  .directory-dense .sb-lang select { width: 95px; padding-left: 8px; font-size: 11px; }
+  .directory-dense .directory-command { gap: 6px; padding: 10px; }
+  .directory-dense .directory-tool,
+  .directory-dense .sb-tool { padding-inline: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+}
+
+@media (prefers-reduced-motion: reduce) { .directory-dense * { transition: none; } }
+.directory-dense .directory-preview-notice { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; font-size: 11px; }
+.directory-dense .directory-preview-notice .sb-status { margin: 0; padding: 0; border: 0; background: transparent; }
+.directory-dense .directory-preview-notice > a { color: var(--cyan); }
+.directory-dense button.sb-row-link { border: 0; background: transparent; text-align: left; }
+.sb-page > .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
