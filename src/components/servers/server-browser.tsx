@@ -213,11 +213,15 @@ export function ServerBrowser({
   status,
   emptyState,
   preview = false,
+  isActive = true,
+  onOpenServer,
 }: {
   servers: GameServer[];
   status?: ReactNode;
   emptyState?: ReactNode;
   preview?: boolean;
+  isActive?: boolean;
+  onOpenServer?: (id: string) => void;
 }) {
   const filters = useDirectoryFilters();
   const { query, mode, sort, favorites: favsOnly } = filters;
@@ -356,6 +360,7 @@ export function ServerBrowser({
     keyState.current = { visible, selected, join, filtersOpen };
   });
   useEffect(() => {
+    if (!isActive) return;
     const handleKey = (event: KeyboardEvent) => {
       const { visible, selected, join, filtersOpen } = keyState.current;
       const inControl = insideControl(event.target);
@@ -397,7 +402,7 @@ export function ServerBrowser({
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, []);
+  }, [isActive]);
 
   const countryOptions = [...facets.countries];
   if (
@@ -793,10 +798,11 @@ export function ServerBrowser({
                       key={server.id}
                       server={server}
                       preview={preview}
+                      onOpen={onOpenServer ? () => onOpenServer(server.id) : undefined}
                       near={proximity(server, me) >= 4}
                       isFavorite={isFavorite(server.id)}
                       isSelected={selected?.id === server.id}
-                      onSelect={() =>
+                      onSelect={() => onOpenServer && !preview ? onOpenServer(server.id) :
                         setSelectedId((id) =>
                           id === server.id ? null : server.id,
                         )
@@ -825,6 +831,7 @@ export function ServerBrowser({
         </section>
         <ServerInspector
           preview={preview}
+          onOpen={selected && onOpenServer ? () => onOpenServer(selected.id) : undefined}
           server={selected}
           nearYou={selected ? proximity(selected, me) >= 4 : false}
           isFavorite={selected ? isFavorite(selected.id) : false}
@@ -852,6 +859,7 @@ export function ServerBrowser({
 function ServerRow({
   server,
   preview,
+  onOpen,
   near,
   isFavorite,
   isSelected,
@@ -861,6 +869,7 @@ function ServerRow({
 }: {
   server: GameServer;
   preview: boolean;
+  onOpen?: () => void;
   /** Same country as the player: the locale cell lights up. */
   near: boolean;
   isFavorite: boolean;
@@ -895,6 +904,7 @@ function ServerRow({
             className="sb-row-link"
             href={`/servers/${server.id}`}
             aria-label={`View ${server.name}`}
+            onNavigate={onOpen ? (event) => { event.preventDefault(); onOpen(); } : undefined}
           >
             <span className="sb-name">{server.name}</span>
           </Link>}

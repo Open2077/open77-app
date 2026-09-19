@@ -11,6 +11,8 @@ export type ServerLinks = {
 };
 
 export type GameServer = {
+  /** Directory snapshot for an immediate detail view while its roster loads. */
+  catalog?: CatalogServer;
   /** Stable slug; also the `/servers/<id>` route segment. */
   id: string;
   name: string;
@@ -355,6 +357,7 @@ export function catalogToGameServer(server: CatalogServer): GameServer {
   const website = server.website?.trim() || undefined;
   const discord = server.discord?.trim() || undefined;
   return {
+    catalog: server,
     id: server.id,
     name: server.name,
     desc: server.description ?? "",

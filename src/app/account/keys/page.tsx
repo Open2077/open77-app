@@ -5,6 +5,7 @@ import { KeysGate } from "@/components/account/keys-gate";
 import { Eyebrow } from "@/components/brand";
 import { SiteFooter } from "@/components/site-footer";
 import { pageMetadata } from "@/lib/seo";
+import styles from "@/components/account/account-workspace.module.css";
 
 export const metadata: Metadata = {
   ...pageMetadata({
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 export default function KeysPage() {
   return (
     <>
-      <main className="ac-main" id="main">
+      <main className={`ac-main ${styles.workspace} ${styles.keys}`} id="main">
         <div className="ac-inner">
           <header className="ac-head">
             <Eyebrow>KEYMASTER</Eyebrow>
@@ -37,7 +38,7 @@ export default function KeysPage() {
           </Suspense>
         </div>
       </main>
-      <SiteFooter fineprint="Accounts run against the OPEN//77 master server." />
+      <SiteFooter tone="dark" fineprint="Accounts run against the OPEN//77 master server." />
     </>
   );
 }

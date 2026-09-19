@@ -39,8 +39,10 @@ type State =
  * working retry), and the full detail view. Nothing is invented while the
  * request is in flight or has failed.
  */
-export function ServerDetail({ id }: { id: string }) {
-  const [state, setState] = useState<State>({ status: "loading" });
+export function ServerDetail({ id, initialServer }: { id: string; initialServer?: CatalogServer }) {
+  const [state, setState] = useState<State>(() => initialServer
+    ? { status: "ok", server: initialServer }
+    : { status: "loading" });
   const [reload, setReload] = useState(0);
 
   // Reset to the loading state and re-run the effect. Kept out of the effect
@@ -75,9 +77,9 @@ export function ServerDetail({ id }: { id: string }) {
   if (state.status === "loading") {
     return (
       <div className="sb-offline" role="status" aria-busy="true">
-        <p className="sb-offline-title">
+        <h1 className="sb-offline-title">
           <span className="live-dot" aria-hidden="true" /> LOADING SERVER…
-        </p>
+        </h1>
         <p className="sb-offline-body">Reading this listing from the OPEN//77 master directory.</p>
       </div>
     );
@@ -86,9 +88,9 @@ export function ServerDetail({ id }: { id: string }) {
   if (state.status === "error") {
     return (
       <div className="sb-offline" role="status">
-        <p className="sb-offline-title">
+        <h1 className="sb-offline-title">
           <span className="live-dot live-dot-idle" aria-hidden="true" /> DIRECTORY UNREACHABLE
-        </p>
+        </h1>
         <p className="sb-offline-body">{state.message}</p>
         <div className="sb-offline-ctas">
           <button className="btn btn-ghost" type="button" onClick={retry}>
@@ -105,9 +107,9 @@ export function ServerDetail({ id }: { id: string }) {
   if (state.status === "missing") {
     return (
       <div className="sb-offline" role="status">
-        <p className="sb-offline-title">
+        <h1 className="sb-offline-title">
           <span className="live-dot live-dot-idle" aria-hidden="true" /> SERVER OFFLINE
-        </p>
+        </h1>
         <p className="sb-offline-body">
           This server is not in the live directory right now. It may have gone offline, or the link
           is out of date. Servers appear here only while they are up and beating.
@@ -140,7 +142,6 @@ function ServerCard({ server }: { server: CatalogServer }) {
       <div className="sv-cover">
         <ServerImage src={server.bannerUrl} kind="banner" className="sv-cover-img" alt="" />
         <span className="sv-cover-scrim" aria-hidden="true" />
-        <span className="hud-corners" aria-hidden="true" />
         <div className="sv-cover-bottom">
           <div className="sv-cover-id">
             <div className="sv-idrow">
@@ -220,7 +221,7 @@ function ServerCard({ server }: { server: CatalogServer }) {
             </p>
           </section>
 
-          <section className="sv-section">
+          <section className="sv-section sv-section-connect">
             <h2 className="sv-h2">
               <SlashMark /> Connect
             </h2>

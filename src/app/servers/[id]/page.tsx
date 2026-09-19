@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-
-import { ArrowLeftIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
-import { ServerDetail } from "@/components/servers/server-detail";
-import { SiteFooter } from "@/components/site-footer";
+import { LiveServerBrowser } from "@/components/servers/live-server-browser";
 import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
 
 /**
@@ -36,20 +32,9 @@ export default async function ServerPage({ params }: { params: Promise<{ id: str
 
   return (
     <>
-      <main id="main" className="sv-page">
-        <div className="section-inner section-inner-wide">
-          <p className="sv-back">
-            <Link href="/servers">
-              <ArrowLeftIcon />
-              Back to server browser
-            </Link>
-          </p>
-
-          <ServerDetail id={id} />
-        </div>
+      <main id="main" className="sb-page">
+        <LiveServerBrowser initialId={id} />
       </main>
-
-      <SiteFooter fineprint="Live server details from the OPEN//77 master directory." />
 
       {/* Only the navigational trail is emitted: the listing is live and
           client-fetched, so there is no server-specific data to mark up here. */}

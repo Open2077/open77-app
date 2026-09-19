@@ -17,12 +17,12 @@ The workspace has four parts:
 - **Filter rail** — All servers / Favorites, game type, region, language,
   country, availability and the most common tags. Collapsible on desktop and
   remembered per browser; a drawer on narrow screens.
-- **List** — 64px desktop rows, with two-line 96px rows on mobile: icon, name (link to the full page) and description, game
+- **List** — 64px desktop rows, with two-line 96px rows on mobile: icon, name (shareable link to the profile) and description, game
   type and tags as clickable filters, flag and `US · EN` locale, cyan player count
   with a capacity bar (amber when full), favorite, and a quiet Connect that lights
   up on hover or selection. Only the list and the rail scroll.
 - **Inspector** — the launcher's detail pane. Idle with "Select a world" until a
-  row is clicked, then cover, description, capacity, locale facts, tags,
+  row is selected with the keyboard, then cover, description, capacity, locale facts, tags,
   community links, Connect, favorite and the link to the full page. Nothing is
   selected on the player's behalf. Below 1200px it is an overlay that appears
   only for a selected server.
@@ -39,7 +39,15 @@ default.
 Keyboard: ↑/↓ walk the list, Enter connects, Escape clears the selection or
 closes the filter drawer. Filters, sort and search live in the URL so links,
 reload and Back restore the same view; result scroll is restored when returning
-from a detail page. The list stays mounted across the 30-second background
+from a profile. Clicking a row or its name replaces the directory interior with
+the redesigned profile, retaining the full-window frame. Native History API
+updates the shareable `/servers/{id}` URL without a route reload. The mounted
+list retains filters and scroll; Back to server list and browser Back/Forward
+restore it. Directory data renders immediately while the detail request fills
+in the roster. Direct profile links use the same workspace and preserve their
+existing canonical, noindex metadata and breadcrumb markup.
+
+The list stays mounted across the 30-second background
 refresh, and a failed refresh keeps the last results. Connect still uses the
 `open77://connect?server=…` handoff; nothing about accounts or launching changed.
 
@@ -60,3 +68,12 @@ For a local visual review with one illustrative server, open
 `/servers?preview=1` on localhost. The preview displays a demo-data notice,
 opens the inspector from the server name, and disables launcher handoff and
 full-detail navigation. Production hosts always use the live directory.
+
+Browser regression checks (synthetic read-only API fixtures):
+
+```sh
+node scripts/check-server-workspaces.mjs http://localhost:3113
+```
+
+This covers in-place navigation, history, filter/scroll retention, responsive
+profiles, error recovery and the account creations/key workspaces.

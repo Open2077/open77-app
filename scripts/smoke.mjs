@@ -46,7 +46,7 @@ const CHECKS = [
   { path: "/download", expect: 200, contains: "SHA-256" },
   // Listings load from the live master in the browser; SSR has no fixed sample server.
   { path: "/servers", expect: 200, contains: "OPEN//77 server browser", type: "text/html" },
-  { path: "/servers/nc-roleplay", expect: 200, contains: "Back to server browser" },
+  { path: "/servers/nc-roleplay", expect: 200, contains: "Back to server list" },
   { path: "/create", expect: 200, contains: "Create" },
   { path: "/create", expect: 200, contains: "Phantom Liberty" },
   // `open77-base` is private, so no rendered page may link to it. These guard

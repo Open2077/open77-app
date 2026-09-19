@@ -1643,3 +1643,15 @@
 .directory-dense .directory-preview-notice > a { color: var(--cyan); }
 .directory-dense button.sb-row-link { border: 0; background: transparent; text-align: left; }
 .sb-page > .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* List and profile share one mounted directory and one browser history. */
+.directory-session, .directory-list-view { height: 100%; min-height: 0; }
+.directory-list-view[hidden] { display: none; }
+.directory-list-view > .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.directory-profile-view { display: grid; grid-template-rows: auto minmax(0, 1fr); height: 100%; min-height: 0; background: #050e16; }
+.directory-profile-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 10px 24px; border-block: 1px solid #92d0e024; background: #0b1c29; }
+.directory-profile-toolbar button { display: inline-flex; align-items: center; gap: 10px; min-height: 38px; padding: 8px 14px; border: 1px solid #92d0e04d; border-radius: 8px; background: #102635; color: #d6e6f0; font: 500 12px/1.5 var(--font-body); }
+.directory-profile-toolbar button:hover { border-color: #08dfec; color: #08dfec; }
+.directory-profile-toolbar button:focus-visible { outline: 2px solid #08dfec; outline-offset: 3px; }
+.directory-profile-toolbar > span { color: #96afbf; font: 9px var(--font-mono); letter-spacing: .14em; }
+.directory-profile-scroll { min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #6d96aa #071520; }
+@media (max-width: 520px) { .directory-profile-toolbar { padding: 10px 12px; } .directory-profile-toolbar > span { display: none; } }

@@ -2,10 +2,11 @@ import type { ReactNode } from "react";
 import { SiteFooter } from "@/components/site-footer";
 import { HubBar } from "./hub-bar";
 import { HubRetry } from "./hub-retry";
+import styles from "@/components/account/account-workspace.module.css";
 
-export function HubShell({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
-  return <><main id="main" className="hub-main"><HubBar />
-    <div className={`hub-wrap${wide ? " hub-wrap-wide" : ""}`}>{children}</div></main><SiteFooter /></>;
+export function HubShell({ children, wide = false, workspace = false }: { children: ReactNode; wide?: boolean; workspace?: boolean }) {
+  return <><main id="main" className={`hub-main${workspace ? ` workshop-surface ${styles.workspace}` : ""}`}><HubBar />
+    <div className={`hub-wrap${wide ? " hub-wrap-wide" : ""}`}>{children}</div></main><SiteFooter tone={workspace ? "dark" : undefined} /></>;
 }
 
 /** Compact page head shared by account and creator pages: eyebrow, title, one line, optional actions. */

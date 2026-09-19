@@ -32,6 +32,7 @@ function addedLabel(days: number): string {
 export function ServerInspector({
   server,
   preview = false,
+  onOpen,
   nearYou = false,
   isFavorite,
   onToggleFavorite,
@@ -40,6 +41,7 @@ export function ServerInspector({
 }: {
   server: GameServer | null;
   preview?: boolean;
+  onOpen?: () => void;
   /** Same country as the player. */
   nearYou?: boolean;
   isFavorite: boolean;
@@ -103,7 +105,7 @@ export function ServerInspector({
         >
           <StarIcon size={16} filled={isFavorite} />
         </button>
-        {!preview && <Link className="directory-detail-more" href={`/servers/${server.id}`}>
+        {!preview && <Link className="directory-detail-more" href={`/servers/${server.id}`} onNavigate={onOpen ? (event) => { event.preventDefault(); onOpen(); } : undefined}>
           Full details ↗
         </Link>}
         </div>

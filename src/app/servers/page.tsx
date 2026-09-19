@@ -13,7 +13,6 @@ export default function ServersPage() {
   return (
     <>
       <main id="main" className="sb-page">
-        <h1 className="sr-only">Server browser</h1>
         <LiveServerBrowser />
       </main>
 
