@@ -86,3 +86,13 @@ node scripts/check-server-workspaces.mjs http://localhost:3113
 
 This covers in-place navigation, history, filter/scroll retention, responsive
 profiles, error recovery and the account creations/key workspaces.
+
+Image hydration regression check:
+
+```sh
+node scripts/check-server-images.mjs http://localhost:3113
+```
+
+This delays JavaScript until both public profile images have decoded, then
+checks actual visibility after hydration and a warm reload. It guards the
+pre-rendered image case where the load event precedes React handler attachment.
