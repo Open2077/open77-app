@@ -85,7 +85,7 @@ export async function GET() {
 
   lines.push("## API reference by namespace", "");
   for (const group of api.runtimes) {
-    lines.push(`### ${group.label} runtime — ${group.count} functions`, "", group.blurb, "");
+    lines.push(`### ${group.label} runtime (${group.count} functions)`, "", group.blurb, "");
     for (const namespace of group.namespaces) {
       lines.push(
         `- [${namespace.label}](${absoluteUrl(namespace.markdownHref)}): ${

@@ -200,7 +200,7 @@ export default async function PlatformPage() {
                 <Link href={item.href}>
                   <strong>{item.label}</strong>
                 </Link>{" "}
-                — {item.body}
+                {item.body}
               </li>
             ))}
           </ul>
@@ -213,7 +213,7 @@ export default async function PlatformPage() {
           />
 
           <p className="creators-note">
-            That is the real API, not a sketch — every registered function is listed in the{" "}
+            That is the real API, not a sketch: every registered function is listed in the{" "}
             <Link href="/docs/api">Lua API reference</Link>, separated by runtime so a client
             projection is never mistaken for server authority. The surface will still change while
             the project is in Alpha. Read the{" "}

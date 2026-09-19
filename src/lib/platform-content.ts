@@ -49,7 +49,7 @@ export const REQUIREMENTS_SERVER_INTRO =
 export const PLAYER_STEPS = [
   {
     title: "Own the game",
-    body: `OPEN//77 requires your own legal copy of Cyberpunk 2077, at build ${GAME_BUILD}, with ${GAME_EXPANSION}. The platform never distributes game content — it builds on the game you bought. Pirated or cracked copies are not supported and not welcome.`,
+    body: `OPEN//77 requires your own legal copy of Cyberpunk 2077, at build ${GAME_BUILD}, with ${GAME_EXPANSION}. The platform never distributes game content. It builds on the game you bought. Pirated or cracked copies are not supported and not welcome.`,
   },
   {
     title: "Install the client",
@@ -68,7 +68,7 @@ export const PLAYER_STEPS = [
 export const SERVER_POINTS = [
   {
     title: "Persistent worlds",
-    body: "The world keeps running when you log off. Economies, factions and stories continue — the server remembers.",
+    body: "The world keeps running when you log off. Economies, factions and stories continue. The server remembers.",
   },
   {
     title: "Authoritative state",
@@ -183,7 +183,7 @@ export const ROADMAP = [
   {
     stage: "BEYOND",
     title: "The ecosystem",
-    body: "Featured communities, server reputation, resource sharing between servers — the parts that only matter once real worlds exist. The community will shape these.",
+    body: "Featured communities, server reputation, resource sharing between servers: the parts that only matter once real worlds exist. The community will shape these.",
   },
 ];
 
@@ -198,7 +198,7 @@ export const FAQ = [
   {
     question: "Is OPEN//77 official? Is CD PROJEKT RED involved?",
     answer:
-      "No. OPEN//77 is an independent community project. It is not affiliated with, endorsed by, or supported by CD PROJEKT RED. Cyberpunk 2077 is the property of CD PROJEKT S.A. — we build alongside the game, not on their behalf.",
+      "No. OPEN//77 is an independent community project. It is not affiliated with, endorsed by, or supported by CD PROJEKT RED. Cyberpunk 2077 is the property of CD PROJEKT S.A. We build alongside the game, not on their behalf.",
   },
   {
     question: "Do I need to own Cyberpunk 2077?",
@@ -213,7 +213,7 @@ export const FAQ = [
   {
     question: `Is ${GAME_EXPANSION} required, or only recommended?`,
     answer:
-      `Required. The expansion ships as the EP1 content set, and the world the client loads when you connect to a server is an EP1 save — without the expansion installed there is nothing for it to load. The base game on its own is not enough.`,
+      `Required. The expansion ships as the EP1 content set, and the world the client loads when you connect to a server is an EP1 save. Without the expansion installed there is nothing for it to load. The base game on its own is not enough.`,
   },
   {
     question: "Do I need Cyberpunk 2077 to host a server?",
@@ -223,7 +223,7 @@ export const FAQ = [
   {
     question: "So is this one big multiplayer server?",
     answer:
-      "No — and this is the core idea. OPEN//77 is the platform underneath many servers. Communities run their own independent worlds with their own game modes and rules; the client lets you browse and join them. If FiveM's model for GTA V is familiar, that is the shape.",
+      "No, and this is the core idea. OPEN//77 is the platform underneath many servers. Communities run their own independent worlds with their own game modes and rules; the client lets you browse and join them. If FiveM's model for GTA V is familiar, that is the shape.",
   },
   {
     question: "Can I play it right now?",
@@ -265,24 +265,24 @@ export function platformToMarkdown(): string {
 
   lines.push("## How it works (for players)", "");
   PLAYER_STEPS.forEach((step, index) => {
-    lines.push(`${index + 1}. **${step.title}** — ${step.body}`);
+    lines.push(`${index + 1}. **${step.title}**: ${step.body}`);
   });
   lines.push("");
 
   lines.push("## Requirements", "", REQUIREMENTS_INTRO, "");
   lines.push("### To play", "");
-  for (const item of PLAYER_REQUIREMENTS) lines.push(`- **${item.label}** — ${item.body}`);
+  for (const item of PLAYER_REQUIREMENTS) lines.push(`- **${item.label}**: ${item.body}`);
   lines.push("", "### To host a server", "", REQUIREMENTS_SERVER_INTRO, "");
-  for (const item of SERVER_REQUIREMENTS) lines.push(`- **${item.label}** — ${item.body}`);
+  for (const item of SERVER_REQUIREMENTS) lines.push(`- **${item.label}**: ${item.body}`);
   lines.push("");
 
   lines.push("## Dedicated servers", "", DEDICATED_INTRO, "");
-  for (const point of SERVER_POINTS) lines.push(`- **${point.title}** — ${point.body}`);
+  for (const point of SERVER_POINTS) lines.push(`- **${point.title}**: ${point.body}`);
   lines.push("");
 
   lines.push("## Resources and scripting", "", RESOURCES_INTRO, "");
   lines.push("Documented systems:", "");
-  for (const item of SCRIPTABLE) lines.push(`- **${item.label}** (${item.href}) — ${item.body}`);
+  for (const item of SCRIPTABLE) lines.push(`- **${item.label}** (${item.href}): ${item.body}`);
   lines.push("", "Resource manifest (`resources/hello/open77.lua`):", "");
   lines.push("```lua", MANIFEST_SAMPLE, "```", "");
   lines.push("Server entry point (`resources/hello/server/main.lua`):", "");
@@ -291,7 +291,7 @@ export function platformToMarkdown(): string {
 
   lines.push("## Roadmap", "", ROADMAP_INTRO, "");
   for (const item of ROADMAP) {
-    lines.push(`### ${item.stage}${item.chip ? ` (${item.chip})` : ""} — ${item.title}`, "", item.body, "");
+    lines.push(`### ${item.stage}${item.chip ? ` (${item.chip})` : ""}: ${item.title}`, "", item.body, "");
   }
 
   lines.push("## FAQ", "");

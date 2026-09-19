@@ -176,7 +176,7 @@ export function ReleasesPanel() {
           <p className="adm-footnote">
             Enforcement is set in the master config (<span className="adm-mono">MasterOptions</span>) and shown
             read-only here. Revoked builds are always refused; unknown-build lock-down is the future full
-            posture. Enforcement is fast-revocation + forced-upgrade, not tamper-proofing — a patched client can
+            posture. Enforcement is fast-revocation + forced-upgrade, not tamper-proofing. A patched client can
             lie about its own hash.
           </p>
         </section>
@@ -380,9 +380,9 @@ function ModHistory({
         </div>
       )}
       <p className="adm-footnote">
-        Rollback re-serves a prior manifest&apos;s exact signed bytes as the live one — the launcher re-syncs the
+        Rollback re-serves a prior manifest&apos;s exact signed bytes as the live one. The launcher re-syncs the
         mod to that version&apos;s files on its next check (those files already live on the CDN). It does{" "}
-        <strong>not</strong> move the launcher or server <span className="adm-mono">latest.json</span> pointers —
+        <strong>not</strong> move the launcher or server <span className="adm-mono">latest.json</span> pointers;
         those live on the CDN box and are rolled back there.
       </p>
     </section>

@@ -24,7 +24,7 @@ export async function generateMetadata({
     ...pageMetadata({
       title: "Server details",
       description:
-        "Live details for an OPEN//77 community server — players, region, version and how to connect, straight from the master directory.",
+        "Live details for an OPEN//77 community server: players, region, version and how to connect, straight from the master directory.",
       path: `/servers/${id}`,
     }),
     robots: { index: false, follow: false },

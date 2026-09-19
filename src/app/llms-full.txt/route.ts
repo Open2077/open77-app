@@ -24,7 +24,7 @@ export async function GET() {
 
   const documents: string[] = [
     [
-      `# ${site.name} — complete documentation`,
+      `# ${site.name}: complete documentation`,
       "",
       `> ${site.summary}`,
       "",

@@ -54,14 +54,14 @@ export const SCRIPT_PILLARS = [
   {
     tag: "LUA 5.4",
     title: "One language, two runtimes",
-    body: "Client scripts run inside the game; server scripts own the authoritative world. Each resource gets its own isolated Lua VM — and hot reload: save the file, it is live.",
+    body: "Client scripts run inside the game; server scripts own the authoritative world. Each resource gets its own isolated Lua VM, and hot reload: save the file, it is live.",
     href: "/docs/server-resources",
     link: "Resource model",
   },
   {
     tag: "REAL GAME APIS",
     title: "Drive the actual engine",
-    body: "Vehicles, blips, NPCs, weather, loot, interactions, notifications — the same permission-gated natives OPEN//77's own resources are built on.",
+    body: "Vehicles, blips, NPCs, weather, loot, interactions, notifications: the same permission-gated natives OPEN//77's own resources are built on.",
     href: "/docs/api",
     link: "Lua API reference",
   },

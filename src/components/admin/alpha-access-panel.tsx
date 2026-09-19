@@ -128,12 +128,12 @@ export function AlphaAccessPanel() {
       setData((current) => (current ? replaceRow(current, row) : current));
       const reason =
         err instanceof MasterApiError && err.code === "user_not_found"
-          ? "that account no longer exists — reload the list"
+          ? "that account no longer exists; reload the list"
           : err instanceof MasterApiError
             ? err.message
             : "the request failed";
       setError(
-        `${granted ? "Grant" : "Revoke"} failed for ${row.email} — ${reason}. Nothing was changed.`,
+        `${granted ? "Grant" : "Revoke"} failed for ${row.email}: ${reason}. Nothing was changed.`,
       );
     } finally {
       setPending((current) => current.filter((id) => id !== row.accountId));
@@ -263,7 +263,7 @@ export function AlphaAccessPanel() {
       <p className="adm-footnote">
         Alpha access is an entitlement, not a role: it lets somebody join a world and grants no
         staff powers. Administrators hold it implicitly through their role, so those rows show
-        access with no granter — granting one explicitly anyway is what survives a later demotion,
+        access with no granter. Granting one explicitly anyway is what survives a later demotion,
         and revoking one only clears that explicit record while the role keeps them in. Both
         actions are idempotent and land in the audit log.
       </p>
@@ -289,7 +289,7 @@ function GateBanner({ required }: { required: boolean }) {
     <p className="ac-notice adm-gate is-off" role="status">
       <InfoIcon />
       <span>
-        <strong>The alpha gate is off — grants decide nothing today.</strong> Every signed-in
+        <strong>The alpha gate is off, so grants decide nothing today.</strong> Every signed-in
         account can join a world regardless of this list. Grants made here are still recorded and
         take effect the moment the gate is switched on in the master configuration, but granting
         one now lets nobody in who was not already in.

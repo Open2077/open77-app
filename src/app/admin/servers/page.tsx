@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
   ...pageMetadata({
-    title: "Admin — Servers",
+    title: "Admin · Servers",
     description: "OPEN//77 operations console: live servers, licenses and owners.",
     path: "/admin/servers",
   }),

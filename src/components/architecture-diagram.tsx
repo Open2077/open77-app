@@ -90,7 +90,7 @@ export function ArchitectureDiagram() {
         each player runs their own copy of Cyberpunk 2077
       </text>
       <text x="210" y="436" textAnchor="middle" className="dg-caption dg-caption-dim">
-        the server persists the world — players come and go
+        the server persists the world. Players come and go
       </text>
     </svg>
   );

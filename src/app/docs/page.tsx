@@ -38,7 +38,7 @@ export default async function DocsHomePage() {
 
           <div className="docs-hub-content">
             <section id="start-here">
-              <div className="docs-hub-section-heading"><div><p className="docs-kicker">START HERE</p><h2>Start here.</h2><p>One guide for each way in — playing, hosting, building — and the place to ask when a guide is missing.</p></div><Link href="#explore">Browse all guides <ArrowRightIcon size={15} /></Link></div>
+              <div className="docs-hub-section-heading"><div><p className="docs-kicker">START HERE</p><h2>Start here.</h2><p>One guide for each way in (playing, hosting, building) and the place to ask when a guide is missing.</p></div><Link href="#explore">Browse all guides <ArrowRightIcon size={15} /></Link></div>
               <div className="docs-start-grid">
                 {starts.map(({ icon: Icon, title, description, href, action, tone }, index) => (
                   <Link href={href} key={title} className="docs-start-card" data-tone={tone} {...(href.startsWith("https:") ? { target: "_blank", rel: "noreferrer noopener" } : {})}>
@@ -99,7 +99,7 @@ export default async function DocsHomePage() {
                 </div>
               ))}
             </section>
-            <div className="docs-hub-bottom"><PeopleIcon size={19} /><p>OPEN//77 is an unofficial, independent community project — unaffiliated with CD PROJEKT RED.</p><Link href="/docs/launcher">Just here to play? The launcher guide <ArrowRightIcon size={15} /></Link></div>
+            <div className="docs-hub-bottom"><PeopleIcon size={19} /><p>OPEN//77 is an unofficial, independent community project, unaffiliated with CD PROJEKT RED.</p><Link href="/docs/launcher">Just here to play? The launcher guide <ArrowRightIcon size={15} /></Link></div>
           </div>
         </div>
       </DocsShell>

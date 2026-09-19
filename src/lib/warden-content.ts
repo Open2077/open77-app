@@ -58,7 +58,7 @@ export const PIN_STEPS = [
   {
     num: "03",
     title: "Create your admin account",
-    body: "Set your admin username and password. This becomes the owner account for the panel — full access to everything Warden can do. The setup PIN is spent and will not work again.",
+    body: "Set your admin username and password. This becomes the owner account for the panel, with full access to everything Warden can do. The setup PIN is spent and will not work again.",
   },
   {
     num: "04",
@@ -74,12 +74,12 @@ export const CAPABILITIES = [
   {
     icon: "console",
     title: "Live console & commands",
-    body: "Watch the server's console stream in real time, and type any server command straight into it — the same commands you would run at the machine, from wherever you are. It is your primary window into what the server is doing.",
+    body: "Watch the server's console stream in real time, and type any server command straight into it: the same commands you would run at the machine, from wherever you are. It is your primary window into what the server is doing.",
   },
   {
     icon: "reload",
     title: "Hot-reload Lua resources",
-    body: "Edit a resource, then reload it from the panel and the server picks up the change on the spot — no restart, no dropping the players who are connected. Start, stop and restart individual resources to iterate on a game mode while it is live.",
+    body: "Edit a resource, then reload it from the panel and the server picks up the change on the spot. No restart, no dropping the players who are connected. Start, stop and restart individual resources to iterate on a game mode while it is live.",
   },
   {
     icon: "players",
@@ -89,17 +89,17 @@ export const CAPABILITIES = [
   {
     icon: "announce",
     title: "Announcements",
-    body: "Push a message to everyone on the server at once — a scheduled restart warning, an event kickoff, or a rules reminder — without joining the game yourself.",
+    body: "Push a message to everyone on the server at once (a scheduled restart warning, an event kickoff, or a rules reminder) without joining the game yourself.",
   },
   {
     icon: "config",
     title: "Config & identity",
-    body: "Edit the server's configuration and identity — its name, visibility and public presentation — from the panel, so tuning the server does not mean editing files over SSH and restarting. Upload the server's icon and banner here too: the panel checks the size and shape before it accepts them, and a new image goes live without a restart.",
+    body: "Edit the server's configuration and identity (its name, visibility and public presentation) from the panel, so tuning the server does not mean editing files over SSH and restarting. Upload the server's icon and banner here too: the panel checks the size and shape before it accepts them, and a new image goes live without a restart.",
   },
   {
     icon: "roles",
     title: "Access & roles",
-    body: "Add more admins and give each one a role, so your staff get scoped access — a moderator who can kick and ban without being able to rewrite the config, for instance. You decide who can do what.",
+    body: "Add more admins and give each one a role, so your staff get scoped access: a moderator who can kick and ban without being able to rewrite the config, for instance. You decide who can do what.",
   },
 ] as const;
 
@@ -133,16 +133,16 @@ export function wardenToMarkdown(): string {
 
   lines.push("## First run: the setup PIN", "", PIN_INTRO, "");
   for (const step of PIN_STEPS) {
-    lines.push(`${step.num}. **${step.title}** — ${step.body}`);
+    lines.push(`${step.num}. **${step.title}**: ${step.body}`);
   }
   lines.push("");
 
   lines.push("## What you can do", "", CAPABILITIES_INTRO, "");
-  for (const cap of CAPABILITIES) lines.push(`- **${cap.title}** — ${cap.body}`);
+  for (const cap of CAPABILITIES) lines.push(`- **${cap.title}**: ${cap.body}`);
   lines.push("");
 
   lines.push("## Keeping Warden secure", "", SECURITY_INTRO, "");
-  for (const point of SECURITY_POINTS) lines.push(`- **${point.label}** — ${point.body}`);
+  for (const point of SECURITY_POINTS) lines.push(`- **${point.label}**: ${point.body}`);
   lines.push("");
 
   return `${lines.join("\n")}\n`;

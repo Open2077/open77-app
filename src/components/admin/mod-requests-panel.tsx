@@ -222,7 +222,7 @@ export function ModRequestsPanel() {
       {data && data.length === 0 ? (
         <p className="adm-empty">
           {filter === "pending"
-            ? "Nothing is waiting on us — every submitted hash has a decision."
+            ? "Nothing is waiting on us. Every submitted hash has a decision."
             : filter === "all"
               ? "No server owner has asked for a review yet."
               : `No ${filter} request.`}
@@ -263,7 +263,7 @@ export function ModRequestsPanel() {
 
       <p className="adm-footnote">
         Owners host their own bytes; a request asks only for our verdict on them. Approving writes a
-        whitelist entry and lifts the capability cap for that one hash — check the source page and
+        whitelist entry and lifts the capability cap for that one hash. Check the source page and
         the licence before you do, because approval is what lets executable content run.
       </p>
     </section>
@@ -304,7 +304,7 @@ function RequestRow({
             {hostOf(source)}
           </a>
         ) : row.sourceUrl ? (
-          <span className="adm-mono adm-faint" title="Not an http(s) link — not rendered as one">
+          <span className="adm-mono adm-faint" title="Not an http(s) link, so it is not rendered as one">
             {row.sourceUrl}
           </span>
         ) : (
@@ -404,7 +404,7 @@ function DecisionForm({
             className="ac-input"
             value={reason}
             onChange={(event) => onReason(event.target.value)}
-            placeholder="Written for them — say what would make this reviewable"
+            placeholder="Written for them: say what would make this reviewable"
             maxLength={512}
             required
           />
@@ -431,7 +431,7 @@ function DecisionForm({
         <InfoIcon />
         <span>
           Approving <strong>{request.displayName}</strong> records{" "}
-          <strong>safety: verified</strong> for that one hash — you are saying you read these exact
+          <strong>safety: verified</strong> for that one hash. You are saying you read these exact
           bytes.{" "}
           {request.contentClass === "executable"
             ? "The importer found executable content in this package, so approval is what lets it run at all."
@@ -440,7 +440,7 @@ function DecisionForm({
         </span>
       </p>
       <label className="ac-label">
-        Redistribution — the licence
+        Redistribution: the licence
         <select
           className="adm-select"
           value={redistribution}
@@ -469,7 +469,7 @@ function DecisionForm({
       </label>
       <div className="ac-form-actions adm-form-span" style={{ margin: 0 }}>
         <button className="btn btn-small btn-primary" type="submit" disabled={busy}>
-          {busy ? "Working…" : "Approve — write the attestation"}
+          {busy ? "Working…" : "Approve and write the attestation"}
         </button>
         <button className="btn btn-small btn-ghost" type="button" onClick={onCancel}>
           Cancel

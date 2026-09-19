@@ -23,21 +23,21 @@ export const ONBOARDING_STEPS = [
   {
     num: "01",
     title: "Create your account",
-    body: "Register on open2077.net with an e-mail and password, then verify your e-mail. One account covers everything — the server browser, your license keys, and your game identities. E-mail verification is required before you can create a key.",
+    body: "Register on open2077.net with an e-mail and password, then verify your e-mail. One account covers everything: the server browser, your license keys, and your game identities. E-mail verification is required before you can create a key.",
     href: "/account",
     linkText: "Go to your account",
   },
   {
     num: "02",
     title: "Mint a license key",
-    body: "In your account, open Server license keys and create one. Give it a label so you can tell your servers apart. The key is shown once — copy it now; the platform only stores a fingerprint and can never show it again.",
+    body: "In your account, open Server license keys and create one. Give it a label so you can tell your servers apart. The key is shown once. Copy it now; the platform only stores a fingerprint and can never show it again.",
     href: "/account/keys",
     linkText: "Open the keymaster",
   },
   {
     num: "03",
     title: "Give the key to your server",
-    body: "Point your server config at the key — through the OP77_LICENSE_KEY environment variable (recommended) or the masterServer.licenseKey field. Keep the key out of any file you commit or share.",
+    body: "Point your server config at the key, through the OP77_LICENSE_KEY environment variable (recommended) or the masterServer.licenseKey field. Keep the key out of any file you commit or share.",
     href: "#linking-the-key",
     linkText: "How to link the key",
   },
@@ -56,7 +56,7 @@ export const KEY_SHAPE =
 export const KEY_FACTS = [
   {
     label: "Shown once",
-    body: "The full key is displayed only at creation. The platform stores a one-way fingerprint, so support can never recover it — losing it means revoke and replace.",
+    body: "The full key is displayed only at creation. The platform stores a one-way fingerprint, so support can never recover it. Losing it means revoke and replace.",
   },
   {
     label: "One key, many servers",
@@ -68,7 +68,7 @@ export const KEY_FACTS = [
   },
   {
     label: "Revocable at any time",
-    body: "Revoking a key immediately cuts off every server enrolled with it — the master stops authorising them and they leave the browser.",
+    body: "Revoking a key immediately cuts off every server enrolled with it. The master stops authorising them and they leave the browser.",
   },
 ] as const;
 
@@ -108,7 +108,7 @@ export const AUTH_INTRO =
 export const AUTH_STEPS = [
   {
     title: "The key is verified",
-    body: "The master looks up your key. An unknown key, a revoked key, or a suspended owner is refused with a single error — the server logs \"Master refused the platform license key…\" and does not appear in the browser.",
+    body: "The master looks up your key. An unknown key, a revoked key, or a suspended owner is refused with a single error: the server logs \"Master refused the platform license key…\" and does not appear in the browser.",
   },
   {
     title: "The server is bound to your license",
@@ -116,7 +116,7 @@ export const AUTH_STEPS = [
   },
   {
     title: "It is issued a run lease",
-    body: "The master hands the server a short-lived, signed run lease — renewed every heartbeat — that stands as proof the server is licensed and current. Stop heartbeating, or lose the license, and the lease is not renewed.",
+    body: "The master hands the server a short-lived, signed run lease, renewed every heartbeat, that stands as proof the server is licensed and current. Stop heartbeating, or lose the license, and the lease is not renewed.",
   },
   {
     title: "Revocation takes effect immediately",
@@ -138,12 +138,12 @@ export function licensingToMarkdown(): string {
 
   lines.push("## From zero to a listed server", "");
   for (const step of ONBOARDING_STEPS) {
-    lines.push(`${step.num}. **${step.title}** — ${step.body}`);
+    lines.push(`${step.num}. **${step.title}**: ${step.body}`);
   }
   lines.push("");
 
   lines.push("## Your license key", "", KEY_SHAPE, "");
-  for (const fact of KEY_FACTS) lines.push(`- **${fact.label}** — ${fact.body}`);
+  for (const fact of KEY_FACTS) lines.push(`- **${fact.label}**: ${fact.body}`);
   lines.push("");
 
   lines.push("## Linking the key to your server", "", LINKING_INTRO, "");
@@ -153,7 +153,7 @@ export function licensingToMarkdown(): string {
 
   lines.push("## How the master authorises your server", "", AUTH_INTRO, "");
   AUTH_STEPS.forEach((step, index) => {
-    lines.push(`${index + 1}. **${step.title}** — ${step.body}`);
+    lines.push(`${index + 1}. **${step.title}**: ${step.body}`);
   });
   lines.push("", `> ${AUTH_NOTE}`, "");
 

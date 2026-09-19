@@ -445,7 +445,7 @@ export function apiEntryToMarkdown(entry: ApiEntry, headingLevel = 2): string {
   const { label, hint } = apiSetLabel(entry.api_set);
 
   lines.push("```lua", entry.signature, "```", "");
-  lines.push(`\`${label}\`${hint ? ` — ${hint}` : ""}`, "");
+  lines.push(`\`${label}\`${hint ? `: ${hint}` : ""}`, "");
   if (entry.summary) lines.push(entry.summary, "");
   if (entry.description) lines.push(entry.description, "");
 
@@ -494,7 +494,7 @@ export function apiEntryToMarkdown(entry: ApiEntry, headingLevel = 2): string {
 export function apiNamespaceToMarkdown(namespace: ApiNamespace, headingLevel = 1): string {
   const meta = RUNTIME_META[namespace.runtime];
   const lines: string[] = [
-    `${"#".repeat(headingLevel)} ${namespace.label} — ${meta.label.toLowerCase()} runtime`,
+    `${"#".repeat(headingLevel)} ${namespace.label} (${meta.label.toLowerCase()} runtime)`,
     "",
     meta.blurb,
     "",

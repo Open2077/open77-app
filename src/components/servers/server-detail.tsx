@@ -110,7 +110,7 @@ export function ServerDetail({ id }: { id: string }) {
         </p>
         <p className="sb-offline-body">
           This server is not in the live directory right now. It may have gone offline, or the link
-          is out of date — servers appear here only while they are up and beating.
+          is out of date. Servers appear here only while they are up and beating.
         </p>
         <div className="sb-offline-ctas">
           <button className="btn btn-ghost" type="button" onClick={retry}>

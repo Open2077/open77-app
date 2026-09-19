@@ -20,7 +20,7 @@ export function DownloadAction({ href, label }: { href: string; label: string })
         {label}{requested ? <CheckIcon size={19} /> : <DownloadIcon size={19} />}
       </a>
       <p className={styles.downloadFeedback} role="status">
-        {requested ? "Download requested. Check your browser’s downloads, or click again to retry." : "Straight from the official OPEN//77 CDN — the only place we publish it."}
+        {requested ? "Download requested. Check your browser’s downloads, or click again to retry." : "Straight from the official OPEN//77 CDN, the only place we publish it."}
       </p>
     </div>
   );

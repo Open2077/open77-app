@@ -76,7 +76,7 @@ export function EmailVerifier() {
         <div className="ac-success" role="status">
           <CheckIcon size={17} />
           <span>
-            <strong>E-mail verified.</strong> Your address is confirmed — you can now sign in and
+            <strong>E-mail verified.</strong> Your address is confirmed. You can now sign in and
             create server license keys.
           </span>
         </div>

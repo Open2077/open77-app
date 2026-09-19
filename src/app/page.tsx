@@ -23,21 +23,21 @@ const HERO_FACTS = [
 
 const DESTINATIONS = [
   { href: "/servers", title: "Play Cyberpunk together.", label: "FOR PLAYERS", body: "Community servers turn Night City into multiplayer worlds, each with its own rules and its own experience.", image: "/assets/home/play-v2.webp", icon: PeopleIcon, number: "01" },
-  { href: "/create", title: "Create your own server.", label: "FOR SERVER CREATORS", body: "A dedicated server you operate — your rules, your mods, and gameplay you design.", image: "/assets/home/servers-v2.webp", icon: ServerRackIcon, number: "02" },
+  { href: "/create", title: "Create your own server.", label: "FOR SERVER CREATORS", body: "A dedicated server you operate, with your rules, your mods, and gameplay you design.", image: "/assets/home/servers-v2.webp", icon: ServerRackIcon, number: "02" },
   { href: "/workshop", title: "Share what you build.", label: "WORKSHOP", body: "Scripts, gamemodes, maps and interfaces made by the community, free to download and ready for your world.", image: "/assets/home/worlds-v2.webp", icon: GlobeIcon, number: "03" },
-  { href: "/docs", title: "Script your own Night City.", label: "FOR DEVELOPERS", body: "Lua 5.4, real game APIs and web interfaces — the complete documentation and the Lua API reference.", image: "/assets/home/build-v2.webp", icon: CodeIcon, number: "04" },
+  { href: "/docs", title: "Script your own Night City.", label: "FOR DEVELOPERS", body: "Lua 5.4, real game APIs and web interfaces. The complete documentation and the Lua API reference.", image: "/assets/home/build-v2.webp", icon: CodeIcon, number: "04" },
 ];
 
 const WORLDS = [
   { title: "Live another life.", tag: "ROLEPLAY", href: "/servers?mode=Roleplay", image: "/assets/exp-roleplay.jpg", body: "Strict roleplay cities with their own economies, factions, jobs and staff." },
   { title: "Own the streets.", tag: "RACING", href: "/servers?mode=Racing", image: "/assets/exp-racing.jpg", body: "Racing leagues, late-night meets and a city full of open roads." },
-  { title: "Rewrite the rules.", tag: "CUSTOM WORLDS", href: "/servers", image: "/assets/exp-combat.jpg", body: "PvP, survival, freeroam — or a game mode nobody has seen yet." },
+  { title: "Rewrite the rules.", tag: "CUSTOM WORLDS", href: "/servers", image: "/assets/exp-combat.jpg", body: "PvP, survival, freeroam, or a game mode nobody has seen yet." },
 ];
 
 const CREATE_POINTS = [
-  { title: "Your own dedicated server", body: "A persistent world you operate — on your hardware or a rented machine." },
+  { title: "Your own dedicated server", body: "A persistent world you operate, on your hardware or a rented machine." },
   { title: "Custom gameplay", body: "Build anything from a strict roleplay city to a racing league to a game mode nobody has seen yet." },
-  { title: "Your rules, your community", body: "Whitelists, moderation, staff, identity — your server page is your front door." },
+  { title: "Your rules, your community", body: "Whitelists, moderation, staff, identity. Your server page is your front door." },
 ];
 
 const PILLAR_ICONS = { "LUA 5.4": CodeIcon, "REAL GAME APIS": PlugIcon, "WEB INTERFACES": GlobeIcon } as const;
@@ -68,12 +68,12 @@ export default async function HomePage() {
             <div className={styles.heroCopy}>
               <p className={styles.eyebrow}><span aria-hidden="true">{"//"}</span> {site.stage} · ACTIVE</p>
               <h1 id="home-title">Multiplayer for<br />Cyberpunk <em>2077</em><span className={styles.titleDot}>.</span></h1>
-              <p className={styles.intro}>Play Cyberpunk&nbsp;2077 online on community servers — or create your own server and your own multiplayer experience. Everyone with Alpha access can download the server and start building now.</p>
+              <p className={styles.intro}>Play Cyberpunk&nbsp;2077 online on community servers, or create your own server and your own multiplayer experience. Everyone with Alpha access can download the server and start building now.</p>
               <div className={styles.actions}>
                 <Link className={styles.primary} href="/download">Download launcher<ArrowRightIcon size={20} /></Link>
                 <Link className={styles.secondary} href="/create">Build your server<ArrowRightIcon size={18} /></Link>
               </div>
-              <Link className={styles.alphaLink} href="/docs/alpha-access"><span aria-hidden="true" />ALPHA ACCESS<span className={styles.alphaText}>Play, host and build — how to get in.</span><ArrowRightIcon size={13} /></Link>
+              <Link className={styles.alphaLink} href="/docs/alpha-access"><span aria-hidden="true" />ALPHA ACCESS<span className={styles.alphaText}>Play, host and build. How to get in.</span><ArrowRightIcon size={13} /></Link>
             </div>
             <span className={styles.sceneNote} aria-hidden="true">ONE CITY,<br />MANY WORLDS.<i /></span>
             <a className={styles.scrollHint} href="#discover"><ArrowDownIcon size={30} /><span>SCROLL<br />TO EXPLORE</span></a>
@@ -111,14 +111,14 @@ export default async function HomePage() {
               <div><h3>{world.title}</h3><p>{world.body}</p><span className={styles.worldArrow}><ArrowRightIcon size={21} /></span></div>
             </Link>)}
           </div>
-          <p className={styles.worldNote}>One client takes you to every community server — resources download automatically when you join a world.</p>
+          <p className={styles.worldNote}>One client takes you to every community server. Resources download automatically when you join a world.</p>
         </section>
 
         <section className={styles.creator} id="lua" aria-labelledby="creator-title">
           <div className={styles.creatorCopy}>
             <p className={styles.eyebrow}><span aria-hidden="true">{"//"}</span> FOR DEVELOPERS</p>
             <h2 id="creator-title">Script your own<br /><em>Night City.</em></h2>
-            <p>Gameplay on an OPEN//77 server is not configured — it is scripted. A resource is a small Lua&nbsp;5.4 package your server loads, hot-reloads and streams to every player who joins. This is the entire <code>/ride</code> command, for real.</p>
+            <p>Gameplay on an OPEN//77 server is not configured. It is scripted. A resource is a small Lua&nbsp;5.4 package your server loads, hot-reloads and streams to every player who joins. This is the entire <code>/ride</code> command, for real.</p>
             <ul className={styles.pillars}>
               {SCRIPT_PILLARS.map((pillar) => {
                 const Icon = PILLAR_ICONS[pillar.tag];
@@ -153,7 +153,7 @@ export default async function HomePage() {
           <div>
             <p className={styles.eyebrow}><span aria-hidden="true">{"//"}</span> FOR SERVER CREATORS</p>
             <h2 id="create-title">Create your<br /><em>own server.</em></h2>
-            <p>Run a dedicated server that stays online for your community — with your rules, your mods, and gameplay you design. Everyone with Alpha access can download it and start building now. No separate developer application.</p>
+            <p>Run a dedicated server that stays online for your community, with your rules, your mods, and gameplay you design. Everyone with Alpha access can download it and start building now. No separate developer application.</p>
             <ul className={styles.points}>
               {CREATE_POINTS.map((point) => (
                 <li key={point.title}><strong>{point.title}</strong><p>{point.body}</p></li>

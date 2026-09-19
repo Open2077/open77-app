@@ -83,7 +83,7 @@ export default async function DevblogPostPage({ params }: { params: Promise<{ sl
               <div>
                 <p className="blog-kicker">FOLLOW THE BUILD</p>
                 <h2>A post like this lands every working day.</h2>
-                <p>The short versions hit Discord first — and it is where you share Alpha feedback and reproducible issues with the team.</p>
+                <p>The short versions hit Discord first. It is also where you share Alpha feedback and reproducible issues with the team.</p>
               </div>
               <div className="blog-cta-actions">
                 {site.links.discord ? (

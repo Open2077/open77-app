@@ -111,7 +111,7 @@ export function BansPanel() {
               value={scope}
               onChange={(event) => setScope(event.target.value as BanScope)}
             >
-              <option value="global">Global — whole platform</option>
+              <option value="global">Global: whole platform</option>
               <option value="server">Single server</option>
             </select>
           </label>

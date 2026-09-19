@@ -56,7 +56,7 @@ export function ApiSearch({ items }: { items: ApiSearchItem[] }) {
         <SearchIcon />
         <input
           type="search"
-          placeholder="Filter functions — try camera, vehicles, TriggerServerEvent…"
+          placeholder="Filter functions: try camera, vehicles, TriggerServerEvent…"
           aria-label="Filter API functions"
           value={query}
           onChange={(event) => setQuery(event.target.value)}

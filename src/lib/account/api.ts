@@ -124,7 +124,7 @@ export async function masterCall<T>(
   if (response.status === 429) {
     throw new MasterApiError(
       "rate_limited",
-      "Too many attempts — wait a minute and try again.",
+      "Too many attempts. Wait a minute and try again.",
       429,
     );
   }

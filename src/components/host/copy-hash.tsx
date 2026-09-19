@@ -28,7 +28,7 @@ export function CopyHash({ value }: { value: string }) {
     <button
       type="button"
       className="host-hash host-hash-btn"
-      title={`Copy SHA-256 — ${value}`}
+      title={`Copy SHA-256: ${value}`}
       aria-label={`Copy SHA-256 ${value}`}
       onClick={() => {
         navigator.clipboard

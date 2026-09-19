@@ -127,7 +127,7 @@ export function LauncherConsent() {
             Sign in to authorize your launcher
           </h2>
           <p>
-            Sign in — or create an account — and you can connect the OPEN//77 launcher on this
+            Sign in, or create an account, and you can connect the OPEN//77 launcher on this
             device to your platform account.
           </p>
         </section>
@@ -146,7 +146,7 @@ export function LauncherConsent() {
             Launcher authorized.
           </h2>
           <p>
-            You can return to the OPEN//77 launcher — it&apos;s signing you in now. You may close
+            You can return to the OPEN//77 launcher. It&apos;s signing you in now. You may close
             this tab.
           </p>
         </div>
@@ -179,7 +179,7 @@ export function LauncherConsent() {
         ) : null}
       </dl>
       <p className="ac-hint">
-        The launcher receives a short-lived, single-use code over a local connection — never your
+        The launcher receives a short-lived, single-use code over a local connection, never your
         password. Only authorize a launcher you started yourself.
       </p>
       {error ? (

@@ -13,7 +13,7 @@ import { withCommunityImage } from "@/lib/community/metadata";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = await getProject(slug).catch(() => null);
-  return project ? withCommunityImage(pageMetadata({ title: `${project.content.title} — versions`, description: `Release history and installation details for ${project.content.title}.`, path: `/workshop/${project.slug}/versions` }), project.content.media?.[0]?.mediaId, project.content.media?.[0]?.altText ?? project.content.title) :
+  return project ? withCommunityImage(pageMetadata({ title: `${project.content.title} · versions`, description: `Release history and installation details for ${project.content.title}.`, path: `/workshop/${project.slug}/versions` }), project.content.media?.[0]?.mediaId, project.content.media?.[0]?.altText ?? project.content.title) :
     { title: "Versions unavailable", robots: { index: false, follow: false } };
 }
 

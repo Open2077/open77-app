@@ -33,14 +33,14 @@ export const HOSTING_STEPS = [
   {
     num: "02",
     title: "Mint a license key",
-    body: "In your account, open the keymaster and create a license key. It ties the server to your account and is shown once — copy it now, because the platform only stores a fingerprint and can never show it again.",
+    body: "In your account, open the keymaster and create a license key. It ties the server to your account and is shown once. Copy it now, because the platform only stores a fingerprint and can never show it again.",
     href: "/account/keys",
     linkText: "Open the keymaster",
   },
   {
     num: "03",
     title: "Unpack and run the first-run setup",
-    body: "Unzip (Windows) or untar (Linux) into a folder of your choice. The first time you launch with no server.jsonc present, the server opens a first-run setup — a small wizard in your browser that walks you through naming the server, pasting your license key and picking visibility, then writes the config for you.",
+    body: "Unzip (Windows) or untar (Linux) into a folder of your choice. The first time you launch with no server.jsonc present, the server opens a first-run setup, a small wizard in your browser that walks you through naming the server, pasting your license key and picking visibility, then writes the config for you.",
     href: "#first-run",
     linkText: "About first-run setup",
   },
@@ -60,7 +60,7 @@ export const HOSTING_STEPS = [
   },
   {
     num: "06",
-    title: "Run it — and it appears automatically",
+    title: "Run it, and it appears automatically",
     body: "Start the server. It enrols, registers and begins heartbeating, and within a heartbeat it is live in the launcher and on the public server list under your account. Players can join straight away.",
     href: "#appears",
     linkText: "What happens on boot",
@@ -68,7 +68,7 @@ export const HOSTING_STEPS = [
 ] as const;
 
 export const NEED_INTRO =
-  "The host is deliberately light. You do not install Cyberpunk 2077, REDengine or any game content on the server machine — the server ships everything it needs.";
+  "The host is deliberately light. You do not install Cyberpunk 2077, REDengine or any game content on the server machine. The server ships everything it needs.";
 
 export const NEED_POINTS = [
   {
@@ -81,7 +81,7 @@ export const NEED_POINTS = [
   },
   {
     label: "A license key",
-    body: "One op77_live_ key minted in the keymaster. No key means no enrolment and no listing — anonymous servers are not part of the platform.",
+    body: "One op77_live_ key minted in the keymaster. No key means no enrolment and no listing. Anonymous servers are not part of the platform.",
   },
 ] as const;
 
@@ -96,13 +96,13 @@ export const BUILD_ROWS = [
   },
   {
     os: "Linux (x64, Debian)",
-    archive: ".tar.gz — self-contained",
+    archive: ".tar.gz, self-contained",
     run: "./Open77.Server",
   },
 ] as const;
 
 export const BUILD_NOTE =
-  "Only ever download the server from the Host a Server page or the official CDN — nowhere else. Each release publishes a SHA-256 for every archive; compare it against the file you downloaded before you run it.";
+  "Only ever download the server from the Host a Server page or the official CDN, nowhere else. Each release publishes a SHA-256 for every archive; compare it against the file you downloaded before you run it.";
 
 export const FIRSTRUN_INTRO =
   "If server.jsonc is absent on first launch, a browser-based setup wizard creates it.";
@@ -144,7 +144,7 @@ export const CONFIG_SAMPLE = `{
 export const CONFIG_FIELDS = [
   {
     label: "identity.name",
-    body: "The name players see in the launcher and on the server list. Make it recognisable — it is your server's front door.",
+    body: "The name players see in the launcher and on the server list. Make it recognisable. It is your server's front door.",
   },
   {
     label: "identity.visibility",
@@ -152,7 +152,7 @@ export const CONFIG_FIELDS = [
   },
   {
     label: "network.publicEndpoint",
-    body: "The address the launcher hands to players. It must be reachable from the internet — a public hostname or IP and the server's port, not a 192.168.x address.",
+    body: "The address the launcher hands to players. It must be reachable from the internet: a public hostname or IP and the server's port, not a 192.168.x address.",
   },
   {
     label: "masterServer.enabled",
@@ -172,12 +172,12 @@ $env:OP77_LICENSE_KEY = "op77_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"`
 export const RUN_INTRO =
   "With the key set and server.jsonc in place, start the server the way its platform expects:";
 
-export const RUN_SAMPLE = `# Windows — from the unpacked folder
+export const RUN_SAMPLE = `# Windows, from the unpacked folder
 Open77.Server.exe
 #   …or, against an installed .NET 10 runtime:
 dotnet Open77.Server.dll
 
-# Linux — from the unpacked folder
+# Linux, from the unpacked folder
 ./Open77.Server`;
 
 export const APPEARS_INTRO =
@@ -190,7 +190,7 @@ export const APPEARS_STEPS = [
   },
   {
     title: "It registers itself",
-    body: "The server publishes its identity — name, public endpoint, player count and icon — to the master. There is no separate listing form; the config is the listing.",
+    body: "The server publishes its identity (name, public endpoint, player count and icon) to the master. There is no separate listing form; the config is the listing.",
   },
   {
     title: "It appears in the launcher",
@@ -212,12 +212,12 @@ export function hostingToMarkdown(): string {
 
   lines.push("## From download to open doors", "");
   for (const step of HOSTING_STEPS) {
-    lines.push(`${step.num}. **${step.title}** — ${step.body}`);
+    lines.push(`${step.num}. **${step.title}**: ${step.body}`);
   }
   lines.push("");
 
   lines.push("## What the host needs", "", NEED_INTRO, "");
-  for (const point of NEED_POINTS) lines.push(`- **${point.label}** — ${point.body}`);
+  for (const point of NEED_POINTS) lines.push(`- **${point.label}**: ${point.body}`);
   lines.push("");
 
   lines.push("## Get the build", "", BUILD_INTRO, "");
@@ -230,7 +230,7 @@ export function hostingToMarkdown(): string {
 
   lines.push("## Configure server.jsonc", "", CONFIG_INTRO, "");
   lines.push("```jsonc", CONFIG_SAMPLE, "```", "");
-  for (const field of CONFIG_FIELDS) lines.push(`- **${field.label}** — ${field.body}`);
+  for (const field of CONFIG_FIELDS) lines.push(`- **${field.label}**: ${field.body}`);
   lines.push("");
 
   lines.push("## Set the license key", "", ENV_INTRO, "");
@@ -241,7 +241,7 @@ export function hostingToMarkdown(): string {
 
   lines.push("## It appears automatically", "", APPEARS_INTRO, "");
   APPEARS_STEPS.forEach((step, index) => {
-    lines.push(`${index + 1}. **${step.title}** — ${step.body}`);
+    lines.push(`${index + 1}. **${step.title}**: ${step.body}`);
   });
   lines.push("", `> ${APPEARS_NOTE}`, "");
 

@@ -38,7 +38,7 @@ export function DemoDataNotice({ scope = "listings" }: { scope?: "listings" | "p
         </button>
       </p>
       <p className="sb-status-note" id={noteId} hidden={!expanded}>
-        This view uses illustrative demo data — its player counts, pings and communities are not
+        This view uses illustrative demo data. Its player counts, pings and communities are not
         real. Alpha is active; use the <Link href="/servers">live directory</Link> for
         actual listings. Joining a world requires an approved account.
       </p>

@@ -246,7 +246,7 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
       <label>Resource address<input required maxLength={80} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} readOnly={!!project || busy || pendingCreate} value={slug} onChange={event => { editSequence.current++; setFieldErrors({}); setSlug(normalizeSlug(event.target.value)); setDirty(true); }} placeholder="auto-taxi" /><small>{SITE_URL.replace(/^https?:\/\//, "")}/resources/{slug || "your-project"}</small></label>
       <label>Short description<input required maxLength={200} value={content.summary} onChange={event => change("summary", event.target.value)} /></label>
       <div className="hub-form-row"><label>Category<select value={content.category} onChange={event => change("category", event.target.value)}>{categories.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}</select></label>
-        <label>Project type<select value={content.kind} onChange={event => change("kind", event.target.value as CommunityContent["kind"])}><option value="showcase">Showcase — share your work</option><option value="resource">Resource — downloadable package</option></select></label></div>
+        <label>Project type<select value={content.kind} onChange={event => change("kind", event.target.value as CommunityContent["kind"])}><option value="showcase">Showcase: share your work</option><option value="resource">Resource: downloadable package</option></select></label></div>
       <label>Tags, separated by commas<input maxLength={164} value={content.tags.join(",")} onChange={event => change("tags", event.target.value ? event.target.value.split(",") : [])} /><small>Up to five lowercase tags, using letters, digits and hyphens. Remove empty tags before saving.</small></label>
       <label>Development status<select value={content.maturity} onChange={event => change("maturity", event.target.value as CommunityContent["maturity"])}><option value="experimental">Experimental</option><option value="stable">Stable</option></select></label>
       <p>Creator account: {session.displayName}. <a href="/account/profile" target="_blank" rel="noopener noreferrer">Edit your public profile ↗</a></p>
@@ -264,7 +264,7 @@ function Editor({ session, active, id, onUnsavedChange }: { session: StoredSessi
       </div>
       </fieldset>
       <div className="hub-actions"><button type="submit" className="btn btn-primary" disabled={busy || conflict || locked}>{busy ? "Saving…" : project ? "Save draft" : "Create draft"}</button>
-        <span role="status">{dirty ? busy ? "Saving your changes…" : paused || conflict ? "Unsaved changes — autosave paused" : project ? "Unsaved changes — autosave pending" : "Create your draft to enable autosave" : project ? "All project changes saved" : ""}</span></div>
+        <span role="status">{dirty ? busy ? "Saving your changes…" : paused || conflict ? "Unsaved changes, autosave paused" : project ? "Unsaved changes, autosave pending" : "Create your draft to enable autosave" : project ? "All project changes saved" : ""}</span></div>
     </form>
     {project && <fieldset className="hub-editor-fields" hidden={step !== 1} disabled={conflict || locked}><CreatorMedia token={session.token} projectId={project.projectId} media={content.media ?? []} onChange={value => change("media", value)} />
       <CreatorClip token={session.token} projectId={project.projectId} clipMediaId={content.clipMediaId} onChange={value => change("clipMediaId", value)} /></fieldset>}

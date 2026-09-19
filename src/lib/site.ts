@@ -30,9 +30,9 @@ export const site = {
   stageLabel: "Alpha",
   alphaNotice:
     "Everyone with Alpha access can download the server and start building. No separate developer application is required. Need Alpha access? Use /alpha apply in any channel on our Discord. Expect bugs and API changes during Alpha.",
-  tagline: "Cyberpunk 2077 multiplayer. Find a world to play in — or build your own.",
+  tagline: "Cyberpunk 2077 multiplayer. Find a world to play in, or build your own.",
   description:
-    "OPEN//77 lets you play Cyberpunk 2077 online on community servers — or create your own server and multiplayer experience. Roleplay, racing, combat, freeroam: pick a world, press connect.",
+    "OPEN//77 lets you play Cyberpunk 2077 online on community servers, or create your own server and multiplayer experience. Roleplay, racing, combat, freeroam: pick a world, press connect.",
   /**
    * One-paragraph statement of what this site covers, for llms.txt and for the
    * Organization description in structured data.
@@ -49,7 +49,7 @@ export const site = {
     "OPEN//77 is an unofficial, independent community project. It is not affiliated with, endorsed by, " +
     "or sponsored by CD PROJEKT S.A. “Cyberpunk”, “Cyberpunk 2077” and related marks are trademarks of " +
     "CD PROJEKT S.A. Game imagery is used for illustration of a fan project. Playing on OPEN//77 will " +
-    "always require your own legal copy of Cyberpunk 2077 — the platform does not accept piracy, and " +
+    "always require your own legal copy of Cyberpunk 2077. The platform does not accept piracy, and " +
     "pirated or cracked copies are neither supported nor welcome.",
   /**
    * The ?v= content hash moves the URL whenever the card is regenerated:

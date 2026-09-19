@@ -209,7 +209,7 @@ export default function BrandPage() {
             <h1 className="page-title">The OPEN//77 mark.</h1>
             <p className="section-lead">
               Painted lockup (PNG), the <strong>{"//77"}</strong> mark and <strong>77</strong>{" "}
-              monogram cut from it, favicons, avatars and social banners — everything in one
+              monogram cut from it, favicons, avatars and social banners, everything in one
               download, plus individual files below.
             </p>
             <div className="hero-ctas">

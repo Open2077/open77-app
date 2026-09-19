@@ -93,7 +93,7 @@ export function ResetPasswordForm() {
         <div className="ac-success" role="status">
           <CheckIcon size={17} />
           <span>
-            <strong>Password changed.</strong> Your new password is active — sign in with it now.
+            <strong>Password changed.</strong> Your new password is active. Sign in with it now.
           </span>
         </div>
         <div className="ac-form-actions" style={{ marginTop: 16 }}>

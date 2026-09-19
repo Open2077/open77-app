@@ -48,7 +48,7 @@ export async function generateMetadata({
   }
 
   return pageMetadata({
-    title: `${namespace.label} — ${namespace.runtime} API`,
+    title: `${namespace.label} · ${namespace.runtime} API`,
     description: describe(namespace.label, namespace.runtime, namespace.entries.length),
     path: namespace.href,
     markdownPath: namespace.markdownHref,

@@ -54,7 +54,7 @@ export function ForgotPasswordForm() {
           <CheckIcon size={17} />
           <span>
             If an account exists for <strong>{email}</strong>, we&apos;ve sent a reset link. Check
-            your inbox — the link expires after a short while.
+            your inbox. The link expires after a short while.
           </span>
         </div>
         <div className="ac-form-actions" style={{ marginTop: 16 }}>

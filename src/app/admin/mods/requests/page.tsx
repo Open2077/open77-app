@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
   ...pageMetadata({
-    title: "Admin — Mod review queue",
+    title: "Admin · Mod review queue",
     description: "OPEN//77 operations console: owner-submitted mod review requests.",
     path: "/admin/mods/requests",
   }),

@@ -39,8 +39,8 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${site.name} — Cyberpunk 2077 Multiplayer`,
-    template: `%s — ${site.name}`,
+    default: `${site.name} · Cyberpunk 2077 Multiplayer`,
+    template: `%s · ${site.name}`,
   },
   description: site.description,
   applicationName: site.name,
@@ -66,9 +66,9 @@ export const metadata: Metadata = {
     siteName: site.name,
     locale: site.locale,
     url: SITE_URL,
-    title: `${site.name} — Cyberpunk 2077 Multiplayer`,
+    title: `${site.name} · Cyberpunk 2077 Multiplayer`,
     description: site.description,
-    images: [{ url: site.ogImage, width: 1200, height: 630, alt: `${site.name} — ${site.tagline}` }],
+    images: [{ url: site.ogImage, width: 1200, height: 630, alt: `${site.name}: ${site.tagline}` }],
   },
   twitter: { card: "summary_large_image", images: [site.ogImage] },
   robots: IS_PRODUCTION_DEPLOY ? { index: true, follow: true } : { index: false, follow: false },

@@ -17,7 +17,7 @@ export function DeveloperAlpha({ compact = false }: { compact?: boolean }) {
       </Heading>
       <p className={styles.description}>
         Everyone with Alpha access can now download the server and start building.
-        Roleplay, PvP, Battle Royale, Racing, Survival — create your own gamemode
+        Roleplay, PvP, Battle Royale, Racing, Survival: create your own gamemode
         and your own experience in Night City.
       </p>
       <div className={styles.actions}>

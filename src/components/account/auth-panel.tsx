@@ -109,7 +109,7 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
         }}>{value === "login" ? "Sign in" : "Create account"}</button>)}
     </div>
     <div role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-${mode}`}>
-      <div className="auth-panel-heading"><h2>{mode === "login" ? "Sign in." : "Create your account."}</h2><p>{mode === "login" ? "Your OPEN//77 platform account — the same one the launcher uses." : "Free, and it takes a minute. Alpha access is a separate step."}</p></div>
+      <div className="auth-panel-heading"><h2>{mode === "login" ? "Sign in." : "Create your account."}</h2><p>{mode === "login" ? "Your OPEN//77 platform account, the same one the launcher uses." : "Free, and it takes a minute. Alpha access is a separate step."}</p></div>
       {feedback}
       <form className="ac-form" onSubmit={onSubmit} aria-busy={busy}>
         {mode === "register" && <AuthField label="Display name" icon="user" name="display-name" value={displayName} onChange={event => setDisplayName(event.target.value)} placeholder="How other players see you" autoComplete="nickname" maxLength={32} required disabled={busy} />}

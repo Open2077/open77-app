@@ -5,10 +5,10 @@ import { ArrowRightIcon, ShieldIcon } from "@/components/icons";
 import { AuthIcon } from "@/components/account/auth-icon";
 
 const scenes = {
-  account: { label: "PLATFORM ACCOUNT", title: "Your", accent: "account.", description: "One account for the whole platform — the server browser, your game identities, your Workshop creations, and the license keys your servers run on." },
+  account: { label: "PLATFORM ACCOUNT", title: "Your", accent: "account.", description: "One account for the whole platform: the server browser, your game identities, your Workshop creations, and the license keys your servers run on." },
   forgot: { label: "PLATFORM ACCOUNT", title: "Forgot your", accent: "password?", description: "It happens. We'll e-mail you a single-use link to choose a new one." },
-  reset: { label: "PLATFORM ACCOUNT", title: "Set a new", accent: "password.", description: "You followed a reset link from your inbox — choose the new password for your account and sign in with it." },
-  verify: { label: "PLATFORM ACCOUNT", title: "Verify your", accent: "e-mail.", description: "One click and your address is confirmed — verification is required before you can create server license keys." },
+  reset: { label: "PLATFORM ACCOUNT", title: "Set a new", accent: "password.", description: "You followed a reset link from your inbox. Choose the new password for your account and sign in with it." },
+  verify: { label: "PLATFORM ACCOUNT", title: "Verify your", accent: "e-mail.", description: "One click and your address is confirmed. Verification is required before you can create server license keys." },
   launcher: { label: "LAUNCHER", title: "Authorize your", accent: "launcher.", description: "Connect the OPEN//77 launcher running on this device to your platform account. The launcher never sees your password." },
   github: { label: "CREATOR CONNECTIONS", title: "Connect", accent: "GitHub.", description: "Verify your public identity and import release assets into the Workshop, without granting write access to your repositories." },
   warden: { label: "CREATOR CONNECTIONS", title: "Connect your", accent: "Warden.", description: "Let your server's Warden prepare Workshop resource drafts under your account. Review exactly what it asks for before you approve it." },
@@ -22,7 +22,7 @@ export function AuthScene({ kind, children }: { kind: keyof typeof scenes; child
     { icon: "game", title: "Alpha access", text: "Play on community servers and download the dedicated server." },
   ] : kind === "github" || kind === "warden" || kind === "launcher" ? [
     { icon: "shield", title: "Approve only what you started", text: "If you did not open this page from the launcher, GitHub or your Warden, close it." },
-    { icon: "link", title: "What is exchanged", text: kind === "github" ? "Read access to your public identity and releases — no write permissions." : kind === "warden" ? "A scoped token for the project you pick, revocable from your account." : "A short-lived code; your password never leaves this page." },
+    { icon: "link", title: "What is exchanged", text: kind === "github" ? "Read access to your public identity and releases, no write permissions." : kind === "warden" ? "A scoped token for the project you pick, revocable from your account." : "A short-lived code; your password never leaves this page." },
   ] : [
     { icon: "mail", title: "Use the latest e-mail", text: "Links are single-use and expire after a short while." },
     { icon: "shield", title: "Keep the link to yourself", text: "Nobody from OPEN//77 will ever ask you for it." },

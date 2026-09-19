@@ -79,7 +79,7 @@ function ReviewDetail({ token, item, completed }: { token: string; item: Communi
       <details open><summary>Project description and installation</summary><pre className="hub-review-text">{project.content.description}</pre><pre className="hub-review-text">{project.content.installation}</pre></details>
       <p>License: {project.content.license || "Not provided"}</p><p>Tags: {project.content.tags.join(", ")}</p>
       {[project.content.sourceUrl, project.content.issueUrl, ...(project.content.videoUrls ?? [])].filter(Boolean).map((url, index) => <p key={index}><a href={url!} target="_blank" rel="noopener noreferrer nofollow ugc">{url}</a></p>)}
-      <div className="hub-media-editor">{project.content.media?.map(media => <figure key={media.mediaId}><PrivateMediaPreview token={token} mediaId={media.mediaId} alt={media.altText} /><figcaption>{media.altText}{media.caption ? ` — ${media.caption}` : ""}</figcaption></figure>)}</div>
+      <div className="hub-media-editor">{project.content.media?.map(media => <figure key={media.mediaId}><PrivateMediaPreview token={token} mediaId={media.mediaId} alt={media.altText} /><figcaption>{media.altText}{media.caption ? `: ${media.caption}` : ""}</figcaption></figure>)}</div>
     </>}
     {release && <><h3>Release details</h3><pre className="hub-review-text">{release.metadata.changelog}</pre><pre className="hub-review-text">{release.metadata.installation}</pre>
       <p>License: {release.metadata.license}</p><p>Tested builds: {release.metadata.testedBuilds.join(", ") || "None declared"}</p><p>Required resources: {release.metadata.requiredResources.join(", ") || "None declared"}</p>

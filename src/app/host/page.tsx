@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 const RUN_COMMANDS: Record<ServerBuild["os"], string> = { windows: "Start.cmd", linux: "./start.sh" };
 
 const SETUP_STEPS = [
-  { title: "Mint a license key", body: <>Create one in the <Link href="/account/keys">keymaster</Link>. It ties the server to your account and is shown once — keep it somewhere safe.</> },
+  { title: "Mint a license key", body: <>Create one in the <Link href="/account/keys">keymaster</Link>. It ties the server to your account and is shown once, so keep it somewhere safe.</> },
   { title: "Unpack and configure", body: <>Extract into a new folder and run <code>Start.cmd</code> on Windows or <code>./start.sh</code> on Linux. Warden&apos;s first-run wizard creates <code>server.jsonc</code> with your server name, visibility and public endpoints.</> },
   { title: "Configure your license", body: <>Supply your license in setup, or keep it in <code>OP77_LICENSE_KEY</code> when configuring the server manually. The master URL defaults to <code>https://master.open2077.net/</code>.</> },
   { title: "Run it", body: <>Open the game and resource-download ports, then start the configured server. Public servers register with the master so Alpha players can discover and join them.</> },
@@ -49,13 +49,13 @@ export default async function HostPage() {
           <div className={styles.heroCopy}>
             <SurfaceEyebrow>HOST A SERVER</SurfaceEyebrow>
             <h1 id="host-title">Host your own<em>OPEN//77 server.</em></h1>
-            <p className={styles.intro}>Everyone with Alpha access can download the dedicated server and start building. No separate developer application. License it to your account and create your own gamemode — the host machine never needs Cyberpunk 2077 installed.</p>
+            <p className={styles.intro}>Everyone with Alpha access can download the dedicated server and start building. No separate developer application. License it to your account and create your own gamemode. The host machine never needs Cyberpunk 2077 installed.</p>
             <div className={styles.actions}>
               <Link href="#download" className={styles.primary}>Get the server <ArrowRightIcon size={17} /></Link>
               <Link href="/account/keys" className={styles.secondary}>License keys</Link>
               <Link href="/docs/host-a-server" className={styles.textLink}>Full hosting guide <ArrowRightIcon size={16} /></Link>
             </div>
-            <p className={styles.heroNote}><CheckIcon size={15} />Official builds only: download the server from this page or the official CDN — nowhere else. Each archive lists its SHA-256 so you can verify what you run.</p>
+            <p className={styles.heroNote}><CheckIcon size={15} />Official builds only: download the server from this page or the official CDN, nowhere else. Each archive lists its SHA-256 so you can verify what you run.</p>
           </div>
           <aside className={styles.serverIntro}>
             <SurfaceEyebrow>SELF-CONTAINED DOWNLOADS</SurfaceEyebrow>
@@ -63,7 +63,7 @@ export default async function HostPage() {
             <ul>
               <li><CheckIcon size={16} />The dedicated server, with the .NET runtime included</li>
               <li><CheckIcon size={16} />Freeroam, ready to play, and its system resources</li>
-              <li><CheckIcon size={16} />Warden — first-run wizard and the web admin panel</li>
+              <li><CheckIcon size={16} />Warden, the first-run wizard and the web admin panel</li>
               <li><CheckIcon size={16} />The Lua 5.4 runtime for your own resources</li>
             </ul>
             <p>Configure your license and reachable endpoints; no Cyberpunk 2077 installation is needed on the server machine.</p>
@@ -100,7 +100,7 @@ export default async function HostPage() {
               <li><CheckIcon size={18} /><div><h3>Your players still need the game</h3><p>Everyone who connects needs {PLAYER_REQUIREMENT_SHORT} on their own machine, plus Alpha access. Hosting changes nothing about that.</p></div></li>
             </ul>
             <div className={styles.faq}>
-              <details><summary>Do I need special developer access?</summary><div>No. Everyone with Alpha access can download and run the server. Sign in with your Alpha-enabled OPEN//77 account to see the archives — no separate developer application, project review or staff role.</div></details>
+              <details><summary>Do I need special developer access?</summary><div>No. Everyone with Alpha access can download and run the server. Sign in with your Alpha-enabled OPEN//77 account to see the archives. No separate developer application, project review or staff role.</div></details>
               <details><summary>I am signed in but see no downloads.</summary><div>Check that the account you are signed in with is the one with Alpha access, then use “Check access again”. To request access, use <code>/alpha apply</code> in any channel on our Discord.</div></details>
               <details><summary>Where does the license key go?</summary><div>Supply it in Warden&apos;s first-run setup, or keep it in <code>OP77_LICENSE_KEY</code> when configuring the server by hand. The <Link href="/docs/server-licensing">licensing guide</Link> covers activation. Never paste keys into public scripts or screenshots.</div></details>
               <details><summary>How do I update an existing server?</summary><div>Read the release notes, back up your configuration, resources and data, then stop the server before unpacking the new archive over it. Check client/server compatibility and test your own resources before reopening.</div></details>
@@ -111,8 +111,8 @@ export default async function HostPage() {
         <section className={styles.section} aria-label="Hosting tools">
           <div className={styles.features}>
             {[
-              { icon: ShieldIcon, title: "Warden, the admin panel", body: "Set up, monitor and administer your server from its web panel — players, resources, Workshop installs.", href: "/docs/warden", action: "Meet Warden" },
-              { icon: CodeIcon, title: "The Lua API", body: "Vehicles, blips, NPCs, weather, interactions — the same permission-gated natives OPEN//77's own resources are built on.", href: "/docs/api", action: "Lua API reference" },
+              { icon: ShieldIcon, title: "Warden, the admin panel", body: "Set up, monitor and administer your server from its web panel: players, resources, Workshop installs.", href: "/docs/warden", action: "Meet Warden" },
+              { icon: CodeIcon, title: "The Lua API", body: "Vehicles, blips, NPCs, weather, interactions: the same permission-gated natives OPEN//77's own resources are built on.", href: "/docs/api", action: "Lua API reference" },
               { icon: ServerRackIcon, title: "Resources", body: "The resource format, the manifest, and the lifecycle of a package your server loads and streams to players.", href: "/docs/server-resources", action: "Resources & scripting" },
               { icon: WindowsIcon, title: "Here to play?", body: "Players need the launcher, not this archive. It signs you in, checks your game and takes you to the server browser.", href: "/download", action: "Get the launcher" },
             ].map(({ icon: Icon, title, body, href, action }) => <article className={styles.feature} key={title}><Icon size={28} /><h3>{title}</h3><p>{body}</p><Link className={styles.textLink} href={href}>{action}<ArrowRightIcon size={15} /></Link></article>)}
@@ -147,7 +147,7 @@ function BuildCard({ build }: { build: ServerBuild }) {
         <details className={styles.details}>
           <summary>Archive details &amp; verification</summary>
           <div className={styles.detailsBody}><p>File: <code>{build.fileName}</code></p>
-            {build.archiveSha256 ? <><p>Archive SHA-256 — compare it against the downloaded archive before extracting.</p><CopyLine value={build.archiveSha256} label={`Copy the ${build.os} archive SHA-256`} /></> : <p>An archive checksum is not published for this build.</p>}
+            {build.archiveSha256 ? <><p>Archive SHA-256. Compare it against the downloaded archive before extracting.</p><CopyLine value={build.archiveSha256} label={`Copy the ${build.os} archive SHA-256`} /></> : <p>An archive checksum is not published for this build.</p>}
           </div>
         </details>
       </> : <p>This platform&apos;s build has not been published for this release yet. Use “Check for updates” below to retry.</p>}

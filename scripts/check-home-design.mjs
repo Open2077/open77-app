@@ -51,7 +51,7 @@ async function findChrome() {
  */
 const PAGE_HELPERS = `
   const parseSuggestions = (placeholder) =>
-    (placeholder.split('\\u2014')[1] ?? '')
+    (placeholder.split(/[\\u2014:]/)[1] ?? '')
       .replace(/^\\s*try\\s+/i, '')
       .split(',')
       .map((part) => part.replace('\\u2026', '').trim())

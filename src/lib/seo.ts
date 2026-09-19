@@ -30,7 +30,7 @@ type PageMetadataInput = {
  * noindex so they never compete with production.
  */
 export function pageMetadata(input: PageMetadataInput): Metadata {
-  const title = input.title ? `${input.title} — ${site.name}` : `${site.name} — Cyberpunk 2077 Multiplayer`;
+  const title = input.title ? `${input.title} · ${site.name}` : `${site.name} · Cyberpunk 2077 Multiplayer`;
   const image = absoluteUrl(input.image ?? site.ogImage);
   const canonical = absoluteUrl(input.path);
 
@@ -51,7 +51,7 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
       title,
       description: input.description,
       url: canonical,
-      images: [{ url: image, width: 1200, height: 630, alt: `${site.name} — ${input.title ?? site.tagline}` }],
+      images: [{ url: image, width: 1200, height: 630, alt: `${site.name}: ${input.title ?? site.tagline}` }],
       ...(input.publishedTime ? { publishedTime: input.publishedTime } : {}),
       ...(input.modifiedTime ? { modifiedTime: input.modifiedTime } : {}),
     },

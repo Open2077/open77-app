@@ -5,7 +5,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { mainNav } from "@/lib/site";
 
 export const metadata = {
-  title: "Page not found — OPEN//77",
+  title: "Page not found · OPEN//77",
   description: "This page does not exist.",
   robots: { index: false, follow: true },
 };
@@ -19,7 +19,7 @@ export default function NotFound() {
           <h1 className="page-title">Signal lost.</h1>
           <p className="section-lead">
             This page does not exist. It may have moved during the site rebuild, or it may never have
-            existed — the project is in Alpha and things do move.
+            existed. The project is in Alpha and things do move.
           </p>
           <p className="hero-actions">
             <Link className="btn btn-primary" href="/">
