@@ -5,27 +5,27 @@ import { ArrowRightIcon, ShieldIcon } from "@/components/icons";
 import { AuthIcon } from "@/components/account/auth-icon";
 
 const scenes = {
-  account: { label: "PLATFORM ACCOUNT", title: "Your city.", accent: "Your account.", description: "A single home for your Open//77 identity, your creations and the servers you bring to life." },
-  forgot: { label: "ACCOUNT RECOVERY", title: "Let's get", accent: "you back in.", description: "Forgot your password? Your next chapter in Night City is still here. We'll help you pick up where you left off." },
-  reset: { label: "ACCOUNT RECOVERY", title: "A fresh", accent: "start.", description: "Choose a new password, then return to your account. Your profile, creations and connections stay with you." },
-  verify: { label: "E-MAIL VERIFICATION", title: "Make it", accent: "official.", description: "Confirm your e-mail to finish setting up your identity and unlock server license creation." },
-  launcher: { label: "DEVICE AUTHORIZATION", title: "Ready to", accent: "connect.", description: "Connect the launcher on this device to your Open//77 account. Your password stays out of the hand-off." },
-  github: { label: "GITHUB CONNECTION", title: "Your work.", accent: "Connected.", description: "Link your GitHub identity to Open//77. Verify repository access and bring your releases into the Workshop." },
-  warden: { label: "WARDEN AUTHORIZATION", title: "Your server.", accent: "Your control.", description: "Connect your Warden to the Workshop. Review the requested access before allowing it to prepare resource drafts." },
+  account: { label: "PLATFORM ACCOUNT", title: "Your", accent: "account.", description: "One account for the whole platform — the server browser, your game identities, your Workshop creations, and the license keys your servers run on." },
+  forgot: { label: "PLATFORM ACCOUNT", title: "Forgot your", accent: "password?", description: "It happens. We'll e-mail you a single-use link to choose a new one." },
+  reset: { label: "PLATFORM ACCOUNT", title: "Set a new", accent: "password.", description: "You followed a reset link from your inbox — choose the new password for your account and sign in with it." },
+  verify: { label: "PLATFORM ACCOUNT", title: "Verify your", accent: "e-mail.", description: "One click and your address is confirmed — verification is required before you can create server license keys." },
+  launcher: { label: "LAUNCHER", title: "Authorize your", accent: "launcher.", description: "Connect the OPEN//77 launcher running on this device to your platform account. The launcher never sees your password." },
+  github: { label: "CREATOR CONNECTIONS", title: "Connect", accent: "GitHub.", description: "Verify your public identity and import release assets into the Workshop, without granting write access to your repositories." },
+  warden: { label: "CREATOR CONNECTIONS", title: "Connect your", accent: "Warden.", description: "Let your server's Warden prepare Workshop resource drafts under your account. Review exactly what it asks for before you approve it." },
 } as const;
 
 export function AuthScene({ kind, children }: { kind: keyof typeof scenes; children: ReactNode }) {
   const scene = scenes[kind];
   const features = kind === "account" ? [
-    { icon: "user", title: "One identity", text: "Your profile, game identities and community." },
-    { icon: "server", title: "Build your world", text: "Manage server licenses and share your creations." },
-    { icon: "game", title: "Find your people", text: "A different Night City on every server." },
+    { icon: "user", title: "One account", text: "Your profile, your linked game identities, your Workshop creations." },
+    { icon: "server", title: "Server license keys", text: "Mint, inspect and revoke the keys your dedicated servers register with." },
+    { icon: "game", title: "Alpha access", text: "Play on community servers and download the dedicated server." },
   ] : kind === "github" || kind === "warden" || kind === "launcher" ? [
-    { icon: "shield", title: "You're in control", text: "Only approve a connection you started yourself." },
-    { icon: "link", title: "A clear hand-off", text: kind === "github" ? "No repository write permissions requested." : kind === "warden" ? "Choose the project and review the permissions." : "A short-lived code connects this device." },
+    { icon: "shield", title: "Approve only what you started", text: "If you did not open this page from the launcher, GitHub or your Warden, close it." },
+    { icon: "link", title: "What is exchanged", text: kind === "github" ? "Read access to your public identity and releases — no write permissions." : kind === "warden" ? "A scoped token for the project you pick, revocable from your account." : "A short-lived code; your password never leaves this page." },
   ] : [
-    { icon: "mail", title: "Check your inbox", text: "Use the most recent e-mail from Open//77." },
-    { icon: "shield", title: "Keep it personal", text: "Never share a verification or password-reset link." },
+    { icon: "mail", title: "Use the latest e-mail", text: "Links are single-use and expire after a short while." },
+    { icon: "shield", title: "Keep the link to yourself", text: "Nobody from OPEN//77 will ever ask you for it." },
   ];
   return <main id="main" className="auth-scene" data-auth-scene={kind}>
     <div className="auth-scenery" aria-hidden="true"><Image src="/assets/auth/night-city-login-v2.webp" alt="" fill sizes="100vw" preload /></div>
@@ -41,10 +41,10 @@ export function AuthScene({ kind, children }: { kind: keyof typeof scenes; child
       </section>
       <div className="auth-stage">
         {children}
-        <p className="auth-stage-note"><ShieldIcon size={13} /> Your account. Your control.</p>
+        <p className="auth-stage-note"><ShieldIcon size={13} /> Accounts run against the OPEN//77 master server.</p>
       </div>
     </div>
-    <footer className="auth-footer"><span><i aria-hidden="true" />Night City is better together.</span><Link href="/docs/alpha-access">About Alpha access <ArrowRightIcon size={13} /></Link></footer>
+    <footer className="auth-footer"><span><i aria-hidden="true" />Creating an account is free. Alpha access is a separate step to play and host.</span><Link href="/docs/alpha-access">How Alpha access works <ArrowRightIcon size={13} /></Link></footer>
   </main>;
 }
 

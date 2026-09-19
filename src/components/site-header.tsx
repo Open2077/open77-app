@@ -9,15 +9,15 @@ import { useSession } from "@/lib/account/session";
 import { mainNav, site } from "@/lib/site";
 
 const SHORTCUTS = [
-  { href: "/download", title: "Download launcher", detail: "Install Open//77 and start playing", keywords: "play client windows install" },
-  { href: "/servers", title: "Community servers", detail: "Find your next Night City", keywords: "browse roleplay racing pvp" },
-  { href: "/create", title: "Create your server", detail: "Your world. Your rules.", keywords: "build host hosting" },
+  { href: "/download", title: "Download launcher", detail: "Signs you in, checks your game, installs the mod", keywords: "play client windows install" },
+  { href: "/servers", title: "Server browser", detail: "Every community server, live", keywords: "browse roleplay racing pvp servers" },
+  { href: "/create", title: "Create a server", detail: "Run your own Night City", keywords: "build host hosting" },
   { href: "/host", title: "Download dedicated server", detail: "Windows & Linux · Alpha access", keywords: "hosting release" },
-  { href: "/docs", title: "Documentation", detail: "Guides, resources and getting started", keywords: "help learn tutorial lua" },
+  { href: "/docs", title: "Documentation", detail: "Play, host and build — every guide", keywords: "help learn tutorial lua" },
   { href: "/docs/api", title: "Lua API reference", detail: "Search the client and server APIs", keywords: "functions vehicles players native scripting" },
-  { href: "/workshop", title: "Workshop", detail: "Explore community creations", keywords: "mods packages resources community" },
-  { href: "/devblog", title: "Devblog", detail: "Follow the project", keywords: "news updates" },
-  { href: "/docs/alpha-access", title: "Alpha access", detail: "How to play, host and build", keywords: "apply discord join access" },
+  { href: "/workshop", title: "Workshop", detail: "Resources made by the community", keywords: "mods packages resources community" },
+  { href: "/devblog", title: "Devblog", detail: "What shipped, one post per working day", keywords: "news updates" },
+  { href: "/docs/alpha-access", title: "Alpha access", detail: "/alpha apply on Discord — play, host and build", keywords: "apply discord join access" },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -143,14 +143,14 @@ export function SiteHeader() {
         </div>
       </div>
       <nav className="liquid-mobile" id="mobile-nav" aria-label="Mobile" hidden={!menuOpen}>
-        <p>YOUR NEXT DESTINATION</p>
+        <p>NAVIGATION</p>
         {[{ href: "/", label: "Home" }, ...mainNav, { href: "/docs/alpha-access", label: "Alpha access" }, ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []), { href: "/account", label: "Account" }].map((item) => <Link key={item.href} href={item.href} aria-current={current(item.href)} onClick={() => setMenuOpen(false)}>{item.label}<ArrowRightIcon /></Link>)}
         <Link className="liquid-download" href="/download" onClick={() => setMenuOpen(false)}>Download launcher<DownloadIcon size={18} /></Link>
       </nav>
       <dialog ref={searchRef} className="liquid-search" aria-labelledby="quick-nav-title" onClose={() => setQuery("")}
         onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); searchRef.current?.close(); } }}
         onClick={(event) => { if (event.target === event.currentTarget) searchRef.current?.close(); }}>
-        <div className="liquid-search-head"><h2 id="quick-nav-title">Where to next?</h2><button className="liquid-icon" aria-label="Close search" onClick={() => searchRef.current?.close()}><CrossIcon size={20} /></button></div>
+        <div className="liquid-search-head"><h2 id="quick-nav-title">Quick navigation</h2><button className="liquid-icon" aria-label="Close search" onClick={() => searchRef.current?.close()}><CrossIcon size={20} /></button></div>
         <label className="liquid-search-field"><SearchIcon size={20} /><span className="sr-only">Search pages and tools</span><input autoFocus type="search" placeholder="Search pages and tools…" value={query} onChange={(event) => setQuery(event.target.value)} /></label>
         <div className="liquid-search-results" aria-live="polite">
           {results.length ? results.map((item) => <Link key={item.href} href={item.href} onClick={() => searchRef.current?.close()}><span><strong>{item.title}</strong><small>{item.detail}</small></span><ArrowRightIcon size={18} /></Link>) : <p>No destination found. Try “server”, “Lua” or “Alpha”.</p>}

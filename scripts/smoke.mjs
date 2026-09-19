@@ -23,7 +23,7 @@ const origin = process.argv[2] ?? "http://127.0.0.1:3000";
  * }[]}
  */
 const CHECKS = [
-  { path: "/docs/cyberware", expect: 200, contains: "Cyberware &amp; abilities" },
+  { path: "/docs/cyberware", expect: 200, contains: "Weapons &amp; abilities" },
   { path: "/docs/gorilla-arms", expect: 200, contains: "Gorilla Arms" },
   { path: "/docs/gorilla-arms.md", expect: 200, contains: "gorilla_install" },
   { path: "/docs/cyberware.md", expect: 200, contains: "onCyberwareOperationCompleted" },
@@ -54,7 +54,7 @@ const CHECKS = [
   // a guaranteed 404.
   { path: "/workshop", expect: 200, absent: "open77-base" },
   { path: "/brand", expect: 200 },
-  { path: "/docs", expect: 200, contains: "Welcome to OPEN//77", absent: "open77-base" },
+  { path: "/docs", expect: 200, contains: "Explore the documentation.", absent: "open77-base" },
   { path: "/docs/vehicles", expect: 200, contains: "authority", absent: "open77-base" },
   { path: "/docs/npcs", expect: 200, absent: "open77-base" },
   { path: "/docs/data-reference", expect: 200, absent: "open77-base" },

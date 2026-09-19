@@ -143,7 +143,8 @@ try {
     await fs.writeFile(path.join(".shots",name+".png"),Buffer.from(img.data,"base64"));
   }
   await resize(1680); await visit("/");
-  for(const route of ["/download","/create","/host","/servers","/devblog","/workshop","/docs","/download","/"]) {
+  // The documentation has its own header without the launcher link, so the walk returns home through it first.
+  for(const route of ["/download","/create","/host","/servers","/devblog","/workshop","/docs","/","/download","/"]) {
     await session.evaluate("window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'});");
     await session.evaluate("document.querySelector('a[href="+JSON.stringify(route)+"]').click();");
     await ready(route); await delay(600);
@@ -168,6 +169,8 @@ try {
   check('Forward returns to the next page',await session.evaluate("return scrollY===0;"));
 
   await visit('/download');
+  // The copy button only exists once the panel has hydrated and clipboard support is known.
+  for(let i=0;i<40&&!(await session.evaluate("return !!document.querySelector('#get button[aria-label]');"));i++)await delay(250);
   await session.evaluate("document.querySelector('#get summary').click();");
   check('file details expand with full SHA-256',await session.evaluate("return document.querySelector('#get details').open && /^[a-f0-9]{64}$/i.test(document.querySelector('#get .copy-line-value').textContent);"));
   await session.send('Browser.grantPermissions',{origin,permissions:['clipboardReadWrite','clipboardSanitizedWrite']},false);

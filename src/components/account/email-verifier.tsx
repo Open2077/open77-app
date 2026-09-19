@@ -115,7 +115,7 @@ export function EmailVerifier() {
   return (
     <div className="auth-panel ac-card">
       <span className="auth-state-icon"><AuthIcon name="mail" size={24} /></span>
-      <div className="auth-panel-heading"><h2>Let&apos;s try again.</h2></div>
+      <div className="auth-panel-heading"><h2>Verification failed.</h2></div>
       <p className="ac-error" role="alert">
         <InfoIcon />
         <span>{phase.message}</span>

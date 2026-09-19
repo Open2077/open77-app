@@ -61,7 +61,7 @@ export default async function DevblogPostPage({ params }: { params: Promise<{ sl
           <div className="blog-article-hero">
             <header className="blog-post-head">
               <Link href="/devblog" className="blog-back"><ArrowLeftIcon />Back to devblog</Link>
-              <p className="blog-kicker"><span aria-hidden="true">{"//"}</span> DEVELOPMENT NOTES</p>
+              <p className="blog-kicker"><span aria-hidden="true">{"//"}</span> UNDER THE HOOD</p>
               <h1>{post.title}</h1>
               <p className="blog-post-description">{post.description}</p>
               <div className="blog-meta blog-post-meta">
@@ -69,7 +69,7 @@ export default async function DevblogPostPage({ params }: { params: Promise<{ sl
                   {formatBlogDate(post.date)}
                 </time>
                 <span>{post.readingMinutes} min read</span>
-                <span>Open//77 team</span>
+                <span>OPEN//77 team</span>
                 <span className="blog-topics">{postTopics(post).map(topic => <Link href={`/devblog?topic=${topic.id}`} key={topic.id}>{topic.label}</Link>)}</span>
               </div>
             </header>
@@ -81,9 +81,9 @@ export default async function DevblogPostPage({ params }: { params: Promise<{ sl
 
             <aside className="blog-cta">
               <div>
-                <p className="blog-kicker">THE NEXT CHAPTER</p>
-                <h2>Help shape what comes next.</h2>
-                <p>Follow the updates, meet other builders and share your Alpha feedback with the team.</p>
+                <p className="blog-kicker">FOLLOW THE BUILD</p>
+                <h2>A post like this lands every working day.</h2>
+                <p>The short versions hit Discord first — and it is where you share Alpha feedback and reproducible issues with the team.</p>
               </div>
               <div className="blog-cta-actions">
                 {site.links.discord ? (
@@ -106,7 +106,7 @@ export default async function DevblogPostPage({ params }: { params: Promise<{ sl
             <nav className="blog-pager" aria-label="More posts">
               {older ? (
                 <Link className="blog-pager-link" href={blogHref(older.slug)} rel="prev">
-                  <span className="blog-pager-label"><ArrowLeftIcon /> Older update</span>
+                  <span className="blog-pager-label"><ArrowLeftIcon /> Older post</span>
                   {older.title}
                 </Link>
               ) : (
@@ -118,7 +118,7 @@ export default async function DevblogPostPage({ params }: { params: Promise<{ sl
                   href={blogHref(newer.slug)}
                   rel="next"
                 >
-                  <span className="blog-pager-label">Newer update <ArrowRightIcon /></span>
+                  <span className="blog-pager-label">Newer post <ArrowRightIcon /></span>
                   {newer.title}
                 </Link>
               ) : (
@@ -128,7 +128,7 @@ export default async function DevblogPostPage({ params }: { params: Promise<{ sl
             </div>
             <aside className="blog-article-tools" aria-label="Article tools">
               {post.headings.length > 0 && <nav className="blog-side-panel blog-toc" aria-label="In this article"><h2 className="blog-kicker"><span aria-hidden="true">{"//"}</span> IN THIS ARTICLE</h2><ol>{post.headings.map(heading => <li key={heading.id}><a href={`#${heading.id}`}>{heading.title}</a></li>)}</ol></nav>}
-              <div className="blog-side-panel blog-share"><p className="blog-kicker">TAKE IT WITH YOU</p><PostTools key={slug} /><a className="blog-text-link" href={blogMarkdownHref(slug)}>Read as Markdown <ArrowRightIcon /></a><Link className="blog-text-link" href="/docs">Explore the documentation <ArrowRightIcon /></Link></div>
+              <div className="blog-side-panel blog-share"><p className="blog-kicker">SHARE</p><PostTools key={slug} /><a className="blog-text-link" href={blogMarkdownHref(slug)}>Read as Markdown <ArrowRightIcon /></a><Link className="blog-text-link" href="/docs">Explore the documentation <ArrowRightIcon /></Link></div>
             </aside>
           </div>
         </article>

@@ -225,7 +225,8 @@ try {
   for (const route of ["/download", "/docs", "/servers", "/account", "/admin"]) {
     await resize(1440);
     await visit(route);
-    check(route + ": shared header fits", await session.evaluate("return document.querySelector('.liquid-bar').getBoundingClientRect().right<=innerWidth && document.documentElement.scrollWidth<=innerWidth;"));
+    // The documentation has its own single header bar; every other route shares the liquid bar.
+    check(route + ": shared header fits", await session.evaluate("return document.querySelector('.liquid-bar, .docs-header-bar').getBoundingClientRect().right<=innerWidth && document.documentElement.scrollWidth<=innerWidth;"));
   }
   await resize(1680,1000);
   await session.send("Emulation.setEmulatedMedia", { features: [{ name:"prefers-reduced-motion", value:"reduce" }] });
