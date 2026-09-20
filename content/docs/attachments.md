@@ -53,6 +53,15 @@ Never assume that every named slot exists on both the real player and a replica.
 | `bone` | Case-sensitive named slot. Omitted/`""` attaches to the parent's root. At most 64 ASCII letters, digits, `_` or `-`. |
 | `offset` | `{x,y,z}` in metres, in the slot's local coordinate system. Missing components default to zero; each component must be finite and within ±20. |
 | `rotation` | `{x,y,z}` in degrees: X roll, Y pitch, Z yaw; each finite and within ±360. Applied as parent rotation × Z × Y × X. |
+| `contact` | Experimental native-item mouth contact: omit for automatic estimation, `false` to disable, or `{x,y,z}` in item-local metres, each finite and within ±2 (missing axes are zero). Requires an `item:Items.*` prop; ordinary meshes return `contact_requires_item`. See [item size and mouth contact](rp-animations.md#item-size-and-mouth-contact). |
+
+Native item props use the game's authored `WeaponRight` attachment on a player,
+with zero offset/rotation and unit scale. The contact point controls the arm's
+mouth target during supported consumption profiles; it does not move the grip.
+Automatic contact uses the container's authored local-up end (the can rim) and
+keeps that end while tilting; smoking uses the end nearest the mouth.
+Matching client/server code and animation assets are required, and visual
+validation of this adapter is incomplete.
 
 A vehicle binding normally uses its root, because slots differ between models:
 

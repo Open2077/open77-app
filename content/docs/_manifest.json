@@ -59,11 +59,14 @@
       "target": "content/docs/attachments.md",
       "slug": "attachments",
       "title": "Synchronized attachments",
-      "bytes": 7819,
-      "sha256": "1cbacc050ca282a8b6a22edf4dd8f685472811cb3bec19fa51847f4693c1f6d2",
+      "bytes": 8679,
+      "sha256": "f9c49cabc134958ac584b23b64025b52f7174770701808a3d60223c6627d4942",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "7ea954d90f482bbf1f809497bc5f12dd3c480e2ea80a59e06dfab26d4ad96e22"
+      },
+      "siteAmendment": {
+        "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete"
       }
     },
     {
@@ -209,7 +212,7 @@
       "source": "wiki/context-menu.md",
       "target": "content/docs/context-menu.md",
       "slug": "context-menu",
-      "title": "Generic context menu — open77_contextmenu",
+      "title": "Generic context menu â€” open77_contextmenu",
       "bytes": 20418,
       "sha256": "991709b808c59afbd18dac716e67813b9bf9845b995deaad2c9034fd635a6f00",
       "siteEditorial": {
@@ -221,7 +224,7 @@
       "source": "wiki/cordon.md",
       "target": "content/docs/cordon.md",
       "slug": "cordon",
-      "title": "Cordon — battle royale",
+      "title": "Cordon â€” battle royale",
       "bytes": 15653,
       "sha256": "3b99e1775daca0271124763393c54586fef2b85457d305ce7dbf0cef39a009a6",
       "siteEditorial": {
@@ -257,7 +260,7 @@
       "source": "wiki/data-catalogues.md",
       "target": "content/docs/data-catalogues.md",
       "slug": "data-catalogues",
-      "title": "Game data catalogues — `Open77.data`",
+      "title": "Game data catalogues â€” `Open77.data`",
       "bytes": 7744,
       "sha256": "9c563af76b1d3c7a9245bd23e55d8f9011f49a56b9a708348259a5e05ddd0a56",
       "siteEditorial": {
@@ -281,7 +284,7 @@
       "source": "wiki/deathmatch.md",
       "target": "content/docs/deathmatch.md",
       "slug": "deathmatch",
-      "title": "Deathmatch — running the Kabuki Arena PvP mode",
+      "title": "Deathmatch â€” running the Kabuki Arena PvP mode",
       "bytes": 23023,
       "sha256": "a4367f998b1c0f8a56b3e4a45447ddf13ff9c8e8835ddcae832508a7e923f028",
       "siteEditorial": {
@@ -763,11 +766,15 @@
       "target": "content/docs/rp-animations.md",
       "slug": "rp-animations",
       "title": "Role-play animations",
-      "bytes": 29883,
-      "sha256": "21ffbb056e33da04663c007d3c43247ea535dd0f70762a40c4747d7e13b55bf8",
+      "bytes": 40555,
+      "sha256": "b6cec067aac48f7d4ae3657900136415ac5619cde827409569c0d8f4032f2ca7",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b5c104b760c0540f4725de2a5f1fb1c7f5c7cb6dd4397495943490d9ca8d167a"
+      },
+      "siteAmendment": {
+        "previous": "Walking RP actions, native item ownership, job sequences and public discovery downloads; contract reference open77-base 75f0e59cfa26606e83d9257ec1c7c07c6929c977",
+        "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete"
       }
     },
     {
@@ -1123,11 +1130,16 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1624,
-      "bytes": 2269215,
-      "sha256": "8a25871651597e3f8fdc2c6f7429174aac24260d3de62f13b92e6d184219b9ca",
+      "bytes": 2279657,
+      "sha256": "b67ef3a32dc9cbdc6c8c141f28f3f6f6b851e1b3508f882606eb6bd672e34727",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
+      },
+      "siteAmendment": {
+        "sourceCommit": "75f0e59cfa26606e83d9257ec1c7c07c6929c977",
+        "scope": "RP native layer/item/sequence descriptions and server animation permissions; no inferred option release version",
+        "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete"
       }
     },
     {
