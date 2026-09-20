@@ -208,12 +208,14 @@ can vary by body and appearance.
 
 First-person arm support is experimental and needs a compatible client and player
 animation archive. The can, bottle, cigarette, cigar and hold profiles have visible
-first-person hands/items on the tested female body, with mouth contact on the
-consumption profiles. Items stay visible at the lower right between sips.
-Other appearances, the male body and custom shapes remain under validation;
-phone and other gestures do not have a first-person adapter. Third-person support
-does not imply first-person support for every profile.
+first-person hands/items on the tested female and male bodies. Third-person can
+contact reaches the lips on both tested bodies; third-person smoking contact has
+been checked on the female body. Items stay visible at the lower right between
+sips. Other appearances, custom shapes and remaining third-person combinations
+remain under validation; phone and other gestures do not have a first-person
+adapter. Third-person support does not imply first-person support for every profile.
 
+`hold_item_walk` remains active with its item during ground sprinting.
 Holding, drinking and holding again preserves the same item; completion removes
 the animation-owned item. Punching interrupts the layer and its item, and a later
 play creates a fresh presentation. Server acceptance alone does not establish

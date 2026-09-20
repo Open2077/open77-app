@@ -766,8 +766,8 @@
       "target": "content/docs/rp-animations.md",
       "slug": "rp-animations",
       "title": "Role-play animations",
-      "bytes": 40368,
-      "sha256": "ada99298eb6bee05cf24a8d5f7a6c2db536f5cb685dd68dabc719fb3e06c791a",
+      "bytes": 40555,
+      "sha256": "b6cec067aac48f7d4ae3657900136415ac5619cde827409569c0d8f4032f2ca7",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b5c104b760c0540f4725de2a5f1fb1c7f5c7cb6dd4397495943490d9ca8d167a"
