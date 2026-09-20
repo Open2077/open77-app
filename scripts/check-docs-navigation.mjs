@@ -6,7 +6,7 @@ const nav = JSON.parse(await readFile("content/docs/meta.json", "utf8"));
 const pages = nav.sections.flatMap((section) => section.pages);
 assert.equal(new Set(nav.sections.map((section) => section.id)).size, nav.sections.length, "Duplicate topic IDs");
 assert.equal(new Set(pages.map((page) => page.slug)).size, pages.length, "A guide must have exactly one navigation home");
-assert.equal(pages.length, 111, "Review guide coverage when adding or removing pages");
+assert.equal(pages.length, 112, "Review guide coverage when adding or removing pages");
 const collections = [...new Set(nav.sections.map((section) => section.group))];
 assert.deepEqual(collections, ["Start & host", "Build resources", "Game systems", "Reference & tools"]);
 let previous = "";
@@ -32,6 +32,7 @@ for (const [id, slugs] of Object.entries({
   map: ["native-map", "blips", "markers", "world-queries", "zones", "polyzone"],
   cameras: ["perspective", "cameras", "third-person-camera", "remote-camera", "screen-transitions", "photo-mode", "screenshots"],
   audio: ["package-audio", "sound", "chat", "voice", "voice-lipsync"],
+  interfaces: ["pause-menu", "ui-kit", "webui-input", "hud-visibility", "keybindings"],
 })) {
   const section = nav.sections.find((entry) => entry.id === id);
   assert.ok(section, id);

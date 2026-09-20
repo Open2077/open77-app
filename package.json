@@ -39,7 +39,7 @@
     "verify:voice": "node scripts/check-voice-docs.mjs",
     "sync:utilities": "node scripts/sync-utilities-docs.mjs",
     "verify:utilities": "node scripts/sync-utilities-docs.mjs --check && node scripts/check-utilities-docs.mjs",
-    "verify:docs": "node --test scripts/test-docs-editorial.mjs && node scripts/check-docs-editorial.mjs && node scripts/check-docs-navigation.mjs && node scripts/check-remote-camera-docs.mjs && node scripts/check-marker-docs.mjs",
+    "verify:docs": "node --test scripts/test-docs-editorial.mjs && node scripts/check-docs-editorial.mjs && node scripts/check-docs-navigation.mjs && node scripts/check-remote-camera-docs.mjs && node scripts/check-marker-docs.mjs && node scripts/check-pause-menu-docs.mjs",
     "verify:devblog": "node --test scripts/test-devblog-presentation.mjs",
     "verify:devblog:browser": "node scripts/check-devblog-design.mjs http://127.0.0.1:3113",
     "verify:workshop:browser": "node scripts/check-workshop-design.mjs",

@@ -4,6 +4,8 @@ Set a square server icon and a wide banner for the launcher and website. Both ar
 
 Upload images from Warden. Icon changes do not require a server restart.
 
+For the in-game Escape menu, use [Pause menu customization](pause-menu.md). Its Lua accent and resource logo are separate from the launcher icon and website banner.
+
 ## What the two images are
 
 | | Icon | Banner |

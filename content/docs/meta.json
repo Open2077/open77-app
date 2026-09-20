@@ -645,6 +645,13 @@
       "description": "Build menus and notifications, manage the HUD and handle keyboard input.",
       "pages": [
         {
+          "slug": "pause-menu",
+          "kind": "guide",
+          "nav": "Pause menu branding",
+          "title": "Pause menu customization",
+          "description": "Customize the OPEN//77 Escape menu with a Lua accent color and a server logo beside OPEN//77. Manifest setup, local assets, image URLs, permissions and resource cleanup."
+        },
+        {
           "slug": "ui-kit",
           "kind": "guide",
           "nav": "The UI kit",

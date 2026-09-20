@@ -56,6 +56,7 @@ a `.lua` script.
 | `ui_page` / `web_ui_page` | Default WebUI entry: a declared local file or an HTTP(S) URL. See [remote pages](#remote-pages-external-content-and-hot-reload) for supported entry types. |
 | `web_ui_auto_create` | Whether to create that page at resource start. |
 | `web_file` / `web_files` | Files served to this resource's WebUI origin. |
+| `pause_menu_logo` | Optional server logo beside OPEN//77 in the Escape menu: an HTTP(S) image URL or a declared local asset. Requires `pause_menu.customize`; see [Pause menu customization](pause-menu.md). |
 
 Singular and plural forms are accepted everywhere. Globs support `*`, `?`
 and `**`, and expand in a deterministic order: patterns in the order they

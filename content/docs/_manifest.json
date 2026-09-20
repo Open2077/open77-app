@@ -3,9 +3,24 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-17T02:23:59.652Z",
-  "guides": 92,
+  "guides": 93,
   "apiEntries": 1624,
   "files": [
+    {
+      "source": "wiki/pause-menu.md",
+      "target": "content/docs/pause-menu.md",
+      "slug": "pause-menu",
+      "title": "Pause menu customization",
+      "bytes": 7067,
+      "sha256": "5f39fa071acf3da2e4af2155ab87309fe59fee1fd35ca203f525e2590b2fcf81",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "91da018b286376d48479e58a7cc5fff0afac80f55608a0373857ac647b6061e6",
+        "sourceRevision": "bb39271cfba51fa6589bc80ddaf7137c8cc3c964",
+        "sourceWorkingTreeDirty": true,
+        "clientVersion": "2.31.13+op77.85"
+      }
+    },
     {
       "source": "wiki/README.md",
       "target": "content/docs/README.md",
