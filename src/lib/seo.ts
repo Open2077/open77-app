@@ -104,6 +104,7 @@ export function organizationNode(): JsonLdNode {
       site.links.discord,
       site.links.x,
       site.links.tiktok,
+      site.links.twitch,
     ].filter((url): url is string => url !== null),
   };
 }

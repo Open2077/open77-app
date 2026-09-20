@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ComponentType } from "react";
 
 import { Logotype } from "@/components/brand";
-import { DiscordIcon, TikTokIcon, XIcon } from "@/components/icons";
+import { DiscordIcon, TikTokIcon, TwitchIcon, XIcon } from "@/components/icons";
 import { footerNav, site } from "@/lib/site";
 
 /** Social links carry their mark; every other footer link stays plain text. */
@@ -10,6 +10,7 @@ const SOCIAL_ICONS: Record<string, ComponentType<{ size?: number }>> = {
   Discord: DiscordIcon,
   "X / Twitter": XIcon,
   TikTok: TikTokIcon,
+  Twitch: TwitchIcon,
 };
 
 /**

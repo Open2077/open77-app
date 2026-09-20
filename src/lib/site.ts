@@ -70,6 +70,7 @@ export const site = {
     discord: "https://discord.open2077.net" as string | null,
     x: "https://x.com/open2077" as string | null,
     tiktok: "https://www.tiktok.com/@open2077_network" as string | null,
+    twitch: "https://www.twitch.tv/open2077",
     devlog: "/devblog" as string | null,
   },
 } as const;
@@ -139,6 +140,7 @@ export const footerNav = [
       { href: "https://discord.open2077.net", label: "Discord" },
       { href: "https://x.com/open2077", label: "X / Twitter" },
       { href: "https://www.tiktok.com/@open2077_network", label: "TikTok" },
+      { href: site.links.twitch, label: "Twitch" },
     ],
   },
 ] as const;
