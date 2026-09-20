@@ -59,8 +59,8 @@
       "target": "content/docs/attachments.md",
       "slug": "attachments",
       "title": "Synchronized attachments",
-      "bytes": 8530,
-      "sha256": "49deb9e022be87913fdcfaf72f47b584230c2c6217d4694eb4d0546f6d79cd8d",
+      "bytes": 8679,
+      "sha256": "f9c49cabc134958ac584b23b64025b52f7174770701808a3d60223c6627d4942",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "7ea954d90f482bbf1f809497bc5f12dd3c480e2ea80a59e06dfab26d4ad96e22"
@@ -766,8 +766,8 @@
       "target": "content/docs/rp-animations.md",
       "slug": "rp-animations",
       "title": "Role-play animations",
-      "bytes": 39551,
-      "sha256": "f5f3d6ca6ff37586ca2866836737530d88ec94803d2e5183cf5d19afbbc96397",
+      "bytes": 40368,
+      "sha256": "ada99298eb6bee05cf24a8d5f7a6c2db536f5cb685dd68dabc719fb3e06c791a",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b5c104b760c0540f4725de2a5f1fb1c7f5c7cb6dd4397495943490d9ca8d167a"
@@ -1130,8 +1130,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1624,
-      "bytes": 2278479,
-      "sha256": "8aac8c63eb886412b6b6bfba7d7e646bad4229c166ff35965f79a7b7df9148b5",
+      "bytes": 2279657,
+      "sha256": "b67ef3a32dc9cbdc6c8c141f28f3f6f6b851e1b3508f882606eb6bd672e34727",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"

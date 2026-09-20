@@ -58,6 +58,8 @@ Never assume that every named slot exists on both the real player and a replica.
 Native item props use the game's authored `WeaponRight` attachment on a player,
 with zero offset/rotation and unit scale. The contact point controls the arm's
 mouth target during supported consumption profiles; it does not move the grip.
+Automatic contact uses the container's authored local-up end (the can rim) and
+keeps that end while tilting; smoking uses the end nearest the mouth.
 Matching client/server code and animation assets are required, and visual
 validation of this adapter is incomplete.
 

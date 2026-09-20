@@ -109,12 +109,16 @@ from prop attachment and cannot generally be corrected by moving the prop alone.
 
 The experimental contact adapter adjusts the arm during `drink_walk`,
 `bottle_walk`, `smoke_walk` and `cigar_walk`, using the item's visible geometry
-and the character's mouth. It preserves the authored grip and releases the
-correction as the hand lowers. `hold_item_walk` only holds the item. Matching
+and the character's mouth. It preserves the authored grip. In first person,
+the arm keeps the held item visible at the lower right between sips and smoothly
+follows the camera during contact. `hold_item_walk` only holds the item. Matching
 client, server and animation assets are required; visual validation is incomplete.
 
-Omitting `itemContact` selects automatic contact estimation. The main mesh's
-bounds estimate an end or rim; they cannot identify every custom model's opening.
+Omitting `itemContact` selects automatic contact estimation. For cans and bottles,
+the main mesh's bounds select the end along the item's authored local up direction
+(the can's rim). This remains the selected end while the container tilts; choosing
+whichever end is nearest the mouth could select the bottle's bottom. Smoking
+items use the end nearest the mouth. Bounds cannot identify every custom model's opening.
 For an unusual item, your inventory definition can supply a measured mouth point:
 
 ```lua
@@ -132,7 +136,7 @@ if not action then print(reason); return end
 | --- | --- |
 | Omitted | Estimate contact automatically from visible geometry. |
 | `{x,y,z}` | Contact point in metres in the native item's local frame. Missing axes default to zero; supplied axes must be finite and within ±2 metres. |
-| `false` | Preserve the clip without automatic contact correction. |
+| `false` | Disable mouth fitting. The first-person holding pose still keeps the item visible. |
 
 The option is server-only and requires `world.props`, including when set to
 `false`. Use it on `play`, on `playClip` when the clip resolves to a layer, or on
@@ -203,10 +207,17 @@ hands-behind-back pose includes spine movement. Contact with the mouth and cloth
 can vary by body and appearance.
 
 First-person arm support is experimental and needs a compatible client and player
-animation archive. Third-person support does not imply first-person support for
-every profile. Drink-to-mouth placement and cigar grip remain incomplete; phone
-and other gestures do not have a first-person adapter. Server acceptance cannot
-be used to infer first-person visibility or successful combat cleanup.
+animation archive. The can, bottle, cigarette, cigar and hold profiles have visible
+first-person hands/items on the tested female body, with mouth contact on the
+consumption profiles. Items stay visible at the lower right between sips.
+Other appearances, the male body and custom shapes remain under validation;
+phone and other gestures do not have a first-person adapter. Third-person support
+does not imply first-person support for every profile.
+
+Holding, drinking and holding again preserves the same item; completion removes
+the animation-owned item. Punching interrupts the layer and its item, and a later
+play creates a fresh presentation. Server acceptance alone does not establish
+that a particular body, item or animation phase rendered correctly.
 
 | Task | Client resource | Server resource |
 | --- | --- | --- |
