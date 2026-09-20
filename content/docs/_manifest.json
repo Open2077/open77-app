@@ -763,12 +763,13 @@
       "target": "content/docs/rp-animations.md",
       "slug": "rp-animations",
       "title": "Role-play animations",
-      "bytes": 29883,
-      "sha256": "21ffbb056e33da04663c007d3c43247ea535dd0f70762a40c4747d7e13b55bf8",
+      "bytes": 37150,
+      "sha256": "57ffd049eaded3b6e46ab65727f6a8161a2dca8ff846313b1d23fe45ecb91730",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b5c104b760c0540f4725de2a5f1fb1c7f5c7cb6dd4397495943490d9ca8d167a"
-      }
+      },
+      "siteAmendment": "Walking RP actions, native item ownership, job sequences and public discovery downloads; contract reference open77-base 75f0e59cfa26606e83d9257ec1c7c07c6929c977"
     },
     {
       "source": "wiki/rp-kit.md",

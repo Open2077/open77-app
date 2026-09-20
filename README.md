@@ -183,6 +183,15 @@ This writes review screenshots under `.shots/` (ignored by Git).
 
 ### References to the platform repository
 
+The RP animation guide links public discovery downloads under `/data/`:
+`emote-animations.txt` and `rp-workspots.json`. Refresh them with
+`node scripts/sync-animation-inventories.mjs --from <platform-checkout>` and
+verify with the same command plus `--check`. The exporter records source revision
+and hashes in `animation-inventories.json`; it publishes names and workspot-to-clip
+associations only, not game assets or internal tree details. These inventories
+do not grant playback support; the installed `Open77.animations.clips()` catalogue
+is the runtime reference.
+
 Some guides point at files outside the wiki — datasets under `docs/generated/`, example resources,
 the licence. That repository is not public yet, so `site.links.platformRepo` is `null` and those
 references render as filenames in code style rather than links to a 404. Setting that field to the

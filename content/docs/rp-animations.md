@@ -1,12 +1,15 @@
 # Role-play animations
 
-Play named role-play profiles such as `smoke`, `phone` and `dance` through server-authoritative animation requests. Profiles bind compatible workspots, clips and rig assets.
+Play server-authoritative RP actions for inventory use, jobs and social gestures.
+Use upper-body profiles such as `smoke_walk`, `drink_walk` and `wave` while moving,
+or full-body workspots such as `smoke`, `phone` and `dance` for stationary actions.
 
 Requires matching client, server and RP archive support for the selected profile. Clip and prop compatibility can vary by body and appearance. Repeated reconnects can leave stale presentation objects or a camera hold; handle lifecycle failures. Furniture is not spawned automatically.
 
-Use a named profile such as `smoke`, `phone` or `dance`. Each profile binds an
-authored workspot and an explicit set of compatible clip names. Arbitrary animation
-names from the general game inventory are not accepted by this system.
+Each profile selects compatible clips and either a workspot or an upper-body
+layer. Start with [walking actions and items](#upper-body-actions-for-jobs-and-inventory)
+for a minimal server Lua example. Arbitrary names from the general game inventory
+are not accepted by this system.
 
 See the [profile and clip catalogue](rp-animation-catalogue.md) for 76 profiles and 456 selectable clips. The `chair`, `lean` and `lie` profiles support anchored placement; see [Portable workspots](#portable-workspots-sit-lean-and-lie-anywhere). Male and female bindings are included, but not every clip is compatible with every body or proxy graph.
 
@@ -20,15 +23,146 @@ To build a job action out of a profile, a prop attached to the hands and a progr
 2. **The server owns the action.** It validates the player, resource ownership,
    options and duration, assigns a `playbackId`, and distributes state within the
    routing bucket. Store this ID when a delayed callback will stop the action.
-3. **Clients present the accepted state.** The local player temporarily uses the
+3. **Clients present the accepted state.** For workspots, the local player temporarily uses the
    F7 third-person body; replicated bodies receive the same selected profile and
    step. Native mounting and profile changes are asynchronous. A native failure
    is reported separately from the accepted server request.
 
-An animation is not a locomotion controller. These profiles are stationary:
-walking, entering a vehicle, death and other interruptions cancel playback.
-They do not replace walking, climbing or combat animations, and arbitrary names
-from the game's animation inventory are not supported RP profiles.
+Workspot profiles are stationary and cancel when the player moves. Layer profiles
+keep walking, running and turning available while animating the upper body.
+Entering a vehicle, death and combat can interrupt an action. Neither profile kind
+replaces the locomotion or combat controller.
+
+## Upper-body actions for jobs and inventory
+
+Run `open77_animations` and `open77_props` with matching client, server and archive
+support. The server runtime owns playback and temporary item lifetime; the native
+client animates the body and attaches the item. Your RP resource owns inventory
+validation, consumption, job permissions and rewards.
+
+```lua
+-- open77.lua
+resource 'my_job_actions'
+server_script 'server.lua'
+permissions { 'players.animations.control' }
+```
+
+```lua
+-- server.lua: call from your validated job or inventory handler.
+local function drink(playerId)
+    local action, reason = Open77.animations.play(playerId, 'drink_walk', {
+        loop = false,
+    })
+    if not action then return nil, reason end
+    return action.playbackId
+end
+```
+
+This plays one drink cycle with the default can while the player can move. The
+platform removes its temporary can when the action ends; no prop-spawn call or
+cleanup timer is required. It does not remove anything from the player's inventory
+or change thirst. Server acceptance does not prove that presentation succeeded.
+
+| Profile | Action | Default item |
+| --- | --- | --- |
+| `smoke_walk` | Smoke a cigarette | `Items.crowd_cigarette_i_stick` |
+| `cigar_walk` | Smoke a cigar | `Items.crowd_cigar` |
+| `drink_walk` | Drink from a can | `Items.crowd_soda_can_a` |
+| `bottle_walk` | Drink from a bottle | `Items.crowd_bottle_i_beer` |
+| `hold_item_walk` | Hold an item | `Items.crowd_soda_can_a` |
+| `call_walk` | Talk on the phone | `Items.crowd_talking_cellphone` |
+| `phone_walk` | Use the phone with both hands | `Items.crowd_cellphone` |
+| `wave`, `point`, `thumbsup` | Brief gesture | None |
+| `handsup_walk`, `handsback_walk`, `armscrossed_walk` | Maintain a pose while moving | None |
+
+Use `Open77.animations.list()` on the server to discover profiles supported by
+the installed build. Profiles with `kind='layer'` use the upper-body path. Select
+these by profile ID: a raw clip name shared with a workspot resolves to the
+stationary version. An `upperBody=true` option does not convert arbitrary clips.
+
+### Animation-owned items: one server call
+
+| `options.item` | Behavior |
+| --- | --- |
+| Omitted | Use the layer profile's default item, if any. |
+| `'Items.crowd_soda_can_a'` | Select this native item. Server only; also requires `world.props`. |
+| `false` | Suppress the animation-owned item. An independently held item is preserved. |
+
+The item option is available on `play`, each `sequence` step, and `playClip` when
+it resolves to a layer. Workspots reject it with `item_requires_layer`. Invalid
+record syntax returns `invalid_item_record`; client requests for a custom record
+return `item_requires_server`. Clients may request `item=false`.
+
+Native items use the game's authored hand attachment. A valid record name does
+not guarantee that its size or grip suits a chosen animation. Custom mesh props
+remain available through [attachments](attachments.md).
+
+For native `Items.*`, `options.item` selects the record; it does not expose position
+or rotation adjustments. The native attachment supports zero offsets/rotations
+and unit scale only. For a custom mesh prop, the server can set `bone`, `offset`
+and `rotation` with `Open77.props.attach`, and use `item=false` on the animation.
+Player-facing adjustment controls must send requests to your server resource,
+which validates and applies them. Animation poses and mouth contact are separate
+from prop attachment and cannot generally be corrected by moving the prop alone.
+
+### Hold, drink, then hold again
+
+For input-driven transitions, call `play` from the same resource when the player
+chooses an action. Keep the latest returned playback ID for delayed cancellation:
+
+```lua
+-- Server manifest also needs world.props for an explicit item selection.
+local function setDrinkAction(playerId, drinking)
+    local profile = drinking and 'drink_walk' or 'hold_item_walk'
+    return Open77.animations.play(playerId, profile, {
+        item = 'Items.crowd_soda_can_a',
+    })
+end
+-- setDrinkAction(playerId, false): hold.
+-- setDrinkAction(playerId, true): drink until the next input or cancellation.
+```
+
+Changing between these actions preserves the same prop ID while its item record
+stays the same. Each call returns a new playback ID. For an automatic timed chain:
+
+```lua
+local action, reason = Open77.animations.sequence(playerId, {
+    { profile = 'hold_item_walk', durationMs = 3000 },
+    { profile = 'drink_walk' }, -- One measured clip cycle for a layer step.
+    { profile = 'hold_item_walk', durationMs = 3000 },
+}, { loop = false })
+if not action then print(reason); return end
+-- To cancel this particular action from the same resource:
+-- Open77.animations.stop(playerId, action.playbackId)
+```
+
+The default can is shared across the three steps and removed when the sequence
+finishes. With a custom item, specify `item` on each step. A sequence coordinates
+one player's actions; it does not automatically coordinate a handover between
+players. Use the existing [player interactions](player-interactions.md) API for
+carrying or escorting another player.
+
+An independently held item can outlive an animation through the server
+`Open77.heldItems.hold` / `release` API. Its owning resource must manage its release.
+Animation cleanup preserves that item and suppresses the default while the hand
+is occupied. The animation-owned item is cleaned up on completion, cancellation,
+death, disconnect, bucket changes and resource shutdown.
+
+See the public [RP examples and held-action guide](https://github.com/Open2077/open77-rp-examples/blob/main/docs/held-actions.md)
+for inventory, bar and phone integration.
+
+### Third-person and first-person support
+
+Upper-body profiles animate the third-person body while locomotion continues.
+Selected smoking, drinking and phone poses also animate the neck/head; the
+hands-behind-back pose includes spine movement. Contact with the mouth and clothing
+can vary by body and appearance.
+
+First-person arm support is experimental and needs a compatible client and player
+animation archive. Third-person support does not imply first-person support for
+every profile. Drink-to-mouth placement and cigar grip remain incomplete; phone
+and other gestures do not have a first-person adapter. Server acceptance cannot
+be used to infer first-person visibility or successful combat cleanup.
 
 | Task | Client resource | Server resource |
 | --- | --- | --- |
@@ -81,7 +215,7 @@ variants. The browser renders at most 60 cards per page. Select a family and use
 the variant arrows, then **Play**, or double-click a card. Looping and timed
 5/10/30-second playback are available. The menu releases
 input before the temporary TPP starts. **Stop** or `/anim stop` cancels the caller's
-action, including an in-flight UI request; moving also interrupts playback.
+action, including an in-flight UI request; moving interrupts workspot playback.
 Experimental variants may have body-specific presentation differences.
 Start/menu/list/info commands are limited to one every 500 ms per player.
 
@@ -271,17 +405,20 @@ local stopped, stopError = Open77.animations.stop(playerId, playbackId)
 
 ### Duration, clips and sequences
 
-`play` options are `clip`, `durationMs` and `loop` only. Omit `clip` to select the
+`play` options are `clip`, `durationMs`, `loop` and `item`. The item option is for
+layer profiles only, as described above. Omit `clip` to select the
 profile default. A variant must belong to that exact profile. Unknown options,
 non-integer durations and cross-profile clips are rejected, not silently corrected.
 
 `loop` defaults to true. With that default, omitted or zero `durationMs` keeps the
 server action active until cancellation. With `loop = false`, the default duration
-is 5,000 ms. A nonzero duration must be between 1,000 and 600,000 ms.
+is the measured clip length when supplied by the profile, otherwise 5,000 ms.
+One-shot layer gestures also use their measured duration when looping.
+A nonzero duration must be between 1,000 and 600,000 ms.
 
-These are **server scheduling durations**, not measured native clip lengths. Native
-frame-accurate seeking/repetition is not yet verified. Do not derive a clip's
-length from the server's default duration.
+Durations schedule server playback. The 5,000 ms fallback does not establish the
+native clip length. Layer profiles expose measured `clipDurationsMs`; workspot
+seeking and repetition have different presentation constraints.
 
 ```lua
 local playback, err = Open77.animations.sequence(playerId, {
@@ -291,8 +428,9 @@ local playback, err = Open77.animations.sequence(playerId, {
 }, { loop = false })
 ```
 
-A sequence contains 1–16 steps. Each step accepts `profile`, `clip` and
-`durationMs`; its duration defaults to 5,000 ms and must be nonzero. The sum cannot
+A sequence contains 1–16 steps. Each step accepts `profile`, `clip`, `item` and
+`durationMs`; its duration defaults to the measured clip length when available,
+otherwise 5,000 ms, and must be nonzero. The sum cannot
 exceed 600,000 ms. The only sequence option is `loop`, default false. Different
 profiles may appear in one sequence; native profile changes require asynchronous
 workspot exit/re-entry and are not promised to be seamless blends.
@@ -337,15 +475,19 @@ after it is mounted into a *device* — an entity carrying a
 **inside that device's workspot tree**. The device and its tree are bound together
 when the archive is built, not at runtime.
 
-So the addressable set is the **456 clips of the 76 catalogue devices**, and
-`Open77.animations.clips()` is the whole of it. Two consequences worth stating
-plainly, because both have cost time before:
+The addressable set includes the catalogue workspots and the shipped layer
+profiles. `Open77.animations.clips()` returns the installed build's supported
+profile/clip pairs. Select a layer by profile ID when its clip is also used by a
+workspot; clip-first lookup selects the full-body version for shared names.
 
-- [`docs/data/emote-animations.txt`](../docs/data/emote-animations.txt) lists 23,044
-  clip names and
-  [`docs/data/rp-workspots.json`](../docs/data/rp-workspots.json) 4,510 more across
-  494 vanilla workspots. Both are **discovery inventories, not allowlists**. A name
-  from either that no shipped device carries is refused with `unknown_clip`.
+- Download the [clip-name inventory](/data/emote-animations.txt) (23,044 names)
+  or the [workspot discovery index](/data/rp-workspots.json) (4,510 names across
+  494 vanilla workspots). These public files require no repository access and
+  contain identifiers, not animation assets. The inventories can overlap and
+  are **discovery lists, not playback allowlists**. Angle-bracket names in the
+  workspot index are engine markers. A name absent from the installed playback
+  catalogue is refused with `unknown_clip`. For usable actions, start with the
+  [profile catalogue](rp-animation-catalogue.md) and `Open77.animations.clips()`.
 - The legacy client-local `Open77.animations.play(entity, clip)` looks like it takes
   any name. It does not: it mounts the body into the single generic device
   `cyberm\entities\workspot_anim.ent`, which binds exactly one vanilla workspot
@@ -365,13 +507,13 @@ which concept is missing instead of assuming a bad value:
 
 | Passed option | Reason returned | Why |
 | --- | --- | --- |
-| `upperBody` | `unsupported_option:upperBody` | A workspot takes the whole body. There is no bone mask on this path. |
+| `upperBody` | `unsupported_option:upperBody` | Choose a shipped layer profile such as `smoke_walk`; this flag cannot convert a workspot. |
 | `blendIn`, `blendOut`, `blendMs` | `unsupported_option:blendIn` … | The engine *jumps* a mounted body to an authored node; it does not blend a clip in over milliseconds. |
 | `holdLastFrame` | `unsupported_option:holdLastFrame` | Not measured on 2.31. Unverified behaviour is not an API. |
 | `flags`, `dict`, `playbackRate` | `unsupported_option:<key>` | No equivalent concept. |
 
-What *is* supported is `loop` and `durationMs`, described above, plus `clip` on
-`play` and on a sequence step.
+Supported options include `loop`, `durationMs`, `clip` on `play` or a sequence
+step, and `item` on layer actions as described above.
 
 #### Scenarios: what `playAt` covers and what it does not
 
@@ -483,7 +625,11 @@ Pass `playbackId` to delayed stops. A stop for an older action returns
 action owned by the calling resource. The player's self-cancellation network path
 is allowed to stop their own server-controlled animation.
 
-The server cancels on disconnect, loss of readiness, death, vehicle occupancy, routing-bucket changes, movement beyond 0.5 m from the start and completion of a non-looping sequence. The client reports native playback failures and interruptions through self-cancellation. Native interruption handling remains experimental.
+The server cancels on disconnect, loss of readiness, death, vehicle occupancy,
+routing-bucket changes and completion of a non-looping sequence. Movement beyond
+0.5 m from the start cancels stationary workspots; layer profiles allow movement.
+The client reports native playback failures and interruptions through
+self-cancellation. Native interruption handling remains experimental.
 
 ```lua
 AddEventHandler('onPlayerAnimationChanged', function(playerId, stateJson)
@@ -514,7 +660,7 @@ failures are reported separately through `onAnimationPlaybackFailed`.
 
 ## Local view and development diagnostics
 
-The curated native local path requests third person temporarily and reuses the F7
+The workspot local path requests third person temporarily and reuses the F7
 presentation body. It waits for that body to be active before starting the workspot;
 its walking, aiming and combat presentation stand down while the workspot owns it.
 Stopping releases the temporary animation-camera priority immediately. Returning
