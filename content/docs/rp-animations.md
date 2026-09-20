@@ -105,6 +105,50 @@ Player-facing adjustment controls must send requests to your server resource,
 which validates and applies them. Animation poses and mouth contact are separate
 from prop attachment and cannot generally be corrected by moving the prop alone.
 
+### Item size and mouth contact
+
+The experimental contact adapter adjusts the arm during `drink_walk`,
+`bottle_walk`, `smoke_walk` and `cigar_walk`, using the item's visible geometry
+and the character's mouth. It preserves the authored grip and releases the
+correction as the hand lowers. `hold_item_walk` only holds the item. Matching
+client, server and animation assets are required; visual validation is incomplete.
+
+Omitting `itemContact` selects automatic contact estimation. The main mesh's
+bounds estimate an end or rim; they cannot identify every custom model's opening.
+For an unusual item, your inventory definition can supply a measured mouth point:
+
+```lua
+-- Server manifest: players.animations.control, world.props
+-- itemDefinition belongs to your validated inventory/job configuration.
+local action, reason = Open77.animations.play(playerId, 'bottle_walk', {
+    item = itemDefinition.record,
+    itemContact = itemDefinition.mouthPoint,
+})
+if not action then print(reason); return end
+-- mouthPoint is nil (automatic), or { x=..., y=..., z=... } for this model.
+```
+
+| `options.itemContact` | Behavior |
+| --- | --- |
+| Omitted | Estimate contact automatically from visible geometry. |
+| `{x,y,z}` | Contact point in metres in the native item's local frame. Missing axes default to zero; supplied axes must be finite and within ±2 metres. |
+| `false` | Preserve the clip without automatic contact correction. |
+
+The option is server-only and requires `world.props`, including when set to
+`false`. Use it on `play`, on `playClip` when the clip resolves to a layer, or on
+each sequence step. Workspots reject it with `item_requires_layer`; client
+requests return `item_requires_server`. Malformed points, unknown fields and
+out-of-range coordinates return `invalid_item_contact` before replacing the
+current action. Omit the option on a subsequent action or step to restore
+automatic contact. Changing the point preserves the animation-owned prop ID
+when the item record stays the same.
+
+This adjusts the arm's contact target. It does not change the item's grip offset,
+consume inventory or make an incompatible shape fit the fingers. An independently
+owned held item keeps its own attachment settings: set `contact` on that native
+item's `Open77.props.attach` binding instead. Contact settings travel with the
+prop attachment; they are not fields of the animation playback snapshot.
+
 ### Hold, drink, then hold again
 
 For input-driven transitions, call `play` from the same resource when the player

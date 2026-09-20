@@ -59,11 +59,14 @@
       "target": "content/docs/attachments.md",
       "slug": "attachments",
       "title": "Synchronized attachments",
-      "bytes": 7819,
-      "sha256": "1cbacc050ca282a8b6a22edf4dd8f685472811cb3bec19fa51847f4693c1f6d2",
+      "bytes": 8530,
+      "sha256": "49deb9e022be87913fdcfaf72f47b584230c2c6217d4694eb4d0546f6d79cd8d",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "7ea954d90f482bbf1f809497bc5f12dd3c480e2ea80a59e06dfab26d4ad96e22"
+      },
+      "siteAmendment": {
+        "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete"
       }
     },
     {
@@ -763,13 +766,16 @@
       "target": "content/docs/rp-animations.md",
       "slug": "rp-animations",
       "title": "Role-play animations",
-      "bytes": 37150,
-      "sha256": "57ffd049eaded3b6e46ab65727f6a8161a2dca8ff846313b1d23fe45ecb91730",
+      "bytes": 39551,
+      "sha256": "f5f3d6ca6ff37586ca2866836737530d88ec94803d2e5183cf5d19afbbc96397",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b5c104b760c0540f4725de2a5f1fb1c7f5c7cb6dd4397495943490d9ca8d167a"
       },
-      "siteAmendment": "Walking RP actions, native item ownership, job sequences and public discovery downloads; contract reference open77-base 75f0e59cfa26606e83d9257ec1c7c07c6929c977"
+      "siteAmendment": {
+        "previous": "Walking RP actions, native item ownership, job sequences and public discovery downloads; contract reference open77-base 75f0e59cfa26606e83d9257ec1c7c07c6929c977",
+        "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete"
+      }
     },
     {
       "source": "wiki/rp-kit.md",
@@ -1124,15 +1130,16 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1624,
-      "bytes": 2274628,
-      "sha256": "c5a998c4cb4c6455495c70fd1b79c727a1cab86a83c7f93c230e9501ef3c701d",
+      "bytes": 2278479,
+      "sha256": "8aac8c63eb886412b6b6bfba7d7e646bad4229c166ff35965f79a7b7df9148b5",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
       },
       "siteAmendment": {
         "sourceCommit": "75f0e59cfa26606e83d9257ec1c7c07c6929c977",
-        "scope": "RP native layer/item/sequence descriptions and server animation permissions; no inferred option release version"
+        "scope": "RP native layer/item/sequence descriptions and server animation permissions; no inferred option release version",
+        "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete"
       }
     },
     {
