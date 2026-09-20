@@ -209,7 +209,7 @@
       "source": "wiki/context-menu.md",
       "target": "content/docs/context-menu.md",
       "slug": "context-menu",
-      "title": "Generic context menu — open77_contextmenu",
+      "title": "Generic context menu â€” open77_contextmenu",
       "bytes": 20418,
       "sha256": "991709b808c59afbd18dac716e67813b9bf9845b995deaad2c9034fd635a6f00",
       "siteEditorial": {
@@ -221,7 +221,7 @@
       "source": "wiki/cordon.md",
       "target": "content/docs/cordon.md",
       "slug": "cordon",
-      "title": "Cordon — battle royale",
+      "title": "Cordon â€” battle royale",
       "bytes": 15653,
       "sha256": "3b99e1775daca0271124763393c54586fef2b85457d305ce7dbf0cef39a009a6",
       "siteEditorial": {
@@ -257,7 +257,7 @@
       "source": "wiki/data-catalogues.md",
       "target": "content/docs/data-catalogues.md",
       "slug": "data-catalogues",
-      "title": "Game data catalogues — `Open77.data`",
+      "title": "Game data catalogues â€” `Open77.data`",
       "bytes": 7744,
       "sha256": "9c563af76b1d3c7a9245bd23e55d8f9011f49a56b9a708348259a5e05ddd0a56",
       "siteEditorial": {
@@ -281,7 +281,7 @@
       "source": "wiki/deathmatch.md",
       "target": "content/docs/deathmatch.md",
       "slug": "deathmatch",
-      "title": "Deathmatch — running the Kabuki Arena PvP mode",
+      "title": "Deathmatch â€” running the Kabuki Arena PvP mode",
       "bytes": 23023,
       "sha256": "a4367f998b1c0f8a56b3e4a45447ddf13ff9c8e8835ddcae832508a7e923f028",
       "siteEditorial": {
@@ -1124,11 +1124,15 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1624,
-      "bytes": 2269215,
-      "sha256": "8a25871651597e3f8fdc2c6f7429174aac24260d3de62f13b92e6d184219b9ca",
+      "bytes": 2274628,
+      "sha256": "c5a998c4cb4c6455495c70fd1b79c727a1cab86a83c7f93c230e9501ef3c701d",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
+      },
+      "siteAmendment": {
+        "sourceCommit": "75f0e59cfa26606e83d9257ec1c7c07c6929c977",
+        "scope": "RP native layer/item/sequence descriptions and server animation permissions; no inferred option release version"
       }
     },
     {
