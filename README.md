@@ -10,6 +10,12 @@ private file uploads and downloads use its configured gateway. The app owns no
 database. Documentation and public Hub content remain readable without executing
 client JavaScript.
 
+## Service status
+
+The public `/status` page displays real service checks, 90-day availability, response
+times, detected incidents and maintenance. A standalone persistent collector feeds
+the website; see [operation, deployment and test instructions](docs/service-status.md).
+
 ## Requirements
 
 - Node.js 20.19 or newer (Vercel builds on Node 24)
