@@ -31,6 +31,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - name: Status probes, persistence, incidents and feed validation
+        run: npm run test:status
       - name: Deterministic Hub tests and browser-runner guards
         run: npm run test:hub
       - run: npm run build

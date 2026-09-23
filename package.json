@@ -13,6 +13,8 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test:status": "node --experimental-strip-types --test scripts/test-status.mjs",
+    "verify:status:browser": "node scripts/check-status-browser.mjs",
     "check": "npm run typecheck && npm run lint && npm run verify:docs",
     "test:hub": "node --test scripts/test-server-profile-seo.mjs scripts/test-community-drafts.mjs scripts/test-community-draft-merge.mjs scripts/test-community-github-pkce.mjs scripts/test-community-seo.mjs scripts/test-community-video.mjs scripts/test-community-create.mjs scripts/test-community-read-failure.mjs scripts/test-community-format.mjs && node scripts/check-community-markdown.mjs && node scripts/test-hub-browser-guards.mjs",
     "verify:releases": "node scripts/check-release-channels.mjs",
