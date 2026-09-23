@@ -62,6 +62,14 @@
           "description": "A step-by-step guide to running your own OPEN//77 dedicated server: get the Windows or Linux build, mint a license key, walk the first-run setup, edit server.jsonc, launch it, and watch it appear automatically in the launcher."
         },
         {
+          "slug": "server-startup",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Startup arguments & logging",
+          "title": "Server startup arguments and logging",
+          "description": "Configure server log levels and verbose output, override JSONC fields with startup arguments or environment variables, provision public VPS addresses and validate configuration before boot."
+        },
+        {
           "slug": "server-licensing",
           "kind": "page",
           "nav": "Server licensing",

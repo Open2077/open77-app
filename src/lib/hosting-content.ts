@@ -180,6 +180,11 @@ dotnet Open77.Server.dll
 # Linux, from the unpacked folder
 ./Open77.Server`;
 
+export const STARTUP_DOC = {
+  href: "/docs/server-startup",
+  label: "Startup arguments, log levels and hosting-panel configuration",
+} as const;
+
 export const APPEARS_INTRO =
   "On startup, the server enrolls and registers automatically:";
 
@@ -238,6 +243,7 @@ export function hostingToMarkdown(): string {
 
   lines.push("## Run it", "", RUN_INTRO, "");
   lines.push("```bash", RUN_SAMPLE, "```", "");
+  lines.push(`[${STARTUP_DOC.label}](${STARTUP_DOC.href})`, "");
 
   lines.push("## It appears automatically", "", APPEARS_INTRO, "");
   APPEARS_STEPS.forEach((step, index) => {

@@ -39,6 +39,7 @@ import {
   NEXT_INTRO,
   RUN_INTRO,
   RUN_SAMPLE,
+  STARTUP_DOC,
 } from "@/lib/hosting-content";
 import { breadcrumbNode, jsonLdGraph, pageMetadata, techArticleNode } from "@/lib/seo";
 
@@ -220,6 +221,12 @@ export default async function HostAServerPage() {
           </h2>
           <p className="docs-p">{RUN_INTRO}</p>
           <Snippet filename="shell" badge="LAUNCH" html={runHtml} />
+          <p className="docs-p">
+            <Link className="doc-inline-link" href={STARTUP_DOC.href}>
+              {STARTUP_DOC.label}
+              <ArrowRightIcon size={14} />
+            </Link>
+          </p>
         </section>
 
         <section className="docs-section" id="appears">
