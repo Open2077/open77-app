@@ -33,6 +33,8 @@ jobs:
       - run: npm run check
       - name: Status probes, persistence, incidents and feed validation
         run: npm run test:status
+      - name: Dev Tracker workflow guards and quota error handling
+        run: npm run test:dev-tracker
       - name: Deterministic Hub tests and browser-runner guards
         run: npm run test:hub
       - run: npm run build

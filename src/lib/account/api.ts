@@ -122,9 +122,19 @@ export async function masterCall<T>(
   }
 
   if (response.status === 429) {
+    // Business quotas can last longer than the transport limiter's one-minute
+    // window. Preserve their actionable message instead of claiming every retry
+    // will work after one minute. Empty infrastructure responses keep the fallback.
+    let code = "rate_limited";
+    let message = "Too many attempts. Wait a minute and try again.";
+    try {
+      const body = await response.json() as { code?: unknown; message?: unknown };
+      if (typeof body.code === "string") code = body.code;
+      if (typeof body.message === "string") message = body.message;
+    } catch { /* No structured quota response. */ }
     throw new MasterApiError(
-      "rate_limited",
-      "Too many attempts. Wait a minute and try again.",
+      code,
+      message,
       429,
     );
   }

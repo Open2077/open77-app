@@ -75,7 +75,8 @@ export function StatusDashboard() {
     active.current = controller;
     setLoading(true);
     try {
-      const response = await fetch("/api/status", { cache: "no-store", signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]) });
+      // Version the URL once to escape snapshots cached by the old public route.
+      const response = await fetch("/api/status?v=2", { cache: "no-store", signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]) });
       const data = response.ok ? parseSnapshot(await response.json()) : null;
       if (!data) throw new Error("No monitoring data");
       setSnapshot(data);

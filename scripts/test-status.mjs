@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { readFile } from "node:fs/promises";
+import ts from "typescript";
 import { SERVICES, artifactUrl, boundedBody, probe } from "../ops/status-monitor/probes.mjs";
 import { DAY, MINUTE, openStore, prune, record, snapshot, validateMaintenance } from "../ops/status-monitor/store.mjs";
 import { currentState, isStale, overallState, parseSnapshot, percent, statistics } from "../src/lib/status/model.ts";
@@ -13,6 +15,48 @@ const bad = { state: "outage", latencyMs: null, detail: "HTTP 503" };
 function seed(db, at = now) { for (const service of SERVICES) record(db, service.id, good, at); }
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status });
 const partial = () => new Response(new Uint8Array(4096), { status: 206, headers: { "Content-Range": "bytes 0-4095/200000" } });
+
+function sourceModule(source) {
+  const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText;
+  return "data:text/javascript;base64," + Buffer.from(compiled).toString("base64");
+}
+const modelModule = sourceModule(await readFile(new URL("../src/lib/status/model.ts", import.meta.url), "utf8"));
+const routeSource = await readFile(new URL("../src/app/api/status/route.ts", import.meta.url), "utf8");
+const route = await import(sourceModule(routeSource.replace('"@/lib/status/model"', JSON.stringify(modelModule))));
+
+test("status API bypasses both upstream and edge caches on every refresh", async t => {
+  const db = openStore(":memory:");
+  try {
+    seed(db);
+    let measuredAt = now;
+    let calls = 0;
+    t.mock.method(globalThis, "fetch", async (url, options) => {
+      calls++;
+      assert.equal(options.cache, "no-store");
+      assert.equal(options.next, undefined);
+      assert.equal(options.redirect, "error");
+      return json(snapshot(db, { now: measuredAt }));
+    });
+    for (let i = 0; i < 2; i++) {
+      const response = await route.GET();
+      assert.equal(response.status, 200);
+      assert.equal((await response.json()).generatedAt, new Date(measuredAt).toISOString());
+      for (const header of ["Cache-Control", "CDN-Cache-Control", "Vercel-CDN-Cache-Control"]) assert.ok(response.headers.get(header).includes("no-store"));
+      measuredAt += MINUTE;
+    }
+    assert.equal(calls, 2);
+    assert.equal(route.dynamic, "force-dynamic");
+    assert.equal(route.revalidate, 0);
+  } finally { db.close(); }
+});
+
+test("status API failures cannot be cached as a last good response", async t => {
+  t.mock.method(globalThis, "fetch", async () => new Response("temporarily unavailable", { status: 503 }));
+  const response = await route.GET();
+  assert.equal(response.status, 503);
+  assert.equal((await response.json()).error, "status_unavailable");
+  for (const header of ["Cache-Control", "CDN-Cache-Control", "Vercel-CDN-Cache-Control"]) assert.ok(response.headers.get(header).includes("no-store"));
+});
 
 test("fresh install has 90 unknown days, never synthetic uptime", () => {
   const db = openStore(":memory:");

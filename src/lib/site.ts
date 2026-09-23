@@ -104,6 +104,7 @@ export const mainNav = [
   { href: "/devblog", label: "Devblog" },
   { href: "/workshop", label: "Workshop" },
   { href: "/status", label: "Status" },
+  { href: "/dev-tracker", label: "Dev Tracker" },
 ] as const;
 
 export const footerNav = [
@@ -129,6 +130,7 @@ export const footerNav = [
     title: "Project",
     links: [
       { href: "/status", label: "Service status" },
+      { href: "/dev-tracker", label: "Dev Tracker" },
       { href: "/docs/platform#roadmap", label: "Roadmap" },
       { href: "/devblog", label: "Devblog" },
       { href: "/workshop", label: "Workshop" },

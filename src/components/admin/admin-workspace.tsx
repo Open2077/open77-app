@@ -9,6 +9,7 @@ import { useAdminActivity, AdminSpinner } from "./admin-activity";
 
 const NAV = [
   { href: "/admin", label: "Overview", group: "Workspace", icon: CodeIcon, note: "Your network, at a glance. Live data and the latest platform activity." },
+  { href: "/admin/dev-tracker", label: "Dev Tracker", group: "Workspace", icon: CodeIcon, note: "Review community ideas, publish progress and keep discussions constructive." },
   { href: "/admin/incidents", label: "Crash reports", group: "Workspace", icon: InfoIcon, note: "Investigate player reports, correlate incidents and inspect the evidence." },
   { href: "/admin/servers", label: "Servers", group: "Network", icon: ServerRackIcon, note: "Connected worlds, player capacity and heartbeat observations." },
   { href: "/admin/releases", label: "Releases", group: "Network", icon: DownloadIcon, note: "Published channels, trusted builds and controlled release operations." },

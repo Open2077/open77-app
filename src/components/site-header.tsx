@@ -9,6 +9,7 @@ import { useSession } from "@/lib/account/session";
 import { mainNav, site } from "@/lib/site";
 
 const SHORTCUTS = [
+  { href: "/dev-tracker", title: "Dev Tracker", detail: "Ideas, community votes and development progress", keywords: "roadmap feedback suggestions forum" },
   { href: "/status", title: "Service status", detail: "Live health, uptime and incidents", keywords: "outage availability cdn master downloads maintenance" },
   { href: "/download", title: "Download launcher", detail: "Signs you in, checks your game, installs the mod", keywords: "play client windows install" },
   { href: "/servers", title: "Server browser", detail: "Every community server, live", keywords: "browse roleplay racing pvp servers" },
