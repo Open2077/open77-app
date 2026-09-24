@@ -106,7 +106,7 @@
       "id": "server-administration",
       "title": "Server administration",
       "group": "Start & host",
-      "description": "Operate your server with Warden or integrate its administration into your own dashboard through RCON.",
+      "description": "Operate your server with Warden and RCON, and monitor its load with Prometheus metrics.",
       "pages": [
         {
           "slug": "warden",
@@ -122,6 +122,14 @@
           "nav": "RCON & TCP protocol",
           "title": "RCON: authenticated TCP administration",
           "description": "Configure authenticated TCP administration, connect dashboard backends, implement the Open77 RCON protocol, stream logs and transfer files with Warden permissions, TLS and resumable sessions."
+        },
+        {
+          "slug": "metrics",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Prometheus metrics",
+          "title": "Prometheus metrics",
+          "description": "Monitor CPU, RAM, ticks, network traffic, players and gameplay. Configure secure Prometheus collection, build Grafana graphs and export custom Lua metrics for stress tests."
         },
         {
           "slug": "community-hub-warden",

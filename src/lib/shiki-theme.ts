@@ -106,6 +106,7 @@ export const syntaxLanguages = [
   "powershell",
   "jsonc",
   "bash",
+  "yaml",
   "typescript",
   "xml",
   "diff",

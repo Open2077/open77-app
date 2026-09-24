@@ -241,7 +241,39 @@ try {
     }
   }
 
-  if (process.argv.includes("--remote-camera")) {
+  if (process.argv.includes("--metrics")) {
+    for (const width of [1440, 390]) {
+      await session.send("Emulation.setDeviceMetricsOverride", {
+        width, height: 900, deviceScaleFactor: 1, mobile: width < 600,
+      });
+      await visit("/docs/metrics");
+      check(`metrics ${width}px guide and active navigation render`, await session.evaluate(`
+        return document.querySelector('h1')?.textContent === 'Prometheus metrics' &&
+          !!document.querySelector('#enable-the-endpoint') &&
+          !!document.querySelector('#custom-gameplay-counters-from-lua') &&
+          !!document.querySelector('a[href="/docs/metrics.md"]') &&
+          document.querySelector('.dx-nav a[aria-current="page"]')?.getAttribute('href') === '/docs/metrics';
+      `));
+      check(`metrics ${width}px tables and code fit viewport`, await session.evaluate(
+        "return document.documentElement.scrollWidth <= innerWidth;",
+      ));
+      check(`metrics ${width}px all table-of-contents links resolve`, await session.evaluate(`
+        const links = [...document.querySelectorAll('a[href^="#"]')];
+        return links.length > 5 && links.every(a => a.hash.length < 2 || !!document.getElementById(decodeURIComponent(a.hash.slice(1))));
+      `));
+      reportConsole(`Prometheus guide ${width}px`);
+      if (width < 600) await session.evaluate(`document.querySelector('.docs-mobile-nav').click();`);
+      await session.evaluate(`
+        const input = document.querySelector('[aria-label="Filter documentation topics"]');
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'Prometheus');
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        await new Promise(r => setTimeout(r, 150));
+      `);
+      check(`metrics ${width}px is discoverable in topic search`, await session.evaluate(`
+        return document.querySelector('#nav-server-administration a[href="/docs/metrics"]')?.getBoundingClientRect().height > 0;
+      `));
+    }
+  } else if (process.argv.includes("--remote-camera")) {
     for (const width of [1440, 390]) {
       await session.send("Emulation.setDeviceMetricsOverride", {
         width, height: 900, deviceScaleFactor: 1, mobile: width < 600,

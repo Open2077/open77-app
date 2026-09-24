@@ -406,4 +406,4 @@ connection error types without echoing credentials or raw protocol payloads.
 Related guides: [Warden](/docs/warden), [player administration](/docs/warden-players),
 [Workshop administration](/docs/community-hub-warden),
 [connection control](/docs/connection-control), [permissions](/docs/server-acl),
-and [startup arguments and logging](/docs/server-startup).
+[Prometheus metrics](/docs/metrics), and [startup arguments and logging](/docs/server-startup).

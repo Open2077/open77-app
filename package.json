@@ -36,6 +36,7 @@
     "verify:blip-icons": "node scripts/check-blip-svg-docs.mjs",
     "verify:native-map:browser": "node scripts/check-hydration.mjs http://127.0.0.1:3113 --native-map",
     "verify:navigation": "node scripts/check-docs-navigation.mjs",
+    "verify:metrics": "node scripts/check-metrics-docs.mjs",
     "verify:navigation:browser": "node scripts/check-hydration.mjs http://127.0.0.1:3113 --navigation",
     "verify:webui-input": "node scripts/check-webui-input-docs.mjs",
     "sync:wiki": "node scripts/sync-wiki.mjs",
