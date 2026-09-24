@@ -194,9 +194,20 @@ client cannot select or forge another player's source ID.**
 local helpers, reason = require("shared.helpers")
 ```
 
-`require` is confined to the resource and resolves
+On the **client**, this local import resolves
 `<resource>/shared/helpers.lua`, then `<resource>/shared/helpers/init.lua`.
-Modules are text-only and cached per Lua state.
+Publish downloaded modules under `files`; they are text-only and cached per
+calling Lua VM. The dedicated-server sandbox does not expose `require`.
+
+The newer client implementation introduced with PolyZone also supports
+`require('@polyzone')` and `require('@library/helpers.math')` for explicitly
+published files of declared, running dependencies. The imported code runs in
+the **caller's** VM and permissions, not as a call to the provider. This
+dependency syntax is available starting with client `2.31.13+op77.67`.
+
+See [Lua modules and require](lua-modules.md) for complete manifests, local and
+dependency examples, cache/reload behavior, errors and how to choose between
+modules and exports.
 
 Exports allow asynchronous calls between isolated resources on **both client and
 server**. The registries are separate: a server call reaches a server resource,

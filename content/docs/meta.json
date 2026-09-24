@@ -719,7 +719,7 @@
           "slug": "hud-visibility",
           "kind": "guide",
           "nav": "HUD visibility",
-          "description": "Show and hide the game's HUD elements from a client resource."
+          "description": "Show and hide native HUD components, or mask the HUD, watermark and nonfocused resource interfaces with cinematic letterbox bars. Resource-owned claims, cleanup and native notifications."
         },
         {
           "slug": "keybindings",
