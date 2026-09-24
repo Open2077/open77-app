@@ -1,11 +1,6 @@
 # World-anchored POIs
 
-`open77_worldui` is the shared client service that turns "a marker and a
-prompt at the same point" into one owned handle. Composing a native ground
-marker (`Open77.markers`) with a contextual action card
-([`open77_interactions`](interactions.md)) by hand means every caller
-re-implements the same partial-failure cleanup; this service does it once,
-transactionally, and removes both halves together.
+`open77_worldui` combines a native ground marker and an [interaction prompt](interactions.md) under one resource-owned handle. Creation and cleanup cover both elements.
 
 It is mode-agnostic: nothing in its API names a role, a match, a team, or
 any other gamemode-shaped concept, and both official consumers

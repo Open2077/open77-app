@@ -2,13 +2,14 @@
  * Targeted wiki sync for attachments/interactions. Keeps newer, unrelated site
  * content (e.g. Cyberware) when the source checkout is on another revision.
  * Usage: node scripts/sync-attachment-docs.mjs [--from ../CyberM/wiki] [--check]
- * Generated guides remain byte-for-byte wiki copies; API cards are merged by
+ * Curated guides keep their site-owned prose; API cards are merged by
  * runtime + namespace + name. A full sync still needs a complete source wiki.
  */
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { readGuideForSync, reviewApiEntries } from "./docs-editorial.mjs";
 
 const args = process.argv.slice(2);
 let source = process.env.OPEN77_WIKI_SOURCE ?? "../CyberM/wiki";
@@ -31,7 +32,7 @@ const contractKeys = new Set(Object.entries(contracts).flatMap(([namespace, runt
     Object.keys(methods).map((name) => key({ namespace, runtime, name })))));
 assert.equal(contractKeys.size, 24, "Review the targeted sync when the contract changes");
 const selected = (entry) => contractKeys.has(key(entry)) || entry.namespace === "Open77.animations";
-const sourceApi = JSON.parse(await read(path.join(source, "data/api.json")));
+const sourceApi = reviewApiEntries(JSON.parse(await read(path.join(source, "data/api.json"))));
 const incoming = sourceApi.filter(selected);
 assert.equal(incoming.length, 41, "Expected 24 attachment/interaction and 17 animation cards");
 assert.equal(new Set(incoming.map(key)).size, incoming.length, "Duplicate source API cards");
@@ -50,7 +51,7 @@ const manifestTarget = "content/docs/_manifest.json";
 const manifest = JSON.parse(await read(manifestTarget));
 const writes = new Map();
 for (const slug of guides) {
-  writes.set(`content/docs/${slug}.md`, (await read(path.join(source, `${slug}.md`))).replaceAll("\r\n", "\n"));
+  writes.set(`content/docs/${slug}.md`, await readGuideForSync(source, `${slug}.md`));
 }
 // Match the existing generated JSON indentation.
 writes.set(apiTarget, JSON.stringify(merged, null, 1) + "\n");

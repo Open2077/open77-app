@@ -1,80 +1,55 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Eyebrow, EyebrowSpan, SlashMark } from "@/components/brand";
 import { JsonLd } from "@/components/json-ld";
-import { DeveloperAlpha } from "@/components/developer-alpha";
-import { ArrowRightIcon, CodeIcon, DiscordIcon, GlobeIcon, PlugIcon } from "@/components/icons";
+import { ArrowDownIcon, ArrowRightIcon, CodeIcon, DiscordIcon, GlobeIcon, PeopleIcon, PlugIcon, ServerRackIcon, ShieldIcon } from "@/components/icons";
 import { SiteFooter } from "@/components/site-footer";
 import { highlightCode } from "@/lib/docs";
-import { cssBackgrounds, expCardArt, images } from "@/lib/images";
 import { PLAYER_REQUIREMENT_SHORT } from "@/lib/requirements";
-import {
-  HOME_CLIENT_LUA,
-  HOME_SERVER_LUA,
-  SCRIPT_DOC_LINKS,
-  SCRIPT_PILLARS,
-  SCRIPT_SAMPLE_NOTE,
-} from "@/lib/scripting";
+import { HOME_CLIENT_LUA, HOME_SERVER_LUA, SCRIPT_DOC_LINKS, SCRIPT_PILLARS, SCRIPT_SAMPLE_NOTE } from "@/lib/scripting";
 import { breadcrumbNode, jsonLdGraph, pageMetadata, softwareApplicationNode } from "@/lib/seo";
 import { site } from "@/lib/site";
+import styles from "./home.module.css";
 
-export const metadata = pageMetadata({
-  description: site.description,
-  path: "/",
-});
+export const metadata = pageMetadata({ description: site.description, path: "/" });
 
 /** The four load-bearing facts about the platform, stated without adjectives. */
 const HERO_FACTS = [
-  { key: "Model", value: "Community-run dedicated servers" },
-  { key: "Requires", value: PLAYER_REQUIREMENT_SHORT },
-  { key: "Game modes", value: "Whatever creators build" },
-  { key: "Stage", value: "Developer Preview · Active" },
+  { key: "Model", value: "Community-run dedicated servers", icon: ServerRackIcon },
+  { key: "Requires", value: PLAYER_REQUIREMENT_SHORT, icon: ShieldIcon },
+  { key: "Game modes", value: "Whatever creators build", icon: PeopleIcon },
+  { key: "Stage", value: "Alpha · Build your server", icon: CodeIcon },
 ];
 
-const PILLAR_ICONS = {
-  "LUA 5.4": CodeIcon,
-  "REAL GAME APIS": PlugIcon,
-  "WEB INTERFACES": GlobeIcon,
-} as const;
+const DESTINATIONS = [
+  { href: "/servers", title: "Play Cyberpunk together.", label: "FOR PLAYERS", body: "Community servers turn Night City into multiplayer worlds, each with its own rules and its own experience.", image: "/assets/home/play-v2.webp", icon: PeopleIcon, number: "01" },
+  { href: "/create", title: "Create your own server.", label: "FOR SERVER CREATORS", body: "A dedicated server you operate, with your rules, your mods, and gameplay you design.", image: "/assets/home/servers-v2.webp", icon: ServerRackIcon, number: "02" },
+  { href: "/workshop", title: "Share what you build.", label: "WORKSHOP", body: "Scripts, gamemodes, maps and interfaces made by the community, free to download and ready for your world.", image: "/assets/home/worlds-v2.webp", icon: GlobeIcon, number: "03" },
+  { href: "/docs", title: "Script your own Night City.", label: "FOR DEVELOPERS", body: "Lua 5.4, real game APIs and web interfaces. The complete documentation and the Lua API reference.", image: "/assets/home/build-v2.webp", icon: CodeIcon, number: "04" },
+];
 
-function Snippet({ filename, badge, html }: { filename: string; badge: string; html: string }) {
-  return (
-    <div className="code-window">
-      <div className="code-titlebar">
-        <span className="client-dots" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </span>
-        <span className="code-filename">{filename}</span>
-        <span className="client-badge">{badge}</span>
-      </div>
-      <div className="dx-snippet" dangerouslySetInnerHTML={{ __html: html }} />
-    </div>
-  );
-}
-
-const EXPERIENCES = [
-  { tag: "ROLEPLAY", title: "Live another life", href: "/servers?mode=Roleplay", art: expCardArt.roleplay },
-  { tag: "RACING", title: "Own the streets", href: "/servers?mode=Racing", art: expCardArt.racing },
-  { tag: "CUSTOM WORLDS", title: "Rewrite the rules", href: "/servers", art: expCardArt.custom },
+const WORLDS = [
+  { title: "Live another life.", tag: "ROLEPLAY", href: "/servers?mode=Roleplay", image: "/assets/exp-roleplay.jpg", body: "Strict roleplay cities with their own economies, factions, jobs and staff." },
+  { title: "Own the streets.", tag: "RACING", href: "/servers?mode=Racing", image: "/assets/exp-racing.jpg", body: "Racing leagues, late-night meets and a city full of open roads." },
+  { title: "Rewrite the rules.", tag: "CUSTOM WORLDS", href: "/servers", image: "/assets/exp-combat.jpg", body: "PvP, survival, freeroam, or a game mode nobody has seen yet." },
 ];
 
 const CREATE_POINTS = [
-  {
-    title: "Your own dedicated server",
-    body: "A persistent world you operate — on your hardware or a rented machine.",
-  },
-  {
-    title: "Custom gameplay",
-    body: "Build anything from a strict roleplay city to a racing league to a game mode nobody has seen yet.",
-  },
-  {
-    title: "Your rules, your community",
-    body: "Whitelists, moderation, staff, identity — your server page is your front door.",
-  },
+  { title: "Your own dedicated server", body: "A persistent world you operate, on your hardware or a rented machine." },
+  { title: "Custom gameplay", body: "Build anything from a strict roleplay city to a racing league to a game mode nobody has seen yet." },
+  { title: "Your rules, your community", body: "Whitelists, moderation, staff, identity. Your server page is your front door." },
 ];
+
+const PILLAR_ICONS = { "LUA 5.4": CodeIcon, "REAL GAME APIS": PlugIcon, "WEB INTERFACES": GlobeIcon } as const;
+
+function Snippet({ filename, badge, html }: { filename: string; badge: string; html: string }) {
+  return (
+    <div className={styles.codePanel}>
+      <div className={styles.codeHead}><span><i /><i /><i /></span><span>{filename}</span><b>{badge}</b></div>
+      <div className={styles.code} dangerouslySetInnerHTML={{ __html: html }} />
+    </div>
+  );
+}
 
 export default async function HomePage() {
   const [clientHtml, serverHtml] = await Promise.all([
@@ -84,281 +59,119 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* The hero background is a stylesheet background, so the browser cannot
-          discover it while parsing the markup. It is almost always the largest
-          contentful paint on this page, hence the explicit hint. */}
-      <link rel="preload" as="image" href={cssBackgrounds.hero} fetchPriority="high" />
-
-      <main id="main">
-        <section className="hero hero-home">
-          <div className="hero-bg" aria-hidden="true">
-            <i className="amb-glow amb-cyan" />
-            <i className="amb-glow amb-warm" />
-            <i className="amb-scan" />
+      <main id="main" className={styles.home}>
+        <div className={styles.opening}>
+          <div className={styles.backdrop} aria-hidden="true">
+            <Image src="/assets/home/night-city-wallpaper-v3.webp" alt="" fill preload sizes="100vw" className={styles.heroArt} />
           </div>
-          <div className="hero-inner">
-            <Eyebrow>{site.stage} · ACTIVE</Eyebrow>
-            <h1 className="hero-title">
-              Multiplayer for
-              <br />
-              Cyberpunk&nbsp;<span className="hero-title-accent">2077</span>
-              <span className="hero-caret" aria-hidden="true" />
-            </h1>
-            <p className="hero-sub">
-              Play Cyberpunk&nbsp;2077 online on community servers — or create your own server and
-              your own multiplayer experience.
-            </p>
-            <div className="hero-ctas">
-              <Link className="btn btn-primary btn-lg" href="/community#alpha">
-                Join preview
-                <ArrowRightIcon />
-              </Link>
-              <Link className="btn btn-light btn-lg" href="/create#developer-alpha">
-                Build a server · Dev preview
-              </Link>
+          <section className={styles.hero} aria-labelledby="home-title">
+            <div className={styles.heroCopy}>
+              <p className={styles.eyebrow}><span aria-hidden="true">{"//"}</span> {site.stage} · ACTIVE</p>
+              <h1 id="home-title">Multiplayer for<br />Cyberpunk <em>2077</em><span className={styles.titleDot}>.</span></h1>
+              <p className={styles.intro}>Play Cyberpunk&nbsp;2077 online on community servers, or create your own server and your own multiplayer experience. Everyone with Alpha access can download the server and start building now.</p>
+              <div className={styles.actions}>
+                <Link className={styles.primary} href="/download">Download launcher<ArrowRightIcon size={20} /></Link>
+                <Link className={styles.secondary} href="/create">Build your server<ArrowRightIcon size={18} /></Link>
+              </div>
+              <Link className={styles.alphaLink} href="/docs/alpha-access"><span aria-hidden="true" />ALPHA ACCESS<span className={styles.alphaText}>Play, host and build. How to get in.</span><ArrowRightIcon size={13} /></Link>
             </div>
-            <ul className="hero-facts" aria-label="Platform facts">
-              {HERO_FACTS.map((fact) => (
-                <li key={fact.key} className={fact.key === "Requires" ? "hero-fact-requires" : undefined}>
-                  <span className="fact-k">{fact.key}</span>
-                  <span className="fact-v">{fact.value}</span>
-                </li>
+            <span className={styles.sceneNote} aria-hidden="true">ONE CITY,<br />MANY WORLDS.<i /></span>
+            <a className={styles.scrollHint} href="#discover"><ArrowDownIcon size={30} /><span>SCROLL<br />TO EXPLORE</span></a>
+          </section>
+
+          <div className={styles.gateway}>
+            <ul className={styles.facts} aria-label="Platform facts">
+              {HERO_FACTS.map(({ key, value, icon: Icon }) => (
+                <li key={key}><Icon size={28} /><div><span>{key.toUpperCase()}</span><strong>{value}</strong></div></li>
               ))}
             </ul>
-          </div>
-        </section>
-
-        <section className="section light-zone" id="play">
-          <span className="lz-corner" aria-hidden="true">
-            <i />
-            <i />
-          </span>
-          <div className="section-inner">
-            <div className="split-head">
-              <div>
-                <Eyebrow>FOR PLAYERS</Eyebrow>
-                <h2 className="section-title">
-                  Play Cyberpunk
-                  <br />
-                  together.
-                </h2>
-              </div>
-              <p className="split-head-lead">
-                Community servers turn Night City into multiplayer worlds, each with its own rules
-                and its own experience. OPEN//77 is the layer that makes them possible.
-              </p>
-            </div>
-          </div>
-
-          <div className="section-inner section-inner-wide">
-            <figure className="feature-visual">
-              <span className="hud-corners" aria-hidden="true" />
-              <Image
-                src={images.playTogether.src}
-                width={images.playTogether.width}
-                height={images.playTogether.height}
-                alt={images.playTogether.alt}
-                sizes="(max-width: 1280px) 100vw, 1280px"
-              />
-              <figcaption className="feature-visual-caption">
-                <EyebrowSpan>ONE CITY, MANY WORLDS</EyebrowSpan>
-                <p>The same streets you know — shared with everyone on your server.</p>
-              </figcaption>
-            </figure>
-
-            <div className="exp-grid exp-grid-3">
-              {EXPERIENCES.map((experience) => (
-                <Link
-                  key={experience.tag}
-                  className="exp-card exp-card-tall"
-                  href={experience.href}
-                  style={{ "--exp-img": `url('${experience.art}')` } as React.CSSProperties}
-                >
-                  <span className="exp-tag">
-                    <SlashMark />
-                    {experience.tag}
-                  </span>
-                  <span className="exp-body">
-                    <span className="exp-title">{experience.title}</span>
-                  </span>
+            <div className={styles.destinations} id="discover">
+              {DESTINATIONS.map(({ icon: Icon, ...card }) => (
+                <Link className={styles.destination} key={card.href} href={card.href}>
+                  <Image src={card.image} alt="" fill sizes="(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 25vw" />
+                  <div className={styles.cardTop}><Icon size={28} /><span>{card.number} /</span></div>
+                  <div className={styles.cardCopy}><span className={styles.cardLabel}>{card.label}</span><h2>{card.title}</h2><p>{card.body}</p></div>
+                  <span className={styles.cardArrow}><ArrowRightIcon size={17} /></span>
                 </Link>
               ))}
             </div>
-
-            <div className="section-cta-row">
-              <Link className="btn btn-primary" href="/servers">
-                Preview the server browser
-                <ArrowRightIcon />
-              </Link>
-              <p className="section-cta-note">
-                One client will take you to every community server — resources download
-                automatically when you join a world.
-              </p>
-            </div>
+            <div className={styles.signature}><span /><p>THE CITY WAS BUILT FOR ONE. OPEN IT TO EVERYONE.</p><span /></div>
           </div>
+        </div>
+
+        <section className={styles.worlds} id="play" aria-labelledby="worlds-title">
+          <div className={styles.sectionHeading}>
+            <div><p className={styles.eyebrow}><span aria-hidden="true">{"//"}</span> FOR PLAYERS</p><h2 id="worlds-title">Play Cyberpunk<br /><em>together.</em></h2></div>
+            <div><p>Community servers turn Night City into multiplayer worlds, each with its own rules and its own experience. OPEN//77 is the layer that makes them possible.</p><Link href="/servers" className={styles.textLink}>Preview the server browser<ArrowRightIcon size={18} /></Link></div>
+          </div>
+          <div className={styles.worldGrid}>
+            {WORLDS.map((world) => <Link className={styles.worldCard} key={world.tag} href={world.href}>
+              <Image src={world.image} alt="" fill sizes="(max-width: 760px) 100vw, 33vw" />
+              <span className={styles.worldTag}>{world.tag}</span>
+              <div><h3>{world.title}</h3><p>{world.body}</p><span className={styles.worldArrow}><ArrowRightIcon size={21} /></span></div>
+            </Link>)}
+          </div>
+          <p className={styles.worldNote}>One client takes you to every community server. Resources download automatically when you join a world.</p>
         </section>
 
-        <section className="section" id="create">
-          <div className="section-inner section-inner-wide">
-            <div className="create-split">
-              <div className="create-copy">
-                <Eyebrow>FOR SERVER CREATORS</Eyebrow>
-                <h2 className="section-title">
-                  Create your
-                  <br />
-                  own server.
-                </h2>
-                <p className="section-lead">
-                  Run a dedicated server that stays online for your community — with your rules,
-                  your mods, and gameplay you design.
-                </p>
-                <ul className="create-points">
-                  {CREATE_POINTS.map((point) => (
-                    <li key={point.title}>
-                      <h3>{point.title}</h3>
-                      <p>{point.body}</p>
-                    </li>
-                  ))}
-                </ul>
-                <DeveloperAlpha compact />
-              </div>
-              <figure className="create-visual">
-                <span className="hud-corners" aria-hidden="true" />
-                <Image
-                  src={images.createCommunity.src}
-                  width={images.createCommunity.width}
-                  height={images.createCommunity.height}
-                  alt={images.createCommunity.alt}
-                  sizes="(max-width: 1080px) 100vw, 620px"
-                />
-                <figcaption className="create-visual-chip">
-                  <span className="live-dot" aria-hidden="true" /> YOUR WORLD // YOUR PEOPLE
-                </figcaption>
-              </figure>
-            </div>
-          </div>
-        </section>
-
-        <section className="section light-zone" id="lua">
-          <span className="lz-corner" aria-hidden="true">
-            <i />
-            <i />
-          </span>
-          <div className="section-inner">
-            <div className="split-head">
-              <div>
-                <Eyebrow>FOR DEVELOPERS</Eyebrow>
-                <h2 className="section-title">
-                  Script your
-                  <br />
-                  own Night City.
-                </h2>
-              </div>
-              <p className="split-head-lead">
-                Gameplay on an OPEN//77 server is not configured — it is scripted. A resource is a
-                small Lua&nbsp;5.4 package your server loads, hot-reloads and streams to every
-                player who joins. This is the entire <code>/ride</code> command, for real:
-              </p>
-            </div>
-          </div>
-
-          <div className="section-inner section-inner-wide">
-            <div className="distinction-grid">
-              <Snippet
-                filename="resources/ride/server/main.lua"
-                badge="SERVER RUNTIME"
-                html={serverHtml}
-              />
-              <Snippet
-                filename="resources/ride/client/main.lua"
-                badge="CLIENT RUNTIME"
-                html={clientHtml}
-              />
-            </div>
-            <p className="section-cta-note">{SCRIPT_SAMPLE_NOTE}</p>
-
-            <div className="benefit-grid benefit-grid-3">
+        <section className={styles.creator} id="lua" aria-labelledby="creator-title">
+          <div className={styles.creatorCopy}>
+            <p className={styles.eyebrow}><span aria-hidden="true">{"//"}</span> FOR DEVELOPERS</p>
+            <h2 id="creator-title">Script your own<br /><em>Night City.</em></h2>
+            <p>Gameplay on an OPEN//77 server is not configured. It is scripted. A resource is a small Lua&nbsp;5.4 package your server loads, hot-reloads and streams to every player who joins. This is the entire <code>/ride</code> command, for real.</p>
+            <ul className={styles.pillars}>
               {SCRIPT_PILLARS.map((pillar) => {
                 const Icon = PILLAR_ICONS[pillar.tag];
                 return (
-                  <article className="benefit-card" key={pillar.tag}>
-                    <Icon className="feat-icon" />
-                    <span className="audience-tag">{pillar.tag}</span>
-                    <h3>{pillar.title}</h3>
-                    <p>{pillar.body}</p>
-                    <Link className="btn btn-ghost" href={pillar.href}>
-                      {pillar.link}
-                      <ArrowRightIcon />
-                    </Link>
-                  </article>
+                  <li key={pillar.tag}>
+                    <Icon size={20} />
+                    <div>
+                      <span className={styles.cardLabel}>{pillar.tag}</span>
+                      <strong>{pillar.title}</strong>
+                      <p>{pillar.body} <Link href={pillar.href}>{pillar.link}</Link></p>
+                    </div>
+                  </li>
                 );
               })}
+            </ul>
+            <div className={styles.actions}>
+              <Link className={styles.primary} href="/docs">Read the docs<ArrowRightIcon size={18} /></Link>
+              {SCRIPT_DOC_LINKS.filter((link) => link.href !== "/docs").map((link) => (
+                <Link key={link.href} className={styles.textLink} href={link.href}>{link.label}<ArrowRightIcon size={16} /></Link>
+              ))}
             </div>
-
-            <div className="section-cta-row">
-              <Link className="btn btn-primary" href="/docs">
-                Read the docs
-                <ArrowRightIcon />
-              </Link>
-              <p className="section-cta-note">
-                {SCRIPT_DOC_LINKS.map((link, index) => (
-                  <span key={link.href}>
-                    {index > 0 ? " · " : null}
-                    <Link href={link.href}>{link.label}</Link>
-                  </span>
-                ))}
-                .
-              </p>
-            </div>
+          </div>
+          <div className={styles.codeStack}>
+            <Snippet filename="resources/ride/server/main.lua" badge="SERVER RUNTIME" html={serverHtml} />
+            <Snippet filename="resources/ride/client/main.lua" badge="CLIENT RUNTIME" html={clientHtml} />
+            <p className={styles.codeFoot}><span aria-hidden="true" />{SCRIPT_SAMPLE_NOTE}</p>
           </div>
         </section>
 
-        <section className="finale" id="community">
-          <div className="finale-bg" aria-hidden="true">
-            <i className="amb-glow amb-cyan amb-slow" />
-            <i className="amb-scan" />
+        <section className={styles.alpha} id="create" aria-labelledby="create-title">
+          <div className={styles.alphaGlow} aria-hidden="true" />
+          <div>
+            <p className={styles.eyebrow}><span aria-hidden="true">{"//"}</span> FOR SERVER CREATORS</p>
+            <h2 id="create-title">Create your<br /><em>own server.</em></h2>
+            <p>Run a dedicated server that stays online for your community, with your rules, your mods, and gameplay you design. Everyone with Alpha access can download it and start building now. No separate developer application.</p>
+            <ul className={styles.points}>
+              {CREATE_POINTS.map((point) => (
+                <li key={point.title}><strong>{point.title}</strong><p>{point.body}</p></li>
+              ))}
+            </ul>
+            <div className={styles.actions}><Link className={styles.primary} href="/host">Download server<ArrowRightIcon size={18} /></Link><Link className={styles.secondary} href="/docs/host-a-server">Hosting guide<ArrowRightIcon size={18} /></Link></div>
           </div>
-          <div className="finale-inner">
-            <Eyebrow>OPEN//77</Eyebrow>
-            <h2 className="finale-title">
-              The city was built for one.
-              <br />
-              Open it to everyone.
-            </h2>
-            <div className="hero-ctas finale-ctas">
-              <Link className="btn btn-primary btn-lg" href="/community#alpha">
-                Join preview
-              </Link>
-              {site.links.discord ? (
-                <a
-                  className="btn btn-discord btn-lg"
-                  href={site.links.discord}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <DiscordIcon size={18} />
-                  Join our Discord
-                </a>
-              ) : null}
-              <Link className="btn btn-light btn-lg" href="/create">
-                Create a server
-              </Link>
-            </div>
-            <p className="finale-note">
-              <Link href="/community">Follow development</Link>
-            </p>
-          </div>
+          <aside className={styles.join}>
+            <DiscordIcon size={36} />
+            <h3>Need Alpha access?</h3>
+            <p>Use <code>/alpha apply</code> with the bot in any channel on our official Discord. It is also where Alpha members follow the changelog and report reproducible issues to the team.</p>
+            {site.links.discord && <a href={site.links.discord} target="_blank" rel="noreferrer noopener" className={styles.textLink}>Join our Discord<ArrowRightIcon size={18} /></a>}
+            <small>Alpha software: expect bugs, crashes and API changes while the platform grows.</small>
+          </aside>
         </section>
       </main>
-
-      <SiteFooter />
-
-      <JsonLd
-        data={jsonLdGraph(
-          softwareApplicationNode(),
-          breadcrumbNode([{ name: "Home", path: "/" }]),
-        )}
-      />
+      <div className={styles.footer}><SiteFooter tone="dark" /></div>
+      <JsonLd data={jsonLdGraph(softwareApplicationNode(), breadcrumbNode([{ name: "Home", path: "/" }]))} />
     </>
   );
 }

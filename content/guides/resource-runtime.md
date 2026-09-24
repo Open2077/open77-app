@@ -1,10 +1,6 @@
 # The Lua resource runtime
 
-[Server resources](server-resources.md) covers what a resource *is* and how
-it reaches a player. This page covers what a resource *gets*: the manifest
-in full, the scheduler, the event buses, modules and cross-resource exports,
-the core `Open77` namespaces, WebUI surfaces, and the sandbox that bounds all
-of it.
+Reference for resource manifests, scheduling, events, modules, exports, core namespaces, WebUI and sandbox limits. Start with [Server resources](server-resources.md) for resource structure and distribution.
 
 OPEN//77 embeds **PUC Lua 5.4.8**. Each resource receives its own Lua state,
 scheduler, memory allocator, permission set and lifecycle. Developers coming
@@ -57,9 +53,10 @@ a `.lua` script.
 | `dependency` / `dependencies` | Required resources, with optional version constraints. |
 | `permission` / `permissions` | Capabilities requested by the resource. |
 | `file` / `files` | Generic files distributed to the client. |
-| `web_ui_page` | Default WebUI entry page. |
+| `ui_page` / `web_ui_page` | Default WebUI entry: a declared local file or an HTTP(S) URL. See [remote pages](#remote-pages-external-content-and-hot-reload) for supported entry types. |
 | `web_ui_auto_create` | Whether to create that page at resource start. |
 | `web_file` / `web_files` | Files served to this resource's WebUI origin. |
+| `pause_menu_logo` | Optional server logo beside OPEN//77 in the Escape menu: an HTTP(S) image URL or a declared local asset. Requires `pause_menu.customize`; see [Pause menu customization](pause-menu.md). |
 
 Singular and plural forms are accepted everywhere. Globs support `*`, `?`
 and `**`, and expand in a deterministic order: patterns in the order they
@@ -115,11 +112,6 @@ exists.
 
 Scripts load in manifest order, which is what lets one file publish a table
 that a later file in the same resource consumes.
-
-> **Version note.** Manifest order has only been honoured since
-> 2026-08-26; before that scripts loaded alphabetically. See
-> [Writing a gamemode](writing-a-gamemode.md#why-the-server-is-exactly-one-resource)
-> for the symptom this produced.
 
 ## Lifecycle and scheduling
 
@@ -385,6 +377,9 @@ This is per-resource and server-side only.
 
 ### The database bridge is per-server, not per-resource
 
+For installation, credentials, connection settings and a working Lua probe,
+see [Configure a SQL database](/docs/database).
+
 There is **one** database connection for the whole server, built once from a
 single `database.connectionString`. The `database.access` permission is a
 boolean gate on reaching it — not an allocation of a private database.
@@ -436,19 +431,22 @@ Game namespaces exist on the client host. Calling one on a host without a
 game backend returns an explicit unavailable error rather than failing
 silently.
 
+This table is the set a client resource reaches for first, not the whole
+surface: the [API reference](/docs/api) lists every client namespace and every
+function in it, generated from the runtime rather than maintained here.
+
 | Namespace | Permission | Purpose |
 |---|---|---|
 | `Open77.character` | none | Read local or registered character state |
 | `Open77.animations` | none | Play named workspot animations |
-| `Open77.camera` | `camera.style` for playable TPP style mutations; no permission for `thirdPersonState` | [Shoulder/centered framing, anchors, movement FOV and shake](third-person-camera.md); legacy camera and projection methods keep their own contracts |
-| `Open77.perspective` | `perspective.policy` for forced views; none for ordinary requests or own-lock release | [Switch FPP/TPP or temporarily force it](perspective.md#enable-disable-or-temporarily-force-a-view-client), inspect effective ownership and restore player choice |
-| `Open77.hud.setCinematic` | `ui.vanilla.hud` | [Cinematic display](third-person-camera.md#cinematic-display): hide native HUD and nonfocused resource pages, animate black bars, preserve existing visibility claims |
-| `Open77.input` | `input.actions` | Read a small allowlist of contextual action keys; suppressed while a WebUI captures keyboard input |
+| `Open77.camera` | `camera.script` | Scripted cameras: create, place, follow, look at, shake, and world-to-screen projection. See [Scripted cameras](/docs/cameras) |
+| `Open77.input` | `input.actions`, `input.blockAll` | Read a small allowlist of contextual action keys, plus mouse, gamepad and aim state; take a named input away from the player and give it back. See [Blocking player input](/docs/input-blocking) |
 | `Open77.clipboard` | `clipboard.write` | Write bounded UTF-8 text to the OS clipboard; reading is never exposed |
 | `Open77.kvp` | none | Persistent typed client storage, isolated by connection address and resource |
 | `Open77.inspector` | none | Read and highlight the current streamed-world target |
 | `Open77.nameplates` | `ui.nameplates` | Customise remote-player labels; native per-frame delivery or drawing |
 | `Open77.blips` | `ui.vanilla.map` | Create resource-owned vanilla mappins |
+| `Open77.map` | `map.read`, `map.control` | Read player waypoints, pick destinations and customize the native map screen with resource WebUI tabs. See [Native map & waypoints](native-map.md). |
 | `Open77.markers` | `world.markers` | Create resource-owned 3D world markers |
 | `Open77.anchors` | ownership of the target page (none for a native `render` style) | Anchor a world point or a followed entity; the plugin projects it every frame |
 | `Open77.vfx`, `Open77.sfx` | `world.effects` | Resource-owned REDengine visual and spatial audio effects |
@@ -456,15 +454,33 @@ silently.
 | `Open77.loot` | `world.loot` | Project authoritative ground loot and the pickup flow |
 | `Open77.vehicles` | `vehicles.read`, optional `vehicles.presentation` | Read streamed vehicles; guarded remote-occupant presentation |
 | `Open77.environment` | `world.environment` | Apply authoritative time and weather |
-| `Open77.travel` | `player.travel` | Local-player noclip and direct teleport |
+| `Open77.travel` | `player.travel` | Local-player noclip and teleport, with a settle report that says when the body really arrived. See [Travel](/docs/travel) |
 | `Open77.clothing` | `player.clothing.read` / `player.clothing.edit` | The validated local wardrobe |
 | `Open77.assets` | declared `files` | Resolve resource-owned client assets |
 | `Open77.webui` / `WebUI` | layer-specific | Create isolated HTML/CSS/JavaScript surfaces |
+| `Open77.players` | none, `players.life.read` for life state | The other players this client can see: ids, bodies, distances, the nearest one. See [Players around you](/docs/client-players) |
+| `Open77.state` | none to read, `network.events` to subscribe | Replicated state bags on the server, a player or an entity. A client never writes one. See [State bags](/docs/state-bags) |
+| `Open77.net` / `Open77.callbacks` | `network.events` | Net events, and callbacks that ask the server a question and await the answer. See [Network callbacks](/docs/callbacks) |
+| `Open77.hud` | `ui.vanilla.hud` | The vanilla HUD components, the game's own toasts, help text and subtitles. See [HUD visibility](/docs/hud-visibility) |
+| `Open77.screen` | `screen.effects` | Native fades and transitions, plus an unowned read of the engine's own fade state |
+| `Open77.map` | `map.read`, `map.control` | The native map: the waypoint, the selected marker, open/close, pick a point |
+| `Open77.world` | `world.query`, `world.devices` | Raycasts that name what they hit, ground height, nearby entities, the district, ambient population — and taking a vanilla device prompt away |
+| `Open77.zones` | none | Shared zone geometry from the prelude: normalise a shape, test containment, read bounds |
+| `Open77.data` | none | Turn a TweakDB record string into a display name, class, manufacturer or seat count |
+| `Open77.prevention` | `world.prevention` | This client's wanted level and NCPD dispatch. World state, never player state: the units it summons are never replicated |
+| `Open77.abilities` | `player.abilities.project`, `player.abilities.read` | Project a granted session ability and read its state |
+| `Open77.chute` | `player.chute` | Arm and disarm the grav-chute |
+| `Open77.runtime` | none | Register a client command, list the registered ones, run one |
+| `Open77.session` | none, `session.menus` for menu reads | Session and menu state, including whether a vanilla menu currently owns the screen |
+| `Citizen`, `vector3`, `promise` | none | The FiveM-shaped aliases, in both runtimes. See [FiveM compatibility](/docs/fivem-compatibility) and [Vectors](/docs/vectors) |
 
-`Open77.travel` writes the transform without the respawn discipline. Prefer
-the server-side kill/respawn transaction for long-distance moves, which
-preloads streaming — see
-[Writing a gamemode](writing-a-gamemode.md#4-move-players-with-kill--respawn-never-a-transform-write).
+When the **server** decides where somebody goes, do not reach for
+`Open77.travel` at all: `Open77.players.teleport` drives the same machinery,
+carries the fade and the bucket change, and answers with a promise that
+resolves only once the client reports the body settled. The kill → respawn
+transaction is no longer the sanctioned way to move a living player — see
+[Writing a gamemode](writing-a-gamemode.md#4-move-a-living-player-with-teleport-never-a-transform-write)
+and [Travel](travel.md).
 
 The complete generated signatures for every namespace are in the
 [API reference](/docs/api).
@@ -505,16 +521,12 @@ Page methods are `id`, `show`, `hide`, `destroy`, `setFocus`, `send`, `on`,
 |---|---|
 | `page:reply` | `(requestId, payload, ok?)` — `ok` defaults to `true` |
 | `page:setFocus` | `(keyboard, cursor?, keepInput?)` |
+| `page:setConsumedKeys` | `(keys)` — selectively consume navigation keys while retaining gameplay input; requires the updated client. |
 | `page:send` | `(event, payload?)` — event name at most 128 bytes |
 | `page:on` | `(event, handler)` — returns a handler id |
 | `page:off` | `(handlerId)` |
 
-> **Argument order catches people out here.** `page:reply` takes the payload
-> second and the success flag third, `page:setFocus` takes *keyboard* first
-> rather than a general "focused" flag, and both `page:off` and
-> `Open77.events.off` take a handler id alone with no event name. The
-> [API reference](/docs/api) agrees with the table above; it did not until
-> 2026-08-26, so treat an older copy of a signature with suspicion.
+`page:reply` takes the payload second and success flag third. `page:setFocus` takes the keyboard flag first. `page:off` and `Open77.events.off` accept only a handler ID, not an event name.
 
 The JavaScript bridge is exposed as `window.Open77`:
 
@@ -529,7 +541,35 @@ Open77.ready();
 Bundled WebUI uses an isolated virtual HTTPS origin; remote WebUI uses the
 configured HTTP(S) origin. Lua/JavaScript payloads use a bounded JSON codec.
 
+### WebUI tabs in the native map
+
+On clients with map-tab support, `Open77.map.addTab({id, label, url})` creates a resource-local page inside the native map's content area. Use `page` instead of `url` to register an existing owned, hidden and unfocused page. Register after resource preparation with `map.control`. The screen manages focus, visibility and bounds: bound pages cannot use `show`, `hide` or `setFocus` directly.
+
+Use `Open77.map.selectTab` to activate an owned tab on an open map. Listen to Lua `open77:map:tabEntered` / `tabLeft` or JavaScript `open77:map:tabState` for lifecycle updates. JavaScript should install listeners before emitting `open77:map:ready` to receive the current state. Pages retain state between visits; pause timers and audio when inactive. See [Native map customization](native-map.md#customize-the-map-screen) for the complete example, title/accent overrides, limits and cleanup.
+
+### Escape and selective keyboard consumption
+
+`page:setFocus(true, false, true)` intentionally keeps native gameplay input alive.
+Browser `preventDefault()` and `stopPropagation()` cannot stop the native Raw Input
+stream, so Escape can also open Cyberpunk's pause menu. `Open77.session.setMenuReady`
+is platform pause readiness, not a per-page key blocker.
+
+On the updated client, configure the page before taking focus:
+
+```lua
+-- Manifest permission: "webui.keep_input"
+assert(page:setConsumedKeys({"escape"}))
+assert(page:setFocus(true, false, true))
+-- When the menu closes:
+page:setFocus(false, false)
+page:hide()
+```
+
+The browser receives Escape without opening native pause or Open77 pause. Movement and mouse look remain active. See [WebUI keyboard input](webui-input.md) for keys, examples, errors and focus transfer. This does not consume a controller's menu button or disable pause globally.
+
 ### Remote pages, external content and hot reload
+
+Remote pages require HTTP(S) entry support in the client. Browser security rules still apply to remote content.
 
 `ui_page` (alias `web_ui_page`) and `WebUI.create({ entry = ... })`
 accept an HTTP or HTTPS URL. No host allowlist or extra network permission is
@@ -604,6 +644,22 @@ HTTP errors are reported as `webui_http_status:<status>`; DNS/TLS/connection
 errors remain visible as Chromium errors in WebUI diagnostics. CORS and
 embedding-policy errors appear in the WebHost browser console log.
 
+| Symptom | What to check |
+|---|---|
+| A dev URL works on your PC but not another player's | `localhost` points at each player's own PC. Use a reachable host; check the dev server's listening address and firewall. |
+| The page loads but HMR does not reconnect | Verify the WebSocket URL/port and proxy upgrade support. HTTPS pages normally use WSS. |
+| The page loads but `window.Open77` is missing | Check the final top-level URL. An HTTP-to-HTTPS or host/port redirect changes origin; configure the final URL as the entry. Iframes never receive the bridge. |
+| An API call is blocked by CORS | Allow the page's origin on that API, or proxy it through the page's own server. WebUI does not bypass CORS. |
+| A video or iframe refuses to display | Use the provider's embed URL, preserve its required Referer and inspect CSP, embedding, login and codec errors. |
+| The page's scale changes on Ctrl + wheel | Install the updated client. It suppresses CEF's wheel zoom, not zoom implemented by the page's own JavaScript. |
+
+Embedded WebUI pages do not use CEF's Ctrl + mouse wheel browser zoom:
+Ctrl + wheel scrolls normally, without changing the page scale. This is not
+a promise to disable keyboard shortcuts or custom page zoom code.
+
+This WebUI network policy does **not** change the dedicated server's Lua
+HTTP bridge, its `http.request` permission or its host allowlist.
+
 The `modal`, `system` and `debug` layers require `webui.modal`,
 `webui.system` and `webui.debug` respectively; the `hud` and `menu` layers
 are ungated. Keeping game input active while a page owns focus requires
@@ -616,13 +672,13 @@ frame — see
 
 ## Sandbox and quotas
 
-Default client limits, per resource:
+Default client limits apply per resource, except the frame budget, which is shared by the client host. Clients without these capabilities may use lower limits; require the appropriate runtime for resources that depend on them.
 
 | Limit | Value |
 |---|---|
 | Lua memory | 96 MiB |
 | Instructions per coroutine resume | 1,500,000 |
-| Global Lua frame budget | 6 ms per client host |
+| Lua frame budget (host-wide) | 6 ms per client host |
 | Scheduled tasks | 3,072 |
 | Event handlers | 6,144 |
 | WebUI handlers | 1,536 |
@@ -637,8 +693,10 @@ to each resource. The trusted and server-downloaded hosts each have this
 ceiling. These are maximum allowances, not reserved memory or a higher tick
 rate. The dedicated server's Lua runtime has separate limits.
 
-Embedded WebUI pages do not use CEF's Ctrl + mouse wheel browser zoom:
-Ctrl + wheel scrolls normally, without changing the page scale.
+The signed-manifest and transport/message size caps have not been tripled.
+For example, `readPackedFile` can read up to 3 MiB of raw file data, but its
+Base64 result may exceed the unchanged 2 MiB WebUI message limit. Do not use
+the larger file allowance as a promise that one `page:send` can carry it.
 
 Exceeding the instruction budget raises `Open77 script execution budget
 exceeded` from the instruction hook. That is a Lua error: it unwinds

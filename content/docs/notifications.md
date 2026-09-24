@@ -1,11 +1,15 @@
 # WebUI notifications
 
-`open77_notifications` is the shared toast service for Open77 resources. It provides a FiveM-style
-notification API without coupling gameplay packages to their own browser surface. Notifications can
-originate locally or from an authoritative server resource and are always owned by their caller.
+`open77_notifications` displays resource-owned WebUI toasts. Client resources can create notifications directly; server resources can request them through the package's server interface.
 
 The WebUI is transparent and never captures input. Copy is inserted with DOM `textContent`, queues
 are bounded, and notifications disappear automatically when their owner stops or reloads.
+
+> **Not the only toast in the build.** `Open77.hud.notify`, `log` and `menu` write to Cyberpunk's
+> *own* notification pipelines — see [vanilla toasts](hud-visibility.md#vanilla-toasts). Reach for
+> those when you want something that looks like the game's own popup and costs no dependency and no
+> browser surface; reach for `open77_notifications` when you need to control colour, icon, duration,
+> stacking or dismissal.
 
 ## Add the dependency
 
@@ -17,6 +21,12 @@ dependency "open77_notifications >=1.0.0"
 client_script "client/main.lua"
 server_script "server/main.lua"
 ```
+
+`dependency` takes a resource name and, optionally, version constraints after a space (`>=`, `<=`, `>`,
+`<`, `=` / `==`, against a 1-to-3-part number such as `1.0.0`); a plain `dependency "open77_notifications"`
+is enough when any version will do. A server whose load list lacks the package refuses to start the
+resource, which is the point: a toast sent to a client without the package is dropped without a word.
+Declare it for a server-only resource too, since `Open77.notifications.*` renders through the package.
 
 Exports cross isolated Lua VMs and therefore return a promise. Call them from a scheduler coroutine.
 
@@ -81,6 +91,12 @@ end)
 
 `setEnabled(false)` clears and suppresses the caller's notifications. `list()` returns that caller's
 active entries; resources cannot inspect, update, or dismiss another owner's handles.
+
+The read-only `readiness()` export returns `{ready=boolean}`. It becomes true only
+after the notification WebUI's readiness callback, and resets on resource teardown.
+Gameplay requiring an admitted warning should check readiness and then check the
+`show` result; disabled owners or full queues can still reject a notification.
+Readiness/acceptance indicate presentation admission, not proof of rendered pixels.
 
 ## Server-targeted notification
 

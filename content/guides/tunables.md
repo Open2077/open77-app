@@ -1,9 +1,6 @@
 # Operator tunables
 
-Every number in a resource's config is a decision its author made once. Some of
-them the owner of a server running that resource will want to make differently,
-and will want to make *tonight* — between rounds, without a restart and without
-editing Lua over SSH.
+Expose bounded configuration values through Warden's Tuning tab. Operators can change declared settings without editing Lua or restarting the resource.
 
 A resource **declares** which of its numbers are tunable, with bounds and a
 description written for an operator. Warden's Tuning tab renders that

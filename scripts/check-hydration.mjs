@@ -20,6 +20,8 @@ import path from "node:path";
 
 const origin = process.argv[2] ?? "http://127.0.0.1:3000";
 const DEBUG_PORT = 9333;
+const apiCards = JSON.parse(await fs.readFile(new URL("../content/api/api.json", import.meta.url), "utf8"));
+const namespaceCount = (runtime, namespace) => apiCards.filter(entry => entry.runtime === runtime && entry.namespace === namespace).length;
 
 const CHROME_CANDIDATES = [
   "C:/Program Files/Google/Chrome/Application/chrome.exe",
@@ -51,7 +53,7 @@ async function findChrome() {
  */
 const PAGE_HELPERS = `
   const parseSuggestions = (placeholder) =>
-    (placeholder.split('\\u2014')[1] ?? '')
+    (placeholder.split(/[\\u2014:]/)[1] ?? '')
       .replace(/^\\s*try\\s+/i, '')
       .split(',')
       .map((part) => part.replace('\\u2026', '').trim())
@@ -239,6 +241,146 @@ try {
     }
   }
 
+  if (process.argv.includes("--remote-camera")) {
+    for (const width of [1440, 390]) {
+      await session.send("Emulation.setDeviceMetricsOverride", {
+        width, height: 900, deviceScaleFactor: 1, mobile: width < 600,
+      });
+      await visit("/docs/remote-camera");
+      check(`remote camera ${width}px guide, contracts and warnings render`, await session.evaluate(`
+        return !!document.querySelector('#server-service') &&
+          !!document.querySelector('#limits-and-troubleshooting') &&
+          document.querySelector('main').textContent.includes('intermittent engine crashes') &&
+          !!document.querySelector('a[href="/docs/api/client/open77-remotecamera"]') &&
+          document.querySelector('.dx-nav a[aria-current="page"]')?.getAttribute('href') === '/docs/remote-camera';
+      `));
+      check(`remote camera ${width}px fits viewport`, await session.evaluate(
+        "return document.documentElement.scrollWidth <= innerWidth;",
+      ));
+      reportConsole(`remote camera guide ${width}px`);
+      await visit("/docs/api?side=client&namespace=Open77.remoteCamera#client/open77-remotecamera/bindwebui");
+      const api = await session.evaluate(`
+        const detail = document.querySelector('.api-detail');
+        return { name: detail?.querySelector('h2')?.textContent,
+          count: document.querySelectorAll('.api-function-row').length,
+          guide: detail?.querySelector('a[href="/docs/remote-camera"]')?.getAttribute('href') };
+      `);
+      check(`remote camera ${width}px explorer exposes 15 cards and guide`,
+        api.name === "bindWebUI" && api.count === 15 && api.guide === "/docs/remote-camera", JSON.stringify(api));
+      reportConsole(`remote camera explorer ${width}px`);
+    }
+  } else if (process.argv.includes("--navigation")) {
+    await session.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
+    await visit("/docs");
+    check("sidebar has four collections, 18 topics and one API shortcut", await session.evaluate(`
+      const nav = document.querySelector('.dx-nav');
+      return nav.querySelectorAll('.docs-nav-collection').length === 4 &&
+        nav.querySelectorAll('.docs-group-toggle').length === 18 &&
+        nav.querySelectorAll('a[href="/docs/api"]').length === 1 &&
+        nav.querySelectorAll('.docs-group-toggle[aria-expanded="true"]').length === 1;
+    `));
+    check("home directory matches sidebar themes", await session.evaluate(`
+      return document.querySelectorAll('.docs-topic-directory').length === 4 &&
+        document.querySelectorAll('.docs-category-directory h4').length === 18;
+    `));
+    await session.send("Page.bringToFront");
+    await session.evaluate(`document.querySelector('[aria-controls="nav-vehicles"]').focus();`);
+    await session.send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", text: "\r", unmodifiedText: "\r", windowsVirtualKeyCode: 13 });
+    await session.send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 });
+    await session.evaluate("await new Promise(r => setTimeout(r, 150));");
+    const keyboardTopic = await session.evaluate(`
+      return { expanded: document.querySelector('[aria-controls="nav-vehicles"]').getAttribute('aria-expanded'),
+        height: document.querySelector('#nav-vehicles').getBoundingClientRect().height,
+        focused: document.activeElement.getAttribute('aria-controls') };
+    `);
+    check("keyboard opens the vehicle topic", keyboardTopic.expanded === 'true' && keyboardTopic.height > 0, JSON.stringify(keyboardTopic));
+    await fs.mkdir(".shots", { recursive: true });
+    const screenshot = async (name) => {
+      const shot = await session.send("Page.captureScreenshot", { format: "png" });
+      await fs.writeFile(path.join(".shots", name + ".png"), Buffer.from(shot.data, "base64"));
+    };
+    await screenshot("docs-navigation-desktop");
+    await visit("/docs/native-map");
+    check("deep link opens only its topic and marks current guide", await session.evaluate(`
+      return document.querySelectorAll('.docs-group-toggle[aria-expanded="true"]').length === 1 &&
+        document.querySelector('[aria-controls="nav-map"]').getAttribute('aria-expanded') === 'true' &&
+        document.querySelector('.dx-nav a[aria-current="page"]').getAttribute('href') === '/docs/native-map';
+    `));
+    const filter = async (value) => session.evaluate(`
+      const input = document.querySelector('[aria-label="Filter documentation topics"]');
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, ${JSON.stringify(value)});
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 150));
+    `);
+    await filter("vehicles");
+    check("filter finds the whole vehicle theme", await session.evaluate(`
+      return document.querySelectorAll('.docs-group-toggle').length === 1 &&
+        document.querySelectorAll('#nav-vehicles a').length === 5 &&
+        document.querySelector('.docs-nav-results').textContent === '5 pages found';
+    `));
+    await filter("nothingmatcheszz");
+    check("filter has an explicit empty state", await session.evaluate(`return !!document.querySelector('.docs-nav-empty');`));
+    await session.evaluate(`document.querySelector('[aria-label="Clear topic filter"]').click(); await new Promise(r => setTimeout(r, 100));`);
+    check("clearing filter restores topics and input focus", await session.evaluate(`
+      return document.querySelectorAll('.docs-group-toggle').length === 18 &&
+        document.activeElement.getAttribute('aria-label') === 'Filter documentation topics';
+    `));
+    reportConsole("desktop topic navigation");
+    await session.evaluate(`document.querySelector('.docs-theme-toggle').click(); await new Promise(r => setTimeout(r, 100));`);
+    await screenshot("docs-navigation-dark");
+    await session.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
+    await visit("/docs/native-map");
+    await session.evaluate(`document.querySelector('.docs-mobile-nav').click(); await new Promise(r => setTimeout(r, 100));`);
+    check("mobile navigation opens and fits viewport", await session.evaluate(`
+      return document.querySelector('.docs-mobile-nav').getAttribute('aria-expanded') === 'true' &&
+        document.documentElement.scrollWidth <= innerWidth;
+    `));
+    await filter("NPC");
+    check("mobile filter finds NPCs and player models", await session.evaluate(`
+      return document.querySelectorAll('#nav-characters a').length === 5 &&
+        document.querySelectorAll('.docs-group-toggle').length === 1;
+    `));
+    await screenshot("docs-navigation-mobile");
+    await session.evaluate(`document.querySelector('#nav-characters a[href="/docs/npcs"]').click();`);
+    for (let i = 0; i < 50; i++) {
+      if (await session.evaluate(`return location.pathname === '/docs/npcs' && document.querySelector('.docs-mobile-nav')?.getAttribute('aria-expanded') === 'false';`)) break;
+      await new Promise(r => setTimeout(r, 100));
+    }
+    check("mobile guide navigation closes drawer and clears filter", await session.evaluate(`
+      return location.pathname === '/docs/npcs' &&
+        document.querySelector('.docs-mobile-nav').getAttribute('aria-expanded') === 'false' &&
+        document.querySelector('[aria-label="Filter documentation topics"]').value === '';
+    `));
+    reportConsole("mobile topic navigation");
+  } else if (process.argv.includes("--native-map")) {
+    for (const width of [1440, 390]) {
+      await session.send("Emulation.setDeviceMetricsOverride", {
+        width, height: 900, deviceScaleFactor: 1, mobile: width < 600,
+      });
+      await visit("/docs/native-map");
+      check(`native map ${width}px guide and ready handshake render`, await session.evaluate(`
+        return !!document.querySelector('#customize-the-map-screen') &&
+          document.querySelector('main').textContent.includes("Open77.emit('open77:map:ready'") &&
+          !!document.querySelector('a[href="/docs/api/client/open77-map"]');
+      `));
+      check(`native map ${width}px fits viewport`, await session.evaluate(
+        "return document.documentElement.scrollWidth <= innerWidth;",
+      ));
+      reportConsole(`native map ${width}px`);
+      await visit("/docs/api?side=client&namespace=Open77.map#client/open77-map/addtab");
+      const api = await session.evaluate(`
+        const detail = document.querySelector('.api-detail');
+        return { name: detail?.querySelector('h2')?.textContent,
+          count: document.querySelectorAll('.api-function-row').length,
+          guide: detail?.querySelector('a[href="/docs/native-map"]')?.getAttribute('href'),
+          text: detail?.textContent ?? '' };
+      `);
+      check(`native map ${width}px deep link selects addTab among 21 functions`,
+        api.name === "addTab" && api.count === 21 && api.guide === "/docs/native-map" &&
+        api.text.includes("map.control") && api.text.includes("id, page"), JSON.stringify(api));
+      reportConsole(`native map API ${width}px`);
+    }
+  } else {
   if (process.argv.includes("--npcs")) {
     await fs.mkdir(".shots", { recursive: true });
     await session.send("Network.enable");
@@ -309,13 +451,24 @@ try {
     await session.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
   }
 
-  if (process.argv.includes("--preview")) {
+  if (process.argv.includes("--alpha")) {
+    await fs.mkdir(".shots", { recursive: true });
     for (const width of [1440, 1100, 420]) {
       await session.send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
-      for (const route of ["/", "/docs/developer-preview", "/host"]) {
+      for (const route of ["/", "/create", "/download", "/docs/alpha-access", "/host"]) {
         await visit(route);
-        check(`preview ${route} ${width}px has no page overflow`, await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
-        reportConsole(`preview ${route} ${width}px`);
+        check(`Alpha ${route} ${width}px has no page overflow`, await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
+        check(`Alpha ${route} ${width}px has current access guidance`, await session.evaluate(`
+          const text = document.body.innerText;
+          return text.includes('/alpha apply') && !/developer[ -]?preview|preview access|join preview/i.test(text) &&
+            !document.querySelector('a[href*="docs.google.com/forms"]');
+        `));
+        reportConsole(`Alpha ${route} ${width}px`);
+        if (route === "/create" && width !== 1100) {
+          await session.evaluate("document.getElementById('alpha-access').scrollIntoView({ block: 'center', behavior: 'instant' }); await new Promise(r => requestAnimationFrame(r)); return true;");
+          const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+          await fs.writeFile(`.shots/alpha-build-${width}.png`, Buffer.from(data, "base64"));
+        }
       }
     }
     await session.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
@@ -336,16 +489,16 @@ try {
           if (!fixture.signedOut) localStorage.setItem('open77.session', JSON.stringify({
             token: 'host-access-browser-fixture', accountId: 'host-fixture',
             expiresAtUtc: new Date(Date.now() + 3600000).toISOString(),
-            displayName: 'Preview test', role: fixture.storedRole, emailVerified: true
+            displayName: 'Alpha test', role: fixture.storedRole, emailVerified: true
           }));
           const originalFetch = window.fetch.bind(window);
           window.fetch = async (input, init) => {
             const url = typeof input === 'string' ? input : input.url;
             if (new URL(url, location.href).pathname === '/api/v1/accounts/me') {
               if (fixture.offline) throw new TypeError('Simulated unavailable master');
-              return new Response(JSON.stringify({accountId:'host-fixture', displayName:'Preview test',
+              return new Response(JSON.stringify({accountId:'host-fixture', displayName:'Alpha test',
                 role:fixture.role, alphaAccess:fixture.alphaAccess, alphaGateActive:true,
-                email:'preview@example.test', emailVerified:true, identities:[]}),
+                email:'alpha@example.test', emailVerified:true, identities:[]}),
                 {status:200, headers:{'Content-Type':'application/json'}});
             }
             return originalFetch(input, init);
@@ -360,7 +513,8 @@ try {
             locked: !!document.querySelector('.host-locked'), text: document.body.innerText };
         `);
         check(`host gate: ${fixture.name}`, fixture.allowed ? access.downloads >= 2 && !access.locked : access.downloads === 0 && access.locked);
-        if (fixture.offline) check("host gate reports an availability error", access.text.includes("Unable to verify preview access."));
+        if (fixture.offline) check("host gate reports an availability error", access.text.includes("Unable to verify Alpha access."));
+        if (!fixture.allowed) check(`host gate ${fixture.name} explains Discord access`, access.text.includes('/alpha apply'));
         reportConsole(`host gate ${fixture.name}`);
       } finally {
         await session.send("Page.removeScriptToEvaluateOnNewDocument", { identifier });
@@ -369,6 +523,7 @@ try {
     await session.evaluate("localStorage.removeItem('open77.session');");
   }
 
+  if (!process.argv.includes("--alpha")) {
   /* ---------------------------------------------------------------- home --- */
 
   if (!process.argv.includes("--docs")) {
@@ -511,16 +666,21 @@ try {
   await session.send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
   await visit("/docs");
   reportConsole("/docs");
-  check("main site navigation and official logo remain available", await session.evaluate(`
-    return !!document.querySelector('.site-header a[href="/servers"]') &&
-      !!document.querySelector('.site-header img[src="/brand/logo/open77-logo-light.png"]');
+  check("docs use a single header with official logo and a way back to the site", await session.evaluate(`
+    return !document.querySelector('.site-header') &&
+      !!document.querySelector('.docs-header a[href="/"]') &&
+      !!document.querySelector('.docs-header img[src="/brand/logo/open77-logo-dark.png"]');
   `));
-  const theme = await session.evaluate(`
+  check("documentation starts in the new dark theme", await session.evaluate("return document.querySelector('.docs-site').dataset.theme === 'dark';"));
+  const lightTheme = await session.evaluate(`
     document.querySelector('.docs-theme-toggle').click();
     await new Promise(r => setTimeout(r, 150));
     return document.querySelector('.docs-site').dataset.theme;
   `);
-  check("theme switches to dark", theme === "dark", theme);
+  check("light reading theme remains available", lightTheme === "light", lightTheme);
+  await visit("/docs");
+  check("light preference survives reload", await session.evaluate("return document.querySelector('.docs-site').dataset.theme === 'light';"));
+  await session.evaluate("document.querySelector('.docs-theme-toggle').click();");
   await visit("/docs");
   check("theme survives reload", await session.evaluate("return document.querySelector('.docs-site').dataset.theme === 'dark';"));
   if (process.argv.includes("--docs")) {
@@ -532,14 +692,12 @@ try {
     document.documentElement.style.scrollBehavior = 'auto';
     window.scrollTo(0, 900);
     await new Promise(r => setTimeout(r, 200));
-    const site = document.querySelector('.site-header').getBoundingClientRect();
     const docs = document.querySelector('.docs-header').getBoundingClientRect();
     const nav = document.querySelector('.dx-nav').getBoundingClientRect();
-    return { y: scrollY, site: site.top, docs: docs.top, siteBottom: site.bottom, nav: nav.top, docsBottom: docs.bottom };
+    return { y: scrollY, docs: docs.top, nav: nav.top, docsBottom: docs.bottom };
   `);
-  check("site header stays at viewport top when scrolled", sticky.y > 0 && Math.abs(sticky.site) < 2, JSON.stringify(sticky));
-  check("docs header stays below site navigation", Math.abs(sticky.docs - sticky.siteBottom) < 2, JSON.stringify(sticky));
-  check("sidebar stays below both headers", Math.abs(sticky.nav - sticky.docsBottom) < 2, JSON.stringify(sticky));
+  check("single docs header stays at viewport top when scrolled", sticky.y > 0 && Math.abs(sticky.docs) < 2, JSON.stringify(sticky));
+  check("sidebar stays below the single header", Math.abs(sticky.nav - sticky.docsBottom) < 2, JSON.stringify(sticky));
   await session.evaluate("window.scrollTo(0, 0); document.querySelector('.docs-theme-toggle').click();");
   const docsSearch = await session.evaluate(`
     const input = document.querySelector('.docs-global-search input');
@@ -562,8 +720,8 @@ try {
     await visit(`/docs/${slug}`);
     reportConsole(`${slug} guide`);
     check(`${slug} guide exposes both runtime references`, await session.evaluate(`
-      return !!document.querySelector('.dx-prose a[href="/docs/api/server/open77-cyberware"]') &&
-        !!document.querySelector('.dx-prose a[href="/docs/api/client/open77-cyberware"]');
+      return !!document.querySelector('.dx-meta a[href="/docs/api/server/open77-cyberware"]') &&
+        !!document.querySelector('.dx-meta a[href="/docs/api/client/open77-cyberware"]');
     `));
     if (process.argv.includes("--docs")) {
       const { data } = await session.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
@@ -639,8 +797,8 @@ try {
     await fs.writeFile(".shots/rp-animation-guide.png", Buffer.from(data, "base64"));
   }
   for (const [runtime, method, count, expected] of [
-    ["client", "request", 11, "Open77.Promise"],
-    ["server", "play", 6, "players.animations.control"],
+    ["client", "request", namespaceCount("client", "Open77.animations"), "Open77.Promise"],
+    ["server", "play", namespaceCount("server", "Open77.animations"), "players.animations.control"],
   ]) {
     await visit(`/docs/api?side=${runtime}&category=players&namespace=Open77.animations#${runtime}/open77-animations/${method}`);
     reportConsole(`RP ${runtime} API`);
@@ -666,8 +824,8 @@ try {
     await visit(route);
     reportConsole(route);
     check(`${route} is in the vehicle navigation with working reference links`, await session.evaluate(`
-      return !document.getElementById('nav-world').hidden &&
-        !!document.querySelector('#nav-world a[aria-current="page"]') &&
+      return !document.getElementById('nav-vehicles').hidden &&
+        !!document.querySelector('#nav-vehicles a[aria-current="page"]') &&
         !!document.querySelector('a[href="/docs/api/client/open77-vehicles"]') &&
         !!document.querySelector('a[href="/data/vehicle-weapons-2.31.json"]') &&
         document.documentElement.scrollWidth <= innerWidth;
@@ -699,7 +857,7 @@ try {
   check("export explorer separates the server runtime", await session.evaluate(`
     return document.querySelector('.api-detail h2').textContent === 'call' &&
       document.querySelector('.api-detail-meta .api-side').textContent === 'server' &&
-      document.querySelectorAll('.api-function-row').length === 1 &&
+      document.querySelectorAll('.api-function-row').length === ${namespaceCount("server", "Open77.exports")} &&
       document.querySelector('.api-detail').textContent.includes('Promise');
   `));
   if (process.argv.includes("--docs")) {
@@ -771,7 +929,8 @@ try {
     return { hash: location.hash, title: document.querySelector('.api-detail h2').textContent,
       source: document.querySelector('.api-source').textContent, groups: document.querySelectorAll('.api-function-group').length };
   `);
-  check("category filter selects a documented server function", category.title === "disconnect" && category.groups === 1 && category.source.includes("server-api.md"), JSON.stringify(category));
+  const disconnectSource = apiCards.find(entry => entry.namespace === "Open77.players" && entry.name === "disconnect" && entry.runtime === "server").source;
+  check("category filter selects a documented server function", category.title === "disconnect" && category.groups === 1 && category.source.includes(disconnectSource), JSON.stringify(category));
   await visit("/docs/api?side=server&category=players#server/open77-players/disconnect");
   check("filters and selection survive a direct visit", await session.evaluate(`
     return document.querySelector('.api-detail h2').textContent === 'disconnect' &&
@@ -917,6 +1076,8 @@ try {
     JSON.stringify(menu.afterNav),
   );
   reportConsole("client navigation to /create");
+  }
+  }
   }
 } finally {
   child.kill();

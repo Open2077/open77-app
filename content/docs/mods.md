@@ -1,10 +1,6 @@
 # Mods: the complete guide
 
-Everything about mods in Open//77, from the server that declares them to the file that lands in
-the player's game folder. [Server-required mods](server-mods.md) is the operator's reference for
-trust, review and Warden; [Server resources](server-resources.md) covers Lua resources. This page
-ties the whole pipeline together, walks through adding a Nexus mod to a world, and lists what to
-check when a mod does not show up.
+Configure the mods required by a server and understand how the launcher installs them. For trust and review rules, see [Server-required mods](server-mods.md); for Lua packages, see [Server resources](server-resources.md).
 
 ## Three layers of mods
 

@@ -165,11 +165,11 @@ export function Keymaster({
             Your server needs a license key
           </h2>
           <p>
-            A dedicated server joins the OPEN//77 platform with a license key created here — that
+            A dedicated server joins the OPEN//77 platform with a license key created here. That
             key is what ties the server to your account in the server browser.
           </p>
           <ol>
-            <li>Create a key below and copy it — it is shown only once.</li>
+            <li>Create a key below and copy it. It is shown only once.</li>
             <li>
               Paste it into the <code>masterServer.licenseKey</code> field of your{" "}
               <code>server.jsonc</code>.
@@ -190,7 +190,7 @@ export function Keymaster({
         <section className="ac-reveal" aria-label="New license key">
           <h2 className="ac-reveal-title">
             <KeyIcon size={15} />
-            {created.label} — key created
+            {created.label}: key created
           </h2>
           <div className="ac-keybox">
             <code>{created.key}</code>
@@ -207,7 +207,7 @@ export function Keymaster({
             <InfoIcon />
             <span>
               <strong>This key is shown only once.</strong> The platform stores a fingerprint, not
-              the key — if you lose it, revoke it and create a new one.
+              the key. If you lose it, revoke it and create a new one.
             </span>
           </p>
           <div className="ac-snippet">
@@ -285,7 +285,7 @@ export function Keymaster({
                 autoFocus
                 required
               />
-              <span className="ac-hint">Only you see the label — name it after the server it runs.</span>
+              <span className="ac-hint">Only you see the label. Name it after the server it runs.</span>
             </label>
             <div className="ac-form-actions">
               <button

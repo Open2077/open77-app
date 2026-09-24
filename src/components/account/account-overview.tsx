@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { type FormEvent, useEffect, useState } from "react";
-
-import { CheckIcon, DownloadIcon, InfoIcon, KeyIcon, PeopleIcon, ServerRackIcon, SignOutIcon } from "@/components/icons";
+import { type FormEvent, type ReactNode, useEffect, useState } from "react";
+import { AuthIcon } from "@/components/account/auth-icon";
+import { ArrowRightIcon, CheckIcon, CodeIcon, DownloadIcon, InfoIcon, KeyIcon, PeopleIcon, ServerRackIcon, ShieldIcon, SignOutIcon, WindowsIcon } from "@/components/icons";
 import * as master from "@/lib/account/api";
 import { type Account, MasterApiError } from "@/lib/account/api";
 import { canDownloadServer } from "@/lib/account/host-access";
@@ -11,254 +12,130 @@ import { type StoredSession, useSession } from "@/lib/account/session";
 
 function formatDate(iso: string): string {
   const date = new Date(iso);
-  return Number.isNaN(date.getTime())
-    ? iso
-    : date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  return Number.isNaN(date.getTime()) ? "Date unavailable" : date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
 
-/**
- * The signed-in account page: profile facts, e-mail verification, linked
- * device identities, and the way out. `/me` is refetched on mount so the page
- * reflects the master rather than the cached login snapshot; a 401 means the
- * session died server-side and the stored copy is cleared to match.
- */
+function Shortcut({ href, title, description, icon, label, className = "" }: {
+  href: string; title: string; description: string; icon: ReactNode; label: string; className?: string;
+}) {
+  return <Link className={`account-tile account-shortcut ${className}`} href={href}>
+    <span className="account-tile-top"><span className="account-tile-icon">{icon}</span><span className="account-tile-arrow"><ArrowRightIcon size={21} /></span></span>
+    <span className="account-micro">{label}</span><h2>{title}</h2><p>{description}</p>
+  </Link>;
+}
+
+/** Live master data only; the cached session must never imply Alpha entitlement. */
 export function AccountOverview({ session }: { session: StoredSession }) {
   const { clear, update } = useSession();
   const [account, setAccount] = useState<Account | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [retry, setRetry] = useState(0);
+  const [busy, setBusy] = useState<"verify" | "resend" | "logout" | null>(null);
   const [verifyToken, setVerifyToken] = useState("");
   const [verifyOpen, setVerifyOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    master
-      .me(session.token)
-      .then((result) => {
-        if (cancelled) return;
-        setAccount(result);
-        update({ emailVerified: result.emailVerified, displayName: result.displayName, email: result.email });
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        if (err instanceof MasterApiError && err.status === 401) clear();
-        else setError(err instanceof MasterApiError ? err.message : "Could not load your account.");
-      });
-    return () => {
-      cancelled = true;
-    };
-    // Refetch only when the token itself changes; `update` writing the same
-    // profile back must not loop this effect.
+    master.me(session.token).then(result => {
+      if (cancelled) return;
+      setAccount(result);
+      update({ emailVerified: result.emailVerified, displayName: result.displayName, email: result.email });
+    }).catch((err: unknown) => {
+      if (cancelled) return;
+      if (err instanceof MasterApiError && err.status === 401) clear();
+      else setLoadError(err instanceof MasterApiError ? err.message : "Could not load your account.");
+    });
+    return () => { cancelled = true; };
+    // Updating the cached profile must not refetch /me in a loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session.token]);
+  }, [session.token, retry]);
 
   async function onVerify(event: FormEvent) {
     event.preventDefault();
-    if (!account) return;
-    setError(null);
-    setBusy(true);
+    if (!account || busy || !verifyToken.trim()) return;
+    setError(null); setNotice(null); setBusy("verify");
     try {
       await master.verifyEmail({ email: account.email, token: verifyToken.trim() });
       setAccount({ ...account, emailVerified: true });
       update({ emailVerified: true });
-      setVerifyOpen(false);
-    } catch (err) {
-      setError(err instanceof MasterApiError ? err.message : "Verification failed. Try again.");
-    } finally {
-      setBusy(false);
-    }
+      setVerifyOpen(false); setVerifyToken(""); setNotice("Your e-mail is verified. You're all set.");
+    } catch (err) { setError(err instanceof MasterApiError ? err.message : "Verification failed. Try again."); }
+    finally { setBusy(null); }
+  }
+
+  async function onResend() {
+    if (!account || busy) return;
+    setError(null); setNotice(null); setBusy("resend");
+    try {
+      await master.resendVerification({ email: account.email });
+      setNotice("Verification requested. Check your inbox and spam folder for the latest e-mail.");
+    } catch (err) { setError(err instanceof MasterApiError ? err.message : "Could not request a verification e-mail. Try again."); }
+    finally { setBusy(null); }
   }
 
   async function onSignOut() {
-    setBusy(true);
-    try {
-      await master.logout(session.token);
-    } catch {
-      // The local session is cleared regardless: a token the master already
-      // forgot is not worth keeping around.
-    } finally {
-      clear();
-    }
+    if (busy) return;
+    setBusy("logout");
+    try { await master.logout(session.token); }
+    catch { /* A revoked or offline session is still cleared locally. */ }
+    finally { clear(); }
   }
 
-  if (account === null && error === null) {
-    return <p className="ac-loading">Loading account…</p>;
-  }
+  return <>
+    <header className="account-heading">
+      <div><p className="account-kicker"><span aria-hidden="true">{"//"}</span> PLATFORM ACCOUNT</p><h1>Your account<span>.</span></h1><p>One account for the whole platform: the server browser, your game identities, and the license keys your servers run on.</p></div>
+      <button className="account-button account-signout" type="button" onClick={onSignOut} disabled={busy !== null}><SignOutIcon size={17} />{busy === "logout" ? "Signing out…" : "Sign out"}</button>
+    </header>
 
-  return (
-    <>
-      {error ? (
-        <p className="ac-error" role="alert" style={{ marginBottom: 14 }}>
-          <InfoIcon />
-          {error}
-        </p>
-      ) : null}
+    {!account ? <div className="account-tile account-load" aria-live="polite">
+      {loadError ? <><InfoIcon size={24} /><h2>Could not load your account.</h2><p role="alert">{loadError}</p><button className="account-button" onClick={() => { setLoadError(null); setRetry(value => value + 1); }}>Try again <ArrowRightIcon /></button></> : <><span className="auth-spinner" aria-hidden="true" /><p role="status">Loading your account…</p></>}
+    </div> : <>
+      {error && <p className="ac-error account-feedback" role="alert"><InfoIcon />{error}</p>}
+      {notice && <p className="ac-success account-feedback" role="status"><CheckIcon />{notice}</p>}
+      {!account.emailVerified && <section className="account-verification" aria-labelledby="account-verify-title">
+        <div className="account-verification-copy"><AuthIcon name="mail" /><div><h2 id="account-verify-title">Your e-mail is not verified yet.</h2><p>Verification is required before you can create server license keys. Use the code from your inbox, or request a new e-mail.</p></div></div>
+        <div className="account-inline-actions"><button className="account-button" onClick={onResend} disabled={busy !== null}>{busy === "resend" ? "Sending…" : "Resend e-mail"}</button><button className="account-text-link" aria-expanded={verifyOpen} aria-controls="account-verification-form" disabled={busy !== null} onClick={() => setVerifyOpen(value => !value)}>{verifyOpen ? "Cancel" : "Enter a code"}</button></div>
+        {verifyOpen && <form className="account-verification-form" id="account-verification-form" onSubmit={onVerify}>
+          <label htmlFor="account-verification-code">Verification code</label><div><input className="ac-input" id="account-verification-code" name="verification-code" value={verifyToken} onChange={event => setVerifyToken(event.target.value)} placeholder="Code from your verification e-mail" autoComplete="one-time-code" spellCheck={false} required disabled={busy !== null} /><button className="account-button account-button-primary" disabled={busy !== null || !verifyToken.trim()} type="submit">{busy === "verify" ? "Verifying…" : "Verify e-mail"}<ArrowRightIcon /></button></div>
+        </form>}
+      </section>}
 
-      {account ? (
-        <>
-          <div className="ac-card">
-            <div className="ac-card-head">
-              <h2 className="ac-card-title">
-                <PeopleIcon size={18} />
-                Profile
-              </h2>
-              <button className="ac-iconbtn" type="button" onClick={onSignOut} disabled={busy}>
-                <SignOutIcon />
-                Sign out
-              </button>
-            </div>
-            <dl className="ac-profile-grid">
-              <div>
-                <dt>Display name</dt>
-                <dd>{account.displayName}</dd>
-              </div>
-              <div>
-                <dt>E-mail</dt>
-                <dd>{account.email}</dd>
-              </div>
-              <div>
-                <dt>Status</dt>
-                <dd>
-                  {account.emailVerified ? (
-                    <span className="ac-badge ac-badge-ok">
-                      <CheckIcon size={11} />
-                      Verified
-                    </span>
-                  ) : (
-                    <span className="ac-badge ac-badge-warn">Unverified</span>
-                  )}
-                </dd>
-              </div>
-              <div>
-                <dt>Role</dt>
-                <dd>
-                  <span className="ac-badge ac-badge-dim">{account.role}</span>
-                </dd>
-              </div>
-            </dl>
+      <section className="account-bento" aria-label="Your account and shortcuts">
+        <article className="account-tile account-welcome">
+          <Image className="account-welcome-art" src="/assets/auth/night-city-login-v2.webp" alt="" fill sizes="(max-width: 760px) 100vw, (max-width: 1100px) 90vw, 750px" preload />
+          <div className="account-welcome-top"><span className="account-avatar" aria-hidden="true">{Array.from(account.displayName.trim())[0]?.toUpperCase() || "V"}</span><span className={`account-status ${canDownloadServer(account) ? "is-enabled" : ""}`}>{canDownloadServer(account) ? "Alpha access enabled" : "Platform account"}</span></div>
+          <div className="account-welcome-copy"><p className="account-micro">PROFILE</p><h2>Signed in as<br /><span>{account.displayName || account.email}.</span></h2><p>{canDownloadServer(account) ? "Your account can play on community servers and download the Windows and Linux dedicated server. No further application needed." : "Your account is ready. Joining servers and hosting need Alpha access. Request it with /alpha apply on our Discord."}</p></div>
+          <dl className="ac-profile-grid account-profile-facts"><div><dt>E-mail</dt><dd>{account.email}<span className={`account-email-state ${account.emailVerified ? "is-verified" : ""}`}>{account.emailVerified ? <><CheckIcon size={12} /> Verified</> : "Not verified"}</span></dd></div><div><dt>Account role</dt><dd>{account.role}</dd></div></dl>
+        </article>
+        <Shortcut href="/account/keys" title="Server license keys." label="KEYMASTER" description="License keys let your dedicated servers register on the OPEN//77 platform. Create, inspect and revoke them here." icon={<KeyIcon size={25} />} className="account-licenses" />
+        <Shortcut href="#identities" title="Linked game identities." label={`${account.identities.length} LINKED ${account.identities.length === 1 ? "IDENTITY" : "IDENTITIES"}`} description="The game clients that signed in through the launcher with this account." icon={<PeopleIcon size={26} />} className="account-identities-shortcut" />
+        <Shortcut href="/download#get" title="Get the launcher." label="PLAY" description="It signs you in, checks your game build, installs the mod and opens the server browser." icon={<WindowsIcon size={25} />} className="account-launcher-shortcut" />
+        <article className="account-tile account-server-shortcut" data-server-download={canDownloadServer(account) ? "" : undefined}>
+          <span className="account-tile-top"><span className="account-tile-icon"><ServerRackIcon size={26} /></span><span className="account-os">WIN / LINUX</span></span><span className="account-micro">HOST</span><h2>Dedicated server.</h2><p>{canDownloadServer(account) ? "Your account can download and run the Windows and Linux dedicated server. You do not need to apply again or have a staff role." : "Every Alpha account can download the dedicated server, with no separate developer application. This account does not have Alpha access yet."}</p><Link className="account-text-link" href="/host">Download server <DownloadIcon size={17} /></Link>
+        </article>
+        <Shortcut href="/docs" title="Documentation." label="BUILD" description="Hosting guides, the resource format and the complete Lua API reference." icon={<CodeIcon size={26} />} className="account-docs-shortcut" />
+      </section>
 
-            {!account.emailVerified ? (
-              <div style={{ marginTop: 18 }}>
-                {verifyOpen ? (
-                  <form className="ac-form" onSubmit={onVerify}>
-                    <label className="ac-label">
-                      Verification code
-                      <input
-                        className="ac-input"
-                        value={verifyToken}
-                        onChange={(event) => setVerifyToken(event.target.value)}
-                        placeholder="Code from your registration"
-                        autoComplete="one-time-code"
-                        spellCheck={false}
-                        required
-                      />
-                      <span className="ac-hint">
-                        The code was shown when you registered on this development master; in
-                        production it arrives by e-mail.
-                      </span>
-                    </label>
-                    <div className="ac-form-actions">
-                      <button
-                        className="btn btn-small btn-primary"
-                        type="submit"
-                        disabled={busy || verifyToken.trim().length === 0}
-                      >
-                        Verify
-                      </button>
-                      <button
-                        className="btn btn-small btn-ghost"
-                        type="button"
-                        onClick={() => setVerifyOpen(false)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <p className="ac-notice">
-                    <InfoIcon />
-                    <span>
-                      Your e-mail is not verified yet — verification is required before creating
-                      server license keys.{" "}
-                      <button
-                        type="button"
-                        className="ac-tab"
-                        style={{ padding: 0, border: 0, margin: 0, color: "var(--accent)" }}
-                        onClick={() => setVerifyOpen(true)}
-                      >
-                        Enter your code
-                      </button>
-                    </span>
-                  </p>
-                )}
-              </div>
-            ) : null}
+      <div className="account-section-heading"><h2>Identities and connections.</h2><span className="account-micro">LINKED BY THE LAUNCHER · MANAGED HERE</span></div>
+      <div className="account-details-grid">
+        <section className="account-tile account-identities" id="identities" aria-labelledby="identities-title" tabIndex={-1}>
+          <header className="account-panel-heading"><span className="account-tile-icon"><PeopleIcon size={23} /></span><div><h2 id="identities-title">Linked game identities</h2><p>Game clients that proved possession of their identity key through the launcher.</p></div><span className="account-count">{account.identities.length}</span></header>
+          {account.identities.length === 0 ? <div className="account-empty"><AuthIcon name="game" size={34} /><h3>No game client is linked yet.</h3><p>Sign into the launcher with this account and follow its game setup; linking proves possession of the client identity key.</p><Link className="account-text-link" href="/download#get">Get the launcher <ArrowRightIcon /></Link></div> : <ul className="account-identity-list">{account.identities.map(identity => <li key={identity.userId}><span className="account-identity-avatar" aria-hidden="true"><AuthIcon name="user" size={19} /></span><div><h3>{identity.displayName}</h3><code>{identity.userId}</code></div><span className="account-identity-date">Linked <time dateTime={identity.linkedAtUtc}>{formatDate(identity.linkedAtUtc)}</time></span></li>)}</ul>}
+          <p className="account-panel-foot"><ShieldIcon size={14} />Linked by the launcher. Never share your identity key.</p>
+        </section>
+        <section className="account-tile account-connections" aria-labelledby="connections-title">
+          <header className="account-panel-heading"><span className="account-tile-icon"><AuthIcon name="link" size={23} /></span><div><h2 id="connections-title">Creator tools &amp; settings</h2><p>Your Workshop presence and the services allowed to act for this account.</p></div></header>
+          <div className="account-connection-links">
+            <Link href="/account/profile"><AuthIcon name="user" size={20} /><span><strong>Creator profile</strong><small>Your public page on the Workshop</small></span><ArrowRightIcon /></Link>
+            <Link href="/account/github"><CodeIcon size={20} /><span><strong>GitHub connection</strong><small>Import releases without granting write access</small></span><ArrowRightIcon /></Link>
+            <Link href="/account/connections"><ServerRackIcon size={20} /><span><strong>Warden connections</strong><small>Server consoles allowed to prepare Workshop drafts</small></span><ArrowRightIcon /></Link>
+            <Link href="/forgot-password"><AuthIcon name="lock" size={20} /><span><strong>Password & access</strong><small>Change it through a single-use reset link</small></span><ArrowRightIcon /></Link>
           </div>
-
-          {canDownloadServer(account) ? (
-            <div className="ac-card" data-server-download>
-              <div className="ac-card-head">
-                <h2 className="ac-card-title">
-                  <ServerRackIcon size={18} />
-                  Server downloads
-                </h2>
-                <span className="ac-badge ac-badge-ok">Preview access approved</span>
-              </div>
-              <p className="ac-lead">
-                Your account can download and run the Windows and Linux dedicated server.
-                You do not need to apply again or have a staff role.
-              </p>
-              <Link className="btn btn-small btn-primary" href="/host">
-                Download server
-                <DownloadIcon size={16} />
-              </Link>
-            </div>
-          ) : null}
-
-          <div className="ac-card">
-            <div className="ac-card-head">
-              <h2 className="ac-card-title">
-                <KeyIcon size={17} />
-                Server license keys
-              </h2>
-              <Link className="btn btn-small btn-ghost" href="/account/keys">
-                Open the keymaster
-              </Link>
-            </div>
-            <p className="ac-lead" style={{ fontSize: 14.5 }}>
-              License keys let your dedicated servers register on the OPEN//77 platform. Create,
-              inspect and revoke them in the keymaster.
-            </p>
-          </div>
-
-          <div className="ac-card">
-            <div className="ac-card-head">
-              <h2 className="ac-card-title">
-                <PeopleIcon size={18} />
-                Linked game identities
-              </h2>
-            </div>
-            {account.identities.length === 0 ? (
-              <p className="ac-lead" style={{ fontSize: 14.5 }}>
-                No game client is linked to this account yet. Sign into the launcher with this
-                account and follow its game setup; linking proves possession of the client identity key.
-              </p>
-            ) : (
-              <ul className="ac-keys">
-                {account.identities.map((identity) => (
-                  <li className="ac-key-row" key={identity.userId}>
-                    <div className="ac-key-id">
-                      <span className="ac-key-label">{identity.displayName}</span>
-                      <span className="ac-key-hint">{identity.userId}</span>
-                    </div>
-                    <span className="ac-key-date">linked {formatDate(identity.linkedAtUtc)}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </>
-      ) : null}
-    </>
-  );
+        </section>
+      </div>
+      <aside className="account-explore"><span><span className="account-live-dot" aria-hidden="true" />Everything else on the platform.</span><div><Link href="/servers">Find a server <ArrowRightIcon /></Link><Link href="/workshop">Explore the Workshop <ArrowRightIcon /></Link>{!canDownloadServer(account) && <Link href="/docs/alpha-access">About Alpha access <ArrowRightIcon /></Link>}</div></aside>
+    </>}
+  </>;
 }

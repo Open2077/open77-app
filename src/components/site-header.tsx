@@ -2,171 +2,163 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-
+import { useEffect, useRef, useState } from "react";
 import { Wordmark } from "@/components/brand";
-import { DiscordIcon, MenuIcon, ShieldIcon } from "@/components/icons";
+import { ArrowRightIcon, CrossIcon, DiscordIcon, DownloadIcon, MenuIcon, SearchIcon, ShieldIcon } from "@/components/icons";
 import { useSession } from "@/lib/account/session";
 import { mainNav, site } from "@/lib/site";
 
-function isActive(pathname: string, href: string): boolean {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
+const SHORTCUTS = [
+  { href: "/dev-tracker", title: "Dev Tracker", detail: "Ideas, community votes and development progress", keywords: "roadmap feedback suggestions forum" },
+  { href: "/status", title: "Service status", detail: "Live health, uptime and incidents", keywords: "outage availability cdn master downloads maintenance" },
+  { href: "/download", title: "Download launcher", detail: "Signs you in, checks your game, installs the mod", keywords: "play client windows install" },
+  { href: "/servers", title: "Server browser", detail: "Every community server, live", keywords: "browse roleplay racing pvp servers" },
+  { href: "/create", title: "Create a server", detail: "Run your own Night City", keywords: "build host hosting" },
+  { href: "/host", title: "Download dedicated server", detail: "Windows & Linux · Alpha access", keywords: "hosting release" },
+  { href: "/docs", title: "Documentation", detail: "Play, host and build: every guide", keywords: "help learn tutorial lua" },
+  { href: "/docs/api", title: "Lua API reference", detail: "Search the client and server APIs", keywords: "functions vehicles players native scripting" },
+  { href: "/workshop", title: "Workshop", detail: "Resources made by the community", keywords: "mods packages resources community" },
+  { href: "/devblog", title: "Devblog", detail: "What shipped, one post per working day", keywords: "news updates" },
+  { href: "/docs/alpha-access", title: "Alpha access", detail: "/alpha apply on Discord to play, host and build", keywords: "apply discord join access" },
+];
+
+function isActive(pathname: string, href: string) {
+  return pathname === href || (href !== "/" && pathname.startsWith(href + "/"));
 }
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const isDocumentation = pathname === "/docs" || pathname.startsWith("/docs/");
   const { session } = useSession();
   const isAdmin = session?.role === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
-  // The header element survives navigation, so the menu has to close itself.
-  // Adjusting during render rather than in an effect means the closed menu is
-  // part of the same render as the new route, instead of a second pass that
-  // briefly paints the old page's open menu over the new one.
+  const [query, setQuery] = useState("");
+  const headerRef = useRef<HTMLElement>(null);
+  const searchRef = useRef<HTMLDialogElement>(null);
+  const menuToggleRef = useRef<HTMLButtonElement>(null);
   const [navigatedFrom, setNavigatedFrom] = useState(pathname);
   if (pathname !== navigatedFrom) {
     setNavigatedFrom(pathname);
     setMenuOpen(false);
   }
 
+  useEffect(() => { searchRef.current?.close(); }, [pathname]);
+
   useEffect(() => {
     document.body.classList.toggle("nav-open", menuOpen);
-    return () => document.body.classList.remove("nav-open");
+    if (!menuOpen) return () => document.body.classList.remove("nav-open");
+    const onKey = (event: KeyboardEvent) => {
+      if (searchRef.current?.open) return;
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        menuToggleRef.current?.focus();
+      }
+      if (event.key === "Tab") {
+        const elements = Array.from(headerRef.current?.querySelectorAll<HTMLElement>("a[href], button") ?? [])
+          .filter((element) => element.getClientRects().length > 0 && !element.closest("dialog"));
+        const first = elements[0], last = elements.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    };
+    const onResize = () => { if (window.innerWidth > 1270) setMenuOpen(false); };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    return () => {
+      document.body.classList.remove("nav-open");
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", onResize);
+    };
   }, [menuOpen]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    // Documentation has its own single navigation bar. Re-measure the main
+    // header when returning to the site, including through client navigation.
+    if (isDocumentation) {
+      document.documentElement.style.setProperty("--header-h", "0px");
+      return;
+    }
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+        // The docs have their own search shortcut. Never steal keys from an editor.
+        if (window.location.pathname.startsWith("/docs") || (event.target instanceof Element && event.target.closest("input, textarea, [contenteditable=true]"))) return;
+        event.preventDefault();
+        searchRef.current?.showModal();
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Full-viewport sections subtract the real header height rather than guessing.
-  useEffect(() => {
-    const header = document.querySelector<HTMLElement>(".site-header");
-    if (!header) return;
+    window.addEventListener("keydown", onKey);
+    const header = headerRef.current;
     const publish = () => {
-      document.documentElement.style.setProperty("--header-h", `${header.offsetHeight}px`);
+      if (header) document.documentElement.style.setProperty("--header-h", header.offsetHeight + "px");
     };
     publish();
     const observer = new ResizeObserver(publish);
-    observer.observe(header);
-    return () => observer.disconnect();
-  }, []);
+    if (header) observer.observe(header);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [isDocumentation]);
+
+  const results = SHORTCUTS.filter((item) => (item.title + " " + item.detail + " " + item.keywords).toLowerCase().includes(query.trim().toLowerCase()));
+  const current = (href: string) => isActive(pathname, href) ? "page" as const : undefined;
+
+  if (isDocumentation) return null;
 
   return (
-    <header
-      className={`site-header${scrolled ? " is-scrolled" : ""}${pathname === "/servers" ? " directory-header" : ""}`}
-      id="top"
-    >
-      <div className="header-inner">
-        <Wordmark />
-        <nav className="main-nav" id="main-nav" aria-label="Main">
-          {mainNav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              {...(isActive(pathname, item.href) ? { "aria-current": "page" as const } : {})}
-            >
-              {item.label}
-            </Link>
-          ))}
+    <header ref={headerRef} className={"site-header liquid-header" + (scrolled ? " is-scrolled" : "") + (menuOpen ? " is-open" : "")} id="top">
+      <svg className="liquid-optics" aria-hidden="true" focusable="false" width="0" height="0">
+        <defs>
+          <filter id="open77-nav-glass" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.028" numOctaves="1" seed="8" result="glass-noise" />
+            <feGaussianBlur in="glass-noise" stdDeviation="2" result="glass-flow" />
+            <feDisplacementMap in="SourceGraphic" in2="glass-flow" scale="7" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
+      <div className="liquid-bar" onPointerMove={(event) => {
+        if (event.pointerType !== "mouse" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        event.currentTarget.style.setProperty("--glass-x", ((event.clientX - rect.left) / rect.width * 100).toFixed(1) + "%");
+      }}>
+        <Wordmark tone="dark" />
+        <nav className="liquid-nav" id="main-nav" aria-label="Main">
+          {mainNav.map((item) => <Link key={item.href} href={item.href} aria-current={current(item.href)}>{item.label}</Link>)}
         </nav>
-        <div className="header-actions">
-          <span className="stage-chip" title="Current development stage">
-            {site.stage}
-          </span>
-          {site.links.discord ? (
-            <a
-              className="header-discord"
-              href={site.links.discord}
-              target="_blank"
-              rel="noreferrer noopener"
-              aria-label="Join our Discord"
-              title="Join our Discord"
-            >
-              <DiscordIcon size={17} />
-            </a>
-          ) : null}
-          {isAdmin ? (
-            <Link
-              className="btn btn-small btn-ghost header-admin"
-              href="/admin"
-              title="Operations console"
-              {...(isActive(pathname, "/admin") ? { "aria-current": "page" as const } : {})}
-            >
-              <ShieldIcon size={14} />
-              Admin
-            </Link>
-          ) : null}
-          <Link
-            className="btn btn-small btn-ghost header-account"
-            href="/account"
-            {...(isActive(pathname, "/account") ? { "aria-current": "page" as const } : {})}
-          >
+        <div className="liquid-actions">
+          <button className="liquid-icon liquid-search-trigger" aria-label="Search the site" title="Quick navigation (Ctrl / ⌘ K)" onClick={() => searchRef.current?.showModal()}><SearchIcon size={19} /></button>
+          <span className="liquid-divider" aria-hidden="true" />
+          {site.links.discord && <a className="liquid-icon liquid-discord" href={site.links.discord} target="_blank" rel="noreferrer noopener" aria-label="Join our Discord"><DiscordIcon size={24} /></a>}
+          <Link className="liquid-pill liquid-alpha" href="/docs/alpha-access">Alpha<span aria-hidden="true" /></Link>
+          {isAdmin && <Link className="liquid-pill liquid-admin" href="/admin" aria-label="Admin" aria-current={current("/admin")}><ShieldIcon size={16} />Admin</Link>}
+          <Link className="liquid-pill liquid-account" href="/account" aria-label="Account" aria-current={current("/account")}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><circle cx="12" cy="8" r="3.5" /><path d="M5 21v-2a7 7 0 0 1 14 0v2" /></svg>
             Account
           </Link>
-          <Link className="btn btn-small btn-primary" href="/community#alpha">
-            Join preview
-          </Link>
-          <button
-            className="nav-toggle"
-            id="nav-toggle"
-            type="button"
-            aria-expanded={menuOpen}
-            aria-controls="mobile-nav"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            <MenuIcon />
-          </button>
+          <Link className="liquid-download" href="/download">Download launcher<DownloadIcon size={17} /></Link>
+          <button ref={menuToggleRef} className="liquid-icon liquid-toggle" id="nav-toggle" type="button" aria-expanded={menuOpen} aria-controls="mobile-nav" aria-label={menuOpen ? "Close menu" : "Open menu"} onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? <CrossIcon size={21} /> : <MenuIcon size={22} />}</button>
         </div>
       </div>
-      <div className="header-rule" aria-hidden="true" />
-      <nav className="mobile-nav" id="mobile-nav" aria-label="Mobile" hidden={!menuOpen}>
-        <Link href="/" {...(pathname === "/" ? { "aria-current": "page" as const } : {})}>
-          Home
-        </Link>
-        {mainNav.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            {...(isActive(pathname, item.href) ? { "aria-current": "page" as const } : {})}
-          >
-            {item.label}
-          </Link>
-        ))}
-        {isAdmin ? (
-          <Link
-            href="/admin"
-            {...(isActive(pathname, "/admin") ? { "aria-current": "page" as const } : {})}
-          >
-            Admin
-          </Link>
-        ) : null}
-        <Link
-          href="/account"
-          {...(isActive(pathname, "/account") ? { "aria-current": "page" as const } : {})}
-        >
-          Account
-        </Link>
-        <Link className="btn btn-primary" href="/community#alpha">
-          Join preview
-        </Link>
-        {site.links.discord ? (
-          <a
-            className="btn btn-discord"
-            href={site.links.discord}
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            <DiscordIcon size={16} />
-            Join our Discord
-          </a>
-        ) : null}
+      <nav className="liquid-mobile" id="mobile-nav" aria-label="Mobile" hidden={!menuOpen}>
+        <p>NAVIGATION</p>
+        {[{ href: "/", label: "Home" }, ...mainNav, { href: "/docs/alpha-access", label: "Alpha access" }, ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : []), { href: "/account", label: "Account" }].map((item) => <Link key={item.href} href={item.href} aria-current={current(item.href)} onClick={() => setMenuOpen(false)}>{item.label}<ArrowRightIcon /></Link>)}
+        <Link className="liquid-download" href="/download" onClick={() => setMenuOpen(false)}>Download launcher<DownloadIcon size={18} /></Link>
       </nav>
+      <dialog ref={searchRef} className="liquid-search" aria-labelledby="quick-nav-title" onClose={() => setQuery("")}
+        onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); event.stopPropagation(); searchRef.current?.close(); } }}
+        onClick={(event) => { if (event.target === event.currentTarget) searchRef.current?.close(); }}>
+        <div className="liquid-search-head"><h2 id="quick-nav-title">Quick navigation</h2><button className="liquid-icon" aria-label="Close search" onClick={() => searchRef.current?.close()}><CrossIcon size={20} /></button></div>
+        <label className="liquid-search-field"><SearchIcon size={20} /><span className="sr-only">Search pages and tools</span><input autoFocus type="search" placeholder="Search pages and tools…" value={query} onChange={(event) => setQuery(event.target.value)} /></label>
+        <div className="liquid-search-results" aria-live="polite">
+          {results.length ? results.map((item) => <Link key={item.href} href={item.href} onClick={() => searchRef.current?.close()}><span><strong>{item.title}</strong><small>{item.detail}</small></span><ArrowRightIcon size={18} /></Link>) : <p>No destination found. Try “server”, “Lua” or “Alpha”.</p>}
+        </div>
+        <div className="liquid-search-foot"><span>OPEN//77 · QUICK NAVIGATION</span><span><kbd>esc</kbd> to close</span></div>
+      </dialog>
     </header>
   );
 }

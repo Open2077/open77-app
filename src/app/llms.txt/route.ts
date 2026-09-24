@@ -3,7 +3,6 @@ import { blogMarkdownHref, getBlogPosts } from "@/lib/devblog";
 import {
   docHref,
   docMarkdownHref,
-  getDocsManifest,
   getDocsNav,
   getDocsPages,
 } from "@/lib/docs";
@@ -25,11 +24,10 @@ import { absoluteUrl, site } from "@/lib/site";
 export const dynamic = "force-static";
 
 export async function GET() {
-  const [nav, pages, api, manifest, posts] = await Promise.all([
+  const [nav, pages, api, posts] = await Promise.all([
     getDocsNav(),
     getDocsPages(),
     getApiIndex(),
-    getDocsManifest(),
     getBlogPosts(),
   ]);
 
@@ -40,22 +38,21 @@ export async function GET() {
     "",
     "## Status",
     "",
-    `- ${site.previewNotice}`,
-    "- The Windows player launcher is available at /download. Approved preview accounts and staff",
+    `- ${site.alphaNotice}`,
+    "- The Windows player launcher is available at /download. Everyone with Alpha access",
     "  can access Windows/Linux dedicated-server downloads at /host, with Freeroam and system resources.",
     "- /servers reads the live master directory. Any explicitly labelled demo view is illustrative only.",
     "- Account registration or downloading the launcher does not grant approval to join worlds.",
     "- Unaffiliated with CD PROJEKT RED. Playing requires your own legal copy of Cyberpunk 2077.",
-    `- Documentation synced from the platform wiki on ${manifest.syncedAt.slice(0, 10)}.`,
     "",
     "## Site",
     "",
     `- [Home](${absoluteUrl("/")}): what the platform is, for players and for server owners.`,
     `- [Download](${absoluteUrl("/download")}): the current Windows launcher, requirements and first run; joining requires account approval.`,
     `- [Server browser](${absoluteUrl("/servers")}): live master directory.`,
-    `- [Create a server](${absoluteUrl("/create")}): Developer Preview applications and hosting.`,
-    `- [Host a server](${absoluteUrl("/host")}): Windows/Linux server downloads for approved preview accounts and staff.`,
-    `- [Community](${absoluteUrl("/community")}): preview access, updates and feedback.`,
+    `- [Create a server](${absoluteUrl("/create")}): Server downloads and custom gamemodes for everyone with Alpha access.`,
+    `- [Host a server](${absoluteUrl("/host")}): Windows/Linux server downloads for everyone with Alpha access.`,
+    `- [Workshop](${absoluteUrl("/workshop")}): community-made resources, gamemodes, maps and tools for servers, free to download.`,
     `- [Brand kit](${absoluteUrl("/brand")}): logo, mark, colours and social assets.`,
     `- [Devblog](${absoluteUrl("/devblog")}): development updates as they ship, one post per working day.`,
     "",
@@ -71,8 +68,13 @@ export async function GET() {
     lines.push("");
   }
 
+  let previousGroup = "";
   for (const section of nav.sections) {
-    lines.push(`## ${section.title}`, "");
+    if (section.group !== previousGroup) {
+      lines.push(`## ${section.group}`, "");
+      previousGroup = section.group;
+    }
+    lines.push(`### ${section.title}`, "", section.description, "");
     for (const page of section.pages) {
       lines.push(
         `- [${page.title ?? page.nav}](${absoluteUrl(docMarkdownHref(page.slug))}): ${page.description}`,
@@ -83,7 +85,7 @@ export async function GET() {
 
   lines.push("## API reference by namespace", "");
   for (const group of api.runtimes) {
-    lines.push(`### ${group.label} runtime — ${group.count} functions`, "", group.blurb, "");
+    lines.push(`### ${group.label} runtime (${group.count} functions)`, "", group.blurb, "");
     for (const namespace of group.namespaces) {
       lines.push(
         `- [${namespace.label}](${absoluteUrl(namespace.markdownHref)}): ${

@@ -5,15 +5,13 @@ import { breadcrumbNode, collectionPageNode, jsonLdGraph, pageMetadata } from "@
 export const metadata = pageMetadata({
   title: "Server browser",
   description:
-    "Browse live OPEN//77 community servers for Cyberpunk 2077. Search, compare player counts, and filter by mode, region and language — straight from the OPEN//77 master directory.",
+    "Browse live OPEN//77 community servers for Cyberpunk 2077. Search, compare player counts, and filter by mode, region and language, straight from the OPEN//77 master directory.",
   path: "/servers",
 });
 
 export default function ServersPage() {
   return (
     <>
-      {/* The directory is a full-window application: no page chrome around it,
-          and the site footer is folded into its own status strip. */}
       <main id="main" className="sb-page">
         <LiveServerBrowser />
       </main>

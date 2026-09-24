@@ -5,8 +5,9 @@ import { readFile } from "node:fs/promises";
 const read = (file) => readFile(file, "utf8");
 const api = JSON.parse(await read("content/api/api.json"));
 const entries = api.filter((entry) => entry.namespace === "Open77.animations");
-assert.equal(entries.length, 17);
-assert.equal(new Set(entries.map((entry) => entry.route_id)).size, 17);
+// 25 since wave 5 (row I4): playAt and stopAt joined the server namespace.
+assert.equal(entries.length, 25);
+assert.equal(new Set(entries.map((entry) => entry.route_id)).size, 25);
 assert.ok(entries.every((entry) => !entry.name.startsWith("_") && entry.name !== "animations"));
 const find = (runtime, name) => {
   const entry = entries.find((entry) => entry.runtime === runtime && entry.name === name);
@@ -26,12 +27,27 @@ for (const name of ["list", "get", "play", "sequence", "stop", "current"]) {
   assert.ok(entry.summary && entry.description && entry.example && entry.returns.length);
   assert.equal(entry.inferred, false);
 }
+for (const [runtime, name, params] of [
+  ["client", "clip", ["clip"]],
+  ["client", "clips", ["query"]],
+  ["client", "requestClip", ["clip", "options"]],
+  ["server", "clip", ["clip"]],
+  ["server", "clips", ["query"]],
+  ["server", "playClip", ["playerId", "clip", "options"]],
+  ["server", "playAt", ["playerId", "profileId", "position", "yaw", "options"]],
+  ["server", "stopAt", ["playbackId"]],
+]) {
+  const entry = find(runtime, name);
+  assert.deepEqual(entry.params.map((param) => param.name), params, `${runtime}:${name}`);
+  assert.ok(entry.summary && entry.description && entry.returns.length, `${runtime}:${name}`);
+  assert.equal(entry.inferred, false, `${runtime}:${name}`);
+}
 assert.deepEqual(find("client", "sequence").params.map((p) => p.name), ["steps", "options"]);
 assert.deepEqual(find("server", "sequence").params.map((p) => p.name), ["playerId", "steps", "options"]);
 assert.deepEqual(find("client", "play").params.map((p) => p.name), ["entity", "animation"]);
 assert.deepEqual(find("server", "play").params.map((p) => p.name), ["playerId", "profileId", "options"]);
 const meta = JSON.parse(await read("content/docs/meta.json"));
-const players = meta.sections.find((section) => section.id === "players");
+const players = meta.sections.find((section) => section.id === "animations");
 for (const slug of ["rp-animations", "rp-animation-catalogue"]) {
   assert.ok(players.pages.some((page) => page.slug === slug && page.kind === "guide"));
 }
@@ -41,8 +57,9 @@ for (const section of ["How it works", "Quick start: your first client action", 
 }
 assert.match(guide, /Open77RP\.archive/);
 assert.match(guide, /onAnimationPlaybackFailed/);
-assert.match(guide, /known limitation/);
-assert.equal((await read("content/docs/rp-animation-catalogue.md")).match(/^- `/gm).length, 73);
+assert.match(guide, /Repeated reconnects.+camera hold/);
+// The public profile catalogue contains 456 selectable clips across 76 profiles.
+assert.equal((await read("content/docs/rp-animation-catalogue.md")).match(/^- `/gm).length, 456);
 
 const origin = process.argv[2];
 if (origin) {
@@ -67,4 +84,4 @@ if (origin) {
     console.log(`served OK ${path}`);
   }
 }
-console.log("Animation documentation OK: 12 synchronized APIs, 5 legacy APIs, tutorial and 73 clips.");
+console.log("Animation documentation OK: 25 API cards, tutorial and 456 catalogue clips.");

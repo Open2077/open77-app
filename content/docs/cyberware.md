@@ -1,124 +1,254 @@
 # Cyberware
 
-Cyberware connects persistent implants to native Cyberpunk equipment, multiplayer combat and synchronized presentation. Server creators choose the definitions, grades, progression, prices and access rules. Open77 provides the authoritative transactions and native projection that those rules use.
+Define and install persistent cyberware through the server-owned implant framework. Supported slots include Gorilla Arms (`arms`), double jump (`legs`) and the [hacking](hacking.md) implants (`operating_system`, `self_ice`, `purge`). Session abilities are documented separately: [Dash](dash.md), [Ground Slam](ground-slam.md) and [Overdrive](reflex-overdrive.md).
 
-**Gorilla Arms is the implemented profile.** Start with the [Gorilla Arms tutorial](gorilla-arms.md) for a resource example and the optional clinic and arena. Other powers can build on these foundations, but defining a new name does not add a native adapter for an unsupported power.
+## Minimal example
 
-## Requirements and responsibilities
+A self-service resource that installs double-jump legs on the player who runs
+`/legs install` and removes them with `/legs remove`. It needs a configured server
+database and the `open77_appearance` character adapter, which binds the player's
+character; the `open77_cyberware` support resource is running by default.
 
-Use matching **protocol 1.26** client and server source builds. These guides document the integrated implementation; they do not announce a stable binary release. Earlier minor versions are rejected before authentication; downloading a Lua resource cannot upgrade an incompatible client. Native assets and scripts must match the runtime. The tested Cyberpunk build is 2.31.
+`open77.lua`:
 
-| Layer | Responsibility |
-|---|---|
-| Your server resource | Register definitions; select grades; validate jobs, consent, distance, costs and progression; request transactions. |
-| Character adapter | Bind the authenticated user's server-selected character key. The optional `open77_appearance` adapter supplies this integration. |
-| Backend | Own revisions, operation receipts, persistence, combat admission, temporary grants and lifecycle invalidation. |
-| `open77_cyberware` client support | Equip/remove native arms, report bounded native actions, project approved appearance and acknowledge native readiness. |
-| Presentation policy | Select charge/impact effects and sound through public effects APIs. This policy is independently replaceable. |
+```lua
+resource "my_legs"
+version "1.0.0"
+dependency "open77_cyberware >=0.1.0"
+server_script "server/main.lua"
+permissions { "players.cyberware.define", "players.cyberware.read", "players.cyberware.manage" }
+```
 
-Run `open77_cyberware` alongside your character adapter. Use the configured server database; missing storage does not silently become transient success. The backend stores character revisions and durable operation receipts transactionally. Never bind a client-supplied account ID: the account comes from the admitted connection, and the selected character key must come from your trusted character workflow.
-
-The clinic, arena and lab are optional resources with `auto_start false`. Stopping a dependency can stop them too. Restart definition providers after restarting the core: a saved implant can remain visible while combat is disabled because its definition provider is stopped. This preserves paid records without granting unregistered gameplay.
-
-## Server APIs and permissions
-
-Declare only the permissions your resource needs in its manifest. Resource permissions authorize API use; restricted command ACLs and your gameplay checks decide which players may request it.
-
-| API | Resource permission | Purpose |
-|---|---|---|
-| `Open77.cyberware.define(definition)` | `players.cyberware.define` | Register an owned definition and its grades. |
-| `bind(player, characterKey)` / `unbind(player)` | `players.cyberware.identity` | Load/release this resource's authenticated character binding. |
-| `current(player)` | `players.cyberware.read` | Read the ready durable record. |
-| `effective(player)` | `players.cyberware.read` | Read the ready gameplay record, including an active temporary loadout. |
-| `activity(player)` | `players.cyberware.read` | Read fresh server-measured native action/hold state. |
-| `install(player, definition, grade, options)` | `players.cyberware.manage` | Stage a durable installation. |
-| `remove(player, options)` | `players.cyberware.manage` | Stage durable removal. |
-| `cancel(player, ticket)` | `players.cyberware.manage` | Cancel owned staging and request rollback. |
-| `newOperationId()` | `players.cyberware.manage` | Generate a durable operation identity. |
-| `lease(player, definition, grade, options?)` | `players.cyberware.temporary` | Stage an owned temporary loadout. |
-| `releaseLease(player, leaseId)` | `players.cyberware.temporary` | Restore the paid loadout. |
-| `leaseState(player)` | `players.cyberware.read` | Read temporary-loadout lifecycle state. |
-
-Calls below the first row use the same `Open77.cyberware` namespace. Failures return `nil, reason`. See the [Cyberware server API](/docs/api/server/open77-cyberware) and [complete server reference](server-api.md) for individual contracts.
-
-## Complete transactions, not just requests
-
-A new install/remove request uses `{expectedRevision=current.revision, operationId=id}`. Obtain `id` from `newOperationId()` and retain it with your server-owned transaction. A successful staging response contains `{ok=true,ticket=...}`. **A ticket means pending work, not a completed installation.**
-
-Listen for the server-local `onCyberwareOperationCompleted(player, ticket, encodedResult)` event. Player IDs follow host string conventions; decode the third argument with server `json.decode`. Match the ticket and player to your own transaction, and require `result.ok == true` before completing it. Temporary operations may also emit this event with a `lease` field; never consume someone else's ticket.
-
-The native owner stages equipment before SQL commit. Observers receive the committed installation after native acknowledgment and storage success. Failure requests restoration of the previous record; a pending or unacknowledged rollback cannot grant combat. A storage completion for a disconnected body does not target its replacement. A commit already underway may complete and load at the next bind.
-
-For RP payments, reserve funds before submission, finalize only on successful completion and compensate failure. Keep the same operation ID and original expected revision when retrying the same intent. Repeating the last committed operation returns `{ok=true}` without another ticket/write; changing its intent returns `operation_conflict`. Do not create a second charge for that retry. Durable economy reservations and receipts belong in your economy service; the example clinic's demonstration credits are in memory.
-
-`cancel` can return `operation_committing` after storage work begins. At that point wait for the durable result instead of promising cancellation. Resource stop cancels owned staging where possible, but does not undo an already committed purchase. Stopping the identity adapter releases its bindings; stopping a definition provider disables runtime grants without deleting implants.
-
-## Temporary loadouts
-
-Use `lease(player, definition, grade, {durationMs=300000})` for an arena or event that should restore the player's paid implant afterward. Duration is 1000–300000 server-monotonic milliseconds, counted from the request. One lease may occupy a character binding; pending purchases and conflicting leases refuse it. Another resource cannot release your lease merely by knowing its ID.
-
-`current` keeps the durable record; `effective` selects the active temporary record. Both return nil while loading/projecting/restoring. A temporary record's revision and operation ID still describe the durable base: do not save it as a purchase. Durable install/remove is refused while a lease exists.
-
-`onCyberwareLeaseChanged(player, encodedState)` contains `id`, `player`, `phase`, `definition`, `grade`, `expiresAt`, `ticket` and `reason`. Normal phases are `pending -> active -> restoring -> ended`; restoration can fail. Match the lease ID. Expiry, owner stop, body/projector loss, disconnect and bucket changes revoke the grant. Restoration remains backend-owned even after the initiating VM stops.
-
-An `ended` event alone can mean the old body disappeared. Before granting another loadout, wait for `leaseState(player) == nil` and `current(player) ~= nil`. A temporary loadout never survives reconnect or silently overwrites the paid implant.
-
-## Combat notifications
-
-These events are server-local; clients cannot forge them through network events. Player IDs are strings. They report accepted backend outcomes, not a request to apply damage again.
-
-| Event | Meaning |
-|---|---|
-| `onCyberwareMeleeHit(victim, attacker, encodedSnapshot)` | Accepted, unblocked contact, including cosmetic/zero-knockback hits. |
-| `onCyberwareMeleeBlocked(victim, attacker, sequence, amount)` | Accepted block; amount is zero for full block or the adjusted chip price before armor absorption. |
-| `onCyberwareMotionOutcome(victim, attacker, encodedOutcome)` | Whether an accepted hit requested, skipped or was refused a new reaction. |
-
-Hit JSON contains `sequence`, `incarnation`, `instanceId`, `definition`, `grade`, `charged`, `amount`, `bodyPart` and `lethal`. Identity comes from the admitted action even if the loadout changes before contact. `amount` includes committed armor absorption, not only health loss. Vetoed, duplicate and blocked contacts do not emit the hit event.
-
-Motion-outcome JSON carries the same action identity plus `requestedDistance`, `outcome`, `reason` and `motionId`. `pending` means a request was admitted, not native activation. `skipped` reasons include `zero_distance`, `lethal`, `downed`, `motion_unavailable`, `body_unavailable` and `bucket_mismatch`. `rejected` includes service errors such as `motion_busy`. Skipped/rejected outcomes have no motion ID. Damage can succeed while an existing recovery lease prevents another throw. Correlate the ID with `onPlayerMotionChanged`; do not rely on ordering between different event names.
-
-## Reusable reactions and effects
-
-Server `Open77.motion.knockdown(player, {x=0,y=1,distance=2})` requests a native planar reaction; `cancel(player,id)` cancels the resource's request. Both require `players.motion.control`. `current(player)` requires `players.motion.read`. Direction is normalized and distance is bounded to 0–6m. The body must be ready, alive and unmounted; overlapping leases are refused. Native collisions determine travel, so the requested distance is not an exact endpoint.
-
-The returned `{ok=true,id=...}` starts pending. `onPlayerMotionChanged(player,id,phase,reason)` reports pending/active/ended. Active follows the owner's native PSM-down acknowledgment; it is not server-side visual proof. Native owner requests wait at most 1.5s for consecutive down-state observations. The server reserves a six-second reaction/recovery window after acknowledgment. Cancellation removes owned native state; it does not instantly stop momentum or complete a get-up animation.
-
-The motion validator rejects nonfinite/excessive samples and cancels invalid leases. Its active displacement window is anchored at acknowledgment, after native motion may have begun; it is not exact launch-origin enforcement. Vertical gravity and collisions remain native. Expired observer reactions are not replayed on a newly streamed proxy; persistent arm appearance is restored separately.
-
-The public `Open77.effects` APIs support typed network targets, owned attached leases, expiration, streaming and spatial sound. The Gorilla presentation policy uses `activity`, `effects.attach/remove` and accepted-hit events. Configure or replace that policy without changing installation or damage rules. See the [Gorilla effects configuration](gorilla-arms.md#charge-effects-and-sound) and API reference.
-
-## Client adapter and capability discovery
-
-The [Cyberware client API](/docs/api/client/open77-cyberware) documents the native adapter methods. Ordinary gameplay resources should use server transactions rather than call native projection directly. Trusted client adapters can use:
-
-| Client API | Permission | Contract |
-|---|---|---|
-| `Open77.cyberware.projectLocal(enabled)` / `localState(request)` | `player.cyberware.project` | Owned equipment request; states pending/ready/failed. |
-| `configureLocal(request, grade)` | `player.cyberware.project` | Configure the owned native adapter. |
-| `captureArms()` / `attackState()` | `player.cyberware.read` | Read native profiles/actions; no damage authority. |
-| `presentArms(networkPlayer, capturedOrFalse)` | `player.cyberware.project` | Apply/remove owned native arm appearance. |
-| `Open77.motion.knockdown(localHandle,x,y,distance)` / `state(id)` / `stop(id)` | `player.motion.project` | Native reaction primitives used by support. |
-
-Arm capture returns `{family, groups}` with two sibling canonical groups, each `{part="arms",name=fixedHash,keys={{resourceHash,definitionHash},...}}`. Keep both holstered and drawn profiles from the patient's own capture. Incomplete or cross-family profiles are refused; there is no single-group compatibility fallback. Never send receiver-local entity handles as network identities. Resolve public typed targets through `Open77.vfx.resolveTarget`.
-
-Call the support resource's capability export asynchronously from a running resource on the relevant side:
+`server/main.lua`:
 
 ```lua
 CreateThread(function()
-    local pending, reason = Open77.exports.call("open77_cyberware", "capabilities")
-    if not pending then print(reason); return end
-    local capability, callError = pending:await()
-    if not capability then print(callError); return end
-    print(capability.side, capability.compatibility.protocol)
+    local result, reason = Open77.cyberware.define({
+        id = "myserver.double_jump", version = 1, slot = "legs", profile = "double_jump",
+        grades = {
+            { id = "training", normalDamage = 0, chargedDamage = 0, knockbackMeters = 0,
+              cooldownMs = 800, chargeMs = 650,
+              jumpStaminaCost = 15, maxAirborneMs = 10000, maxFallSpeed = 30 },
+        },
+    })
+    assert(result, reason)
+end)
+
+local pending = {}
+
+RegisterCommand("legs", function(source, args)
+    local player = tonumber(source)
+    if not player or player <= 0 or pending[player] then return end
+    local record, reason = Open77.cyberware.current(player)
+    if not record then print("character not ready: " .. tostring(reason)); return end
+    local options = { expectedRevision = record.revision, operationId = assert(Open77.cyberware.newOperationId()) }
+    local result
+    if args[1] == "remove" then
+        options.slot = "legs"
+        result, reason = Open77.cyberware.remove(player, options)
+    else
+        result, reason = Open77.cyberware.install(player, "myserver.double_jump", "training", options)
+    end
+    if not result then print("refused: " .. tostring(reason)); return end
+    if result.ticket then pending[player] = result.ticket; print("pending for player " .. player) end
+end, false)
+
+AddEventHandler("onCyberwareOperationCompleted", function(player, ticket, encoded)
+    player = tonumber(player)
+    if pending[player] ~= ticket then return end
+    pending[player] = nil
+    local result = json.decode(encoded)
+    print(("player %d: %s"):format(player, result.ok and "done" or tostring(result.error)))
 end)
 ```
 
-This export is not a core `Open77.cyberware` method. Client and server registries are separate. Results declare adapter support, supported families and tested build 2.31; `actualGameBuild` and `dlcVerification` currently remain `unknown`. Client `localProjection` reports phase/reason/family/equipmentReadback, with `visualProof=false`. Server metadata has `clientReadiness="unknown"`. A ready native readback does not prove rendered appearance, storage completion or a running definition provider.
+The player types `/legs install`, waits for the `done` line, then uses the ordinary
+jump key: jump, release, press again in the air. One second jump per airtime; landing
+rearms it. `/legs remove` puts the native legs back.
 
-## Support and limits
+## Server API
 
-The Gorilla workflow has finite two-client coverage for both body families, installation/removal and reconnect, normal/charged combat, native reactions/recovery, representative collision/terrain cases, effects lifecycle and 80/150/250ms impaired-network controls. This does not establish 32-player capacity, every outfit/team combination, exact animation-phase agreement or acoustically verified duplicate-free sound.
+All calls live under `Open77.cyberware`. Failures return `nil, reason`.
 
-Rapid resource restart may overlap native equipment cleanup. Combat stays disabled during failed projection/restoration and the support retries bounded transient refusals. A transient native projection timeout followed by recovery remains recorded. Keep native/client/server resources coordinated and keep definition providers running.
+| Call | Permission | Purpose |
+|---|---|---|
+| `define(definition)` | `players.cyberware.define` | Register a definition and its grades (up to 32) |
+| `bind(player, characterKey)` / `unbind(player)` | `players.cyberware.identity` | Bind the authenticated player to a character; `open77_appearance` does this for you |
+| `current(player)` | `players.cyberware.read` | The durable record, or `nil` while it loads |
+| `effective(player)` | `players.cyberware.read` | The record in play, including an active temporary loadout |
+| `activity(player)` | `players.cyberware.read` | The fresh native punch/hold state |
+| `install(player, definitionId, gradeId, options)` | `players.cyberware.manage` | Stage an installation; the slot comes from the definition |
+| `remove(player, options)` | `players.cyberware.manage` | Stage a removal; `options.slot` is `"arms"` (default) or `"legs"` |
+| `cancel(player, ticket)` | `players.cyberware.manage` | Cancel your own staged operation |
+| `newOperationId()` | `players.cyberware.manage` | A durable operation identity for `options.operationId` |
+| `lease(player, definitionId, gradeId, options)` | `players.cyberware.temporary` | Stage a temporary loadout; `options.durationMs` is 1000–300000 |
+| `releaseLease(player, leaseId)` | `players.cyberware.temporary` | End it early and restore the paid implant |
+| `leaseState(player)` | `players.cyberware.read` | Lifecycle of the current lease, or `nil` |
 
-For reproducible evidence and limitations, see the [integration plan](../docs/cyberware-integration-plan.md), [test scenarios](../docs/research/cyberware-test-scenarios.md) and [native research](../docs/research/multiplayer-cyberware-and-abilities.md). Implementation/testing completion does not announce a stable release.
+A definition is `{id, version, slot, profile, grades}`. `id` is 1–96 ASCII letters,
+digits, `_`, `.` or `-`; `version` is a positive integer; the slot/profile pair is one of
+`arms`/`gorilla_arms`, `legs`/`double_jump`, `operating_system`/`cyberdeck`,
+`self_ice`/`self_ice`, `purge`/`active_purge`. An installed grade is a snapshot: changing
+the definition later does not rewrite installed implants.
+
+### Records
+
+`current` and `effective` return `{revision, arms, legs, operationId, operationSlot}`;
+an empty slot is `nil`. Each implant has `instanceId`, `definition`, `definitionVersion`,
+`profile`, `slot` and its `grade` snapshot. Both slots share one revision, so read
+`current` again before every mutation.
+
+## Transactions
+
+`install` and `remove` take `{expectedRevision = current.revision, operationId = id}` and
+return `{ok = true, ticket = ...}`. **A ticket is pending work, not an installed
+implant.** Wait for `onCyberwareOperationCompleted(player, ticket, encodedResult)`, match
+your ticket and require `result.ok == true`. The owner's client equips the native item
+first, then the record is committed to storage, then observers see it.
+
+Keep the same `operationId` and `expectedRevision` when you retry: repeating the last
+committed operation returns `{ok = true}` with no new ticket, repeating the ID with a
+different intent returns `operation_conflict`. For a paid service, reserve the money
+before you submit, finalize on `ok`, refund on failure, and keep your own receipt.
+`cancel` returns `operation_committing` once storage has started; wait for the result
+instead. Stopping your resource cancels what can still be cancelled and disables
+combat for implants whose definition is gone, but never deletes an installed implant.
+
+## Grade options
+
+The grade schema is shared by every slot. Arms use the punch fields, legs use the jump
+fields; the other fields must still be present and valid.
+
+| Grade field | Range / meaning |
+|---|---|
+| `normalDamage`, `chargedDamage` | Required, 0–300; use 0 for legs |
+| `knockbackMeters` | Required, 0–6; use 0 for legs |
+| `cooldownMs` | Required, 100–600000 ms between admitted punches or second jumps |
+| `chargeMs` | Required, 100–10000; any valid value for legs |
+| `jumpStaminaCost` | Default 0, range 0–300; charged once per admitted second jump |
+| `maxAirborneMs` | Default 10000, range 100–10000; latest point in the airtime a second jump is admitted |
+| `maxFallSpeed` | Default 30, range 0.1–30 m/s; fastest descent that still admits a second jump |
+
+The full arm fields (`maxChargeMs`, stamina costs, `nonlethal`, `cosmetic`, blocking)
+are on the [Gorilla Arms](gorilla-arms.md#grade-options) page. Legs limits only narrow
+when the second jump is admitted; jump height, gravity, fall damage and collision are
+the native ones.
+
+## Temporary loadouts
+
+`lease(player, definitionId, gradeId, {durationMs = 300000})` gives an arena or an event
+an implant that is restored to the paid one afterwards. One lease per character at a
+time; a pending purchase or another lease refuses it, and paid installs and removals are
+refused while a lease runs. `current` keeps the paid record, `effective` shows the lease.
+
+`onCyberwareLeaseChanged(player, encodedState)` carries `id`, `player`, `phase`
+(`pending`, `active`, `restoring`, `ended`), `definition`, `grade`, `expiresAt`, `ticket`
+and `reason`. Expiry, your resource stopping, death, disconnect and a bucket change all
+end a lease and restore the paid implant; restoration is the backend's job even after
+your resource has stopped. Before granting another loadout wait until
+`leaseState(player) == nil` and `current(player) ~= nil`.
+
+## Events
+
+All events are server-local; clients cannot forge them. Player IDs are strings, JSON
+arguments need `json.decode`.
+
+| Event | Meaning |
+|---|---|
+| `onCyberwareOperationCompleted(player, ticket, encodedResult)` | An install, removal or lease operation finished; `result.ok`, `result.error`, optional `result.lease` |
+| `onCyberwareLeaseChanged(player, encodedState)` | A temporary loadout changed phase |
+| `onCyberwareMeleeHit(victim, attacker, encodedSnapshot)` | An accepted Gorilla contact: `sequence`, `incarnation`, `instanceId`, `definition`, `grade`, `charged`, `amount`, `bodyPart`, `lethal` |
+| `onCyberwareMeleeBlocked(victim, attacker, sequence, amount)` | An accepted block; `amount` is 0 or the chip damage |
+| `onCyberwareMotionOutcome(victim, attacker, encodedOutcome)` | The knockback decision for a hit: `requestedDistance`, `outcome` (`pending`, `skipped`, `rejected`), `reason`, `motionId` |
+| `onCyberwareJump(player, encodedResult)` | A second-jump decision: `{sequence, ok, error}` |
+| `onCyberwareActionRejected(player, sequence, error)` | A punch the server refused |
+| `onPlayerMotionChanged(player, id, phase, reason)` | A knockback moved through `pending`, `active`, `ended` |
+
+Skipped knockback reasons are `zero_distance`, `lethal`, `downed`, `motion_unavailable`,
+`body_unavailable` and `bucket_mismatch`; `motion_busy` means the victim is still in a
+previous reaction. Second-jump refusals are `implant_unavailable`, `stale_incarnation`,
+`stale_action`, `stale_movement`, `movement_timeout`, `bucket_changed`, `motion_busy`,
+`jump_unavailable`, `movement_limit`, `cooldown` and `insufficient_stamina`.
+
+## Optional resources
+
+`open77_ripperdoc_example` (`auto_start false`) is a consent-and-payment clinic. Doctors
+need the `command.doc` ACL; both players must be alive, in one bucket and within three
+metres. Arms: `/doc offer <patient> training|industrial|cosmetic`, `/doc inspect <patient>`,
+`/doc remove <patient>`. Legs: `/doc offer <patient> training|athlete legs`,
+`/doc inspect <patient> legs`, `/doc remove <patient> legs`. The patient looks at the
+doctor and holds **E** to accept, **F** to decline, or types `/implantaccept` /
+`/implantcancel`. Its example prices are 100 credits for training legs, 250 for athlete
+and 25 for a removal, from an in-memory balance of 500 that resets with the resource.
+
+`open77_cyberware_lab` (`auto_start false`) is an open test panel: `/cyberlab` opens it on
+your own character, `/cyberlab ui <player>` on somebody else's; pick Gorilla Arms or
+Double Jump, a grade, and Install or Remove, or grant Dash, Ground Slam or Overdrive from
+their cards further down. The same controls exist as commands:
+`cyberlab installlegs <player> training <operation-id>`, `cyberlab removelegs <player>
+<operation-id>`, `cyberlab state <player>`. Add it to `resources.load` and run
+`ensure open77_cyberware_lab`; after editing its manifest run `refresh` first.
+
+## Limits
+
+**Double jump admission.** The native second-jump rules still apply (jump count, fall
+speed, elevators and vehicles). Open77 buffers an eligible press for up to 750 ms while
+the server decides; the server needs a ready, alive, unmounted body, a movement sample
+at most 750 ms old, no active knockdown, and enough stamina. At least 150 ms of ground
+rearms the airtime. Stamina is charged on admission, with no refund if the native jump
+does not follow. A press whose movement sample has not arrived after 200 ms is refused
+with `movement_timeout`.
+
+**Knockback is a request.** `Open77.motion.knockdown(player, {x = 0, y = 1, distance = 2})`
+(`players.motion.control`) and `Open77.motion.current(player)` (`players.motion.read`)
+expose the same native reaction Gorilla hits use. Distance is 0–6 m and collisions
+decide the real travel; the body must be ready, alive and unmounted; a second request
+during a reaction is refused; cancelling removes the lease but does not stop momentum or
+the get-up animation.
+
+**One character binding.** The account comes from the admitted connection and the
+character key from your trusted character workflow; never bind a client-supplied ID.
+Stopping the identity adapter releases its bindings.
+
+**Providers must run.** After restarting the core, restart every resource that defines
+implants. An implant whose definition is not registered stays on the record and stays
+visible, but cannot punch or double jump until its provider is back.
+
+**Storage.** Records live in the `open77_cyberware_v1` and
+`open77_cyberware_operations_v1` tables as additive JSON; a custom `ICyberwareStore` must
+keep both slots and `operationSlot` in one atomic revision-and-receipt transaction.
+
+## Advanced: client adapter
+
+`open77_cyberware` owns the native side. Gameplay resources do not need these calls;
+they are listed for trusted projection resources replacing the adapter.
+
+| Client call | Permission | Contract |
+|---|---|---|
+| `Open77.cyberware.projectLocal(enabled)` / `localState(request)` | `player.cyberware.project` | Owned arm equipment request; `pending`, `ready`, `failed` |
+| `configureLocal(request, grade)` | `player.cyberware.project` | Configure the owned arm adapter |
+| `captureArms()` / `attackState()` | `player.cyberware.read` | Read the native arm profile and action state |
+| `presentArms(networkPlayer, capturedOrFalse)` | `player.cyberware.project` | Apply or remove an observer's arm appearance |
+| `projectLegs(enabled)` / `legsState(request)` | `player.cyberware.project` | Owned legs request; `pending`, `ready`, `failed` |
+| `configureLegs(request, staminaManaged, maxAirborneMs, maxFallSpeed)` | `player.cyberware.project` | Configure a ready legs request |
+| `legsActivity()` | `player.cyberware.read` | `{request, sequence, phase, grounded, airborneMs, verticalSpeed}` |
+| `approveLegJump(request, sequence, allowed)` | `player.cyberware.project` | Answer a pending native second-jump intent |
+| `releaseLegs()` | `player.cyberware.project` | Release the owned legs |
+| `Open77.motion.knockdown(handle, x, y, distance)` / `state(id)` / `stop(id)` | `player.motion.project` | Native reaction primitives |
+
+Requests are local handles, never network IDs. Any client resource can read the adapter's
+state through its exports without owning it:
+
+```lua
+CreateThread(function()
+    local pending = Open77.exports.call("open77_cyberware", "legsActivity")
+    local activity = pending and pending:await()
+    if activity then print(activity.phase, activity.airborneMs) end
+end)
+```
+
+`capabilities` (client and server) lists the supported profiles, slots, body families and
+the limits above; `legsActivity` returns `{sequence, phase, grounded, airborneMs,
+verticalSpeed}` with phases `idle`, `pending`, `granted`, `consumed`, `rejected`. The
+`open77:cyberware:*` network events are the platform's own transport and cannot be used
+to forge an implant or a jump.

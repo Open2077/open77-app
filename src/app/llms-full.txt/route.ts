@@ -1,5 +1,5 @@
 import { apiNamespaceToMarkdown, getApiIndex } from "@/lib/api-reference";
-import { getDocsManifest, getDocsNav, getGuideMarkdown } from "@/lib/docs";
+import { getDocsNav, getGuideMarkdown } from "@/lib/docs";
 import { textResponse } from "@/lib/markdown-response";
 import { platformToMarkdown } from "@/lib/platform-content";
 import { absoluteUrl, site } from "@/lib/site";
@@ -20,24 +20,23 @@ export const dynamic = "force-static";
 const SEPARATOR = "\n\n---\n\n";
 
 export async function GET() {
-  const [nav, api, manifest] = await Promise.all([getDocsNav(), getApiIndex(), getDocsManifest()]);
+  const [nav, api] = await Promise.all([getDocsNav(), getApiIndex()]);
 
   const documents: string[] = [
     [
-      `# ${site.name} — complete documentation`,
+      `# ${site.name}: complete documentation`,
       "",
       `> ${site.summary}`,
       "",
       `Source: ${absoluteUrl("/docs")}`,
-      `Documentation synced from the platform wiki on ${manifest.syncedAt.slice(0, 10)}.`,
       "",
-      site.previewNotice,
-      `The Windows launcher is available at ${absoluteUrl("/download")}. Approved preview accounts`,
-      `and staff can download Windows/Linux dedicated servers at ${absoluteUrl("/host")}.`,
+      site.alphaNotice,
+      `The Windows launcher is available at ${absoluteUrl("/download")}. Everyone with Alpha access`,
+      `can download Windows/Linux dedicated servers at ${absoluteUrl("/host")}.`,
       "The server packages include Freeroam and its system resources. The directory reads the live",
       "master; explicitly labelled demo views remain illustrative only. Downloading or registering",
       "an account does not grant access to join. Read the scope and known limitations at",
-      `${absoluteUrl("/docs/developer-preview")}. APIs and supported features can change.`,
+      `${absoluteUrl("/docs/alpha-access")}. APIs and supported features can change.`,
       "",
       site.disclaimer,
     ].join("\n"),

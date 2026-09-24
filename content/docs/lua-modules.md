@@ -1,8 +1,6 @@
 # Lua modules and require
 
-`require` loads a Lua library and returns the value that library exposes, usually
-a table of functions. Use it to split a resource into smaller files or reuse a
-library such as [PolyZone](polyzone.md), without copying its code into every job.
+Split resource code into modules with `require`. A module returns its public value, typically a function table. Libraries such as [PolyZone](polyzone.md) execute inside the importing resource.
 
 ```lua
 local PZ = assert(require('@polyzone'))
@@ -21,8 +19,7 @@ expose it. For server code, declare ordered `server_script` entry points; use
 [server exports](server-exports.md) to call another server resource.
 
 Local modules already exist. The `@dependency` syntax requires the newer client
-implementation introduced with PolyZone. That dependency-import update is
-currently a development-build feature, not a guarantee for existing CDN clients.
+implementation introduced with PolyZone in client `2.31.13+op77.67`.
 Installing a Lua package alone cannot add this capability to an older client.
 
 ## Load a file from your own resource
@@ -150,6 +147,39 @@ The consumer declares `dependency 'my_library >=1.0.0'` and uses
 
 Everything in `files` is client-distributed content. Never publish credentials,
 private configuration or server-only logic there.
+
+### A library needs no script of its own
+
+The manifest above is complete. `files` alone is a valid resource, and so is
+`files` plus a `server_script` for a library that also publishes server-side
+`exports()`:
+
+```lua
+-- bt_lib/open77.lua: server exports plus client modules, no client entry point
+resource 'bt_lib'
+version '0.1.0'
+auto_start true
+server_script 'server/main.lua'
+files { 'init.lua', 'client/raycast.lua', 'client/format.lua' }
+```
+
+The server delivers every resource that has client content, and `files` is
+client content. On the client such a **passive library** gets an idle VM, reaches
+`Running` without executing anything, and a dependant's `require('@bt_lib/...')`
+resolves against its declared files. A `server_script` never reaches a client;
+it does not have to be paired with a `client_script`, empty or otherwise.
+
+The only manifest that is refused is one with neither a script nor `files`:
+`no_client_scripts` on the client, "Resource contains no scripts or files." on
+the server. `web_files` alone do not count; nothing could open them.
+
+**Builds up to 2.31.13+op77.82 are stricter.** Their client refuses any
+delivered resource without a `client_script` or `shared_script`, logs
+`no_client_scripts`, and that single refusal fails the whole activation:
+`server resource activation failed: discovery:... failed=1`, and the client
+stays on "Verifying resources". Fixed in the release that follows op77.82. Until
+your players run it, add an empty `client_script 'client/noop.lua'` to the
+library; it costs nothing and can be removed afterwards.
 
 ## Cache, ownership and reload
 

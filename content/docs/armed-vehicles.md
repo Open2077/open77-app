@@ -1,16 +1,16 @@
 # Armed vehicle spawn catalogue
 
-Find the exact `Vehicle.*` model records to spawn vehicles with mounted weapons in Open77. This catalogue covers the installed **Cyberpunk 2077 2.31 / build 23100** base and Phantom Liberty databases.
+Spawn weapon-equipped vehicles with the `Vehicle.*` records listed below. The catalogue covers Cyberpunk 2077 **2.31 / build 23100**, including Phantom Liberty.
 
-**Important:** the database contains **172 vehicle records declaring weapon mounts**, not 172 independently verified armed, drivable cars. Some records inherit a shared weapon list but do not attach all—or any—of those weapons in their selected appearance. The lists below deliberately separate live-tested vehicles from database candidates; quest, transport, broken and hologram variants need individual validation.
+The database declares weapon mounts on **172 vehicle records**. This is not a count of supported armed vehicles: inherited lists may include unattached weapons. Quest, transport, broken and hologram variants can require additional assets or logic.
 
 The **spawn ID** is the full `Vehicle.*` string, not an `Items.*` weapon record, a mount/slot ID, or the numeric network vehicle ID returned after creation. Use [Network vehicles](vehicles.md) for the complete API and [Game data reference](data-reference.md) for other model catalogues.
 
-## Vehicles with firing verified in-game
+## Armed model examples
 
-These exact records were exercised in a private two-client test on 2026-09-10. This confirms their native mounted weapons can fire; it does **not** certify every multiplayer effect or every variant below. Vehicle-weapon replication ships in **2.31.13+op77.53 / protocol 1.24**; read the [multiplayer guide and current limitations](vehicle-weapons.md#what-has-been-validated) before relying on it in a gamemode.
+The records below provide native mounted weapons. Model appearance and attachments can change the available armament. See [weapon replication and limitations](vehicle-weapons.md#model-specific-armament) before using a model in a gamemode.
 
-| Vehicle | Spawn ID | Observed armament |
+| Vehicle | Spawn ID | Armament |
 |---|---|---|
 | Militech Basilisk | `Vehicle.v_militech_basilisk` | Cannon, homing missiles, left/right countermeasures |
 | Herrera Outlaw, armed Heist variant | `Vehicle.v_sport1_herrera_outlaw_heist_player` | Two mounted machine guns |
@@ -52,32 +52,32 @@ assert(vehicleId, reason)
 
 ## Player variants at a glance
 
-These **18** `_player` variants occur in the extracted mount catalogue. Except for the two explicitly tested car variants above, this is a shortlist to inspect, not a promise that all listed mounts deploy. The Basilisk is listed separately because its tested ID does not contain `_player`.
+These **18** `_player` variants declare weapon mounts. Except for the armed examples above, treat these records as experimental: a declared mount does not establish that its weapon can be deployed. The Basilisk is listed separately because its ID does not contain `_player`.
 
-| Spawn ID | Declared mount profile | Validation |
+| Spawn ID | Declared mount profile | Support |
 |---|---|---|
-| `Vehicle.v_sport1_herrera_outlaw_heist_player` | Outlaw MG | Live firing checked |
-| `Vehicle.v_sport1_rayfield_caliburn_02_player` | MG | Player variant — firing not checked |
-| `Vehicle.v_sport1_rayfield_caliburn_mordred_player` | MG | Player variant — firing not checked |
-| `Vehicle.v_sport1_rayfield_caliburn_player` | MG | Player variant — firing not checked |
-| `Vehicle.v_sport2_mizutani_shion_nomad_02_player` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_sport2_mizutani_shion_nomad_player` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_sport2_mizutani_shion_nomad_player_missiles` | MG + missiles (declared) | Live firing checked |
-| `Vehicle.v_sport2_quadra_type66_nomad_player` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_sport2_quadra_type66_nomad_player_03` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_standard25_thorton_colby_nomad_player` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_standard25_thorton_colby_nomad_player_missiles` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_standard2_archer_quartz_nomad_player` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_standard2_archer_quartz_nomad_player_02` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_standard2_thorton_galena_nomad_player` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_standard2_thorton_galena_nomad_player_missiles` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_standard3_mahir_supron_kurtz_player` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_standard3_militech_hellhound_player` | MG + missiles (declared) | Player variant — firing not checked |
-| `Vehicle.v_utility4_chevalier_legatus_player` | MG | Player variant — firing not checked |
+| `Vehicle.v_sport1_herrera_outlaw_heist_player` | Outlaw MG | Mounted armament |
+| `Vehicle.v_sport1_rayfield_caliburn_02_player` | MG | Experimental player variant |
+| `Vehicle.v_sport1_rayfield_caliburn_mordred_player` | MG | Experimental player variant |
+| `Vehicle.v_sport1_rayfield_caliburn_player` | MG | Experimental player variant |
+| `Vehicle.v_sport2_mizutani_shion_nomad_02_player` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_sport2_mizutani_shion_nomad_player` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_sport2_mizutani_shion_nomad_player_missiles` | MG + missiles (declared) | Mounted armament |
+| `Vehicle.v_sport2_quadra_type66_nomad_player` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_sport2_quadra_type66_nomad_player_03` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_standard25_thorton_colby_nomad_player` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_standard25_thorton_colby_nomad_player_missiles` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_standard2_archer_quartz_nomad_player` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_standard2_archer_quartz_nomad_player_02` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_standard2_thorton_galena_nomad_player` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_standard2_thorton_galena_nomad_player_missiles` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_standard3_mahir_supron_kurtz_player` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_standard3_militech_hellhound_player` | MG + missiles (declared) | Experimental player variant |
+| `Vehicle.v_utility4_chevalier_legatus_player` | MG | Experimental player variant |
 
 ## Complete record inventory
 
-All **172** unique source records are listed below, including inherited and special-purpose variants. **Declared** describes the TweakDB mount list; only **Live firing checked** reports an actual firing test on that exact record.
+All **172** unique source records are listed below, including inherited and special-purpose variants. **Declared** describes the TweakDB mount list, not a guarantee of functional armament. Refer to the armed model examples and inspect attached weapons with the Lua API.
 
 ### Basilisk / Panzer — cannon, missiles and countermeasures (7)
 
@@ -89,7 +89,7 @@ Four declared mounts: cannon, homing missile launcher, left and right countermea
 | `Vehicle.panam_panzer_q202` | Quest / scene / encounter — firing not checked |
 | `Vehicle.q114_militech_panzer` | Quest / scene / encounter — firing not checked |
 | `Vehicle.q114_nomad_panzer` | Quest / scene / encounter — firing not checked |
-| `Vehicle.v_militech_basilisk` | Live firing checked |
+| `Vehicle.v_militech_basilisk` | Mounted armament |
 | `Vehicle.v_militech_basilisk_militech` | Other variant — firing not checked |
 | `Vehicle.v_militech_basilisk_transport` | Special/broken variant — inspect before use |
 
@@ -100,7 +100,7 @@ Two declared Outlaw-specific power-weapon mounts: left and right.
 | Spawn ID | Validation / caution |
 |---|---|
 | `Vehicle.v_sport1_herrera_outlaw_heist` | Other variant — firing not checked |
-| `Vehicle.v_sport1_herrera_outlaw_heist_player` | Live firing checked |
+| `Vehicle.v_sport1_herrera_outlaw_heist_player` | Mounted armament |
 
 ### Machine-gun mount records (27)
 
@@ -116,12 +116,12 @@ Two declared standard power-weapon mounts: left A and right A. Actual attachment
 | `Vehicle.q000_nomad_v_sport1_rayfield_caliburn_quest` | Quest / scene / encounter — firing not checked |
 | `Vehicle.q306_oa_rayfield` | Quest / scene / encounter — firing not checked |
 | `Vehicle.v_sport1_rayfield_caliburn` | Other variant — firing not checked |
-| `Vehicle.v_sport1_rayfield_caliburn_02_player` | Player variant — firing not checked |
+| `Vehicle.v_sport1_rayfield_caliburn_02_player` | Experimental player variant |
 | `Vehicle.v_sport1_rayfield_caliburn_courier` | Other variant — firing not checked |
 | `Vehicle.v_sport1_rayfield_caliburn_mordred` | Other variant — firing not checked |
-| `Vehicle.v_sport1_rayfield_caliburn_mordred_player` | Player variant — firing not checked |
+| `Vehicle.v_sport1_rayfield_caliburn_mordred_player` | Experimental player variant |
 | `Vehicle.v_sport1_rayfield_caliburn_murdered` | Other variant — firing not checked |
-| `Vehicle.v_sport1_rayfield_caliburn_player` | Player variant — firing not checked |
+| `Vehicle.v_sport1_rayfield_caliburn_player` | Experimental player variant |
 | `Vehicle.v_sport1_rayfield_caliburn_quest` | Other variant — firing not checked |
 | `Vehicle.v_utility4_chevalier_centurion` | Other variant — firing not checked |
 | `Vehicle.v_utility4_chevalier_centurion_cargo` | Other variant — firing not checked |
@@ -134,7 +134,7 @@ Two declared standard power-weapon mounts: left A and right A. Actual attachment
 | `Vehicle.v_utility4_chevalier_centurion_poor_dogtown` | Other variant — firing not checked |
 | `Vehicle.v_utility4_chevalier_legatus_aquila_basic` | Other variant — firing not checked |
 | `Vehicle.v_utility4_chevalier_legatus_basic` | Other variant — firing not checked |
-| `Vehicle.v_utility4_chevalier_legatus_player` | Player variant — firing not checked |
+| `Vehicle.v_utility4_chevalier_legatus_player` | Experimental player variant |
 
 ### Shared machine-gun and missile mount records (136)
 
@@ -215,13 +215,13 @@ Nine possible mounts: power weapons left/right A, B and C, plus missile launcher
 | `Vehicle.sts_bls_ina_07_ghost_car` | Quest / scene / encounter — firing not checked |
 | `Vehicle.sts_bls_ina_08_pickup_car` | Quest / scene / encounter — firing not checked |
 | `Vehicle.v_sport2_mizutani_shion_nomad` | Other variant — firing not checked |
-| `Vehicle.v_sport2_mizutani_shion_nomad_02_player` | Player variant — firing not checked |
+| `Vehicle.v_sport2_mizutani_shion_nomad_02_player` | Experimental player variant |
 | `Vehicle.v_sport2_mizutani_shion_nomad_buggy` | Other variant — firing not checked |
 | `Vehicle.v_sport2_mizutani_shion_nomad_buggy_quest` | Other variant — firing not checked |
 | `Vehicle.v_sport2_mizutani_shion_nomad_courier` | Other variant — firing not checked |
 | `Vehicle.v_sport2_mizutani_shion_nomad_ncu` | Other variant — firing not checked |
-| `Vehicle.v_sport2_mizutani_shion_nomad_player` | Player variant — firing not checked |
-| `Vehicle.v_sport2_mizutani_shion_nomad_player_missiles` | Live firing checked |
+| `Vehicle.v_sport2_mizutani_shion_nomad_player` | Experimental player variant |
+| `Vehicle.v_sport2_mizutani_shion_nomad_player_missiles` | Mounted armament |
 | `Vehicle.v_sport2_mizutani_shion_nomad_quest` | Other variant — firing not checked |
 | `Vehicle.v_sport2_mizutani_shion_nomad_samum` | Other variant — firing not checked |
 | `Vehicle.v_sport2_mizutani_shion_nomad_technical` | Other variant — firing not checked |
@@ -229,8 +229,8 @@ Nine possible mounts: power weapons left/right A, B and C, plus missile launcher
 | `Vehicle.v_sport2_quadra_type66_nomad` | Other variant — firing not checked |
 | `Vehicle.v_sport2_quadra_type66_nomad_courier` | Other variant — firing not checked |
 | `Vehicle.v_sport2_quadra_type66_nomad_kb` | Other variant — firing not checked |
-| `Vehicle.v_sport2_quadra_type66_nomad_player` | Player variant — firing not checked |
-| `Vehicle.v_sport2_quadra_type66_nomad_player_03` | Player variant — firing not checked |
+| `Vehicle.v_sport2_quadra_type66_nomad_player` | Experimental player variant |
+| `Vehicle.v_sport2_quadra_type66_nomad_player_03` | Experimental player variant |
 | `Vehicle.v_sport2_quadra_type66_nomad_quest` | Other variant — firing not checked |
 | `Vehicle.v_sport2_quadra_type66_nomad_tribute` | Other variant — firing not checked |
 | `Vehicle.v_sport2_quadra_type66_nomad_wraith` | Other variant — firing not checked |
@@ -240,8 +240,8 @@ Nine possible mounts: power weapons left/right A, B and C, plus missile launcher
 | `Vehicle.v_standard25_thorton_colby_nomad_disabled_interactions` | Special/broken variant — inspect before use |
 | `Vehicle.v_standard25_thorton_colby_nomad_mule` | Other variant — firing not checked |
 | `Vehicle.v_standard25_thorton_colby_nomad_ncu` | Other variant — firing not checked |
-| `Vehicle.v_standard25_thorton_colby_nomad_player` | Player variant — firing not checked |
-| `Vehicle.v_standard25_thorton_colby_nomad_player_missiles` | Player variant — firing not checked |
+| `Vehicle.v_standard25_thorton_colby_nomad_player` | Experimental player variant |
+| `Vehicle.v_standard25_thorton_colby_nomad_player_missiles` | Experimental player variant |
 | `Vehicle.v_standard25_thorton_colby_nomad_prevention` | Other variant — firing not checked |
 | `Vehicle.v_standard25_thorton_colby_nomad_quest` | Other variant — firing not checked |
 | `Vehicle.v_standard25_thorton_colby_nomad_vulture` | Other variant — firing not checked |
@@ -252,8 +252,8 @@ Nine possible mounts: power weapons left/right A, B and C, plus missile launcher
 | `Vehicle.v_standard2_archer_quartz_nomad` | Other variant — firing not checked |
 | `Vehicle.v_standard2_archer_quartz_nomad_courier` | Other variant — firing not checked |
 | `Vehicle.v_standard2_archer_quartz_nomad_disabled_interactions` | Special/broken variant — inspect before use |
-| `Vehicle.v_standard2_archer_quartz_nomad_player` | Player variant — firing not checked |
-| `Vehicle.v_standard2_archer_quartz_nomad_player_02` | Player variant — firing not checked |
+| `Vehicle.v_standard2_archer_quartz_nomad_player` | Experimental player variant |
+| `Vehicle.v_standard2_archer_quartz_nomad_player_02` | Experimental player variant |
 | `Vehicle.v_standard2_archer_quartz_nomad_prevention` | Other variant — firing not checked |
 | `Vehicle.v_standard2_archer_quartz_nomad_quest` | Other variant — firing not checked |
 | `Vehicle.v_standard2_archer_quartz_nomad_wraith` | Other variant — firing not checked |
@@ -261,8 +261,8 @@ Nine possible mounts: power weapons left/right A, B and C, plus missile launcher
 | `Vehicle.v_standard2_thorton_galena_nomad_courier` | Other variant — firing not checked |
 | `Vehicle.v_standard2_thorton_galena_nomad_courier_expanded` | Other variant — firing not checked |
 | `Vehicle.v_standard2_thorton_galena_nomad_locust` | Other variant — firing not checked |
-| `Vehicle.v_standard2_thorton_galena_nomad_player` | Player variant — firing not checked |
-| `Vehicle.v_standard2_thorton_galena_nomad_player_missiles` | Player variant — firing not checked |
+| `Vehicle.v_standard2_thorton_galena_nomad_player` | Experimental player variant |
+| `Vehicle.v_standard2_thorton_galena_nomad_player_missiles` | Experimental player variant |
 | `Vehicle.v_standard2_thorton_galena_nomad_prevention` | Other variant — firing not checked |
 | `Vehicle.v_standard2_thorton_galena_nomad_prevention_2` | Other variant — firing not checked |
 | `Vehicle.v_standard2_thorton_galena_nomad_quest` | Other variant — firing not checked |
@@ -272,11 +272,11 @@ Nine possible mounts: power weapons left/right A, B and C, plus missile launcher
 | `Vehicle.v_standard3_mahir_supron_kurtz` | Other variant — firing not checked |
 | `Vehicle.v_standard3_mahir_supron_kurtz_basic_mq304` | Other variant — firing not checked |
 | `Vehicle.v_standard3_mahir_supron_kurtz_overlander` | Other variant — firing not checked |
-| `Vehicle.v_standard3_mahir_supron_kurtz_player` | Player variant — firing not checked |
+| `Vehicle.v_standard3_mahir_supron_kurtz_player` | Experimental player variant |
 | `Vehicle.v_standard3_mahir_supron_kurtz_prevention` | Other variant — firing not checked |
 | `Vehicle.v_standard3_militech_hellhound` | Other variant — firing not checked |
 | `Vehicle.v_standard3_militech_hellhound_courier` | Other variant — firing not checked |
-| `Vehicle.v_standard3_militech_hellhound_player` | Player variant — firing not checked |
+| `Vehicle.v_standard3_militech_hellhound_player` | Experimental player variant |
 | `Vehicle.v_standard3_militech_hellhound_police` | Other variant — firing not checked |
 
 ## Weapon and attachment IDs
@@ -326,10 +326,10 @@ the array position plus one is the stable Lua mount index for that model.
 
 For example, the Panzer cannon declares `cycleTime=0.3`; its homing launcher
 declares `cycleTime=2` but emits multiple missiles in a salvo. Countermeasure
-mounts declare one whole-burst projectile while live tests observed five
-projectiles per side. Do not infer network admission or ammunition from a
+mounts can declare one whole-burst projectile while emitting multiple
+projectiles. Do not infer network admission or ammunition from a
 single catalogue field; the [multiplayer guide](vehicle-weapons.md) separates
-native observations from the server's policy.
+native behavior from the server's policy.
 
 ### Provenance and regeneration
 
@@ -338,4 +338,4 @@ native observations from the server's policy.
 - [Vehicle weapon synchronization research](../docs/research/vehicle-weapons-and-combat.md): live observations, validation boundaries and remaining work.
 - [Complete vehicle model catalogue](../docs/vehicle-models.md): broader model/template inventory, including unarmed vehicles.
 
-After a game update, regenerate the source catalogue and reconcile this inventory. Promote a record to **Live firing checked** only after spawning that exact variant and observing its real attached weapon fire. Archive-dependent vehicles also require the corresponding game content to be installed.
+After a game update, regenerate the source catalogue and reconcile this inventory. Promote a record to **Mounted armament** only after spawning that exact variant and observing its real attached weapon fire. Archive-dependent vehicles also require the corresponding game content to be installed.

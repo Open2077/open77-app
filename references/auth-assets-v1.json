@@ -1,0 +1,9 @@
+{
+  "tool": "image_gen built-in (imagegen skill)",
+  "asset": ".shots/auth-generated-concept-v1.webp",
+  "source": "generated image exec-17a4c96b-f88a-41e5-93e6-f73cc981c2b4.png",
+  "usage": "Unused concept, replaced with the user's selected wallpaper; not shipped in public assets",
+  "size": { "width": 1672, "height": 941, "bytes": 238724 },
+  "encoding": "WebP quality 87, no upscaling",
+  "prompt": "Use case: stylized-concept. Asset type: production website full-screen authentication background, landscape 16:9, 1920x1080 or wider. Create a cinematic, realistically rendered futuristic Night City urban vista at night, inspired by Cyberpunk 2077: dense vertical skyscrapers, elevated skywalks, a few palm silhouettes, wet street pavement reflecting electric cyan blue with a restrained touch of magenta. Eye-level view from a quiet rain-wet terrace towards a cluster of illuminated megabuildings. Deep navy and near-black shadows, detailed weathered concrete and reflective glass, atmospheric blue haze. Composition must support a real HTML login page overlaid on top: left 38% is dark and relatively quiet for a large heading and a few lines of copy, right 40% is atmospheric and low contrast behind a translucent form panel, brightest detailed architecture concentrated in the central vertical strip and at far edges. Refined photographic game-cinematic look, moody but buildings visibly legible, not flat black. ONLY the background artwork; absolutely no UI, panels, fields, buttons, logos, typography, legible signs, numbers, watermarks, or people. No fake website screenshot. Original new artwork."
+}

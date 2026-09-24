@@ -2,7 +2,7 @@ import type { GameServer } from "@/lib/servers";
 
 /**
  * INVENTED DATA. None of these servers, communities, owners, player counts or
- * pings are real. These fixtures are separate from the active Developer Preview
+ * pings are real. These fixtures are separate from the active Alpha
  * and its live master directory.
  *
  * They exist so the server browser — the product experience the whole platform
@@ -75,7 +75,7 @@ export const DEMO_SERVERS: GameServer[] = [
     owner: "BRL Stewards",
     links: { website: "brl-racing.example", discord: "discord.gg/brl" },
     rules: [
-      "Clean racing — contact penalties are enforced",
+      "Clean racing: contact penalties are enforced",
       "Ranked lobbies require a placement session",
       "Custom handling profiles are server-provided",
     ],
@@ -117,7 +117,7 @@ export const DEMO_SERVERS: GameServer[] = [
     owner: "Blackout Team",
     links: null,
     rules: [
-      "Permadeath is on — one life per season",
+      "Permadeath is on: one life per season",
       "No teaming above four players",
       "Loot spawns are server-controlled",
     ],
@@ -182,7 +182,7 @@ export const DEMO_SERVERS: GameServer[] = [
     links: { website: "neoncircuit.example", discord: "discord.gg/neoncircuit" },
     rules: [
       "Combat is disabled everywhere",
-      "Venues are player-run — respect the host",
+      "Venues are player-run, respect the host",
       "Photography mode encouraged",
     ],
   },
@@ -267,7 +267,7 @@ export const DEMO_SERVERS: GameServer[] = [
     rules: [
       "Modes rotate every 15 minutes",
       "Votes pick the next minigame",
-      "Be nice — it's a party server",
+      "Be nice, it's a party server",
     ],
   },
   {

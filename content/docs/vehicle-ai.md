@@ -1,19 +1,8 @@
 # Networked vehicle AI
 
-`Open77.vehicles.ai` is a **server** API requiring `world.vehicles`.
-The server owns destinations, seat reservation and task lifecycle. One ready
-nearby client executes native autonomous driving; observers do not run another AI.
-Motion retains the existing authority lease, epoch and routing-bucket validation.
+`Open77.vehicles.ai` is a server API requiring `world.vehicles`. The server owns destinations, seat reservations and task lifecycle. One nearby ready client executes native driving; observers receive replicated motion under the existing authority lease and routing-bucket rules.
 
-Available with client and server **2.31.13+op77.54**, using network protocol
-**1.24**. Update both runtimes before using these APIs; this release does not
-introduce a protocol bump. This is a Developer Preview feature: consult the
-validation notes and test your routes before production use.
-Neither solo Delamain quests nor its taxi UI is activated.
-Local validation covers a Hella with a seated NPC and player passenger, two-client
-replication, simulator handover, destination/route arrival, follow and stop.
-It does not certify every vehicle model, road or large traffic fleet.
-For player-selected destinations, see [native map and player waypoints](native-map.md).
+Requires client and server **2.31.13+op77.54** or later, using compatible network protocols. Vehicle and route compatibility varies; fleet-scale traffic is not guaranteed. This API does not activate Delamain quests or the taxi UI. For player-selected destinations, see [Native map and player waypoints](native-map.md).
 
 ## Autonomous vehicle
 
@@ -67,9 +56,7 @@ Vanilla's automatic front-passenger-to-driver seat switch is suppressed while
 the driver seat is reserved, including when no NPC is visible.
 `stop()` keeps the reservation; only removing the controller releases it.
 
-The template `civilian_female_relaxed_01` currently resolves to `Character.Panam`.
-The local test's optional visible NPC therefore always looks like Panam; the
-driving API itself does not choose or impose that template.
+`civilian_female_relaxed_01` resolves to `Character.Panam`. Pass an explicit NPC ID to select a visible driver, or omit it for a driverless vehicle.
 
 ## Commands
 
@@ -118,16 +105,6 @@ unavailable/cross-bucket target, unavailable driver, destroyed vehicle and nativ
 command failure. Losing a simulator does not permit stale-epoch motion; a
 replacement must acknowledge readiness. Human-driven authority is unchanged.
 
-## Local validation
+## Route integration
 
-`server.native-systems-local.jsonc` explicitly loads
-`open77_native_systems_test`. Commands: `maptest state|open|pick|close|cancel`,
-`aitest create`, `aitest go x y z [speed]`, `aitest state|stop|ride|follow|remove`.
-`aitest create x y z yaw` creates a driverless car; append `npc` for the visible
-test driver. `aitest driver` tests a driver-seat warp rejection while attached;
-`aitest detach` releases the controller so the same seat becomes available.
-One locally validated Hella route: `aitest create 430 -2370 182 -90`, then
-`aitest ride`, then `aitest go 450 -2365 180 6`. Allow the spawn/mount to settle
-before issuing the destination. Append `npc` to the create command to compare
-the same route with a visible driver.
-Never load this unrestricted test resource on a public server.
+Choose destinations on reachable road surfaces and wait for vehicle creation and mounting before issuing a task. Handle `blocked`, `failed` and `waiting_for_simulator` states; a nearby point may not have a valid road path.

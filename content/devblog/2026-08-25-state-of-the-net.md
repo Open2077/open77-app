@@ -42,7 +42,7 @@ A serious slice of recent work went into keeping the network fair: signed builds
 
 ## What's next
 
-The project is pre-alpha: there is no public build yet, and this blog is part of changing that in the open. Follow the daily posts here, or join the [Discord](https://discord.open2077.net) where the same updates land as short summaries — announcements always hit there first.
+This entry records an early development milestone. For current downloads and access, read the [Alpha guide](/docs/alpha-access). Follow the daily posts here, or join the [Discord](https://discord.open2077.net) where updates also appear as short summaries.
 
 ---
 

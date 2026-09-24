@@ -4,6 +4,8 @@ import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { AuthPanel } from "@/components/account/auth-panel";
+import { AuthLoading } from "@/components/account/auth-scene";
+import { AuthIcon } from "@/components/account/auth-icon";
 import { ShieldIcon } from "@/components/icons";
 import { authorizeLauncher, MasterApiError } from "@/lib/account/api";
 import { useSession } from "@/lib/account/session";
@@ -102,7 +104,9 @@ export function LauncherConsent() {
   // A bad or hostile launcher link — never redirect, just explain.
   if (linkError) {
     return (
-      <div className="ac-card">
+      <div className="auth-panel ac-card">
+        <span className="auth-state-icon"><AuthIcon name="shield" size={24} /></span>
+        <div className="auth-panel-heading"><h2>Connection stopped.</h2></div>
         <p className="ac-error" role="alert">
           <ShieldIcon size={15} />
           <span>{linkError}</span>
@@ -112,7 +116,7 @@ export function LauncherConsent() {
     );
   }
 
-  if (!ready) return <p className="ac-loading">Loading…</p>;
+  if (!ready) return <AuthLoading />;
 
   if (!session) {
     return (
@@ -123,7 +127,7 @@ export function LauncherConsent() {
             Sign in to authorize your launcher
           </h2>
           <p>
-            Sign in — or create an account — and you can connect the OPEN//77 launcher on this
+            Sign in, or create an account, and you can connect the OPEN//77 launcher on this
             device to your platform account.
           </p>
         </section>
@@ -134,14 +138,15 @@ export function LauncherConsent() {
 
   if (handedOff) {
     return (
-      <div className="ac-card">
+      <div className="auth-panel ac-card">
+        <span className="auth-state-icon"><AuthIcon name="link" size={24} /></span>
         <div className="ac-success" role="status">
           <h2 className="ac-reveal-title">
             <ShieldIcon size={19} />
             Launcher authorized.
           </h2>
           <p>
-            You can return to the OPEN//77 launcher — it&apos;s signing you in now. You may close
+            You can return to the OPEN//77 launcher. It&apos;s signing you in now. You may close
             this tab.
           </p>
         </div>
@@ -150,7 +155,8 @@ export function LauncherConsent() {
   }
 
   return (
-    <div className="ac-card">
+    <div className="auth-panel ac-card">
+      <span className="auth-state-icon"><AuthIcon name="link" size={24} /></span>
       <div className="ac-card-head">
         <h2 className="ac-card-title">
           <ShieldIcon size={19} />
@@ -173,7 +179,7 @@ export function LauncherConsent() {
         ) : null}
       </dl>
       <p className="ac-hint">
-        The launcher receives a short-lived, single-use code over a local connection — never your
+        The launcher receives a short-lived, single-use code over a local connection, never your
         password. Only authorize a launcher you started yourself.
       </p>
       {error ? (

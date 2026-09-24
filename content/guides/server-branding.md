@@ -1,14 +1,10 @@
 # Branding your server
 
-Two images decide how your server looks to a player who has never heard of it:
-a square **icon** on its row in the launcher and on the website, and a wide
-**banner** across the top of its detail page. Both are optional, and a server
-without them is drawn with a generated gradient placeholder — which is exactly
-what most servers in the list look like today, because branding used to mean
-editing files on the box.
+Set a square server icon and a wide banner for the launcher and website. Both are optional; servers without images use a placeholder.
 
-It does not any more. Upload both from the Warden panel, and the icon goes live
-without restarting your server.
+Upload images from Warden. Icon changes do not require a server restart.
+
+For the in-game Escape menu, use [Pause menu customization](pause-menu.md). Its Lua accent and resource logo are separate from the launcher icon and website banner.
 
 ## What the two images are
 

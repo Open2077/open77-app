@@ -47,7 +47,7 @@ export function OverviewPanel() {
       <div className="adm-quicklinks">
         <Link className="adm-quicklink" href="/admin/incidents"><InfoIcon size={22} /><div><strong>Investigate a crash</strong><span>Correlate reports and inspect evidence</span></div></Link>
         <Link className="adm-quicklink" href="/admin/releases"><DownloadIcon size={22} /><div><strong>Manage releases</strong><span>Channels, compatibility and trusted builds</span></div></Link>
-        <Link className="adm-quicklink" href="/admin/alpha-access"><ServerRackIcon size={22} /><div><strong>Manage preview access</strong><span>Find an account and review its permissions</span></div></Link>
+        <Link className="adm-quicklink" href="/admin/alpha-access"><ServerRackIcon size={22} /><div><strong>Manage Alpha access</strong><span>Find an account and review its permissions</span></div></Link>
       </div>
 
       {data ? <div className="adm-overview-grid">

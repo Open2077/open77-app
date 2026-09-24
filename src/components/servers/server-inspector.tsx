@@ -31,6 +31,8 @@ function addedLabel(days: number): string {
  */
 export function ServerInspector({
   server,
+  preview = false,
+  onOpen,
   nearYou = false,
   isFavorite,
   onToggleFavorite,
@@ -38,6 +40,8 @@ export function ServerInspector({
   onClose,
 }: {
   server: GameServer | null;
+  preview?: boolean;
+  onOpen?: () => void;
   /** Same country as the player. */
   nearYou?: boolean;
   isFavorite: boolean;
@@ -101,9 +105,9 @@ export function ServerInspector({
         >
           <StarIcon size={16} filled={isFavorite} />
         </button>
-        <Link className="directory-detail-more" href={`/servers/${server.id}`}>
-          Full details ↗
-        </Link>
+        {!preview && <Link className="directory-detail-more" href={`/servers/${server.id}`} onNavigate={onOpen ? (event) => { event.preventDefault(); onOpen(); } : undefined}>
+          View details ↗
+        </Link>}
         </div>
         <p className="directory-detail-desc">
           {server.desc || "This server has not published a description yet."}

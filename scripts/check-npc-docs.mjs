@@ -16,8 +16,24 @@ assert.ok(catalogue.records.every((record) => record.record.startsWith("Characte
 assert.ok(catalogue.records.some((record) => record.record === "Character.cpz_maelstrom_grunt1_ranged1_lexington_wa"));
 const api = JSON.parse(await read("content/api/api.json"));
 const server = api.filter((entry) => entry.namespace === "Open77.npcs" && entry.runtime === "server");
-assert.deepEqual(server.map((entry) => entry.name).sort(), ["getBehavior", "setAIEnabled", "setBehavior", "setCombatEnabled", "setPerceptionEnabled", "setVoiceEnabled"].sort());
-assert.equal(api.filter((entry) => entry.namespace === "Open77.npcs" && entry.runtime === "client").length, 5);
+const serverNames = new Set(server.map((entry) => entry.name));
+// The behaviour switches this guide was written for. The namespace has since
+// grown a lifecycle and relationship surface, so this is a required subset
+// rather than the whole list -- a new sibling must not fail the check, but one
+// of these six disappearing still must.
+for (const name of ["getBehavior", "setAIEnabled", "setBehavior", "setCombatEnabled", "setPerceptionEnabled", "setVoiceEnabled"]) {
+  assert.ok(serverNames.has(name), `server Open77.npcs.${name}`);
+}
+for (const name of ["create", "remove", "setTransform", "setHealth", "setAttitude", "setRelationship", "all"]) {
+  assert.ok(serverNames.has(name), `server Open77.npcs.${name}`);
+}
+// The five client reads the guide was written for, plus the wave-6 preloading
+// promise (`whenReady`, base 4d6b81ea). Same rule as the server list above: a
+// required subset, so a new sibling does not fail the check.
+const clientNames = new Set(api.filter((entry) => entry.namespace === "Open77.npcs" && entry.runtime === "client").map((entry) => entry.name));
+for (const name of ["all", "currentTask", "entity", "get", "isStreamedIn", "whenReady"]) {
+  assert.ok(clientNames.has(name), `client Open77.npcs.${name}`);
+}
 for (const entry of server) assert.ok(entry.summary && entry.description && entry.returns.length, entry.name);
 const nav = JSON.parse(await read("content/docs/meta.json"));
 for (const slug of ["npcs", "npc-behavior", "npc-catalogue"]) {
@@ -44,4 +60,4 @@ if (origin) {
     console.log(`served OK ${url}`);
   }
 }
-console.log("NPC docs: 6 server behavior APIs, 5 client reads, 3 guides and 6,582 Character records verified (86 TEST IDs excluded).");
+console.log(`NPC docs: ${server.length} server APIs (6 behaviour switches), 6 client reads, 3 guides and 6,582 Character records verified (86 TEST IDs excluded).`);

@@ -1,9 +1,6 @@
 # Key mappings
 
-`RegisterKeyMapping` is an **engine primitive**, not a resource. A resource declares a named action
-bound to a default key and supplies the callback to run; the engine owns the registry, the
-per-frame dispatch, and the persistence of rebinds. The player rebinds any registered action from
-**Pause → Settings → KEY BINDINGS**, and the new key is remembered across servers and relaunches.
+Register a named action, default key and Lua callback with `RegisterKeyMapping`. Players can rebind it under **Pause → Settings → KEY BINDINGS**. Bindings persist across servers and launcher restarts.
 
 Developers coming from FiveM will recognize the call. Open77 has no client command bus, so the
 mapping runs a Lua callback the resource supplies directly, rather than a registered command string.
@@ -68,6 +65,8 @@ In the positional form, passing a fifth argument (the release callback) implies 
 Keys use the same vocabulary as `Open77.input.isDown`, normalized to upper case:
 
 - a single alphanumeric — `A`–`Z`, `0`–`9`
+- The French AZERTY number row: `&`, `é`, `"`, `'`, `(`, `-`, `è`, `_`, `ç`, `à`, `)`, `=`.
+  Common punctuation is accepted too: `+ [] {} ; : , . / \\` and `` ` ~ ! ? @ # $ % ^ * < > | ù ² ``.
 - `F1`–`F12`
 - `SPACE`, `ENTER`/`RETURN`, `TAB`, `SHIFT`, `CTRL`/`CONTROL`, `ALT`, `CAPSLOCK`, `BACKSPACE`,
   `INSERT`, `DELETE`, `HOME`, `END`, `PAGEUP`, `PAGEDOWN`, and the four arrow keys `UP`, `DOWN`,
@@ -76,11 +75,149 @@ Keys use the same vocabulary as `Open77.input.isDown`, normalized to upper case:
 The pause page's capture, the Lua layer, and the native dispatch all agree on this set, so a key
 chosen in the rebinding UI maps to exactly what a resource registered.
 
+Letters are normalized to uppercase; accented characters and punctuation are preserved.
+These are **logical keys on the player's current Windows layout**, not US physical labels:
+on French AZERTY, `é` and `2` refer to the same top-row key. No Shift chord is required.
+The menu displays the captured character, including when CEF provides no `event.code`.
+Use UTF-8 Lua files, for example `RegisterKeyMapping("slot2", "Second slot", "é", callback)`.
+
+**Only keyboard keys can be bound.** A mapping's key is persisted, listed in the pause menu and
+polled by the engine's own dispatcher, and that dispatcher reads keys. Mouse buttons and gamepad
+controls are readable — see the next section — but they are not bindable, and the vocabulary was
+deliberately left alone so that a key saved in `keybinds.json` can never name a control nothing
+polls.
+
+## Reading a device directly
+
+`Open77.input` also reads the mouse, the wheel, a gamepad and the cursor. Same table, same
+`input.actions` permission: a mouse button is the same kind of read as a key, and a second
+permission string would only mean every menu manifest grows a line.
+
+| Call | Answers |
+|---|---|
+| `Open77.input.isDown(control)` | A key, a mouse button or a gamepad button. `boolean`, or `false, reason`. |
+| `Open77.input.axis(name)` | A stick, a trigger, the cursor, or a cumulative counter. `number`, or `nil, reason`. |
+| `Open77.input.pointer()` | `x, y, source` — the pointer as 0..1 across the image, overlay-aware. |
+| `Open77.input.devices()` | Every mouse and gamepad control, and whether this machine can answer for it. |
+| `Open77.input.isCaptured()` | Whether a WebUI owns the keyboard. |
+
+### Control names
+
+| Group | Names |
+|---|---|
+| Mouse buttons | `mouse1`/`mouseLeft`, `mouse2`/`mouseRight`, `mouse3`/`mouseMiddle`, `mouse4`, `mouse5` |
+| Mouse axes | `mouseX`, `mouseY`, `mouseDeltaX`, `mouseDeltaY`, `mouseWheel`, `mouseWheelX` |
+| Gamepad buttons | `padA`, `padB`, `padX`, `padY`, `padUp`, `padDown`, `padLeft`, `padRight`, `padStart`, `padBack`, `padLeftShoulder` (`padLB`), `padRightShoulder` (`padRB`), `padLeftThumb`, `padRightThumb` |
+| Gamepad axes | `padLeftStickX`/`Y`, `padRightStickX`/`Y`, `padLeftTrigger`, `padRightTrigger` — each also spelled without the `pad` prefix (`leftStickX`, `rightTrigger`, …) |
+
+Names are case-insensitive. `Open77.input.devices()` is the authoritative list for the machine the
+resource is running on, and it is the list to build a settings screen from rather than the table
+above.
+
+### These are physical reads
+
+Everything here reports **the device**, not the game's interpretation of it. It does not know the
+player's Cyberpunk key bindings, it does not know whether the game or a menu is currently consuming
+the control, and it does not know about in-game controller remapping. In FiveM's vocabulary that
+makes every one of these the `GetDisabledControlNormal` flavour rather than the `GetControlNormal`
+one.
+
+To get the enabled flavour, combine it with the two questions Open77 can answer about who owns the
+input:
+
+```lua
+local function gameplayInput(control)
+    if Open77.input.isCaptured() then return false end        -- a WebUI has the keyboard
+    if Open77.session.isMenuOpen() then return false end      -- some modal owns the screen
+    return Open77.input.isDown(control) == true
+end
+```
+
+Gamepad reads are also zero — and buttons false — while the game window is not in the foreground.
+The keyboard already behaved that way; this only extends the rule to the pad.
+
+### A missing device is named, never answered zero
+
+An unplugged gamepad refuses by name. This matters more than it looks: an axis that always reads
+zero cannot be told from a stick held at centre, so a menu built on a silent zero looks broken
+rather than unsupported.
+
+```lua
+local turn, reason = Open77.input.axis("padRightStickX")
+if turn == nil then
+    -- reason == "gamepad_not_connected" on a machine with no pad
+    turn = 0
+end
+```
+
+Asking for an axis by `isDown`, or a button by `axis`, is a real mistake and each is named:
+`control_is_an_axis` and `control_is_a_button`. An unknown name is `unsupported_action_key`.
+
+Gamepad support is **XInput**, slot 0. Controllers that present themselves as XInput devices — the
+Xbox pads, and a DualSense or DualShock through Steam Input or DS4Windows — are read; one that does
+not is invisible and reports as not connected. Sticks come back with XInput's own dead zones removed
+and the remainder rescaled, so a stick at rest reads exactly `0` and at the rim exactly `1`; stick Y
+is positive **up**.
+
+### The wheel and the motion counters are cumulative
+
+`mouseWheel`, `mouseWheelX`, `mouseDeltaX` and `mouseDeltaY` count from the moment the client
+started and are **not consumed by reading them**. Difference two samples:
+
+```lua
+local previous = Open77.input.axis("mouseWheel") or 0
+CreateThread(function()
+    while true do
+        Wait(0)
+        local now = Open77.input.axis("mouseWheel") or 0
+        if now ~= previous then
+            scrollList(now - previous)   -- positive is away from the player
+            previous = now
+        end
+    end
+end)
+```
+
+A consume-on-read wheel would be shorter to use and wrong: two resources reading it would each
+receive part of the same scroll, and neither could tell.
+
+### The pointer, and which space it is in
+
+`Open77.input.pointer()` returns `x, y` as **0..1 across the rendered image, origin top left**, plus
+a `source`. That is the same frame `Open77.camera.project` answers in and `Open77.camera.unproject`
+consumes, so hit-testing a projected world point is a subtraction:
+
+```lua
+local x, y = Open77.input.pointer()
+local target = Open77.camera.project({ x = 100.0, y = 220.0, z = 15.0 })
+if x and target and target.onScreen then
+    local dx, dy = x - target.x, y - target.y
+    if dx * dx + dy * dy < 0.02 * 0.02 then showTooltip() end
+end
+```
+
+Coordinates are normalized rather than pixel-based. DPI scaling can make the window's client rectangle differ from the render buffer; normalized values use a consistent coordinate space.
+
+`source` says which regime produced it:
+
+| `source` | Meaning |
+|---|---|
+| `overlay` | A WebUI surface owns the pointer. This is Open77's own virtual cursor, the one CEF and the drawn pointer share — the only meaningful position while a page is up. |
+| `system` | Nobody owns it, so this is the OS cursor mapped into the game's client area. |
+
+During ordinary gameplay Cyberpunk recentres the OS cursor every frame, so `system` reads near
+`0.5, 0.5`. That is where the cursor is, not a failed read.
+
 ## Rebinding UI
 
 The pause menu's **KEY BINDINGS** tab lists every registered action across every running resource
 and rebinds them. It is only a viewer: it reads the registry and writes back through the same
 management API any resource may call.
+
+This includes both bundled client resources and resources downloaded from the current server.
+Callbacks stay in their owning resource; the pause menu can list, rebind and reset them across
+the two client layers. Stopped/disconnected resources disappear from the list, while their saved
+choices are retained for the next session. There are no demo bindings in the shipped pause menu.
 
 | Call | Effect |
 |---|---|
@@ -121,3 +258,6 @@ outside the per-server KVP layout so a rebind follows the player to every server
 relaunch. The engine owns and validates the format; a corrupt file degrades to defaults rather than
 refusing bindings. A mapping inherits its saved key at registration time, so the player's choice is
 applied the moment the resource declares the action on the next session.
+
+If writing the preferences fails, `rebind`/`reset` returns `false, "keybind_save_failed"` and
+keeps the previous effective key. Updating one client layer does not discard the other's overrides.

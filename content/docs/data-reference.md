@@ -1,8 +1,6 @@
 # Game data reference
 
-This page is the entry point for identifiers passed to Open77 APIs: NPC templates, vehicle records,
-seat and damage indexes, weapons, appearances, effects, sounds, animations, and map sprites. The
-catalogues were extracted from Cyberpunk 2077 **2.31** unless another version is stated.
+Find identifiers for Open77 APIs: NPCs, vehicles, seats, damage indexes, weapons, appearances, effects, sounds, animations and map sprites. Catalogues target Cyberpunk 2077 **2.31** unless stated otherwise.
 
 ## Support levels
 

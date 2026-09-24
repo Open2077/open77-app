@@ -5,21 +5,24 @@ import { readFile } from "node:fs/promises";
 const read = (file) => readFile(file, "utf8");
 const api = JSON.parse(await read("content/api/api.json"));
 const nav = JSON.parse(await read("content/docs/meta.json"));
-const entries = api.filter((entry) => entry.namespace === "Open77.screen");
-assert.deepEqual(entries.map((entry) => entry.name).sort(),
-  ["fadeOut", "fadeIn", "transition", "cancel", "state", "catalog"].sort());
+// `Open77.screen` now also carries the wave-6 capture surface (`capture`,
+// `surface`, `upload`, `mugshot` -- base 4d6b81ea, guide screenshots.md); this
+// check is about the fades, so it looks at the eight fade cards only.
+const fadeNames = ["fadeOut", "fadeIn", "transition", "cancel", "state", "catalog", "isFaded", "nativeState"];
+const entries = api.filter((entry) => entry.namespace === "Open77.screen" && fadeNames.includes(entry.name));
+assert.deepEqual(entries.map((entry) => entry.name).sort(), [...fadeNames].sort());
 for (const entry of entries) {
   assert.equal(entry.runtime, "client", entry.qualified);
   assert.equal(entry.inferred, false, entry.qualified);
   assert.ok(entry.summary && entry.description && entry.returns.length, entry.qualified);
   assert.ok(entry.description.includes("screen.effects"), entry.qualified);
 }
-assert.ok(nav.sections.find((section) => section.id === "interfaces").pages
+assert.ok(nav.sections.find((section) => section.id === "cameras").pages
   .some((page) => page.slug === "screen-transitions" && page.kind === "guide"));
 assert.ok((await read("src/lib/api-categories.ts")).includes('"Open77.screen"'));
 assert.ok((await read("src/lib/api-reference.ts")).includes("/docs/screen-transitions"));
 const guide = await read("content/docs/screen-transitions.md");
-for (const text of ["2.31.13+op77.56", "1.24", "screen.effects", "open77:screen:black",
+for (const text of ["2.31.13+op77.56", "client-local", "screen.effects", "open77:screen:black",
   "unsupported_screen_preset", "screen_busy", "native_screen_busy", "timeoutMs",
   "CEF", "blurred/tinted", "not a GPU presentation fence", "not authorization"]) {
   assert.ok(guide.includes(text), text);
@@ -45,4 +48,4 @@ if (origin) {
   assert.equal((await fetch(new URL("/docs/api/server/open77-screen", origin))).status,
     404, "No nonexistent server screen API page");
 }
-console.log("Native fades: six client API cards, dedicated guide, navigation and limits verified.");
+console.log("Native fades: eight client API cards, dedicated guide, navigation and limits verified.");

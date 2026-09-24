@@ -51,7 +51,7 @@ export function DocsSearch({ entries }: { entries: DocsSearchItem[] }) {
         <SearchIcon />
         <input
           type="search"
-          placeholder="Filter pages — try vehicles, identity, exports…"
+          placeholder="Filter pages: try vehicles, identity, exports…"
           aria-label="Filter documentation pages"
           value={query}
           onChange={(event) => setQuery(event.target.value)}

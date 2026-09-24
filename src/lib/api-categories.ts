@@ -1,17 +1,17 @@
 /** Presentation only. Function contracts and runtime always come from wiki/data/api.json. */
-const FALLBACK_CATEGORY = { id: "utilities", label: "Data & utilities", namespaces: ["Open77.assets", "Open77.kvp", "Open77.clipboard", "Open77.debug", "Open77.inspector"] } as const;
+const FALLBACK_CATEGORY = { id: "utilities", label: "Data & utilities", namespaces: ["Open77.assets", "Open77.data", "Open77.kvp", "Open77.clipboard", "Open77.debug", "Open77.inspector"] } as const;
 
 export const API_CATEGORIES = [
-  { id: "core", label: "Core & resources", namespaces: ["_G", "Open77.Promise", "Open77.resource", "Open77.runtime", "Open77.events", "Open77.exports", "Open77.json"] },
-  { id: "players", label: "Players & characters", namespaces: ["Open77.players", "Open77.character", "Open77.stats", "Open77.appearance", "Open77.clothing", "Open77.equipment", "Open77.wardrobe", "Open77.puppets", "Open77.animations", "Open77.playerInteractions"] },
-  { id: "cyberware", label: "Cyberware & abilities", namespaces: ["Open77.cyberware", "Open77.motion"] },
+  { id: "core", label: "Core & resources", namespaces: ["_G", "Open77.Promise", "Open77.resource", "Open77.runtime", "Open77.events", "Open77.exports", "Open77.json", "Citizen", "promise", "Open77.EventVerdict", "Open77.convars", "Open77.acl", "Open77.access"] },
+  { id: "players", label: "Players & characters", namespaces: ["Open77.players", "Open77.character", "Open77.stats", "Open77.appearance", "Open77.clothing", "Open77.equipment", "Open77.wardrobe", "Open77.puppets", "Open77.animations", "Open77.playerInteractions", "Open77.heldItems"] },
+  { id: "cyberware", label: "Cyberware & abilities", namespaces: ["Open77.cyberware", "Open77.motion", "Open77.abilities", "Open77.chute"] },
   { id: "vehicles", label: "Vehicles", namespaces: ["Open77.vehicles", "Open77.vehicles.ai"] },
-  { id: "world", label: "World & environment", namespaces: ["Open77.world", "Open77.environment", "Open77.time", "Open77.travel", "Open77.doors", "open77_doors", "Open77.elevators", "Open77.props"] },
+  { id: "world", label: "World & environment", namespaces: ["Open77.world", "Open77.environment", "Open77.time", "Open77.travel", "Open77.zones", "Open77.prevention", "Open77.doors", "open77_doors", "Open77.elevators", "Open77.props"] },
   { id: "combat", label: "NPCs, weapons & loot", namespaces: ["Open77.npcs", "Open77.weapons", "Open77.loot"] },
-  { id: "ui", label: "Interfaces & markers", namespaces: ["Open77.webui", "WebUI.Page", "Open77.hud", "Open77.screen", "Open77.blips", "Open77.map", "Open77.markers", "Open77.anchors", "Open77.nameplates"] },
-  { id: "camera", label: "Camera & input", namespaces: ["Open77.camera", "Open77.perspective", "Open77.photoMode", "Open77.input", "Open77.settings"] },
-  { id: "audio", label: "Voice & effects", namespaces: ["Open77.voice", "Open77.sfx", "Open77.vfx"] },
-  { id: "network", label: "Network & sessions", namespaces: ["Open77.net", "Open77.network", "Open77.session"] },
+  { id: "ui", label: "Interfaces & markers", namespaces: ["Open77.webui", "WebUI.Page", "Open77.hud", "Open77.chat", "Open77.screen", "Open77.blips", "Open77.map", "Open77.markers", "Open77.anchors", "Open77.nameplates"] },
+  { id: "camera", label: "Camera & input", namespaces: ["Open77.camera", "Open77.remoteCamera", "Open77.perspective", "Open77.photoMode", "Open77.input", "Open77.settings"] },
+  { id: "audio", label: "Voice & effects", namespaces: ["Open77.voice", "Open77.sound", "Open77.sfx", "Open77.vfx"] },
+  { id: "network", label: "Network & sessions", namespaces: ["Open77.net", "Open77.network", "Open77.callbacks", "Open77.state", "Open77.session"] },
   FALLBACK_CATEGORY,
 ] as const;
 

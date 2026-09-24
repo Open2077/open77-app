@@ -1,9 +1,6 @@
 # Third person
 
-Open77 gives players a real third-person view of their own character. It is a **presentation
-layer**: a local body stands in for the player on screen, driven by the same replication contracts
-that draw every other player. The player entity itself remains the only gameplay authority — what
-you aim at, what you hit and what leaves on the wire are unchanged, in either view.
+Open77's third-person view renders a local character body using the replication system. The player entity retains gameplay authority: aiming, hit detection and network state are unchanged.
 
 Nothing changes for other players. The stand-in body is local: nobody else ever sees it, and the
 same bytes leave your client whether you are in first or third person.
@@ -128,15 +125,7 @@ cameras are the fallback, and they are always allowed to win.
 Each handover returns the player's real body and every effect that belongs to it — muzzle flash,
 shells, footsteps, audio — without the player doing anything.
 
-**Why sliding is on that list, and why it briefly was not.** The stand-in body is not your
-character's body: it runs the animation graph the game gives its NPCs, and that graph has no
-slide. On 2026-08-30 a way to drive it into a forward charge was found and measured, the handover
-was removed, and third person kept the view through a slide for the first time. Played rather
-than measured, it did not read as a slide at all — the body simply kept walking, because the
-forward clip the charge asks for is not carried on that body. So the handover is back the same
-day. **A slide that renders as a walk is worse than a slide that renders through your own eyes**,
-and that is the trade this is settling; nothing about your character or your movement changes
-either way, only which camera you watch the second from.
+Sliding can hand the view back to first person when the third-person rig has no compatible slide clip. This changes presentation only, not movement or player state.
 
 Vaulting is on the list for the same kind of reason and has never come off it.
 
@@ -241,21 +230,13 @@ end
 
 ## Limitations
 
-These are measured, not guessed. Cyberpunk 2077 2.31.
+Known presentation limitations on Cyberpunk 2077 2.31:
 
-**The shot leaves from the gun that fires, not the gun you see.** These are two different weapons.
-The body you see holds the stand-in's weapon; the one that actually fires, and that the muzzle
-flash and tracer come from, is your own, and in third person it sits higher — measured at 1.45 m
-above your feet standing, 1.56 m when aiming lifts it to eye level. Damage and muzzle flash agree
-with each other exactly, so nothing shoots from anywhere other than where it appears to from the
-engine's point of view; what is off is the gun drawn on the body. Measured, not yet closed.
+The firing weapon and the weapon drawn on the third-person body can have different muzzle positions. Damage and native effects use the actual firing weapon; the displayed weapon can appear offset.
 
 **You have to be aiming for the body to raise its weapon.** Press the trigger from the hip and the stand-in keeps the gun down. This is a rule now, and it was not always one: for a while the firing pose was withheld because the stand-in could not resolve which weapon family it was holding, and a withheld pose looks exactly like a forbidden shot. Repairing the family resolution took the block away with the defect -- which is how you learn a behaviour was an accident. It was asked for back, so it is written down where it will survive the next repair. What it withholds is the *pose*: the shot still fires, still costs ammo, and still cannot cross cover that blocks the barrel -- that gate is separate and unchanged.
 
-**Some animations are deliberately silent.** Jumping, side-stepping and emotes are measured but
-not played on the stand-in body. The NPC animation graph the body runs has no clip for those
-states, and sending them anyway puts the body in its bind pose — a T-pose, which is worse than
-nothing. They stay silent until a clip is validated on this rig.
+Animations without a compatible clip are suppressed on the third-person rig to avoid displaying its bind pose.
 
 **The body does not crouch.** The camera anchor does dip, so the framing is right while the body
 is not.
@@ -270,9 +251,7 @@ photo mode and mirrors are out of scope by design and fall back cleanly to the n
 the toggle is client-local: a server can set a policy, but it cannot watch a specific player's
 current view.
 
-**The camera can be misplaced when aimed steeply downward.** Measured at up to 1.4 m at -80
-degrees. The view does not flip and the body stays drawn, but the framing is not what the rig
-asked for. Repair is pending.
+Steep downward aim can displace the camera framing, particularly near -80 degrees. The body remains visible, but the requested framing is not guaranteed.
 
 **Your character wears what your character owns.** A body that owns no clothing appears in
 underwear, because that is what it is wearing — a V straight out of the creator wears exactly

@@ -1,0 +1,75 @@
+/* Shared navigation: isolated from page and admin design tokens. */
+.site-header.liquid-header {
+  --text: #f2f8fc;
+  --text-dim: #a7bac8;
+  position: sticky; top: 0; z-index: 80;
+  padding: 12px 24px; background: transparent; color: var(--text);
+}
+.liquid-bar {
+  position: relative; display: flex; align-items: center; gap: clamp(12px, 1.5vw, 28px);
+  max-width: 1840px; min-height: 70px; margin: auto; padding: 10px 12px 10px 28px;
+  border: 1px solid rgba(146, 208, 224, .16); border-radius: 20px;
+  background: linear-gradient(135deg, #d1f4ff12, #14313d24 38%, #99dced0a 72%, #07172538);
+  backdrop-filter: blur(14px) saturate(180%) brightness(1.12); -webkit-backdrop-filter: blur(14px) saturate(180%) brightness(1.12);
+  box-shadow: inset 0 1px 0 #c8efff0d, 0 8px 32px #00101e24;
+  transition: background .25s, box-shadow .25s;
+}
+.liquid-optics { position: absolute; pointer-events: none; }
+.liquid-bar::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(ellipse 24% 150% at var(--glass-x, 15%) -25%, #e3faff28, transparent 85%), linear-gradient(178deg, #ddf6ff10, transparent 45%, #79d9ef08); }
+.liquid-bar::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: linear-gradient(120deg, #b9ecff1c, transparent 24%, transparent 65%, #72d6e512); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; }
+.liquid-bar > * { position: relative; }
+@supports (backdrop-filter: url("#open77-nav-glass")) { .liquid-bar { backdrop-filter: url("#open77-nav-glass") blur(11px) saturate(170%) brightness(1.1); } }
+.is-scrolled .liquid-bar { background-color: rgba(5, 18, 29, .38); box-shadow: inset 0 1px 0 #c8efff0d, 0 12px 40px #0005; }
+.liquid-bar .wordmark { flex: none; padding: 10px 0; }
+.liquid-bar .logotype { width: 169px; height: auto; max-width: none; }
+.liquid-nav { display: flex; align-items: center; justify-content: center; gap: 3px; margin: 0 auto; }
+.liquid-nav a { position: relative; padding: 12px clamp(9px, .9vw, 17px); border-radius: 9px; font: 500 13px var(--font-body); text-decoration: none; white-space: nowrap; color: #e2edf4; transition: color .2s, background .2s; }
+.liquid-nav a:hover, .liquid-nav a[aria-current] { background: #d1f2ff0c; color: #fff; }
+.liquid-nav a[aria-current]::after { content: ""; position: absolute; bottom: 4px; left: 40%; right: 40%; height: 2px; background: #00dcec; border-radius: 3px; }
+.liquid-nav a[href="/workshop"] { color: #35e9ef; }
+.liquid-actions { display: flex; flex: none; align-items: center; gap: 8px; }
+.liquid-icon, .liquid-pill { display: inline-flex; flex: none; align-items: center; justify-content: center; gap: 8px; min-height: 42px; border: 1px solid #b8dcec30; border-radius: 11px; background: linear-gradient(140deg, #c4edff0d, #a4d5ee03); color: #edf7fe; text-decoration: none; font: 500 12px var(--font-body); transition: background .2s, border-color .2s, transform .2s; }
+.liquid-icon { width: 42px; }
+.liquid-pill { padding: 0 14px; }
+.liquid-icon:hover, .liquid-pill:hover { background: #c4edff18; border-color: #c4edff60; transform: translateY(-1px); }
+.liquid-search-trigger { border-radius: 50%; border-color: transparent; }
+.liquid-divider { height: 23px; width: 1px; margin: 0 4px; background: #b8dcec30; }
+.liquid-discord { color: #8b98ff; }
+.liquid-alpha span { width: 5px; height: 5px; border-radius: 50%; background: #29e7c0; box-shadow: 0 0 9px #29e7c066; }
+.liquid-download { display: inline-flex; justify-content: center; align-items: center; gap: 17px; min-height: 44px; padding: 0 19px; border: 1px solid #70f7ff99; border-radius: 11px; color: #00151d; background: linear-gradient(125deg, #29eaf1, #00c9e1); box-shadow: inset 0 1px 0 #fff4, 0 4px 22px #00d4e51a; font: 600 12px var(--font-body); text-decoration: none; white-space: nowrap; transition: box-shadow .2s, filter .2s, transform .2s; }
+.liquid-download:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 28px #00d4e533; }
+.liquid-toggle { display: none; }
+.liquid-mobile { position: absolute; top: calc(100% - 4px); left: 24px; right: 24px; max-height: calc(100dvh - 112px); overflow-y: auto; padding: 20px; margin: 0 auto; border: 1px solid #b8dcec35; border-radius: 16px; background: #091c2bf5; backdrop-filter: blur(24px); box-shadow: 0 20px 60px #0009; }
+.liquid-mobile p { padding: 0 12px 15px; color: #91aaba; font: 10px var(--font-mono); letter-spacing: .2em; }
+.liquid-mobile > a:not(.liquid-download) { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-radius: 8px; font-size: 14px; text-decoration: none; }
+.liquid-mobile > a:hover, .liquid-mobile > a[aria-current] { background: #3ce8fa10; color: #4fe9f1; }
+.liquid-mobile > .liquid-download { width: 100%; margin-top: 14px; }
+/* overflow-x:hidden makes body a scrolling ancestor and breaks sticky. */
+body:has(.liquid-header) { overflow-x: clip; }
+body.nav-open, body:has(.liquid-search[open]) { overflow: hidden; }
+.liquid-search { width: min(580px, calc(100% - 32px)); max-height: min(740px, calc(100dvh - 48px)); margin: auto; padding: 24px; border-radius: 20px; border: 1px solid #b8dcec40; color: #eaf6fc; background: #0a1b2aee; backdrop-filter: blur(32px); box-shadow: inset 0 1px 0 #ffffff20, 0 30px 100px #0009; }
+.liquid-search::backdrop { background: #000a; backdrop-filter: blur(8px); }
+.liquid-search-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.liquid-search-head h2 { font: 600 26px var(--font-display); }
+.liquid-search-field { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid #8fc7df44; border-radius: 10px; background: #0003; }
+.liquid-search-field:focus-within { border-color: #3bdeea; }
+.liquid-search-field input { width: 100%; border: none; outline: none; background: transparent; color: white; font: 14px var(--font-body); }
+.liquid-search-field input::placeholder { color: #93adbb; }
+.liquid-search-results { margin-top: 12px; }
+.liquid-search-results > a { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-radius: 10px; text-decoration: none; }
+.liquid-search-results > a:hover, .liquid-search-results > a:focus-visible { background: #47dce211; }
+.liquid-search-results strong, .liquid-search-results small { display: block; }
+.liquid-search-results strong { font-size: 14px; font-weight: 500; }
+.liquid-search-results small { margin-top: 2px; font-size: 12px; color: #a4bac8; }
+.liquid-search-results > p { padding: 30px 12px; color: #a4bac8; font-size: 14px; }
+.liquid-search-foot { display: flex; justify-content: space-between; gap: 12px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #aacfe322; font: 9px var(--font-mono); color: #92acbc; }
+.liquid-search-foot kbd { border: 1px solid #abc8dd30; border-radius: 4px; padding: 2px 4px; }
+.liquid-search .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@supports not (backdrop-filter: blur(1px)) { .liquid-bar { background: #0b1e2ef5; } }
+@media (max-width: 1530px) { .liquid-alpha { display: none; } .liquid-bar { gap: 16px; padding-left: 22px; } .liquid-bar .logotype { width: 145px; } .liquid-nav a { padding-inline: 10px; font-size: 12px; } .liquid-actions { gap: 6px; } }
+@media (max-width: 1380px) { .liquid-account { font-size: 0; gap: 0; width: 42px; padding: 0; } .liquid-divider { display: none; } .liquid-nav a { padding-inline: 8px; } }
+@media (max-width: 1270px) { .liquid-nav { display: none; } .liquid-actions { margin-left: auto; } .liquid-toggle { display: inline-flex; } .liquid-bar .logotype { width: 174px; } .liquid-account { font-size: 12px; gap: 8px; width: auto; padding: 0 14px; } .liquid-alpha { display: inline-flex; } }
+@media (max-width: 1000px) { .liquid-alpha { display: none; } .liquid-account, .liquid-admin { font-size: 0; gap: 0; width: 42px; padding: 0; } }
+@media (max-width: 760px) { .site-header.liquid-header { padding: 10px 12px; } .liquid-bar { min-height: 62px; padding: 8px 10px 8px 18px; gap: 10px; border-radius: 15px; } .liquid-bar .logotype { width: 139px; } .liquid-account, .liquid-admin, .liquid-alpha, .liquid-actions > .liquid-download { display: none; } .liquid-actions { gap: 4px; } .liquid-icon { width: 40px; min-height: 40px; } .liquid-mobile { max-height: calc(100dvh - 100px); } }
+@media (max-width: 370px) { .liquid-discord { display: none; } }
+@media (prefers-reduced-motion: reduce) { .liquid-bar, .liquid-icon, .liquid-pill, .liquid-download, .liquid-nav a { transition: none; } }

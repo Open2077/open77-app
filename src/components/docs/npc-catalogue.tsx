@@ -9,7 +9,7 @@ type NpcRecord = {
 type Catalogue = { schemaVersion: number; gameVersion: string; count: number; records: NpcRecord[] };
 const PAGE_SIZE = 40;
 const RISK_LABELS: Record<string, string> = {
-  candidate: "Candidate — untested", unsafe_quest_or_scene: "Quest / scene", special_rig: "Special rig",
+  candidate: "Candidate (untested)", unsafe_quest_or_scene: "Quest / scene", special_rig: "Special rig",
   special_vendor: "Vendor", restricted_child: "Child", deny_player: "Player", missing_template: "Missing template",
 };
 const label = (value: string) => value.replace(/^Factions\./, "").replaceAll("_", " ");

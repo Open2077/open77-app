@@ -15,16 +15,16 @@
 export const WARDEN_TITLE = "Warden";
 
 export const WARDEN_DESCRIPTION =
-  "Warden is the OPEN//77 in-server admin panel: a browser control room for your live server. Stream the console, run commands, hot-reload Lua resources, moderate players, post announcements, edit config and manage admins — without ever restarting.";
+  "Configure Warden, the built-in server administration panel, to manage logs, commands, resources, players, settings and operator roles.";
 
 export const WARDEN_LEDE =
-  "Warden is your live server control room. Open it in a browser from your own PC and run the whole server — console, resources, players and config — while it stays up. It is to an OPEN//77 server what txAdmin is to a FiveM one.";
+  "Manage the server from a browser: console, resources, players, configuration and operator permissions.";
 
 export const WARDEN_OVERVIEW =
-  "A dedicated server is a program on a box somewhere; Warden is the window into it. Instead of tailing a log file over SSH and restarting the process for every change, you open a panel in your browser and drive the running server directly — watch the live console, type commands, reload a resource you just edited, deal with a troublesome player, and push a message to everyone online. Nothing needs a restart, and you never need to be at the machine itself. It is off by default; you turn it on when you want it.";
+  "Warden is bundled with the dedicated server and disabled by default. Many operations apply immediately; configuration and preload changes can require a restart. Check each operation's status before treating it as active.";
 
 export const ENABLE_INTRO =
-  "Warden ships inside the server build — there is nothing extra to download. You switch it on in server.jsonc by enabling the warden block, then restart the server once so the setting takes effect.";
+  "Enable the warden block in server.jsonc, then restart the server.";
 
 export const ENABLE_SAMPLE = `{
   "warden": {
@@ -39,10 +39,10 @@ export const ENABLE_SAMPLE = `{
 }`;
 
 export const ENABLE_NOTE =
-  "The default panel address is http://<host>:11780. On a machine you sit at, that is http://localhost:11780. On a remote box, reach it over an SSH tunnel or VPN rather than opening the port to the world — Warden is full control of your server.";
+  "The default local address is http://localhost:11780. Access remote installations through a VPN or SSH tunnel; avoid exposing the administration port publicly.";
 
 export const PIN_INTRO =
-  "The first time Warden starts, there is no admin account yet — so it prints a one-time setup PIN to the server log. This is how it proves that whoever creates the first admin actually controls the server machine.";
+  "On initial setup, Warden prints a one-time PIN in the server log. Use it to create the first administrator account.";
 
 export const PIN_STEPS = [
   {
@@ -58,7 +58,7 @@ export const PIN_STEPS = [
   {
     num: "03",
     title: "Create your admin account",
-    body: "Set your admin username and password. This becomes the owner account for the panel — full access to everything Warden can do. The setup PIN is spent and will not work again.",
+    body: "Set your admin username and password. This becomes the owner account for the panel, with full access to everything Warden can do. The setup PIN is spent and will not work again.",
   },
   {
     num: "04",
@@ -68,18 +68,18 @@ export const PIN_STEPS = [
 ] as const;
 
 export const CAPABILITIES_INTRO =
-  "Warden is one panel over the whole running server. Everything below happens live, against the server as it is right now — no restart, no redeploy.";
+  "Warden provides the following administrative tools. Restart requirements depend on the operation.";
 
 export const CAPABILITIES = [
   {
     icon: "console",
     title: "Live console & commands",
-    body: "Watch the server's console stream in real time, and type any server command straight into it — the same commands you would run at the machine, from wherever you are. It is your primary window into what the server is doing.",
+    body: "Watch the server's console stream in real time, and type any server command straight into it: the same commands you would run at the machine, from wherever you are. It is your primary window into what the server is doing.",
   },
   {
     icon: "reload",
     title: "Hot-reload Lua resources",
-    body: "Edit a resource, then reload it from the panel and the server picks up the change on the spot — no restart, no dropping the players who are connected. Start, stop and restart individual resources to iterate on a game mode while it is live.",
+    body: "Edit a resource, then reload it from the panel and the server picks up the change on the spot. No restart, no dropping the players who are connected. Start, stop and restart individual resources to iterate on a game mode while it is live.",
   },
   {
     icon: "players",
@@ -89,17 +89,17 @@ export const CAPABILITIES = [
   {
     icon: "announce",
     title: "Announcements",
-    body: "Push a message to everyone on the server at once — a scheduled restart warning, an event kickoff, or a rules reminder — without joining the game yourself.",
+    body: "Push a message to everyone on the server at once (a scheduled restart warning, an event kickoff, or a rules reminder) without joining the game yourself.",
   },
   {
     icon: "config",
     title: "Config & identity",
-    body: "Edit the server's configuration and identity — its name, visibility and public presentation — from the panel, so tuning the server does not mean editing files over SSH and restarting. Upload the server's icon and banner here too: the panel checks the size and shape before it accepts them, and a new image goes live without a restart.",
+    body: "Edit the server's configuration and identity (its name, visibility and public presentation) from the panel, so tuning the server does not mean editing files over SSH and restarting. Upload the server's icon and banner here too: the panel checks the size and shape before it accepts them, and a new image goes live without a restart.",
   },
   {
     icon: "roles",
     title: "Access & roles",
-    body: "Add more admins and give each one a role, so your staff get scoped access — a moderator who can kick and ban without being able to rewrite the config, for instance. You decide who can do what.",
+    body: "Add more admins and give each one a role, so your staff get scoped access: a moderator who can kick and ban without being able to rewrite the config, for instance. You decide who can do what.",
   },
 ] as const;
 
@@ -133,16 +133,16 @@ export function wardenToMarkdown(): string {
 
   lines.push("## First run: the setup PIN", "", PIN_INTRO, "");
   for (const step of PIN_STEPS) {
-    lines.push(`${step.num}. **${step.title}** — ${step.body}`);
+    lines.push(`${step.num}. **${step.title}**: ${step.body}`);
   }
   lines.push("");
 
   lines.push("## What you can do", "", CAPABILITIES_INTRO, "");
-  for (const cap of CAPABILITIES) lines.push(`- **${cap.title}** — ${cap.body}`);
+  for (const cap of CAPABILITIES) lines.push(`- **${cap.title}**: ${cap.body}`);
   lines.push("");
 
   lines.push("## Keeping Warden secure", "", SECURITY_INTRO, "");
-  for (const point of SECURITY_POINTS) lines.push(`- **${point.label}** — ${point.body}`);
+  for (const point of SECURITY_POINTS) lines.push(`- **${point.label}**: ${point.body}`);
   lines.push("");
 
   return `${lines.join("\n")}\n`;

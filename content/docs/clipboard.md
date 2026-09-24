@@ -1,8 +1,6 @@
 # Clipboard API and transform commands
 
-Open77 exposes a write-only client API for copying generated text to the operating-system
-clipboard. It is intended for explicit user actions such as copying coordinates, identifiers, or
-configuration snippets. Lua resources cannot read or inspect the existing clipboard.
+Copy text to the operating-system clipboard with a client resource. The API is write-only and is intended for explicit actions such as copying coordinates, IDs or configuration snippets.
 
 ## Manifest permission
 

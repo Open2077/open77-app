@@ -1,7 +1,5 @@
 # Voice lipsync
 
-> Implemented and tested locally. Do not infer CDN availability from this guide.
-
 Open77's native voice renderer can drive a small mouth-only animation on player
 heads. Lua controls the policy; no Lua loop, custom animation bank or Redscript
 resource is needed. The existing body locomotion, combat and RP animation systems

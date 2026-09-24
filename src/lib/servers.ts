@@ -11,6 +11,8 @@ export type ServerLinks = {
 };
 
 export type GameServer = {
+  /** Directory snapshot for an immediate detail view while its roster loads. */
+  catalog?: CatalogServer;
   /** Stable slug; also the `/servers/<id>` route segment. */
   id: string;
   name: string;
@@ -61,7 +63,7 @@ export const LANGUAGES: ServerLanguage[] = ["EN", "FR", "DE", "ES"];
  * The server directory.
  *
  * Legacy empty data source for the old demo browser. Production uses the live
- * master catalog API below; this placeholder says nothing about preview access
+ * master catalog API below; this placeholder says nothing about Alpha access
  * or the availability of actual servers. Demo fixtures remain separate.
  */
 export const serverDirectory = {
@@ -355,6 +357,7 @@ export function catalogToGameServer(server: CatalogServer): GameServer {
   const website = server.website?.trim() || undefined;
   const discord = server.discord?.trim() || undefined;
   return {
+    catalog: server,
     id: server.id,
     name: server.name,
     desc: server.description ?? "",
@@ -381,11 +384,9 @@ export function catalogToGameServer(server: CatalogServer): GameServer {
  * Fetches the master's public server directory and projects it onto the
  * browser's {@link GameServer} rows.
  *
- * Runs in the browser (a public, unauthenticated GET), exactly like the account
- * client: the master sits behind Cloudflare, which serves CORS for the site's
- * own origin but challenges non-browser fetches, so this must not be called
- * from a server component. Errors surface as `MasterApiError` for the caller to
- * render.
+ * Live browser read (public and unauthenticated), using the same transport as
+ * the account client. Server components use the cached public reads in
+ * `server-catalog.ts` instead. Errors surface as `MasterApiError`.
  */
 export async function fetchServers(): Promise<GameServer[]> {
   const page = await masterCall<CatalogPage>("/api/v1/servers?pageSize=100");
@@ -403,7 +404,7 @@ export async function fetchServers(): Promise<GameServer[]> {
  * (network, 5xx, rate-limit) re-throws as {@link MasterApiError} so the caller
  * can tell "not found" apart from "master unreachable".
  *
- * Runs in the browser for the same Cloudflare/CORS reason as {@link fetchServers}.
+ * Live browser read; static profile generation uses `server-catalog.ts`.
  */
 export async function fetchServer(id: string): Promise<CatalogServer | null> {
   try {
@@ -425,20 +426,20 @@ export async function fetchServer(id: string): Promise<CatalogServer | null> {
 export const LIVE_HEARTBEAT_MAX_AGE_MS = 3 * 60_000;
 
 /** True when the server's last heartbeat is fresh enough to call it live. */
-export function isServerLive(server: Pick<CatalogServer, "lastHeartbeatAtUtc">): boolean {
+export function isServerLive(server: Pick<CatalogServer, "lastHeartbeatAtUtc">, now = Date.now()): boolean {
   const beat = new Date(server.lastHeartbeatAtUtc).getTime();
   if (Number.isNaN(beat)) return false;
-  return Date.now() - beat <= LIVE_HEARTBEAT_MAX_AGE_MS;
+  return now - beat <= LIVE_HEARTBEAT_MAX_AGE_MS;
 }
 
 /**
  * Human uptime since `startedAtUtc`, e.g. "3d 4h", "2h 15m", "8m", "just now".
  * Returns null for an unparseable or future timestamp rather than an odd string.
  */
-export function formatUptime(startedAtUtc: string): string | null {
+export function formatUptime(startedAtUtc: string, now = Date.now()): string | null {
   const started = new Date(startedAtUtc).getTime();
   if (Number.isNaN(started)) return null;
-  const ms = Date.now() - started;
+  const ms = now - started;
   if (ms < 0) return null;
   const minutes = Math.floor(ms / 60_000);
   if (minutes < 1) return "just now";

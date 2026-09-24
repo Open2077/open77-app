@@ -1,7 +1,6 @@
 # Vanilla HUD visibility
 
-Client resources can replace selected Cyberpunk 2077 HUD modules with custom WebUI through
-`Open77.hud`. Declare the capability in the client resource manifest:
+Use `Open77.hud` to hide selected native HUD modules and replace them with resource-owned interfaces. Client resources require `ui.vanilla.hud`:
 
 ```lua
 permissions { "ui.vanilla.hud" }

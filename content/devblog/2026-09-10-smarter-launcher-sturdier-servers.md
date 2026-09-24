@@ -4,7 +4,7 @@ date: "2026-09-10"
 description: "OPEN//77 improved its Cyberpunk 2077 multiplayer mod with launcher diagnostics, direct connect, crash reporting, and sturdier server sync."
 tags: ["cyberpunk-2077-multiplayer", "cyberpunk-2077-multiplayer-mod", "cp2077-multiplayer", "cyberpunk-2077-dedicated-server"]
 ---
-OPEN//77 had a very practical day: better first-run experience in the launcher, better protection against multiplayer session breakage, and stronger tools for diagnosing problems during the Developer Preview. For anyone following our **Cyberpunk 2077 multiplayer mod**, this update is less about flashy content and more about making **Cyberpunk 2077 online** feel smoother and more dependable.
+OPEN//77 had a very practical day: better first-run experience in the launcher, better protection against multiplayer session breakage, and stronger tools for diagnosing multiplayer problems. For anyone following our **Cyberpunk 2077 multiplayer mod**, this update is less about flashy content and more about making **Cyberpunk 2077 online** feel smoother and more dependable.
 
 ## Launcher improvements that make joining easier
 
@@ -60,7 +60,7 @@ This update did not add a flashy headline system like races or PvP, but it stren
 
 Players get easier reconnects, direct connect, smarter diagnostics, and optional crash reporting. Multiplayer sessions get stronger rules around saves and time skipping, plus more resilient network handling. Server owners and admins get better investigation tools and easier build access.
 
-That is exactly the kind of work that helps a **Cyberpunk 2077 RP server** or co-op server survive real player behavior instead of just looking good in a controlled test. It is steady, foundational progress — and during a Developer Preview, that kind of progress is gold.
+That is exactly the kind of work that helps a **Cyberpunk 2077 RP server** or co-op server survive real player behavior instead of just looking good in a controlled test. It is steady, foundational progress that makes building on the platform more reliable.
 
 ---
 

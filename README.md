@@ -1,12 +1,20 @@
 # OPEN//77 — web app
 
-Marketing site, server browser and documentation for OPEN//77, a multiplayer project for
+Marketing site, community resource Hub, server browser and documentation for OPEN//77, a multiplayer project for
 Cyberpunk 2077. Built with Next.js on the App Router and deployed on Vercel.
 
-Every route is prerendered at build time. There is no database, no request-time data fetching and
-no runtime dependency on the platform: the whole site is static HTML, which is what makes the
-documentation legible to search engines, answer engines and coding agents without any of them
-executing JavaScript.
+Documentation and marketing content are prerendered. Public Hub pages read approved
+content from the master API at request time and render their content and metadata
+on the server. Account, moderation and creator workflows also depend on the master;
+private file uploads and downloads use its configured gateway. The app owns no
+database. Documentation and public Hub content remain readable without executing
+client JavaScript.
+
+## Service status
+
+The public `/status` page displays real service checks, 90-day availability, response
+times, detected incidents and maintenance. A standalone persistent collector feeds
+the website; see [operation, deployment and test instructions](docs/service-status.md).
 
 ## Requirements
 
@@ -23,15 +31,29 @@ npm run dev     # http://localhost:3000
 | Script                   | Purpose                                                           |
 | ------------------------ | ----------------------------------------------------------------- |
 | `npm run dev`            | Development server                                                |
-| `npm run build`          | Production build, prerenders every route                          |
+| `npm run build`          | Production build, prerenders static routes                        |
 | `npm start`              | Serves the build; the `verify:served` scripts expect it on `:3000` |
 | `npm run check`          | Typecheck then lint                                               |
+| `npm run test:hub`       | Deterministic Hub tests, Markdown safety and browser-runner guards |
 | `npm run sync:wiki`      | Re-copies the documentation source out of the platform repository |
 | `npm run verify:content` | Checks the synced content before it is built                      |
 | `npm run verify:served`  | Checks the built site over HTTP and in a real browser             |
 | `npm run inspect:output` | Prints what a crawler receives for a sample of pages              |
 | `npm run inspect:prose`  | Prints the prose around each platform-repository file reference   |
 | `npm run screenshot`     | Writes full-page screenshots of every page shape                  |
+
+App CI runs a locked dependency install, `check`, `test:hub` and the production
+build on Node24.19.0. It compiles loopback API targets and does not deploy or claim
+real browser/provider acceptance. For the separate real-site guest scenario, see
+[Hub browser acceptance](docs/community-hub-browser-acceptance.md).
+
+Configure `NEXT_PUBLIC_OP77_MASTER_URL` before building for browser API calls.
+`OP77_COMMUNITY_API_URL` selects the server-side Hub API origin and falls back to
+the browser master origin when absent. Keep credentials out of both URLs. The
+deployment needs working browser-to-master/gateway and server-to-master paths;
+a successful static build alone does not verify those connections. See the
+[operator guide](docs/community-hub-operator-guide.md) and
+[release-readiness report](docs/community-hub-release-readiness.md).
 
 ## Layout
 
@@ -118,6 +140,16 @@ header. Guide content remains authored in the platform wiki.
 
 On this workstation, sync with `npm run sync:wiki -- --from ../base/wiki`.
 The sync also discovers sibling `CyberM`, `open77-base` and `base` checkouts automatically.
+When a feature worktree contains one new guide but lacks unrelated sources from a
+newer vendored snapshot, use the explicit scoped pipeline:
+`npm run sync:wiki -- --from ../hub-base/wiki --only community-hub-warden.md`.
+The selected source must be committed. This preserves unrelated files and manifest
+records, recording the selected guide's `sourceRevision` and `sourceSyncedAt`
+without advancing the full-snapshot timestamp. Verify with the same arguments plus
+`--check`; this checks only that guide and does not claim a complete wiki sync.
+Full sync retains its source requirements and stale-guide removal behavior.
+Run `node --test scripts/test-sync-wiki-scoped.mjs` for the preservation/drift checks.
+
 When another session is implementing a feature, select a clean worktree of the intended
 platform revision with `--from <worktree>/wiki`; do not publish its unfinished working files.
 Set `OPEN77_WIKI_SOURCE` to that same wiki path when running `npm run verify:content`,
@@ -141,11 +173,30 @@ namespaces to the guide in `src/lib/api-reference.ts`. Category membership is ma
 `src/lib/api-categories.ts`. Generate the platform API JSON before syncing; publish only
 implemented contracts and state the required compatible client/server build in each guide.
 
+> **Those two files are not on the platform's `main` branch.** They were published from the
+> `docs/cyberware-public-20260913` branch, which has never been merged: `main` carries an
+> internal `cyberware.md` written as an engineering status report, and no `gorilla-arms.md`
+> at all. A plain `npm run sync:wiki -- --from ../base/wiki` therefore **deletes the Gorilla
+> Arms tutorial and replaces the public cyberware page**, which is why the last sync ran from
+> a staged source: a copy of `main`'s wiki with those two files overlaid from that branch.
+> Merge the branch upstream and this whole exception disappears. Until then, after syncing
+> from `main`, restore both files with
+> `git checkout HEAD -- content/docs/cyberware.md content/docs/gorilla-arms.md`.
+
 Run `node scripts/check-hydration.mjs http://127.0.0.1:3000 --docs` for the focused browser
 checks: filters, deep links, Back, clipboard, themes, sticky navigation and mobile layout.
 This writes review screenshots under `.shots/` (ignored by Git).
 
 ### References to the platform repository
+
+The RP animation guide links public discovery downloads under `/data/`:
+`emote-animations.txt` and `rp-workspots.json`. Refresh them with
+`node scripts/sync-animation-inventories.mjs --from <platform-checkout>` and
+verify with the same command plus `--check`. The exporter records source revision
+and hashes in `animation-inventories.json`; it publishes names and workspot-to-clip
+associations only, not game assets or internal tree details. These inventories
+do not grant playback support; the installed `Open77.animations.clips()` catalogue
+is the runtime reference.
 
 Some guides point at files outside the wiki — datasets under `docs/generated/`, example resources,
 the licence. That repository is not public yet, so `site.links.platformRepo` is `null` and those
@@ -170,9 +221,9 @@ same prerendered output rather than a parallel implementation.
   agents probe for. Route segments cannot carry an extension, so the handlers live under `/md/*`
   and are rewritten into place in `next.config.ts`.
 - **`llms.txt` and `llms-full.txt`.** A structured map of the site, and the entire documentation
-  set concatenated into one 320 KB document, for models that would rather read once than crawl.
+  set concatenated into one 2.4 MB document, for models that would rather read once than crawl.
 - **`robots.txt`** names the known AI crawlers explicitly instead of leaving their access to be
-  inferred, and **`sitemap.xml`** lists all 79 public URLs with `lastmod` taken from the wiki sync.
+  inferred, and **`sitemap.xml`** lists all 229 public URLs with `lastmod` taken from the wiki sync.
 - **Legacy URLs.** The static site's `.html` URLs are already indexed, so each one is a permanent
   redirect to its replacement. `docs.html` maps to `/docs/platform`, which is what that page
   actually was, and it keeps the `#how-it-works` and `#faq` anchors alive.
@@ -227,7 +278,7 @@ npm run verify:served    # the built site, over HTTP and in a real browser
 ### Download release freshness
 
 `/download` shows the **launcher** and **dedicated server** as separate channels.
-`/host` keeps the approved-preview account gate and offers the Windows/Linux
+`/host` keeps the Alpha account gate and offers the Windows/Linux
 archives. Each channel reads its own CDN `latest.json` at request time, with
 `no-store` and a bounded timeout. These two pages are not build-time/ISR release
 snapshots; publishing a pointer updates them without redeploying the website.

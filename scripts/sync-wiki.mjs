@@ -20,9 +20,11 @@ import { existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import path from "node:path";
 import process from "node:process";
+import { execFileSync } from "node:child_process";
 
-import { EXCLUDED_GUIDES, isExcluded } from "./wiki-exclusions.mjs";
+import { APP_OWNED_GUIDES, EXCLUDED_GUIDES, isAppOwned, isExcluded } from "./wiki-exclusions.mjs";
 import { buildNpcCatalogue } from "./npc-catalogue.mjs";
+import { assertEditorialProse, reviewApiEntries } from "./docs-editorial.mjs";
 
 const DEFAULT_SOURCE = process.env.OPEN77_WIKI_SOURCE ?? ["CyberM", "open77-base", "base"]
   .map((directory) => path.join("..", directory, "wiki"))
@@ -34,12 +36,64 @@ const VEHICLE_CATALOGUE_OUT = "public/data/vehicle-weapons-2.31.json";
 
 
 function parseArgs(argv) {
-  const args = { from: DEFAULT_SOURCE, check: false };
+  const args = { from: DEFAULT_SOURCE, check: false, only: null };
   for (let i = 0; i < argv.length; i += 1) {
     if (argv[i] === "--from") args.from = argv[++i] ?? args.from;
     else if (argv[i] === "--check") args.check = true;
+    else if (argv[i] === "--only") {
+      if (args.only !== null) throw new Error("--only may be specified once");
+      args.only = argv[++i];
+      if (!args.only || !/^[A-Za-z0-9][A-Za-z0-9_-]*\.md$/.test(args.only) || isExcluded(args.only))
+        throw new Error("--only requires one non-excluded wiki Markdown filename, without directories");
+    }
   }
   return args;
+}
+
+/** Refresh one base-owned guide without claiming to refresh the rest of a newer
+ * vendored snapshot. Full sync deliberately retains its strict source contract. */
+async function syncSelected(args, sourceDir) {
+  const selected = args.only;
+  if (isAppOwned(selected)) {
+    if (!args.check) throw new Error(`${selected} is site-owned. Merge technical changes manually; see docs/documentation-style.md.`);
+    assertEditorialProse(await readFile(path.join(DOCS_OUT, selected), "utf8"), selected);
+    console.log(`Preserved reviewed guide: ${selected}`);
+    return;
+  }
+  const sourceFile = path.join(sourceDir, selected);
+  const markdown = (await readFile(sourceFile, "utf8")).replace(/\r\n/g, "\n");
+  const target = `${DOCS_OUT}/${selected}`.replace(/\\/g, "/");
+  const manifestPath = path.join(DOCS_OUT, "_manifest.json");
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  if (!Array.isArray(manifest.files)) throw new Error("Scoped sync requires an existing manifest");
+  const slug = selected === "README.md" ? "index" : selected.replace(/\.md$/, "");
+  const previous = manifest.files.filter((record) => record.target === target);
+  if (previous.length > 1) throw new Error("Duplicate selected manifest record");
+  if (existsSync(path.join("content", "guides", selected))) throw new Error("Selected guide collides with authored content");
+  assertEditorialProse(markdown, selected);
+  const digest = sha256(markdown);
+  const revision = execFileSync("git", ["-C", sourceDir, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+  if (!/^[a-f0-9]{40}$/.test(revision)) throw new Error("Source revision is unavailable");
+  execFileSync("git", ["-C", sourceDir, "ls-files", "--error-unmatch", "--", selected], { encoding: "utf8" });
+  const sourceStatus = execFileSync("git", ["-C", sourceDir, "status", "--porcelain", "--", selected], { encoding: "utf8" }).trim();
+  if (sourceStatus) throw new Error("Commit the selected wiki source before recording its provenance");
+  if (args.check) {
+    const current = existsSync(target) ? await readFile(target, "utf8") : null;
+    const record = previous[0];
+    if (current !== markdown || !record || record.sha256 !== digest || record.bytes !== Buffer.byteLength(markdown, "utf8") ||
+        record.source !== `wiki/${selected}` || !/^[a-f0-9]{40}$/.test(record.sourceRevision ?? "") || !record.sourceSyncedAt)
+      throw new Error(`Selected guide or provenance differs: ${target}`);
+    console.log(`up to date: selected guide ${selected}; unrelated source drift was not checked`);
+    return;
+  }
+  const record = { source: `wiki/${selected}`, target, slug, title: extractTitle(markdown, slug),
+    bytes: Buffer.byteLength(markdown, "utf8"), sha256: digest, sourceRevision: revision, sourceSyncedAt: new Date().toISOString() };
+  manifest.files = previous.length ? manifest.files.map((entry) => entry.target === target ? record : entry) : [...manifest.files, record];
+  manifest.guides = manifest.files.filter((entry) => "slug" in entry).length;
+  // Preserve the full-snapshot timestamp and all unselected record metadata.
+  await writeFile(target, markdown, "utf8");
+  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+  console.log(`synced selected guide ${selected} from ${revision}; unrelated files preserved`);
 }
 
 function sha256(text) {
@@ -66,6 +120,8 @@ async function collectMarkdown(sourceDir) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const sourceDir = path.resolve(args.from);
+
+  if (args.only) return syncSelected(args, sourceDir);
 
   if (!existsSync(sourceDir)) {
     // The vendored content is committed precisely so a build needs no platform
@@ -101,9 +157,26 @@ async function main() {
   const records = [];
   const writes = [];
 
+  // A site-owned guide keeps the record it already has: this sync never reads
+  // or writes its file, so it has no bytes or digest of its own to compute.
+  const manifestPath = path.join(DOCS_OUT, "_manifest.json");
+  const previousManifest = existsSync(manifestPath)
+    ? JSON.parse(await readFile(manifestPath, "utf8"))
+    : null;
+
   for (const name of markdownFiles) {
+    // A guide the site maintains itself keeps its manifest record -- it is
+    // still published and still counted -- but is never written or compared:
+    // its site copy differing from the wiki is the point, not drift.
+    if (isAppOwned(name)) {
+      const target = `${DOCS_OUT}/${name}`.split(path.sep).join("/");
+      const existing = previousManifest?.files?.find((record) => record.target === target);
+      if (existing) records.push(existing);
+      continue;
+    }
     const text = await readFile(path.join(sourceDir, name), "utf8");
     const normalised = text.replace(/\r\n/g, "\n");
+    assertEditorialProse(normalised, name);
     const slug = name === "README.md" ? "index" : name.replace(/\.md$/, "");
     records.push({
       source: `wiki/${name}`,
@@ -116,7 +189,13 @@ async function main() {
     writes.push({ file: path.join(DOCS_OUT, name), text: normalised });
   }
 
-  const apiText = (await readFile(apiSource, "utf8")).replace(/\r\n/g, "\n");
+  for (const [name] of APP_OWNED_GUIDES) {
+    if (markdownFiles.includes(name)) continue;
+    const existing = previousManifest?.files?.find((record) => record.target?.replaceAll("\\", "/") === `${DOCS_OUT}/${name}`);
+    if (existing) records.push(existing);
+  }
+
+  const apiText = JSON.stringify(reviewApiEntries(JSON.parse(await readFile(apiSource, "utf8"))), null, 1) + "\n";
   const apiEntries = JSON.parse(apiText);
   if (!Array.isArray(apiEntries)) {
     throw new Error("api.json is expected to be an array of API entries");
@@ -143,6 +222,48 @@ async function main() {
     entries: doorExports.length, bytes: Buffer.byteLength(doorsText, "utf8"), sha256: sha256(doorsText),
   });
   writes.push({ file: path.join(API_OUT, "door-service-api.json"), text: doorsText });
+
+  // The companion catalogues the Devkit MCP reads next to api.json: enforced
+  // permissions, open77:* events and the published-build table that gives
+  // every card its `since`. Generated in base by wiki/tools; vendored verbatim
+  // so the index builder in open77-devkit needs only this public content.
+  // A base checkout that predates the companion catalogues (or a branch without
+  // them) keeps the vendored copies: the sync warns instead of failing, so
+  // verify:content on main does not depend on which base branch is checked out.
+  const companionsDir = path.join(sourceDir, "data");
+  const hasCompanions = existsSync(path.join(companionsDir, "permissions.json"));
+  if (!hasCompanions) console.warn(`  companion catalogues absent in ${companionsDir}; keeping the vendored content/api copies`);
+  for (const name of hasCompanions ? ["permissions.json", "events.json", "releases.json"] : []) {
+    const text = (await readFile(path.join(sourceDir, "data", name), "utf8")).replace(/\r\n/g, "\n");
+    const parsed = JSON.parse(text);
+    const key = name.replace(".json", "");
+    if (!Array.isArray(parsed[key]) || parsed[key].length === 0) {
+      throw new Error(`${name} must carry a non-empty "${key}" array`);
+    }
+    records.push({
+      source: `wiki/data/${name}`, target: `${API_OUT}/${name}`,
+      entries: parsed[key].length, bytes: Buffer.byteLength(text, "utf8"), sha256: sha256(text),
+    });
+    writes.push({ file: path.join(API_OUT, name), text });
+  }
+
+  // The slim game-data catalogues (names and record ids the server itself
+  // answers Open77.data.* from) and the two schemas a resource author writes
+  // against. Whole directories, vendored file by file.
+  for (const folder of hasCompanions ? ["catalogues", "schemas"] : []) {
+    const sourceFolder = path.join(sourceDir, "data", folder);
+    const names = (await readdir(sourceFolder)).filter((entry) => entry.endsWith(".json")).sort();
+    if (names.length === 0) throw new Error(`wiki/data/${folder} is empty`);
+    for (const name of names) {
+      const text = (await readFile(path.join(sourceFolder, name), "utf8")).replace(/\r\n/g, "\n");
+      JSON.parse(text);
+      records.push({
+        source: `wiki/data/${folder}/${name}`, target: `${API_OUT}/${folder}/${name}`,
+        bytes: Buffer.byteLength(text, "utf8"), sha256: sha256(text),
+      });
+      writes.push({ file: path.join(API_OUT, folder, name), text });
+    }
+  }
 
   // Published alongside its guide: exact typed TweakDB extraction, not a
   // hand-maintained list or a claim that every appearance has been tested.
@@ -200,12 +321,17 @@ async function main() {
       throw new Error(`${drift} vendored file(s) differ from the wiki — run \`npm run sync:wiki\``);
     }
     console.log(`up to date: ${manifest.guides} guides, ${manifest.apiEntries} API entries`);
+    for (const [name, owner] of APP_OWNED_GUIDES) {
+      console.log(`  site-owned, not compared: ${name} — ${owner}`);
+    }
     return;
   }
 
-  // Drop guides that were removed upstream so deletions propagate.
+  // Drop guides that were removed upstream so deletions propagate. A
+  // site-owned guide is kept: it is not written by this sync, but it is also
+  // not stale.
   if (existsSync(DOCS_OUT)) {
-    const keep = new Set(markdownFiles);
+    const keep = new Set([...markdownFiles, ...APP_OWNED_GUIDES.keys()]);
     for (const entry of await readdir(DOCS_OUT, { withFileTypes: true })) {
       if (entry.isFile() && entry.name.endsWith(".md") && !keep.has(entry.name)) {
         await rm(path.join(DOCS_OUT, entry.name));
@@ -218,6 +344,7 @@ async function main() {
   await mkdir(API_OUT, { recursive: true });
   await mkdir(path.dirname(VEHICLE_CATALOGUE_OUT), { recursive: true });
   for (const write of writes) {
+    await mkdir(path.dirname(write.file), { recursive: true });
     await writeFile(write.file, write.text, "utf8");
   }
   await writeFile(
@@ -229,6 +356,9 @@ async function main() {
   console.log(`synced ${manifest.guides} guides and ${manifest.apiEntries} API entries`);
   for (const [name, reason] of EXCLUDED_GUIDES) {
     console.log(`  held back: ${name} — ${reason}`);
+  }
+  for (const [name, owner] of APP_OWNED_GUIDES) {
+    console.log(`  site-owned, left untouched: ${name} — ${owner}`);
   }
   console.log(`  from ${sourceDir}`);
   const totalKb = (

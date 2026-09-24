@@ -18,13 +18,13 @@ import {
 export const PLATFORM_TITLE = "How OPEN//77 works";
 
 export const PLATFORM_DESCRIPTION =
-  "What OPEN//77 is and is not, how players connect, why it is built on dedicated servers rather than peer-to-peer sessions, what server creators can change, the project roadmap, and answers to the questions people ask most.";
+  "Overview of the OPEN//77 multiplayer platform, player requirements, dedicated servers and Lua resources.";
 
 export const PLATFORM_LEDE =
-  "The active OPEN//77 Developer Preview: the platform, dedicated servers and creator toolkit available today, with current requirements and preview limitations.";
+  "Connect players to community-operated Cyberpunk 2077 servers and build gameplay with Lua resources.";
 
 export const PLATFORM_OVERVIEW =
-  "OPEN//77 is an open platform that brings community-run multiplayer servers to Cyberpunk 2077 — the way FiveM opened GTA V. Not one server: an ecosystem of them, each with its own game mode, rules and community.";
+  "OPEN//77 is a multiplayer platform for Cyberpunk 2077. Each community operates its own dedicated server, gamemode and rules.";
 
 export const IS_NOT = [
   "One official multiplayer server run by us",
@@ -41,15 +41,15 @@ export const IS = [
 ];
 
 export const REQUIREMENTS_INTRO =
-  `Two of these are stricter than the usual "you need the game" line, so they are worth stating plainly: the client is built against game build ${GAME_BUILD} specifically rather than that version or newer, and ${GAME_EXPANSION} is required rather than recommended. One more thing is not negotiable: OPEN//77 does not accept piracy. You buy Cyberpunk 2077, or you do not play on it.`;
+  "Players need a legal copy of Cyberpunk 2077 at the exact supported game build, with Phantom Liberty installed. Newer game builds are not automatically compatible; see the requirements below.";
 
 export const REQUIREMENTS_SERVER_INTRO =
-  "Hosting is a different list. A dedicated server is a normal server process and has no relationship with the game at all.";
+  "The dedicated server runs independently of the game and does not require game assets.";
 
 export const PLAYER_STEPS = [
   {
     title: "Own the game",
-    body: `OPEN//77 requires your own legal copy of Cyberpunk 2077, at build ${GAME_BUILD}, with ${GAME_EXPANSION}. The platform never distributes game content — it builds on the game you bought. Pirated or cracked copies are not supported and not welcome.`,
+    body: `OPEN//77 requires your own legal copy of Cyberpunk 2077, at build ${GAME_BUILD}, with ${GAME_EXPANSION}. The platform never distributes game content. It builds on the game you bought. Pirated or cracked copies are not supported and not welcome.`,
   },
   {
     title: "Install the client",
@@ -68,7 +68,7 @@ export const PLAYER_STEPS = [
 export const SERVER_POINTS = [
   {
     title: "Persistent worlds",
-    body: "The world keeps running when you log off. Economies, factions and stories continue — the server remembers.",
+    body: "The world keeps running when you log off. Economies, factions and stories continue. The server remembers.",
   },
   {
     title: "Authoritative state",
@@ -76,19 +76,19 @@ export const SERVER_POINTS = [
   },
   {
     title: "Operated by communities",
-    body: "Server owners can download the Windows or Linux build, configure their platform license, and run their own worlds. Joining worlds during Developer Preview requires an approved player account.",
+    body: "Everyone with Alpha access can download the Windows or Linux server, configure their platform license and build their own worlds. No separate developer application is required. Players need Alpha access to join.",
   },
 ];
 
 export const DEDICATED_INTRO =
-  "OPEN//77 is built around real dedicated servers, not peer-to-peer sessions. A server is a persistent process that a community operates — it holds the authoritative state of its world, and players connect to it.";
+  "A dedicated server owns shared world state and accepts player connections. OPEN//77 does not use peer-to-peer sessions.";
 
 /**
  * Split around its one inline link so the page and the Markdown projection are
  * built from the same words instead of two copies that drift.
  */
 export const RESOURCES_INTRO_PARTS = {
-  lead: "A server is only as interesting as what runs on it. Gameplay is packaged as ",
+  lead: "Gameplay is packaged as ",
   linkLabel: "resources",
   linkHref: "/docs/server-resources",
   tail: ": self-contained directories with a manifest, Lua scripts, declared permissions, dependencies and optional web interfaces. The server picks the resource set for a session; connecting clients download it, verify its signature and content hashes, and activate it before entering the world.",
@@ -158,17 +158,17 @@ export const SERVER_SAMPLE = `RegisterCommand("hello", function(source, args)
 end, false)`;
 
 export const RESOURCES_OUTRO =
-  "Every registered function is listed in the Lua API reference at /docs/api, separated by runtime so a client projection is never mistaken for server authority. APIs can change during Developer Preview; read each guide's limitations before depending on a feature.";
+  "Every registered function is listed in the Lua API reference at /docs/api, separated by runtime so a client projection is never mistaken for server authority. APIs can change during Alpha; read each guide's limitations before depending on a feature.";
 
 export const ROADMAP_INTRO =
-  "Developer Preview is active. The launcher, Windows/Linux dedicated server, live directory and Lua documentation are available now. Joining requires an approved account. The next milestones focus on reliability and feedback, not a promise of a stable release date.";
+  "Alpha members can play, download the server and build custom gamemodes now. Development priorities include reliability, compatibility and the resource ecosystem; release dates are not guaranteed.";
 
 export const ROADMAP = [
   {
     stage: "NOW",
-    chip: "DEVELOPER PREVIEW",
+    chip: "ALPHA",
     title: "Build and test today",
-    body: "Published launcher and server packages, Freeroam with integrated activities, a live server browser, WebUI and documented client/server Lua APIs. Access is approved per account.",
+    body: "Launcher and Windows/Linux server packages, Freeroam, a live server browser, WebUI and documented client/server Lua APIs. Everyone with Alpha access can start building without a separate developer application.",
   },
   {
     stage: "NEXT",
@@ -183,7 +183,7 @@ export const ROADMAP = [
   {
     stage: "BEYOND",
     title: "The ecosystem",
-    body: "Featured communities, server reputation, resource sharing between servers — the parts that only matter once real worlds exist. The community will shape these.",
+    body: "Featured communities, server reputation, resource sharing between servers: the parts that only matter once real worlds exist. The community will shape these.",
   },
 ];
 
@@ -198,7 +198,7 @@ export const FAQ = [
   {
     question: "Is OPEN//77 official? Is CD PROJEKT RED involved?",
     answer:
-      "No. OPEN//77 is an independent community project. It is not affiliated with, endorsed by, or supported by CD PROJEKT RED. Cyberpunk 2077 is the property of CD PROJEKT S.A. — we build alongside the game, not on their behalf.",
+      "No. OPEN//77 is an independent community project. It is not affiliated with, endorsed by, or supported by CD PROJEKT RED. Cyberpunk 2077 is the property of CD PROJEKT S.A. We build alongside the game, not on their behalf.",
   },
   {
     question: "Do I need to own Cyberpunk 2077?",
@@ -208,12 +208,12 @@ export const FAQ = [
   {
     question: "Does OPEN//77 work with pirated or cracked copies?",
     answer:
-      "No — and it never will, as a matter of principle, not just engineering. This project exists because we love Cyberpunk 2077; buying the game and its expansion is how the studio that made it gets paid, and it is the baseline for being part of this community. Pirated and cracked installations are unsupported, receive no help in any community channel, and server operators are expected to turn them away. If you cannot buy the game yet, wait for a sale — do not pirate it.",
+      "No. A legal copy of Cyberpunk 2077 and its required expansion is mandatory. Pirated or cracked installations are unsupported.",
   },
   {
     question: `Is ${GAME_EXPANSION} required, or only recommended?`,
     answer:
-      `Required. The expansion ships as the EP1 content set, and the world the client loads when you connect to a server is an EP1 save — without the expansion installed there is nothing for it to load. The base game on its own is not enough.`,
+      `Required. The expansion ships as the EP1 content set, and the world the client loads when you connect to a server is an EP1 save. Without the expansion installed there is nothing for it to load. The base game on its own is not enough.`,
   },
   {
     question: "Do I need Cyberpunk 2077 to host a server?",
@@ -223,17 +223,17 @@ export const FAQ = [
   {
     question: "So is this one big multiplayer server?",
     answer:
-      "No — and this is the core idea. OPEN//77 is the platform underneath many servers. Communities run their own independent worlds with their own game modes and rules; the client lets you browse and join them. If FiveM's model for GTA V is familiar, that is the shape.",
+      "No, and this is the core idea. OPEN//77 is the platform underneath many servers. Communities run their own independent worlds with their own game modes and rules; the client lets you browse and join them. If FiveM's model for GTA V is familiar, that is the shape.",
   },
   {
     question: "Can I play it right now?",
     answer:
-      "Developer Preview is active. You can download the launcher and browse live servers now; joining requires approval for your OPEN//77 account. Apply through the creator page, then sign into the launcher with your approved account. Expect bugs, crashes and incomplete features — this is not a stable release.",
+      "Yes, with Alpha access. Download the launcher and sign in with your approved OPEN//77 account to join a server. Need access? Use the bot command /alpha apply in any channel on our official Discord. Alpha can still have bugs, crashes and incomplete features; this is not a stable release.",
   },
   {
     question: "Can I host my own server?",
     answer:
-      "Yes. Windows and Linux server packages are available now, with the Freeroam template and system resources included. Follow the hosting guide, configure your server license and reachable endpoints, and connect through the production master. Your players still need approved Developer Preview accounts.",
+      "Yes. Everyone with Alpha access can download the Windows or Linux server and start developing, with no separate developer application or special access required. The Freeroam template and system resources are included. Follow the hosting guide, configure your license and reachable endpoints, and invite other Alpha players.",
   },
   {
     question: "What can server creators actually customize?",
@@ -248,7 +248,7 @@ export const FAQ = [
   {
     question: "How much will it cost?",
     answer:
-      "OPEN//77 is a community project, not a storefront. The platform itself is intended to be free to play on. Beyond that, honest answer: sustainability decisions come after a working platform, and they will be discussed in the open.",
+      "The platform is intended to be free to use. Players must purchase Cyberpunk 2077 and the required expansion; server owners cover their hosting costs.",
   },
 ];
 
@@ -265,24 +265,24 @@ export function platformToMarkdown(): string {
 
   lines.push("## How it works (for players)", "");
   PLAYER_STEPS.forEach((step, index) => {
-    lines.push(`${index + 1}. **${step.title}** — ${step.body}`);
+    lines.push(`${index + 1}. **${step.title}**: ${step.body}`);
   });
   lines.push("");
 
   lines.push("## Requirements", "", REQUIREMENTS_INTRO, "");
   lines.push("### To play", "");
-  for (const item of PLAYER_REQUIREMENTS) lines.push(`- **${item.label}** — ${item.body}`);
+  for (const item of PLAYER_REQUIREMENTS) lines.push(`- **${item.label}**: ${item.body}`);
   lines.push("", "### To host a server", "", REQUIREMENTS_SERVER_INTRO, "");
-  for (const item of SERVER_REQUIREMENTS) lines.push(`- **${item.label}** — ${item.body}`);
+  for (const item of SERVER_REQUIREMENTS) lines.push(`- **${item.label}**: ${item.body}`);
   lines.push("");
 
   lines.push("## Dedicated servers", "", DEDICATED_INTRO, "");
-  for (const point of SERVER_POINTS) lines.push(`- **${point.title}** — ${point.body}`);
+  for (const point of SERVER_POINTS) lines.push(`- **${point.title}**: ${point.body}`);
   lines.push("");
 
   lines.push("## Resources and scripting", "", RESOURCES_INTRO, "");
   lines.push("Documented systems:", "");
-  for (const item of SCRIPTABLE) lines.push(`- **${item.label}** (${item.href}) — ${item.body}`);
+  for (const item of SCRIPTABLE) lines.push(`- **${item.label}** (${item.href}): ${item.body}`);
   lines.push("", "Resource manifest (`resources/hello/open77.lua`):", "");
   lines.push("```lua", MANIFEST_SAMPLE, "```", "");
   lines.push("Server entry point (`resources/hello/server/main.lua`):", "");
@@ -291,7 +291,7 @@ export function platformToMarkdown(): string {
 
   lines.push("## Roadmap", "", ROADMAP_INTRO, "");
   for (const item of ROADMAP) {
-    lines.push(`### ${item.stage}${item.chip ? ` (${item.chip})` : ""} — ${item.title}`, "", item.body, "");
+    lines.push(`### ${item.stage}${item.chip ? ` (${item.chip})` : ""}: ${item.title}`, "", item.body, "");
   }
 
   lines.push("## FAQ", "");

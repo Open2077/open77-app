@@ -1,13 +1,8 @@
 # Cross-resource server exports
 
-Server resources can publish and call **asynchronous exports**, using the same
-Lua surface as client resources. Each resource still has its own Lua VM: globals,
-functions, handles and mutable tables are not shared.
+Publish and call cross-resource server functions synchronously with `exports.resource:name(...)` or asynchronously with `Open77.exports.call(...)`. Each resource retains its own Lua VM; calls do not share globals, functions, handles or mutable tables.
 
-This requires a server build containing the server-export runtime. Updating a
-Lua package or the website alone does not add the feature to an older server.
-No client update is required. The client and server export registries are
-separate: a server export is not a client RPC or a network event.
+Client and server export registries are separate. A server export is neither a client RPC nor a network event.
 
 ## Publish a service
 
@@ -70,6 +65,57 @@ RegisterCommand('score_demo', function(playerId)
 end, true)
 ```
 
+## Or call it synchronously
+
+The FiveM spelling works too, and returns the export's values directly instead of
+a Promise:
+
+```lua
+local score = exports.score_service:add(playerId, 10)
+local stored = exports['open77-garage']:store(vehicleId)
+```
+
+A resource name with a hyphen only works through the bracket form, exactly as in
+FiveM; `exports.res.name(...)` with a dot works as well, because the proxy
+recognises and drops the `self` the colon inserts.
+`Open77.exports.callSync(resource, name, ...)` is the same path without the
+sugar, for when the export name is in a variable.
+
+The call runs **inline on the host scheduler thread**. Every server resource VM
+already runs on that one thread, and the scripting host holds no lock while a VM
+executes, so entering a second VM from inside the first is a plain nested call:
+there is nothing to contend for, and therefore nothing that can deadlock. The
+callee's body finishes before the call expression returns — no queue, no tick
+boundary, no Promise.
+
+Four consequences, and each is worth knowing before choosing this form:
+
+- **The callee must not yield.** `Wait`, `:await()` and the MySQL `.await` helper
+  fail the call with `export_yielded`: there is no scheduler underneath a
+  synchronous callee to yield to. That is the dividing line between the two
+  forms — if the callee can be slow, or touches the database, network or HTTP,
+  use `Open77.exports.call`.
+- **Failure raises instead of returning `nil, reason`.** This is deliberate and
+  it is the one place Open77 breaks its own convention. FiveM raises, ported
+  resources are written for that, and a raise is the only way to keep "the export
+  returned nil" distinguishable from "the call never happened". Wrap it in
+  `pcall` when you want to decide for yourself. The asynchronous form keeps
+  `nil, reason` unchanged.
+- **Recursion is capped at 8 frames.** A → B → A works and is supported; the
+  ninth nested frame fails with `export_recursion_limit`. The cap exists because
+  each frame costs a real host stack frame across two Lua states, and Lua's own
+  C-stack guard only counts frames inside one state.
+- **A resource may call its own export.** It is an ordinary nested call, arguments
+  and results still copied, and it counts toward the cap. Unlike the asynchronous
+  self-call, which is deferred to the next tick, this one runs now.
+
+Budgets stay where they belong. The callee runs with **its own** instruction
+counter, reset for the call and restored after it, so a callee that burns its
+budget fails that one call with `export_budget_exhausted` and leaves the caller
+running. `source` is cleared for the duration and restored afterwards, so a
+synchronous export is no more proof of a player's identity than an asynchronous
+one — including on a self-call, where both sides share the same VM global.
+
 Enable `race_mode` in the server's resource selection; its dependency starts the
 service first. Keep the existing resources enabled. The restricted command uses
 the normal `command.score_demo` ACL. A declared dependency controls ordering and
@@ -85,7 +131,10 @@ Start initial requests from a scheduled thread or `onResourceStart` instead.
 
 - `exports(name, function)` publishes or replaces a function in this VM.
 - `Open77.exports.call(resource, name, ...)` returns a Promise or `nil, reason`.
-  There is no `exports.resource:method()` proxy.
+- `exports.resource:method(...)` and `Open77.exports.callSync(resource, name, ...)`
+  run the callee inline and return its values, or **raise**. See the synchronous
+  section above; `exports` is both the registration call and the proxy, and
+  neither it nor a proxy can be assigned to.
 - `promise:await()` returns the function's values, including multiple values and
   nil holes. A rejected call returns `nil, reason`; `promise:status()` reports
   `pending`, `resolved`, `rejected` or `cancelled`. A service may also deliberately
@@ -115,9 +164,11 @@ it changes on reload and returns `0` if the provider is no longer running. With
 no argument it returns this VM's generation. These identities are local to the
 server process, not durable IDs to persist across a server restart.
 
-`TriggerEvent` remains local to one server VM. This feature does **not** turn it
-into a cross-resource event bus. Host lifecycle/player events retain their existing
-fan-out; client/server communication still uses authenticated network events.
+Exports and events are different tools. `TriggerEvent` publishes on the host-wide
+bus (every running resource that handles the name receives it on the next tick,
+see [the host-wide event bus](server-api.md#the-host-wide-event-bus)); an export is
+a synchronous call with a return value. Client/server communication still uses
+authenticated network events.
 
 ## Values, limits and lifecycle
 
@@ -159,10 +210,23 @@ Common refusal reasons:
 | `export_request_limit`, `export_target_busy`, `export_registration_limit` | A request, task or registration quota was reached. |
 | `await_requires_scheduler_coroutine` | A pending Promise was awaited outside a managed task. |
 | `export_resource_stopped`, `export_timeout`, `promise_cancelled` | The request's lifetime ended. |
+| `export_target_stopped` | Synchronous: the provider is stopping or not yet active. |
+| `export_recursion_limit` | Synchronous: the chain already has 8 frames. |
+| `export_yielded` | Synchronous: the callee tried to `Wait` or `await`. |
+| `export_budget_exhausted` | Synchronous: the callee burned its own instruction budget. |
+| `export_raised` | Synchronous: the callee raised; its message follows the reason. |
 
-Lua handler errors reject the Promise with the bounded Lua error text. An export
-is not automatically registered as a network event, and an export failure alone
-does not stop otherwise healthy resources.
+Lua handler errors reject the Promise with the bounded Lua error text, and raise
+in the caller with the same text on the synchronous path. An export is not
+automatically registered as a network event, and an export failure alone does not
+stop otherwise healthy resources.
+
+A synchronous chain pins every VM it passes through for the length of the call.
+`Stop` and `Reload` refuse a resource that is on such a chain, with
+`stop refused: a synchronous export call is still on the stack` in the log,
+rather than disposing a Lua state that is still executing. Nothing in the current
+host can reach `Stop` from inside a VM callback, so this is a guard rather than a
+behaviour you should ever see.
 
 See the [server API reference](server-api.md#cross-resource-exports),
 [official client resource exports](resource-exports.md), and

@@ -1,18 +1,12 @@
 # Armed vehicles and weapon Lua API
 
-Read mounted armament from client resources to build vehicle HUDs, ammo displays and developer tools.
-These APIs distinguish **declared model mounts**, **actual attached weapon objects** and
-**the driver's selected weapons**. See the [spawn catalogue](armed-vehicles.md) for model IDs.
+Read mounted armament from client Lua for vehicle HUDs and diagnostics. The API distinguishes declared model mounts, attached weapon objects and the driver's selected weapons. Find model IDs in the [spawn catalogue](armed-vehicles.md).
 
 ## Release and compatibility
 
-Vehicle-weapon replication and the twelve client getters below ship in **Open77
-2.31.13+op77.53**, using **network protocol 1.24**, for Cyberpunk 2077 2.31
-(game build 23100). Update the client and dedicated server together: protocol
-1.23 peers cannot join a 1.24 session. Updating a CDN package does not update a
-running dedicated server; its operator must install the matching release.
+Requires client and server **2.31.13+op77.53** or later, with compatible network protocols, on Cyberpunk 2077 **2.31 / build 23100**. The feature was introduced with protocol **1.24**; protocol **1.23** cannot join a **1.24** session.
 
-This is **Developer Preview** functionality, not a claim that every armed model
+This is **experimental** functionality, not a claim that every armed model
 or visual effect is fully validated. Keep `open77_vehicles` loaded for the shared
 vehicle helpers and diagnostic commands. Native replication runs in the client
 and server binaries; a HUD resource does not need to forward shots itself.
@@ -46,23 +40,17 @@ effect. There is currently **no public Lua mounted-weapon fire/select/ammo sette
 Use the read-only API for HUDs; use server-side vehicle and combat policy for
 shared world changes.
 
-## What has been validated
+## Model-specific armament
 
-The following observations used exact model records and two private clients.
-They do not certify every appearance in the same family.
+Examples of model-specific armament. Other appearances can attach a different subset of declared mounts.
 
-| Exact model | Confirmed observations |
+| Model | Armament |
 |---|---|
-| `Vehicle.v_militech_basilisk` | Four attached mounts; cannon shots and impacts delivered to the observer; vehicle damage and PvP damage/respawn exercised; native missile and countermeasure projectile streams observed. |
-| `Vehicle.v_sport1_herrera_outlaw_heist_player` | Two mounted machine guns; accepted rounds applied canonical vehicle damage without duplicate charges. |
-| `Vehicle.v_sport2_mizutani_shion_nomad_player_missiles` | Nine declared mounts, three attached objects at indices 5, 6 and 8; MG selection uses 5/6, missile selection uses 8; native salvos and selection reached the observer. |
+| `Vehicle.v_militech_basilisk` | Four attached mounts, with cannon, missile and countermeasure projectile streams. |
+| `Vehicle.v_sport1_herrera_outlaw_heist_player` | Two mounted machine guns. |
+| `Vehicle.v_sport2_mizutani_shion_nomad_player_missiles` | Nine declared mounts; attached indices 5/6 are MGs and 8 is a missile launcher. |
 
-**Still limited or awaiting acceptance:** remote/passenger ammunition, heat,
-reload and lock details are not replicated; observer weapon-deployment meshes,
-audio fidelity, NPC damage and overlapping missile-hit association still need
-further acceptance. `weapon.active` confirms selected state, not that an observer's
-gun mesh is visibly deployed. Missing local native data must remain unavailable
-in a HUD rather than guessed.
+Remote and passenger ammunition, heat, reload and lock details are not replicated. Observer weapon deployment and audio may differ from the driver's view; NPC damage and overlapping missile-hit association are experimental. `weapon.active` reports selection, not visible mesh deployment. Display unavailable native data as unavailable rather than estimating it.
 
 ## Current damage policy
 
@@ -77,10 +65,7 @@ invulnerability and Lua damage arbitration still apply.
 | Countermeasure | 15 | 0.025 |
 | Machine gun | 12 | 0.012 |
 
-The server requires an admitted projectile terminal and a plausible canonical
-target in the same bucket, and deduplicates repeated projectile/target receipts.
-Clients cannot choose the damage price. NPC damage has an implementation path
-but is not yet live-validated by the vehicle-weapon acceptance tests.
+Damage requires an admitted projectile terminal and a plausible canonical target in the same bucket. Repeated projectile/target receipts are deduplicated; clients cannot set the damage value. NPC damage remains experimental.
 
 ## Start with a known model
 
@@ -90,10 +75,7 @@ to create a network vehicle from the server console or a resource with
 appearance attaches every declared mount. Enter normally or use the existing
 server-authoritative seat APIs, then inspect it with `getWeaponState`.
 
-Selection and firing use the game's vehicle controls, including player rebinds.
-In the tested default PC controls, `1` selects the Shion's MGs and `2` its missile
-launcher. Treat those as an observed binding, not a hard-coded Open77 key API.
-Do not assume an ordinary Outlaw or Shion variant is the armed player variant.
+Selection and firing follow the player's vehicle bindings. Do not hard-code weapon-selection keys. Use the exact armed model record: ordinary Outlaw or Shion variants may not carry weapons.
 
 ## Manifest and runtime
 
@@ -315,8 +297,3 @@ server exports or authorize client-side firing, ammo mutation or damage.
 | Client cannot join after updating | Confirm both peers use protocol 1.24 and a matching release before investigating the model. |
 
 ## Sources
-
-- [Vehicle weapon research](../docs/research/vehicle-weapons-and-combat.md): measured native callbacks, two-client tests, failure analysis and remaining acceptance work.
-- [Catalogue exporter](../scripts/research/vehicle-weapons-catalog/Program.cs): typed base/Phantom Liberty TweakDB extraction, not per-appearance runtime validation.
-- [Authoritative catalogue](../server/src/Open77.Server.Core/Vehicles/vehicle-weapons-2.31.json): exact model/mount/item/slot associations used by the server.
-- [Spawn catalogue and source-field caveats](armed-vehicles.md): all 172 records, the 15 mount definitions and validated examples.

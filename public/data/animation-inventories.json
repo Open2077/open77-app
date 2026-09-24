@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "sourceRevision": "75f0e59cfa26606e83d9257ec1c7c07c6929c977",
+  "gameVersion": "2.31",
+  "evidence": "asset_discovery_not_a_playback_allowlist",
+  "files": [
+    {
+      "url": "/data/emote-animations.txt",
+      "source": "docs/data/emote-animations.txt",
+      "entries": 23044,
+      "bytes": 1137682,
+      "sha256": "1331a2d3e0fa742f809fd084d668d92256236be3eafed0bd63ee1e0050d80af0"
+    },
+    {
+      "url": "/data/rp-workspots.json",
+      "source": "docs/data/rp-workspots.json",
+      "entries": 494,
+      "bytes": 1165360,
+      "sha256": "34e91a602d1e5447d97aa77da74dcc5f1a890b1ad307eff56ad94dc9e548b452"
+    }
+  ]
+}

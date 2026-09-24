@@ -233,7 +233,7 @@ export function UsersPanel() {
         Manual e-mail verification is for delivery problems after checking the account owner&apos;s identity.
         {" "}
         Suspension blocks sign-in and invalidates active sessions on their next request; it does not
-        touch the account&apos;s licenses — revoke those separately if needed.
+        touch the account&apos;s licenses. Revoke those separately if needed.
       </p>
     </section>
   );

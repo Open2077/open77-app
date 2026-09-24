@@ -14,13 +14,13 @@
 export const HOSTING_TITLE = "Host your own server";
 
 export const HOSTING_DESCRIPTION =
-  "A step-by-step guide to running your own OPEN//77 dedicated server: get the Windows or Linux build, mint a license key, walk the first-run setup, edit server.jsonc, launch it, and watch it appear automatically in the launcher.";
+  "Install and configure an OPEN//77 dedicated server on Windows or Linux: downloads, license keys, first-run setup, network endpoints and startup.";
 
 export const HOSTING_LEDE =
-  "Host your own Night City in the active Developer Preview. Download the server, configure your license and reachable endpoints, and invite approved preview accounts. The host does not need Cyberpunk 2077 installed.";
+  "Everyone with Alpha access can download and run a dedicated server, with no separate developer application. Configure its license and reachable endpoints, then invite Alpha players. Cyberpunk 2077 is not required on the host.";
 
 export const HOSTING_OVERVIEW =
-  "An OPEN//77 server is a small, self-contained program you run on any Windows or Linux box. You point it at a license key so the platform knows it is yours, tell it its name and public address, and start it. From there it enrols with the master, registers itself, and shows up in every player's launcher within a heartbeat — no manual listing, no ticket, no waiting for approval. This guide walks the whole path, from an empty folder to open doors.";
+  "The dedicated server is a self-contained Windows or Linux application. It uses a platform license to register with the Master and publish its name, endpoint and status. Public, eligible servers appear in the directory; private or hidden servers do not.";
 
 export const HOSTING_STEPS = [
   {
@@ -33,14 +33,14 @@ export const HOSTING_STEPS = [
   {
     num: "02",
     title: "Mint a license key",
-    body: "In your account, open the keymaster and create a license key. It ties the server to your account and is shown once — copy it now, because the platform only stores a fingerprint and can never show it again.",
+    body: "In your account, open the keymaster and create a license key. It ties the server to your account and is shown once. Copy it now, because the platform only stores a fingerprint and can never show it again.",
     href: "/account/keys",
     linkText: "Open the keymaster",
   },
   {
     num: "03",
     title: "Unpack and run the first-run setup",
-    body: "Unzip (Windows) or untar (Linux) into a folder of your choice. The first time you launch with no server.jsonc present, the server opens a first-run setup — a small wizard in your browser that walks you through naming the server, pasting your license key and picking visibility, then writes the config for you.",
+    body: "Unzip (Windows) or untar (Linux) into a folder of your choice. The first time you launch with no server.jsonc present, the server opens a first-run setup, a small wizard in your browser that walks you through naming the server, pasting your license key and picking visibility, then writes the config for you.",
     href: "#first-run",
     linkText: "About first-run setup",
   },
@@ -60,7 +60,7 @@ export const HOSTING_STEPS = [
   },
   {
     num: "06",
-    title: "Run it — and it appears automatically",
+    title: "Run it, and it appears automatically",
     body: "Start the server. It enrols, registers and begins heartbeating, and within a heartbeat it is live in the launcher and on the public server list under your account. Players can join straight away.",
     href: "#appears",
     linkText: "What happens on boot",
@@ -68,7 +68,7 @@ export const HOSTING_STEPS = [
 ] as const;
 
 export const NEED_INTRO =
-  "The host is deliberately light. You do not install Cyberpunk 2077, REDengine or any game content on the server machine — the server ships everything it needs.";
+  "The host is deliberately light. You do not install Cyberpunk 2077, REDengine or any game content on the server machine. The server ships everything it needs.";
 
 export const NEED_POINTS = [
   {
@@ -81,7 +81,7 @@ export const NEED_POINTS = [
   },
   {
     label: "A license key",
-    body: "One op77_live_ key minted in the keymaster. No key means no enrolment and no listing — anonymous servers are not part of the platform.",
+    body: "One op77_live_ key minted in the keymaster. No key means no enrolment and no listing. Anonymous servers are not part of the platform.",
   },
 ] as const;
 
@@ -96,25 +96,25 @@ export const BUILD_ROWS = [
   },
   {
     os: "Linux (x64, Debian)",
-    archive: ".tar.gz — self-contained",
+    archive: ".tar.gz, self-contained",
     run: "./Open77.Server",
   },
 ] as const;
 
 export const BUILD_NOTE =
-  "Only ever download the server from the Host a Server page or the official CDN — nowhere else. Each release publishes a SHA-256 for every archive; compare it against the file you downloaded before you run it.";
+  "Only ever download the server from the Host a Server page or the official CDN, nowhere else. Each release publishes a SHA-256 for every archive; compare it against the file you downloaded before you run it.";
 
 export const FIRSTRUN_INTRO =
-  "The very first launch is designed to be friendly. If the server finds no server.jsonc next to it, it does not error out or make you learn the config format up front — it opens a first-run setup wizard in your browser.";
+  "If server.jsonc is absent on first launch, a browser-based setup wizard creates it.";
 
 export const FIRSTRUN_BODY =
-  "The wizard collects the essentials — the server's display name, your license key, its public address and whether it should be listed publicly — and writes a valid server.jsonc for you. When it finishes, the server is configured and ready to start. You can re-open the config any time afterwards to fine-tune it, either by editing the file directly or, once the server is running, from the Warden admin panel.";
+  "Enter the server name, license key, public endpoint and visibility. Review the generated server.jsonc before starting. Later changes can be made in the file or through Warden.";
 
 export const FIRSTRUN_NOTE =
-  "Prefer to skip the wizard? Drop a server.jsonc into the folder before the first launch and the server uses it directly. The next section lists the fields that matter.";
+  "To skip the wizard, place a valid server.jsonc beside the server executable before launch.";
 
 export const CONFIG_INTRO =
-  "server.jsonc is a commented JSON file — you can leave notes to yourself with // comments. Most defaults are sensible; these are the fields you actually set to get listed.";
+  "server.jsonc supports JSON with // comments. Configure the following fields for enrollment and directory visibility.";
 
 export const CONFIG_SAMPLE = `{
   // How your server presents itself in the launcher and server list.
@@ -144,7 +144,7 @@ export const CONFIG_SAMPLE = `{
 export const CONFIG_FIELDS = [
   {
     label: "identity.name",
-    body: "The name players see in the launcher and on the server list. Make it recognisable — it is your server's front door.",
+    body: "The name players see in the launcher and on the server list. Make it recognisable. It is your server's front door.",
   },
   {
     label: "identity.visibility",
@@ -152,7 +152,7 @@ export const CONFIG_FIELDS = [
   },
   {
     label: "network.publicEndpoint",
-    body: "The address the launcher hands to players. It must be reachable from the internet — a public hostname or IP and the server's port, not a 192.168.x address.",
+    body: "The address the launcher hands to players. It must be reachable from the internet: a public hostname or IP and the server's port, not a 192.168.x address.",
   },
   {
     label: "masterServer.enabled",
@@ -172,16 +172,21 @@ $env:OP77_LICENSE_KEY = "op77_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"`
 export const RUN_INTRO =
   "With the key set and server.jsonc in place, start the server the way its platform expects:";
 
-export const RUN_SAMPLE = `# Windows — from the unpacked folder
+export const RUN_SAMPLE = `# Windows, from the unpacked folder
 Open77.Server.exe
 #   …or, against an installed .NET 10 runtime:
 dotnet Open77.Server.dll
 
-# Linux — from the unpacked folder
+# Linux, from the unpacked folder
 ./Open77.Server`;
 
+export const STARTUP_DOC = {
+  href: "/docs/server-startup",
+  label: "Startup arguments, log levels and hosting-panel configuration",
+} as const;
+
 export const APPEARS_INTRO =
-  "You do not submit your server anywhere or wait for it to be approved. On start-up it does three things on its own:";
+  "On startup, the server enrolls and registers automatically:";
 
 export const APPEARS_STEPS = [
   {
@@ -190,7 +195,7 @@ export const APPEARS_STEPS = [
   },
   {
     title: "It registers itself",
-    body: "The server publishes its identity — name, public endpoint, player count and icon — to the master. There is no separate listing form; the config is the listing.",
+    body: "The server publishes its identity (name, public endpoint, player count and icon) to the master. There is no separate listing form; the config is the listing.",
   },
   {
     title: "It appears in the launcher",
@@ -199,10 +204,10 @@ export const APPEARS_STEPS = [
 ] as const;
 
 export const APPEARS_NOTE =
-  "Not showing up? The usual cause is reachability — if network.publicEndpoint is a LAN address or the port is not forwarded, players cannot connect even though the server is enrolled. Check that visibility is \"public\", the master is enabled, and the endpoint is reachable from outside your network.";
+  "If the server is missing from the directory, check its license, public visibility, master connection and endpoint. LAN and loopback endpoints are not public listings. A platform administrator can also hide a server. For connection failures, check external port reachability.";
 
 export const NEXT_INTRO =
-  "Once your server is live, the next step is running it day to day — streaming the console, managing players and reloading resources without a restart. That is what the Warden admin panel is for.";
+  "Use Warden to view logs, manage players and control resources. Some configuration and preload changes require a server restart.";
 
 /** Markdown twin of the page, projected from the same constants. */
 export function hostingToMarkdown(): string {
@@ -212,12 +217,12 @@ export function hostingToMarkdown(): string {
 
   lines.push("## From download to open doors", "");
   for (const step of HOSTING_STEPS) {
-    lines.push(`${step.num}. **${step.title}** — ${step.body}`);
+    lines.push(`${step.num}. **${step.title}**: ${step.body}`);
   }
   lines.push("");
 
   lines.push("## What the host needs", "", NEED_INTRO, "");
-  for (const point of NEED_POINTS) lines.push(`- **${point.label}** — ${point.body}`);
+  for (const point of NEED_POINTS) lines.push(`- **${point.label}**: ${point.body}`);
   lines.push("");
 
   lines.push("## Get the build", "", BUILD_INTRO, "");
@@ -230,7 +235,7 @@ export function hostingToMarkdown(): string {
 
   lines.push("## Configure server.jsonc", "", CONFIG_INTRO, "");
   lines.push("```jsonc", CONFIG_SAMPLE, "```", "");
-  for (const field of CONFIG_FIELDS) lines.push(`- **${field.label}** — ${field.body}`);
+  for (const field of CONFIG_FIELDS) lines.push(`- **${field.label}**: ${field.body}`);
   lines.push("");
 
   lines.push("## Set the license key", "", ENV_INTRO, "");
@@ -238,10 +243,11 @@ export function hostingToMarkdown(): string {
 
   lines.push("## Run it", "", RUN_INTRO, "");
   lines.push("```bash", RUN_SAMPLE, "```", "");
+  lines.push(`[${STARTUP_DOC.label}](${STARTUP_DOC.href})`, "");
 
   lines.push("## It appears automatically", "", APPEARS_INTRO, "");
   APPEARS_STEPS.forEach((step, index) => {
-    lines.push(`${index + 1}. **${step.title}** — ${step.body}`);
+    lines.push(`${index + 1}. **${step.title}**: ${step.body}`);
   });
   lines.push("", `> ${APPEARS_NOTE}`, "");
 

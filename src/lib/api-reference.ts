@@ -166,24 +166,58 @@ const VEHICLE_WEAPON_READS = new Set([
   "getWeaponType", "isWeaponActive", "getWeaponCount", "getWeaponAim",
 ]);
 
+/** `Open77.input` is two surfaces: the key bindings, and taking a key away. */
+const INPUT_BLOCKING = new Set([
+  "blockAll", "blocks", "blockableActions", "isActionBlocked", "setActionBlocked",
+]);
+
+/**
+ * Namespaces with one obvious tutorial, in both runtimes.
+ *
+ * A generated card states a contract; this is the page that explains when to
+ * reach for it. Only a guide that really covers the namespace belongs here —
+ * `Open77.chute` is deliberately absent, because nothing documents it yet and a
+ * link to a page that does not mention it is worse than no link.
+ */
+const NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGuideLabel: string }> = {
+  "Open77.database": { usageGuideHref: "/docs/database", usageGuideLabel: "SQL database setup" },
+  MySQL: { usageGuideHref: "/docs/database", usageGuideLabel: "SQL database setup" },
+  "Open77.webui": { usageGuideHref: "/docs/resource-runtime#webui", usageGuideLabel: "WebUI & remote pages" },
+  Citizen: { usageGuideHref: "/docs/fivem-compatibility", usageGuideLabel: "FiveM compatibility guide" },
+  promise: { usageGuideHref: "/docs/fivem-compatibility#promises", usageGuideLabel: "FiveM compatibility guide" },
+  "Open77.callbacks": { usageGuideHref: "/docs/callbacks", usageGuideLabel: "Network callbacks guide" },
+  "Open77.state": { usageGuideHref: "/docs/state-bags", usageGuideLabel: "Replicated state bags guide" },
+  "Open77.chat": { usageGuideHref: "/docs/chat", usageGuideLabel: "Chat & slash commands guide" },
+  "Open77.sound": { usageGuideHref: "/docs/sound", usageGuideLabel: "Resource audio guide" },
+  "Open77.data": { usageGuideHref: "/docs/data-catalogues", usageGuideLabel: "Game data catalogues guide" },
+  "Open77.abilities": { usageGuideHref: "/docs/ground-slam", usageGuideLabel: "Ground Slam guide" },
+  "Open77.zones": { usageGuideHref: "/docs/zones", usageGuideLabel: "Proximity zones guide" },
+  "Open77.acl": { usageGuideHref: "/docs/server-acl", usageGuideLabel: "Commands & ACL guide" },
+  "Open77.access": { usageGuideHref: "/docs/connection-control", usageGuideLabel: "Connection control guide" },
+  "Open77.heldItems": { usageGuideHref: "/docs/props#attachment", usageGuideLabel: "World props guide" },
+  "Open77.prevention": { usageGuideHref: "/docs/server-api#wanted-level-and-ncpd-dispatch", usageGuideLabel: "Wanted level & NCPD dispatch" },
+  "Open77.EventVerdict": { usageGuideHref: "/docs/server-api#cancellable-events", usageGuideLabel: "Cancellable events" },
+  "Open77.convars": { usageGuideHref: "/docs/server-api#convars", usageGuideLabel: "Convars" },
+};
+
+/** The same, but only in one runtime: the other side has its own page. */
+const RUNTIME_NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGuideLabel: string }> = {
+  "client:Open77.players": { usageGuideHref: "/docs/client-players", usageGuideLabel: "Players around you (client)" },
+  "client:Open77.camera": { usageGuideHref: "/docs/cameras", usageGuideLabel: "Scripted cameras guide" },
+  "client:Open77.remoteCamera": { usageGuideHref: "/docs/remote-camera", usageGuideLabel: "Remote cameras & world screens guide" },
+  "client:Open77.travel": { usageGuideHref: "/docs/travel", usageGuideLabel: "Travel & settling guide" },
+  "client:Open77.hud": { usageGuideHref: "/docs/hud-visibility", usageGuideLabel: "HUD visibility guide" },
+  "client:Open77.markers": { usageGuideHref: "/docs/markers", usageGuideLabel: "3D world markers guide" },
+};
+
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
-  if (runtime === "client" && raw.namespace === "Open77.gizmos") {
-    return { usageGuideHref: "/docs/gizmos", usageGuideLabel: "Entity gizmos guide" };
+  if ((raw.namespace === "Open77.players" && ["setModel", "getModel", "resetModel", "isModelReady", "isModelValid"].includes(raw.name)) ||
+      (raw.namespace === "_G" && ["SetPlayerModel", "GetPlayerModel", "ResetPlayerModel", "IsPlayerModelReady", "IsPlayerModelValid"].includes(raw.name))) {
+    return { usageGuideHref: "/docs/player-models", usageGuideLabel: "Player morphs and model lifecycle guide" };
   }
-  if (runtime === "client" && raw.namespace === "Open77.camera" &&
-      ["configureThirdPerson", "thirdPersonState", "resetThirdPerson", "shakeThirdPerson", "stopThirdPersonShake", "thirdPerson"].includes(raw.name)) {
-    return { usageGuideHref: "/docs/third-person-camera", usageGuideLabel: "Third-person camera styles guide" };
-  }
-  if (raw.namespace === "Open77.perspective") {
-    return { usageGuideHref: "/docs/perspective", usageGuideLabel: "First/third person & perspective locks guide" };
-  }
-  if (runtime === "client" && raw.namespace === "Open77.hud") {
-    return raw.name === "setCinematic"
-      ? { usageGuideHref: "/docs/third-person-camera#cinematic-display", usageGuideLabel: "Cinematic display guide" }
-      : { usageGuideHref: "/docs/hud-visibility", usageGuideLabel: "HUD visibility guide" };
-  }
-  if (runtime === "client" && raw.namespace === "_G" && raw.name === "require") {
-    return { usageGuideHref: "/docs/lua-modules", usageGuideLabel: "Lua modules & require guide" };
+  if (runtime === "client" && raw.namespace === "WebUI.Page" &&
+      ["setConsumedKeys", "setFocus", "hasFocus"].includes(raw.name)) {
+    return { usageGuideHref: "/docs/webui-input", usageGuideLabel: "WebUI keyboard input guide" };
   }
   if (raw.namespace === "Open77.players" && ["setHoloCallEyes", "getHoloCallEyes"].includes(raw.name)) {
     return { usageGuideHref: "/docs/holocall-eyes", usageGuideLabel: "Blue holocall eyes guide" };
@@ -238,7 +272,23 @@ function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
   if (runtime === "client" && raw.namespace === "Open77.vehicles" && VEHICLE_WEAPON_READS.has(raw.name)) {
     return { usageGuideHref: "/docs/vehicle-weapons#function-reference", usageGuideLabel: "Armed vehicle guide" };
   }
-  return {};
+  if (runtime === "client" && raw.namespace === "Open77.input") {
+    return INPUT_BLOCKING.has(raw.name)
+      ? { usageGuideHref: "/docs/input-blocking", usageGuideLabel: "Blocking player input guide" }
+      : { usageGuideHref: "/docs/keybindings", usageGuideLabel: "Key bindings guide" };
+  }
+  if (raw.namespace === "Open77.players" && /^(setFrozen|isFrozen)$/.test(raw.name)) {
+    return { usageGuideHref: "/docs/player-freeze", usageGuideLabel: "Freezing a player guide" };
+  }
+  if (runtime === "server" && raw.namespace === "Open77.vehicles" && /Properties$/.test(raw.name)) {
+    return {
+      usageGuideHref: "/docs/vehicles#vehicle-properties-and-what-cyberpunk-does-not-have",
+      usageGuideLabel: "Vehicle properties, and what Cyberpunk does not have",
+    };
+  }
+  return RUNTIME_NAMESPACE_GUIDES[`${runtime}:${raw.namespace}`]
+    ?? NAMESPACE_GUIDES[raw.namespace]
+    ?? {};
 }
 
 export function getApiIndex(): Promise<ApiIndex> {
@@ -260,6 +310,18 @@ export function getApiIndex(): Promise<ApiIndex> {
 async function loadApiIndex(): Promise<ApiIndex> {
   const raw = await readFile(API_FILE, "utf8");
   const generated = JSON.parse(raw) as ApiEntryRaw[];
+  // The wiki now emits the low-level server globals as real cards, and most
+  // borrow the example of their Open77.* twin. The few that have no twin keep
+  // the site-owned example the table-derived cards used to carry, from the
+  // same overlay file, so no card ships without a worked example.
+  const globalsExamples = JSON.parse(
+    await readFile(path.join(process.cwd(), "content", "api", "server-globals-examples.json"), "utf8"),
+  ) as Record<string, string>;
+  for (const entry of generated) {
+    if (entry.runtime === "server" && entry.namespace === "_G" && !entry.example && globalsExamples[entry.name]) {
+      entry.example = globalsExamples[entry.name];
+    }
+  }
   const parsed = [...generated, ...await getDocumentedServerApi(generated), ...await getDoorServiceApi()];
 
   const namespaceKeys = new Map<string, string>();
@@ -384,7 +446,7 @@ export function apiEntryToMarkdown(entry: ApiEntry, headingLevel = 2): string {
   const { label, hint } = apiSetLabel(entry.api_set);
 
   lines.push("```lua", entry.signature, "```", "");
-  lines.push(`\`${label}\`${hint ? ` — ${hint}` : ""}`, "");
+  lines.push(`\`${label}\`${hint ? `: ${hint}` : ""}`, "");
   if (entry.summary) lines.push(entry.summary, "");
   if (entry.description) lines.push(entry.description, "");
 
@@ -433,7 +495,7 @@ export function apiEntryToMarkdown(entry: ApiEntry, headingLevel = 2): string {
 export function apiNamespaceToMarkdown(namespace: ApiNamespace, headingLevel = 1): string {
   const meta = RUNTIME_META[namespace.runtime];
   const lines: string[] = [
-    `${"#".repeat(headingLevel)} ${namespace.label} — ${meta.label.toLowerCase()} runtime`,
+    `${"#".repeat(headingLevel)} ${namespace.label} (${meta.label.toLowerCase()} runtime)`,
     "",
     meta.blurb,
     "",

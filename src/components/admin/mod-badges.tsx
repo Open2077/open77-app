@@ -61,7 +61,7 @@ export function ContentClassChip({ value }: { value: ModContentClass }) {
  * `unknown` leads because it is the honest default: most authors never said.
  */
 export const REDISTRIBUTION_OPTIONS: { value: ModRedistribution; label: string }[] = [
-  { value: "unknown", label: "Unknown — the author has not said" },
-  { value: "granted", label: "Granted — a server may hand this to players" },
-  { value: "refused", label: "Refused — players must fetch it themselves" },
+  { value: "unknown", label: "Unknown: the author has not said" },
+  { value: "granted", label: "Granted: a server may hand this to players" },
+  { value: "refused", label: "Refused: players must fetch it themselves" },
 ];

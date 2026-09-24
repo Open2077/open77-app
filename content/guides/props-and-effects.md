@@ -1,10 +1,6 @@
 # Props and effects
 
-A roadblock across a street. A crate a player can pick up and carry. A lamp
-that lights an alley the base game left dark, and a switch that turns it off.
-A fire that keeps burning while players walk away and come back. All of that
-is one server-side API and one idea: **the server owns the object, and every
-client near it is told to draw it.**
+Create synchronized props, lights and persistent effects from server Lua. The server owns each object; nearby clients render its current state.
 
 Nothing on this page can be done from a client resource. That is deliberate,
 and it is the same rule as ground loot: a client that could mint objects
@@ -442,7 +438,7 @@ lifetime, neither returns a handle, and neither counts against the looping
 ceiling. `duration` is in seconds, 0–60, where `0` leaves the lifetime to the
 effect itself. `slot` is an optional authored attachment point.
 
-**Three naming schemes, and mixing them up costs an afternoon.** World
+**Identifier formats.** World
 effects are addressed by depot path or curated alias. `playOn` takes a name
 the *target's own template* declares — `muzzle_flash` is not a file. `sound`
 takes a Wwise event name. A depot path handed to `playOn` will not resolve,
@@ -484,6 +480,23 @@ An attachment does not reserve a player or transfer inventory ownership. Use
 and cancellation, then commit item ownership in your server resource after
 validated completion. The guide includes a revision-safe handoff example.
 
+To put a pose and a duration around the carried object, so that a pick-up looks
+like a pick-up, see [Animated actions](animated-actions.md): it pairs this
+binding with the catalogue's `carry` profiles and the UI-kit progress bar, with
+the offset numbers for `crate.small` and a command to tune them live.
+
+If you want something genuinely **held as gear**, that is a different API:
+`Open77.heldItems.hold(playerId, record, options?)` puts a real *item* in one of
+the ten equipment slots through the engine's own transaction system, so it
+behaves as equipment in first and third person. The price is that it takes an
+item record rather than an entity path, needs `open77_helditems` running on the
+client, competes with `Open77.weapons` over `WeaponRight`, and nothing persists
+it across a world entry. `props.attach` binds a prop; `heldItems.hold` equips
+an item. The older `attach(id, { kind = , id = }, opts)` spelling still works
+and is translated onto the binding above, so a resource written against it
+keeps running; `kind = "npc"` is refused, because there is no rendered NPC
+parent yet.
+
 ## Quotas, lifetime and the three ways a prop dies
 
 | Registry | Per resource | Global |
@@ -504,9 +517,17 @@ carries which one:
 | `expired` | Its `ttlMs` came due. |
 | `resource_stopped` | Its owning resource stopped or reloaded. |
 
-There is no persistence. Nothing survives a server restart, and nothing
-survives its owning resource stopping. Keep your scene in a table and place
-it on start — the roadblock below is that pattern.
+**The registry itself has no persistence.** Nothing a resource creates through
+`Open77.props` survives a server restart, and nothing survives its owning
+resource stopping. Keep your scene in a table and place it on start — the
+roadblock below is that pattern.
+
+The one exception is not a registry feature: the bundled `open77_props` resource
+has an opt-in `persist` tunable, **off by default**, which saves the props its
+own `prop.*` and `light.*` console commands created and recreates them at boot.
+It deliberately does not persist a gamemode's programmatic props — those would
+double-spawn against the gamemode's own rebuild on start. See
+[World props](/docs/props#persistence-the-bundled-resources-opt-in).
 
 ## Worked example: a roadblock the resource owns
 

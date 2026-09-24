@@ -1,10 +1,6 @@
 # Connection control: connect events, whitelists and bans
 
-Everything a server resource can do about *who* plays. Watch connections arrive, hold a player at
-the door while a list or a database answers, refuse them with a sentence they read on their own
-screen, learn why any connection was refused or dropped, and remove or ban a player who is already
-in. [Complete server Lua API](server-api.md#connection-control) has the one-line reference for
-each function; this page is the guide, ending with a whitelist and a ban list you can copy.
+Control server admission with connection events, deferred checks, whitelists and bans. Resources can reject a connection with a player-facing message or remove an active player. See the [server Lua API](server-api.md#connection-control) for method signatures.
 
 ## Where the gate sits
 
@@ -21,11 +17,12 @@ A connection goes through these stages in order. Resources take part in the stag
    `Open77.access` all edit the same list. See [The built-in door list](#the-built-in-door-list).
 5. **`onPlayerConnecting`**, the resource gate. Every running resource that holds the
    `players.gate` permission and registered a handler is asked. Refuse, hold, or let through.
-6. The player is admitted: welcome packet, player id, **`onPlayerConnected(playerId)`**.
+6. The player is admitted: welcome packet, player id, **`playerJoining`** and then
+   **`onPlayerConnected(playerId)`**.
 7. The join-time readiness gate (`Open77.ready`) and **`onPlayerReady`**. That gate decides *when a
    resource may act on* an admitted player; this page is about *whether* they get in. See
    [Join-time readiness gate](server-api.md#join-time-readiness-gate).
-8. The session ends: **`onPlayerDisconnected(playerId, reason)`**.
+8. The session ends: **`onPlayerDisconnected(playerId, reason)`** and **`playerDropped(reason)`**.
 
 The gate lives in Lua rather than in configuration because the questions it answers belong to the
 server's operator: who is on the list tonight, is this account banned until Sunday, is this slot
@@ -142,6 +139,45 @@ AddEventHandler("onPlayerDisconnected", function(playerId, reason)
 end)
 ```
 
+## The FiveM names
+
+Three connection events exist under their FiveM spelling as well, so a resource ported from a
+FiveM server runs without being rewritten. They are additive: the Open77 events above keep their
+names, their arguments and their timing, and a resource may listen to either family or both.
+
+| FiveM name | Open77 name | What differs |
+|---|---|---|
+| `playerConnecting(name, setKickReason, deferrals)` | `onPlayerConnecting(player, deferrals)` | Same gate, same tally, same deferrals. The FiveM form receives only the display name; the Open77 form receives the whole `player` table. `source` is not set in either: no player id exists yet. |
+| `playerJoining(oldId)` with `source` | `onPlayerConnected(playerId, playerName)` | `source` is the new player id. `oldId` is always `""`. A resource sees `playerJoining` before `onPlayerConnected`. |
+| `playerDropped(reason)` with `source` | `onPlayerDisconnected(playerId, reason)` | `source` is the player who left, and `reason` is the same text. Both arrive in the same tick. |
+
+`source` is the global a network event handler already reads, set the same way and by the same
+mechanism, so the two families of events mean the same thing by it:
+
+```lua
+AddEventHandler("playerDropped", function(reason)
+    local player = source            -- the id, exactly as in a RegisterNetEvent handler
+    print(("player %s left: %s"):format(tostring(player), tostring(reason)))
+end)
+```
+
+### `setKickReason` and `CancelEvent()`, exactly as in FiveM
+
+`setKickReason(message)` records a refusal message but does not reject the connection. Call `CancelEvent()` in the same `playerConnecting` handler to reject it. Cancellation takes precedence over a pending deferral; without a message, the reason is `refused`. Recording a reason without cancelling logs a warning for that resource.
+
+```lua
+-- a ported whitelist keeps its shape
+AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
+    if not allowed[name] then
+        setKickReason("You are not on the whitelist.")
+        CancelEvent()
+    end
+end)
+```
+
+`deferrals.done(message)` remains the Open77-native refusal and works in the same handler; the two
+never disagree, because the first decision wins and the other is answered `gate_already_decided`.
+
 ## Reading an admitted player's identity
 
 `Open77.players.identity(playerId)` (alias `GetPlayerIdentity`) returns
@@ -178,12 +214,37 @@ Most servers need no code for this: the server keeps its own whitelist and ban l
 `access.json` next to `server.jsonc`, enforced before the resource gate and with no resource
 running. Every entry is keyed on the Master `userId` and remembers who added it and when.
 
+This is a server-enforced policy, not a launcher filter. It applies to direct connections,
+Master-ticket connections and reconnects. A valid ticket or a resource's `deferrals.done()`
+cannot override it: the server checks the verified identity before the resource gate and
+again immediately before admission.
+
 **Warden**: the *Whitelist & bans* tab (permissions `access.view` to see, `access.edit` to change)
 switches the whitelist, lists and removes identities, bans with a reason and a duration, lifts bans,
 and shows the recent refusals with the sentence each player saw, each with *Allow* and *Ban*
 buttons. The *Players* tab gains an *Allow* button per row, so a guest can be let in without
 leaving the table. Bans from this tab disconnect the player at once if they are online; they are
 local to this server, unlike `Open77.players.ban`, which records a device ban at the Master.
+
+Enabling the whitelist immediately disconnects all unlisted players, including connections
+still waiting for a Lua gate. Removing an identity while the whitelist is enabled does the
+same for **every session** using that identity. Staff and the operator's own game account
+have no automatic exemption: add those game identities before enabling it. Being logged
+into Warden is not itself permission to join the game. The refusal explains that the server
+is private and includes the identity to give to an administrator.
+
+The same policy is checked before processing further player packets and on the server tick,
+so a quiet client or a change made through Lua cannot retain gameplay authority. Lua changes
+take effect no later than the next tick; Warden and built-in console changes enforce it before
+returning. Players still listed remain connected.
+
+Changes are atomically saved before success is reported. If saving fails, the previous policy
+remains in force and the caller receives an error. An existing unreadable or malformed
+`access.json` now **stops server startup** instead of silently disabling the whitelist; repair
+or restore that file. A genuinely missing file still means a fresh server with the whitelist
+disabled. Use Warden, the console or `Open77.access` for live edits; manual disk edits are read
+at startup. Each server should have its own configuration directory, since that directory
+also owns its `access.json`.
 
 **Console** (also from Warden's live console):
 
@@ -209,7 +270,9 @@ unban <userId>
 | `unban(userId)` | `true`, or `false` when there was no ban |
 
 Every call returns `false, reason` on failure: `permission_denied:players.access`,
-`invalid_user_id`, `access_unavailable`. Entries written from Lua carry `resource:<name>` as their
+`invalid_user_id`, `access_unavailable`, `access_persistence_failed` (whitelist/allow/disallow/unban),
+or `ban_persistence_failed`. A persistence failure leaves the previous policy unchanged.
+Entries written from Lua carry `resource:<name>` as their
 author, so Warden shows which script let someone in.
 
 ```lua
@@ -383,8 +446,11 @@ end)
 | `onPlayerConnecting` (event) | `players.gate` | `(player, deferrals)` |
 | `deferrals.defer` / `update` / `done` | via the event | `()` / `(message)` / `(message?)` |
 | `onPlayerRejected` (event) | None | `(userId, name, code, message)` |
-| `onPlayerConnected` (event) | None | `(playerId)` |
+| `onPlayerConnected` (event) | None | `(playerId, playerName)` |
 | `onPlayerDisconnected` (event) | None | `(playerId, reason)` |
+| `playerConnecting` (event) | `players.gate` | `(name, setKickReason, deferrals)` |
+| `playerJoining` (event) | None | `(oldId)`, `source` = the new player id |
+| `playerDropped` (event) | None | `(reason)`, `source` = the player who left |
 | `Open77.players.identity` / `GetPlayerIdentity` | None | `(playerId) -> { userId, name, publicKey, fingerprint, joinedAt }` or `nil` |
 | `Open77.players.identifier` / `name` | None | `(playerId)` |
 | `Open77.players.disconnect` / `kick` | `players.disconnect` | `(playerId, reason?)` |

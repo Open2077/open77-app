@@ -16,7 +16,7 @@ const LEGACY_PAGES: Record<string, string> = {
   "/index.html": "/",
   "/servers.html": "/servers",
   "/create.html": "/create",
-  "/community.html": "/community",
+  "/community.html": "/workshop",
   "/brand.html": "/brand",
   "/docs.html": "/docs/platform",
 };
@@ -64,6 +64,10 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // Preserve links to the retired access guide, including Markdown consumers.
+      { source: "/docs/developer-preview", destination: "/docs/alpha-access", permanent: true },
+      { source: "/docs/developer-preview.md", destination: "/docs/alpha-access.md", permanent: true },
+      { source: "/md/docs/developer-preview", destination: "/docs/alpha-access.md", permanent: true },
       ...Object.entries(LEGACY_PAGES).map(([source, destination]) => ({
         source,
         destination,
@@ -77,6 +81,28 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       { source: "/server.html", destination: "/servers", permanent: true },
+      // The community resource library moved under /workshop (2026-09-13).
+      { source: "/community", destination: "/workshop", permanent: true },
+      { source: "/community/sitemap.xml", destination: "/workshop/sitemap.xml", permanent: true },
+      { source: "/community/sitemaps/:path*", destination: "/workshop/sitemaps/:path*", permanent: true },
+      { source: "/resources", destination: "/workshop/browse", permanent: true },
+      { source: "/workshop/discover", destination: "/workshop", permanent: true },
+      { source: "/resources/:path*", destination: "/workshop/:path*", permanent: true },
+      { source: "/creators/:handle", destination: "/workshop/creators/:handle", permanent: true },
+      // The 2026-09-15 devblog post was first published under an unpadded date
+      // (2026-9-15), which the post loader ignores. The Discord announcements
+      // already link to that slug, so it and its Markdown twin redirect to the
+      // corrected one.
+      {
+        source: "/devblog/2026-9-15-bucket-paint-polyzone-launcher",
+        destination: "/devblog/2026-09-15-bucket-paint-polyzone-launcher",
+        permanent: true,
+      },
+      {
+        source: "/devblog/2026-9-15-bucket-paint-polyzone-launcher.md",
+        destination: "/devblog/2026-09-15-bucket-paint-polyzone-launcher.md",
+        permanent: true,
+      },
     ];
   },
 

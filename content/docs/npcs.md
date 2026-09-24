@@ -1,12 +1,10 @@
 # Server-owned NPCs
 
-Open77 NPCs are canonical server entities projected into REDengine only for nearby players. A Lua
-resource creates and owns the canonical NPC; the server controls identity, routing bucket, health,
-tasks and simulation authority. Clients cannot create or mutate canonical NPCs.
+Create server-owned NPCs and control their identity, routing bucket, health, tasks and simulation authority. Clients project nearby NPCs into the world but cannot create or mutate their canonical state.
 
 The reference implementation is [`resources/system/open77_npcs`](../resources/system/open77_npcs/README.md).
 
-**Developer preview:** spawn directly from `Character.*` record IDs, without registering a
+Spawn directly from `Character.*` record IDs, without registering a
 virtual template. Browse the [NPC record catalogue](npc-catalogue.md) for IDs, appearances
 and compatibility warnings. See [AI, combat and voice control](npc-behavior.md) to make a
 hostile NPC passive, disable its perception or silence combat/search voice lines.
@@ -65,13 +63,7 @@ end
 An alias contains its predefined record, observer record and capability list. An advertised
 capability describes the underlying rig/template; it does not make an unstable task public.
 
-**`civilian_female_relaxed_01` cannot be shot, and this is not a bug to work around.** It
-resolves to `Character.Panam`, which carries the TweakDB tag `Invulnerable` — vanilla quest
-protection that no attitude change, no `damagePolicy` and no Lua call can lift. Measured in
-game on 2026-08-03: *impossible à viser/frapper*. It is also unsafe to arm — driving the
-weapon path against her native graph corrupts a component vtable
-(`NpcReplication.cpp`, `Cyberpunk2077.exe+0x336376`). Use it for a passive background body
-and nothing else.
+`civilian_female_relaxed_01` resolves to `Character.Panam`, whose `Invulnerable` tag prevents normal combat targeting and damage. Do not arm this template: its weapon graph can crash the client. Use it only as a passive background character; use combat-compatible records for damageable NPCs.
 
 **Native combat relations are explicit.** A native gang record runs engine combat AI on
 every client streaming it. For `aiMode = Open77.npcs.ai.native`, the client makes native
@@ -183,10 +175,21 @@ record lookup and asynchronous spawning can still fail; use `onNpcReady` and `on
 | `Open77.npcs.setBucket` | `npcId, bucket` | boolean |
 | `Open77.npcs.setAppearance` | `npcId, appearance` | boolean |
 | `Open77.npcs.setLoadout` | `npcId, loadout` | boolean |
+| `Open77.npcs.setEquipment` | `npcId, { slot = "Items.*", ... }` | `true`, or `nil, reason` |
+| `Open77.npcs.getEquipment` | `npcId` | slot-to-record table, or `nil` |
+| `Open77.npcs.speak` | `npcId, voice, optional options` | `true`, or `nil, reason` |
+| `Open77.npcs.voices` | none | array of `{ name, context, source }` |
 | `Open77.npcs.setHealth` | `npcId, health, optional maxHealth` | boolean |
 | `Open77.npcs.setDamagePolicy` | `npcId, policy` | boolean |
 | `Open77.npcs.setAiMode` | `npcId, mode` | boolean |
 | `Open77.npcs.setRagdoll` | `npcId, enabled` | boolean |
+| `Open77.npcs.setAttitude` | `npcId, attitude, optional options` | boolean, or `false, reason` |
+| `Open77.npcs.getAttitude` | `npcId` | attitude table or `nil` |
+| `Open77.npcs.setGroup` | `npcId, group` | boolean, or `false, reason` |
+| `Open77.npcs.getGroup` | `npcId` | group string or `nil` |
+| `Open77.npcs.setRelationship` | `groupA, groupB, attitude` | boolean, or `false, reason` |
+| `Open77.npcs.getRelationship` | `groupA, groupB` | attitude string or `nil` |
+| `Open77.npcs.target` | `npcId` | `{ kind, id }` or `nil` |
 | `Open77.npcs.applyDamage` | `npcId, amount, optional source, optional cause` | boolean |
 | `Open77.npcs.kill` | `npcId, optional reason` | boolean |
 | `Open77.npcs.revive` | `npcId, optional health` | boolean |
@@ -226,10 +229,83 @@ Open77.npcs.remove(npcId)
 ```
 
 `Open77.npcs.update(id, fields)` can atomically change appearance, loadout, AI mode, damage policy,
-health, maximum health and ragdoll. The named setters above are convenience wrappers.
+health, maximum health and ragdoll, and takes an `equipment` table (below). The named setters
+above are convenience wrappers.
 
 Moving an NPC between buckets or teleporting it revokes the current simulation lease before the
 new state is broadcast.
+
+## Equipment: dressing an NPC
+
+`Open77.npcs.setEquipment(id, set)` dresses an NPC in `Items.*` clothing records, on every
+client that streams it, through the same puppet equipment path the loadout's `weapon` key
+already uses. It is the server-side counterpart of FiveM's `SetPedComponentVariation` on a
+ped — a uniform for a job NPC, a costume for an event.
+
+```lua
+-- A shopkeeper in a work jacket and jeans. The table is the WHOLE desired set.
+local npc = Open77.npcs.create({ record = "Character.Judy", position = counter })
+local ok, reason = Open77.npcs.setEquipment(npc, {
+    OuterChest = "Items.Jacket_01_basic_01",
+    Legs = "Items.Pants_01_basic_01",
+    Feet = "Items.Shoes_01_basic_01",
+})
+if not ok then print("could not dress the clerk: " .. reason) end
+
+-- Read it back; the same table also rides `json.decode(Open77.npcs.get(npc).loadout).equipment`.
+local worn = Open77.npcs.getEquipment(npc)   --> { OuterChest = ..., Legs = ..., Feet = ... }
+
+-- Swap one piece: send the set again with that slot changed. A slot you leave
+-- out is a slot you want empty.
+Open77.npcs.setEquipment(npc, { OuterChest = "Items.Jacket_02_basic_01", Legs = "Items.Pants_01_basic_01" })
+
+-- Beside other fields, in one update.
+Open77.npcs.update(npc, { equipment = { Head = "Items.Hat_01_basic_01" }, health = 100 })
+
+-- Undress what you dressed.
+Open77.npcs.setEquipment(npc, {})
+```
+
+Slots are the client's clothing vocabulary: `Head`, `Face`, `InnerChest`, `OuterChest`,
+`Legs`, `Feet`, `Outfit`, `UnderwearTop`, `UnderwearBottom`. The held weapon is **not** a
+clothing slot; it stays on `setLoadout(id, { weapon = ... })`. Values are `Items.*` record
+names (`Items.` followed by an identifier, at most 200 characters); the catalogue of clothing
+records is `docs/generated/clothing-2.31.csv`.
+
+What the server promises, and refuses by name:
+
+| Reason | Meaning |
+|---|---|
+| `npc_equipment_invalid` | The set is not a table (or, inside `update`, `equipment` is not one). |
+| `npc_equipment_slot_invalid` | A key is not one of the nine clothing slots. |
+| `npc_equipment_record_invalid` | A value is not an `Items.*` identifier of at most 200 characters. |
+| `npc_not_found`, `npc_not_owned` | The id is unknown, or belongs to another resource. |
+
+A refused set changes nothing. An accepted set is published as one revision, rides the NPC's
+loadout envelope to every viewer and to late joiners, and survives a later `setLoadout` that
+does not mention `equipment` — a resource re-sending a weapon does not strip the uniform. A
+`setLoadout` that does state `equipment` (an empty table included) replaces it.
+
+**What the client does with it.** Every viewer dresses its own puppet instance, one changed
+slot at a time (`GiveItem` + `AddItemToSlot`, the transaction-system path a vanilla puppet
+equips its own loadout with), and only ever empties a slot Open77 itself filled: a
+character's own look lives in its appearance, not in its attachment slots, so nothing native
+is stripped. The client never runs `InitializeSlots` for clothing — a `Character.*` record
+declares its attachment slots in TweakDB (`Puppet_Base` declares thirty-three, the nine
+clothing slots included) and the engine builds the container from that list at spawn;
+re-initialising it would wipe the weapon the AI holstered. A slot the record does not declare
+(a mech, an exo, a player puppet record) is refused on the client with a log line
+`[npc] equipment refused ... reason=slot_unavailable`; a record whose list cannot be read gets
+nothing (`slots_unknown`). Success is the log line
+`[npc] equipment applied npc=<id> slot=<slot> record=<record>` per slot.
+
+**Honest limits.** The server has no TweakDB: existence of the record, and whether the
+garment mesh binds to that character's rig, are decided on each client against the live
+game. Clothing records are authored for the player bodies; on a vanilla civilian body some
+garments will fit and some will clip or float, and only a look at the screen tells which —
+test the records you ship on the records you ship. There is no NPC-side equipment read on
+the client Lua surface; `Open77.npcs.getEquipment` (server) and the client log are the
+readbacks.
 
 ### Constants
 
@@ -258,7 +334,6 @@ For native AI pause, passive NPCs, sensory acquisition and per-NPC voice suppres
 `behavior = {...}` at creation or `Open77.npcs.setBehavior(id, {...})` later; snapshots expose
 the current `behavior` table. They survive loadout changes and stream-out/stream-in.
 
-
 Tasks are server queues partitioned into movement, look, action and full-body channels. Priority is
 evaluated within a channel. One task may execute in each channel at the same time. A timeout of `0`
 means no timeout. Task/channel combinations are validated server-side; for example `moveTo` is
@@ -276,6 +351,9 @@ to any channel and blocks only that channel.
 | `wait` | action by default | Server-timed delay. |
 | `hold` | movement | Holds the current position. |
 | `playAnimation` | full body | Plays a reviewed named workspot animation. |
+| `attack` | action | Engages a player or an owned NPC. Composes with a movement task. |
+| `guard` | movement | Holds an area, and fights from it without being pulled home. |
+| `flee` | movement | Breaks contact with a player, NPC or fixed point. |
 
 ### Move, follow and patrol
 
@@ -318,6 +396,102 @@ Named full-body animations remain active until they are cancelled, preempted, ti
 streams out. REDengine does not expose a reliable completion signal for every workspot clip, so use
 `timeoutMs` or explicit cancellation when the animation must end deterministically.
 
+### Scenarios: workspots
+
+A named animation is one clip. A **workspot** is the engine's authored scenario system -- a body
+mounted into a device that plays a whole behaviour with its own props and its own clip set. It is
+what the vanilla world uses for a ped smoking on a corner or sitting on a kerb, and it is what
+`tasks.workspot` drives.
+
+```lua
+for _, profile in ipairs(Open77.npcs.tasks.workspots()) do
+    print(profile.id, profile.label, profile.category)
+end
+
+Open77.npcs.tasks.workspot(npcId, "smoke", { durationMs = 8000 })
+Open77.npcs.tasks.workspot(npcId, "sit", { loop = true })
+```
+
+The catalogue is the twelve shipped RP profiles -- `smoke`, `cigar`, `drink`, `phone`, `dance`,
+`handsup`, `meditate`, `sit`, `clap`, `cry`, `think`, `stretch` -- and it is the **same list**
+`Open77.animations.list()` offers for players. One catalogue, two callers. Each entry names the
+vanilla `.workspot` resource it plays, so a profile is traceable back to the authored asset rather
+than to a clip name someone typed.
+
+A reference that is not a catalogue id is played as a **raw clip** through the generic device, the
+same path `playAnimation` uses. That is the escape hatch and it is not the supported form: a raw
+clip's animset may not be loaded by the generic device, in which case the engine simply does not
+play it.
+
+| Option | |
+|---|---|
+| `durationMs` | ends the scenario by **succeeding**. A scenario that ran its course is not a failure, which is why this is not `timeoutMs` |
+| `loop` | `true` has no end; the task runs until cancelled or preempted |
+| `clip` | a specific clip from the profile's set, instead of its default |
+
+| Reason | Meaning |
+|---|---|
+| `npc_task_invalid_workspot` | the reference was not a string, or a profile was named together with a clip name |
+| `npc_task_invalid_duration` | `durationMs` was negative or above one hour |
+
+### Getting into a vehicle
+
+```lua
+Open77.npcs.tasks.enterVehicle(npcId, vehicleId, "driver")
+Open77.npcs.tasks.enterVehicle(npcId, vehicleId, 0, { warp = true })
+Open77.npcs.tasks.exitVehicle(npcId)
+```
+
+Movement channel -- walking to a car is locomotion, so it replaces a standing `moveTo` rather than
+composing with it. Seats use the `Open77.vehicles.seats` numbering (`-1` driver, `0` front
+passenger, `1` rear left, `2` rear right) and also accept `driver`, `frontPassenger`, `rearLeft`,
+`rearRight` by name.
+
+The NPC approaches to within `approachDistance` (default 3 m), then mounts. `warp = true` skips the approach. The task reports `executing` until the native mounting relation confirms the NPC is seated.
+
+`exitVehicle` is idempotent: a body already out of the car has done what was asked and the task
+succeeds with reason `not_in_vehicle`. Passing `vehicleId` narrows it to one car, and a body
+sitting in a different one then fails with `vehicle_mismatch` instead of being pulled out of it.
+
+| Reason | Meaning |
+|---|---|
+| `npc_task_invalid_target` | no `vehicleId`, or zero |
+| `npc_task_invalid_seat` | outside `-1..2`, or an unknown seat name |
+| `vehicle_not_streamed` | no client has that car streamed in, so there is nothing to walk to |
+| `vehicle_mount_refused` | the engine refused the seat |
+
+### Driving
+
+An NPC that is the attached driver of a vehicle can be given driving orders **by ped id**:
+
+```lua
+Open77.vehicles.ai.attachDriver(vehicleId, { npcId = npcId })
+
+Open77.npcs.tasks.driveTo(npcId, { x = 100, y = 200, z = 10 }, { speed = 20, style = "aggressive" })
+Open77.npcs.tasks.driveWander(npcId)
+Open77.npcs.tasks.chase(npcId, { playerId = source })
+Open77.npcs.tasks.setDriverAbility(npcId, 0.9)
+Open77.npcs.tasks.stopDriving(npcId)
+```
+
+These are **not** a second driving system. They resolve the vehicle the NPC drives and forward to
+[`Open77.vehicles.ai`](server-api.md), which owns the vanilla
+`AIVehicleDriveToPointAutonomousCommand` pipeline; two stacks that could disagree about where a car
+is going would be worse than one. Every one of them returns `nil, "npc_not_driving"` until the NPC
+is actually attached as a driver, and returns the driving state when it is.
+
+Two things do not map from GTA and are named rather than faked:
+
+* **`driveWander` is `joinTraffic`**, the engine's own lane-following mode. Cyberpunk traffic AI
+  drives authored lanes; there is no free-roam wander to expose.
+* **`setDriverAbility` is a mapping, not a skill parameter.** 2.31 has no driver-ability field, so a
+  0..1 ability is mapped onto the two levers that do exist: below `0.34` is `cautious`, above `0.67`
+  is `aggressive`, otherwise `normal`; the speed cap becomes `8 + ability * 24` m/s. It returns the
+  resulting driving state so a caller reads what was applied instead of assuming.
+
+`attachDriver` refuses an NPC that holds any live task (`driver_npc_has_tasks`), so finish or cancel
+an `enterVehicle` before attaching.
+
 ### Generic queue and cancellation
 
 ```lua
@@ -334,6 +508,10 @@ Open77.npcs.tasks.clear(npcId, Open77.npcs.channels.movement, "new_route")
 Only the task names listed above are accepted. Unsupported types and malformed targets, paths,
 durations or animation names are rejected before replication.
 
+The five driving verbs are the exception to the shape above: they are commands, not queued tasks,
+because the job they drive lives in the vehicle AI service and already has its own lifecycle. They
+return a driving state rather than a task id.
+
 ### Task API reference
 
 | Function | Parameters | Return |
@@ -348,6 +526,19 @@ durations or animation names are rejected before replication.
 | `Open77.npcs.tasks.wait` | `npcId, durationMs, optional options` | task ID |
 | `Open77.npcs.tasks.hold` | `npcId, optional options` | task ID |
 | `Open77.npcs.tasks.playAnimation` | `npcId, animation, optional options` | task ID |
+| `Open77.npcs.tasks.workspot` | `npcId, profile or clip, optional options` | task ID |
+| `Open77.npcs.tasks.workspots` | `optional query` | array of catalogue profiles |
+| `Open77.npcs.tasks.enterVehicle` | `npcId, vehicleId, optional seat, optional options` | task ID |
+| `Open77.npcs.tasks.exitVehicle` | `npcId, optional options` | task ID |
+| `Open77.npcs.tasks.driving` | `npcId` | driving state or `nil, reason` |
+| `Open77.npcs.tasks.driveTo` | `npcId, position, optional options` | driving state or `nil, reason` |
+| `Open77.npcs.tasks.driveWander` | `npcId, optional options` | driving state or `nil, reason` |
+| `Open77.npcs.tasks.chase` | `npcId, target, optional options` | driving state or `nil, reason` |
+| `Open77.npcs.tasks.stopDriving` | `npcId` | driving state or `nil, reason` |
+| `Open77.npcs.tasks.setDriverAbility` | `npcId, ability` | driving state or `nil, reason` |
+| `Open77.npcs.tasks.attack` | `npcId, target, optional options` | task ID |
+| `Open77.npcs.tasks.guard` | `npcId, position, optional radius, optional options` | task ID |
+| `Open77.npcs.tasks.flee` | `npcId, from, optional options` | task ID |
 | `Open77.npcs.tasks.get` | `npcId, taskId` | task snapshot or `nil` |
 | `Open77.npcs.tasks.all` | `npcId` | array of task snapshots |
 | `Open77.npcs.tasks.cancel` | `npcId, taskId, optional reason` | boolean |
@@ -358,6 +549,104 @@ Common options are `priority` (signed integer) and `timeoutMs` (`0` disables the
 JSON string `parameters`, `channel`, `priority`, `timeoutMs`, `status`, `revision` and `reason`.
 Statuses are `queued`, `suspended`, `executing`, `success`, `failure`, `cancelled` and
 `interrupted`.
+
+## Attitude and relationship groups
+
+`setAttitude` decides who an NPC will fight. It is **per NPC and per target**, and that is not a
+design preference -- it is the only shape the engine can express for one incarnation. A
+`gameAttitudeAgent` carries `SetAttitudeTowards(otherAgent, attitude)`, an override on one pair of
+agents, which is what Open77 writes. The engine's other lever, a global group matrix reached through
+`gameCAttitudeManager.SetAttitudeRelation`, is process-wide and shared with vanilla content, so
+Open77 does not touch it; `docs/research/npc-behavior-control.md` records that measurement in full.
+
+```lua
+-- Hostile to every player and to every other NPC of this resource.
+Open77.npcs.setAttitude(npcId, "hostile")
+
+-- ...except this one player, who is an ally.
+Open77.npcs.setAttitude(npcId, "friendly", { towards = { playerId = playerId } })
+
+-- ...and this NPC, which it simply ignores.
+Open77.npcs.setAttitude(npcId, "neutral", { towards = { npcId = otherNpcId } })
+
+-- Take the exception back; the default applies again.
+Open77.npcs.setAttitude(npcId, nil, { towards = { playerId = playerId } })
+```
+
+Rows resolve in a fixed order, most specific first:
+
+1. the per-entity row (`{ playerId = n }` or `{ npcId = n }`);
+2. the per-group row (`{ group = "name" }`);
+3. the relationship row declared by `setRelationship` for the two NPCs' groups;
+4. the default set by `setAttitude` with no `towards`;
+5. otherwise the NPC behaves exactly as it did before any of this existed.
+
+Two rules are worth reading twice. An NPC that states **nothing** replicates the same loadout bytes
+it always did and is resolved by the pre-existing rules, so adding this API changed no running
+resource. And player **eligibility is a hard cap, not a default**: a dead player, or one in another
+routing bucket, is never made a target by a directive. A directive can only ever make an NPC
+friendlier toward an ineligible player, never hostile.
+
+Attitude survives a wholesale `setLoadout`, the way `behavior` does, because it is policy rather
+than equipment. `combat.group` does not: it is an ordinary loadout field with pre-existing meaning.
+
+### Relationship groups
+
+Groups are the readable way to run more than two sides. `setGroup` writes the same `combat.group`
+field a loadout has always been able to carry -- two NPCs sharing a non-empty group are allies --
+and `setRelationship` declares what happens between two groups.
+
+```lua
+Open77.npcs.setGroup(copId, "police")
+Open77.npcs.setGroup(gangerId, "valentinos")
+Open77.npcs.setRelationship("police", "valentinos", "hostile")
+Open77.npcs.setRelationship("police", "medics", "friendly")
+```
+
+The matrix is **per resource**, symmetric, and dies with the resource that declared it: one
+resource's groups never reach another's bodies, exactly as its NPC reads and writes never do. The
+resulting row is projected onto every owned NPC in either group and replicated with it, so every
+observer resolves the pair without asking the server -- and an NPC that joins a group later picks up
+the standing row. When two NPCs state attitudes about each other that disagree, **the more hostile
+side wins**: a one-sided friendship produces a body that is shot at and does not shoot back.
+
+### Combat tasks
+
+The combat tasks are ordinary queue entries on the existing channels, so they compose with the
+movement and look tasks already there.
+
+```lua
+-- Engage. Action channel: a standing `moveTo` or `patrol` is NOT cancelled -- the engine
+-- suspends it for the fight and resumes it afterwards.
+Open77.npcs.tasks.attack(npcId, { playerId = playerId })
+Open77.npcs.tasks.attack(npcId, { npcId = rivalId }, { reacquireMs = 3000 })
+
+-- Hold a doorway. Standing order: it ends on cancel or timeout, never on its own.
+Open77.npcs.tasks.guard(npcId, { x = 10, y = 20, z = 30 }, 12, { speed = "run" })
+
+-- Break contact.
+Open77.npcs.tasks.flee(npcId, { playerId = playerId }, { distance = 60 })
+```
+
+`attack` forces the pair hostile and seeds the target into the puppet's own target tracker, then
+re-seeds on `reacquireMs`. It issues **no** locomotion or shooting command: the engine's combat AI
+owns the body from there, which is why an attacking NPC can still take cover and manoeuvre. It
+reports `success` when the target dies, streams out or is removed, and `failure` with
+`attack_target_unavailable` when the target could not be resolved at all. Cancelling drops the
+seeded threat but leaves the attitude alone -- that was a deliberate statement, and a task must not
+overwrite it.
+
+`guard` is a leash, not a patrol. Whenever the body is further than `radius` from the anchor **and
+is not already in a fight** it walks back; while it holds a hostile threat it is left entirely
+alone. It does not by itself make anything hostile: pair it with `setAttitude` or a group.
+
+`flee` re-measures a live target every cycle, so an NPC keeps breaking contact as the thing it flees
+moves, and reports `success` once `distance` metres separate them. It drops the tracked threat on
+that body once, which is best-effort and deliberately shallow: the attitude is untouched, so a
+still-hostile NPC may re-acquire the same target by perception.
+`setAttitude(npcId, "neutral", { towards = ... })` before the flee is the composable answer.
+
+**There is no `cover` task.** Native cover commands require authored `NodeRef` positions that Open77 cannot create or enumerate. NPCs can use native cover during combat. The `guard` task uses a `moveTo` leash rather than a native guard-area command, which has the same `NodeRef` restriction.
 
 ## Health, damage and death
 
@@ -386,6 +675,51 @@ AddEventHandler("onNpcTaskState", function(npcId, taskId, status, reason) end)
 AddEventHandler("onNpcAuthorityChanged", function(npcId, playerId, epoch, reason) end)
 AddEventHandler("onNpcDamaged", function(npcId, source, amount, health, cause) end)
 AddEventHandler("onNpcDied", function(npcId, source, cause) end)
+AddEventHandler("onNpcTargetChanged", function(npcId, kind, targetId, previousKind, previousTargetId) end)
+AddEventHandler("onNpcInteracted", function(npcId, playerId, interactionId, choiceId, distance) end)
+```
+
+The same creation and removal also reach `onEntityCreated(kind, id, resource)` and
+`onEntityRemoved(kind, id, reason)` with `kind` = `"npc"`, for a resource that declares
+`world.entities.observe` and wants every registry under one name. The mirror is raised by the
+same statement as the event above it, so the two can never disagree — see
+[entity lifecycle events](server-api.md#entity-lifecycle-events).
+
+`onNpcTargetChanged` is delivered **only to the resource that owns the NPC**, unlike the six above
+it, because NPC reads are owner scoped everywhere else in this API and an event telling every
+resource which player another resource's bodyguard had just drawn on would be a read across that
+boundary. `kind` is `none`, `player` or `npc`, and `targetId` is `0` when `kind` is `none`. All five
+arguments are strings, as every server resource event's arguments are.
+
+`onNpcInteracted` is a **player's** act on an NPC — a choice used on a `globalNpc`
+[interaction target](interactions.md#event-payload-and-server-authority) — and is delivered
+host-wide like `onNpcDamaged`: the owner is not the only resource entitled to know that a player
+pressed a key on its clerk. The bundled prompt reports the use to the server; the server refuses
+a report from a player it cannot place, from another routing bucket, or from more than 40 m away,
+and publishes the event only for an accepted one, with `distance` being **its own** measurement
+between the player's last fresh snapshot and the NPC's canonical position (metres, two decimals).
+`interactionId` is the target's materialised id (`<targetId>:<matchKey>`) and `choiceId` the
+choice; a refused report produces no event at all, so a forged one can only be silent. Apply your
+own rule on `distance` — 40 m is the ceiling that keeps a sprinting player's stale snapshot from
+breaking a real prompt, not the reach of your shop.
+
+```lua
+-- A vendor: one NPC per stall, opened by the prompt the interactions resource shows on it.
+local stalls = {}   -- npcId (string) -> catalogue
+
+CreateThread(function()
+    local npcId = Open77.npcs.create({ record = "Character.Judy", position = { x = -1378.0, y = 1262.0, z = 123.0 } })
+    stalls[tostring(npcId)] = "weapons"
+    exports.open77_interactions:define({
+        { id = "stall", kind = "globalNpc", distance = 2.0, label = "Browse", key = "E", event = "market:browse" },
+    })
+end)
+
+AddEventHandler("onNpcInteracted", function(npcId, playerId, interactionId, choiceId, distance)
+    local catalogue = stalls[npcId]
+    if catalogue == nil or tonumber(distance) > 3.0 then return end
+    TriggerClientEvent("market:open", tonumber(playerId), catalogue)
+end)
 ```
 
 Client resource events:
@@ -399,6 +733,31 @@ AddEventHandler("onNpcTaskChanged", function(npcId, taskId) end)
 AddEventHandler("onNpcAuthorityChanged", function(npcId, playerId) end)
 AddEventHandler("onNpcStreamOut", function(npcId, reason) end)
 ```
+
+**No `RequestModel` / `HasModelLoaded` loop is needed.** Streaming is implicit; `create` returns
+before the body exists anywhere, `isStreamedIn(id)` says whether this client has it and `onNpcReady`
+is the transition. `Open77.npcs.whenReady` folds both into one promise, on both runtimes:
+
+```lua
+-- Client, requires npcs.read. Resolves with { id, entity } the instant isStreamedIn(id)
+-- answers true (the same instant onNpcReady fires: attached AND behaving), before the call
+-- returns when it already is; rejects with `timeout` (default 15000 ms, clamped 1..120000).
+Open77.npcs.whenReady(npcId, 8000):next(function(body)
+    Open77.animations.play(body.entity, "wave")
+end, function(reason) print("vendor never appeared: " .. reason) end)
+
+-- Server, requires world.npcs. Resolves with the Open77.npcs.owner(id) table as soon as at
+-- least one client reports a ready projection (readyClients > 0) -- the election's own
+-- `onNpcAuthorityChanged(..., "projectionready")` event, with a 250 ms poll as the safety
+-- net -- and rejects with `timeout`.
+local guard = assert(Open77.npcs.create({ template = "civilian_female_relaxed_01", position = post }))
+Open77.npcs.whenReady(guard, 10000):next(function(owner)
+    Open77.npcs.tasks.patrol(guard, route, { loop = true })
+end, function(reason) print(("guard %d never streamed: %s"):format(guard, reason)) end)
+```
+
+The one-shot handler is removed on resolve, on timeout and with the resource. `nil, reason` only
+for a bad id, a bad timeout or a missing permission; an unknown id is waited for and times out.
 
 ## Client read-only API
 

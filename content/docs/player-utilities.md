@@ -1,8 +1,6 @@
 # Player checks and controls
 
-Client Lua helpers use the player's native state, not pressed keyboard keys. Network
-player IDs are **not** entity handles. Omitting the player ID queries the local player.
-Failures return `nil, reason` for reads and `false, reason` for controls.
+Read native player state and apply client-local controls. Player IDs are network IDs, not entity handles. Omit the ID to target the local player. Failed reads return `nil, reason`; failed controls return `false, reason`.
 
 Available in client **2.31.13+op77.62**, protocol **1.25**. These are client APIs;
 server resources request their own client's actions through permissioned events.
@@ -83,17 +81,9 @@ replacement. The native query has a two-second watchdog so abandoned runtime sta
 does not leave a player locked indefinitely. These controls do not freeze a vehicle,
 stop a moving platform, cancel server teleports, or cancel projectiles already fired.
 
-## Validation status
+## Compatibility limits
 
-Lua ownership/permission tests and full REDscript compilation pass. Live acceptance
-confirms grounded movement freeze/release, mouse-turn restriction, sprint restriction,
-jump block/release, crouch block/release, native aim detection, leaving held aim,
-blocking firearm firing and interrupting/resuming an automatic firing sequence.
-Airborne/platform freeze and every traversal state are not certified: this is a native
-locomotion/input restriction, not a physics anchor. Before a combat graph sample exists,
-combat checks return `nil, 'state_unavailable'` (including early unarmed startup).
-Swimming/diving use the verified native enum; entering water was not part of the live
-acceptance run. These checks do not synthesize missing remote swimming state.
+Movement controls restrict native locomotion and input; they are not physics anchors. Airborne, moving-platform and traversal behavior can differ. Combat checks return `nil, 'state_unavailable'` until a graph sample exists. Swimming and diving use native state and do not synthesize missing remote-player data.
 
 `IsPointOnRoad` is **not implemented**. The exposed road/lane natives inspected so far
 query the current player/vehicle; they do not classify arbitrary world coordinates.

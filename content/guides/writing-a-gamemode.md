@@ -1,17 +1,8 @@
 # Writing a gamemode
 
-A gamemode is the thing that makes your server *yours*: a set of rules, a
-round structure, a scoreboard, and whatever the players are actually there
-to do. On OPEN//77 it is written in Lua, as one or more
-[resources](server-resources.md), and it is the server that decides
-everything that matters.
+Build gamemodes as one or more Lua [resources](server-resources.md). Keep shared gameplay rules, match state and scoring authoritative on the server; use client resources for presentation and input.
 
-Read this before you write a line. Most of what follows is not style advice
-— it is platform behaviour that will otherwise cost you an evening each. All
-of it is drawn from two gamemodes that exist and run: **Pursuit**, the
-worked example (`resources/pursuit`, `resources/pursuit_hud`), and **Race**,
-a deliberately small second mode with no roles, no teams and no fixed player
-count.
+Examples use Pursuit and Race to demonstrate lifecycle handling, player readiness, routing buckets and server-side validation.
 
 ## The shape of a gamemode
 
@@ -65,14 +56,7 @@ Load order follows **manifest order**, so list `main.lua` before
 one glob stays deterministic — but list scripts explicitly anyway, for the
 reason in the next section.
 
-> **Version note.** Manifest order has only been honoured since
-> 2026-08-26. Before that the parser collected scripts into a sorted set and
-> loaded them alphabetically regardless of the manifest, and the symptom was
-> brutal and misleading: a later file reaching the shared global failed with
-> `attempt to index a nil value (global 'Pursuit')` and the whole resource
-> refused to start, because `bounds` sorts before `main`. If you ever see a
-> "global is nil" error from a file that clearly runs *after* the one
-> defining it, check that this has not regressed on your build.
+Load shared definitions before scripts that use them. Manifest order determines execution order; a missing global usually indicates a missing declaration or an earlier startup error.
 
 For decoupling *inside* the resource, use a local event — same VM, so it
 works:
@@ -121,14 +105,28 @@ server_script "server/match.lua"
 client_script "client/main.lua"
 ```
 
-### 2. There is no way to list players
+### 2. The roster does not rebuild itself after a reload
 
-`Open77.players` has `name`, `identifier`, `position`, life and damage — but
-no `all()` or `list()`. A resource reload gives you a fresh VM with an empty
-roster while the server is still full, and `onPlayerConnected` does **not**
-re-fire for players already connected.
+`Open77.players.all()` answers with every authenticated player id, ascending,
+and needs no permission — `GetPlayers` is the same function. That call did not
+exist when the first gamemodes were written, which is why older code carries a
+roster assembled by hand from join and leave events.
 
-Repopulate lazily from the next event each player produces:
+What has not changed is *when* you have to ask. A resource reload gives you a
+fresh VM with an empty table while the server is still full, and
+`onPlayerConnected` does **not** re-fire for players who were already
+connected. So seed from the host's roster on start:
+
+```lua
+AddEventHandler("onResourceStart", function(resource)
+    if resource ~= GetCurrentResourceName() then return end
+    for _, playerId in ipairs(Open77.players.all()) do ensurePlayer(playerId) end
+end)
+```
+
+and keep the lazy path for everyone who arrives afterwards, because a player
+who connects between that read and your first handler is otherwise invisible
+until they do something:
 
 ```lua
 local players = {}
@@ -166,14 +164,44 @@ IDs used everywhere else. (This is the opposite of the rule for *engine*
 IDs, which are 64-bit, opaque, and must never go through `tonumber`. Player
 session IDs are small integers and are safe.)
 
-### 4. Move players with kill → respawn, never a transform write
+### 4. Move a living player with `teleport`, never a transform write
 
-A direct teleport over any real distance drops the player into unstreamed
-world. The respawn transaction carries the fade, the streaming preload and
-the grace window. Write one primitive and route every move through it:
+A bare transform write over any real distance drops the player through a floor
+that has not streamed in, and the engine's own fall-under-world failsafe then
+returns them to the save's spawn kilometres away. Neither sanctioned move is a
+transform write.
+
+`Open77.players.teleport` is the placement primitive for a **living** player.
+Health, inventory, weapons and vehicle occupancy are untouched, it carries the
+fade and the bucket change, and it returns a promise that resolves only once the
+client reports the body settled on the mark:
 
 ```lua
-local function placeAt(playerId, position, heading, bucket, reason)
+CreateThread(function()
+    local placed, reason = Open77.players.teleport(playerId, position, {
+        heading = heading,
+        bucket  = bucket,   -- changed before the move; nobody in the old bucket sees the new place
+        fade    = true,     -- default
+    }):await()
+    if not placed then return false, reason end
+    -- placed.state is "settled", or "near" when the body never reported grounded
+end)
+```
+
+Requires `players.teleport`, which is deliberately not one of the `players.life.*`
+strings: a move is not a life event. It refuses rather than improvising —
+`player_not_ready` (no life record, which is the "press any key to continue"
+screen, where a server-side placement **crashes the client**), `player_not_alive`,
+`player_in_vehicle` unless you pass `dismount = true`, `invalid_position`,
+`settle_timeout` and `settle_superseded`.
+
+`Open77.players.respawn` is the other half and is **not** a general move: it
+refuses with `invalid_state` unless the phase is already `Dead`. The kill →
+respawn pair below is therefore for the case where a death is what your mode
+actually means, not for placing somebody:
+
+```lua
+local function killAndPlace(playerId, position, heading, bucket, reason)
     local killed, killError = Open77.players.kill(playerId, {
         cause = "script", weapon = "<mode>:" .. reason,
     })
@@ -191,10 +219,10 @@ end
 
 Requires `players.life.kill` and `players.life.respawn`.
 
-**Consequence:** in a mode that places players, *every placement is a
-death*. If you also have a "player died" rule, it will fire on your own
-spawns unless you guard it. Tag the kill and reject your own tag — and
-verify the tag actually survives the round trip before trusting it.
+**Consequence of that second path:** every placement made through it is a
+*death*. If you also have a "player died" rule, it will fire on your own spawns
+unless you guard it. Tag the kill and reject your own tag — and verify the tag
+actually survives the round trip before trusting it.
 
 ### 5. Never judge a player mid-transition
 

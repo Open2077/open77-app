@@ -19,7 +19,7 @@ const SHOTS = [
   { path: "/servers", name: "servers", width: 1440, height: 1100 },
   { path: "/servers/nc-roleplay", name: "server-detail", width: 1440, height: 1000 },
   { path: "/create", name: "create", width: 1440, height: 1000 },
-  { path: "/community", name: "community", width: 1440, height: 900 },
+  { path: "/workshop", name: "community", width: 1440, height: 900 },
   { path: "/brand", name: "brand", width: 1440, height: 1000 },
   { path: "/docs", name: "docs-index", width: 1440, height: 1100 },
   { path: "/docs/vehicles", name: "docs-guide", width: 1440, height: 1100 },

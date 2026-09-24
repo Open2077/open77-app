@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { readGuideForSync, reviewApiEntries } from "./docs-editorial.mjs";
 
 const args = process.argv.slice(2);
 let source = process.env.OPEN77_WIKI_SOURCE ?? "../CyberM/wiki";
@@ -19,7 +20,7 @@ const hash = (text) => createHash("sha256").update(text).digest("hex");
 const key = (entry) => `${entry.runtime}:${entry.namespace}.${entry.name}`;
 const names = ["setLipSyncEnabled", "setPlayerLipSyncEnabled", "getLipSyncStatus", "getPlayerLipSyncState"];
 const selected = (entry) => entry.runtime === "client" && entry.namespace === "Open77.voice" && names.includes(entry.name);
-const incoming = JSON.parse(await read(path.join(source, "data/api.json"))).filter(selected);
+const incoming = reviewApiEntries(JSON.parse(await read(path.join(source, "data/api.json")))).filter(selected);
 assert.equal(incoming.length, 4, "Expected four reviewed lipsync API cards");
 assert.equal(new Set(incoming.map(key)).size, 4, "Duplicate source cards");
 const apiTarget = "content/api/api.json";
@@ -31,7 +32,7 @@ const merged = [...current.map((entry) => byKey.get(key(entry)) ?? entry),
   ...incoming.filter((entry) => !currentKeys.has(key(entry)))];
 const guides = ["voice", "voice-lipsync"];
 const writes = new Map();
-for (const slug of guides) writes.set(`content/docs/${slug}.md`, await read(path.join(source, `${slug}.md`)));
+for (const slug of guides) writes.set(`content/docs/${slug}.md`, await readGuideForSync(source, `${slug}.md`));
 writes.set(apiTarget, JSON.stringify(merged, null, 1) + "\n");
 const manifestTarget = "content/docs/_manifest.json";
 const manifest = JSON.parse(await read(manifestTarget));

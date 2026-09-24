@@ -1,10 +1,6 @@
 # Third-person camera styles
 
-Client-side customization of the playable F7 camera: classic full-body framing,
-close over-the-shoulder action framing, custom pivots, movement FOV and temporary
-camera shake. These are **not** scripted/cinematic cameras. Mouse look, movement,
-aiming, the collision boom, and perspective ownership keep their existing rules.
-Nothing here moves the player or changes network aim/damage.
+Configure the playable third-person camera through `Open77.camera`: framing, movement response and resource-owned styles. Cinematic camera ownership is documented separately in [Scripted cameras](cameras.md).
 
 ## Availability and permissions
 

@@ -1,8 +1,6 @@
 # Mods your server requires
 
-> The end-to-end picture — layers, the launcher's store and journal, a worked Nexus example and
-> the troubleshooting table — lives in [Mods: the complete guide](mods.md). This page is the
-> operator's reference for trust, hosting, Warden and review.
+Declare, host and manage the mods required by your server. This guide covers Warden, trust levels and review. For installation flow and troubleshooting, see [Mods](mods.md).
 
 A server declares the mods its world needs, hosts the bytes itself, and the launcher installs them
 when the player presses Connect — before the game process exists. The master vouches for hashes,
@@ -68,21 +66,9 @@ splits in two. Which half you are in decides whether you need this pipeline or n
 | Applies | Hot-reloadable, live | On the next boot |
 | Needs this guide | No | Yes |
 
-If the content can be assembled from assets the game already has, build it as a resource.
-`open77_props`, `open77_markers` and `open77_interactions` ship today and are backed by the
-production spawn chain — see [props.md](props.md), [worldui.md](worldui.md) and
-[interactions.md](interactions.md). A racetrack of barriers, a marked-out arena, a decorated
-apartment: all of that is placement, not geometry. It costs your players nothing to download and you
-can change it while they are connected.
+Use a Lua resource for content assembled from existing game assets: props, barriers, markers, zones or furnished interiors. See [props](props.md), [world UI](worldui.md) and [interactions](interactions.md). Resources can update while players are connected, without downloading additional model archives.
 
-Only reach for a required mod when you genuinely need geometry the game does not ship.
-
-**One honest gap.** The runtime half is proven and in production. The baked half is not. Nothing in
-the Open77 repository measures how ArchiveXL world streaming, a custom `.streamingsector` or added
-geometry behaves with Open77's world suppression and routing buckets. The pipeline will happily
-deliver an `.archive` and an `.xl` to every player, because they are inert data — but whether the
-sector streams correctly for two connected players in the same bucket has not been tested. Treat a
-custom map as an experiment on your own server before you announce it.
+Use a required mod for assets the game does not include. Delivery of `.archive` and `.xl` files does not guarantee custom `.streamingsector` compatibility with world suppression or routing buckets. Custom map geometry remains experimental.
 
 ## What you can require
 
@@ -383,8 +369,7 @@ What does not:
 - The launcher fetches on the Connect click, which is exactly when you are most likely to have a
   crowd arriving at once — a stream raid lands as simultaneous full-set downloads.
 
-Open77 has not measured mod-blob egress against a live server, so there is no published figure to
-plan against. Measure your own, and keep the required set as small as the world actually needs.
+Bandwidth depends on package size, concurrent joins and cache reuse. Monitor your server's egress and keep required packages as small as practical.
 
 ## Removing a mod without stranding players
 
@@ -422,14 +407,9 @@ values simulate the same car differently, and the divergence surfaces as desync 
 visual difference. Requiring the file server-wide is how you make every client integrate the same
 physics.
 
-That reasoning is an inference, not a measurement. Two clients on different handling INIs driving
-the same car have not yet been compared in-game. It is the strongest argument for the feature and it
-is cheap to test — but until it is run, treat "mismatched handling causes desync" as expected, not
-established.
+Required handling files enforce consistent configuration; they do not guarantee identical simulation under all network conditions.
 
-**Why it is the easy case.** It is inert data: an INI under `engine/config`, nothing executable. So
-it needs no review at all — it rides the unverified tier, the player is warned, and the join works.
-Of seven real mods we classified, it was the only one that qualified.
+This package contains inert configuration data, not executable code, and follows the unverified-content consent flow.
 
 **What the importer reports.**
 
@@ -452,18 +432,8 @@ change on your side.
 reloaded the way a Lua resource can, which is precisely why it belongs to the launcher path and the
 boot, and not to [server-resources.md](server-resources.md).
 
-## What is not proven yet
+## Compatibility limits
 
-Stated plainly, so you can plan around the gaps rather than discover them:
-
-- **ArchiveXL world streaming on Open77.** No measurement exists of custom `.streamingsector`
-  content against world suppression and routing buckets. Delivery is not the question; behaviour in
-  a live session is.
-- **The desync argument for handling files.** Reasoned from client-authoritative vehicles, not yet
-  observed with two clients on different INIs.
-- **Review throughput.** Six of seven mods in our sample were executable, so the queue is likely the
-  main path rather than an edge case, but the sample is far too small to size it.
-- **Egress in practice.** No published figure for what hosting mod blobs costs a real server.
-
-Everything else in this guide — the custody split, the capability cap, the trust verdicts, the
-import flow and the removal path — is how the pipeline is built, not how it is hoped to work.
+- Successful package delivery does not guarantee custom `.streamingsector` behavior with world suppression and routing buckets.
+- Required handling files enforce identical configuration, not identical simulation.
+- Review turnaround and mod-hosting bandwidth depend on package size and player traffic.

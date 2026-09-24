@@ -1,10 +1,6 @@
 # Autonomous agent testing
 
-Open77 ships a testing toolkit that lets an AI agent — or any harness without a human at the
-screen — drive the actual game: launch the full stack, log into a server through the exact path a
-player clicks, act in the world, and read the result. It is the game's equivalent of the web
-developer's edit–reload–look cycle: every step is a command, every result is readable from outside
-the process.
+Use the agent testing toolkit to launch the local stack, connect a game client, run actions and inspect results from an external automation harness.
 
 Two pieces, both versioned in the platform repository:
 
@@ -140,8 +136,7 @@ subsequent call. Two in-world clients is the practical ceiling on a 12 GB graphi
 
 ## Rules paid for by real failures
 
-These rules come from measured crashes and dead ends, not from caution. They are what separates a
-real verdict from a false positive.
+Run the checks below to distinguish a completed operation from an accepted command or a partially loaded world.
 
 - **World entry is proven by three things together**: the log line `worldReady matched pristine
   transition`, a readable `position`, and `char.state alive=yes`. An "active" session is not an
@@ -230,9 +225,4 @@ deliberate. Any durable addition deserves a line in the skill and in the referen
 
 ## Where the details live
 
-In the platform repository, `docs/agent-autonomous-testing.md` is the full reference — the
-connection mechanism, the observability table, and every measured pitfall with its evidence — and
-`docs/agent-setup.md` covers installation. The skill file is the short operating procedure an
-agent loads into context. The equivalent standalone scripts (`agent-play.ps1`,
-`capture-game.ps1`, `game-input.ps1`, `launch-extra-client.ps1`) remain usable as-is; the MCP
-server wraps them.
+See `docs/agent-autonomous-testing.md` for the automation reference and `docs/agent-setup.md` for installation. The MCP server wraps the standalone `agent-play.ps1`, `capture-game.ps1`, `game-input.ps1` and `launch-extra-client.ps1` scripts.

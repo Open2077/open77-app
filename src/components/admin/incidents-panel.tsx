@@ -6,14 +6,15 @@ import { DownloadIcon, InfoIcon, SearchIcon } from "@/components/icons";
 import { MasterApiError } from "@/lib/account/api";
 import { useSession } from "@/lib/account/session";
 import { downloadIncident, incidentError, incidentPreview, incidents } from "@/lib/account/incidents-api";
-import type { IncidentCursor, IncidentFilters, IncidentPreview, IncidentRow } from "@/lib/account/incidents-api";
+import type { IncidentCursor, IncidentFilters, IncidentPreview, IncidentResolution, IncidentRow } from "@/lib/account/incidents-api";
 import { AdminSpinner, useAdminActivity } from "./admin-activity";
 import { HashCell } from "./hash-cell";
 import { shortId } from "./format";
 import { ErrorStrip, useAdminData } from "./use-admin-data";
 import { IncidentDiscordPanel } from "./incident-discord-panel";
+import { IncidentResolutionPanel, ResolutionBadge } from "./incident-resolution-panel";
 
-const EMPTY = { serverId: "", incidentId: "", fingerprint: "", kind: "", period: "" };
+const EMPTY = { serverId: "", incidentId: "", fingerprint: "", kind: "", period: "", status: "" };
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function utc(value: string) { const d = new Date(value); return Number.isNaN(d.getTime()) ? "Unknown" : d.toISOString().replace("T", " ").slice(0, 19); }
 function obj(value: unknown): Record<string, unknown> { return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {}; }
@@ -27,13 +28,17 @@ export function IncidentsPanel({ initialIncidentId = "" }: { initialIncidentId?:
   const [selected, setSelected] = useState<IncidentRow | null>(null);
   const [validation, setValidation] = useState<string | null>(null);
   const load = useCallback((token: string) => incidents(token, { ...filters, ...cursor }), [filters, cursor]);
-  const { token, data, error, loading } = useAdminData(load);
+  const { token, data, error, loading, reload } = useAdminData(load);
+  function resolved(id: string, resolution: IncidentResolution) {
+    setSelected(current => current?.incidentId === id ? { ...current, resolution } : current);
+    reload(); // Reapply status filtering on the master, before pagination.
+  }
   function apply(event: FormEvent) {
     event.preventDefault();
     if ((draft.serverId && !UUID.test(draft.serverId.trim())) || (draft.incidentId && !UUID.test(draft.incidentId.trim()))) { setValidation("Enter a complete incident / server UUID."); return; }
     if (draft.fingerprint && !/^[a-f0-9]{64}$/i.test(draft.fingerprint.trim())) { setValidation("A fingerprint must contain exactly 64 hexadecimal characters."); return; }
     setValidation(null); setCursor(null); setPrevious([]); setSelected(null);
-    setFilters({ serverId: draft.serverId.trim(), incidentId: draft.incidentId.trim(), fingerprint: draft.fingerprint.trim(), kind: draft.kind,
+    setFilters({ serverId: draft.serverId.trim(), incidentId: draft.incidentId.trim(), fingerprint: draft.fingerprint.trim(), kind: draft.kind, status: draft.status,
       after: draft.period ? new Date(Date.now() - Number(draft.period) * 86400000).toISOString() : undefined });
   }
   function reset() { setDraft(EMPTY); setFilters({}); setPrevious([]); setCursor(null); setSelected(null); setValidation(null); }
@@ -46,6 +51,7 @@ export function IncidentsPanel({ initialIncidentId = "" }: { initialIncidentId?:
       <label className="ac-label">Server ID<input className="ac-input" value={draft.serverId} onChange={e => setDraft({ ...draft, serverId: e.target.value })} placeholder="All servers" maxLength={36} /></label>
       <label className="ac-label">Type<select className="adm-select" value={draft.kind} onChange={e => setDraft({ ...draft, kind: e.target.value })}><option value="">All reports</option><option value="engine-crash">Engine crash</option><option value="abnormal-exit">Unexpected exit</option><option value="manual">Manual report</option><option value="connection-failure">Connection failure</option><option value="process-exit">Process exit</option></select></label>
       <label className="ac-label">Period<select className="adm-select" value={draft.period} onChange={e => setDraft({ ...draft, period: e.target.value })}><option value="">All retained</option><option value="1">Last 24 hours</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select></label>
+      <label className="ac-label">Status<select className="adm-select" value={draft.status} onChange={e => setDraft({ ...draft, status: e.target.value })}><option value="">All statuses</option><option value="open">Open</option><option value="resolved">Resolved</option></select></label>
       <label className="ac-label adm-fingerprint-input">Fingerprint<input className="ac-input" value={draft.fingerprint} onChange={e => setDraft({ ...draft, fingerprint: e.target.value })} placeholder="Optional: match an exact crash signature" maxLength={64} /></label>
       <div className="adm-action-row"><button className="ac-iconbtn" type="button" onClick={reset}>Reset</button><button className="ac-iconbtn adm-primary" disabled={loading}><SearchIcon size={14} /> Apply filters</button></div>
     </form>
@@ -57,18 +63,18 @@ export function IncidentsPanel({ initialIncidentId = "" }: { initialIncidentId?:
         {data?.items.length === 0 ? <div className="adm-empty-state"><InfoIcon size={28} /><h3>No reports found</h3><p>New consented reports will appear here. Try a wider period or clear the filters.</p><button className="ac-iconbtn" onClick={reset}>Clear filters</button></div> : null}
         {data && data.items.length > 0 ? <div className="adm-tablewrap"><table className="adm-table"><thead><tr><th>Incident / occurred UTC</th><th>Type / server</th><th>Signature</th><th>Size</th><th><span className="adm-sr-only">Actions</span></th></tr></thead><tbody>{data.items.map(row => <tr key={row.incidentId} className={selected?.incidentId === row.incidentId ? "is-active" : ""}>
           <td><button className="adm-text-button adm-mono" onClick={() => setSelected(row)} title={row.incidentId}>{shortId(row.incidentId)}</button><span className="adm-cell-sub"><time dateTime={row.occurredAtUtc}>{utc(row.occurredAtUtc)}</time></span></td>
-          <td><span className={`adm-chip ${row.kind === "engine-crash" ? "adm-chip-warn" : "adm-chip-dim"}`}>{row.kind}</span><span className="adm-cell-sub" title={row.serverId ?? ""}>{row.serverId ? shortId(row.serverId) : "No server context"}</span></td>
+          <td><div className="adm-resolution-badges"><ResolutionBadge resolution={row.resolution} /><span className={`adm-chip ${row.kind === "engine-crash" ? "adm-chip-warn" : "adm-chip-dim"}`}>{row.kind}</span></div><span className="adm-cell-sub" title={row.serverId ?? ""}>{row.serverId ? shortId(row.serverId) : "No server context"}</span></td>
           <td><button className="adm-text-button adm-mono" onClick={() => group(row)} title={`Show reports matching ${row.fingerprint}`}>{row.fingerprint.slice(0, 10)}…</button></td><td className="adm-mono adm-faint">{(row.bytes / 1048576).toFixed(2)} MB</td>
           <td><button className="ac-iconbtn" onClick={() => setSelected(row)} aria-label={`Inspect incident ${shortId(row.incidentId)}`}>Inspect</button></td>
         </tr>)}</tbody></table></div> : null}
         <div className="adm-pager"><span className="adm-pager-range">Page {previous.length + 1} · newest received first</span><div className="adm-pager-controls"><button className="ac-iconbtn" disabled={!previous.length || loading} onClick={() => { setCursor(previous[previous.length - 1] ?? null); setPrevious(previous.slice(0, -1)); setSelected(null); }}>Newer</button><button className="ac-iconbtn" disabled={!data?.next || loading} onClick={() => { setPrevious([...previous, cursor]); setCursor(data!.next); setSelected(null); }}>Older</button></div></div>
       </section>
-      {selected && token ? <IncidentDetails key={selected.incidentId} token={token} row={selected} close={() => setSelected(null)} group={() => group(selected)} /> : null}
+      {selected && token ? <IncidentDetails key={selected.incidentId} token={token} row={selected} close={() => setSelected(null)} group={() => group(selected)} onResolved={value => resolved(selected.incidentId, value)} /> : null}
     </div>
   </>;
 }
 
-function IncidentDetails({ token, row, close, group }: { token: string; row: IncidentRow; close: () => void; group: () => void }) {
+function IncidentDetails({ token, row, close, group, onResolved }: { token: string; row: IncidentRow; close: () => void; group: () => void; onResolved: (value: IncidentResolution) => void }) {
   const [entry, setEntry] = useState("incident.json");
   const [preview, setPreview] = useState<IncidentPreview | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -103,6 +109,7 @@ function IncidentDetails({ token, row, close, group }: { token: string; row: Inc
     <p className="adm-incident-id adm-mono">{row.incidentId}</p>
     <div className="adm-action-row"><button className="ac-iconbtn adm-primary" onClick={download} disabled={downloading}>{downloading ? <AdminSpinner label="Verifying ZIP" /> : <><DownloadIcon size={14} /> Download ZIP</>}</button><button className="ac-iconbtn" onClick={group}>Related signatures</button></div>
     <p className="adm-footnote" role="status">{notice || "Private report · downloads and previews are audited."}</p>
+    <IncidentResolutionPanel id={row.incidentId} onSaved={onResolved} />
     <ErrorStrip message={error} />
     {error ? <button className="ac-iconbtn" onClick={() => { setError(null); setRetry(n => n + 1); }}>Retry evidence request</button> : null}
     {preview ? <>

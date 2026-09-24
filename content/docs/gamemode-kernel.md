@@ -1,17 +1,8 @@
 # The gamemode kernel and shared server services
 
-Early planning for the template system
-([`docs/gamemode-pursuit-plan.md`](../docs/gamemode-pursuit-plan.md) section
-4.2b) called for a third shared resource, `open77_gamemode`: a kernel
-owning "roster and disconnect handling, the lobby bucket, the queue, bucket
-allocation and release, the countdown, the state machine with guarded
-transitions, the scoreboard, and the return transaction" -- callable the
-same way `open77_zones` and `open77_worldui` are.
+Organize gamemode rules in server resources and expose reusable services through [server exports](server-exports.md). Open77 does not ship a universal `open77_gamemode` resource.
 
-**No universal `open77_gamemode` resource is shipped.** The original implementation
-used generated code because server exports were unavailable. That runtime
-limitation has now been removed: shared server services are supported, while
-the existing gamemodes keep their current single-resource state machines.
+Keep tightly coupled match state in one resource. Extract reusable services when they need an independent lifecycle and a clear request interface.
 
 ## Shared server resources are supported
 
@@ -20,11 +11,7 @@ The server runtime now provides `exports(name, fn)`,
 generation identity. See [server exports](server-exports.md) for a runnable
 two-resource example and the precise lifecycle contract.
 
-A service can own scores, lobbies or a bucket allocator and accept explicit
-requests from gamemodes. Each still owns its Lua state, permissions and handles.
-Values cross by copy, and calls are deferred: this is not a shared global table
-or a synchronous state-machine function call. Validate the immediate caller and
-arguments; keep operations atomic before yielding where races would matter.
+Shared services can own scores, lobbies or bucket allocation. Values cross resource boundaries by copy. Synchronous exports must not yield; asynchronous calls are deferred and awaited. Validate callers and arguments, and keep state changes atomic before yielding.
 
 `TriggerEvent` remains local to a VM. The host still fans lifecycle/player events
 into resources. Export registration does not create a network entry point.
@@ -33,12 +20,7 @@ packages; adding server exports does not move their presentation logic to the se
 
 ## The scaffolder remains useful
 
-For local gameplay patterns, `scripts/new-resource.ps1 -Kind gamemode` emits
-a correct-by-construction starting point directly into the new resource --
-a guarded state machine, roster tracking with the reload-safe adoption
-pattern below, and a `<name>.status` command. Both `resources/gamemodes/pursuit` and
-`resources/gamemodes/race` began this way and then diverged, because that is what a
-generated starting point is for.
+`scripts/new-resource.ps1 -Kind gamemode` creates a resource with a guarded state machine, reload-safe roster handling and a `<name>.status` command.
 
 Use generated code for tightly coupled state-machine rules, and server exports
 for reusable services with a clear ownership boundary. See
@@ -47,18 +29,14 @@ or new dependency is added to existing gamemodes by the runtime change.
 
 ## The contract every gamemode's server should implement
 
-Not an API to call -- a set of conventions to copy, proven across two
-gamemodes now. Each one is documented in full, with the failure it was
-measured against, in
-[writing a gamemode](../docs/writing-a-gamemode.md) section 2; this is the
-short version, with the two working examples.
+Apply these lifecycle and authority conventions to each gamemode. See [Writing a gamemode](writing-a-gamemode.md) for examples.
 
 | Convention | Why | Where it lives |
 |---|---|---|
 | **Reload-safe roster adoption.** Use `Open77.players.all()` for the current roster and retain lazy `ensurePlayer` handling at player-event boundaries. | A reload must not lose track of connected players. | `ensurePlayer` in `resources/gamemodes/pursuit/server/main.lua` and `resources/gamemodes/race/server/main.lua` |
 | **`tonumber` every player ID.** IDs arrive from net events and lifecycle handlers as strings. | A raw string key silently diverges from the numeric IDs used everywhere else. | Every `AddEventHandler("onPlayer...", ...)` in both resources |
 | **Guarded state transitions, one function.** A single `transition(playerId, target, detail)` that checks an explicit table of allowed edges and logs a refusal instead of corrupting state. | An invalid transition is more useful as a log line than as silent corruption. | `transition` in both resources |
-| **Move players only through kill -> respawn.** Never a raw transform write; the transaction carries the fade and the streaming preload a direct teleport skips. | A direct teleport over distance drops the player into unstreamed world. Every placement is therefore a death, which its own life-state checks must account for. | `placeAt` in both resources |
+| **Move players with `Open77.players.teleport`.** Never a raw transform write. Kill -> respawn was the ONLY placement primitive before `teleport` existed -- `Open77.players.respawn` refuses unless the player is already dead -- and the modes that still do it are unconverted, not exemplary. | A raw transform write over distance drops the player into unstreamed world and the engine's fall-under-world failsafe silently returns them to the save's spawn. `teleport` carries the fade and waits for the client to report the body settled, without costing a death. | `placeAt` in both resources (kill -> respawn, pre-`teleport`); [Moving a player](server-api.md#moving-a-player) |
 | **Re-derive every client-reported condition on the server.** A zone `enter` event, a checkpoint claim, a queue intent -- all are hints. Re-check them against `Open77.players.position` with a few metres of grace before granting anything. | The client is never the authority (writing a gamemode, section 4). | `containsPlayer` (Pursuit) / `checkpointReached` (Race) |
 | **Never judge a single position sample.** Every rule is "held continuously for N seconds," evaluated on a fixed tick; an unreadable position freezes an accumulator, never resets it. | `Open77.players.position` is a replicated snapshot, not a live read (writing a gamemode, section 2.5). | Pursuit's win-condition tick; Race's per-second heat-state check |
 | **One `<mode>.where`-style diagnostic, early.** Print exactly what the server sees for one player -- position, bucket, the rule's own verdict and reason. | Nearly every confusing failure in this project was answered in one line by such a command (writing a gamemode, section 6). | `pursuit.where`, `race.where` |

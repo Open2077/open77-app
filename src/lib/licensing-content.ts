@@ -11,33 +11,33 @@
 export const LICENSING_TITLE = "Server licensing";
 
 export const LICENSING_DESCRIPTION =
-  "How a server joins the OPEN//77 platform: create an account, mint a license key in the keymaster, put the key in your server config, and how the master authorises the server on boot.";
+  "Create, configure and revoke server license keys. Understand Master enrollment, account ownership and run leases.";
 
 export const LICENSING_LEDE =
-  "Every server on the platform belongs to an account. You create a license key on open2077.net, put it in your server's configuration, and the master authorises the server when it starts — no key, no listing.";
+  "A platform license associates a dedicated server with its owner's account. Create a key, configure it on the server and authenticate with the Master at startup.";
 
 export const LICENSING_OVERVIEW =
-  "OPEN//77 works like FiveM's keymaster: a server exists on the platform because a logged-in owner created a key for it. The key ties the server to your account, puts it in the public server browser under your name, and is the switch you use to pull it back off. Anonymous servers are not part of the platform — a server with no valid key is refused by the master and never appears in the browser.";
+  "Servers need a valid license for Master enrollment, directory registration and run leases. Manage keys in your account. An invalid or revoked key prevents enrollment.";
 
 export const ONBOARDING_STEPS = [
   {
     num: "01",
     title: "Create your account",
-    body: "Register on open2077.net with an e-mail and password, then verify your e-mail. One account covers everything — the server browser, your license keys, and your game identities. E-mail verification is required before you can create a key.",
+    body: "Register on open2077.net with an e-mail and password, then verify your e-mail. One account covers everything: the server browser, your license keys, and your game identities. E-mail verification is required before you can create a key.",
     href: "/account",
     linkText: "Go to your account",
   },
   {
     num: "02",
     title: "Mint a license key",
-    body: "In your account, open Server license keys and create one. Give it a label so you can tell your servers apart. The key is shown once — copy it now; the platform only stores a fingerprint and can never show it again.",
+    body: "In your account, open Server license keys and create one. Give it a label so you can tell your servers apart. The key is shown once. Copy it now; the platform only stores a fingerprint and can never show it again.",
     href: "/account/keys",
     linkText: "Open the keymaster",
   },
   {
     num: "03",
     title: "Give the key to your server",
-    body: "Point your server config at the key — through the OP77_LICENSE_KEY environment variable (recommended) or the masterServer.licenseKey field. Keep the key out of any file you commit or share.",
+    body: "Point your server config at the key, through the OP77_LICENSE_KEY environment variable (recommended) or the masterServer.licenseKey field. Keep the key out of any file you commit or share.",
     href: "#linking-the-key",
     linkText: "How to link the key",
   },
@@ -56,7 +56,7 @@ export const KEY_SHAPE =
 export const KEY_FACTS = [
   {
     label: "Shown once",
-    body: "The full key is displayed only at creation. The platform stores a one-way fingerprint, so support can never recover it — losing it means revoke and replace.",
+    body: "The full key is displayed only at creation. The platform stores a one-way fingerprint, so support can never recover it. Losing it means revoke and replace.",
   },
   {
     label: "One key, many servers",
@@ -68,12 +68,12 @@ export const KEY_FACTS = [
   },
   {
     label: "Revocable at any time",
-    body: "Revoking a key immediately cuts off every server enrolled with it — the master stops authorising them and they leave the browser.",
+    body: "Revoking a key immediately cuts off every server enrolled with it. The master stops authorising them and they leave the browser.",
   },
 ] as const;
 
 export const LINKING_INTRO =
-  "The server reads the key from its configuration when it starts. There are two ways to supply it; the environment variable is preferred because it keeps the key out of any file you might commit or hand to someone else.";
+  "Supply the key through the server environment or configuration. Prefer the environment variable to keep secrets out of shared files.";
 
 export const ENV_INTRO =
   "Set OP77_LICENSE_KEY in the server's environment and leave the config credential-free:";
@@ -103,12 +103,12 @@ export const LINKING_OUTRO =
   "Never commit a real key. The tracked server.jsonc should keep licenseKey null and rely on the environment variable; a leaked key should be revoked in the keymaster, not merely rotated in the file.";
 
 export const AUTH_INTRO =
-  "When the server starts with a valid key, the master authorises it and keeps it authorised for as long as it stays healthy. You never touch the platform database — everything goes through the key.";
+  "The Master checks the key at enrollment and renews the server's run lease through heartbeats.";
 
 export const AUTH_STEPS = [
   {
     title: "The key is verified",
-    body: "The master looks up your key. An unknown key, a revoked key, or a suspended owner is refused with a single error — the server logs \"Master refused the platform license key…\" and does not appear in the browser.",
+    body: "The master looks up your key. An unknown key, a revoked key, or a suspended owner is refused with a single error: the server logs \"Master refused the platform license key…\" and does not appear in the browser.",
   },
   {
     title: "The server is bound to your license",
@@ -116,7 +116,7 @@ export const AUTH_STEPS = [
   },
   {
     title: "It is issued a run lease",
-    body: "The master hands the server a short-lived, signed run lease — renewed every heartbeat — that stands as proof the server is licensed and current. Stop heartbeating, or lose the license, and the lease is not renewed.",
+    body: "The master hands the server a short-lived, signed run lease, renewed every heartbeat, that stands as proof the server is licensed and current. Stop heartbeating, or lose the license, and the lease is not renewed.",
   },
   {
     title: "Revocation takes effect immediately",
@@ -125,10 +125,10 @@ export const AUTH_STEPS = [
 ] as const;
 
 export const AUTH_NOTE =
-  "Player-side enforcement — official clients refusing to complete a handshake with a server whose lease has expired — is still being built. Today the master side is live: no license means no enrolment, no listing and no lease.";
+  "Master-side licensing controls enrollment, directory listing and run leases. Do not rely on it as the sole client-admission control; configure server access rules separately.";
 
 export const MANAGE_INTRO =
-  "Your account lists every key you hold, with its label, fingerprint and creation date, and a control to revoke it. Revoking is how you take a server off the platform, retire a community, or respond to a leaked key.";
+  "Your account shows each key's label, fingerprint and creation date. Revoke keys for retired servers or compromised credentials.";
 
 /** Markdown twin of the page, projected from the same constants. */
 export function licensingToMarkdown(): string {
@@ -138,12 +138,12 @@ export function licensingToMarkdown(): string {
 
   lines.push("## From zero to a listed server", "");
   for (const step of ONBOARDING_STEPS) {
-    lines.push(`${step.num}. **${step.title}** — ${step.body}`);
+    lines.push(`${step.num}. **${step.title}**: ${step.body}`);
   }
   lines.push("");
 
   lines.push("## Your license key", "", KEY_SHAPE, "");
-  for (const fact of KEY_FACTS) lines.push(`- **${fact.label}** — ${fact.body}`);
+  for (const fact of KEY_FACTS) lines.push(`- **${fact.label}**: ${fact.body}`);
   lines.push("");
 
   lines.push("## Linking the key to your server", "", LINKING_INTRO, "");
@@ -153,7 +153,7 @@ export function licensingToMarkdown(): string {
 
   lines.push("## How the master authorises your server", "", AUTH_INTRO, "");
   AUTH_STEPS.forEach((step, index) => {
-    lines.push(`${index + 1}. **${step.title}** — ${step.body}`);
+    lines.push(`${index + 1}. **${step.title}**: ${step.body}`);
   });
   lines.push("", `> ${AUTH_NOTE}`, "");
 

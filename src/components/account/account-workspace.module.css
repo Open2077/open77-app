@@ -1,0 +1,111 @@
+/* Presentation only: account gates, forms and API workflows keep their contracts. */
+.workspace {
+  --bg: #050e16; --bg-elev: #071520; --surface: #0b1c29; --surface-2: #102635;
+  --accent: #08dfec; --accent-rgb: 8, 223, 236; --accent-soft: #08dfec0d;
+  --ws-accent: #08dfec; --ws-accent-rgb: 8, 223, 236;
+  --text: #f2f7fa; --text-dim: #b4cad8; --text-faint: #96afbf;
+  --line: #92d0e024; --line-strong: #92d0e04d;
+  --radius-sm: 8px; --radius-md: 16px;
+  min-height: calc(100dvh - var(--header-h, 94px));
+  padding-bottom: 64px;
+  background: radial-gradient(ellipse at 85% 0%, #10354655, transparent 45%), #050e16;
+  color: var(--text); color-scheme: dark;
+}
+.workspace :global(.hub-wrap), .workspace :global(.hub-bar-inner) { max-width: 1500px; }
+.workspace :global(.hub-page-head), .workspace :global(.ac-head) {
+  align-items: center; margin: 0 0 24px; padding: clamp(24px, 3vw, 40px);
+  border: 1px solid var(--line-strong); border-radius: 18px;
+  background: radial-gradient(ellipse at 100% 0%, #25b4c520, transparent 65%), linear-gradient(125deg, #12344490, #0b1c29);
+  box-shadow: inset 0 1px 0 #d4f4ff0d;
+}
+.workspace :global(.hub-page-head h1), .workspace :global(.ac-title) {
+  margin: 12px 0; font: 700 clamp(34px, 3.5vw, 52px)/1.05 var(--font-display); letter-spacing: -.025em;
+}
+.workspace :global(.hub-page-head > div > p:not(.hub-kicker)), .workspace :global(.ac-lead) {
+  color: var(--text-dim); font-size: 14px; line-height: 1.8; max-width: 72ch;
+}
+.workspace :global(.hub-kicker), .workspace :global(.eyebrow) { color: #8dbbca; font-size: 10px; letter-spacing: .15em; }
+.workspace :global(.btn) {
+  min-height: 44px; padding: 11px 18px; border-radius: 9px; clip-path: none;
+  font: 600 12px/1.5 var(--font-body); letter-spacing: .02em; text-transform: none;
+  transition: background .2s, border-color .2s, box-shadow .2s;
+}
+.workspace :global(.btn::before), .workspace :global(.btn::after) { display: none; }
+.workspace :global(.btn-primary) {
+  color: #001a21; border: 1px solid #5affff99; background: linear-gradient(115deg, #19e7ed, #00cfe4);
+  box-shadow: inset 0 1px 0 #fff4, 0 6px 24px #00dded14;
+}
+.workspace :global(.btn-primary:hover) { background: #60f5f7; }
+.workspace :global(.btn-ghost) { color: var(--text); border-color: var(--line-strong); background: #10263580; }
+.workspace :global(.btn-ghost:hover) { background: #153344; }
+.workspace :global(.btn:disabled) { opacity: .5; box-shadow: none; cursor: not-allowed; }
+.workspace :global(.hub-draft-row), .workspace :global(.ac-card), .workspace :global(.hub-form),
+.workspace :global(.hub-empty), .workspace :global(.hub-release) {
+  padding: clamp(20px, 2.4vw, 30px); border: 1px solid var(--line); border-radius: 16px;
+  background: linear-gradient(125deg, #162d3b80, #0b1c29); box-shadow: inset 0 1px 0 #d4f4ff08;
+}
+.workspace :global(.hub-draft-row) { align-items: center; gap: 24px; margin-bottom: 14px; }
+.workspace :global(.hub-draft-row > div:first-child) { min-width: 0; flex: 1; }
+.workspace :global(.hub-draft-row h2) { margin: 7px 0 10px; font: 600 25px/1.2 var(--font-display); overflow-wrap: anywhere; }
+.workspace :global(.hub-draft-row p:not(.hub-kicker)) { max-width: 70ch; color: var(--text-dim); font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
+.workspace :global(.hub-draft-row .hub-kicker) { color: #67dce5; font-size: 9px; }
+.workspace :global(.hub-actions) { gap: 10px; }
+.workspace :global(.hub-actions > a:not(.btn)) { font-size: 12px; color: var(--accent); }
+.workspace :global(.hub-empty) { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: 260px; text-align: left; }
+.workspace :global(.hub-empty h2) { font: 600 30px/1.2 var(--font-display); }
+.workspace :global(.hub-empty p) { max-width: 65ch; margin: 12px 0 22px; color: var(--text-dim); line-height: 1.8; }
+.workspace :global(.hub-notice), .workspace :global(.ac-notice), .workspace :global(.ac-launch), .workspace :global(.ac-reveal) {
+  border-radius: 12px; padding: 20px 24px; border-color: var(--line-strong); background: #10263580; line-height: 1.8;
+}
+.workspace :global(.hub-notice[role="alert"]), .workspace :global(.ac-error) { border-color: #ff596455; background: #ff59640a; color: #ffb6bc; }
+.workspace :global(.ac-reveal) { border-color: #55dab14d; background: #14352f44; }
+.workspace :global(.ac-card-head) { align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }
+.workspace :global(.ac-card-title) { font: 600 24px/1.3 var(--font-display); letter-spacing: 0; text-transform: none; }
+.workspace :global(.ac-key-row) { gap: 20px; padding: 18px 20px; border-radius: 10px; border-color: var(--line); background: #06152066; }
+.workspace :global(.ac-key-label) { overflow-wrap: anywhere; font-size: 14px; }
+.workspace :global(.ac-key-hint), .workspace :global(.ac-key-date) { font-size: 11px; line-height: 1.7; }
+.workspace :global(.ac-iconbtn) { min-height: 36px; border-radius: 8px; padding: 8px 12px; font: 500 11px/1.5 var(--font-body); letter-spacing: 0; }
+.workspace :global(.ac-key-empty) { border: 1px dashed var(--line-strong); border-radius: 12px; padding: 32px 20px; background: #07152066; font-size: 13px; line-height: 1.8; }
+.workspace :global(.ac-keybox) { border-radius: 10px; background: #061520; padding: 16px; }
+.workspace :global(.ac-keybox code) { min-width: 0; overflow-wrap: anywhere; }
+.workspace :global(.ac-snippet pre) { border-radius: 10px; background: #061520; }
+.workspace :global(.ac-form) { padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: #07152066; }
+.workspace :global(.ac-label), .workspace :global(.hub-form label) { font: 500 12px/1.6 var(--font-body); letter-spacing: 0; text-transform: none; }
+.workspace :global(.ac-input), .workspace :global(.hub-form input), .workspace :global(.hub-form select), .workspace :global(.hub-form textarea) {
+  border-radius: 8px; border-color: var(--line-strong); background: #071520; color: var(--text); font: 400 13px/1.6 var(--font-body);
+}
+.workspace :global(.hub-wizard-steps) { gap: 8px; padding: 0; }
+.workspace :global(.hub-wizard-steps button) { border-radius: 9px; }
+.workspace :global(.hub-wizard-steps [aria-current="step"]) { color: var(--accent); border-color: #08dfec66; background: #08dfec0d; }
+.workspace :global(.hub-editor-fields) { min-width: 0; }
+.workspace :global(.hub-rights) { line-height: 1.8; font-size: 13px; }
+.workspace :global(.hub-form-row) { gap: 20px; }
+.workspace :global(.hub-release + .hub-release) { margin-top: 14px; }
+.workspace :global(.hub-notice h2), .workspace :global(.hub-notice h3) { font-family: var(--font-display); }
+.workspace :is(a, button, input, textarea, select):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.keys { padding-top: 32px; }
+.keys :global(.ac-inner) { width: min(1240px, calc(100% - 112px)); max-width: none; padding: 0; }
+.keys :global(.ac-lead a) { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; }
+@media (max-width: 1000px) {
+  .keys :global(.ac-inner) { width: calc(100% - 48px); }
+  .workspace :global(.hub-draft-row) { align-items: flex-start; flex-direction: column; }
+  .workspace :global(.hub-bar-inner) { gap: 12px; }
+  .workspace :global(.hub-bar-tabs) { order: 3; width: 100%; overflow-x: auto; }
+}
+@media (max-width: 600px) {
+  .keys { padding-top: 14px; }
+  .keys :global(.ac-inner) { width: calc(100% - 24px); }
+  .workspace :global(.hub-page-head), .workspace :global(.ac-head) { padding: 24px 20px; border-radius: 14px; }
+  .workspace :global(.hub-page-head-actions) { width: 100%; }
+  .workspace :global(.hub-page-head-actions .btn) { width: 100%; }
+  .workspace :global(.ac-card), .workspace :global(.hub-form) { padding: 20px 16px; }
+  .workspace :global(.ac-key-row) { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px; }
+  .workspace :global(.ac-key-meta) { width: 100%; justify-content: space-between; }
+  .workspace :global(.ac-keybox) { flex-direction: column; align-items: stretch; gap: 12px; }
+  .workspace :global(.hub-form-row) { grid-template-columns: minmax(0, 1fr); }
+  .workspace :global(.hub-actions) { flex-wrap: wrap; }
+  .workspace :global(.ac-form) { padding: 16px 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workspace :global(.btn), .workspace :global(.ac-input) { transition: none; }
+}

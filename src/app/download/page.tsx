@@ -1,31 +1,18 @@
 import Link from "next/link";
 import { connection } from "next/server";
 
-import { Eyebrow, SlashMark } from "@/components/brand";
 import { CopyLine } from "@/components/copy-line";
-import {
-  ArrowDownIcon,
-  DiscordIcon,
-  DownloadIcon,
-  InfoIcon,
-  ServerRackIcon,
-  ShieldIcon,
-  WindowsIcon,
-} from "@/components/icons";
+import { DownloadAction } from "@/components/downloads/download-action";
+import { ArtworkCard, DownloadSurface, QuickFacts, SurfaceEyebrow, SurfaceHeading, UnavailableRelease } from "@/components/downloads/download-surface";
+import styles from "@/components/downloads/download-surface.module.css";
+import { ArrowRightIcon, CheckIcon, DiscordIcon, DownloadIcon, PeopleIcon, PlayIcon, ServerRackIcon, ShieldIcon, WindowsIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
-import { SiteFooter } from "@/components/site-footer";
 import { ReleaseRefresh } from "@/components/release-refresh";
 import { formatBytes, formatReleaseDate } from "@/lib/cdn";
-import { cssBackgrounds } from "@/lib/images";
 import { fetchLatestLauncherRelease, type LauncherRelease } from "@/lib/launcher-release";
-import { fetchLatestServerRelease, type ServerRelease } from "@/lib/server-release";
+import { fetchLatestServerRelease } from "@/lib/server-release";
 import { GAME_BUILD, GAME_EXPANSION, PLAYER_REQUIREMENT_SHORT } from "@/lib/requirements";
-import {
-  breadcrumbNode,
-  jsonLdGraph,
-  launcherApplicationNode,
-  pageMetadata,
-} from "@/lib/seo";
+import { breadcrumbNode, jsonLdGraph, launcherApplicationNode, pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 export const metadata = pageMetadata({
@@ -41,372 +28,113 @@ function verifyCommand(fileName: string): string {
 }
 
 const LAUNCHER_DOES = [
-  {
-    title: "Signs you in",
-    body: "One OPEN//77 account, authorized in your browser rather than in the app — the launcher never sees your password.",
-  },
-  {
-    title: "Checks your game",
-    body: `It makes sure your Cyberpunk 2077 install is build ${GAME_BUILD} with ${GAME_EXPANSION} before it installs anything. The client is built against that exact version, so you hear about a mismatch up front rather than halfway into a session.`,
-  },
-  {
-    title: "Installs and updates the mod",
-    body: "The OPEN//77 client is fetched, verified and kept current for you. Nothing to unzip into your game folder by hand, and nothing left behind when you turn it off.",
-  },
-  {
-    title: "Manages what loads",
-    body: "Choose which mods are active for a session. Some servers ask for a clean load-out, so this is how you keep your own setup and still connect.",
-  },
-  {
-    title: "Finds you a world",
-    body: "Browse community servers, filter them, and press connect. The launcher starts the game already pointed at the world you picked.",
-  },
-];
-
-const REQUIREMENTS = [
-  {
-    title: "Windows 10 or 11, 64-bit",
-    body: "The launcher is a Windows desktop application, and the client it installs is a native plugin that loads inside the game process. There is no macOS or Linux player build.",
-  },
-  {
-    title: "The WebView2 runtime",
-    body: "The launcher renders its interface with Microsoft Edge WebView2. Windows 11 already ships it; on Windows 10 it installs itself the first time it is needed — so this is one to know about, not one to do.",
-  },
-  {
-    title: `Your own copy of Cyberpunk 2077 ${GAME_BUILD}`,
-    body: `Your own legal copy — OPEN//77 never distributes the game or any of its assets. ${GAME_EXPANSION} is required rather than optional: the world you land in when you connect is an EP1 save. The build has to be ${GAME_BUILD} exactly, and the launcher checks that for you.`,
-  },
-];
-
-const FIRST_RUN = [
-  {
-    num: "01",
-    title: "Windows will show a warning",
-    body: (
-      <>
-        The launcher is not code-signed yet, so the first launch brings up SmartScreen&apos;s{" "}
-        <em>“Windows protected your PC”</em> screen. Choose <strong>More info</strong>, then{" "}
-        <strong>Run anyway</strong>, and you are through. Windows shows that message for every
-        unsigned application — plenty of indie launchers included — and it says nothing about the
-        file itself. <Link href="/docs/launcher">The launcher guide</Link> spells out exactly what
-        that dialog does and does not mean.
-      </>
-    ),
-  },
-  {
-    num: "02",
-    title: "Sign in through your browser",
-    body: (
-      <>
-        The launcher opens <Link href="/launcher">the authorization page</Link> on this site. You
-        approve it there, and the launcher receives a token — your password never goes through the
-        app.
-      </>
-    ),
-  },
-  {
-    num: "03",
-    title: "Point it at your game, then play",
-    body: (
-      <>
-        It locates your Cyberpunk 2077 install, checks the build, installs the client, and opens the{" "}
-        <Link href="/servers">server browser</Link>. From there it is one button.
-      </>
-    ),
-  },
+  { icon: ShieldIcon, title: "Signs you in", body: "One OPEN//77 account, authorized in your browser rather than in the app. The launcher never sees your password." },
+  { icon: CheckIcon, title: "Checks your game", body: `It makes sure your Cyberpunk 2077 install is build ${GAME_BUILD} with ${GAME_EXPANSION} before it installs anything. The client is built against that exact version, so you hear about a mismatch up front rather than halfway into a session.` },
+  { icon: DownloadIcon, title: "Installs and updates the mod", body: "The OPEN//77 client is fetched, verified and kept current for you. Nothing to unzip into your game folder by hand, and nothing left behind when you turn it off." },
+  { icon: ServerRackIcon, title: "Manages what loads", body: "Choose which mods are active for a session. Some servers ask for a clean load-out, so this is how you keep your own setup and still connect." },
+  { icon: PlayIcon, title: "Finds you a world", body: "Browse community servers, filter them, and press connect. The launcher starts the game already pointed at the world you picked." },
 ];
 
 export default async function DownloadPage() {
+  // Read each channel independently at request time; never substitute one version for another.
   await connection();
-  const [release, serverRelease] = await Promise.all([
-    fetchLatestLauncherRelease(), fetchLatestServerRelease(),
-  ]);
+  const [release, serverRelease] = await Promise.all([fetchLatestLauncherRelease(), fetchLatestServerRelease()]);
 
   return (
     <>
-      <link rel="preload" as="image" href={cssBackgrounds.playTogether} fetchPriority="high" />
-
-      <main id="main">
-        <section className="page-hero page-hero-download">
-          <div className="page-hero-bg" aria-hidden="true" />
-          <div className="section-inner page-hero-inner">
-            <Eyebrow>DOWNLOAD</Eyebrow>
-            <h1 className="page-title">
-              Get the
-              <br />
-              OPEN//77 launcher.
-            </h1>
-            <p className="section-lead">
-              One Windows app: it signs you in, checks your game build, installs and updates the
-              mod, and drops you into the server browser. Free, and no account needed to download
-              it — you bring {PLAYER_REQUIREMENT_SHORT}.
-            </p>
-            {/* The actual download, above the fold. Someone who came here to get
-                the launcher should not have to find a panel first; the panel
-                further down is for whoever wants the version, the date and the
-                rest of the detail. */}
-            <div className="hero-ctas">
-              {release ? (
-                <a className="btn btn-primary btn-lg" href={release.url}>
-                  Download for Windows
-                  <DownloadIcon size={16} />
-                </a>
-              ) : (
-                <a className="btn btn-primary btn-lg" href="#get">
-                  Get the launcher
-                  <ArrowDownIcon />
-                </a>
-              )}
-              <a className="btn btn-ghost" href="#requirements">
-                What you need
-              </a>
-              <Link className="btn btn-ghost" href="/host">Download the server</Link>
+      <DownloadSurface active="launcher" artwork="/assets/home/night-city-wallpaper-v3.webp">
+        <section className={styles.hero} aria-labelledby="download-title">
+          <div className={styles.heroCopy}>
+            <SurfaceEyebrow>DOWNLOAD</SurfaceEyebrow>
+            <h1 id="download-title">Get the<em>OPEN//77 launcher.</em></h1>
+            <p className={styles.intro}>One Windows app: it signs you in, checks your game build, installs and updates the mod, and drops you into the server browser. Free, and no account needed to download it. You bring {PLAYER_REQUIREMENT_SHORT}.</p>
+            <div className={styles.actions}>
+              <Link className={styles.secondary} href="#requirements">What you need <ArrowRightIcon size={16} /></Link>
+              <Link className={styles.textLink} href="/docs/launcher">Launcher guide <ArrowRightIcon size={16} /></Link>
             </div>
-            {release ? (
-              <p className="dl-hero-meta">
-                Launcher {release.version}
-                {release.sizeBytes !== null ? ` · ${formatBytes(release.sizeBytes)}` : ""} · Windows
-                10 / 11, 64-bit
-              </p>
-            ) : null}
-            <div className="dl-channels" aria-label="Current release versions">
-              <a href="#get" data-channel-summary="launcher">
-                <span>Player launcher · Windows</span>
-                <strong>{release?.version ?? "Temporarily unavailable"}</strong>
-              </a>
-              <a href="#server" data-channel-summary="server">
-                <span>Dedicated server · Windows / Linux</span>
-                <strong>{serverRelease?.version ?? "Temporarily unavailable"}</strong>
-              </a>
+            <p className={styles.heroNote}><CheckIcon size={15} />Free to download. Joining a server requires an Alpha-enabled account.</p>
+          </div>
+          <div id="get" className={styles.downloadPanel}>
+            {release ? <LauncherDownload release={release} /> : <UnavailableRelease kind="launcher" />}
+          </div>
+        </section>
+
+        <QuickFacts facts={[
+          { icon: WindowsIcon, label: "Player platform", value: "Windows 10 / 11 · 64-bit" },
+          { icon: PlayIcon, label: "Game build", value: `Cyberpunk 2077 ${GAME_BUILD} · exact` },
+          { icon: CheckIcon, label: "Required expansion", value: GAME_EXPANSION },
+          { icon: DownloadIcon, label: "Launcher download", value: release?.sizeBytes != null ? formatBytes(release.sizeBytes) : "Size currently unavailable" },
+        ]} />
+        <div className={styles.channelGrid}>
+          <div id="server" data-release-channel="server" data-release-version={serverRelease?.version}>
+            <ArtworkCard image="/assets/home/servers-v2.webp" icon={ServerRackIcon} label="Dedicated server · Windows / Linux · not the launcher" title={serverRelease?.version ?? "Server release unavailable"} href="/host" action="Get the dedicated server" channel="server">
+              <p>{serverRelease ? "Ready-to-play Freeroam and system resources, with the .NET runtime included. No Cyberpunk 2077 installation required on the host. Available to everyone with Alpha access." : "We couldn’t verify the latest server release from the CDN. No older build is substituted; the page checks again automatically."}</p>
+            </ArtworkCard>
+          </div>
+          <ArtworkCard image="/assets/home/build-v2.webp" icon={PeopleIcon} label="Alpha access" title="Play and build with Alpha access." href="/docs/alpha-access" action="Read the Alpha guide">
+            <p>Joining a server requires an Alpha-enabled OPEN//77 account; downloading does not grant access. Every Alpha member can also download the server and start building without an extra application. Need access? Use <code>/alpha apply</code> in any channel on our Discord.</p>
+          </ArtworkCard>
+        </div>
+        <p className={styles.channelNote}>The launcher and the dedicated server are separate release channels, so their version numbers differ. The client the launcher installs is versioned with the server build it speaks to.</p>
+        <div className={styles.refreshRow}><ReleaseRefresh /></div>
+
+        <section className={styles.section} id="what-it-does" aria-label="What the launcher does">
+          <SurfaceHeading label="WHAT IT DOES" title="Five jobs, one window."><p>The launcher is the whole player side of OPEN//77. You do not install anything into your game folder by hand, and you do not edit a config to join a server.</p></SurfaceHeading>
+          <div className={`${styles.features} ${styles.featuresFive}`}>
+            {LAUNCHER_DOES.map(({ icon: Icon, title, body }) => <article key={title} className={styles.feature}><Icon size={29} /><h3>{title}</h3><p>{body}</p></article>)}
+          </div>
+        </section>
+
+        <section className={styles.section} id="first-run">
+          <SurfaceHeading label="FIRST RUN" title="What actually happens."><p>Already installed? Open the launcher, pick a server and press connect. It takes care of the rest.</p></SurfaceHeading>
+          <ol className={styles.steps}>
+            <li><h3>Windows will show a warning</h3><p>The launcher is not code-signed yet, so the first launch brings up SmartScreen&apos;s <em>“Windows protected your PC”</em> screen. Choose <strong>More info</strong>, then <strong>Run anyway</strong>, and you are through. Windows shows that message for every unsigned application, plenty of indie launchers included, and it says nothing about the file itself. <Link href="/docs/launcher">The launcher guide</Link> spells out exactly what that dialog does and does not mean.</p></li>
+            <li><h3>Sign in through your browser</h3><p>The launcher opens <Link href="/launcher">the authorization page</Link> on this site. You approve it there, and the launcher receives a token. Your password never goes through the app.</p></li>
+            <li><h3>Point it at your game, then play</h3><p>It locates your Cyberpunk 2077 install, checks the build, installs the client, and opens the <Link href="/servers">server browser</Link>. From there it is one button.</p></li>
+          </ol>
+        </section>
+
+        <section className={styles.section} id="requirements">
+          <SurfaceHeading label="BEFORE YOU INSTALL" title="What you need." />
+          <div className={styles.requirementsGrid}>
+            <ul className={styles.requirements}>
+              <li><CheckIcon size={18} /><div><h3>Windows 10 or 11, 64-bit</h3><p>The launcher is a Windows desktop application, and the client it installs is a native plugin that loads inside the game process. There is no macOS or Linux player build.</p></div></li>
+              <li><CheckIcon size={18} /><div><h3>Your own copy of Cyberpunk 2077 {GAME_BUILD}</h3><p>Your own legal copy: OPEN//77 never distributes the game or any of its assets. The build has to be {GAME_BUILD} exactly, not a minimum: the client hooks the engine at addresses established for that build, and the launcher checks it for you.</p></div></li>
+              <li><CheckIcon size={18} /><div><h3>{GAME_EXPANSION}</h3><p>Required rather than optional: the world you land in when you connect is an EP1 save, so there is nothing to load without it.</p></div></li>
+              <li><CheckIcon size={18} /><div><h3>The WebView2 runtime</h3><p>The launcher renders its interface with Microsoft Edge WebView2. Windows 11 already ships it; on Windows 10 it installs itself the first time it is needed. This is one to know about, not one to do.</p></div></li>
+            </ul>
+            <div className={styles.faq}>
+              <details><summary>Windows shows a security warning?</summary><div>Expected: the launcher is not code-signed yet, so SmartScreen flags it like every unsigned application. Choose <strong>More info</strong>, then <strong>Run anyway</strong>. Only run the copy you got from this page, and if you want to be sure it is the same file, compare its SHA-256 under “File details &amp; verification” above. The <Link href="/docs/launcher">launcher guide</Link> explains the dialog in full.</div></details>
+              <details><summary>Do I need to install WebView2 myself?</summary><div>No. Windows 11 ships it; on Windows 10 the launcher installs the runtime the first time it is needed.</div></details>
+              <details><summary>Why are the launcher and server versions different?</summary><div>They are separate release channels. The Windows button above always serves the current launcher; <Link href="/host">the server page</Link> serves the current dedicated server. Neither substitutes an older build when the other is unavailable.</div></details>
+              <details><summary>I want to host, not play.</summary><div>Hosting is a different download. A dedicated server never needs Cyberpunk 2077 installed and does not use this launcher. Start at <Link href="/create">Create a Server</Link>, then <Link href="/host">download the server</Link> with your Alpha account.</div></details>
+              <details><summary>Does downloading give me Alpha access?</summary><div>No. The download is public; joining a server needs an Alpha-enabled OPEN//77 account. Request access with <code>/alpha apply</code> in any channel on our Discord, and read the <Link href="/docs/alpha-access">Alpha guide</Link> before your first connection.</div></details>
             </div>
-            <p className="dl-channel-note">The launcher and dedicated server have separate release versions.</p>
-            {/* Downloads are public; approval to join is a separate account gate. */}
-            <p className="status-note" role="note">
-              <InfoIcon size={18} />
-              <span>
-                <strong>Developer Preview is active.</strong> Install the launcher and browse{" "}
-                <Link href="/servers">live servers</Link>. Joining requires an approved OPEN//77
-                account; downloading does not grant access. Read the{" "}
-                <Link href="/docs/developer-preview">preview guide</Link> before your first connection.
-              </span>
-            </p>
           </div>
+          <div className={styles.notice}><DiscordIcon size={18} /><p><strong>This is Alpha software, not a stable release.</strong> Expect bugs, crashes, incomplete features and updates that change APIs. The <a href={site.links.discord ?? "https://discord.open2077.net"} target="_blank" rel="noreferrer noopener">Discord</a> is where you can request access with <code>/alpha apply</code>, report reproducible issues and follow the changelog once you have Alpha access.</p></div>
         </section>
-
-        <section className="section" id="get">
-          <div className="section-inner">
-            <Eyebrow>THE BUILD</Eyebrow>
-            <h2 className="section-title">Latest launcher release.</h2>
-            <ReleaseRefresh />
-            {release ? <ReleasePanel release={release} /> : <NoReleaseYet />}
-            <p className="status-note" role="note">
-              <ShieldIcon size={18} />
-              <span>
-                <strong>This page is the official source.</strong> The build comes straight from the
-                OPEN//77 CDN, and this is the only place we publish it — bookmark this page and you
-                always land on the current version.
-              </span>
-            </p>
-          </div>
-        </section>
-
-        <section className="section" id="server">
-          <div className="section-inner">
-            <Eyebrow>FOR SERVER OWNERS</Eyebrow>
-            <h2 className="section-title">Latest dedicated server.</h2>
-            <ServerReleasePanel release={serverRelease} />
-          </div>
-        </section>
-
-        <section className="section" id="what-it-does">
-          <div className="section-inner">
-            <Eyebrow>WHAT IT DOES</Eyebrow>
-            <h2 className="section-title">Five jobs, one window.</h2>
-            <p className="section-lead">
-              The launcher is the whole player side of OPEN//77. You do not install anything into
-              your game folder by hand, and you do not edit a config to join a server.
-            </p>
-            <ul className="dedicated-points">
-              {LAUNCHER_DOES.map((item) => (
-                <li key={item.title}>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        <section className="section" id="requirements">
-          <div className="section-inner">
-            <Eyebrow>BEFORE YOU INSTALL</Eyebrow>
-            <h2 className="section-title">What you need.</h2>
-            <ul className="dedicated-points">
-              {REQUIREMENTS.map((item) => (
-                <li key={item.title}>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </li>
-              ))}
-            </ul>
-            <p className="status-note" role="note">
-              <InfoIcon size={18} />
-              <span>
-                <strong>Hosting is a different download.</strong> A dedicated server never needs
-                Cyberpunk 2077 installed and does not use this launcher — start at{" "}
-                <Link href="/create">Create a Server</Link>.
-              </span>
-            </p>
-          </div>
-        </section>
-
-        <section className="section" id="first-run">
-          <div className="section-inner">
-            <Eyebrow>FIRST RUN</Eyebrow>
-            <h2 className="section-title">What actually happens.</h2>
-            <ol className="steps steps-3">
-              {FIRST_RUN.map((step) => (
-                <li className="step" key={step.num}>
-                  <span className="step-num">{step.num}</span>
-                  <h3>{step.title}</h3>
-                  <p>{step.body}</p>
-                </li>
-              ))}
-            </ol>
-            <p className="status-note" role="note">
-              <DiscordIcon size={18} />
-              <span>
-                <strong>This is a Developer Preview, not a stable release.</strong> Expect bugs,
-                crashes, incomplete features and updates that change APIs. The{" "}
-                {site.links.discord ? (
-                  <a href={site.links.discord} target="_blank" rel="noreferrer noopener">
-                    Discord
-                  </a>
-                ) : (
-                  "Discord"
-                )}{" "}
-                is where you can report reproducible issues and follow preview updates.
-              </span>
-            </p>
-          </div>
-        </section>
-      </main>
-
-      <SiteFooter fineprint="Launcher builds are published by the OPEN//77 release pipeline to the official CDN." />
-
-      <JsonLd
-        data={jsonLdGraph(
-          breadcrumbNode([
-            { name: "Home", path: "/" },
-            { name: "Download the Launcher", path: "/download" },
-          ]),
-          ...(release ? [launcherApplicationNode(release)] : []),
-        )}
-      />
+      </DownloadSurface>
+      <JsonLd data={jsonLdGraph(breadcrumbNode([{ name: "Home", path: "/" }, { name: "Download the Launcher", path: "/download" }]), ...(release ? [launcherApplicationNode(release)] : []))} />
     </>
   );
 }
 
-function ReleasePanel({ release }: { release: LauncherRelease }) {
+function LauncherDownload({ release }: { release: LauncherRelease }) {
   return (
-    <div className="dl-release" data-release-channel="launcher" data-release-version={release.version}>
-      <span className="hud-corners" aria-hidden="true" />
-
-      <div className="dl-release-head">
-        <div>
-          <p className="dl-release-tag">
-            <SlashMark /> LATEST LAUNCHER
-          </p>
-          <p className="dl-release-version">{release.version}</p>
+    <div data-release-channel="launcher" data-release-version={release.version} data-channel-summary="launcher">
+      <div className={styles.panelTop}><span className={styles.osBadge}><WindowsIcon size={24} /></span><span className={styles.liveBadge}>LATEST LAUNCHER</span></div>
+      <p className={styles.panelKicker}>OPEN//77 for Windows</p>
+      <h2 className={styles.version}>{release.version}</h2>
+      <div className={styles.panelMeta}><span>64-bit</span>{release.sizeBytes !== null ? <span>{formatBytes(release.sizeBytes)}</span> : null}{release.publishedAtUtc ? <span>{formatReleaseDate(release.publishedAtUtc)}</span> : null}</div>
+      <DownloadAction href={release.url} label="Download for Windows" />
+      <details className={styles.details}>
+        <summary>File details &amp; verification</summary>
+        <div className={styles.detailsBody}>
+          <p>File: <code>{release.fileName}</code></p>
+          {release.sha256 ? <><p>SHA-256, published because it costs nothing to publish. If you verify your downloads, this PowerShell line prints the same string. Nothing you have to do.</p><CopyLine value={release.sha256} label="Copy launcher SHA-256" /><CopyLine value={verifyCommand(release.fileName)} label="Copy verification command" /></> : <p>A checksum is not published for this build.</p>}
+          <p>No account is required for this download. This page is the official source: the build comes straight from the OPEN//77 CDN, and it is the only place we publish it.</p>
         </div>
-        <div className="dl-chips">
-          <span className="dl-chip dl-chip-ok">
-            <ShieldIcon size={13} />
-            Official build
-          </span>
-          <span className="dl-chip">
-            <WindowsIcon size={13} />
-            Windows x64
-          </span>
-          {release.publishedAtUtc ? (
-            <span className="dl-chip">published {formatReleaseDate(release.publishedAtUtc)}</span>
-          ) : null}
-        </div>
-      </div>
-
-      <div className="dl-release-body">
-        <div className="dl-cta">
-          <a className="btn btn-primary btn-lg" href={release.url}>
-            Download for Windows
-            <DownloadIcon size={16} />
-          </a>
-          <p className="dl-cta-meta">
-            {release.fileName}
-            {release.sizeBytes !== null ? ` · ${formatBytes(release.sizeBytes)}` : ""} · no account
-            required
-          </p>
-        </div>
-
-        {/* The digest stays published — it is the same digest the master
-            registers as an authorized build, and /host publishes its own for
-            the same reason — but it is no longer a step the player is asked to
-            perform. Folded away it is one click for someone who verifies
-            downloads, and invisible to everyone who just wants the launcher. */}
-        {release.sha256 ? (
-          <details className="dl-verify">
-            <summary>SHA-256 checksum (optional)</summary>
-            <div className="dl-verify-body">
-              <CopyLine value={release.sha256} label="Copy the SHA-256 of this build" />
-              <p>
-                Published because it costs nothing to publish. If you verify your downloads,{" "}
-                <code>{verifyCommand(release.fileName)}</code> in PowerShell prints this same
-                string. Nothing you have to do.
-              </p>
-            </div>
-          </details>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-function ServerReleasePanel({ release }: { release: ServerRelease | null }) {
-  return (
-    <div className="dl-release" data-release-channel="server" data-release-version={release?.version}>
-      <div className="dl-release-head">
-        <div>
-          <p className="dl-release-tag"><SlashMark /> DEDICATED SERVER · NOT THE LAUNCHER</p>
-          <p className="dl-release-version">{release?.version ?? "Temporarily unavailable"}</p>
-        </div>
-        <div className="dl-chips">
-          <span className="dl-chip"><ServerRackIcon size={13} /> Windows / Linux</span>
-          {release?.publishedAtUtc ? <span className="dl-chip">published {formatReleaseDate(release.publishedAtUtc)}</span> : null}
-        </div>
-      </div>
-      <p className="dl-server-description">
-        {release
-          ? "Ready-to-play Freeroam and system resources, with the .NET runtime included. No Cyberpunk 2077 installation required on the host."
-          : "We couldn’t verify the latest server release from the CDN. No older build is substituted; the page will check again automatically."}
-      </p>
-      <div className="dl-cta">
-        <Link className="btn btn-primary" href="/host">Get the server <DownloadIcon size={16} /></Link>
-        <span className="dl-cta-meta">Platform downloads and checksums · approved preview accounts</span>
-      </div>
-    </div>
-  );
-}
-
-function NoReleaseYet() {
-  return (
-    <div className="dl-empty">
-      <span className="hud-corners" aria-hidden="true" />
-      <DownloadIcon size={28} className="dl-empty-icon" />
-      <h3>No launcher build is being served right now.</h3>
-      <p>
-        Either no public launcher has been published yet, or the release CDN is briefly unreachable
-        — this page reads the live pointer and will show the build the moment there is one. Check
-        back shortly, or watch the Discord announcements.
-      </p>
+      </details>
     </div>
   );
 }

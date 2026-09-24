@@ -5,6 +5,10 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
+/* RootLayout declares data-scroll-behavior so Next can temporarily disable
+   smooth scrolling for route changes (without breaking anchors or Back).
+   Respect reduced motion for browser-managed anchor scrolling as well. */
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 /* Anchor targets clear the sticky header. `--header-h` is published by the
    header itself from its measured height, so this stays correct when the header

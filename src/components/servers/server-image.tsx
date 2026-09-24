@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 
 import { isConformantBanner, isConformantIcon } from "@/lib/server-images";
 
@@ -16,8 +16,9 @@ type Kind = "icon" | "banner";
  * impossible to flash a broken or distorted image, even if the master ever hands
  * us a bad URL.
  *
- * `src` is expected to be stable for the lifetime of the element (callers key by
- * server id / navigate to remount), so no reset effect is needed.
+ * Static pages can finish loading images before React attaches its handlers.
+ * Check already-complete images when the ref attaches, as well as on load.
+ * Validation belongs to a specific source so refreshed URLs cannot inherit it.
  */
 export function ServerImage({
   src,
@@ -37,8 +38,13 @@ export function ServerImage({
   /** Richer placeholder artwork; takes precedence over `label`. */
   fallback?: ReactNode;
 }) {
-  const [loaded, setLoaded] = useState(false);
+  const [loadedSource, setLoadedSource] = useState<string | null>(null);
   const conformant = kind === "icon" ? isConformantIcon : isConformantBanner;
+  const validate = useCallback((img: HTMLImageElement | null) => {
+    if (!img?.complete) return;
+    setLoadedSource(conformant(img.naturalWidth, img.naturalHeight) ? src ?? null : null);
+  }, [src, conformant]);
+  const loaded = Boolean(src) && loadedSource === src;
 
   return (
     <span className={`svimg svimg-${kind}${loaded ? " is-loaded" : ""}${className ? ` ${className}` : ""}`}>
@@ -50,17 +56,16 @@ export function ServerImage({
         // remote/brand imagery, and the conformance guard is what makes it safe.
         // eslint-disable-next-line @next/next/no-img-element
         <img
+          key={src}
+          ref={validate}
           className="svimg-img"
           src={src}
           alt={alt}
           loading="lazy"
           decoding="async"
           draggable={false}
-          onLoad={(event) => {
-            const img = event.currentTarget;
-            setLoaded(conformant(img.naturalWidth, img.naturalHeight));
-          }}
-          onError={() => setLoaded(false)}
+          onLoad={(event) => validate(event.currentTarget)}
+          onError={() => setLoadedSource(null)}
         />
       ) : null}
     </span>

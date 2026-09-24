@@ -1,21 +1,13 @@
 # The OPEN//77 launcher
 
-The launcher is how you play. It is one Windows program that finds your copy of
-Cyberpunk 2077, checks it is the build the platform targets, signs you into your
-OPEN//77 account, installs and keeps current the mod set that makes multiplayer
-work, and then starts the game already connecting to a world.
+Use the Windows launcher to locate Cyberpunk 2077, verify compatibility, sign in, install multiplayer files and connect to a server.
 
-None of that is something you can do by hand and get right. The client is a
-native plugin loaded into the game process at addresses fixed for one exact game
-build; multiplayer needs a specific set of files present and a specific set
-absent; and your identity has to reach the game from something the game cannot
-forge. The launcher exists because those are four separate ways to end up with a
-game that starts and then quietly does nothing.
+The launcher checks the game build, required files and account identity before starting a multiplayer session.
 
-> **Developer Preview is active.** The launcher, multiplayer updates and live
-> server directory are available now. Joining requires an approved OPEN//77
-> account; downloading alone does not grant access. Start with the
-> [Developer Preview guide](/docs/developer-preview) for access and known limitations.
+> **Play and build with Alpha access.** The launcher, multiplayer updates and live
+> server directory are available now. Everyone with Alpha access can also download
+> the server without a separate developer application. Need access? Use `/alpha apply`
+> in any channel on the official Discord. Read the [Alpha guide](/docs/alpha-access).
 
 ## What you need
 
@@ -40,49 +32,11 @@ assets bundled inside. There is no installer, no setup wizard and no
 uninstaller: you put the exe somewhere and run it. Everything it later creates
 lives under `%LOCALAPPDATA%\Open77` and inside your Cyberpunk 2077 folder.
 
-### The SmartScreen warning, and what it actually means
+### Windows security warnings
 
-**The launcher executable is not code-signed today.** Nothing in the build
-pipeline signs it, and you can check that yourself on the file you downloaded —
-in PowerShell, `Get-AuthenticodeSignature .\Open77Launcher.exe` reports
-`NotSigned`.
+The launcher executable is unsigned. Check its Authenticode status with `Get-AuthenticodeSignature .\Open77Launcher.exe` in PowerShell. Windows may show an unknown-publisher warning. Download only from the official OPEN//77 website and verify the file's origin before choosing **More info → Run anyway**. Do not bypass a malware detection.
 
-Windows treats a downloaded, unsigned executable it has not seen before the way
-it treats any of them: with the blue *"Windows protected your PC"* screen, whose
-only real action is hidden behind **More info → Run anyway**.
-
-It is worth being precise about what that dialog is telling you, because "unknown
-publisher" gets read as "malware" and it does not mean that:
-
-- SmartScreen is reporting that this file carries **no publisher identity it can
-  check**, and that it has not yet seen enough copies of it in the wild to have
-  built a reputation. That is the expected state for an unsigned executable from
-  a small project.
-- It is **not** a detection. Nothing has scanned the file and found something in
-  it. A detection looks different and is worded differently.
-- It says nothing about *which* file you have. An unsigned exe is exactly as
-  unverifiable when someone else has modified it, which is why where you got it
-  from matters more than usual.
-
-The honest consequences follow from that: download the launcher only from
-OPEN//77's own site, and treat a copy from anywhere else as a copy of unknown
-provenance. Code signing is a purchase and an identity-verification process the
-project has not been through; when that changes, the dialog goes away on its own.
-
-Two related notes, both accurate and both easy to misread. The launcher verifies
-**everything it downloads** — the mod index is signed and the signature is
-checked, package archives are recognised by SHA-256 before a byte enters the
-store, and a launcher self-update is hash-checked against the platform's build
-allowlist. That is real integrity checking, and it is a different thing from the
-exe itself being signed. The first protects what the launcher fetches; only the
-second would tell Windows who published the launcher.
-
-And the launcher **strips the mark-of-the-web** from every file it installs. That
-is not it hiding something from Windows: the mark propagates from a downloaded
-archive to everything extracted out of it, and a mod DLL still carrying it can
-simply fail to load under Code Integrity or Smart App Control — a mod that
-"does nothing" with no error anywhere. The file is verified by hash before that
-happens.
+Download integrity checks are separate from publisher signing: the launcher verifies the signed mod index and checks package and self-update hashes. It removes the downloaded-file mark from installed files after hash verification so that Windows does not block required mod libraries.
 
 ## Finding your game
 
@@ -282,10 +236,7 @@ kinds: **ours** (a package we installed), **contested** (a package claims that
 path but somebody else's bytes are there — never blind-overwritten), and
 **foreign** (yours).
 
-Your own mods get their own section, and the rows are honest about what is not
-known: no version, no author, no licence, because the launcher has no way to learn
-them. The row says what it is, where it came from, how big it is, and — if a rule
-caught it — why, in plain language.
+User-installed mods appear in a separate section with their location, size and any compatibility warning. Version, author and licence are omitted when that information is unavailable.
 
 Two kinds of rule can catch one, and the difference matters:
 
@@ -322,10 +273,9 @@ comes up already joining that world instead of dropping you on the server browse
 If a client is already running, it joins in place rather than launching a second
 one.
 
-The directory is live during Developer Preview. Joining requires an approved
-account. If the list is empty, clear filters, refresh it and check the selected
-master and your connection; an empty list is not a statement that the preview
-has not launched. Local/private addresses are deliberately hidden from this list.
+The directory is live. Joining requires Alpha access on your account. If the list
+is empty, clear filters, refresh it and check the selected master and your connection.
+Local/private addresses are deliberately hidden from this list.
 
 ### History and Direct Connect
 
@@ -434,7 +384,7 @@ launcher found and what it hashed to, without touching the network or your files
 | You were signed in yesterday and are signed out today | Sessions expire. An expired one is treated as signed out rather than half-working; sign in again |
 | The game starts but there is no OPEN//77 in it | Almost always a failed redscript compile reverting to vanilla scripts. The preflight exists to stop this, so check whether anything was installed outside the launcher |
 | The server list is empty | Clear filters, refresh and check the selected master/network; use History or Direct Connect for local servers |
-| Preview access is required | Sign in with the approved account; downloading the launcher alone does not grant access |
+| Alpha access is required | Sign in with your Alpha account; request access with `/alpha apply` on Discord if needed. Downloading the launcher alone does not grant access |
 
 ## See also
 

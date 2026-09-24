@@ -26,13 +26,13 @@ export const site = {
   locale: "en_US",
   lang: "en",
   themeColor: "#080E19",
-  stage: "DEVELOPER PREVIEW",
-  stageLabel: "Developer Preview",
-  previewNotice:
-    "Developer Preview is active. Joining servers requires an approved account. Expect bugs, crashes and API changes; this is not a stable release.",
-  tagline: "Cyberpunk 2077 multiplayer. Find a world to play in — or build your own.",
+  stage: "ALPHA",
+  stageLabel: "Alpha",
+  alphaNotice:
+    "Everyone with Alpha access can download the server and start building. No separate developer application is required. Need Alpha access? Use /alpha apply in any channel on our Discord. Expect bugs and API changes during Alpha.",
+  tagline: "Cyberpunk 2077 multiplayer. Find a world to play in, or build your own.",
   description:
-    "OPEN//77 lets you play Cyberpunk 2077 online on community servers — or create your own server and multiplayer experience. Roleplay, racing, combat, freeroam: pick a world, press connect.",
+    "OPEN//77 lets you play Cyberpunk 2077 online on community servers, or create your own server and multiplayer experience. Roleplay, racing, combat, freeroam: pick a world, press connect.",
   /**
    * One-paragraph statement of what this site covers, for llms.txt and for the
    * Organization description in structured data.
@@ -41,13 +41,15 @@ export const site = {
     "OPEN//77 is an open, community-run multiplayer platform for Cyberpunk 2077. It is not a single " +
     "server: it is the client, dedicated server and scripting layer that lets communities host and " +
     "script their own persistent Night City worlds. This site documents the platform and its Lua API, " +
-    "and hosts the live server browser. Developer Preview is active with approved-account access; " +
+    "and hosts the live server browser. Everyone with Alpha access can download the Windows or Linux server " +
+    "and build a custom gamemode without a separate developer application. To request Alpha access, use " +
+    "/alpha apply in any channel on the official Discord. " +
     "APIs and features may change. The project is unaffiliated with CD PROJEKT RED.",
   disclaimer:
     "OPEN//77 is an unofficial, independent community project. It is not affiliated with, endorsed by, " +
     "or sponsored by CD PROJEKT S.A. “Cyberpunk”, “Cyberpunk 2077” and related marks are trademarks of " +
     "CD PROJEKT S.A. Game imagery is used for illustration of a fan project. Playing on OPEN//77 will " +
-    "always require your own legal copy of Cyberpunk 2077 — the platform does not accept piracy, and " +
+    "always require your own legal copy of Cyberpunk 2077. The platform does not accept piracy, and " +
     "pirated or cracked copies are neither supported nor welcome.",
   /**
    * The ?v= content hash moves the URL whenever the card is regenerated:
@@ -56,7 +58,6 @@ export const site = {
    */
   ogImage: `/brand/social/og-card-1200x630.png?v=${brandAssets.ogCard}`,
   links: {
-    developerAlpha: "https://docs.google.com/forms/d/e/1FAIpQLSc9lNOo-79TcOeJrNiuyM-3WRP-NeSPP7UZbQSOlD15Ke5aBQ/viewform?usp=publish-editor",
     /**
      * The platform repository is not public yet, so this is `null` rather than
      * a URL that returns 404. Several wiki guides reference files that live
@@ -69,6 +70,7 @@ export const site = {
     discord: "https://discord.open2077.net" as string | null,
     x: "https://x.com/open2077" as string | null,
     tiktok: "https://www.tiktok.com/@open2077_network" as string | null,
+    twitch: "https://www.twitch.tv/open2077",
     devlog: "/devblog" as string | null,
   },
 } as const;
@@ -91,7 +93,7 @@ export function absoluteUrl(pathname: string): string {
  * Primary navigation, shared by the header, the mobile menu and the sitemap.
  *
  * `/download` leads to the current launcher. Download availability is separate
- * from permission to join a server: Developer Preview access remains approved
+ * from permission to join a server: Alpha access remains approved
  * per account, and the download page makes that distinction explicit.
  */
 export const mainNav = [
@@ -100,7 +102,9 @@ export const mainNav = [
   { href: "/create", label: "Create Server" },
   { href: "/docs", label: "Docs" },
   { href: "/devblog", label: "Devblog" },
-  { href: "/community", label: "Community" },
+  { href: "/workshop", label: "Workshop" },
+  { href: "/status", label: "Status" },
+  { href: "/dev-tracker", label: "Dev Tracker" },
 ] as const;
 
 export const footerNav = [
@@ -125,9 +129,11 @@ export const footerNav = [
   {
     title: "Project",
     links: [
-      { href: "/docs/platform#roadmap", label: "Status & roadmap" },
+      { href: "/status", label: "Service status" },
+      { href: "/dev-tracker", label: "Dev Tracker" },
+      { href: "/docs/platform#roadmap", label: "Roadmap" },
       { href: "/devblog", label: "Devblog" },
-      { href: "/community", label: "Community" },
+      { href: "/workshop", label: "Workshop" },
       { href: "/docs", label: "Documentation" },
       { href: "/brand", label: "Brand kit" },
     ],
@@ -138,6 +144,7 @@ export const footerNav = [
       { href: "https://discord.open2077.net", label: "Discord" },
       { href: "https://x.com/open2077", label: "X / Twitter" },
       { href: "https://www.tiktok.com/@open2077_network", label: "TikTok" },
+      { href: site.links.twitch, label: "Twitch" },
     ],
   },
 ] as const;

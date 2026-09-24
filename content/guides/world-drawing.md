@@ -1,12 +1,6 @@
 # Drawing in the world
 
-Putting something at a point in Night City — a ring on the ground, a
-"hold E" card floating over a door, a label above a player, a circle a
-player has to walk into — is one of the first things a gamemode needs and
-one of the easiest to get subtly wrong. OPEN//77 offers several mechanisms
-for it, and they are not interchangeable: they differ in who draws the
-pixels, how often the screen position is recomputed, which permission is
-required, and what happens when your resource reloads.
+Display world markers, labels, interaction prompts and overlays from client resources. Choose a mechanism by its rendering behavior, update requirements, permissions and lifecycle.
 
 This page covers all of them, with the real export names and option tables.
 Everything on it is client-side. The server never draws; it decides, and
@@ -16,7 +10,7 @@ tells clients what to draw through net events.
 
 | You want | Use | Drawn by |
 |---|---|---|
-| A ring or cylinder on the ground, visible in the 3D world | `Open77.markers` | REDengine entity |
+| A 3D ring, cylinder, checkpoint, arrow or other mesh with RGBA color | [Open77.markers](markers.md) | REDengine entity |
 | A ground ring **and** a "hold E" prompt on it, as one thing | `open77_worldui` | the two below, composed |
 | A card, ring or dot pinned to a world point or a moving entity, frame-tight, hidden behind static geometry | `Open77.anchors` with `render` | the plugin, per frame |
 | Screen coordinates for a world point, delivered to your own WebUI page every frame | `Open77.anchors` (default `render = "page"`) | your page |
@@ -44,9 +38,10 @@ native code re-projects it every frame.
 
 ## Native ground markers — `Open77.markers`
 
-A marker is a real REDengine entity carrying a mesh, so it exists in the 3D
-world: it is occluded by geometry and lit by the scene. Requires the
-`world.markers` permission.
+A marker is a real REDengine entity carrying a mesh, with world occlusion
+and a translucent gradient. Requires the `world.markers` permission.
+The [3D world markers guide](markers.md) covers all eight shapes, RGBA colors,
+height, scale, rotation, errors and limits in client `2.31.13+op77.83` and newer.
 
 ```lua
 permissions { "world.markers" }
@@ -55,36 +50,38 @@ permissions { "world.markers" }
 ```lua
 local handle, reason = Open77.markers.create({
     position    = { x = -1460.2, y = 99.9, z = 24.8 },
-    shape       = "ring",          -- "ring" (default) or "cylinder"
+    shape       = "cylinder",      -- see Open77.markers.shapes() for all eight
     style       = "objective",     -- "interaction" | "objective" | "spawn" | "danger"
     radius      = 2.5,             -- metres, 0.1 .. 50.0
+    height      = 1.2,
+    color       = { r = 255, g = 190, b = 40, a = 180 },
     maxDistance = 90.0,            -- metres, 1.0 .. 500.0
     minDistance = 0.0,             -- must be < maxDistance
     visible     = true,
 })
 assert(handle, reason)
 
-Open77.markers.update(handle, { radius = 4.0, style = "danger" })
+Open77.markers.update(handle, { radius = 4.0, style = "danger", color = false })
 Open77.markers.remove(handle)
 Open77.markers.clear()             -- every marker this resource owns
 ```
 
-`create` returns a decimal-string handle — a 64-bit engine identifier that
-happens to be spelled as text. Store and compare it unchanged; never pass it
+`create` returns a decimal-string marker handle. Store and compare it unchanged; never pass it
 through `tonumber`.
 
-`Open77.markers.list()` returns one snapshot per owned marker:
-`{ id, shape, style, radius, maxDistance, minDistance, visible, rendered, position }`.
-The `rendered` flag comes from the native registry and is the only way, from
-Lua, to distinguish "the handle exists" from "the engine is actually
-presenting something".
+`Open77.markers.list()` returns this resource's snapshots; `get(handle)` reads
+one. Both include the requested options, effective RGBA color, `customColor`,
+`rendered`, `failed` and optional `error`. Creation is asynchronous. `rendered`
+means attached and enabled, not necessarily on-screen or unoccluded; inspect
+`failed` and `error` for native loading failures.
 
-The four styles are a fixed set. Anything else is refused; there is no
-free-form colour or mesh on this API.
+The four styles are palette presets. A `color = {r, g, b, a}` override accepts
+integer bytes from 0 to 255; update with `color = false` to restore the style.
+The eight supplied meshes are fixed; this API does not accept arbitrary mesh paths.
 
 ### The invisible-ring trap
 
-A marker's ring mesh is flattened to roughly four centimetres. Placed at
+A marker's ring mesh is `0.035` units thick before height/scale multipliers. Placed at
 exactly the ground height with no lift, it is co-planar with the floor: the
 entity spawns, the effect scales, the registry reports `rendered = true`,
 and **nothing is visible**. If a marker refuses to appear while the registry
@@ -788,21 +785,26 @@ This is the pattern the shipped `race` resource uses verbatim.
 
 ### Ownership comes from the caller, never from an argument
 
-Every service on this page derives ownership from `GetInvokingResource()`
+The POI, zone and interaction services derive ownership from `GetInvokingResource()`
 inside the export, not from a name you pass in. `remove`, `list` and
 `contains` are scoped to the caller, and a handle belonging to another
 resource is refused with `not_owner`. If you are writing a service of your
 own, do the same — accepting an owner name as a normal Lua argument would
 let any resource act as any other.
 
+Native `Open77.markers` calls use the calling resource's identity. The thin
+`open77_markers` export facade instead owns its markers itself; use the native
+API directly for automatic cleanup under your own resource.
+
 ## Quotas at a glance
 
 | Surface | Limit |
 |---|---|
+| `Open77.markers` | 64 logical markers per resource, 256 native material slots across the client; retiring entities still occupy slots |
 | `Open77.anchors` | 32 per resource, 128 across the client |
 | `open77_worldui` POIs | 128 across every resource combined (`poi_limit`) |
 | `open77_zones` zones | 256 across every resource combined (`zone_limit`) |
-| WebUI surfaces | 8 per resource |
+| WebUI surfaces | 24 per resource in the updated client; older clients allow 8. See [runtime quotas](/docs/resource-runtime#sandbox-and-quotas). |
 
 A resource that can define more world points than its anchor budget has to
 decide which ones deserve a slot right now. `open77_interactions` is the
@@ -814,9 +816,10 @@ disappears, it is only less smooth.
 
 ## Failure values
 
-Every API here follows the platform convention: a value on success, or
-`nil, reason` — services reached through `Open77.exports.call` answer with a
-table carrying `ok` and, on failure, `error`.
+Creation and read APIs generally return a value or `nil, reason`. Marker
+`update`, `remove` and `clear` return `true` or `false, reason`. The POI, zone
+and interaction services reached through `Open77.exports.call` answer with
+a table carrying `ok` and, on failure, `error`. Check each API's return contract.
 
 | Reason | Meaning |
 |---|---|
@@ -834,6 +837,7 @@ table carrying `ok` and, on failure, `error`.
 
 ## See also
 
+- [3D world markers](markers.md): shape catalogue, RGBA colors, transforms and loading diagnostics.
 - [Contextual interactions](interactions.md) — the full prompt definition
   reference, choices, hold keys and entity attachment.
 - [Blips and map pins](blips.md) — the map and minimap, which is a different

@@ -1,6 +1,6 @@
 # Client persistent KVP
 
-`Open77.kvp` stores small client-local values persistently. Its namespace is always:
+`Open77.kvp` persists small values on the client. Data is isolated by connection address, resource name and key:
 
 ```text
 connection address -> resource name -> key
@@ -56,3 +56,13 @@ namespace semantics.
 This is local persistence, not secret storage. The player owns the machine and can inspect or
 remove the files. Never store passwords, server tokens, private keys, or authoritative economy
 state in client KVP. Use the server database for anything that must resist client modification.
+
+## The server twin
+
+`Open77.kvp` now exists on the server too, with the same eleven functions, the same quotas and the
+same reason tokens — see [Resource key/value store](server-api.md#resource-keyvalue-store). The two
+stores are entirely separate: the client's lives on the player's machine and is keyed by server
+address plus resource, the server's lives in one JSON file under that resource's `data/` directory
+on the host. A shared script calling `Open77.kvp.set` therefore writes to whichever side it is
+running on, which is almost always what you want and never what you should assume — anything the
+server must be able to trust belongs in the server store or the database, not in the client's.

@@ -1,11 +1,6 @@
 # Lua resources loaded by the server
 
-The server picks the session's resources, builds their client image, and the game downloads them
-before entering Night City — the same model FiveM uses. The local
-`red4ext/plugins/Open77/bootstrap` folder holds only the five trusted bootstrap resources —
-`open77_shell`, `open77_pause`, `open77_blips`, `open77_death` and `open77_debug` — which draw the
-server browser, the connection flow, and the loading screen. These same five are excluded from the
-server-supplied resource layer. Gameplay resources on the player's disk are never auto-discovered.
+Package server and client Lua scripts, permissions, dependencies and web assets in an Open77 resource. The server loads the declared resources and distributes their client files to joining players.
 
 Use this guide to write a resource, understand what reaches the player, and publish a change to a
 running session.
@@ -83,6 +78,49 @@ signed resource set, downloaded before Lua starts, and recorded in the client al
 `files` entry. Empty globs, traversal paths, oversized files, and undeclared texture reads fail the
 resource instead of falling back to arbitrary disk access.
 
+### Declarative exports and ported manifests
+
+A resource may list its exports in the manifest instead of calling `exports(name, fn)`:
+
+```lua
+exports { "GetClosestDoor", "IsDoorOpen" }      -- client exports
+server_exports { "GetBalance", "AddMoney" }      -- server exports
+```
+
+Each side pre-registers its own list from the **global function of that name** after the last
+script has run and before the resource is `Running`, through exactly the registration a scripted
+`exports()` call performs -- so a sibling calling `exports.bank:GetBalance()` from its own start
+handler finds it, and a function defined in any file counts. The manifest is the later word: a
+name registered by `exports()` and listed here ends up bound to the global. A listed name with no
+global function refuses the start by name (`manifest_export_missing:<name>`), never starts a
+resource whose manifest promises what its code does not provide; a name that is not a Lua
+identifier of at most 64 characters fails the manifest at discovery
+(`invalid_manifest_export:<directive>:<name>`). `Open77.resource.metadata(name, "exports")` and
+`"serverExports"` read the lists back.
+
+`ui_page` is accepted as an alias of `web_ui_page`, with the same rules (a safe relative path that
+must also be declared in `web_files`). When a manifest carries **both**, the one written last in
+the file wins -- what a Lua-executed manifest would do -- so a ported manifest that kept its
+`ui_page` line above a new `web_ui_page` line gets the Open77 one, and vice versa.
+
+The FiveM keys that describe the FiveM runtime or metadata nothing here reads are **accepted and
+ignored**: `fx_version`, `game`, `games`, `lua54`, `use_experimental_fxv2_oal`, `author`,
+`description`, `provide`, `provides`, `escrow`, `escrow_ignore`. A ported manifest loads without
+editing them out, and so that the acceptance never passes for something done, each side names the
+ones it saw once per start, in one `INF` line:
+
+```text
+INF|my_resource|manifest_ignored_keys=fx_version,lua54
+```
+
+`@other_resource/file.lua` in a script list -- FiveM's cross-resource include -- is refused **by
+name** on both sides, `cross_resource_include_refused:@other_resource/file.lua`, at manifest
+parsing. It is a design decision, not a limitation: a resource's scripts run in its own VM, and
+sharing code across resources is `dependency` plus [`require('@resource/module')`](lua-modules.md)
+over declared `files` on the client, and [exports](resource-exports.md) on both sides. Before this
+the include matched nothing and either failed as "Resource contains no scripts." or, when the
+manifest listed other scripts too, was dropped without a word.
+
 ### Pre-boot REDengine assets
 
 `preload_mod` / `preload_mods` attach inert game assets to a selected resource when REDengine must
@@ -135,6 +173,19 @@ Commands declared with `restricted=true` require the ACL permission
 `command.<lowercase-name>`. The `*` permission and namespace wildcards such as `command.garage.*`
 are accepted. See [server-acl.md](server-acl.md).
 
+A resource may also run a command, list what commands exist, and control the resource lifecycle,
+behind two capabilities that are deliberately not the same one:
+
+```lua
+permissions { "runtime.commands" }    -- invoke a SIBLING's ordinary command, and nothing else
+permissions { "resources.control" }   -- start/stop/restart, and the operator's authority for a line
+```
+
+Everything on that surface is queued for the next tick boundary and reports acceptance rather than
+completion, because Lua runs inside the server's tick and a resource stopping itself synchronously
+would free the Lua state doing the stopping. See
+[Runtime and resource control](server-api.md#runtime-and-resource-control).
+
 ## Selecting which resources load
 
 The dedicated server does not have to load every directory below `resources.root`. The
@@ -157,6 +208,14 @@ The dedicated server does not have to load every directory below `resources.root
 
 An exact list is recommended for production and gamemode profiles. Adding a new development
 resource to the library then cannot silently add it to a live server.
+
+The list is read at startup, and the first-run wizard writes an exact list (the template's
+resources, by name). To add a resource to such a server: create its directory, add its name to
+`resources.load` in `server.jsonc`, then either restart the server or -- on a running server
+-- run `refresh` (rescans the manifests on disk; only names the load rules admit are
+discovered) followed by `ensure <name>`. `refresh` does not re-read `server.jsonc`: a name that
+was not in the list when the server started needs the restart. `ensure` on an unknown name
+answers `Resource '<name>' was not found`, which is this case, not a broken manifest.
 
 ### Rule syntax
 
@@ -208,6 +267,17 @@ Only selected resources that reach `Running` are packaged and signed for clients
 resource from `load` therefore stops it server-side and removes its client scripts, WebUI, and
 declared files from the next resource generation.
 
+A resource is delivered to clients whenever it has client content: `shared_script`,
+`client_script` or `files`. A `server_script` never reaches a client and does not require a
+`client_script` beside it. A library that declares `files` and no client script is delivered as a
+**passive library**: the client gives it an idle VM, marks it `Running`, and dependants
+`require('@name/...')` its files (see [Lua modules](lua-modules.md)). What a manifest cannot be is
+empty: with no script and no `files` it is refused on both sides, `no_client_scripts` on the
+client and "Resource contains no scripts or files." on the server. `web_files` alone do not count.
+Builds up to 2.31.13+op77.82 refused every delivered resource without a client or shared script,
+and one such refusal failed the whole activation (`resource_activation_failed`, client stuck on
+"Verifying resources"); on those builds an empty `client_script` is the workaround.
+
 Selected `preload_mod` declarations are resolved earlier, during dedicated-server boot, because
 the launcher needs their digest before it can start the game. They are not silently pulled in from
 an excluded resource and they are not added by a dependency that `load` omitted.
@@ -247,6 +317,16 @@ resource.status <resource>
 
 `resource.root` shows `source=bootstrap` before the session and `source=server` once active.
 `resource.distribution` exposes phase, generation, progress, digest, and current resource.
+
+Every one of the server commands above is visible to the running resources as events.
+`start`, `ensure` and `restart` announce the resource **before** it starts with
+`onResourceStarting(name)` — delivered inline, while `GetResourceState(name)` still reads
+`starting`; it is a notification, not a veto — then `onResourceStart(name)` once it runs; `stop`
+and `restart` announce `onResourceStop(name, reason)`; `reload` is a stop and a start to every
+other resource; and `refresh` ends with `onResourceListRefresh()` once the tree has been re-read
+and the new package set published. The Open77 spellings (`open77:resource:starting`, `started`,
+`stopped`, `refreshed`) carry a lifecycle revision beside each. See
+[Resource lifecycle events](server-api.md#resource-lifecycle-events).
 
 ## Security and operations
 

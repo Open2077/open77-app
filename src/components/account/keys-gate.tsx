@@ -31,7 +31,7 @@ export function KeysGate() {
               Your server needs a license key
             </h2>
             <p>
-              Sign in — or create an account — and the keymaster will walk you through creating the
+              Sign in, or create an account, and the keymaster will walk you through creating the
               license key your dedicated server asked for.
             </p>
           </section>

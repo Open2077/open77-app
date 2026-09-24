@@ -13,6 +13,9 @@
 import fs from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { createHash } from "node:crypto";
+
+const editorial = JSON.parse(await fs.readFile(new URL("./doc-api-editorial.json", import.meta.url), "utf8"));
 
 const wiki = process.argv[2] ?? process.env.OPEN77_WIKI_SOURCE ?? ["CyberM", "open77-base", "base"]
   .map((directory) => path.join(process.cwd(), "..", directory, "wiki"))
@@ -33,7 +36,20 @@ for (const entry of api) {
   else byQualified.set(entry.qualified, [entry]);
 }
 
+/**
+ * An overlay file, or `null` when the wiki does not carry one.
+ *
+ * An overlay is a hand-written supplement to the extractor, so upstream is free
+ * to retire one by writing the same prose into the extractor itself — which is
+ * what happened to `cyberware-api.json`. Crashing on the absent file would then
+ * report a regression that does not exist, so a missing overlay is announced
+ * and skipped; prose that silently stopped merging is still a failure.
+ */
 async function readOverlay(name) {
+  if (!existsSync(path.join(wiki, name))) {
+    console.log(`${name}: not in this wiki — skipped`);
+    return null;
+  }
   const parsed = JSON.parse(await fs.readFile(path.join(wiki, name), "utf8"));
   delete parsed._comment;
   return parsed;
@@ -50,6 +66,9 @@ function carries(entries, text) {
   if (!entries || !text) return false;
   const needle = text.replace(/\s+/g, " ").trim().slice(0, 60);
   return entries.some((entry) =>
+    editorial.some((review) => review.runtime === entry.runtime && review.qualified === entry.qualified &&
+      review.description === entry.description &&
+      [review.sourceDescriptionSha256, review.sourceOverlaySha256].includes(createHash("sha256").update(text).digest("hex"))) ||
     [entry.description, entry.summary].some((value) =>
       typeof value === "string" && value.replace(/\s+/g, " ").includes(needle),
     ),
@@ -79,6 +98,11 @@ function audit(file, overlay, resolve) {
 let gaps = 0;
 const descriptions = await readOverlay("api-descriptions.json");
 const notes = await readOverlay("api-notes.json");
+if ((!descriptions || !notes) && existsSync(wiki)) {
+  throw new Error("api-descriptions.json and api-notes.json are required overlays");
+}
+if (!existsSync(wiki)) console.log("No source wiki checkout: upstream overlay comparison skipped; checking vendored API coverage.");
+if (descriptions && notes) {
 gaps += audit(
   "api-descriptions.json",
   descriptions,
@@ -93,20 +117,24 @@ const effectiveNotes = Object.fromEntries(Object.entries(notes).map(([name, valu
 gaps += audit("api-notes.json (effective)", effectiveNotes, (name) =>
   byQualified.get(name),
 );
-gaps += audit(
-  "server-vehicle-api.json",
-  await readOverlay("server-vehicle-api.json"),
-  (name) => byQualified.get(`Open77.vehicles.${name}`) ?? byQualified.get(name),
-);
+}
+const serverVehicles = await readOverlay("server-vehicle-api.json");
+if (serverVehicles) {
+  gaps += audit(
+    "server-vehicle-api.json",
+    serverVehicles,
+    (name) => byQualified.get(`Open77.vehicles.${name}`) ?? byQualified.get(name),
+  );
+}
 const animations = await readOverlay("animation-api.json");
-for (const runtime of ["client", "server"]) {
+for (const runtime of animations ? ["client", "server"] : []) {
   gaps += audit(`animation-api.json (${runtime})`, animations[runtime], (name) =>
     byQualified.get(`Open77.animations.${name}`)?.filter((entry) => entry.runtime === runtime),
   );
 }
 
 const cyberware = await readOverlay("cyberware-api.json");
-for (const [runtime, namespaces] of Object.entries(cyberware)) {
+for (const [runtime, namespaces] of Object.entries(cyberware ?? {})) {
   for (const [namespace, cards] of Object.entries(namespaces)) {
     gaps += audit(`cyberware-api.json (${runtime} ${namespace})`, cards, (name) =>
       byQualified.get(`${namespace}.${name}`)?.filter((entry) => entry.runtime === runtime),
@@ -127,5 +155,31 @@ console.log(`  api_set values   : ${[...new Set(api.map((e) => e.api_set))].join
 
 const shared = [...byQualified.entries()].filter(([, entries]) => entries.length > 1);
 console.log(`  names in both runtimes: ${shared.length}`);
+
+// Every card carries a worked example: a generated card through the wiki
+// overlays, a table-derived server global through the site's own overlay.
+// A card without one used to be the silent default; keep it a failure.
+const overlayExamples = JSON.parse(await fs.readFile(
+  path.join(process.cwd(), "content", "api", "server-globals-examples.json"), "utf8",
+));
+// A wiki server-global card without an example is served with the site-owned
+// overlay example (src/lib/api-reference.ts); only a card neither side covers is a gap.
+const missingExamples = api
+  .filter((entry) => !entry.example && !(entry.runtime === "server" && entry.namespace === "_G" && typeof overlayExamples[entry.name] === "string" && overlayExamples[entry.name].trim()))
+  .map((entry) => entry.route_id);
+if (missingExamples.length > 0) {
+  console.log(`   cards without an example: ${missingExamples.join(", ")}`);
+  gaps += missingExamples.length;
+}
+const globalsExamples = JSON.parse(await fs.readFile(
+  path.join(process.cwd(), "content", "api", "server-globals-examples.json"), "utf8",
+));
+const emptyGlobals = Object.entries(globalsExamples)
+  .filter(([name, text]) => !name.startsWith("$") && (typeof text !== "string" || !text.trim()))
+  .map(([name]) => name);
+if (emptyGlobals.length > 0) {
+  console.log(`   server-globals-examples.json entries without text: ${emptyGlobals.join(", ")}`);
+  gaps += emptyGlobals.length;
+}
 
 process.exit(gaps === 0 ? 0 : 1);

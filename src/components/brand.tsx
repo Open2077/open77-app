@@ -3,17 +3,17 @@ import type { ReactNode } from "react";
 
 /**
  * Site wordmark. The official lockup is a painted raster (italic letterforms,
- * speed lines); wrapping that bitmap in an SVG would be a fake vector. Header
- * and footer sit on the light application bar, so this is the navy cut.
+ * speed lines); wrapping that bitmap in an SVG would be a fake vector. The
+ * tone selects the official cut for a light or dark background.
  * Intrinsic size matches `scripts/build-brand.mjs` (height 96).
  */
-export function Logotype() {
+export function Logotype({ tone = "light" }: { tone?: "light" | "dark" }) {
   return (
     // Brand files are shown as authored; the optimizer would re-encode them.
     // eslint-disable-next-line @next/next/no-img-element
     <img
       className="logotype"
-      src="/brand/logo/open77-logo-light.png"
+      src={`/brand/logo/open77-logo-${tone}.png`}
       alt=""
       width={723}
       height={96}
@@ -23,10 +23,10 @@ export function Logotype() {
   );
 }
 
-export function Wordmark() {
+export function Wordmark({ tone = "light" }: { tone?: "light" | "dark" }) {
   return (
     <Link className="wordmark" href="/" aria-label="OPEN//77 home">
-      <Logotype />
+      <Logotype tone={tone} />
     </Link>
   );
 }

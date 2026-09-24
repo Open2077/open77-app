@@ -1,11 +1,6 @@
 # PolyZone
 
-`polyzone` provides the familiar PolyZone functional API, adapted to Open77.
-All zone queries and watchers execute **client-side in the importing resource**.
-No GTA natives or Cfx vector userdata are required: coordinates are ordinary
-`{x, y, z}` tables in Cyberpunk world space. Names and methods follow upstream
-[PolyZone 2.6.2](https://github.com/mkafrin/PolyZone); engine bindings and the
-editor are Open77-specific.
+Use the PolyZone API in an Open77 client resource with ordinary `{x, y, z}` coordinates. Queries and watchers run inside the importing resource. Names follow [PolyZone 2.6.2](https://github.com/mkafrin/PolyZone); engine integration and the editor are Open77-specific.
 
 ## Install and import
 

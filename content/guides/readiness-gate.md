@@ -1,12 +1,6 @@
 # The join-time readiness gate
 
-A player who has just connected is not necessarily a player anybody may act
-upon. One resource may be about to open the character creator for someone with
-no saved character; another may want a rules acceptance, a class pick or a
-spawn choice. Meanwhile a gamemode's join path teleports the same player to its
-lobby the instant their client says its world is up.
-
-Both resources are correct on their own. Together they are an outage.
+Wait for a player's readiness gate before teleporting, spawning, killing or forcing a respawn. Resources can hold the gate while character creation, rules acceptance or another join-time flow is active.
 
 > **The rule: do not teleport, spawn, kill or force a respawn on a player until
 > their readiness gate has opened.** Reading their state, putting them on a

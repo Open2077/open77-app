@@ -21,8 +21,8 @@ import type {
 } from "@/lib/account/mods-api";
 
 const SAFETY_OPTIONS: { value: ModSafety; label: string }[] = [
-  { value: "verified", label: "Verified — I read these bytes" },
-  { value: "blocked", label: "Blocked — never install these bytes" },
+  { value: "verified", label: "Verified: I read these bytes" },
+  { value: "blocked", label: "Blocked: never install these bytes" },
 ];
 
 /**
@@ -134,7 +134,7 @@ export function ModsPanel() {
       // The revoke answers 204, so there is no row to splice back — reload the list.
       reload();
       setNotice(
-        `“${target.displayName}” is now blocked. No launcher release is needed — the verdict flips on the next attest call.`,
+        `“${target.displayName}” is now blocked. No launcher release is needed. The verdict flips on the next attest call.`,
       );
       setRevokeTarget(null);
       setRevokeReason("");
@@ -170,7 +170,7 @@ export function ModsPanel() {
         <span>
           <strong>Two answers, never one.</strong> <em>Safety</em> says we read these exact bytes
           and they are what they claim. <em>Redistribution</em> says whether the author permits a
-          server to hand the file to players — a mod can be safe and still refused, and a refusal
+          server to hand the file to players. A mod can be safe and still refused, and a refusal
           sends the player to the author&apos;s own page instead. Open77 hosts no mod file either
           way.
         </span>
@@ -230,7 +230,7 @@ export function ModsPanel() {
             <span className="ac-hint" id="mod-hash-hint">
               {hashLooksRight
                 ? "Hash the archive the server hosts, not an unpacked file. Case and spacing are normalised."
-                : `That is not a SHA-256 — 64 hex characters expected, ${normalizedHash.length} given.`}
+                : `That is not a SHA-256: 64 hex characters expected, ${normalizedHash.length} given.`}
             </span>
           </label>
           <label className="ac-label">
@@ -274,7 +274,7 @@ export function ModsPanel() {
             </span>
           </label>
           <label className="ac-label">
-            Safety — the bytes
+            Safety: the bytes
             <select
               className="adm-select"
               value={safety}
@@ -288,7 +288,7 @@ export function ModsPanel() {
             </select>
           </label>
           <label className="ac-label">
-            Redistribution — the licence
+            Redistribution: the licence
             <select
               className="adm-select"
               value={redistribution}
@@ -360,7 +360,7 @@ export function ModsPanel() {
               type="submit"
               disabled={busy || revokeReason.trim().length === 0}
             >
-              {busy ? "Working…" : "Confirm — block this hash"}
+              {busy ? "Working…" : "Confirm and block this hash"}
             </button>
             <button
               className="btn btn-small btn-ghost"
@@ -381,7 +381,7 @@ export function ModsPanel() {
         <p className="adm-empty">
           {query
             ? `No entry matches “${query}”.`
-            : "Nothing is whitelisted yet — every hash is unknown, and unknown packages carry inert data only."}
+            : "Nothing is whitelisted yet. Every hash is unknown, and unknown packages carry inert data only."}
         </p>
       ) : null}
 
@@ -423,7 +423,7 @@ export function ModsPanel() {
 
       <p className="adm-footnote">
         The platform stores a verdict, never a file: the bytes stay with the server that hosts them.
-        An unknown hash is a valid answer and the common one — an unverified package may carry inert
+        An unknown hash is a valid answer and the common one. An unverified package may carry inert
         data only (.archive, .tweak, .xl, engine config), while .dll, .reds, CET Lua and .asi are
         refused until that exact hash is verified here.
       </p>
@@ -461,7 +461,7 @@ function AttestationRow({
         ) : row.sourceUrl ? (
           // Not a link we will follow — shown as plain text so the reviewer can
           // still read what was submitted.
-          <span className="adm-mono adm-faint" title="Not an http(s) link — not rendered as one">
+          <span className="adm-mono adm-faint" title="Not an http(s) link, so it is not rendered as one">
             {row.sourceUrl}
           </span>
         ) : (

@@ -5,7 +5,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
   ...pageMetadata({
-    title: "Admin — Alpha access",
+    title: "Admin · Alpha access",
     description: "OPEN//77 operations console: the closed-alpha whitelist.",
     path: "/admin/alpha-access",
   }),

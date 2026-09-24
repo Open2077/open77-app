@@ -1,9 +1,6 @@
 # Photo mode
 
-Open77 gives client resources exclusive control of Cyberpunk 2077's native photo mode. The stock
-shortcut no longer opens it: keyboard `N`, the controller stick chord, and any other vanilla
-producer are refused at the native activation entry. A resource opens and closes the same native
-photo mode through `Open77.photoMode`.
+Control native photo mode through the client-only `Open77.photoMode` API. Vanilla keyboard and controller shortcuts are disabled; resources explicitly open and close the mode.
 
 This is a client-only presentation API. It has no permission because it does not change canonical
 server state, spawn an entity, or expose game data.
@@ -28,8 +25,12 @@ closed. `setEnabled(true)` is equivalent to `open()`; `setEnabled(false)` is equ
 `isActive()` reads the engine's current state. It returns `nil, reason` when the photo-mode system
 or its RTTI query is unavailable.
 
+A client resource may `RegisterCommand` of its own -- see the
+[FiveM compatibility page](fivem-compatibility.md) -- but a key is the better trigger for a toggle.
+It also needs `permissions { "input.actions" }` in the manifest:
+
 ```lua
-RegisterCommand("photo", function()
+RegisterKeyMapping("photo", "Toggle photo mode", "F9", function()
     local active, readError = Open77.photoMode.isActive()
     if active == nil then
         print("photo mode read failed: " .. readError)
@@ -40,7 +41,7 @@ RegisterCommand("photo", function()
     if not ok then
         print("photo mode request failed: " .. error)
     end
-end, false)
+end)
 ```
 
 Photo mode is one local engine state, not a resource-owned lease. Two resources can therefore

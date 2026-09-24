@@ -1,8 +1,6 @@
 # Privileged in-game Lua laboratory
 
-Open77 includes an ACL-controlled development path for testing client Lua, native laboratory
-commands, and the existing REDscript polling bridge without rebuilding the plugin after every
-experiment.
+The bundled `open77_debug` resource provides ACL-controlled tools for client Lua, native diagnostics and the REDscript polling bridge.
 
 This is intentionally not a public gameplay API. It is available only inside the bundled local
 `open77_debug` resource. A downloaded server resource cannot enable it by adding a permission to
@@ -87,8 +85,10 @@ local ok, result = Open77.debug.redscript("debug.trace:glass-probe")
 - ACL authorization happens before Lua source is dispatched.
 - Execution is targeted, never broadcast.
 - Source is limited to 32 KiB, result text to 8 KiB, and replies time out after 10 seconds.
-- Lua runs with the resource host's 32 MiB memory quota, 500,000-instruction resume quota, and 2 ms
-  frame budget. Infinite loops fail with `Open77 script execution budget exceeded`.
+- The updated client allows 96 MiB of Lua memory per resource, 1,500,000 instructions per resume,
+  and a 6 ms frame budget shared by each client host. Older clients retain 32 MiB / 500,000 / 2 ms;
+  see [runtime quotas](/docs/resource-runtime#sandbox-and-quotas).
+  Infinite loops fail with `Open77 script execution budget exceeded`.
 - The normal sandbox remains intact: no `io`, `os`, `debug`, `package`, `load`, bytecode, filesystem
   escape, raw REDengine pointer, or foreign resource global is exposed.
 - The server-distributed copy of `open77_debug` is excluded from the downloaded client host. Its

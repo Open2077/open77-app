@@ -1,15 +1,6 @@
 # Cordon — battle royale
 
-Cordon is Open77's 64-slot battle royale for Cyberpunk 2077. Players queue in
-staging, deploy to surveyed ground, collect equipment and survive a moving
-cordon. Solo, Duo and Squad formats share the same match rules.
-
-This page describes the current source, reviewed on **2026-09-05**. A public
-server can run an older released pack: its listing is not proof that these
-changes are deployed. For design and dated evidence, see the
-[mode plan](../docs/gamemode-cordon-plan.md),
-[September review](../docs/cordon-review-2026-09-05.md) and
-[UI review](../docs/cordon-ui-2026-09-05.md).
+Cordon is a 64-slot battle royale with staging, equipment collection and a moving exclusion zone. Solo, Duo and Squad formats share the same match rules.
 
 ## Joining and controls
 
@@ -145,12 +136,6 @@ says WAITING FOR RECOVERY and additional taps cannot undo the submitted recovery
 Only the canonical recovery acknowledgement restores alive state and credits the
 healer. Default revived health is 30%, with short spawn protection and no old kit.
 
-**Physical two-client F start, cancellation, target progress and completed
-recovery were observed on September 5.** Earlier operator-only demonstrations did
-not prove this input path. The live test caught a missing `body` field in the
-actual squad payload; the full server-publication-to-client prompt regression
-now covers it. See the [UI evidence](../docs/cordon-ui-2026-09-05.md).
-
 The complete squad phase gate also includes looting, fighting and extraction.
 A working revive alone does not close that broader gate. Ghost-flying spectators
 and an observer-visible authored revive animation are not established features;
@@ -164,24 +149,9 @@ is `threshold`: below 24 humans, fill toward 40 contestants. `off` disables fill
 `always` fills toward capacity. Bot movement requires a client simulation lease;
 a headless phantom is not an engine-driven fighting NPC.
 
-Gang holdouts are separate from contestant bots. Their spawner places camps at
-high-tier surveyed loot clusters, and **`holdoutsEnabled=false` remains the
-shipped default**. Opt-in native camp kills of phantoms are now proven,
-including the final query-only run at 07:06:45 on September 5. The pre-pool
-correction prevents native pool writes from racing canonical damage; ordinary
-NPC behavior in other modes stays outside this opt-in policy. Camp kills appear
-as **GANG GUARD**, not a zone death or contestant BOT, and do not taint rating.
-A real player clearing a camp and final native weapon regression remain pending.
+Gang holdouts are separate from contestant bots and spawn at high-tier loot clusters. They are disabled by default (`holdoutsEnabled=false`). Camp kills use **GANG GUARD** in the feed and do not affect rating. This opt-in policy does not change ordinary NPC behavior in other modes.
 
-The world gate requires a camp to kill a phantom, a real player to clear a camp,
-and a vehicle to carry a real player across a closing edge. These conditions are
-not replaced by a spawner log, a synthetic damage call or a moved vehicle shell.
-The occupied ground Hella crossing is proven: physical driving crossed the
-closing front and canonical zone damage began at 05:15:20 on September 5 (see
-[vehicle evidence](../docs/cordon-review-2026-09-05.md#vehicle-crossing-physical-driver-and-passenger-confirmed)).
-Passenger-following AV flight and a completed playable extraction flight remain
-unproven. Boss templates, weather arcs and supply-drop declarations likewise do
-not demonstrate a running gameplay feature.
+Passenger-following AV flight and playable extraction flights are experimental. Boss templates, weather arcs and supply-drop declarations are not supported gameplay guarantees.
 
 ## Running a server
 
@@ -278,26 +248,15 @@ the active map. Use `/br.map` for map authoring, not an unimplemented size knob.
 | `/br.revive <healerId> <downedId>` | Restricted direct server path; does not test physical F input. |
 | `/br.stats`, `/br.stats.of <playerId>` | Own career and restricted operator inspection. |
 
-The tac-map EDIT panel uses the same ACL-checked map commands. Capture marks by
-standing on real ground. Map data is stored outside the watched resource tree;
-changes to geometry should be checked with `/br.map.check` and a real deployment.
-The bundled maps and older Pacifica plans are not interchangeable evidence of
-walkable terrain.
+Use the ACL-protected tac-map EDIT commands to record positions on walkable ground. Map data is stored outside the watched resource tree. Validate geometry with `/br.map.check` before deployment.
 
-## Rating and evidence
+## Rating
 
 Progression is placement rating and career history; it grants no combat power.
 Ratings are format-specific. Under-populated matches and matches containing
 contestant bots do not update the ladder. Persistence is optional for play;
 without a database, history is volatile. Database availability alone does not
 mean a match was rated.
-
-The [mode plan](../docs/gamemode-cordon-plan.md) records phase gates and open
-requirements. The [September review](../docs/cordon-review-2026-09-05.md) and
-[UI review](../docs/cordon-ui-2026-09-05.md) separate automated checks, actual
-client observations and outstanding work. Consult those records before claiming
-a release or a closed gameplay gate.
-
 
 ### Capturing spawn orientation
 

@@ -70,7 +70,7 @@ export function LicensesPanel() {
         <p className="ac-success" style={{ marginBottom: 12 }}>
           <CheckIcon size={14} />
           <span>
-            Revoked “{lastRevoke.label}” — {lastRevoke.serversRevoked}{" "}
+            Revoked “{lastRevoke.label}”: {lastRevoke.serversRevoked}{" "}
             {lastRevoke.serversRevoked === 1 ? "server" : "servers"} lost platform access.
           </span>
         </p>
@@ -110,7 +110,7 @@ export function LicensesPanel() {
                     {license.revokedAtUtc ? null : (
                       <ArmButton
                         label="Revoke"
-                        confirmLabel="Confirm — servers lose access now?"
+                        confirmLabel="Confirm: servers lose access now?"
                         disabled={busy}
                         onConfirm={() => revoke(license.licenseId, license.label)}
                       />

@@ -1,0 +1,36 @@
+{
+  "date": "2026-09-18",
+  "mode": "built-in image_gen",
+  "intent": "Generate new project assets inspired by the user reference, not edit the reference or render UI into the image.",
+  "optimization": "Lossy WebP conversion with sharp; card renditions downscaled to 960px wide. No generative edits after initial output.",
+  "assets": [
+    {
+      "file": "public/assets/home/night-city-v2.webp",
+      "prompt": "Use case: stylized-concept\nAsset type: production website cinematic hero background, not a UI mockup.\nPrimary request: a beautiful photorealistic AAA-game cinematic scene inspired by Cyberpunk 2077 Night City, for the OPEN//77 multiplayer website.\nScene/backdrop: dense futuristic metropolis at blue hour turning to night, layered towers with cyan lights and small magenta signs, atmospheric haze, rain-polished concrete rooftop.\nSubject: one male mercenary seen from behind on the right third, upper body to hips visible, black leather jacket with a red stylized demon emblem, short dark undercut hair, leaning slightly on a rooftop railing looking over the city.\nComposition/framing: very wide landscape 16:9. Character occupies right 35%, distant skyline through the middle, left 48% kept mostly dark and softly detailed for a large white headline overlaid later in HTML. Character's head below top 18% to leave clear navigation space. Skyline has luminous detail without clutter.\nLighting/mood: cinematic teal-blue rim light, restrained red highlights, compelling depth, moody and polished, realistic fabric and concrete, no bloom overload.\nConstraints: image artwork only, no website, no UI, no text, no readable letters, no logos or watermarks, no extra foreground people. Crisp high-resolution image.",
+      "usage": "Alternate hero; superseded by the user's chosen wallpaper, retained for reuse."
+    },
+    {
+      "file": "public/assets/home/play-v2.webp",
+      "prompt": "Use case: stylized-concept\nAsset type: website feature card background, landscape 3:2 image.\nPrimary request: Three friends with varied futuristic streetwear seen from behind, walking into a cyan-lit underground nightclub down a Night City alley. Characters on the right half, atmospheric neon bar entrance, wet pavement, candid social energy. Left third darker for HTML card title.\nStyle/medium: photorealistic AAA Cyberpunk game concept art, cinematic detail, premium polished but credible environment.\nLighting/mood: deep midnight blue, subtle teal/cyan luminous details and restrained magenta accents, consistent dark cinematic Night City atmosphere.\nConstraints: artwork only. No UI, no borders, no captions, no logos, no watermark, no readable text. Strong composition legible as a small card."
+    },
+    {
+      "file": "public/assets/home/servers-v2.webp",
+      "prompt": "Use case: stylized-concept\nAsset type: website feature card background, landscape 3:2 image.\nPrimary request: Close perspective of elegant black dedicated server racks in an industrial futuristic data center. Cyan fiber optic lights, tiny illuminated status LEDs, glass reflections, equipment arranged on the right half. Left third dark for HTML card title. No people.\nStyle/medium: photorealistic AAA Cyberpunk game concept art, cinematic detail, premium polished but credible environment.\nLighting/mood: deep midnight blue, subtle teal/cyan luminous details and restrained magenta accents, consistent dark cinematic Night City atmosphere.\nConstraints: artwork only. No UI, no borders, no captions, no logos, no watermark, no readable text. Strong composition legible as a small card."
+    },
+    {
+      "file": "public/assets/home/build-v2.webp",
+      "prompt": "Use case: stylized-concept\nAsset type: website feature card background, landscape 3:2 image.\nPrimary request: A futuristic developer workstation with several cyan holographic-like monitors overlooking a dense neon city skyline through tall windows. Dark keyboard and technical desk, view from behind the chair. Workstation on right half. Left third dark for HTML card title. No readable code or text.\nStyle/medium: photorealistic AAA Cyberpunk game concept art, cinematic detail, premium polished but credible environment.\nLighting/mood: deep midnight blue, subtle teal/cyan luminous details and restrained magenta accents, consistent dark cinematic Night City atmosphere.\nConstraints: artwork only. No UI, no borders, no captions, no logos, no watermark, no readable text. Strong composition legible as a small card."
+    },
+    {
+      "file": "public/assets/home/worlds-v2.webp",
+      "prompt": "Use case: stylized-concept\nAsset type: production website feature card artwork, landscape 3:2.\nPrimary request: breathtaking dense Night City-inspired skyline seen from an elevated street in a futuristic megacity, monumental layered architecture, suspended bridges, cyan and restrained magenta advertising light, atmospheric night haze, a few windows glowing warm, realistic high-detail AAA Cyberpunk game environment.\nComposition/framing: most impressive tower buildings and city lights on the right two thirds. Keep left third darker to overlay HTML text later. No close foreground characters.\nLighting/mood: deep midnight blue, teal, cyan with restrained magenta. Same polished cinematic realism as a futuristic city rooftop hero and cyberpunk server room, no painterly strokes.\nConstraints: artwork only, no webpage, no UI, no borders, no captions, no logos, no watermark, no readable text. No floating props or cars in foreground."
+    },
+    {
+      "file": "public/assets/home/night-city-wallpaper-v3.webp",
+      "mode": "User-selected existing image, no generation",
+      "source": "https://images8.alphacoders.com/138/thumb-1920-1383930.png",
+      "processing": "Downloaded as provided; lossless geometry preserved at 1920×1080, WebP quality 88. No image edits. CSS adds responsive crop/contrast overlay at runtime.",
+      "usage": "Current homepage hero"
+    }
+  ]
+}

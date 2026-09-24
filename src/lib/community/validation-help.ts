@@ -1,0 +1,21 @@
+const corrections: Record<string, string> = {
+  package_layout: "Put open77.lua at the ZIP root or inside one resource folder. For a bundle, list every resource root in open77-hub.json.",
+  package_metadata: "Check open77-hub.json against the documented bundle schema and release version.",
+  package_unmapped_file: "Remove unrelated files outside the declared resource roots, or include them in the appropriate resource.",
+  resource_manifest: "Check open77.lua syntax, resource name, entrypoints and every referenced file against the resource documentation.",
+  resource_name_collision: "Give each included resource a distinct runtime name and matching folder name.",
+  archive_path: "Use relative, portable paths. Remove traversal, absolute paths and unsupported filenames.",
+  archive_collision: "Remove duplicate paths, including names that differ only by case.",
+  archive_link: "Replace symbolic links with the files that should be distributed.",
+  archive_encrypted: "Export an unencrypted ZIP without a password.",
+  archive_budget: "Reduce expanded size, entry count or nested archive depth to the documented upload limits.",
+  archive_empty: "Include the resource manifest and its files in the ZIP.",
+  archive_length: "Rebuild the ZIP from the original files; its entry lengths are inconsistent.",
+  archive_directory: "Rebuild the ZIP using ordinary file and directory entries.",
+  invalid_zip: "Re-export a valid ZIP and check that it opens locally before uploading.",
+  preload_archive: "Check each declared preload archive against the supported mod layout and archive limits.",
+  preload_capability: "Remove unsupported preload content and use only the documented Open77 preload capabilities.",
+  package_signature: "The scanner rejected this package. Inspect its contents locally and remove the offending content before publishing a replacement.",
+  inspection_temporarily_unavailable: "Processing is temporarily unavailable. Refresh status later; do not create duplicate versions while a job retries.",
+};
+export function validationHelp(code: string) { return corrections[code] ?? "Check the package documentation and this validation code. If the correction is unclear, include the code when asking for development help."; }

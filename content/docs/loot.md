@@ -1,11 +1,6 @@
 # Server loot and ground drops
 
-In an Open77 session, ground loot is server-authoritative. Vanilla bodies, bags, containers,
-collectibles, and physical drops never hand an item to the player directly. An item visible on the
-ground is a local projection, presented through Cyberpunk's own interface — contents, rarity, detail
-card, `Take` and `Take All`. Selecting an item there sends a request to the server, which checks the
-drop, the dimension, and the distance before allowing the pickup. The local `TransactionSystem`
-removes nothing until the reply arrives.
+Ground loot is server-authoritative. Native containers and drops display the server's items; Take and Take All send pickup requests checked against the drop, routing bucket and player distance. The local inventory changes only after authorization.
 
 The official `open77_loot` resource must stay started. Its manifest asks for `network.events` and
 `world.loot`, and its client is distributed with the server's resource set.
@@ -84,6 +79,24 @@ end)
 The pickup is atomic within the registry: two players cannot consume the same id. Validation uses a
 `PlayerSnapshot` received less than two seconds ago, requires the same routing bucket, and accepts
 at most `radius + 0.75 m` to absorb network latency.
+
+## Server events
+
+```lua
+AddEventHandler("onLootCreated", function(id, resource, item) end)
+AddEventHandler("onLootRemoved", function(id, reason, resource) end)
+```
+
+Both require `world.loot` — the same string reading one costs, because a lifecycle event
+that announced a loot to a resource that cannot list one would route around that capability.
+`reason` is `removed`, `expired`, `resource_stopped`, `picked_up`, `moved_bucket`, or the free text (at most 64
+characters) the caller passed to the remove call.
+
+The same two transitions also reach the generic `onEntityCreated(kind, id, resource)` and
+`onEntityRemoved(kind, id, reason)` with `kind` = `"loot"`, for a resource that additionally
+declares `world.entities.observe`. The mirror is raised by the same statement, so the two feeds
+cannot disagree; see [entity lifecycle events](server-api.md#entity-lifecycle-events) for the
+authority rule and for why there is no `Updated` counterpart.
 
 ## Testing from the Open77 terminal
 

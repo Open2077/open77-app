@@ -1,8 +1,6 @@
 # NPC AI, combat and voice control
 
-Use `Open77.npcs` on the **server** to control the behavior of individual spawned NPCs,
-including hostile `Character.*` records. These options do not change an entire gang,
-other NPCs sharing the record, player characters, or the game's global sound settings.
+Control individual spawned NPCs from server Lua with `Open77.npcs`. Behavior settings apply to the selected NPC, not its gang, other NPCs using the same record, player characters or global audio.
 
 Available in client and server **2.31.13+op77.55**, using protocol **1.24**. Both sides must
 be updated to apply the behavior policy. Find spawn IDs in the [NPC record catalogue](npc-catalogue.md).
@@ -67,6 +65,70 @@ when supplied data is invalid. Unknown/not-owned NPCs and missing permission ret
 `Open77.npcs.update(id, { behavior = {...} })` accepts the same partial object. Changing the
 loadout/appearance, changing bucket, or reviving the NPC does not reset these settings.
 They are not stored in client KVP and do not constitute disk persistence across server restarts.
+
+## Speech: one line, on demand
+
+`Open77.npcs.speak(id, voice, options)` is the ON switch beside `setVoiceEnabled`'s OFF: one
+voice-over line from the NPC's own voiceset, queued on every client that has the body
+streamed. It is the counterpart of FiveM's `PlayPedAmbientSpeechNative`. What is proven is the
+plumbing — the `SoundPlayVo` event reaches each viewer's puppet, and a muted NPC refuses — not
+the sound: the test loop has no audio capture, so whether a given line is *heard* on a given
+record is something to check by ear before shipping it.
+
+```lua
+-- A guard greets whoever walks up, and warns them off when they linger.
+local guard = Open77.npcs.create({ record = "Character.Judy", position = gate })
+AddEventHandler("onNpcInteracted", function(npcId, playerId)
+    if npcId ~= guard then return end
+    local ok, reason = Open77.npcs.speak(guard, "greeting")
+    if not ok then print("guard stayed silent: " .. reason) end
+end)
+Open77.npcs.speak(guard, "rep_ask_to_leave", { ignoreDistance = true })
+```
+
+`voice` is a **`voContext` name** — the same word vanilla passes to
+`GameObject.PlayVoiceOver`, resolved by the engine against the puppet's voiceset
+(`Character.*.voiceTag`) — not a Wwise event; `Open77.effects.sound` remains the way to play a
+sound bank event on an NPC. `Open77.npcs.voices()` lists the generic barks that can be
+pointed at in the game's own 2.31 sources, each with the file and line that plays it:
+
+| Name | When vanilla plays it |
+|---|---|
+| `greeting` | look-at reaction to a friendly passer-by |
+| `bump` | bumped into by the player |
+| `fear_beg`, `fear_run`, `fear_foll` | a civilian threatened: begging, fleeing, complying |
+| `stlh_curious`, `stlh_curious_grunt`, `stlh_investigate`, `stlh_search`, `stlh_patrol_back`, `stlh_call`, `stlh_death` | the stealth ladder: noticing, investigating, searching, giving up, calling a friend, finding one dead |
+| `start_alerted`, `start_combat`, `combat_ended`, `danger`, `enemy_warning`, `combat_target_hit`, `combat_target_sight_lost`, `crowd_combat` | alert and combat state changes |
+| `attack_short`, `attack_long`, `enemy_melee_charge`, `battlecry_curse` | attack shouts |
+| `hit_reaction_light`, `hit_reaction_heavy`, `vo_any_damage_hit` | taking hits |
+| `grenade`, `grenade_throw`, `coop_reports_kill` | grenades and kill calls |
+| `rep_ask_to_leave`, `rep_ask_to_holster`, `rep_final_warning`, `rep_call_grd`, `rep_complies` | a guard's escalation ladder |
+| `hurry_up`, `phone_start`, `taunt_hidden_player`, `pedestrian_hit`, `vehicle_bump` | miscellany |
+
+The list is documentation, not an allowlist: any identifier is accepted (letters, digits,
+underscore, at most 64), because a record may carry lines no vanilla script calls. **A name the
+voiceset does not have is silent, and nothing can report that** — the engine drops it without
+a word, so `true` means "queued on every viewer", not "heard". Test the names you ship on the
+records you ship; a character whose record has no `voiceTag` never speaks.
+
+Options: `ignoreFrustum` (default `true`) plays even when the NPC is off-screen;
+`ignoreDistance` (default `false`) skips the engine's distance cull. Refusals, by name:
+
+| Reason | Meaning |
+|---|---|
+| `invalid_voice` | Not an identifier, empty, or longer than 64. |
+| `invalid_npc_id`, `npc_not_found`, `npc_not_owned` | Bad id, unknown id, another resource's NPC. |
+| `npc_dead` | A dead body has nothing to say. |
+| `voice_disabled` | `setVoiceEnabled(id, false)` is in force; lift it first. |
+| `npc_not_streamed` | No client has reported the body ready yet — nobody could hear it. |
+| `npc_voice_busy` | A line was accepted on this NPC less than 400 ms ago. |
+
+Requires `world.npcs` and ownership, like every NPC mutator. The line rides the existing
+effect one-shot to every client in the NPC's routing bucket; a client that does not have the
+body streamed resolves no target and drops it, which is the same rule an entity-bound sound
+follows. On the client the bundled `open77_effects` resource queues the engine's own
+`SoundPlayVo` event on the puppet through `Open77.sfx.playVoice`, which a client resource may
+also use for a purely local bark (see [Effects](effects.md)).
 
 ## Tasks, authority and replication
 
