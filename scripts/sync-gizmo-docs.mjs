@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { assertEditorialProse, reviewApiEntries } from "./docs-editorial.mjs";
 
 const args = process.argv.slice(2);
 let source = process.env.OPEN77_WIKI_SOURCE ?? "../CyberM/wiki";
@@ -20,7 +21,7 @@ const key = (entry) => `${entry.runtime}:${entry.namespace}.${entry.name}`;
 const selected = (entry) => entry.runtime === "client" && entry.namespace === "Open77.gizmos";
 const apiTarget = "content/api/api.json";
 const current = JSON.parse(await read(apiTarget));
-const incoming = JSON.parse(await read(path.join(source, "data/api.json"))).filter(selected);
+const incoming = reviewApiEntries(JSON.parse(await read(path.join(source, "data/api.json"))).filter(selected));
 assert.equal(incoming.length, 14, "Expected fourteen reviewed gizmo API cards");
 assert.equal(new Set(incoming.map(key)).size, 14, "Duplicate source gizmo cards");
 assert.equal(new Set(current.map(key)).size, current.length, "Duplicate site API cards");
@@ -28,8 +29,13 @@ const byKey = new Map(incoming.map((entry) => [key(entry), entry]));
 const currentKeys = new Set(current.map(key));
 const merged = [...current.map((entry) => byKey.get(key(entry)) ?? entry),
   ...incoming.filter((entry) => !currentKeys.has(key(entry)))];
+const sourceGuide = await read(path.join(source, "gizmos.md"));
+// Keep the upstream implementation-status diary out of the public guide.
+assert.ok(sourceGuide.includes("**Implementation status,"), "Review upstream availability notes before syncing");
+const guide = sourceGuide.replace(/\n\*\*Implementation status,[\s\S]*?(?=\n## Permission and execution side)/, "");
+assertEditorialProse(guide, "gizmos.md");
 const writes = new Map([
-  ["content/docs/gizmos.md", await read(path.join(source, "gizmos.md"))],
+  ["content/docs/gizmos.md", guide],
   [apiTarget, JSON.stringify(merged, null, 1) + "\n"],
 ]);
 const manifestTarget = "content/docs/_manifest.json";
@@ -48,14 +54,15 @@ if (check) {
     assert.equal(record.bytes, Buffer.byteLength(actual), `${target}: bytes`);
   }
   assert.equal(manifest.apiEntries, current.length);
-  console.log("Gizmo guide and fourteen client API cards match the source wiki.");
+  console.log("Reviewed gizmo guide and fourteen client API cards match the source contracts.");
 } else {
   for (const [target, text] of writes) {
     const existing = recordFor(target);
     const record = { ...(existing ?? {}), target,
       source: target === apiTarget ? "wiki/data/api.json" : "wiki/gizmos.md",
       ...(target === apiTarget ? { entries: merged.length }
-        : { slug: "gizmos", title: text.match(/^#\s+(.+)$/m)?.[1] ?? "Entity gizmos" }),
+        : { slug: "gizmos", title: text.match(/^#\s+(.+)$/m)?.[1] ?? "Entity gizmos",
+          siteEditorial: { owner: "website", upstreamSnapshotSha256: hash(sourceGuide) } }),
       bytes: Buffer.byteLength(text), sha256: hash(text),
     };
     if (existing) Object.assign(existing, record);

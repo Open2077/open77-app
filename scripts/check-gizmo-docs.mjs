@@ -7,10 +7,12 @@ const guide = await read("content/docs/gizmos.md");
 for (const term of ["gizmos.edit", "Permission and execution side", "Quick start",
   "Target identities and capabilities", "API reference", "Built-in controls",
   "Events and snapshot shape", "Authoritative server integration", "Common errors",
-  "nativeTransform", "preview=false", "vehicle_entry_requested", "still under validation",
-  "not a released/validated build", "not a collision sandbox", "gizmo_restore_pending"]) {
+  "nativeTransform", "preview=false", "vehicle_entry_requested",
+  "not a collision sandbox", "gizmo_restore_pending"]) {
   assert.ok(guide.includes(term), `Guide missing ${term}`);
 }
+const removedNotice = "Requires a matching gizmo-capable OPEN//77 client.";
+assert.ok(!guide.includes(removedNotice), "Do not restore the removed introductory notice");
 const meta = JSON.parse(await read("content/docs/meta.json"));
 assert.equal(meta.sections.flatMap((section) => section.pages)
   .filter((page) => page.slug === "gizmos" && page.kind === "guide").length, 1);
@@ -32,7 +34,7 @@ assert.ok((await read("src/app/docs/[slug]/page.tsx")).includes('href="/docs/api
 if (process.argv[2]) {
   for (const [route, tokens] of [
     ["/docs/gizmos", ["Entity gizmos", 'id="events-and-snapshot-shape"', "/docs/api/client/open77-gizmos", "vehicle_entry_requested"]],
-    ["/docs/gizmos.md", ["Open77.gizmos", "not a released/validated build"]],
+    ["/docs/gizmos.md", ["Open77.gizmos", "Permission and execution side"]],
     ["/docs/api/client/open77-gizmos", ["Open77.gizmos.create", "/docs/gizmos"]],
     ["/docs/api/client/open77-gizmos.md", ["Open77.gizmos.create", "nativeTransform"]],
     ["/docs/api", ["Open77.gizmos.create"]],
@@ -42,6 +44,9 @@ if (process.argv[2]) {
     const response = await fetch(new URL(route, process.argv[2]), { signal: AbortSignal.timeout(60000) });
     assert.equal(response.status, 200, route);
     const body = await response.text();
+    if (route === "/docs/gizmos" || route === "/docs/gizmos.md") {
+      assert.ok(!body.includes(removedNotice), `${route}: removed notice is still served`);
+    }
     for (const token of tokens) assert.ok(body.includes(token), `${route}: ${token}`);
     console.log(`served OK ${route}`);
   }

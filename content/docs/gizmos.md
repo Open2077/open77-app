@@ -5,21 +5,6 @@ placement editors, spawn-point tools, vehicle staging, scene composition or a
 custom editor that listens to transform changes. Handles are drawn by the native
 overlay, not a WebUI page. Opening a gizmo does not pause the server.
 
-**Implementation status, 2026-09-24:** math, controller, Lua queries and picking
-have automated coverage and the native client compiles. Pointer-driven virtual
-translation/rotation/scale, local-prop preview/cancel/commit and one server NPC's
-preview/cancel have live evidence. The server-authorized prop example has passed
-a real pointer-to-server-to-native placement round trip. Vehicle translation and
-occupied-target refusal have live evidence. Native restoration, precise NPC
-server placement and player/vehicle completion events have targeted live checks;
-the full target matrix, collision side effects and cross-client isolation are
-still under validation. This
-page describes the implementation contract, not a released/validated build.
-The NPC-entry interruption guard has also passed a live preview → cancellation
-→ native restoration → confirmed seat-mount test, followed by renewed editing
-after exit and normal player movement after cleanup.
-See [validation evidence and remaining gates](../docs/research/lua-gizmos.md).
-
 ## Permission and execution side
 
 ```lua

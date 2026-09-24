@@ -28,46 +28,39 @@ assert(Open77.blips.setSprite(blip, "VehicleVariant"))
 assert(Open77.blips.remove(blip))
 ```
 
-## Custom PNG icons
+## Custom SVG icons and colors
 
-Declare every client asset in `open77.lua`. Undeclared files cannot be used as textures:
+**Client only · Experimental.** SVG rendering and per-blip colors require Cyberpunk 2077 2.31 and an OPEN//77 client with the native SVG adapter. See [Custom SVG blips](custom-blip-icons.md) for a complete resource, supported SVG features, limits and troubleshooting.
+
+Declare the icon in your resource's manifest:
 
 ```lua
-files { "assets/blips/*.png" }
+files { "icons/fuel.svg" }
 permissions { "ui.vanilla.map" }
 ```
 
-Then validate the texture and associate it with the blip. The native `sprite` provides the actual
-rendering, selection, filtering, and fullscreen-map tooltip on Cyberpunk 2077 2.31.
+Create the blip in its client script after the player has entered the world:
 
 ```lua
-local jobIcon, reason = Open77.assets.texture("assets/blips/job-center.png")
-assert(jobIcon, reason)
-
-local jobCenter = assert(Open77.blips.create({
-    position = { x = -1442.2, y = 127.4, z = 18.0 },
+local station, reason = Open77.blips.create({
+    position = { x = -595.785522, y = -722.328979, z = 8.715637 },
     sprite = "tech",
-    title = "Job Center",
-    description = "Browse available civilian jobs and city contracts.",
-    icon = { asset = jobIcon.asset, size = 56 }
-}))
+    title = "Fuel station",
+    icon = { asset = "icons/fuel.svg", size = 48 },
+    color = "#FFCC00"
+})
+assert(station, reason)
 
-assert(Open77.blips.setIcon(jobCenter, "assets/blips/job-center.png"))
-assert(Open77.blips.setIcon(jobCenter, false)) -- restore the native sprite
+assert(Open77.blips.setColor(station, "#00CCFF80"))
+assert(Open77.blips.setColor(station, false)) -- source colors
+assert(Open77.blips.setIcon(station, false)) -- native sprite
 ```
 
-`icon` accepts a declared asset path, the descriptor returned by `Open77.assets.texture`, or a
-table `{ asset = path, size = pixels }`. Display size is limited to `16..128` pixels. Textures are
-currently PNG only, at most 512 KiB and 512×512. The test asset is 128×128 with transparency.
+The icon is rendered as native Ink geometry, while the mappin retains selection, tracking and tooltips. Use a declared resource-relative SVG path or `{ asset, size }`; URLs and raster images are rejected. Size defaults to 48 and accepts 16–128 native Ink units.
 
-The downloaded PNG compositor is disabled on Cyberpunk 2077 2.31. REDengine applies mappin
-projection after the normal Ink transform pass: script-visible widget coordinates remain local,
-and reading or forcing fullscreen-map layout while its native tree is being constructed causes an
-engine null dereference. Open77 therefore keeps and validates the `icon` metadata but deliberately
-renders the native `sprite`. This is a compatibility fallback, not a promise that the PNG appears.
+`color` accepts `#RRGGBB`, `#RRGGBBAA` or `false`. It also works without an SVG and affects only that owned blip. Clearing an icon preserves its color override. For SVGs the override replaces RGB and multiplies source alpha. Invalid replacements leave the existing icon unchanged.
 
-`Open77.assets.list()` returns the current resource's declared `files`; `texture(path)` returns
-`{ type, asset, mime, width, height, bytes }` without exposing the file contents.
+### Following an entity
 
 A blip can follow an Open77 entity instead of a position:
 
@@ -121,7 +114,8 @@ destination but cannot change `routable`; remove and recreate it to change kind.
 | `setTitle(id, title)` | `boolean, reason?` | Changes the fullscreen-map title, 128 bytes maximum. |
 | `setDescription(id, description)` | `boolean, reason?` | Changes the fullscreen-map description, 1024 bytes maximum. An empty string hides it. |
 | `setLabel(id, label)` | `boolean, reason?` | Backward-compatible alias of `setTitle`. |
-| `setIcon(id, iconOrFalse)` | `boolean, reason?` | Stores a declared PNG icon or clears it; 2.31 renders the native sprite. |
+| `setIcon(id, iconOrFalse)` | `boolean, reason?` | Sets a declared SVG icon or restores the native sprite. |
+| `setColor(id, colorOrFalse)` | `boolean, reason?` | Sets a per-blip RGB/RGBA hex color or restores source colors. |
 | `setActive(id, active)` | `boolean, reason?` | Enables or disables the vanilla mappin. |
 | `setVisibleThroughWalls(id, visible)` | `boolean, reason?` | Changes visibility through walls. |
 | `setRange(id, metres \| false)` | `boolean, reason?` | Switches the blip off beyond `metres` and back on when the player returns. |
@@ -137,7 +131,7 @@ destination but cannot change `routable`; remove and recreate it to change kind.
 | `setWaypoint(position)` | `true`, or `false, reason` | Places the player's map waypoint. |
 | `clearWaypoint()` | `true, wasSet`, or `false, reason` | Clears the waypoint, whoever set it. |
 
-`create` options: `position` or `entity`, `sprite`, `title`, `description`, `icon`, `active`, `visibleThroughWalls`, `range`, `routable`, plus `slot` and `offset` for an entity. `label` remains an alias for `title`; do not provide both. `update` accepts the mutable fields (not `routable`), and the dedicated setters can change text at runtime. The quotas are 128 blips per resource and 512 per client. Stopping, reloading, and leaving the world clean up blips automatically.
+`create` options: `position` or `entity`, `sprite`, `title`, `description`, `icon`, `color`, `active`, `visibleThroughWalls`, `range`, `routable`, plus `slot` and `offset` for an entity. `label` remains an alias for `title`; do not provide both. `update` accepts the mutable fields (not `routable`), and the dedicated setters can change text at runtime. The quotas are 128 blips per resource and 512 per client. Stopping, reloading, and leaving the world clean up blips automatically.
 
 A resource can neither read, change, nor delete another resource's blip. The TweakDB type is fixed to `Mappins.DefaultStaticMappin`, or to the single trusted custom-position definition when `routable = true`; downloaded packages cannot inject an arbitrary UI profile.
 
@@ -225,8 +219,7 @@ A variant existing in the enum does not guarantee its profile renders on every s
 ## A blip that only shows up close
 
 `range` switches a blip off once the player is further away than the given number of metres, and
-back on when they return. It is the one styling-adjacent property of this engine that can be made
-real, and it is worth knowing exactly what it is before relying on it.
+back on when they return. This visibility gate is independent of SVG styling and color.
 
 ```lua
 -- A shop pin that stops cluttering the map from across the city.
@@ -258,59 +251,23 @@ that reason, and `shortRange` is refused by name rather than quietly given these
 range, and a ranged blip you re-activate while out of range stays hidden until you walk back. Limits
 are `0` (no gate, the default) to `4000` metres; anything else is `invalid_range`.
 
-## Colour, size, category, radius — and why each is refused by name
+## Unsupported FiveM options
 
-Every one of these is **refused**, with its own reason token, on `create` and on `update` alike:
+Use the OPEN//77 options instead of FiveM palette IDs or per-surface visibility flags. Unsupported properties return a reason on both `create` and `update`.
 
-| Option | Reason | |
+| Option | Reason | Alternative |
 |---|---|---|
-| `color`, `colour` | `unsupported_option:color` / `:colour` | FiveM `SetBlipColour` |
-| `alpha`, `opacity` | `unsupported_option:alpha` / `:opacity` | FiveM `SetBlipAlpha` |
-| `scale` | `unsupported_option:scale` | FiveM `SetBlipScale` |
-| `shortRange` | `unsupported_option:shortRange` | FiveM `SetBlipAsShortRange` — use `range` |
-| `category` | `unsupported_option:category` | FiveM `SetBlipCategory` |
-| `kind = "radius"` | `unsupported_kind:radius` | FiveM `AddBlipForRadius` |
-| any other `kind` | `unsupported_option:kind` | |
+| `colour` | `unsupported_option:colour` | Use `color` or `setColor` with a hex color. |
+| `alpha`, `opacity` | `unsupported_option:alpha` / `:opacity` | Use the alpha bytes in `#RRGGBBAA`. |
+| `scale` | `unsupported_option:scale` | Use `icon.size` for an SVG. |
+| `shortRange` | `unsupported_option:shortRange` | Use `range`; it hides the pin on all surfaces, not just the minimap. |
+| `category` | `unsupported_option:category` | No per-blip category option. |
+| `kind = "radius"` | `unsupported_kind:radius` | Use [3D markers](markers.md) for a world-space area, not a map overlay. |
+| Other `kind` values | `unsupported_option:kind` | Create a positional or entity-attached blip. |
 
-Refusing is the point. Until this row, an unknown key in the options table was simply ignored, so
-`Open77.blips.create{ sprite = "loot", color = "#ff0000" }` handed back a perfectly good blip that
-was not red and never said so. A property accepted and silently discarded is worse than one that is
-missing, because nothing in the resource can tell the difference.
+Native sprites keep their default colors unless `color` overrides them. Custom SVGs do not add native variant IDs or mount archives. Keep a suitable `sprite` for native behavior and fallback.
 
-The measurements behind the table, all on 2.31:
-
-- **`gamemappinsMappinData` carries seven fields**, and not one of them is a colour, an opacity, a
-  scale, a category or a radius: `mappinType`, `variant`, `active`, `debugCaption`,
-  `localizedCaption`, `visibleThroughWalls`, `scriptData`. `gamemappinsMappinSystem` exposes exactly
-  five mutators to match — `ChangeMappinVariant`, `SetMappinActive`, `SetMappinDebugCaption`,
-  `SetMappinPosition`, `SetMappinScriptData`.
-- **Opacity and scale exist, but per sprite, not per pin.** They live on
-  `gamedataMappinUIRuntimeProfile_Record` (`OpacityDistanceParams`, `ScaleDistanceParams`,
-  `OpacityAngleParams`, ...), which `CreateMappinUIProfile` resolves *from the variant*. One record
-  is shared by every pin using that sprite, so a per-blip colour would restyle every other
-  resource's blips at the same time. That is not a blip property with a missing setter; it is a
-  different thing wearing the same word.
-- **`AddBlipForRadius` has no counterpart at all.** `MappinSystem` publishes no area registration,
-  and the mappin subclasses that do carry a radius — `gamemappinsPointOfInterestMappinData` has
-  `dynamicMappinRadius` — cannot be used, because `RegisterMappin` takes
-  `gamemappinsMappinData` **by value**: a subclass passed into it is sliced. For a circle in the
-  world rather than on the map, [`Open77.markers`](world-queries.md) draws a ground-aligned ring
-  with a real radius.
-
-What *is* per-blip is the sprite, and Cyberpunk's sprites carry their own colours: picking
-`danger` over `objective` is how a blip becomes red here.
-
-`title` and `description` are kept in Open77's private mappin data. The fullscreen-map tooltip reads those values after vanilla setup, so a highlighted blip can display guaranteed free-form text such as `Job Center` and a multiline description. Limits are 128 and 1024 UTF-8 bytes respectively. The HUD does not permanently draw that text next to the icon.
-
-Custom PNG icons are not converted into `gamedataMappinVariant` values. Open77 keeps the native
-mappin and its declared icon metadata, but 2.31 renders only the native sprite for stability.
-WebP and runtime REDengine archive mounting are not supported.
-
-`track(id)` follows the same internal `MappinSystem` operation as selecting a pin on the fullscreen
-map: it changes the manually tracked id. Route calculation is a second condition and only starts
-for a blip created with `routable = true`. It returns `changed = false` when that blip is already
-tracked. `untrack(id)` first checks that the requested mappin really is the tracked one, so it cannot
-remove a vanilla objective or another resource's destination.
+`track(id)` selects the blip as the manually tracked mappin and returns `changed = false` when it is already tracked. A road route additionally requires `routable = true` at creation. `untrack(id)` only clears tracking if that blip is selected; it does not remove another resource's destination or a vanilla objective.
 
 ## The player's waypoint
 

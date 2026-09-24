@@ -107,5 +107,6 @@ export const syntaxLanguages = [
   "jsonc",
   "bash",
   "typescript",
+  "xml",
   "diff",
 ] as const;

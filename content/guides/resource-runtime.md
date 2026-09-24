@@ -203,8 +203,7 @@ The newer client implementation introduced with PolyZone also supports
 `require('@polyzone')` and `require('@library/helpers.math')` for explicitly
 published files of declared, running dependencies. The imported code runs in
 the **caller's** VM and permissions, not as a call to the provider. This
-dependency syntax is currently a development-build feature, not guaranteed
-on existing CDN clients.
+dependency syntax is available starting with client `2.31.13+op77.67`.
 
 See [Lua modules and require](lua-modules.md) for complete manifests, local and
 dependency examples, cache/reload behavior, errors and how to choose between

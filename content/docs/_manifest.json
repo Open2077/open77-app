@@ -2,9 +2,9 @@
   "$comment": "Technical content originates from the platform wiki. Public prose is maintained on the website; curated guides are preserved by sync. Hashes describe the site files. Upstream provenance and siteEditorial amendments are recorded separately. See docs/documentation-style.md.",
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
-  "syncedAt": "2026-09-17T02:23:59.652Z",
-  "guides": 93,
-  "apiEntries": 1624,
+  "syncedAt": "2026-09-24T12:33:14.568Z",
+  "guides": 94,
+  "apiEntries": 1639,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -89,11 +89,14 @@
       "target": "content/docs/blips.md",
       "slug": "blips",
       "title": "Vanilla blips and mappins",
-      "bytes": 22030,
-      "sha256": "97d8cc5b314cba45d0ce705b7aec37bd9e013503834f2c6621d780349e7f4041",
+      "bytes": 19377,
+      "sha256": "6cc5e0a9f17a1d8bf54d2c98862d0955329f7bcc73e4b23c04e46a75bad2b05c",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "15fd8a284253b63073a2d642f7a9a2b0a42243b3dcfe24dcc582d0d6afe45084"
+      },
+      "siteAmendment": {
+        "blipSvgContract": "Native SVG icons and per-blip RGB/RGBA; experimental matching client adapter required. Reviewed against uncommitted open77-base implementation; upstream sync provenance preserved."
       }
     },
     {
@@ -1144,9 +1147,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1624,
-      "bytes": 2279657,
-      "sha256": "b67ef3a32dc9cbdc6c8c141f28f3f6f6b851e1b3508f882606eb6bd672e34727",
+      "entries": 1639,
+      "bytes": 2297894,
+      "sha256": "be79d2f77dbb5b929a4b4a02b167c39727d66e487e9cba933c64d76d1ab18ff2",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
@@ -1154,7 +1157,8 @@
       "siteAmendment": {
         "sourceCommit": "75f0e59cfa26606e83d9257ec1c7c07c6929c977",
         "scope": "RP native layer/item/sequence descriptions and server animation permissions; no inferred option release version",
-        "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete"
+        "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete",
+        "blipSvgContract": "Native SVG icons and per-blip RGB/RGBA; experimental matching client adapter required. Reviewed against uncommitted open77-base implementation; upstream sync provenance preserved."
       }
     },
     {
@@ -1387,16 +1391,44 @@
           "permissionCorrection": "get requires world.markers; shapes is permission-free, verified against Lua handlers"
         }
       }
+    },
+    {
+      "target": "content/docs/gizmos.md",
+      "source": "wiki/gizmos.md",
+      "slug": "gizmos",
+      "title": "Entity gizmos (client Lua)",
+      "bytes": 21277,
+      "sha256": "e4c4a53b22a183712a44667a9baa01c3677845b410d3410e9099fc081b55b6eb",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "33a20d3280ca59495ff8e7c84c06fd1ff2759c069f10b70592d64a6ec14082fd"
+      }
     }
   ],
   "partialSync": {
-    "tool": "scripts/sync-player-model-docs.mjs",
+    "tool": "scripts/sync-gizmo-docs.mjs",
+    "syncedAt": "2026-09-24T12:33:14.568Z",
+    "sourcePath": "wiki",
     "guides": [
-      "player-models",
-      "player-model-catalogue"
+      "gizmos"
     ],
-    "apiMode": "merge-selected-model-cards",
-    "syncedAt": "2026-09-17T15:15:19.053Z"
+    "apiRouteIds": [
+      "client:Open77.gizmos.activate",
+      "client:Open77.gizmos.active",
+      "client:Open77.gizmos.cancel",
+      "client:Open77.gizmos.capabilities",
+      "client:Open77.gizmos.commit",
+      "client:Open77.gizmos.create",
+      "client:Open77.gizmos.deactivate",
+      "client:Open77.gizmos.destroy",
+      "client:Open77.gizmos.get",
+      "client:Open77.gizmos.list",
+      "client:Open77.gizmos.redo",
+      "client:Open77.gizmos.setTransform",
+      "client:Open77.gizmos.undo",
+      "client:Open77.gizmos.update"
+    ],
+    "apiMode": "merge-selected-cards-preserve-other-site-entries"
   },
   "nativeMapSync": {
     "tool": "scripts/sync-native-map-docs.mjs",

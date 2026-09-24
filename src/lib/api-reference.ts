@@ -180,6 +180,7 @@ const INPUT_BLOCKING = new Set([
  * link to a page that does not mention it is worse than no link.
  */
 const NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGuideLabel: string }> = {
+  "Open77.blips": { usageGuideHref: "/docs/custom-blip-icons", usageGuideLabel: "Custom SVG blips & colors" },
   "Open77.database": { usageGuideHref: "/docs/database", usageGuideLabel: "SQL database setup" },
   MySQL: { usageGuideHref: "/docs/database", usageGuideLabel: "SQL database setup" },
   "Open77.webui": { usageGuideHref: "/docs/resource-runtime#webui", usageGuideLabel: "WebUI & remote pages" },
@@ -211,6 +212,9 @@ const RUNTIME_NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGu
 };
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (runtime === "client" && raw.namespace === "Open77.gizmos") {
+    return { usageGuideHref: "/docs/gizmos", usageGuideLabel: "Entity gizmos guide" };
+  }
   if ((raw.namespace === "Open77.players" && ["setModel", "getModel", "resetModel", "isModelReady", "isModelValid"].includes(raw.name)) ||
       (raw.namespace === "_G" && ["SetPlayerModel", "GetPlayerModel", "ResetPlayerModel", "IsPlayerModelReady", "IsPlayerModelValid"].includes(raw.name))) {
     return { usageGuideHref: "/docs/player-models", usageGuideLabel: "Player morphs and model lifecycle guide" };

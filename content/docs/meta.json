@@ -85,26 +85,6 @@
           "description": "Connect an OPEN//77 server to MySQL or MariaDB: install SQL, create a dedicated account, configure credentials, verify readiness from Lua, diagnose failures and back up persistent data."
         },
         {
-          "slug": "warden",
-          "kind": "page",
-          "nav": "Warden admin panel",
-          "title": "Warden",
-          "description": "Warden is the OPEN//77 in-server admin panel: a browser control room for live console, Lua resources, players, configuration and admins. Review operations that require a restart."
-        },
-        {
-          "slug": "community-hub-warden",
-          "kind": "guide",
-          "nav": "Workshop resources in Warden",
-          "title": "Manage Workshop resources with Warden",
-          "description": "Install a Workshop creation from its pasted link, review the plan, update, uninstall and roll back; the Workshop chip in the Resources tab, revoked releases, preload restart staging, local configuration and retained backups."
-        },
-        {
-          "slug": "warden-players",
-          "kind": "guide",
-          "nav": "Players tab in Warden",
-          "description": "The live roster in Warden — ping, health, life state, match — and the per-row admin actions: warn, kick, ban, grant rights, heal, freeze and move, plus why spectate cannot be adapted from a browser."
-        },
-        {
           "slug": "launcher-for-server-owners",
           "kind": "guide",
           "source": "authored",
@@ -119,6 +99,42 @@
           "nav": "Branding your server",
           "title": "Branding your server",
           "description": "Give your server an icon and a banner from the Warden panel, with no SSH and no restart: what the two images are, the real size and shape limits (including the combined budget that decides whether your server is listed at all), and what to check when an image does not appear."
+        }
+      ]
+    },
+    {
+      "id": "server-administration",
+      "title": "Server administration",
+      "group": "Start & host",
+      "description": "Operate your server with Warden or integrate its administration into your own dashboard through RCON.",
+      "pages": [
+        {
+          "slug": "warden",
+          "kind": "page",
+          "nav": "Warden admin panel",
+          "title": "Warden",
+          "description": "Warden is the OPEN//77 in-server admin panel: a browser control room for live console, Lua resources, players, configuration and admins. Review operations that require a restart."
+        },
+        {
+          "slug": "rcon",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "RCON & TCP protocol",
+          "title": "RCON: authenticated TCP administration",
+          "description": "Configure authenticated TCP administration, connect dashboard backends, implement the Open77 RCON protocol, stream logs and transfer files with Warden permissions, TLS and resumable sessions."
+        },
+        {
+          "slug": "community-hub-warden",
+          "kind": "guide",
+          "nav": "Workshop resources in Warden",
+          "title": "Manage Workshop resources with Warden",
+          "description": "Install a Workshop creation from its pasted link, review the plan, update, uninstall and roll back; the Workshop chip in the Resources tab, revoked releases, preload restart staging, local configuration and retained backups."
+        },
+        {
+          "slug": "warden-players",
+          "kind": "guide",
+          "nav": "Players tab in Warden",
+          "description": "The live roster in Warden — ping, health, life state, match — and the per-row admin actions: warn, kick, ban, grant rights, heal, freeze and move, plus why spectate cannot be adapted from a browser."
         }
       ]
     },
@@ -535,6 +551,13 @@
           "description": "Server-owned world props and lights: creation, streaming and cleanup."
         },
         {
+          "slug": "gizmos",
+          "kind": "guide",
+          "nav": "Entity gizmos",
+          "title": "Entity gizmos",
+          "description": "Build native 3D placement editors with Open77.gizmos: Lua functions, target capabilities, snapping, undo/redo, lifecycle events, safe restoration and server-authorized edits. Development-build feature with documented validation limits."
+        },
+        {
           "slug": "props-and-effects",
           "kind": "guide",
           "source": "authored",
@@ -572,7 +595,14 @@
           "slug": "blips",
           "kind": "guide",
           "nav": "Blips and map pins",
-          "description": "Vanilla map markers and mappins: creating and updating blips, attaching them to entities, custom icon metadata, stable aliases, and the complete sprite catalogue."
+          "description": "Native map pins, custom SVG icons and per-blip colors, entity attachment, GPS tracking, distance gates and the complete sprite catalogue."
+        },
+        {
+          "slug": "custom-blip-icons",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Custom SVG blips",
+          "description": "Create resource-owned SVG map icons, change colors and transparency from Lua, preserve native tracking, and handle format limits and errors."
         },
         {
           "slug": "markers",
