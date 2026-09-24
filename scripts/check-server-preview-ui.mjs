@@ -81,6 +81,7 @@ try {
       }
       assert.match(await evaluate(`${preview}.textContent`), /Compatible client:.*Network protocol:/);
       await evaluate(`${preview}.scrollIntoView({block:'start',behavior:'instant'})`);
+      await evaluate(`Promise.all(${preview}.getAnimations({subtree:true}).filter(a=>a.effect.getTiming().iterations!==Infinity).map(a=>a.finished.catch(()=>{})))`);
       await fs.mkdir(".shots/server-preview", { recursive: true });
       await fs.writeFile(`.shots/server-preview/${width}.png`, Buffer.from((await call("Page.captureScreenshot")).data, "base64"));
       await evaluate(`${preview}.querySelector('summary').click()`);
