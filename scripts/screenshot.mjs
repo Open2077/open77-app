@@ -23,6 +23,8 @@ const SHOTS = [
   { path: "/brand", name: "brand", width: 1440, height: 1000 },
   { path: "/docs", name: "docs-index", width: 1440, height: 1100 },
   { path: "/docs/vehicles", name: "docs-guide", width: 1440, height: 1100 },
+  { path: "/docs/gizmos", name: "docs-gizmos", width: 1440, height: 1100 },
+  { path: "/docs/gizmos", name: "docs-gizmos-mobile", width: 390, height: 844, mobile: true },
   { path: "/docs/platform", name: "docs-platform", width: 1440, height: 1100 },
   { path: "/docs/api", name: "docs-api", width: 1440, height: 1000 },
   {
@@ -138,6 +140,7 @@ try {
   await session.send("Runtime.enable");
 
   for (const shot of SHOTS.filter((shot) => !process.argv.includes("--docs") || shot.path.startsWith("/docs"))) {
+    if (process.argv.includes("--gizmos") && shot.path !== "/docs/gizmos") continue;
     await session.send("Emulation.setDeviceMetricsOverride", {
       width: shot.width,
       height: shot.height,

@@ -16,6 +16,11 @@ export type AdminOverview = {
 };
 
 export type AdminServer = {
+  official?: boolean;
+  featured?: boolean;
+  featuredOrder?: number;
+  directoryRevision?: number;
+  online?: boolean;
   serverId: string;
   name: string;
   connectEndpoint: string;
@@ -152,6 +157,14 @@ export function servers(token: string): Promise<AdminServer[]> {
   return masterCall("/api/v1/admin/servers", { token });
 }
 
+export type ServerDirectoryLabels = { official: boolean; featured: boolean; featuredOrder: number; directoryRevision: number };
+export function setServerDirectory(token: string, serverId: string, labels: ServerDirectoryLabels): Promise<ServerDirectoryLabels> {
+  return masterCall(`/api/v1/admin/servers/${serverId}/directory`, {
+    method: "PUT", token,
+    body: { official: labels.official, featured: labels.featured, featuredOrder: labels.featuredOrder, revision: labels.directoryRevision },
+  });
+}
+
 export function users(token: string, query: string, limit = 50): Promise<AdminUser[]> {
   const params = new URLSearchParams({ limit: String(limit) });
   if (query) params.set("query", query);
@@ -164,6 +177,15 @@ export function suspendUser(token: string, accountId: string): Promise<void> {
 
 export function reinstateUser(token: string, accountId: string): Promise<void> {
   return masterCall(`/api/v1/admin/users/${accountId}/reinstate`, { method: "POST", token });
+}
+
+/** Idempotent, audited admin override. The confirmed address must still match. */
+export function verifyUserEmail(token: string, accountId: string, email: string): Promise<AdminUser> {
+  return masterCall(`/api/v1/admin/users/${accountId}/verify-email`, {
+    method: "POST",
+    token,
+    body: { email },
+  });
 }
 
 export function licenses(token: string, query: string, limit = 50): Promise<AdminLicense[]> {

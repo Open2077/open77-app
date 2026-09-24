@@ -9,7 +9,7 @@ Nothing changes for other players. The stand-in body is local: nobody else ever 
 same bytes leave your client whether you are in first or third person.
 
 ```lua
-permissions { "perspective.policy" }   -- server side, to impose a view
+permissions { "perspective.policy" }   -- server policy, or a client-side forced view
 ```
 
 ## The player's side
@@ -23,6 +23,59 @@ permissions { "perspective.policy" }   -- server side, to impose a view
 | While a panel has the keyboard | The key does nothing while chat, the pause menu or an admin surface owns input, so it can never fire underneath a text field. |
 
 A player who has never asked gets first person.
+
+## Enable, disable or temporarily force a view (client)
+
+Requires the client update introducing `setThirdPerson` and
+`clearThirdPersonOverride`. On older clients, check that the function exists
+before calling it. Configuring a [camera style](third-person-camera.md) does
+not enable or lock the perspective by itself.
+
+```lua
+-- Ordinary switch: the player can still change the view with F7.
+Open77.perspective.setThirdPerson(true)         -- request third person
+Open77.perspective.setThirdPerson(false)        -- request first person
+
+-- Requires permissions { "perspective.policy" } in the resource manifest.
+Open77.perspective.setThirdPerson(true, true)   -- force third person, block F7 -> FPP
+Open77.perspective.setThirdPerson(false, true)  -- force first person, block F7 -> TPP
+
+-- Release only this resource's lock, keeping the player's previous preference.
+Open77.perspective.clearThirdPersonOverride()
+```
+
+`setThirdPerson(enabled[, force])` takes strict booleans (`force=false` by
+default). It returns `true` when the request is accepted, or `false, reason`.
+`force=false` also releases this resource's previous lock before requesting the
+new view. It does **not** unlock another resource's lock or override server
+policy. To forbid third person rather than merely switch away, use
+`setThirdPerson(false, true)`.
+
+A forced view is temporary and exclusive to the requesting resource instance.
+Another resource's forced request returns `perspective_owned`. Ordinary
+opposing requests (including F7) are refused without changing the pre-lock
+preference. `clearThirdPersonOverride()` is idempotent, needs no capability,
+and cannot clear someone else's lock. Stop/reload, coroutine error and host
+teardown release the owner's lock automatically; the selected camera **style**
+and the server policy are separate and are not changed by this API.
+
+World safety and native vehicle/cutscene cameras, then the server's
+`disabled`/`forced` policy, take priority over this local override. A conflicting
+server policy rejects a new lock with `refused_by_policy`. If the server policy
+changes while a lock exists, the policy wins; the still-owned lock resumes when
+the policy permits it again. No Lua per-frame loop is needed.
+
+`Open77.perspective.state()` includes `resourceForced` and
+`resourcePerspective` (`"tps"`, `"fpp"`, or `"none"`). These describe the
+requested lock, not a guarantee that it currently owns a vehicle/cutscene
+camera; inspect `mode`, `camera`, `reason` and `settled` for the actual view.
+An active local lock reports `reason="resource_forced"` and `allowed=false`.
+
+Other errors include `invalid_perspective_arguments`,
+`permission_denied:perspective.policy` (forced calls only), and
+`perspective_unavailable_on_this_host`. The API is client-local: use the existing
+server `setPolicy` API below for all players, or a server event to ask a selected
+client resource to apply a local lock. It is not a networked player animation.
 
 ## Server policy
 
@@ -104,6 +157,88 @@ aim is released, the weapon is holstered, a menu captures input, or an engine/fi
 camera takes over. Vanilla hip-fire and first-person HUD behaviour are unchanged.
 The overlay takes no clicks and cannot swallow input.
 
+## Reading the aim from a resource
+
+`Open77.character` answers what the player is doing with a weapon, and what is in front of it. It
+works the same in both perspectives.
+
+| Call | Answers |
+|---|---|
+| `Open77.character.isAiming()` | Aiming down sights. `boolean`, or `nil, reason`. |
+| `Open77.character.isFiring()` | The trigger is **held** — the `IsPedShooting` equivalent, not a shot event. |
+| `Open77.character.aimState()` | `aiming`, `firing`, `weaponDrawn` and `stateSequence`, in one snapshot. |
+| `Open77.character.aimedEntity()` | What is under the crosshair, or a bare `nil` for scenery. |
+
+The first three require the `player.aim.read` permission. `aimedEntity()` requires **both**
+`player.aim.read` and `world.query`: where the player is looking is a fact about the player, and
+what is there is a world entity read, so granting the first must not quietly hand out the second.
+
+```lua
+permissions { "player.aim.read", "world.query" }
+```
+
+### Do not read `perspective.state().aiming` for this
+
+That field exists and is not the same thing. It has exactly two writers: a trigger pull, and the
+third-person self-view's per-frame gate — and the second is skipped entirely whenever the
+self-view session is not active, which is to say **in first person nothing writes it at all**. A
+resource reading it in FPP sees whatever the last shot said, for as long as the player does not
+shoot again. It was published so a player refused a hip-fire shot could see why; it is not an aim
+poll, and it never was one.
+
+`Open77.character.isAiming()` reads the player's own weapon animation graph instead. The call costs
+no raycast, advances no sequence and disturbs no ballistics.
+
+### `aiming` is a latched mirror, and `stateSequence` is how you tell
+
+Nothing samples the aim on a timer. The observer records whatever the animation graph last pushed,
+and between two pushes the bit simply keeps its previous value. So `aiming == true` on its own
+cannot distinguish *aiming right now* from *the last thing this feature ever said was aim, some
+minutes ago* — and the second reads exactly like the defect where an aim pose never comes down.
+
+`aimState().stateSequence` rises on every observed change. Difference it across two reads and the
+question is settled:
+
+```lua
+local before = Open77.character.aimState()
+Wait(500)
+local after = Open77.character.aimState()
+if after.aiming and after.stateSequence == before.stateSequence then
+    -- held for at least half a second, or the graph has gone quiet
+end
+```
+
+It is evidence, never a gate. Nothing times an aim out, because a player may hold one as long as
+they like.
+
+### What `aimedEntity()` answers with
+
+The engine's own look-at target, not a physics ray — a physics ray answers with geometry and carries
+no entity reference at all. Three outcomes, kept apart on purpose:
+
+| Result | Meaning |
+|---|---|
+| a table | Something is under the crosshair. |
+| a **bare** `nil`, no second value | Pointing at scenery, or at nothing. An answer. |
+| `nil, reason` | The question could not be asked — permission, or no target system. |
+
+The table carries `engineEntity`, `className`, `kind`, `family`, `position` and `distance`, plus
+`entity` and one of `playerId` / `vehicleId` / `npcId` when the thing is an Open77 body. `family` is
+the raw class family and `kind` is that family refined by ownership — the same refinement
+`Open77.camera.aimRay({ entities = true })` applies, from the same classifier, so a vanilla crowd
+ped reads `populationNpc` through both and a server-spawned one reads `npc`. A resource branching on
+`kind == "npc"` therefore never acts on a body the server does not own.
+
+```lua
+local target = Open77.character.aimedEntity()
+if target == nil then return end                     -- nothing there
+if target.kind == "player" then
+    reportAimedAt(target.playerId)
+elseif target.kind == "trafficVehicle" then
+    -- vanilla traffic: no vehicleId, and no server write will reach it
+end
+```
+
 ## Limitations
 
 These are measured, not guessed. Cyberpunk 2077 2.31.
@@ -150,3 +285,23 @@ that, and first person never shows it. Dress the character and the third-person 
 | [Vehicles](vehicles.md) | Seats, authority and the vehicle APIs. |
 | [Interactions](interactions.md) | Prompts, choices and layers. |
 | [Chat](chat.md) | Input focus, which the perspective key shares. |
+
+## `aiming` here is the older, looser read
+
+`perspective.state()` carries an `aiming` field and costs no capability, while
+`Open77.character.isAiming()` answers the same question behind
+`player.aim.read`. Both spellings ship, and which one you should use is not a
+matter of taste.
+
+**Prefer `Open77.character.isAiming()`.** The field here has two writers -- a
+trigger pull, and the third-person self-view's per-frame gate -- and the second
+is short-circuited away whenever that session is inactive, so **in first person
+nothing writes it**. A resource reading it in first person sees whatever the
+last shot said until the player shoots again. The gated read observes combat
+directly and does not have that hole.
+
+The older field stays ungated because it already shipped that way, and
+tightening a surface underneath resources that already call it would break
+installs to fix an inconsistency nobody is exploiting. The newer read is gated
+because a new surface starts closed: relaxing a capability later costs nothing,
+and adding one later breaks every manifest that was written without it.

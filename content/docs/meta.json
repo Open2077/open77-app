@@ -118,6 +118,18 @@
           "description": "What a resource actually gets: the complete manifest reference, the scheduler and lifecycle events, local and network events, modules and cross-resource exports, the core Open77 namespaces, WebUI surfaces, and every sandbox quota."
         },
         {
+          "slug": "lua-modules",
+          "kind": "guide",
+          "nav": "Lua modules & require",
+          "description": "Load local Lua files and published dependency libraries with require: complete manifests, PolyZone examples, caller permissions, per-resource cache, reload behavior and differences from exports."
+        },
+        {
+          "slug": "polyzone",
+          "kind": "guide",
+          "nav": "PolyZone",
+          "description": "Client-side polygons, boxes, circles, moving entities and combined zones, with entry/exit callbacks, native debug drawing and an in-game WebUI editor. Requires the PolyZone development client update."
+        },
+        {
           "slug": "server-api",
           "kind": "guide",
           "nav": "Complete server Lua API",
@@ -215,7 +227,13 @@
           "slug": "perspective",
           "kind": "guide",
           "nav": "First and third person",
-          "description": "Player preferences, server policy and camera ownership."
+          "description": "Enable, disable or force FPP/TPP from Lua: temporary resource locks, player preferences, server policy, native-camera priority and automatic cleanup."
+        },
+        {
+          "slug": "third-person-camera",
+          "kind": "guide",
+          "nav": "TPP camera & cinematic mode",
+          "description": "Customize playable third-person cameras: shoulder and centered presets, stable anchors, movement FOV, collision-safe shake, cinematic HUD hiding and letterbox bars, with Freeroam /camchange and /cinematic examples."
         },
         {
           "slug": "rp-animations",
@@ -240,6 +258,18 @@
           "kind": "guide",
           "nav": "Photo mode",
           "description": "Control photo mode from a client resource, with exclusive ownership and cleanup."
+        },
+        {
+          "slug": "player-models",
+          "kind": "guide",
+          "nav": "Player morphs",
+          "description": "Server-owned NPC impersonation, readiness, replication, restoration and model compatibility."
+        },
+        {
+          "slug": "player-model-catalogue",
+          "kind": "guide",
+          "nav": "Morph catalogue",
+          "description": "Search all 6,582 Character records for player morphs, with downloadable IDs and the admin menu workflow."
         }
       ]
     },
@@ -318,6 +348,13 @@
           "kind": "guide",
           "nav": "World props",
           "description": "Server-owned world props and lights: creation, streaming and cleanup."
+        },
+        {
+          "slug": "gizmos",
+          "kind": "guide",
+          "nav": "Entity gizmos",
+          "title": "Entity gizmos",
+          "description": "Build native 3D placement editors with Open77.gizmos: Lua functions, target capabilities, snapping, undo/redo, lifecycle events, safe restoration and server-authorized edits. Development-build feature with documented validation limits."
         },
         {
           "slug": "attachments",
@@ -399,7 +436,7 @@
           "slug": "hud-visibility",
           "kind": "guide",
           "nav": "HUD visibility",
-          "description": "Show and hide the game's HUD elements from a client resource."
+          "description": "Show and hide native HUD components, or mask the HUD, watermark and nonfocused resource interfaces with cinematic letterbox bars. Resource-owned claims, cleanup and native notifications."
         },
         {
           "slug": "keybindings",

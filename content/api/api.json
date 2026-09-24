@@ -552,8 +552,8 @@
   "namespace": "_G",
   "name": "require",
   "handler": "LuaRequire",
-  "summary": "Loads a module from the resource.",
-  "description": "Loads a Lua module declared inside the current resource and caches its result for that resource generation. Resolution stays inside the sandbox: it does not expose the host filesystem, native `package` loaders, or modules from another resource.",
+  "summary": "Loads a local Lua module or a published dependency library into the caller's client VM.",
+  "description": "Client-only Lua module loader. Loads a local module, or a published module from a declared, running dependency using `@provider` / `@provider/module`. The dependency form requires the development client update introduced with PolyZone. Dots map to folders; omit `.lua`. Code executes synchronously in the caller's VM, permissions and budget. Results are cached by resolved file per caller generation; no returned value becomes `true`. Lookup/loading failures return `nil, reason`; circular imports are rejected. Reload consumers to adopt changed library code. Unlike exports, no live Lua object crosses a VM boundary. No HTTP, native `package` loader or unrestricted filesystem access is exposed; the dedicated-server sandbox has no `require`.",
   "params": [
    {
     "name": "module",
@@ -563,14 +563,15 @@
    }
   ],
   "returns": [
-   "whatever the module returns"
+   "module value (true when no value is returned), or nil on loading failure",
+   "reason on failure"
   ],
   "api_set": "shared",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "",
+  "example": "local PZ, reason = require('@polyzone')\nassert(PZ, reason)\nlocal zone = PZ.CircleZone:Create({x=100, y=200, z=20}, 15, {name='meeting_point'})",
   "inferred": false,
-  "source_line": 11777,
+  "source_line": 12243,
   "qualified": "require",
   "route_id": "require"
  },
@@ -2039,8 +2040,8 @@
   "namespace": "Open77.camera",
   "name": "thirdPerson",
   "handler": "LuaCameraThirdPerson",
-  "summary": "Switches the view to third person.",
-  "description": "Turning it off restores the view the game had before the call, rather than some default.",
+  "summary": "Controls the legacy camera-only third-person path.",
+  "description": "Legacy camera-only control, not the playable perspective arbiter. Prefer `Open77.perspective.setThirdPerson(enabled, force)` to switch or lock the playable FPP/TPP view, and `Open77.camera.configureThirdPerson(options)` for shoulder framing, anchors, movement FOV and shake. The legacy call changes the camera without coordinating all body, weapon and input owners. Turning it off restores the view the game had before the call, rather than some default.",
   "params": [
    {
     "name": "enabled",
@@ -2068,9 +2069,9 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "Open77.camera.thirdPerson(true, 2.5, 1.7)",
+  "example": "-- A shoulder view during the fashion show, restored afterwards\nAddEventHandler(\"show:started\", function() Open77.camera.thirdPerson(true, 2.5, 1.7) end)\nAddEventHandler(\"show:ended\", function() Open77.camera.thirdPerson(false) end)",
   "inferred": false,
-  "source_line": 12225,
+  "source_line": 22837,
   "qualified": "Open77.camera.thirdPerson",
   "route_id": "Open77.camera.thirdPerson"
  },
@@ -6304,7 +6305,7 @@
   "name": "set",
   "handler": "LuaPerspectiveSet",
   "summary": "Asks the perspective arbiter for first or third person.",
-  "description": "Records the local player's standing request. It is a REQUEST, not a switch: `Api::PerspectiveArbiter` owns the six ownership values -- camera, body, input, weapon, effects, audio -- and moves them together, and every world state (vehicle, workspot, death, photo mode, an unaccounted-for camera) outranks the player. A server policy outranks them too, and a request the policy refuses is still stored, so that lifting a `forced` pin returns the player to what they wanted rather than dropping them somewhere arbitrary; that refusal is reported as `refused_by_policy`. Accepts `fpp`/`first`/`1` and `tps`/`tpp`/`third`/`3`. Never reach past this to `Open77.camera.thirdPerson`: that moves one of the six owners and leaves five behind, which is the split state the arbiter exists to prevent.",
+  "description": "Records the local player's standing request. It is a REQUEST, not a switch: the perspective arbiter coordinates camera, body, input, weapon, effects and audio. Native vehicle/workspot/death/photo-mode safety and server policy take priority; a server-policy refusal is reported as `refused_by_policy` while remembering the request. A temporary resource lock created by setThirdPerson(enabled, true) is different: it refuses an opposing request without changing the pre-lock preference, and does not record a same-view request either. Accepts `fpp`/`first`/`1` and `tps`/`tpp`/`third`/`3`. Use setThirdPerson for a boolean switch or resource-owned lock and configureThirdPerson for camera style. Do not bypass the arbiter with legacy camera.thirdPerson, which changes only the camera owner.",
   "params": [
    {
     "name": "mode",
@@ -6320,9 +6321,9 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "Open77.perspective.set(\"tps\")",
+  "example": "-- Third person on foot when the player joins; the arbiter still decides\nAddEventHandler(\"onClientResourceStart\", function(name)\n    if name == GetCurrentResourceName() then Open77.perspective.set(\"tps\") end\nend)",
   "inferred": false,
-  "source_line": 12266,
+  "source_line": 22913,
   "qualified": "Open77.perspective.set",
   "route_id": "Open77.perspective.set"
  },
@@ -6331,7 +6332,7 @@
   "name": "state",
   "handler": "LuaPerspectiveState",
   "summary": "Reports the whole perspective decision.",
-  "description": "Returns `mode`, `requested`, `requestExpressed`, `policy`, `forced`, `allowed`, `engaged`, `available`, `settled`, `transition`, `reason`, `rule`, `tier`, the six owners (`camera`, `body`, `input`, `weapon`, `effects`, `audio`) and `violations`. `allowed` is false under a `disabled` or `forced` policy -- the moment a UI should grey its control out. `violations` counts the ticks on which the arbiter caught itself drawing two bodies or two weapons. A pure read, and unlike the `perspective.state` bridge command it works during a live session.",
+  "description": "Client-only read; no permission required. Returns mode, requested, requestExpressed, policy, forced, resourceForced (boolean), resourcePerspective (tps/fpp/none), allowed, engaged, aiming, available, settled, transition, reason, rule, tier, the six owners (camera, body, input, weapon, effects, audio), violations, unsupportedChecks, slideFrames, slideLifted, unsupportedFires and unsupportedSource. resourceForced/resourcePerspective describe a requested local resource lock, not guaranteed ownership of a native vehicle or cutscene camera: inspect mode, camera, reason and settled for the effective view. allowed is false under a disabled/forced server policy or while a resource lock exists; an active resource lock reports reason/rule `resource_forced`. violations counts ticks where the arbiter detected conflicting body/weapon ownership; unsupported fields are diagnostic gate counters. Reads work during a live session and may return nil with `perspective_unavailable_on_this_host` if unsupported.",
   "params": [],
   "returns": [
    "table, or nil",
@@ -6340,9 +6341,9 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "",
+  "example": "-- Grey out the \"toggle view\" button when the server forbids it\nlocal state = Open77.perspective.state()\ntoggleButton.enabled = state and state.allowed",
   "inferred": false,
-  "source_line": 12269,
+  "source_line": 22916,
   "qualified": "Open77.perspective.state",
   "route_id": "Open77.perspective.state"
  },
@@ -6351,7 +6352,7 @@
   "name": "toggle",
   "handler": "LuaPerspectiveToggle",
   "summary": "Flips the standing request and returns the new mode.",
-  "description": "Flips the REQUEST, not the effective view. Sitting in a vehicle the view is first person whatever the preference says, and flipping the effective value would leave a player pressing the key twice to change anything once they got out. The one exception is a player who has never expressed a preference: there the effective view is inverted, so the first press of a fresh session cannot land on the perspective already in force and appear to do nothing.",
+  "description": "Flips the REQUEST, not the effective view. Native vehicle cameras keep their own rules regardless of the standing on-foot preference. For a player who has never expressed a preference, the effective view is inverted so the first press does not appear to do nothing. A temporary resource lock from setThirdPerson(enabled, true) blocks an opposing toggle and preserves the pre-lock preference; server policy and native-camera safety still take priority. Returns the new fpp/tps request on acceptance, or nil and a refusal reason.",
   "params": [],
   "returns": [
    "the new \"fpp\" or \"tps\", or nil",
@@ -6360,9 +6361,9 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "",
+  "example": "-- V flips between first and third person\nRegisterKeyMapping(\"toggle_view\", \"Toggle view\", \"V\", function()\n    local mode = Open77.perspective.toggle()\n    if mode then Open77.hud.notify(mode == \"tps\" and \"Third person\" or \"First person\") end\nend)",
   "inferred": false,
-  "source_line": 12268,
+  "source_line": 22915,
   "qualified": "Open77.perspective.toggle",
   "route_id": "Open77.perspective.toggle"
  },
@@ -16170,5 +16171,665 @@
   "source_line": 5934,
   "qualified": "Open77.players.setHoloCallEyes",
   "route_id": "server:Open77.players.setHoloCallEyes"
+ },
+ {
+  "namespace": "Open77.camera",
+  "name": "configureThirdPerson",
+  "handler": "LuaCameraConfigureThirdPerson",
+  "summary": "Configures the playable third-person camera's framing, anchor, FOV and shoulder.",
+  "description": "Client-only; requires `camera.style`. Acquires an exclusive resource-instance style or patches the caller's existing configuration. `style` selects `classic`, `shoulder` or `centered` and resets that preset before applying other fields; without it, fields patch the current configuration (classic on first use). `anchor` is `eyes` or `body` (feet), stable gameplay pivots rather than animated bones. `hip`, `aim` and `explore` accept distance (0.8..8 metres), offset (vector3 or complete x/y/z table: view-right -2..2, view-forward -1..1, world-up -1.5..3 metres), and fov (0 to restore the captured gameplay lens, otherwise 40..110 native component degrees). Other fields: shoulder (`left`/`right`), transition (0..3 seconds, default 0.3), runSpeed (0.5..15 m/s, default 2.5), runFov and sprintFov (0 disabled or 40..110). Aiming overrides sprint, which overrides running. Collision and native-camera safety still win. Unknown fields and invalid/non-finite values are rejected atomically. Does not enable TPP: use `Open77.perspective.setThirdPerson` separately. Stop/reload, coroutine failure and host teardown release the claim. Errors include `permission_denied:camera.style`, `camera_style_unavailable`, `invalid_camera_style_fields`, `invalid_camera_style` and `camera_style_owned`.",
+  "params": [
+   {
+    "name": "options",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true on success, otherwise false",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "-- Manifest: permissions { \"camera.style\" }\nlocal ok, reason = Open77.camera.configureThirdPerson({\n    style = \"shoulder\", transition = 0.35, runFov = 72, sprintFov = 78\n})\nif ok then\n    local enabled, why = Open77.perspective.setThirdPerson(true)\n    if not enabled then Open77.camera.resetThirdPerson(); print(why) end\nelse\n    print(reason)\nend",
+  "inferred": false,
+  "source_line": 22838,
+  "qualified": "Open77.camera.configureThirdPerson",
+  "route_id": "Open77.camera.configureThirdPerson"
+ },
+ {
+  "namespace": "Open77.camera",
+  "name": "resetThirdPerson",
+  "handler": "LuaCameraResetThirdPerson",
+  "summary": "Releases this resource's camera style and shake, restoring underlying framing and FOV.",
+  "description": "Client-only; requires `camera.style`. Releases the caller's style and shake and blends back to the underlying framing and captured gameplay lens. Does not turn third person off, clear a perspective lock or alter server policy. Safe when no style is configured; another resource's style returns `camera_style_owned` instead of being reset. Other errors: `permission_denied:camera.style`, `camera_style_unavailable`. Stop/reload, coroutine failure and host teardown also release the style automatically.",
+  "params": [],
+  "returns": [
+   "true on success, otherwise false",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "-- Give the camera style back without changing the player's FPP/TPP choice.\nlocal ok, reason = Open77.camera.resetThirdPerson()\nif not ok then print(reason) end",
+  "inferred": false,
+  "source_line": 22840,
+  "qualified": "Open77.camera.resetThirdPerson",
+  "route_id": "Open77.camera.resetThirdPerson"
+ },
+ {
+  "namespace": "Open77.camera",
+  "name": "shakeThirdPerson",
+  "handler": "LuaCameraShakeThirdPerson",
+  "summary": "Starts or replaces a finite positional shake on the caller's playable TPP style.",
+  "description": "Client-only; requires `camera.style` and a style already owned via configureThirdPerson. options: amplitude (vector3 or complete x/y/z table, each 0..0.2 metres, default 0.02/0.01/0.015), frequency (0.1..20 Hz, default 8), duration (0.05..10 seconds, default 0.5). Axes are view-right, view-forward, world-up. Shakes move the pivot before collision resolution; they do not rotate aim, inject roll or change player position. Natural attack/release envelope; a new shake replaces the old one rather than stacking. Wall-clock expiry continues while another camera owns the view. Unknown fields and invalid/non-finite values are refused. Errors: `permission_denied:camera.style`, `camera_style_unavailable`, `invalid_camera_shake`, `camera_style_not_owned`. Cleanup follows the owning style's lifecycle; do not restart it every frame.",
+  "params": [
+   {
+    "name": "options",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true on success, otherwise false",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "-- First acquire a style; an empty options table uses shake defaults.\nlocal configured, reason = Open77.camera.configureThirdPerson({ style = \"shoulder\" })\nif configured then\n    Open77.camera.shakeThirdPerson({ amplitude = vector3(0.03, 0.015, 0.02), frequency = 8, duration = 0.65 })\nelse\n    print(reason)\nend",
+  "inferred": false,
+  "source_line": 22841,
+  "qualified": "Open77.camera.shakeThirdPerson",
+  "route_id": "Open77.camera.shakeThirdPerson"
+ },
+ {
+  "namespace": "Open77.camera",
+  "name": "stopThirdPersonShake",
+  "handler": "LuaCameraStopThirdPersonShake",
+  "summary": "Immediately stops only the calling resource's third-person camera shake.",
+  "description": "Client-only; requires `camera.style`. Safe when the caller owns no shake and never stops another resource's effect. Keeps the style and selected perspective unchanged. Explicit stop is immediate, unlike the natural expiry envelope. Errors: `permission_denied:camera.style`, `camera_style_unavailable`.",
+  "params": [],
+  "returns": [
+   "true on success, otherwise false",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local ok, reason = Open77.camera.stopThirdPersonShake()\nif not ok then print(reason) end",
+  "inferred": false,
+  "source_line": 22842,
+  "qualified": "Open77.camera.stopThirdPersonShake",
+  "route_id": "Open77.camera.stopThirdPersonShake"
+ },
+ {
+  "namespace": "Open77.camera",
+  "name": "thirdPersonState",
+  "handler": "LuaCameraThirdPersonState",
+  "summary": "Reads the requested third-person camera style and whether it is active or owned.",
+  "description": "Client-only read; no permission required. Returns configured, owned (by the calling resource), active, shaking, appliedFov, and the full configuration: style, anchor, shoulder, hip/aim/explore (distance, offset, fov), transition, runSpeed, runFov and sprintFov. style names the base preset, even after custom patches. active is false while FPP, a native vehicle/scripted camera or wardrobe owns the view; a configured style resumes when the playable TPP rig returns. appliedFov is the last rig-written FOV, not necessarily the current camera's lens; use `Open77.camera.view()` for the rendered view. Returns `nil, camera_style_unavailable` when the backend is absent.",
+  "params": [],
+  "returns": [
+   "snapshot table, or nil on failure",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local state, reason = Open77.camera.thirdPersonState()\nif state then\n    print(state.style, state.owned, state.active, state.appliedFov)\nelse\n    print(reason)\nend",
+  "inferred": false,
+  "source_line": 22839,
+  "qualified": "Open77.camera.thirdPersonState",
+  "route_id": "Open77.camera.thirdPersonState"
+ },
+ {
+  "namespace": "Open77.hud",
+  "name": "setCinematic",
+  "handler": "LuaHudSetCinematic",
+  "summary": "Hides gameplay HUD and nonfocused resource interfaces with animated letterbox bars.",
+  "description": "Client-only; requires `ui.vanilla.hud`. enabled must be a boolean; optional height is a finite fraction of the viewport for EACH black bar, 0.01..0.4 (default 0.12). true holds a resource-instance cinematic claim; false releases only the caller's claim. Multiple resources cooperate and the greatest requested height wins. Masks native HUD including minimap, nonfocused Open77 WebUI pages including watermark/chat history/Freeroam HUD, and native world labels/debug overlays. Focused chat or menus remain accessible when opened, as does the developer console. Rendering is gated without destroying pages or changing their visibility state. Existing HUD hide claims, including the same resource's ordinary claims, survive release. Stop/reload, coroutine failure and host teardown clean up automatically. Does not change camera, pause gameplay, mute audio or affect other players. Distinct from the open77_uikit letterbox-only helper. Errors: `permission_denied:ui.vanilla.hud`, `invalid_cinematic_arguments`, `invalid_cinematic_height`, `cinematic_unavailable_on_this_host`.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "height",
+    "type": "number",
+    "optional": true,
+    "default": "0.12"
+   }
+  ],
+  "returns": [
+   "true on success, otherwise false",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "-- Manifest: permissions { \"ui.vanilla.hud\" }\nlocal ok, reason = Open77.hud.setCinematic(true, 0.12)\nif not ok then print(reason) end\n-- At the end of the sequence, release only this resource's claim.\nOpen77.hud.setCinematic(false)",
+  "inferred": false,
+  "source_line": 22572,
+  "qualified": "Open77.hud.setCinematic",
+  "route_id": "Open77.hud.setCinematic"
+ },
+ {
+  "namespace": "Open77.perspective",
+  "name": "clearThirdPersonOverride",
+  "handler": "LuaPerspectiveClearThirdPersonOverride",
+  "summary": "Releases this resource's temporary FPP/TPP lock without changing player preference.",
+  "description": "Client-only; no permission required and no arguments accepted. Idempotent: releases only the calling resource instance's override, never another resource's. Preserves the player's pre-lock preference, camera style and server perspective policy. Native-camera safety and server policy still determine the effective view after release. Stop/reload, coroutine failure and host teardown also release the owner's override automatically. To release a lock AND request a different view, use setThirdPerson(enabled, false) instead. Errors: `invalid_perspective_arguments`, `perspective_unavailable_on_this_host`.",
+  "params": [],
+  "returns": [
+   "true on success, otherwise false",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local ok, reason = Open77.perspective.clearThirdPersonOverride()\nif not ok then print(reason) end",
+  "inferred": false,
+  "source_line": 22919,
+  "qualified": "Open77.perspective.clearThirdPersonOverride",
+  "route_id": "Open77.perspective.clearThirdPersonOverride"
+ },
+ {
+  "namespace": "Open77.perspective",
+  "name": "setThirdPerson",
+  "handler": "LuaPerspectiveSetThirdPerson",
+  "summary": "Requests first/third person, optionally locking that view for this resource.",
+  "description": "Client-only. enabled and optional force must be strict booleans; force defaults to false. Ordinary true/false requests TPP/FPP without a permission and leaves F7 available, subject to existing locks and server policy. force=true requires `perspective.policy`: (true,true) locks TPP; (false,true) locks FPP. This exclusive resource-instance lock preserves the player's remembered pre-lock preference, including when F7 is pressed. A rival forced request returns `perspective_owned`. force=false first releases the caller's own previous lock, then requests the selected view; it cannot clear another resource's lock. Native vehicle/cutscene/safety states and server disabled/forced policy win. Conflicting server policy rejects a new lock with `refused_by_policy`; existing locks resume after policy permits them again. Stop/reload, coroutine failure and host teardown release the lock automatically. No per-frame loop is needed. Does not configure camera style or broadcast a network view: use server setPolicy for global policy. Other errors: `invalid_perspective_arguments`, `permission_denied:perspective.policy` (forced calls only), `perspective_unavailable_on_this_host`. Inspect state for the effective view rather than assuming acceptance means the TPP camera currently owns the screen.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "force",
+    "type": "boolean",
+    "optional": true,
+    "default": "false"
+   }
+  ],
+  "returns": [
+   "true when accepted, otherwise false",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "-- Manifest: permissions { \"perspective.policy\" }\nlocal ok, reason = Open77.perspective.setThirdPerson(true, true)\nif not ok then print(reason) end\n-- Later restore the choice the player had before our lock.\nOpen77.perspective.clearThirdPersonOverride()",
+  "inferred": false,
+  "source_line": 22918,
+  "qualified": "Open77.perspective.setThirdPerson",
+  "route_id": "Open77.perspective.setThirdPerson"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "activate",
+  "handler": "LuaGizmoActivate",
+  "summary": "Acquires native input and begins editing an owned gizmo.",
+  "description": "Client-only; requires gizmos.edit. Rechecks the streamed target and incarnation, captures its current transform as the cancellation baseline and resets history. Refuses another input owner, a background game, dead player, vehicle/workspot or unsupported target. The tool must be visible. Re-activating an already active handle is idempotent. Emits activated; focus loss, target loss, timeout and owner stop cancel it.",
+  "params": [
+   {
+    "name": "handle",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24753,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.activate",
+  "route_id": "Open77.gizmos.activate"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "active",
+  "handler": "LuaGizmoActive",
+  "summary": "Reads this resource's active gizmo, if any.",
+  "description": "Client-only; requires gizmos.edit. Returns the active snapshot only when the calling resource generation owns it. Returns nil without an error when no tool is active or another resource owns the input lease. Only one gizmo can capture native cursor/keyboard input across all resources.",
+  "params": [],
+  "returns": [
+   "table active snapshot or nil",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24751,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.active",
+  "route_id": "Open77.gizmos.active"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "cancel",
+  "handler": "LuaGizmoCancel",
+  "summary": "Restores the activation baseline and ends editing.",
+  "description": "Client-only; requires gizmos.edit. Attempts to restore the original native transform, ends an active drag, releases only the editor's own holds and emits cancel/deactivated. Own-player/vehicle cursor input returns immediately but movement remains briefly fenced while restoration is observed; a newer normal travel/server placement wins. Those asynchronous adapters later emit settled with nativeTransform or error. A missing or replaced target cannot be recreated; cleanup still runs. The owned handle remains until destroy or resource teardown. Escape during a drag cancels that drag first; a second Escape cancels the session. See gizmos.md for asynchronous restoration failures.",
+  "params": [
+   {
+    "name": "handle",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24756,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.cancel",
+  "route_id": "Open77.gizmos.cancel"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "capabilities",
+  "handler": "LuaGizmoCapabilities",
+  "summary": "Queries which transforms a target adapter supports.",
+  "description": "Client-only; requires gizmos.edit. Omit target for the virtual transform capabilities, or supply a typed target table with kind and id. Returns per-axis translate, rotate and scale booleans plus preview, commit and networked. The target must be attached. Native characters and props are yaw-only and native scaling is currently unsupported; virtual transforms support all axes. Never infer server authority from this query: commit=false on a network target means acceptance is a proposal, not a canonical mutation.",
+  "params": [
+   {
+    "name": "target",
+    "type": "table",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "table capabilities or nil",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24752,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.capabilities",
+  "route_id": "Open77.gizmos.capabilities"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "commit",
+  "handler": "LuaGizmoCommit",
+  "summary": "Accepts the current transform and ends editing.",
+  "description": "Client-only; requires gizmos.edit. Emits commit with the accepted transform and returns cursor input. Virtual targets retain data; supported local entities retain their pose. A network target requests restoration and emits a proposal only: the server must validate an edit ticket, ACL, identity, bucket, revision and bounds before applying its own authoritative mutation API. Local puppet placement and own-player/vehicle restoration report their asynchronous result through settled (with nativeTransform) or error. commit is not that completion acknowledgement, and settled never acknowledges server acceptance. This call neither sends a commit to the server nor grants authority. See gizmos.md.",
+  "params": [
+   {
+    "name": "handle",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24755,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.commit",
+  "route_id": "Open77.gizmos.commit"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "create",
+  "handler": "LuaGizmoCreate",
+  "summary": "Creates a resource-owned native 3D gizmo.",
+  "description": "Client-only; requires gizmos.edit. Creates an inactive handle for a typed entity target or a virtual transform. It does not capture input until activate succeeds. Options include mode, space, axes, pivotOffset, snapping, bounds, size, timeoutMs and local preview. IDs and events are scoped to the exact resource VM and generation. Quotas are eight handles per owner and 64 globally. See gizmos.md for the full option schema, native capabilities, validation status and server-authority contract.",
+  "params": [
+   {
+    "name": "options",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "string handle or nil",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24748,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.create",
+  "route_id": "Open77.gizmos.create"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "deactivate",
+  "handler": "LuaGizmoDeactivate",
+  "summary": "Cancels editing and releases the gizmo's input lease.",
+  "description": "Client-only; requires gizmos.edit. This is an alias of cancel, not a hidden acceptance operation. Restores the activation baseline when the target still exists, releases owned native input/physics holds and emits cancel/deactivated. The handle remains available for querying or reactivation. Use commit to accept a result or destroy to remove the handle.",
+  "params": [
+   {
+    "name": "handle",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24754,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.deactivate",
+  "route_id": "Open77.gizmos.deactivate"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "destroy",
+  "handler": "LuaGizmoDestroy",
+  "summary": "Removes an owned gizmo, cancelling any active preview.",
+  "description": "Client-only; requires gizmos.edit. Cancels and releases an active tool before removing its handle and emitting destroyed. It never deletes the target entity. A previously committed local transform is not rolled back merely by destroying its inactive handle. Resource stop/reload performs equivalent owned-handle cleanup automatically.",
+  "params": [
+   {
+    "name": "handle",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24757,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.destroy",
+  "route_id": "Open77.gizmos.destroy"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "get",
+  "handler": "LuaGizmoGet",
+  "summary": "Reads one owned gizmo's complete snapshot.",
+  "description": "Client-only; requires gizmos.edit. Returns the same typed snapshot shape delivered to open77:gizmo events: current and initial transforms, target, capabilities, phase, active/dragging flags, handle, hover, options, revision and history counts. nativeTransform is false until asynchronous native completion, then contains the observed pose without overwriting the proposed transform. Target IDs are decimal strings. It refuses foreign or stale handles; no native pointer or VM identity is exposed. See gizmos.md.",
+  "params": [
+   {
+    "name": "handle",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "table snapshot or nil",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24749,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.get",
+  "route_id": "Open77.gizmos.get"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "list",
+  "handler": "LuaGizmoList",
+  "summary": "Lists this resource generation's gizmo snapshots.",
+  "description": "Client-only; requires gizmos.edit. Returns an array of owned snapshots, including idle and terminal handles until destroyed. It never lists another resource or VM's tools. Stop/reload destroys all owned handles and restores active previews. Use this query to reconcile state after coalesced events; do not assume an event for every rendered frame.",
+  "params": [],
+  "returns": [
+   "table snapshot array or nil",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24750,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.list",
+  "route_id": "Open77.gizmos.list"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "redo",
+  "handler": "LuaGizmoRedo",
+  "summary": "Reapplies an undone gizmo edit.",
+  "description": "Client-only; requires gizmos.edit. Restores the next transform in the active tool's history and previews it through the target adapter. Refuses an active drag, inactive handle or empty redo history. Any new accepted edit truncates the redo branch. Emits redo and updates the snapshot's history counts.",
+  "params": [
+   {
+    "name": "handle",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24759,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.redo",
+  "route_id": "Open77.gizmos.redo"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "setTransform",
+  "handler": "LuaGizmoSetTransform",
+  "summary": "Applies a numeric transform edit to the active gizmo.",
+  "description": "Client-only; requires gizmos.edit. Applies a sparse transform table containing position, rotation and/or scale, retaining unspecified fields. Vectors require x/y/z; rotation requires normalized x/y/z/w. Rejects non-finite values, unsupported target axes, bounds violations, inactive handles and active drags. A changed value is previewed locally, added to history and emitted as change. It is not an authoritative server mutation.",
+  "params": [
+   {
+    "name": "handle",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "transform",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24761,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.setTransform",
+  "route_id": "Open77.gizmos.setTransform"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "undo",
+  "handler": "LuaGizmoUndo",
+  "summary": "Undoes the last completed gizmo edit.",
+  "description": "Client-only; requires gizmos.edit. Restores the preceding transform in the active tool's bounded history and previews it through the target adapter. A completed drag is one history entry; numeric setTransform edits also create entries. Refuses an active drag, inactive handle or empty undo history. Emits undo. History stores at most 32 undo steps and resets on activation.",
+  "params": [
+   {
+    "name": "handle",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24758,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.undo",
+  "route_id": "Open77.gizmos.undo"
+ },
+ {
+  "namespace": "Open77.gizmos",
+  "name": "update",
+  "handler": "LuaGizmoUpdate",
+  "summary": "Reconfigures an owned gizmo without replacing its target.",
+  "description": "Client-only; requires gizmos.edit. Applies a validated sparse patch of mode, space, axes, pivotOffset, snap, position/scale bounds, visible and size. Target, transform, preview and timeout are creation-time settings and cannot be changed here. Refuses changes during a drag, unsupported modes and hiding the active gizmo. Emits configured. Axis restrictions control pointer handles; target capabilities and bounds also constrain numeric edits.",
+  "params": [
+   {
+    "name": "handle",
+    "type": "string",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "patch",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean success",
+   "string reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "",
+  "inferred": false,
+  "source_line": 24760,
+  "permissions": [
+   "gizmos.edit"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.gizmos.update",
+  "route_id": "Open77.gizmos.update"
  }
 ]

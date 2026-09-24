@@ -70,6 +70,9 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <span>{guide.readingMinutes} min read</span>
             <span>{guide.wordCount.toLocaleString("en-GB")} words</span>
             <a href={docMarkdownHref(slug)}>Markdown</a>
+            {slug === "gizmos" ? (
+              <Link href="/docs/api/client/open77-gizmos">Client Lua API</Link>
+            ) : null}
             {slug === "attachments" || slug === "player-interactions" ? (
               <>
                 <Link href={`/docs/api/server/${slug === "attachments" ? "open77-props" : "open77-playerinteractions"}`}>Server Lua API</Link>
@@ -105,7 +108,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         }
         toc={<DocToc entries={guide.toc} />}
       >
-        {slug === "npc-catalogue" ? <NpcCatalogue /> : null}
+        {slug === "npc-catalogue" || slug === "player-model-catalogue" ? <NpcCatalogue /> : null}
         <div className="dx-prose" dangerouslySetInnerHTML={{ __html: guide.html }} />
         <AgentNote markdownHref={docMarkdownHref(slug)} />
         <DocPager {...neighbours} />

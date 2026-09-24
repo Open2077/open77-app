@@ -183,6 +183,12 @@
 .adm-faint { color: var(--text-faint); }
 .adm-num { font-variant-numeric: tabular-nums; text-align: right; }
 .adm-actions-cell { text-align: right; white-space: nowrap; }
+.adm-user-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; }
+.adm-email-dialog { width: min(520px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 24px; overflow: auto; color: var(--text); background: var(--surface); border: 1px solid var(--line-strong); border-top: 2px solid var(--accent); border-radius: var(--radius-sm); box-shadow: 0 24px 80px #0009; }
+.adm-email-dialog::backdrop { background: #02070dc9; }
+.adm-email-dialog h2 { margin: 0 0 16px; font-size: 22px; }
+.adm-email-dialog p { margin: 0 0 20px; color: var(--text-dim); line-height: 1.6; }
+.adm-email-dialog .adm-email-target { padding: 12px; background: var(--accent-soft); color: var(--text); overflow-wrap: anywhere; }
 .adm-empty { color: var(--text-dim); font-size: 13.5px; text-align: center; padding: 22px 0; }
 
 /* ---------- Chips ---------- */
@@ -420,3 +426,14 @@ a.ac-iconbtn { text-decoration: none; }
 @media (max-width: 720px) {
   .adm-stats { grid-template-columns: repeat(2, 1fr); }
 }
+/* Master-owned directory curation. */
+.adm-directory-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: 14px; margin: 18px 0; }
+.adm-directory-toolbar label { display: grid; gap: 7px; min-width: 180px; }
+.adm-directory-toolbar label:first-child { flex: 1; }
+.adm-directory-notice { min-height: 22px; margin-bottom: 12px; font-size: 13px; }
+.adm-directory-table { min-width: 1000px; }
+.adm-directory-table td:first-child { max-width: 340px; overflow-wrap: anywhere; }
+.adm-directory-toggle { display: flex; gap: 8px; align-items: center; cursor: pointer; white-space: nowrap; }
+.adm-directory-toggle input { width: 17px; height: 17px; accent-color: #12cfe3; cursor: pointer; }
+.adm-directory-order { width: 85px; }
+.adm-directory-table td:last-child { min-width: 150px; max-width: 260px; }

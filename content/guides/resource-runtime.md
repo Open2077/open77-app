@@ -202,9 +202,21 @@ client cannot select or forge another player's source ID.**
 local helpers, reason = require("shared.helpers")
 ```
 
-`require` is confined to the resource and resolves
+On the **client**, this local import resolves
 `<resource>/shared/helpers.lua`, then `<resource>/shared/helpers/init.lua`.
-Modules are text-only and cached per Lua state.
+Publish downloaded modules under `files`; they are text-only and cached per
+calling Lua VM. The dedicated-server sandbox does not expose `require`.
+
+The newer client implementation introduced with PolyZone also supports
+`require('@polyzone')` and `require('@library/helpers.math')` for explicitly
+published files of declared, running dependencies. The imported code runs in
+the **caller's** VM and permissions, not as a call to the provider. This
+dependency syntax is currently a development-build feature, not guaranteed
+on existing CDN clients.
+
+See [Lua modules and require](lua-modules.md) for complete manifests, local and
+dependency examples, cache/reload behavior, errors and how to choose between
+modules and exports.
 
 Exports allow asynchronous calls between isolated resources on **both client and
 server**. The registries are separate: a server call reaches a server resource,
@@ -428,7 +440,9 @@ silently.
 |---|---|---|
 | `Open77.character` | none | Read local or registered character state |
 | `Open77.animations` | none | Play named workspot animations |
-| `Open77.camera` | none | Third-person, detached and field-of-view control; one-shot world-to-screen projection |
+| `Open77.camera` | `camera.style` for playable TPP style mutations; no permission for `thirdPersonState` | [Shoulder/centered framing, anchors, movement FOV and shake](third-person-camera.md); legacy camera and projection methods keep their own contracts |
+| `Open77.perspective` | `perspective.policy` for forced views; none for ordinary requests or own-lock release | [Switch FPP/TPP or temporarily force it](perspective.md#enable-disable-or-temporarily-force-a-view-client), inspect effective ownership and restore player choice |
+| `Open77.hud.setCinematic` | `ui.vanilla.hud` | [Cinematic display](third-person-camera.md#cinematic-display): hide native HUD and nonfocused resource pages, animate black bars, preserve existing visibility claims |
 | `Open77.input` | `input.actions` | Read a small allowlist of contextual action keys; suppressed while a WebUI captures keyboard input |
 | `Open77.clipboard` | `clipboard.write` | Write bounded UTF-8 text to the OS clipboard; reading is never exposed |
 | `Open77.kvp` | none | Persistent typed client storage, isolated by connection address and resource |
@@ -512,9 +526,83 @@ const result = await Open77.invoke('shop:buy', { item: 'medkit' });
 Open77.ready();
 ```
 
-WebUI runs under an isolated virtual HTTPS origin with restricted
-navigation, downloads, popups, protocols and network access. Lua and
-JavaScript payloads pass through a bounded JSON codec.
+Bundled WebUI uses an isolated virtual HTTPS origin; remote WebUI uses the
+configured HTTP(S) origin. Lua/JavaScript payloads use a bounded JSON codec.
+
+### Remote pages, external content and hot reload
+
+`ui_page` (alias `web_ui_page`) and `WebUI.create({ entry = ... })`
+accept an HTTP or HTTPS URL. No host allowlist or extra network permission is
+required for WebUI. A remotely hosted page needs no `web_files` declaration:
+
+```lua
+-- open77.lua
+resource "my_ui"
+version "1.0.0"
+ui_page "https://ui.example.dev/"
+client_script "client.lua"
+```
+
+```lua
+-- client.lua: the manifest page is automatically created.
+CreateThread(function()
+    local page = assert(WebUI.default())
+    page:on("shop:buy", function(payload, requestId)
+        -- Validate requests here, and validate purchases on the server.
+        page:reply(requestId, { accepted = true })
+    end)
+end)
+```
+
+For Vite/Vue/React/Nuxt development, use `http://localhost:5173/` as the
+entry, or create a page explicitly with
+`WebUI.create({entry = "http://localhost:5173/", layer = "menu"})`.
+Set `web_ui_auto_create false` if creating the manifest page manually.
+**localhost is the player's PC**, not the game server. Other testers need a
+reachable hostname/IP or a development tunnel. Configure the dev server's
+host and WebSocket URL to be reachable by those clients; Cloudflare must proxy
+WebSockets for HMR. A page reload reinjects the JS bridge. Register UI listeners
+and call `Open77.ready()` again so Lua can resend the initial state.
+
+Bundled and remote pages can load external scripts, styles, fonts, images,
+audio/video, HTTP(S) fetch/XHR, WS/WSS and iframe embeds. HTTP development
+content is allowed even from a bundled HTTPS page. For example:
+
+```html
+<iframe
+  src="https://www.youtube.com/embed/VIDEO_ID"
+  title="Video"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allow="autoplay; encrypted-media; picture-in-picture"
+></iframe>
+```
+
+This removes **Open77's external-content block**, not the remote site's rules:
+
+- CORS still applies to fetch/modules/fonts. Configure the API's allowed
+  origin, or use your web server's same-origin proxy. Do not ship API secrets
+  in browser JavaScript.
+- A site's own CSP, `frame-ancestors`, `X-Frame-Options`, login requirements
+  and certificate validity still apply. Use its supported embed URL, not an
+  ordinary watch page. YouTube also requires an HTTP Referer; do not set
+  `no-referrer`. Media playback depends on codecs available in the bundled CEF.
+- The Lua bridge is exposed only to the top-level page at the configured
+  entry's origin (scheme + host + port). External iframes receive no bridge;
+  cross-origin top-level navigation can display a site, but loses Lua access
+  until returning to the configured origin. Same-origin redirects and reloads
+  preserve it. Use `postMessage` with an exact origin check for trusted embeds.
+- Local assets still require `web_files`; another resource's virtual origin,
+  `file:` URLs, OS protocol execution, plugins and desktop popups stay blocked.
+  Layer permissions, message quotas and resource teardown remain enforced.
+- Remote content is downloaded by **each player's browser**, not included in
+  the signed resource archive. HTTPS is recommended in production. Remote
+  hosts and third-party embeds can see client IPs and browser requests; a
+  compromised script in the main page has that page's Lua bridge access.
+  Request contexts are isolated per surface and are not persistent login profiles.
+
+HTTP errors are reported as `webui_http_status:<status>`; DNS/TLS/connection
+errors remain visible as Chromium errors in WebUI diagnostics. CORS and
+embedding-policy errors appear in the WebHost browser console log.
 
 The `modal`, `system` and `debug` layers require `webui.modal`,
 `webui.system` and `webui.debug` respectively; the `hud` and `menu` layers
@@ -532,17 +620,25 @@ Default client limits, per resource:
 
 | Limit | Value |
 |---|---|
-| Lua memory | 32 MiB |
-| Instructions per coroutine resume | 500,000 |
-| Global Lua frame budget | 2 ms |
-| Scheduled tasks | 1,024 |
-| Event handlers | 2,048 |
-| WebUI handlers | 512 |
-| WebUI surfaces | 8 |
-| Lua source size | 4 MiB per file |
-| `readFile` result | 1 MiB |
-| Lua files in a resource | 1,024 |
-| Declared `files` / `web_files` | 2,048 each |
+| Lua memory | 96 MiB |
+| Instructions per coroutine resume | 1,500,000 |
+| Global Lua frame budget | 6 ms per client host |
+| Scheduled tasks | 3,072 |
+| Event handlers | 6,144 |
+| WebUI handlers | 1,536 |
+| WebUI surfaces | 24 |
+| Lua source size | 12 MiB per file |
+| `readFile` result | 3 MiB |
+| Lua files in a resource | 3,072 (including `open77.lua`) |
+| Declared `files` / `web_files` | 6,144 each |
+
+The frame budget is shared by all resources within a client host, not granted
+to each resource. The trusted and server-downloaded hosts each have this
+ceiling. These are maximum allowances, not reserved memory or a higher tick
+rate. The dedicated server's Lua runtime has separate limits.
+
+Embedded WebUI pages do not use CEF's Ctrl + mouse wheel browser zoom:
+Ctrl + wheel scrolls normally, without changing the page scale.
 
 Exceeding the instruction budget raises `Open77 script execution budget
 exceeded` from the instruction hook. That is a Lua error: it unwinds

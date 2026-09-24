@@ -167,6 +167,24 @@ const VEHICLE_WEAPON_READS = new Set([
 ]);
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (runtime === "client" && raw.namespace === "Open77.gizmos") {
+    return { usageGuideHref: "/docs/gizmos", usageGuideLabel: "Entity gizmos guide" };
+  }
+  if (runtime === "client" && raw.namespace === "Open77.camera" &&
+      ["configureThirdPerson", "thirdPersonState", "resetThirdPerson", "shakeThirdPerson", "stopThirdPersonShake", "thirdPerson"].includes(raw.name)) {
+    return { usageGuideHref: "/docs/third-person-camera", usageGuideLabel: "Third-person camera styles guide" };
+  }
+  if (raw.namespace === "Open77.perspective") {
+    return { usageGuideHref: "/docs/perspective", usageGuideLabel: "First/third person & perspective locks guide" };
+  }
+  if (runtime === "client" && raw.namespace === "Open77.hud") {
+    return raw.name === "setCinematic"
+      ? { usageGuideHref: "/docs/third-person-camera#cinematic-display", usageGuideLabel: "Cinematic display guide" }
+      : { usageGuideHref: "/docs/hud-visibility", usageGuideLabel: "HUD visibility guide" };
+  }
+  if (runtime === "client" && raw.namespace === "_G" && raw.name === "require") {
+    return { usageGuideHref: "/docs/lua-modules", usageGuideLabel: "Lua modules & require guide" };
+  }
   if (raw.namespace === "Open77.players" && ["setHoloCallEyes", "getHoloCallEyes"].includes(raw.name)) {
     return { usageGuideHref: "/docs/holocall-eyes", usageGuideLabel: "Blue holocall eyes guide" };
   }
