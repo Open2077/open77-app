@@ -7,6 +7,7 @@ import { DownloadAction } from "@/components/downloads/download-action";
 import { DownloadSurface, QuickFacts, SurfaceEyebrow, SurfaceHeading, UnavailableRelease } from "@/components/downloads/download-surface";
 import styles from "@/components/downloads/download-surface.module.css";
 import { HostGate } from "@/components/host/host-gate";
+import { UnstableDownloads } from "@/components/host/unstable-downloads";
 import { ArrowRightIcon, CheckIcon, CodeIcon, LinuxIcon, ServerRackIcon, ShieldIcon, WindowsIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { ReleaseRefresh } from "@/components/release-refresh";
@@ -40,7 +41,7 @@ const SETUP_STEPS = [
 export default async function HostPage() {
   // Never bake a mutable release pointer into an ISR/build-time snapshot.
   await connection();
-  const release = await fetchLatestServerRelease();
+  const [release, unstable] = await Promise.all([fetchLatestServerRelease(), fetchLatestServerRelease("unstable")]);
 
   return (
     <>
@@ -78,9 +79,14 @@ export default async function HostPage() {
         ]} />
 
         <section className={styles.section} id="download" aria-label="Server downloads">
-          <HostGate>{release ? <ReleaseDownloads release={release} /> : <UnavailableRelease kind="server" />}</HostGate>
+          <HostGate>
+            {release ? <ReleaseDownloads release={release} /> : <UnavailableRelease kind="server" />}
+            <UnstableDownloads key={unstable?.version ?? "unavailable"} available={Boolean(unstable)}>
+              {unstable ? <ReleaseDownloads release={unstable} /> : null}
+            </UnstableDownloads>
+          </HostGate>
           <div className={styles.refreshRow}><ReleaseRefresh /></div>
-          <p className={styles.channelNote}>The dedicated server is its own release channel; the launcher has a separate version.</p>
+          <p className={styles.channelNote}>Stable is recommended. Unstable is a separate, opt-in server channel for testing; the launcher has its own version.</p>
         </section>
 
         <section className={styles.section} id="start">
@@ -126,24 +132,25 @@ export default async function HostPage() {
 
 function ReleaseDownloads({ release }: { release: ServerRelease }) {
   return (
-    <div data-release-channel="server" data-release-version={release.version}>
+    <div data-release-channel={release.channel === "unstable" ? "server-unstable" : "server"} data-release-version={release.version}>
       <div className={styles.releaseHeading}>
-        <div><SurfaceEyebrow>LATEST SERVER RELEASE</SurfaceEyebrow><h2>{release.version}</h2></div>
-        <div><span className={styles.liveBadge}>OFFICIAL BUILD</span>{release.publishedAtUtc ? <p>Published {formatReleaseDate(release.publishedAtUtc)}</p> : null}</div>
+        <div><SurfaceEyebrow>{release.channel === "unstable" ? "UNSTABLE SERVER · TEST BUILD" : "LATEST STABLE SERVER"}</SurfaceEyebrow><h2>{release.version}</h2></div>
+        <div><span className={styles.liveBadge}>{release.channel === "unstable" ? "PREVIEW BUILD" : "OFFICIAL BUILD"}</span>{release.publishedAtUtc ? <p>Published {formatReleaseDate(release.publishedAtUtc)}</p> : null}</div>
       </div>
-      <ul className={styles.builds}>{release.builds.map((build) => <BuildCard key={build.platform} build={build} />)}</ul>
+      {release.channel === "unstable" ? <p className={styles.channelNote}>Compatible client: {release.clientVersion} · Network protocol: {release.protocol}. Stable clients may not be able to join.</p> : null}
+      <ul className={styles.builds}>{release.builds.map((build) => <BuildCard key={build.platform} build={build} unstable={release.channel === "unstable"} />)}</ul>
     </div>
   );
 }
 
-function BuildCard({ build }: { build: ServerBuild }) {
+function BuildCard({ build, unstable }: { build: ServerBuild; unstable: boolean }) {
   const OsIcon = build.os === "windows" ? WindowsIcon : LinuxIcon;
   return (
     <li className={`${styles.build} ${build.url ? "" : styles.buildUnavailable}`}>
       <div className={styles.buildTop}><OsIcon size={34} /><div><h3>{build.label}</h3><p>{build.osLabel} · .{build.archiveKind} archive</p></div></div>
       {build.url ? <>
         <dl><div><dt>Size</dt><dd>{build.sizeBytes !== null ? formatBytes(build.sizeBytes) : "Not published"}</dd></div><div><dt>Run</dt><dd><code>{RUN_COMMANDS[build.os]}</code></dd></div><div><dt>Runtime</dt><dd>.NET included</dd></div></dl>
-        <DownloadAction href={build.url} label={`Download for ${build.os === "windows" ? "Windows" : "Linux"}`} />
+        <DownloadAction href={build.url} label={`Download ${unstable ? "Unstable " : ""}for ${build.os === "windows" ? "Windows" : "Linux"}`} />
         <details className={styles.details}>
           <summary>Archive details &amp; verification</summary>
           <div className={styles.detailsBody}><p>File: <code>{build.fileName}</code></p>

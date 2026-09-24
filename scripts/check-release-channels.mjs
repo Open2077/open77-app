@@ -28,6 +28,8 @@ function server(version) {
   }])) };
 }
 let current = server("2.31.13+op77.58"), unavailable = false, invalidJson = false, headFails = false;
+let preview = { ...server("2.31.13-unstable+op77.93"), channel: "unstable", clientVersion: "2.31.13-unstable+op77.93", protocol: { major: 1, minor: 39 } };
+let previewUnavailable = false;
 let headCalls = 0;
 const launcher = { version: "2.31.13+op77.54", url: `${cdn.CDN_URL}/launcher/2.31.13+op77.54/Open77Launcher.exe`, sha256: "c".repeat(64) };
 const realFetch = globalThis.fetch;
@@ -43,6 +45,7 @@ globalThis.fetch = async (url, options) => {
   assert.ok(options.signal instanceof AbortSignal, "bounded CDN timeout");
   if (unavailable) throw new Error("Synthetic CDN outage");
   if (invalidJson) return new Response("invalid json");
+  if (url === `${cdn.CDN_URL}/server/unstable/latest.json`) return previewUnavailable ? new Response(null, { status: 404 }) : Response.json(preview);
   assert.ok([`${cdn.CDN_URL}/server/latest.json`, `${cdn.CDN_URL}/launcher/latest.json`].includes(url));
   return Response.json(url.includes("/server/") ? current : launcher,
     { headers: { "Last-Modified": "Sun, 13 Sep 2026 00:00:00 GMT" } });
@@ -55,6 +58,28 @@ try {
   assert.equal(result.version, current.version, "next request follows publication without rebuild");
   assert.equal(result.publishedAtUtc, "2026-09-12T20:26:15.000Z", "publication time beats pointer upload timestamp");
   assert.equal(headCalls, 0, "current pointer includes size; no extra HEAD requests needed");
+  const stable = current;
+  const validPreview = preview;
+  const unstable = await fetchLatestServerRelease("unstable");
+  assert.equal(unstable.channel, "unstable");
+  assert.equal(unstable.protocol, "1.39");
+  assert.equal(unstable.clientVersion, preview.clientVersion);
+  assert.equal(unstable.version, preview.version);
+  assert.equal((await fetchLatestServerRelease()).version, stable.version);
+  preview = stable;
+  assert.equal(await fetchLatestServerRelease("unstable"), null, "no Stable fallback under Unstable");
+  current = validPreview;
+  assert.equal(await fetchLatestServerRelease(), null, "Stable rejects preview builds");
+  current = stable;
+  for (const invalid of [{ ...validPreview, channel: "stable" }, { ...validPreview, protocol: null }, { ...validPreview, clientVersion: null }]) {
+    preview = invalid;
+    assert.equal(await fetchLatestServerRelease("unstable"), null);
+  }
+  preview = validPreview;
+  previewUnavailable = true;
+  assert.equal(await fetchLatestServerRelease("unstable"), null);
+  assert.equal((await fetchLatestServerRelease()).version, stable.version, "preview outage does not hide Stable");
+  previewUnavailable = false;
   for (const build of result.builds) {
     assert.ok(build.url.includes(current.version));
     assert.equal(build.sizeBytes, 54_944_808);

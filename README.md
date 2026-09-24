@@ -284,6 +284,14 @@ archives. Each channel reads its own CDN `latest.json` at request time, with
 snapshots; publishing a pointer updates them without redeploying the website.
 Only metadata for immutable, versioned artefacts is cached.
 
+Server Stable reads `/server/latest.json`; opt-in Unstable reads
+`/server/unstable/latest.json`. Both point to immutable `/server/<version>/`
+archives. The preview section on `/host` is collapsed by default and download
+links are not mounted until the warning is acknowledged. Closing it, reloading,
+or a new preview version resets consent. Missing/invalid Unstable metadata never
+falls back to Stable. Preview metadata includes the compatible `clientVersion`,
+`protocol: { major, minor }`, and an `-unstable+op77.N` version.
+
 Visible tabs refresh every 60 seconds, on returning to the tab or reconnecting,
 and through **Check for updates**. Refresh preserves the current scroll position
 and account state. The displayed version and its archive links come from the

@@ -102,7 +102,7 @@ export const BUILD_ROWS = [
 ] as const;
 
 export const BUILD_NOTE =
-  "Only ever download the server from the Host a Server page or the official CDN, nowhere else. Each release publishes a SHA-256 for every archive; compare it against the file you downloaded before you run it.";
+  "Only ever download the server from the Host a Server page or the official CDN, nowhere else. Each release publishes a SHA-256 for every archive; compare it against the file you downloaded before you run it. Stable is the default. For testing, expand ‘Looking for a preview build?’ on /host and acknowledge the warning to reveal Unstable downloads. Back up configuration, resources and databases and extract into a separate folder. Players must select Unstable in launcher Settings and use the compatible client version listed with the server. Do not overwrite a live server with a preview build.";
 
 export const FIRSTRUN_INTRO =
   "If server.jsonc is absent on first launch, a browser-based setup wizard creates it.";

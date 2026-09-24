@@ -17,7 +17,7 @@ export const CDN_URL = (
 ).replace(/\/$/, "");
 
 /** Mutable channel pointers must never be frozen in Next's data/ISR cache. */
-export async function fetchReleasePointer(channel: "server" | "launcher") {
+export async function fetchReleasePointer(channel: "server" | "server/unstable" | "launcher") {
   try {
     const response = await fetch(`${CDN_URL}/${channel}/latest.json`, {
       cache: "no-store",

@@ -80,6 +80,9 @@ export type ServerBuild = PlatformMeta & {
 };
 
 export type ServerRelease = {
+  channel: "stable" | "unstable";
+  clientVersion: string | null;
+  protocol: string | null;
   /** Full version string, e.g. `2.31.0+op77.4`. */
   version: string;
   /**
@@ -113,13 +116,21 @@ function readBuildEntry(builds: Record<string, unknown>, key: PlatformKey) {
  * The latest published server release, or `null` when none has been cut yet
  * (or the CDN is unreachable — the page treats both as "nothing to offer").
  */
-export async function fetchLatestServerRelease(): Promise<ServerRelease | null> {
-  const pointer = await fetchReleasePointer("server");
+export async function fetchLatestServerRelease(channel: "stable" | "unstable" = "stable"): Promise<ServerRelease | null> {
+  const pointer = await fetchReleasePointer(channel === "unstable" ? "server/unstable" : "server");
   if (!pointer) return null;
   const { raw } = pointer;
 
   const version = asString(raw.version);
   if (!version) return null;
+  // Fail closed if a publisher accidentally crosses the Stable/Unstable pointers.
+  const isUnstable = /^\d+\.\d+\.\d+-unstable\+op77\.\d+$/.test(version);
+  if (isUnstable !== (channel === "unstable") || (raw.channel != null && raw.channel !== channel)) return null;
+  const clientVersion = asString(raw.clientVersion);
+  const wire = raw.protocol as { major?: unknown; minor?: unknown } | undefined;
+  const protocol = wire && Number.isSafeInteger(wire.major) && Number.isSafeInteger(wire.minor)
+    ? `${wire.major}.${wire.minor}` : null;
+  if (channel === "unstable" && (!clientVersion || !protocol)) return null;
 
   const hasBuilds = raw.builds !== null && typeof raw.builds === "object" && !Array.isArray(raw.builds);
   const builds = hasBuilds ? (raw.builds as Record<string, unknown>) : null;
@@ -165,6 +176,9 @@ export async function fetchLatestServerRelease(): Promise<ServerRelease | null> 
   );
 
   return {
+    channel,
+    clientVersion,
+    protocol,
     version,
     serverSha256,
     builds: resolved,
