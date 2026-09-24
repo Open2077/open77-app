@@ -13,7 +13,16 @@ const origin = process.argv[2] ?? "http://127.0.0.1:3000";
 const outDir = process.argv[3] ?? path.join(os.tmpdir(), "open77-shots");
 const DEBUG_PORT = 9334;
 
-const SHOTS = [
+const SHOTS = process.argv.includes("--local-docs") ? [
+  { path: "/docs", name: "docs-current", width: 1440, height: 1000 },
+  ...["gizmos", "custom-blip-icons", "rcon"].flatMap((slug) => [
+    { path: `/docs/${slug}`, name: slug, width: 1440, height: 1000 },
+    { path: `/docs/${slug}`, name: `${slug}-mobile`, width: 390, height: 844, mobile: true },
+  ]),
+] : process.argv.includes("--blips") ? [
+  { path: "/docs/custom-blip-icons", name: "custom-blips", width: 1440, height: 1000 },
+  { path: "/docs/custom-blip-icons", name: "custom-blips-mobile", width: 390, height: 844, mobile: true },
+] : [
   { path: "/", name: "home", width: 1440, height: 1000 },
   { path: "/download", name: "download", width: 1440, height: 1000 },
   { path: "/servers", name: "servers", width: 1440, height: 1100 },
