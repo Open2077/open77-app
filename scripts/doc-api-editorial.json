@@ -127,5 +127,35 @@
     "qualified": "Open77.props.attach",
     "sourceDescriptionSha256": "f4fefdb2e016e9e62254a8c268cf0ef1a50c3d862b44e33423aa38b64e8d0e20",
     "description": "Binding fields: parentType ('player' or 'vehicle'), parentId (canonical network ID, not an engine handle), bone (named slot, empty for root), offset {x,y,z} in metres (each Â±20), rotation {x,y,z} in degrees (each Â±360, local Z-Y-X composition). Unknown fields and non-finite numbers reject. Missing streamed parents are hidden, then rebound when available. See attachments.md. Requires world.props and ownership of the prop. Parent must be alive/valid in the same bucket. Up to 32 bindings per parent. Optional expectedRevision enables compare-and-swap; stale updates reject. Idempotent identical attachment does not create a new revision. Experimental contact applies only to native item:Items.* props: omitted selects automatic mouth contact, false disables it, or {x,y,z} specifies item-local metres (finite, each within ±2; missing axes zero). Invalid values return invalid_item_contact; contact on an ordinary mesh returns contact_requires_item. Native items require a player parent, WeaponRight, zero offset/rotation and unit scale. Contact affects the arm during supported consumption profiles, not the grip offset. Requires matching runtime/assets; visual validation is incomplete. See [item size and mouth contact](/docs/rp-animations#item-size-and-mouth-contact). Automatic container contact uses the main mesh end along the authored item-local up direction (the can rim), keeping that end while tilting; smoking uses the end nearest the mouth. In first person, held items stay visible at the lower right between sips and contact follows the camera. Disabling mouth fitting keeps the first-person holding pose."
+  },
+  {
+    "runtime": "server",
+    "qualified": "GetPlayerIdentifierByType",
+    "sourceDescriptionSha256": "bb0280a08e9c006de2bc8133969ef9ba89663de39a09f165c0db0fb791cf58e7",
+    "description": "Returns a bare string without a type prefix. Type names are case-insensitive: `open77` and `userId` return the installation identity GUID, `name` the display name, and `fingerprint` the SHA-256 of the identity public key. Since `2.31.13+op77.101`, `license` returns the permanent Open77 account GUID without dashes, `steam` the linked SteamID in lowercase hexadecimal, and `gog` the linked GOG ID in decimal. These ownership fields come from the verified Master ticket; when unavailable, the typed read returns `nil, \"identifier_not_linked\"`. Unsupported types return `nil, \"unknown_identifier_type\"`; non-string types return `nil, \"invalid_identifier_type\"`. Keep identifiers as strings and use `license` for account-level persistence across linked devices. See [account and store identifiers](/docs/connection-control#steam-gog-and-permanent-account-identifiers)."
+  },
+  {
+    "runtime": "server",
+    "qualified": "GetPlayerIdentifiers",
+    "sourceDescriptionSha256": "08ad875e926d62c9551cae220e27c7ecb493ba73d031edd6b3c83148b3d5f869",
+    "description": "Returns an array of `type:value` strings: `open77:<identity GUID>`, `name:<display name>` and `fingerprint:sha256:<hash>`. Since `2.31.13+op77.101`, the verified Master ticket also supplies `license:<account GUID without dashes>`, `steam:<lowercase hexadecimal SteamID>` and `gog:<decimal GOG ID>` when available. Missing identifiers are omitted; an unknown session returns `nil, \"player_not_found\"`. Iterate with `for _, id in ipairs(GetPlayerIdentifiers(playerId) or {}) do ... end`. One qualifying Steam or GOG account is sufficient for admission, so do not require both store IDs. No Discord identifier is exposed. For persistence, use the permanent Open77 `license` string. See [account and store identifiers](/docs/connection-control#steam-gog-and-permanent-account-identifiers)."
+  },
+  {
+    "runtime": "server",
+    "qualified": "GetPlayerIdentity",
+    "sourceDescriptionSha256": "1220deb0f3f32f219e8e990055242aded434b06e87064f5cb16aaf244c7741c5",
+    "description": "Alias of `Open77.players.identity`, with no permission required. Returns `{ userId, name, publicKey, fingerprint, joinedAt }` for an admitted player, or `nil`. Since `2.31.13+op77.101`, also includes `license`, `steam` and `gog` when supplied by the verified Master ticket. `license` is the permanent Open77 account GUID without dashes; `steam` is a lowercase hexadecimal SteamID; `gog` is a decimal GOG ID. Values are strings without type prefixes and unavailable fields are omitted. `userId` remains the installation identity GUID; use `license` for account-level persistence across linked devices. `joinedAt` is ISO 8601 UTC. See [account and store identifiers](/docs/connection-control#steam-gog-and-permanent-account-identifiers)."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.players.identifiers",
+    "sourceDescriptionSha256": "4ce0fd9b5e085c53d9550038422cea024dd0f97dbb2736567a794652f54d7141",
+    "description": "The table form of `GetPlayerIdentifiers`. Carries `open77` and `userId` (the same installation identity GUID), `name`, `fingerprint` and `joinedAt`. Since `2.31.13+op77.101`, also carries `license`, `steam` and `gog` from the verified Master ticket when available. `license` is the permanent Open77 account GUID without dashes, `steam` a lowercase hexadecimal SteamID and `gog` a decimal GOG ID. All values are strings without type prefixes; unavailable fields are omitted and read as `nil`. Account/store IDs need no permission; only `endpoint` requires `players.identity.sensitive`. Call in `onPlayerConnected` or later. Invalid IDs return `nil, \"invalid_player_id\"`; unknown sessions return `nil, \"player_not_found\"`. One qualifying store is sufficient, and a linked store ID alone is not a fresh ownership check. Use `license` for account-level persistence. No Discord identifier is exposed. See [account and store identifiers](/docs/connection-control#steam-gog-and-permanent-account-identifiers)."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.players.identity",
+    "sourceDescriptionSha256": "3870857cf21f68d11d501c973cc75b0f1d4ca9c79d93c770fc1a86cd931ac2d4",
+    "description": "No permission required. `GetPlayerIdentity` is the same function. Returns `{ userId, name, publicKey, fingerprint, joinedAt }` for an admitted player, or `nil`; the fingerprint matches the client identity dump. Since `2.31.13+op77.101`, also includes `license`, `steam` and `gog` when supplied by the verified Master ticket. `license` is the permanent Open77 account GUID without dashes, `steam` a lowercase hexadecimal SteamID and `gog` a decimal GOG ID. Keep these bare values as strings; unavailable fields are omitted. `userId` remains the installation identity GUID, while `license` is the account key across linked devices. See [account and store identifiers](/docs/connection-control#steam-gog-and-permanent-account-identifiers)."
   }
 ]

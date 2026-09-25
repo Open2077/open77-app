@@ -4,15 +4,24 @@ Each installation has a persistent cryptographic identity. The Master verifies t
 
 ## Stable id and display name
 
-Two identifiers have different jobs:
+Identifiers have different jobs:
 
 | Value | Lifetime | Use |
 |---|---|---|
-| `userId` | Durable | Characters, inventories, bans, ACLs, progression |
+| `license` | Permanent Open77 account | Characters, inventories and progression across linked devices |
+| `userId` / `open77` | Persistent installation identity | Existing identity-based APIs, including built-in access lists and ACLs |
+| `steam` / `gog` | Linked store account | Store identity supplied by the verified Master ticket |
 | `playerId` / `source` | One connection | Addressing the player during the current session |
 | `displayName` | Editable profile field | Chat and presentation only |
 
-Always persist `userId`. A player can rename their profile and receives a new `playerId` after reconnecting.
+For account-level persistence, store `license` as a string. Use `userId` where an existing API
+requires the installation identity; the two values are not interchangeable. A player can rename
+their profile and receives a new `playerId` after reconnecting. Existing data keyed by `userId`
+needs an explicit migration before switching keys.
+
+`license`, `steam` and `gog` are available to server Lua since `2.31.13+op77.101`. See
+[Steam, GOG and permanent account identifiers](connection-control.md#steam-gog-and-permanent-account-identifiers)
+for a complete join handler, formats and missing-identifier behavior.
 
 ## Changing the username
 
@@ -39,8 +48,9 @@ Server resources receive the verified values through the normal player API:
 ```lua
 AddEventHandler("onPlayerConnected", function(playerId, playerName)
     local player = tonumber(playerId) or 0
-    print(GetPlayerIdentifier(player)) -- durable userId
+    print(GetPlayerIdentifier(player)) -- installation userId
     print(GetPlayerName(player))       -- Master-verified displayName
+    print(GetPlayerIdentifierByType(player, "license")) -- permanent Open77 account ID
 end)
 ```
 

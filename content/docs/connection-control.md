@@ -8,9 +8,9 @@ A connection goes through these stages in order. Resources take part in the stag
 
 1. The transport connects. Nothing is known about the player.
 2. The client sends its hello: protocol, game build, display name, identity public key with a
-   proof, and a Master connect ticket when it has one.
+   proof, and a Master connect ticket.
 3. The server checks the platform facts: protocol and build, identity proof against its Master
-   key, connect ticket when the server requires one, identity key stability, capacity. A failure
+   key, signed game and DLC ownership in the connect ticket, identity key stability, capacity. A failure
    here is a refusal resources are told about (**`onPlayerRejected`**) but cannot influence.
 4. The server's own door list, `access.json` next to `server.jsonc`: a ban, or a closed whitelist
    the identity is not on, refuses here with the list's sentence. Warden, the console and
@@ -182,10 +182,85 @@ never disagree, because the first decision wins and the other is answered `gate_
 
 `Open77.players.identity(playerId)` (alias `GetPlayerIdentity`) returns
 `{ userId, name, publicKey, fingerprint, joinedAt }` for an admitted player, or `nil`. `joinedAt`
-is ISO 8601 UTC. No permission is needed. It is how a `ban <playerId>` command turns the short
-session id an admin sees into the durable `userId` a ban list must store.
+is ISO 8601 UTC. Since `2.31.13+op77.101`, the table also includes `license`, `steam` and `gog`
+when carried by the verified Master ticket. No permission is needed. The existing `userId`
+identifies the installation's cryptographic identity and remains the key accepted by
+`Open77.access`; use `license` for account-level persistence across linked devices.
 
 `Open77.players.identifier(playerId)` and `Open77.players.name(playerId)` remain the short forms.
+
+## Steam, GOG and permanent account identifiers
+
+**Server Lua, since `2.31.13+op77.101`.** Read identifiers in `onPlayerConnected`, after the
+server has admitted the player. No extra permission or store API call is required in a resource.
+
+```lua
+AddEventHandler("onPlayerConnected", function(playerId)
+    local ids, reason = Open77.players.identifiers(playerId)
+    if not ids then
+        print("Identity unavailable: " .. tostring(reason))
+        return
+    end
+
+    local license = ids.license -- permanent Open77 account ID
+    local steamId = ids.steam   -- nil when Steam is not linked
+    local gogId = ids.gog       -- nil when GOG is not linked
+
+    print("Open77 license: " .. tostring(license))
+    print("Steam: " .. tostring(steamId))
+    print("GOG: " .. tostring(gogId))
+end)
+```
+
+The table fields and `GetPlayerIdentifierByType` return **strings without a type prefix**:
+
+| Field / type | Format | Use |
+|---|---|---|
+| `license` | Open77 account GUID as 32 lowercase hexadecimal characters, without dashes | Persistent account key for characters, inventories and progression across linked device identities |
+| `steam` | SteamID in lowercase hexadecimal, without `0x` | Linked Steam account; this is not the decimal SteamID64 representation |
+| `gog` | GOG account ID in decimal | Linked GOG account |
+| `open77` / `userId` | The existing identity GUID, with dashes | Installation identity; keep using `userId` for APIs such as `Open77.access` that require it |
+
+Keep these values as strings in Lua, JSON and database columns. Do not use `tonumber` to store
+or compare them. `playerId` / `source` identifies only the current connection; a display name
+can change.
+
+The FiveM-style compatibility functions expose the same values:
+
+```lua
+-- playerId is an admitted player's session ID.
+local license = GetPlayerIdentifierByType(playerId, "license")
+local steamId, steamReason = GetPlayerIdentifierByType(playerId, "steam")
+local gogId, gogReason = GetPlayerIdentifierByType(playerId, "gog")
+
+-- Array entries include their prefix: license:..., steam:..., gog:...
+for _, identifier in ipairs(GetPlayerIdentifiers(playerId) or {}) do
+    print(identifier)
+end
+```
+
+`GetPlayerIdentifiers` also includes the existing `open77:`, `name:` and `fingerprint:` entries.
+Missing identifiers are omitted. `GetPlayerIdentifierByType` accepts type names case-insensitively
+and returns `nil, "identifier_not_linked"` when `license`, `steam` or `gog` is unavailable.
+An unsupported type returns `nil, "unknown_identifier_type"`; a non-string type returns
+`nil, "invalid_identifier_type"`. `Open77.players.identifiers` returns `nil, "invalid_player_id"`
+for an invalid session ID, or `nil, "player_not_found"` when no player matches it.
+
+The Master verifies **Cyberpunk 2077 and Phantom Liberty on the same Steam or GOG account**
+before issuing the ownership ticket. One qualifying store is sufficient: a resource must allow
+either `steam` or `gog` to be absent. These identifiers come from the ticket verified by the
+server; scripts do not receive raw Steam/GOG tickets, access tokens or passwords. No Discord
+identifier is currently exposed.
+
+A linked store ID can remain present after that store's ownership proof expires, while the
+other store qualifies the player. An identifier is therefore an account link, not a fresh
+ownership query. Admission checks ownership; it does not continuously monitor already admitted
+players. The explicit private loopback `devLocalAuth` mode has no verified store identifiers,
+including `license`.
+
+`Open77.players.identity(playerId)` and `GetPlayerIdentity(playerId)` expose the same three
+ownership fields. Only the separate `endpoint` field in `Open77.players.identifiers` needs
+`players.identity.sensitive`.
 
 ## Removing and banning players who are in
 
@@ -451,7 +526,10 @@ end)
 | `playerConnecting` (event) | `players.gate` | `(name, setKickReason, deferrals)` |
 | `playerJoining` (event) | None | `(oldId)`, `source` = the new player id |
 | `playerDropped` (event) | None | `(reason)`, `source` = the player who left |
-| `Open77.players.identity` / `GetPlayerIdentity` | None | `(playerId) -> { userId, name, publicKey, fingerprint, joinedAt }` or `nil` |
+| `Open77.players.identity` / `GetPlayerIdentity` | None | `(playerId) -> { userId, name, publicKey, fingerprint, joinedAt, license?, steam?, gog? }` or `nil` |
+| `Open77.players.identifiers` | None for account/store IDs | `(playerId) -> { open77, userId, name, fingerprint, joinedAt, license?, steam?, gog?, endpoint? }` or `nil, reason`; `endpoint` needs `players.identity.sensitive` |
+| `GetPlayerIdentifierByType` | None | `(playerId, type) -> bare string` or `nil, reason` |
+| `GetPlayerIdentifiers` | None | `(playerId) -> array of "type:value" strings` or `nil, "player_not_found"` |
 | `Open77.players.identifier` / `name` | None | `(playerId)` |
 | `Open77.players.disconnect` / `kick` | `players.disconnect` | `(playerId, reason?)` |
 | `Open77.players.ban` | `players.ban` | `(playerId, reason?, durationSeconds?)` |

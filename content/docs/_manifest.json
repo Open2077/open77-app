@@ -219,11 +219,14 @@
       "target": "content/docs/connection-control.md",
       "slug": "connection-control",
       "title": "Connection control: connect events, whitelists and bans",
-      "bytes": 23776,
-      "sha256": "ef9d41ee4501f87cbcfa1899c9362ce8fe88d606e983352076f822700b58caf5",
+      "bytes": 28162,
+      "sha256": "179cea8f31f4da420de517f0928345016d2b74d8d5cacf600bc9c52c0d9a7fc2",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1240d7f0440b7b9a26ce04a5023d0bfdf68a93b3042bf76302fc5e3a9706c13f"
+      },
+      "siteAmendment": {
+        "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved."
       }
     },
     {
@@ -375,11 +378,14 @@
       "target": "content/docs/fivem-compatibility.md",
       "slug": "fivem-compatibility",
       "title": "FiveM compatibility aliases",
-      "bytes": 41580,
-      "sha256": "26ff6a5e1bd5f07ca73eb835b1c1ec394ad55bf147fc3fcc0f8fe3e196aca31a",
+      "bytes": 42709,
+      "sha256": "648f415ab8785e0b01b09c4930ab2e713a50717a93ab31564232c5e07a513d25",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "10e78aeaa47519b78b454843f78818f896665ecba967ca53db992d70f6440fc4"
+      },
+      "siteAmendment": {
+        "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved."
       }
     },
     {
@@ -459,11 +465,14 @@
       "target": "content/docs/identity.md",
       "slug": "identity",
       "title": "Player identity and username",
-      "bytes": 5913,
-      "sha256": "94e4b5826bcc1353b8d8c44cb34dd9753efc3645fa6f6488b58120ac87cf14c2",
+      "bytes": 6764,
+      "sha256": "41a52920ffe130b74561c1a45ad0f5887e871c89221fab1bc591586f31211181",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b444538454356b45a8207cca544d305f39bccbcd9a08ef19a4674336a4bad1f5"
+      },
+      "siteAmendment": {
+        "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved."
       }
     },
     {
@@ -877,11 +886,14 @@
       "target": "content/docs/server-api.md",
       "slug": "server-api",
       "title": "Complete server Lua API",
-      "bytes": 205444,
-      "sha256": "9a43651c80dcb3f82f5c6cef7b79245d15c1647ae6f33360e59052e4c5d6f37b",
+      "bytes": 206522,
+      "sha256": "42ddb31a08e0312e073b59bcf0a3720cba71bd7fd324710a72090da7da83329e",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "e7367a5197ea2774f591e48e7f6a7a8645f6611f194e74b0c6b1e6b0841d2ca2"
+      },
+      "siteAmendment": {
+        "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved."
       }
     },
     {
@@ -1182,8 +1194,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1644,
-      "bytes": 2310050,
-      "sha256": "251bbb91902a49aef1272e31f84667f21255a64cc710d47ed64107d7fbaef032",
+      "bytes": 2312482,
+      "sha256": "a1bf4cac9b43a4173ca194e9ab2245a69c12996b7cef970c83cb2e82aceb96f8",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
@@ -1192,7 +1204,8 @@
         "sourceCommit": "75f0e59cfa26606e83d9257ec1c7c07c6929c977",
         "scope": "RP native layer/item/sequence descriptions and server animation permissions; no inferred option release version",
         "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete",
-        "blipSvgContract": "Native SVG icons and per-blip RGB/RGBA; experimental matching client adapter required. Reviewed against uncommitted open77-base implementation; upstream sync provenance preserved."
+        "blipSvgContract": "Native SVG icons and per-blip RGB/RGBA; experimental matching client adapter required. Reviewed against uncommitted open77-base implementation; upstream sync provenance preserved.",
+        "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved."
       }
     },
     {

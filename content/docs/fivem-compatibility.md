@@ -46,8 +46,8 @@ their own sections. Read those before porting: they are silent traps otherwise.
 | `GetScriptFireCoords` / `IsEntityOnFire` | no | partly | `Open77.effects.fires()` answers the first for a resource's own fires; there is no per-entity burning flag, because nothing in the engine replicates one |
 | `fireEvent` | no | yes | `onFire`, host-wide, with `started`/`stopped` and a count rather than names |
 | `ptFxEvent` | no | yes | `onParticleEffect`, host-wide, for every world-positioned server effect. Entity-bound `playOn`/`attach` raise nothing: the target owns the transform |
-| `GetPlayerIdentifierByType(playerId, type)` | no | yes | `Open77.players.identifier` / `name` / `identity` |
-| `GetPlayerIdentifiers(playerId)` | no | yes | the three above as `"type:value"` strings |
+| `GetPlayerIdentifierByType(playerId, type)` | no | yes | Bare `open77`, `userId`, `name`, `fingerprint`, `license`, `steam` or `gog` value |
+| `GetPlayerIdentifiers(playerId)` | no | yes | Available identifiers as `"type:value"` strings; table form: `Open77.players.identifiers` |
 | `RegisterCommand(name, fn, restricted?)` | yes | yes | server: ACL `command.<name>`; client: `Open77.runtime.registerCommand` |
 | `ExecuteCommand(line)` | yes | yes | client: the local registry only; server: the console, see below |
 | `GetRegisteredCommands()` | yes | yes | `Open77.runtime.commands()` |
@@ -309,21 +309,33 @@ who is not connected cannot be answered and the call returns
 
 ```lua
 GetPlayerIdentifierByType(src, "open77")       --> "11111111-2222-3333-4444-555555555555"
-GetPlayerIdentifierByType(src, "userId")       --> the same account GUID
+GetPlayerIdentifierByType(src, "userId")       --> the same installation identity GUID
 GetPlayerIdentifierByType(src, "name")         --> "Valerie"
 GetPlayerIdentifierByType(src, "fingerprint")  --> "sha256:..."
-GetPlayerIdentifierByType(src, "license")      --> nil, "unknown_identifier_type"
+GetPlayerIdentifierByType(src, "license")      --> "aaaaaaaa111122223333bbbbbbbbbbbb"
+GetPlayerIdentifierByType(src, "steam")        --> "11000010000002a" (hexadecimal, if linked)
+GetPlayerIdentifierByType(src, "gog")          --> "12345678901234567" (decimal, if linked)
 
 GetPlayerIdentifiers(src)
---> { "open77:1111...", "name:Valerie", "fingerprint:sha256:..." }
+-- Example with both stores linked (either store may be absent):
+--> { "open77:1111...", "name:Valerie", "fingerprint:sha256:...",
+--    "license:aaaaaaaa111122223333bbbbbbbbbbbb",
+--    "steam:11000010000002a", "gog:12345678901234567" }
 ```
 
 `GetPlayerIdentifierByType` returns the **bare** value; `GetPlayerIdentifiers` returns the FiveM
-shape, an array of `"type:value"` strings, so `for _, id in ipairs(GetPlayerIdentifiers(src))`
-ports unchanged. A player with no session returns `nil, "player_not_found"`.
+shape, an array of `"type:value"` strings. Iterate safely with
+`for _, id in ipairs(GetPlayerIdentifiers(src) or {}) do ... end`.
+The array read returns `nil, "player_not_found"` for an unknown session. The typed read returns
+`nil, "identifier_not_linked"` when the requested `license`, `steam` or `gog` value is unavailable.
+Type names are case-insensitive; unsupported types return `nil, "unknown_identifier_type"`.
 
-The durable identifier is the account GUID — Open77 has no Steam, license, discord or xbl
-identifier to offer, and does not invent one.
+`license`, `steam` and `gog` require server runtime `2.31.13+op77.101` or later. Use `license`
+as the permanent Open77 account key across linked devices; keep all identifiers as strings.
+One Steam or GOG account owning both Cyberpunk 2077 and Phantom Liberty is sufficient for
+admission, so do not require both store identifiers. No Discord or Xbox identifier is exposed.
+See [verified account and store identifiers](connection-control.md#steam-gog-and-permanent-account-identifiers)
+for the server event example, formats and ownership semantics.
 
 ### Commands on the client
 
@@ -402,9 +414,9 @@ address. FiveM gates nothing here; a port that quietly logged addresses will sta
 `permission_denied:players.identity.sensitive` until its manifest says what it is doing.
 
 `Open77.players.identifiers(playerId)` is the table companion to the array `GetPlayerIdentifiers`
-has always returned — `{ open77, userId, name, fingerprint, joinedAt }`, plus `endpoint` **only**
-when the capability is held. The field is absent rather than nil, so a caller can tell "you may not
-ask" from "there is nothing there".
+returns: `{ open77, userId, name, fingerprint, joinedAt, license?, steam?, gog? }`, plus
+`endpoint` only when `players.identity.sensitive` is held. Account and store identifiers need
+no permission. Unavailable fields are omitted and read as `nil` in Lua.
 
 ### txAdmin events, under Open77 names
 
