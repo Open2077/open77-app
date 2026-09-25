@@ -154,6 +154,27 @@ export function overview(token: string): Promise<AdminOverview> {
   return masterCall("/api/v1/admin/overview", { token });
 }
 
+export type GameOwnershipRow = {
+  accountId: string; email: string; displayName: string; role: string; status: string;
+  storeVerified: boolean; steamId: string | null; gogId: string | null;
+  granted: boolean; revision: number; reason: string | null;
+  updatedBy: string | null; updatedAtUtc: string | null;
+};
+export type GameOwnershipPage = { page: number; pageSize: number; total: number; items: GameOwnershipRow[] };
+
+export function gameOwnership(token: string, query: string, granted: boolean | undefined, page: number): Promise<GameOwnershipPage> {
+  const params = new URLSearchParams({ page: String(page), pageSize: "25" });
+  if (query) params.set("query", query);
+  if (granted !== undefined) params.set("granted", String(granted));
+  return masterCall(`/api/v1/admin/game-ownership?${params}`, { token });
+}
+
+export function setGameOwnership(token: string, accountId: string, granted: boolean, revision: number, reason: string): Promise<GameOwnershipRow> {
+  return masterCall(`/api/v1/admin/game-ownership/${accountId}`, {
+    method: "PUT", token, body: { granted, revision, reason },
+  });
+}
+
 export function servers(token: string): Promise<AdminServer[]> {
   return masterCall("/api/v1/admin/servers", { token });
 }

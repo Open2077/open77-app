@@ -247,16 +247,22 @@ An unsupported type returns `nil, "unknown_identifier_type"`; a non-string type 
 for an invalid session ID, or `nil, "player_not_found"` when no player matches it.
 
 The Master verifies **Cyberpunk 2077 and Phantom Liberty on the same Steam or GOG account**
-before issuing the ownership ticket. One qualifying store is sufficient: a resource must allow
-either `steam` or `gog` to be absent. These identifiers come from the ticket verified by the
-server; scripts do not receive raw Steam/GOG tickets, access tokens or passwords. No Discord
-identifier is currently exposed.
+once and permanently links that store account to the Open77 account. One qualifying store is
+sufficient. Starting with `2.31.13+op77.102`, historical proof expiration does not require another
+store login or ownership check. The Master still issues a fresh, short-lived signed ticket for
+each connection. These identifiers come from the ticket verified by the server; scripts do not
+receive raw Steam/GOG tickets, access tokens or passwords. No Discord or Xbox identifier is exposed.
 
-A linked store ID can remain present after that store's ownership proof expires, while the
-other store qualifies the player. An identifier is therefore an account link, not a fresh
-ownership query. Admission checks ownership; it does not continuously monitor already admitted
-players. The explicit private loopback `devLocalAuth` mode has no verified store identifiers,
-including `license`.
+An Open77 administrator can also approve an account manually, for example when its store cannot
+be verified automatically. On server runtime `2.31.13+op77.102` or later, this account has a valid
+`license` even when **both `steam` and `gog` are absent**. Resources must handle that case and
+should use `license` for account-level persistence. Missing IDs remain `nil` in the table and
+are omitted from `GetPlayerIdentifiers`; no placeholder store ID is invented.
+
+Manual approval can be removed for future connections without deleting genuine store links.
+Store IDs identify linked accounts; they do not report current subscription or refund status.
+Admission does not continuously monitor already admitted players. The explicit private loopback
+`devLocalAuth` mode has no verified account or store identifiers, including `license`.
 
 `Open77.players.identity(playerId)` and `GetPlayerIdentity(playerId)` expose the same three
 ownership fields. Only the separate `endpoint` field in `Open77.players.identifiers` needs

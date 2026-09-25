@@ -23,6 +23,11 @@ needs an explicit migration before switching keys.
 [Steam, GOG and permanent account identifiers](connection-control.md#steam-gog-and-permanent-account-identifiers)
 for a complete join handler, formats and missing-identifier behavior.
 
+Steam/GOG ownership is verified once and remains linked to the Open77 account. Since
+`2.31.13+op77.102`, an account manually approved by an Open77 administrator can play without a
+linked store: `license` is present, while `steam` and `gog` may both be absent. Use the Open77
+account key for progression rather than requiring a store ID.
+
 ## Changing the username
 
 The server browser shows the current username in its **Identity** field. Pressing **Save** sends a freshly signed enrollment request to the Master. The Master accepts the update only when the private key already attached to the `userId` signed it.

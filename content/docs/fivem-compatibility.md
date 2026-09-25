@@ -332,8 +332,10 @@ Type names are case-insensitive; unsupported types return `nil, "unknown_identif
 
 `license`, `steam` and `gog` require server runtime `2.31.13+op77.101` or later. Use `license`
 as the permanent Open77 account key across linked devices; keep all identifiers as strings.
-One Steam or GOG account owning both Cyberpunk 2077 and Phantom Liberty is sufficient for
-admission, so do not require both store identifiers. No Discord or Xbox identifier is exposed.
+One Steam or GOG account owning both Cyberpunk 2077 and Phantom Liberty is verified once and
+linked permanently. Since runtime `2.31.13+op77.102`, an account manually approved by an Open77
+administrator can also connect with `license` present and both store identifiers absent.
+Resources must support this case. No Discord or Xbox identifier is exposed.
 See [verified account and store identifiers](connection-control.md#steam-gog-and-permanent-account-identifiers)
 for the server event example, formats and ownership semantics.
 

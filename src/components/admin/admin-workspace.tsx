@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { ArrowLeftIcon, ArrowRightIcon, CodeIcon, DownloadIcon, GlobeIcon, InfoIcon, KeyIcon, MenuIcon, PeopleIcon, SearchIcon, ServerRackIcon, ShieldIcon } from "@/components/icons";
+import { ArrowLeftIcon, ArrowRightIcon, CheckIcon, CodeIcon, DownloadIcon, GlobeIcon, InfoIcon, KeyIcon, MenuIcon, PeopleIcon, SearchIcon, ServerRackIcon, ShieldIcon } from "@/components/icons";
 import { useAdminActivity, AdminSpinner } from "./admin-activity";
 
 const NAV = [
@@ -19,6 +19,7 @@ const NAV = [
   { href: "/admin/resources/reports", label: "Workshop reports", group: "Access & safety", icon: ShieldIcon, note: "Investigate community reports and record moderation outcomes." },
   { href: "/admin/users", label: "Accounts", group: "Access & safety", icon: PeopleIcon, note: "Find accounts, inspect roles and manage access to the network." },
   { href: "/admin/alpha-access", label: "Alpha access", group: "Access & safety", icon: ShieldIcon, note: "Manage Alpha grants and inspect the current access gate." },
+  { href: "/admin/game-ownership", label: "Genuine whitelist", group: "Access & safety", icon: CheckIcon, note: "Approve game access for individual accounts and review linked stores." },
   { href: "/admin/licenses", label: "Licenses", group: "Access & safety", icon: KeyIcon, note: "Server ownership, license status and revocation controls." },
   { href: "/admin/bans", label: "Bans", group: "Access & safety", icon: ShieldIcon, note: "Platform and server enforcement with explicit scope and expiry." },
   { href: "/admin/audit", label: "Audit log", group: "Access & safety", icon: CodeIcon, note: "Trace platform changes, access and administrative actions." },

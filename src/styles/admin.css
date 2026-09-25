@@ -189,6 +189,8 @@
 .adm-email-dialog h2 { margin: 0 0 16px; font-size: 22px; }
 .adm-email-dialog p { margin: 0 0 20px; color: var(--text-dim); line-height: 1.6; }
 .adm-email-dialog .adm-email-target { padding: 12px; background: var(--accent-soft); color: var(--text); overflow-wrap: anywhere; }
+.adm-ownership-reason { max-width: 30ch; white-space: normal; overflow-wrap: anywhere; }
+.adm-ownership-reason-input { display: block; width: 100%; box-sizing: border-box; resize: vertical; margin: 8px 0 16px; padding: 10px; color: var(--text); background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); font: inherit; }
 .adm-empty { color: var(--text-dim); font-size: 13.5px; text-align: center; padding: 22px 0; }
 
 /* ---------- Chips ---------- */

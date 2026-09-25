@@ -57,9 +57,9 @@ forgiving: it accepts the install root, `bin\x64`, the executable itself, a Stea
 library root, `steamapps`, `common`, or the parent of any of those, and falls back
 to a shallow search under whatever you chose.
 
-**Epic is not in that list.** Nothing about the platform requires a particular
-store — it requires a legitimate copy at the right build — but there is no
-registry probe for Epic, so an Epic install is found by picking the folder.
+There is no registry probe for Epic, so an Epic installation is found by picking
+the folder. Locating files does not verify ownership; see the account-linking
+step below for supported stores and manual approval.
 
 ## Checking the build
 
@@ -106,6 +106,22 @@ readable by your Windows user on that machine and nowhere else, and copying the
 file to another PC gets you nothing. The game plugin reads it at startup, which is
 how your account and display name reach the world you join without the game ever
 handling a password.
+
+## Linking your game once
+
+After the multiplayer update, the launcher asks you to connect **Steam or GOG**
+if your Open77 account has not been verified yet. One store account must own both
+**Cyberpunk 2077 and Phantom Liberty**. Complete the verification once; your store
+ID and the result stay linked to your Open77 account.
+
+On later launches, you go directly to the server directory without repeating the
+store sign-in. You can view the linked Steam/GOG accounts in **Settings → Linked
+stores**. Normal Open77 account sign-in still applies.
+
+If your store cannot be verified automatically, contact Open77 support. An
+administrator can manually approve your account. Once approved, the launcher
+opens the server directory without requiring a Steam or GOG link. This approval
+does not create a store ID or automatically grant Alpha access.
 
 ## The mod menu
 
