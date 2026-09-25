@@ -336,6 +336,8 @@ One Steam or GOG account owning both Cyberpunk 2077 and Phantom Liberty is verif
 linked permanently. Since runtime `2.31.13+op77.102`, an account manually approved by an Open77
 administrator can also connect with `license` present and both store identifiers absent.
 Resources must support this case. No Discord or Xbox identifier is exposed.
+Store linking is currently optional; players who choose **Skip for now** also have `license`
+without either store ID. Existing verified store links remain available.
 See [verified account and store identifiers](connection-control.md#steam-gog-and-permanent-account-identifiers)
 for the server event example, formats and ownership semantics.
 

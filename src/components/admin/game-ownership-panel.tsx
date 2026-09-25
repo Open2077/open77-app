@@ -59,7 +59,7 @@ export function GameOwnershipPanel() {
         placeholder="Search e-mail, name or account ID…" aria-label="Search game access accounts" maxLength={96} spellCheck={false} /></div>
     </div>
     <p className="adm-footnote">Approve an Open77 account when store verification is unavailable, including support cases and test accounts.
-      A manual approval allows game access without Steam or GOG. Suspensions, bans and other access rules still apply.</p>
+      A manual approval allows game access without Steam or GOG when linking is required. Suspensions, bans and other access rules still apply.</p>
     <div className="adm-toolbar"><div className="adm-filters" role="group" aria-label="Filter manual approvals">
       {([["all", "All accounts"], ["granted", "Whitelisted"], ["withheld", "Not whitelisted"]] as const).map(([value, label]) =>
         <button key={value} type="button" className={`ac-iconbtn${filter === value ? " is-copied" : ""}`} aria-pressed={filter === value}
@@ -85,7 +85,7 @@ export function GameOwnershipPanel() {
       onCancel={e => { if (inFlight.current) e.preventDefault(); else setSelection(null); }} onClose={() => { if (!inFlight.current) setSelection(null); }}>
       <h2 id={titleId}>{selection?.granted ? "Remove manual approval?" : "Whitelist this account?"}</h2>
       <p className="adm-email-target"><strong>{selection?.displayName}</strong><br />{selection?.email}<br />{selection?.accountId}</p>
-      <p>{selection?.granted ? "The next connection will require a verified Steam or GOG link. Already verified store links remain valid." :
+      <p>{selection?.granted ? "This removes the manual exception. Access follows the platform's current linking policy. Already verified store links remain valid." :
         "This account can play without a verified Steam or GOG link. Its Open77 account identifier remains available to game servers."}</p>
       <form onSubmit={e => { e.preventDefault(); void save(); }}>
         <label htmlFor={reasonId}>Reason for this decision</label>

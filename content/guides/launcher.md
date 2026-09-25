@@ -109,8 +109,12 @@ handling a password.
 
 ## Linking your game once
 
-After the multiplayer update, the launcher asks you to connect **Steam or GOG**
-if your Open77 account has not been verified yet. One store account must own both
+After the multiplayer update, the launcher offers to connect **Steam or GOG**
+if your Open77 account has not been verified yet. Linking is **optional for now**:
+choose **Skip for now** to browse and join servers without linking. Your choice
+is remembered, and you can link later in Settings.
+
+When you choose to verify, one store account must own both
 **Cyberpunk 2077 and Phantom Liberty**. Complete the verification once; your store
 ID and the result stay linked to your Open77 account.
 
@@ -118,10 +122,10 @@ On later launches, you go directly to the server directory without repeating the
 store sign-in. You can view the linked Steam/GOG accounts in **Settings → Linked
 stores**. Normal Open77 account sign-in still applies.
 
-If your store cannot be verified automatically, contact Open77 support. An
-administrator can manually approve your account. Once approved, the launcher
-opens the server directory without requiring a Steam or GOG link. This approval
-does not create a store ID or automatically grant Alpha access.
+If your store is not supported yet, use **Skip for now**. Open77 support can also
+manually approve accounts; this approval is retained for when linking becomes
+mandatory. Skipping does not create a store ID, mark ownership as verified or
+automatically grant Alpha access.
 
 ## The mod menu
 

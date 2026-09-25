@@ -259,7 +259,14 @@ be verified automatically. On server runtime `2.31.13+op77.102` or later, this a
 should use `license` for account-level persistence. Missing IDs remain `nil` in the table and
 are omitted from `GetPlayerIdentifiers`; no placeholder store ID is invented.
 
-Manual approval can be removed for future connections without deleting genuine store links.
+Store linking is currently **optional**. Since launcher/Master `2.31.13+op77.103`, players can
+choose **Skip for now** and still receive a signed ticket accepted by server `.102` or later.
+Their permanent Open77 `license` remains available, with both store IDs absent if none is
+linked. Skipping does not attest ownership or create a manual approval. Existing verified
+Steam/GOG IDs remain available. Resources must not require a store ID to identify a player.
+
+Manual approval can be removed without deleting genuine store links; while linking is optional,
+its absence does not block connections.
 Store IDs identify linked accounts; they do not report current subscription or refund status.
 Admission does not continuously monitor already admitted players. The explicit private loopback
 `devLocalAuth` mode has no verified account or store identifiers, including `license`.

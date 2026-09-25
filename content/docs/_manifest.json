@@ -219,12 +219,13 @@
       "target": "content/docs/connection-control.md",
       "slug": "connection-control",
       "title": "Connection control: connect events, whitelists and bans",
-      "bytes": 28772,
-      "sha256": "a31cfed10e32de6564a8047c87a37865567d42dc196b1ab2c127b85f03f4fd3f",
+      "bytes": 29278,
+      "sha256": "adc7ee50b5c77470f7190de120d5d18caad85e6c7319cfcd5065dbf0eda45bab",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1240d7f0440b7b9a26ce04a5023d0bfdf68a93b3042bf76302fc5e3a9706c13f",
-        "serverVersion": "2.31.13+op77.102"
+        "serverVersion": "2.31.13+op77.102",
+        "masterVersion": "2.31.13+op77.103"
       },
       "siteAmendment": {
         "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved."
@@ -379,12 +380,13 @@
       "target": "content/docs/fivem-compatibility.md",
       "slug": "fivem-compatibility",
       "title": "FiveM compatibility aliases",
-      "bytes": 42878,
-      "sha256": "68bf35a7b8b15a891c17ceb5da210e5cb4416c1d2cb0d385541cf31bf07c4d49",
+      "bytes": 43044,
+      "sha256": "3d7b4a37904e86cd87409550fb7bf520ded1d255007ece98528f735c9a98b705",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "10e78aeaa47519b78b454843f78818f896665ecba967ca53db992d70f6440fc4",
-        "serverVersion": "2.31.13+op77.102"
+        "serverVersion": "2.31.13+op77.102",
+        "masterVersion": "2.31.13+op77.103"
       },
       "siteAmendment": {
         "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved."
@@ -467,12 +469,13 @@
       "target": "content/docs/identity.md",
       "slug": "identity",
       "title": "Player identity and username",
-      "bytes": 7102,
-      "sha256": "23a23e9bf8a08751eefbfef97e017dcab48612613d7bc8c260f0d7990833a222",
+      "bytes": 7284,
+      "sha256": "5aadab823630e65a3794fc691bb52b62e614daa0e4438044443a8a924aacfacc",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b444538454356b45a8207cca544d305f39bccbcd9a08ef19a4674336a4bad1f5",
-        "serverVersion": "2.31.13+op77.102"
+        "serverVersion": "2.31.13+op77.102",
+        "masterVersion": "2.31.13+op77.103"
       },
       "siteAmendment": {
         "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved."

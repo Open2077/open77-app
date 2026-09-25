@@ -28,6 +28,9 @@ Steam/GOG ownership is verified once and remains linked to the Open77 account. S
 linked store: `license` is present, while `steam` and `gog` may both be absent. Use the Open77
 account key for progression rather than requiring a store ID.
 
+Linking is currently optional: players can skip it and still receive their permanent Open77
+`license`. An absent Steam/GOG ID is a supported account state, not a failed connection.
+
 ## Changing the username
 
 The server browser shows the current username in its **Identity** field. Pressing **Save** sends a freshly signed enrollment request to the Master. The Master accepts the update only when the private key already attached to the `userId` signed it.
