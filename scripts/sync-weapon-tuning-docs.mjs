@@ -1,4 +1,4 @@
-/** Merge only the three native weapon-tuning cards; retain other public contracts. */
+/** Merge the weapon-tuning and character-launch slice; retain other public contracts. */
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -17,11 +17,15 @@ for (let i = 0; i < args.length; i++) {
 assert.ok(source, "Pass --from <platform-worktree>/wiki");
 const read = async (file) => (await readFile(file, "utf8")).replaceAll("\r\n", "\n");
 const hash = (text) => createHash("sha256").update(text).digest("hex");
-const names = ["clearTuning", "setTuning", "tuning"];
-const selected = (entry) => entry.runtime === "client" && entry.namespace === "Open77.weapons" && names.includes(entry.name);
 const key = (entry) => `${entry.runtime}:${entry.qualified}`;
+const expected = [
+  "client:Open77.weapons.clearTuning", "client:Open77.weapons.setTuning", "client:Open77.weapons.tuning",
+  "client:Open77.motion.launch", "server:Open77.motion.launch", "server:Open77.motion.current",
+  "server:Open77.players.ragdoll",
+].sort();
+const selected = (entry) => expected.includes(key(entry));
 const incoming = reviewApiEntries(JSON.parse(await read(path.join(source, "data/api.json"))).filter(selected));
-assert.deepEqual(incoming.map((entry) => entry.name).sort(), names);
+assert.deepEqual(incoming.map(key).sort(), expected);
 for (const entry of incoming) assert.equal(entry.inferred, false, entry.qualified);
 const apiTarget = "content/api/api.json";
 const current = JSON.parse(await read(apiTarget));
@@ -30,9 +34,13 @@ const byKey = new Map(incoming.map((entry) => [key(entry), entry]));
 const oldKeys = new Set(current.map(key));
 const merged = [...current.map((entry) => byKey.get(key(entry)) ?? entry), ...incoming.filter((entry) => !oldKeys.has(key(entry)))];
 assert.deepEqual(merged.filter((entry) => !selected(entry)), current.filter((entry) => !selected(entry)));
-const guideTarget = "content/docs/weapons-api.md";
-const guide = await read(guideTarget);
-assertEditorialProse(guide, guideTarget);
+const guideTargets = ["content/docs/weapons-api.md", "content/docs/player-freeze.md"];
+const guides = new Map();
+for (const target of guideTargets) {
+  const text = await read(target);
+  assertEditorialProse(text, target);
+  guides.set(target, text);
+}
 assertEditorialProse(await read("content/guides/weapon-customization.md"), "weapon-customization");
 const manifestTarget = "content/docs/_manifest.json";
 const manifest = JSON.parse(await read(manifestTarget));
@@ -42,8 +50,8 @@ const recordFor = (target) => {
   return matches[0];
 };
 if (check) {
-  assert.deepEqual(current.filter(selected).sort((a, b) => a.name.localeCompare(b.name)), incoming.sort((a, b) => a.name.localeCompare(b.name)));
-  for (const target of [apiTarget, guideTarget]) {
+  assert.deepEqual(current.filter(selected).sort((a, b) => key(a).localeCompare(key(b))), incoming.sort((a, b) => key(a).localeCompare(key(b))));
+  for (const target of [apiTarget, ...guideTargets]) {
     const text = await read(target);
     assert.equal(recordFor(target).sha256, hash(text), target);
     assert.equal(recordFor(target).bytes, Buffer.byteLength(text), target);
@@ -55,11 +63,11 @@ if (check) {
   const provenance = {
     tool: "scripts/sync-weapon-tuning-docs.mjs", syncedAt: new Date().toISOString(),
     sourceRevision: git("rev-parse", "HEAD"),
-    sourceWorkingTreeDirty: Boolean(git("status", "--porcelain", "--", "api-descriptions.json", "data/api.json", "weapons-api.md")),
+    sourceWorkingTreeDirty: Boolean(git("status", "--porcelain", "--", "api-descriptions.json", "cyberware-api.json", "server-api-notes.json", "data/api.json", "weapons-api.md", "player-freeze.md")),
     sourceApiSha256: hash(JSON.stringify(incoming)),
     apiRouteIds: incoming.map(key), apiMode: "merge-selected-cards-preserve-other-site-entries",
   };
-  const writes = new Map([[apiTarget, JSON.stringify(merged, null, 1) + "\n"], [guideTarget, guide]]);
+  const writes = new Map([[apiTarget, JSON.stringify(merged, null, 1) + "\n"], ...guides]);
   for (const [target, text] of writes) {
     const record = recordFor(target);
     record.bytes = Buffer.byteLength(text); record.sha256 = hash(text);
@@ -70,4 +78,4 @@ if (check) {
   manifest.weaponTuningSync = provenance;
   await writeFile(manifestTarget, JSON.stringify(manifest, null, 2) + "\n");
 }
-console.log(`Weapon tuning: three native cards ${check ? "verified" : "synced"}; unrelated APIs preserved.`);
+console.log(`Weapon tuning and launch: seven scoped API cards ${check ? "verified" : "synced"}; unrelated APIs preserved.`);

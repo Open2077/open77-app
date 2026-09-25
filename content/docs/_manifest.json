@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
   "guides": 94,
-  "apiEntries": 1642,
+  "apiEntries": 1644,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -676,11 +676,28 @@
       "target": "content/docs/player-freeze.md",
       "slug": "player-freeze",
       "title": "Freezing a player",
-      "bytes": 10430,
-      "sha256": "17951c37e2a137a2105afc4d7dc1d7244db62e995502b2171e0808033f94dd41",
+      "bytes": 10566,
+      "sha256": "8c835009e4fdbb05a46eefbc57e9203ec1f9ec5cc59a6310248339d41bf9cb52",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "b805702f65dc1b5c8f4613d28f448a81c9992ca061f87e4b42995a8a96c675d3"
+        "upstreamSnapshotSha256": "b805702f65dc1b5c8f4613d28f448a81c9992ca061f87e4b42995a8a96c675d3",
+        "weaponTuningAmendment": {
+          "tool": "scripts/sync-weapon-tuning-docs.mjs",
+          "syncedAt": "2026-09-25T07:52:43.181Z",
+          "sourceRevision": "c03c220cba5d4e5af0db9532efcfe32fe7006f0c",
+          "sourceWorkingTreeDirty": false,
+          "sourceApiSha256": "d351b6e11c15beca48a526bb69e9ce6548a260b0e0ffca1c636f860d72bb4031",
+          "apiRouteIds": [
+            "client:Open77.motion.launch",
+            "client:Open77.weapons.clearTuning",
+            "client:Open77.weapons.setTuning",
+            "client:Open77.weapons.tuning",
+            "server:Open77.motion.current",
+            "server:Open77.motion.launch",
+            "server:Open77.players.ragdoll"
+          ],
+          "apiMode": "merge-selected-cards-preserve-other-site-entries"
+        }
       }
     },
     {
@@ -1077,21 +1094,25 @@
       "target": "content/docs/weapons-api.md",
       "slug": "weapons-api",
       "title": "Weapon Lua API",
-      "bytes": 23771,
-      "sha256": "07abf607ce85e34242e9b0a71a21cd67f738e0b94b42405d9d54b4933c40cc4f",
+      "bytes": 23761,
+      "sha256": "72ef22ee05af22544c218628eaf770d756d5e7861b32d14c4da1697debd0395f",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "da99c0133f9086a12e101c45ed777d368e82e592a6c44e0ba7f5042a129e9c43",
         "weaponTuningAmendment": {
           "tool": "scripts/sync-weapon-tuning-docs.mjs",
-          "syncedAt": "2026-09-25T03:57:22.717Z",
-          "sourceRevision": "d359b7c039092e740c3b339724e7d9e344813b64",
-          "sourceWorkingTreeDirty": true,
-          "sourceApiSha256": "55b4d4b8de50425edc3942755b413adc3f9ecb41396093b97bed9d5f375bb084",
+          "syncedAt": "2026-09-25T07:52:43.181Z",
+          "sourceRevision": "c03c220cba5d4e5af0db9532efcfe32fe7006f0c",
+          "sourceWorkingTreeDirty": false,
+          "sourceApiSha256": "d351b6e11c15beca48a526bb69e9ce6548a260b0e0ffca1c636f860d72bb4031",
           "apiRouteIds": [
+            "client:Open77.motion.launch",
             "client:Open77.weapons.clearTuning",
             "client:Open77.weapons.setTuning",
-            "client:Open77.weapons.tuning"
+            "client:Open77.weapons.tuning",
+            "server:Open77.motion.current",
+            "server:Open77.motion.launch",
+            "server:Open77.players.ragdoll"
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries"
         }
@@ -1160,9 +1181,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1642,
-      "bytes": 2303969,
-      "sha256": "36e6bb4ade84bc75035544a375afd5c06139cb95496288dc5a05c80046ab5813",
+      "entries": 1644,
+      "bytes": 2310050,
+      "sha256": "251bbb91902a49aef1272e31f84667f21255a64cc710d47ed64107d7fbaef032",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
@@ -1535,14 +1556,18 @@
   },
   "weaponTuningSync": {
     "tool": "scripts/sync-weapon-tuning-docs.mjs",
-    "syncedAt": "2026-09-25T03:57:22.717Z",
-    "sourceRevision": "d359b7c039092e740c3b339724e7d9e344813b64",
-    "sourceWorkingTreeDirty": true,
-    "sourceApiSha256": "55b4d4b8de50425edc3942755b413adc3f9ecb41396093b97bed9d5f375bb084",
+    "syncedAt": "2026-09-25T07:52:43.181Z",
+    "sourceRevision": "c03c220cba5d4e5af0db9532efcfe32fe7006f0c",
+    "sourceWorkingTreeDirty": false,
+    "sourceApiSha256": "d351b6e11c15beca48a526bb69e9ce6548a260b0e0ffca1c636f860d72bb4031",
     "apiRouteIds": [
+      "client:Open77.motion.launch",
       "client:Open77.weapons.clearTuning",
       "client:Open77.weapons.setTuning",
-      "client:Open77.weapons.tuning"
+      "client:Open77.weapons.tuning",
+      "server:Open77.motion.current",
+      "server:Open77.motion.launch",
+      "server:Open77.players.ragdoll"
     ],
     "apiMode": "merge-selected-cards-preserve-other-site-entries"
   }

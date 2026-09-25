@@ -75,9 +75,10 @@ src/
 ## Documentation pipeline
 
 The authored [weapon customization guide](content/guides/weapon-customization.md)
-links to the public `rp_weapons_effect` example. Update its three native API cards
+links to the public `rp_weapons_effect` example. Update its weapon-tuning and
+client/server character-launch API cards
 with `npm run sync:weapon-tuning -- --from <platform-worktree>/wiki` after
-generating `Open77.weapons` in the platform checkout. This scoped sync preserves
+generating `Open77.weapons`, `Open77.motion` and `Open77.players` in the platform checkout. This scoped sync preserves
 unrelated public cards and records source provenance. Verify with
 `npm run verify:weapon-tuning`; pass a site URL to also check the HTML and Markdown
 routes. The guide requires a compatible development client and documents

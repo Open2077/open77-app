@@ -438,7 +438,7 @@
           "source": "authored",
           "nav": "Customization & workshop",
           "title": "Weapon customization",
-          "description": "Tune reload speed, recoil, advanced weapon statistics and vehicle-impact impulses with native Lua calls and the English weapon workshop."
+          "description": "Tune weapon statistics and impact blasts, launch nearby vehicles and characters, and test with the English weapon workshop and native Lua APIs."
         }
       ]
     },

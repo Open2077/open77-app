@@ -130,8 +130,10 @@ Open77.players.ragdoll(id, { direction = { x = 0, y = 1 }, distance = 2 })  -- a
   the body (including the 1.5 s recovery window after one ends, so hit spam
   cannot chain ragdolls), `body_unavailable` for a player who is not alive, on
   foot and ready, `invalid_direction` / `invalid_duration` for bad arguments —
-  and `motion_unavailable` when the database is disabled. Motion leases use the
-  cyberware store and require `database.enabled`.
+  and `motion_unavailable` when the motion service is unavailable. Motion leases
+  do not require the implant database. The server still requires a ready
+  canonical body, an alive life state, an open readiness session and matching
+  incarnation and routing bucket.
 
 **Physics ragdoll is not exposed to Lua.** Scripted knockdowns use an alive-only motion lease, separate from the death and respawn ragdoll path. The lease ends as soon as the player leaves the `alive` phase.
 

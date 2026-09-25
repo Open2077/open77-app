@@ -41497,7 +41497,7 @@
   "name": "current",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Read an authoritative living-motion lease.",
-  "description": "Requires players.motion.read. Returns {id,player,incarnation,bucket,directionX,directionY,distance,createdAt,expiresAt,phase,reason}, or nil. Times are server-monotonic milliseconds. pending awaits owner native ACK; active is not server-observed rendering. Acknowledged ownership lasts6s, including recovery; no generic teleport or map collision solution is provided.",
+  "description": "Requires players.motion.read. Returns the authoritative lease {id,player,incarnation,bucket,directionX,directionY,distance,createdAt,expiresAt,phase,reason,kind,push,lift}, or nil. Launch leases have kind=\"launch\" and bounded push/lift values; ordinary knockdown retains its existing distance contract. The optional lifeRevision identifies the authoritative life generation when the server uses a generic body incarnation. Times are server-monotonic milliseconds. pending lasts until the controlling client acknowledges; active is an acknowledged motion lease, not proof of observer rendering. Use the exact id with cancel to end this resource's lease. No generic teleport or map collision solution is provided.",
   "params": [
    {
     "name": "playerId",
@@ -41515,8 +41515,10 @@
   "source": "LuaResourceRuntime.cs",
   "example": "local motion = Open77.motion.current(playerId)\nif motion then print(motion.id, motion.phase) end",
   "inferred": false,
-  "source_line": 7689,
-  "permissions": [],
+  "source_line": 7946,
+  "permissions": [
+   "players.motion.read"
+  ],
   "reasons": [
    "invalid_duration",
    "invalid_json",
@@ -41525,6 +41527,8 @@
    "invalid_request",
    "json_too_large",
    "motion_unavailable",
+   "permission_denied:players.motion.control",
+   "permission_denied:players.motion.read",
    "resource_stopping"
   ],
   "since": "2.31.13+op77.63",
@@ -46535,7 +46539,7 @@
   "name": "ragdoll",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Puts a player's body on the ground for a bounded time; it gets up on its own.",
-  "description": "Requires `players.motion.control`. FiveM's `SetPedToRagdoll`, composed on `Open77.motion.knockdown`: the engine's own knockdown status, a physical fall the observers replicate as a hit reaction. `options.direction` defaults to the body's own facing (from the last accepted transform; a player who never reported one falls north) and accepts a heading in degrees (0 = north) or `{ x, y }`; `options.distance` (0..6 m, default 0) turns the fall into a shove; `options.durationMs` counts from the moment the owning client reports the body down and is **clamped to the native 3000 ms** -- the effective number comes back as `durationMs`. `Open77.motion.cancel(id, result.id)` stands the body up early; `onPlayerMotionChanged` reports `ended` with `reason = \"duration_elapsed\"` when the clock fires. Refusals are the knockdown's: `motion_busy` (a motion is on the body, or the 1.5 s recovery after one), `body_unavailable` (not alive, on foot and ready -- a player mid-revive or respawn can never be knocked down, which is what keeps this away from the respawn ragdoll release), `invalid_direction`, `invalid_duration`; and `motion_unavailable` on a server without a database -- the motion lease is the cyberware store's, which exists only with `database.enabled`, so a bare development server answers that rather than a fall. The true physics ragdoll stays deliberately unbound; see the freeze page.",
+  "description": "Requires `players.motion.control`. FiveM's `SetPedToRagdoll`, composed on `Open77.motion.knockdown`: the engine's own knockdown status, a physical fall the observers replicate as a hit reaction. `options.direction` defaults to the body's own facing (from the last accepted transform; a player who never reported one falls north) and accepts a heading in degrees (0 = north) or `{ x, y }`; `options.distance` (0..6 m, default 0) turns the fall into a shove; `options.durationMs` counts from the moment the owning client reports the body down and is **clamped to the native 3000 ms** -- the effective number comes back as `durationMs`. `Open77.motion.cancel(id, result.id)` stands the body up early; `onPlayerMotionChanged` reports `ended` with `reason = \"duration_elapsed\"` when the clock fires. Refusals are the knockdown's: `motion_busy` (a motion is on the body, or the 1.5 s recovery after one), `body_unavailable` (not alive, on foot and ready -- a player mid-revive or respawn can never be knocked down, which is what keeps this away from the respawn ragdoll release), `invalid_direction`, `invalid_duration`; and `motion_unavailable` if the motion backend is unavailable. Motion leases do not require an implant database; canonical body readiness and matching life, incarnation and bucket remain required. The true physics ragdoll stays deliberately unbound; see the freeze page.",
   "params": [
    {
     "name": "playerId",
@@ -46560,7 +46564,9 @@
   "example": "-- A stun grenade: everybody within 6 m goes down for two seconds.\nfor _, entry in ipairs(Open77.players.nearby({ x = x, y = y, z = z }, 6.0) or {}) do\n    local read = Open77.players.get(entry.playerId)\n    if read and read.alive and not read.inVehicle then\n        Open77.players.ragdoll(entry.playerId, { durationMs = 2000 })\n    end\nend",
   "inferred": false,
   "source_line": 255,
-  "permissions": [],
+  "permissions": [
+   "players.motion.control"
+  ],
   "reasons": [
    "invalid_argument",
    "invalid_direction",
@@ -46572,6 +46578,8 @@
    "invalid_request",
    "json_too_large",
    "motion_unavailable",
+   "permission_denied:players.motion.control",
+   "permission_denied:players.motion.read",
    "player_not_found",
    "resource_stopping",
    "sessions_unavailable"
@@ -61304,7 +61312,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- Clear while this weapon is drawn, before switching weapons.\nlocal ok, reason = Open77.weapons.clearTuning()\nif not ok then print(reason) end\nlocal state = Open77.weapons.tuning()\nif state then print(state.status, state.pendingModifiers) end",
   "inferred": false,
-  "source_line": 24161,
+  "source_line": 24524,
   "permissions": [
    "player.weapons.edit"
   ],
@@ -61322,7 +61330,7 @@
   "name": "setTuning",
   "handler": "LuaWeaponSetTuning",
   "summary": "Configures a resource-owned tuning profile for the local held weapon.",
-  "description": "Requires a compatible development client exposing native weapon tuning with inventory-instance restoration. Client-only; requires `player.weapons.edit`. Accepts an exact `Items.*` record and a complete options table: omitted fields reset to their defaults. Supports reloadSpeed, fireRate, recoil, spread, damage, magazineCapacity, projectilesPerShot, aimSpeed, chargeSpeed, smartProjectileSpeed and the blastRadius/blastPush/blastLift/blastFalloff/blastCooldown vehicle-hit controls. Unknown keys, nonnumeric or nonfinite values and out-of-range multipliers are refused. Returns true when accepted, or nil/reason; read tuning() to distinguish active, waiting_for_weapon and waiting_for_restore. Only one resource owns tuning at a time; another receives weapon_tuning_owned_by_another_resource. Does not equip a weapon, rewrite shared TweakDB records, change projectile types or override server damage policy. Vehicle impulses require a streamed, unfrozen vehicle whose current physics owner is this client. Smart projectile speed applies only to smart weapons. Clearing, switching or stopping the resource removes its own modifiers, with deferred restoration when the engine temporarily retires a holstered weapon's stats.",
+  "description": "Requires a compatible development client exposing native weapon tuning with inventory-instance restoration. Client-only; requires `player.weapons.edit`. Accepts an exact `Items.*` record and a complete options table: omitted fields reset to their defaults. Supports reloadSpeed, fireRate, recoil, spread, damage, magazineCapacity, projectilesPerShot, aimSpeed, chargeSpeed, smartProjectileSpeed and the blastRadius/blastPush/blastLift/blastFalloff/blastCooldown weapon-impact controls. Unknown keys, nonnumeric or nonfinite values and out-of-range multipliers are refused. Returns true when accepted, or nil/reason; read tuning() to distinguish active, waiting_for_weapon and waiting_for_restore. Only one resource owns tuning at a time; another receives weapon_tuning_owned_by_another_resource. Does not equip a weapon, rewrite shared TweakDB records, change projectile types or override server damage policy. Supported inputs are bound-weapon entity hits, actual native impact positions from GameEffectExecutor_StimOnHit, and tracked-projectile collision/explosion callbacks. No synthetic crosshair raycast is substituted. Bare-terrain Comrade coverage remains unverified; generic hitscan ground detection and grenades without the bound weapon object are not promised. Vehicle impulses require a streamed, unfrozen vehicle whose current physics owner is this client. The local open77:weaponBlast(owner,record,sequence,x,y,z) event uses string arguments after cooldown acceptance; it grants no network character authority. Resources request character launches separately through server policy. Smart projectile speed applies only to smart weapons. Clearing, switching or stopping the resource removes its own modifiers, with deferred restoration when the engine temporarily retires a holstered weapon's stats.",
   "params": [
    {
     "name": "record",
@@ -61346,7 +61354,7 @@
   "source": "ResourceHost.cpp",
   "example": "local ok, reason = Open77.weapons.setTuning(\"Items.Preset_Lexington_Default\", { reloadSpeed = 2, recoil = 0.5 })\nif not ok then print(reason) end",
   "inferred": false,
-  "source_line": 24160,
+  "source_line": 24523,
   "permissions": [
    "player.weapons.edit"
   ],
@@ -61367,7 +61375,7 @@
   "name": "tuning",
   "handler": "LuaWeaponTuning",
   "summary": "Reads this resource's native weapon tuning state and diagnostics.",
-  "description": "Requires a compatible development client exposing native weapon tuning with inventory-instance restoration. Client-only; requires `player.weapons.read`. Returns a table or nil/reason. status distinguishes idle, waiting_for_weapon, active, restoring, waiting_for_restore and native failure states; active reports whether the matching weapon is bound. An owned profile includes record, opaque string weaponEntity, modifiers, native stats and cumulative blasts, impulsesQueued, failures and foreignSkipped counters. pendingModifiers counts this resource's deferred cleanup. Idle/restoring results can omit bound-weapon fields. Counters describe queued work rather than measured movement, and a native statistic does not prove that every weapon's animation or projectile logic consumes it. Treat weaponEntity as an opaque string, never as a Lua number.",
+  "description": "Requires a compatible development client exposing native weapon tuning with inventory-instance restoration. Client-only; requires `player.weapons.read`. Returns a table or nil/reason. status distinguishes idle, waiting_for_weapon, active, restoring, waiting_for_restore and native failure states; active reports whether the matching weapon is bound. An owned profile includes record, opaque string weaponEntity, modifiers, native stats and cumulative blasts, impulsesQueued, failures and foreignSkipped counters. projectileContacts counts supported tracked-projectile contacts only; trackedProjectiles is the number still being tracked. Native entity hits and GameEffectExecutor_StimOnHit do not increment projectileContacts, so an accepted blast can leave it at zero. Neither counter establishes a character launch or observed movement. pendingModifiers counts this resource's deferred cleanup. Idle/restoring results can omit bound-weapon fields. Counters describe queued work rather than measured movement, and a native statistic does not prove that every weapon's animation or projectile logic consumes it. Treat weaponEntity as an opaque string, never as a Lua number.",
   "params": [],
   "returns": [
    "state table or nil",
@@ -61378,7 +61386,7 @@
   "source": "ResourceHost.cpp",
   "example": "local state, reason = Open77.weapons.tuning()\nif state then\n    print(state.status, state.active, state.impulsesQueued or 0)\nelse\n    print(reason)\nend",
   "inferred": false,
-  "source_line": 24162,
+  "source_line": 24525,
   "permissions": [
    "player.weapons.read"
   ],
@@ -61391,5 +61399,117 @@
   "constant": false,
   "qualified": "Open77.weapons.tuning",
   "route_id": "Open77.weapons.tuning"
+ },
+ {
+  "namespace": "Open77.motion",
+  "name": "launch",
+  "handler": "LuaMotionLaunch",
+  "summary": "Queue an owned native character launch on an exact local body.",
+  "description": "Requires player.motion.project and a matching development client. entity is a local registry handle (1 for the local player), not a network player ID. The finite nonzero XY direction is normalized; push is 0..20 m/s and lift is 0..14 m/s, with at least one positive. Returns a resource-owned request ID or nil/reason. The local owner must be ready, alive, unmounted and grounded; its request starts pending and activation requires observed movement after one queued native 3D impulse. On a remote body, only the reaction pose is presented; displacement follows owner snapshots. Use state(request) and stop(request) for this resource's request. This projection primitive does not grant server authority, damage or a teleport. Use the matching open77_cyberware projector for network lease and incarnation checks.",
+  "params": [
+   {
+    "name": "entity",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "x",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "y",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "push",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "lift",
+    "type": "number",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "request ID",
+   "nil, reason on rejection"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "-- Client projection only: invoked after the server has granted motion.\nlocal request, reason = Open77.motion.launch(1, 1, 0, 12, 10)\nif request then print(Open77.motion.state(request)) else print(reason) end",
+  "inferred": false,
+  "source_line": 24472,
+  "permissions": [
+   "player.motion.project"
+  ],
+  "reasons": [
+   "invalid_motion",
+   "motion_backend_unavailable",
+   "permission_denied:player.motion.project",
+   "resource_not_running"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.motion.launch",
+  "route_id": "Open77.motion.launch"
+ },
+ {
+  "namespace": "Open77.motion",
+  "name": "launch",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Request a bounded server-authorized character launch.",
+  "description": "Requires players.motion.control and a matching development server. options={x,y,push,lift}; XY must be finite and nonzero and is normalized. push is 0..20 m/s, lift is 0..14 m/s, and at least one must be positive. Requires a ready, alive, unmounted exact incarnation with no active motion or recovery protection. Returns {ok=true,id=string} for admission, or nil/reason; admission is not completed movement. onPlayerMotionChanged reports pending/active/ended, and the pending lease expires after two seconds without the owning client's acknowledgement. Real owners apply one native 3D impulse; updated headless bots publish a bounded ballistic fixture trajectory without REDengine terrain or collision simulation. Observers present the pose and follow owner snapshots. current(playerId) reads the lease, including kind, push and lift; cancel(playerId,id) ends this resource's lease. No damage or generic teleport authority is granted. Motion does not require an implant database; the server still requires canonical body readiness and matching life, incarnation and bucket.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "{ok=true,id=string}",
+   "nil, reason on rejection"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "-- Server: target was selected and authorized by gameplay policy.\nlocal result, reason = Open77.motion.launch(target, {x=1,y=0,push=12,lift=10})\nif result then print(result.id) else print(reason) end",
+  "inferred": false,
+  "source_line": 7939,
+  "permissions": [
+   "players.motion.control"
+  ],
+  "reasons": [
+   "invalid_duration",
+   "invalid_json",
+   "invalid_operation",
+   "invalid_player",
+   "invalid_request",
+   "json_too_large",
+   "motion_unavailable",
+   "permission_denied:players.motion.control",
+   "permission_denied:players.motion.read",
+   "resource_stopping"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.motion.launch",
+  "route_id": "server:Open77.motion.launch"
  }
 ]

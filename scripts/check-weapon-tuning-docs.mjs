@@ -20,10 +20,20 @@ for (const [name, permission, params] of [
   assert.ok(matches[0].permissions.includes(permission));
   assert.equal(api.some((entry) => entry.runtime === "server" && entry.qualified === `Open77.weapons.${name}`), false, "No server tuning overload");
 }
-for (const text of ["compatible development client", 'type(Open77.weapons.setTuning)', "pendingModifiers", "waiting_for_restore", "weapon_tuning_owned_by_another_resource", "300", "512", "64", "--fleet-mode passenger", "-HostPhysics", "Shots at the ground", "https://github.com/Open2077/open77-rp-examples/tree/main/rp_weapons_effect"])
+for (const [runtime, permission, params] of [
+  ["client", "player.motion.project", ["entity", "x", "y", "push", "lift"]],
+  ["server", "players.motion.control", ["playerId", "options"]],
+]) {
+  const matches = api.filter((entry) => entry.runtime === runtime && entry.qualified === "Open77.motion.launch");
+  assert.equal(matches.length, 1, `${runtime} launch`);
+  assert.equal(matches[0].inferred, false);
+  assert.deepEqual(matches[0].params.map((param) => param.name), params);
+  assert.ok(matches[0].permissions.includes(permission));
+}
+for (const text of ["compatible development client", 'type(Open77.weapons.setTuning)', "pendingModifiers", "waiting_for_restore", "weapon_tuning_owned_by_another_resource", "300", "512", "64", "--fleet-mode passenger", "-HostPhysics", "Ground coverage", "open77:weaponBlast", "projectileContacts", "trackedProjectiles", "bounded ballistic", "not a network player ID", "https://github.com/Open2077/open77-rp-examples/tree/main/rp_weapons_effect"])
   assert.ok(guide.toLowerCase().includes(text.toLowerCase()), text);
 const manifest = JSON.parse(await read("content/docs/_manifest.json"));
-for (const target of ["content/api/api.json", "content/docs/weapons-api.md"]) {
+for (const target of ["content/api/api.json", "content/docs/weapons-api.md", "content/docs/player-freeze.md"]) {
   const record = manifest.files.find((entry) => entry.target.replaceAll("\\", "/") === target);
   const text = await read(target);
   assert.equal(record.sha256, createHash("sha256").update(text).digest("hex"), target);
@@ -32,12 +42,13 @@ for (const target of ["content/api/api.json", "content/docs/weapons-api.md"]) {
 assert.equal(manifest.apiEntries, api.length);
 const base = process.argv[2];
 if (base) {
-  for (const route of ["/docs/weapon-customization", "/docs/weapon-customization.md", "/docs/api/client/open77-weapons", "/docs/api/client/open77-weapons.md"]) {
+  for (const route of ["/docs/weapon-customization", "/docs/weapon-customization.md", "/docs/api/client/open77-weapons", "/docs/api/client/open77-weapons.md", "/docs/api/client/open77-motion", "/docs/api/client/open77-motion.md", "/docs/api/server/open77-motion", "/docs/api/server/open77-motion.md"]) {
     const response = await fetch(new URL(route, base));
     assert.equal(response.status, 200, route);
     const text = await response.text();
-    for (const name of ["setTuning", "clearTuning", "tuning"]) assert.ok(text.includes(name), `${route}: ${name}`);
+    const names = route.includes("open77-motion") ? ["launch", "push", "lift"] : ["setTuning", "clearTuning", "tuning"];
+    for (const name of names) assert.ok(text.includes(name), `${route}: ${name}`);
     if (route.endsWith(".md")) assert.ok(response.headers.get("content-type").includes("text/markdown"), route);
   }
 }
-console.log("Weapon tuning: three native signatures, 15 options, permissions, lifecycle, compatibility, links and provenance verified.");
+console.log("Weapon tuning and launch: five signatures, 15 options, permissions, lifecycle, compatibility, links and provenance verified.");
