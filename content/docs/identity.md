@@ -23,9 +23,10 @@ needs an explicit migration before switching keys.
 [Steam, GOG and permanent account identifiers](connection-control.md#steam-gog-and-permanent-account-identifiers)
 for a complete join handler, formats and missing-identifier behavior.
 
-Server `2.31.15+op77.105` adds Epic identifiers. The matching Master update is
-not deployed yet: `epic` stays absent until Master starts issuing v3 tickets to
-compatible servers. A missing store ID never removes the Open77 `license`.
+Server `2.31.15+op77.105` adds Epic identifiers, with the matching Master update
+deployed. Older servers continue receiving v2 tickets: players can still join,
+but `epic` is absent there. Updating a server to read Epic IDs is optional.
+A missing store ID never removes the Open77 `license`.
 
 Steam/GOG ownership is verified once and remains linked to the Open77 account. Since
 `2.31.13+op77.102`, an account manually approved by an Open77 administrator can play without a

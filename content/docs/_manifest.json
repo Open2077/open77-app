@@ -219,12 +219,12 @@
       "target": "content/docs/connection-control.md",
       "slug": "connection-control",
       "title": "Connection control: connect events, whitelists and bans",
-      "bytes": 30027,
-      "sha256": "cc9f9377a2d11444601390fa506c8157452134c0d093da5c2cc999f8eeb29625",
+      "bytes": 30090,
+      "sha256": "b8a9b721cd0cd577743e977cd841ce36ae9a072ededdc7dc3fcc46f437dbca68",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1240d7f0440b7b9a26ce04a5023d0bfdf68a93b3042bf76302fc5e3a9706c13f",
-        "serverVersion": "2.31.13+op77.102",
+        "serverVersion": "2.31.15+op77.105",
         "masterVersion": "2.31.13+op77.103"
       },
       "siteAmendment": {
@@ -469,12 +469,12 @@
       "target": "content/docs/identity.md",
       "slug": "identity",
       "title": "Player identity and username",
-      "bytes": 7543,
-      "sha256": "c5f016a3e60168ba4904c557e0fbed27abcf24fe89f804528a7c1024926277d7",
+      "bytes": 7600,
+      "sha256": "3a5e9f41aa0564f649cc895bc9ee665ca678dad9ddaf299bdb40c0d1dbe7794f",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b444538454356b45a8207cca544d305f39bccbcd9a08ef19a4674336a4bad1f5",
-        "serverVersion": "2.31.13+op77.102",
+        "serverVersion": "2.31.15+op77.105",
         "masterVersion": "2.31.13+op77.103"
       },
       "siteAmendment": {

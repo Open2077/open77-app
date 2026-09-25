@@ -195,10 +195,11 @@ identifies the installation's cryptographic identity and remains the key accepte
 server has admitted the player. No extra permission or store API call is required in a resource.
 
 **Epic:** server `2.31.15+op77.105` also supports `epic`, a 32-character lowercase
-hexadecimal Epic account ID. Its activation requires the matching Master update,
-which is **not deployed yet**. Until that update, the current Master sends v2
-tickets and `epic` remains absent, even for an Epic-linked account. Existing
-clients are compatible; the server advertises v3 ticket support on each heartbeat.
+hexadecimal Epic account ID. The matching Master update is deployed. The server
+advertises v3 ticket support on each heartbeat, and Master includes the Epic ID
+for a qualified linked account. Older servers continue receiving v2 tickets and
+can still admit Epic-linked players, but cannot expose their Epic ID. Updating
+those servers is optional; existing clients remain compatible.
 
 ```lua
 AddEventHandler("onPlayerConnected", function(playerId)
