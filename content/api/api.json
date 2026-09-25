@@ -61293,7 +61293,7 @@
   "name": "clearTuning",
   "handler": "LuaWeaponClearTuning",
   "summary": "Disables this resource's weapon tuning and restores its modifiers.",
-  "description": "Requires a compatible development client exposing native weapon tuning. Client-only; requires `player.weapons.edit`. Disables the calling resource's profile and removes only the modifier handles it owns. Returns true when the request is accepted, or nil/reason on failure; it is a successful no-op when this resource owns no profile and never clears another resource's tuning. If a holstered weapon's StatsObject is temporarily absent, cleanup remains queued until the object returns or the weapon expires. Read tuning().status and pendingModifiers to distinguish idle from restoring. Does not remove granted weapons, ammunition or components. Resource stop and failure also release the tuning profile.",
+  "description": "Requires a compatible development client exposing native weapon tuning. Client-only; requires `player.weapons.edit`. Disables the calling resource's profile and removes only the modifier handles it owns. Returns true when the request is accepted, or nil/reason on failure; it is a successful no-op when this resource owns no profile and never clears another resource's tuning. If a holstered weapon's StatsObject is temporarily absent, cleanup remains queued until the object returns or the weapon expires. Read tuning().status and pendingModifiers to distinguish idle from restoring. Does not remove granted weapons, ammunition or components. Resource stop and failure also release the tuning profile. Known issue under investigation: clearing while a weapon is holstered and then replacing it can leave old tuning on the next weapon instance. Clear tuning while the weapon is drawn, before switching; idle or zero modifiers does not rule out this cached-modifier issue.",
   "params": [],
   "returns": [
    "true or nil",
@@ -61302,7 +61302,7 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "local ok, reason = Open77.weapons.clearTuning()\nif not ok then print(reason) end\nlocal state = Open77.weapons.tuning()\nif state then print(state.status, state.pendingModifiers) end",
+  "example": "-- Clear while this weapon is drawn, before switching weapons.\nlocal ok, reason = Open77.weapons.clearTuning()\nif not ok then print(reason) end\nlocal state = Open77.weapons.tuning()\nif state then print(state.status, state.pendingModifiers) end",
   "inferred": false,
   "source_line": 24161,
   "permissions": [

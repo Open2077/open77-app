@@ -6,6 +6,8 @@ Tune the local held weapon from Lua, then test it in the English weapon workshop
 
 **Experimental:** the six advanced stat controls and restoration after holstering still require gameplay validation. Treat them as development features, and verify the actual weapon behavior and cleanup state before using them in a gamemode.
 
+**Known issue under investigation:** clearing tuning while a weapon is holstered, then replacing it, can leave its old modifiers applied when it is equipped again. Use **Restore stock while the weapon is drawn, before switching weapons**. An `idle` status or zero modifier count does not rule out this issue.
+
 For weapon grants, slots, ammunition, components and grenades, see the [weapon API](weapons-api.md). The three tuning calls run on the **client**; there is no server overload taking a player ID.
 
 ## Open the workshop
@@ -135,6 +137,7 @@ else
     print(reason)
 end
 
+-- Keep the tuned weapon drawn; clear it before switching weapons.
 local cleared, clearError = Open77.weapons.clearTuning()
 if not cleared then print(clearError) end
 ```
@@ -149,7 +152,7 @@ One resource owns the active tuning profile. A second resource receives `weapon_
 | `restoring` | Profile disabled; old modifier handles still await cleanup. |
 | `waiting_for_restore` | A new profile waits for the previous modifiers on this entity to be removed. |
 
-A holstered weapon can temporarily lose its native statistics object. Cleanup is retried when it becomes available; drawing that weapon again allows restoration to finish. A successful `clearTuning()` accepts the disable request, so inspect `pendingModifiers` before reporting cleanup as complete. The bounded cleanup queue can refuse a change with `restore_queue_full`.
+A holstered weapon can temporarily lose its native statistics object. Cleanup is retried when it becomes available, but replacing that weapon while cleanup is pending can leave cached tuning on its next instance. Restore stock while it is drawn, before switching. A successful `clearTuning()` accepts the disable request; `pendingModifiers` reports queued cleanup but cannot detect the known cached-modifier issue. The bounded cleanup queue can refuse a change with `restore_queue_full`.
 
 The state also exposes native readback values and cumulative counters. `impulsesQueued` means events were queued, not that a car visibly moved. `foreignSkipped` indicates nearby vehicles owned elsewhere. `weaponEntity` is an opaque string: do not convert it to a Lua number.
 
@@ -158,7 +161,7 @@ The state also exposes native readback values and cumulative counters. `impulses
 - **No tuning controls:** check for a compatible native client, resource startup and `command.weaponeffects` access.
 - **Waiting for a weapon:** equip and draw the exact selected record, then read state again.
 - **No vehicle movement:** enable a nonzero blast radius and force, hit the vehicle, verify client physics ownership, and check that the vehicle is unfrozen and streamed.
-- **Restoration still pending:** draw the previously tuned weapon and allow cleanup to run before applying another profile to it.
+- **Restoration still pending:** draw the previously tuned weapon and allow cleanup to run before replacing it. Restore stock while it is drawn before switching; replacing it while holstered can leave tuning applied.
 - **A stat changes but the behavior does not:** compare the same weapon and inputs with a neutral profile. Some vanilla weapon logic uses its own limits or cached values.
 
 The workshop's `/weaponeffects measure` command logs actual magazine readings for eight seconds. Use it to compare reloads or bursts, and use before/during/after captures to evaluate vehicle movement. Space diagnostic commands by at least half a second to respect the server command limiter.

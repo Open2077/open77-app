@@ -1084,10 +1084,10 @@
         "upstreamSnapshotSha256": "da99c0133f9086a12e101c45ed777d368e82e592a6c44e0ba7f5042a129e9c43",
         "weaponTuningAmendment": {
           "tool": "scripts/sync-weapon-tuning-docs.mjs",
-          "syncedAt": "2026-09-25T03:25:50.090Z",
+          "syncedAt": "2026-09-25T03:36:23.295Z",
           "sourceRevision": "d359b7c039092e740c3b339724e7d9e344813b64",
           "sourceWorkingTreeDirty": true,
-          "sourceApiSha256": "ede1299fef2080ba810ecf578498005ff961898d0a3eb3b17b3ec4ee2bf08033",
+          "sourceApiSha256": "8759853e1bf809d838e16c9f4f270d774737b89d65c0e74d2e79ff8a4c5b943f",
           "apiRouteIds": [
             "client:Open77.weapons.clearTuning",
             "client:Open77.weapons.setTuning",
@@ -1161,8 +1161,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1642,
-      "bytes": 2303463,
-      "sha256": "4bae0b17adedae00fdbe6d68881e4cbf644708c19ce5fc273424c08c0d4906e2",
+      "bytes": 2303796,
+      "sha256": "e52deebdbde4d818d241b0ed35db43ea946968f091d850ce9f1979ecae4d7c08",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
@@ -1535,10 +1535,10 @@
   },
   "weaponTuningSync": {
     "tool": "scripts/sync-weapon-tuning-docs.mjs",
-    "syncedAt": "2026-09-25T03:25:50.090Z",
+    "syncedAt": "2026-09-25T03:36:23.295Z",
     "sourceRevision": "d359b7c039092e740c3b339724e7d9e344813b64",
     "sourceWorkingTreeDirty": true,
-    "sourceApiSha256": "ede1299fef2080ba810ecf578498005ff961898d0a3eb3b17b3ec4ee2bf08033",
+    "sourceApiSha256": "8759853e1bf809d838e16c9f4f270d774737b89d65c0e74d2e79ff8a4c5b943f",
     "apiRouteIds": [
       "client:Open77.weapons.clearTuning",
       "client:Open77.weapons.setTuning",
