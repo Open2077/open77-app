@@ -2,11 +2,11 @@
 
 Tune the local held weapon from Lua, then test it in the English weapon workshop. The native API exposes reload speed, fire rate, recoil, spread and advanced weapon statistics, plus an optional vehicle-impact impulse.
 
-**Requires a compatible development client with native weapon tuning.** Check that `Open77.weapons.setTuning` exists before enabling this feature. Installing the example resource does not add missing native functions to an older client.
+**Requires a compatible development client with native weapon tuning and inventory-instance restoration.** Check that `Open77.weapons.setTuning` exists before enabling this feature, and use a development build containing the restoration fix. Function availability alone does not distinguish older experimental builds. Installing the example resource does not add missing native functions to an older client.
 
-**Experimental:** the six advanced stat controls and restoration after holstering still require gameplay validation. Treat them as development features, and verify the actual weapon behavior and cleanup state before using them in a gamemode.
+**Experimental controls:** projectile count and smart-projectile speed expose native statistics, but their effects on actual projectile multiplicity and flight speed remain unverified. Aim speed supplies native animation timings; it does not promise an exact visible transition duration. Check the weapon-specific behavior below before using a profile in a gamemode.
 
-**Known issue under investigation:** clearing tuning while a weapon is holstered, then replacing it, can leave its old modifiers applied when it is equipped again. Use **Restore stock while the weapon is drawn, before switching weapons**. An `idle` status or zero modifier count does not rule out this issue.
+Cleanup can be deferred while a weapon is holstered. The corrected client tracks the exact inventory item across replacement engine entities and finishes removing its modifiers when that item is drawn again. Read `pendingModifiers` before reporting cleanup complete.
 
 For weapon grants, slots, ammunition, components and grenades, see the [weapon API](weapons-api.md). The three tuning calls run on the **client**; there is no server overload taking a player ID.
 
@@ -80,7 +80,15 @@ Multipliers are neutral at `1`. Numeric strings, nonfinite values, unknown field
 | `blastFalloff` | 1 | 0–4 | Falloff exponent; zero gives uniform weight inside the radius. |
 | `blastCooldown` | 0.25 | 0.1–5 | Seconds between impulses; coalesces multiple hits from one explosion. |
 
-Count limits cap increases requested by this profile; a pre-existing count above 512 rounds or 64 projectiles is preserved. Advanced statistics are weapon-dependent. A returned native stat value does not guarantee that every weapon's animation, magazine or projectile logic consumes that value. Inspect the actual magazine with `Open77.weapons.snapshot()` before calling `setAmmo`; increasing capacity does not add ammunition. Charging and smart-projectile settings cannot add those capabilities to a weapon that lacks them. Projectile type, trail, model and explosion visuals are not configurable through this API.
+Count limits cap increases requested by this profile; a pre-existing count above 512 rounds or 64 projectiles is preserved. Advanced statistics are weapon-dependent. A returned native stat value does not guarantee that every weapon's animation, magazine or projectile logic consumes that value. Charging and smart-projectile settings cannot add those capabilities to a weapon that lacks them. Projectile type, trail, model and explosion visuals are not configurable through this API.
+
+### Weapon-specific behavior
+
+- **Magazine capacity:** perform a real reload after changing capacity or restoring stock, then read `Open77.weapons.snapshot()`. The currently loaded magazine can keep its previous capacity until a reload refreshes it. Increasing capacity does not add ammunition; use the reported capacity when requesting `setAmmo()`.
+- **Damage:** increasing the native multiplier can increase vehicle health loss, but hit location and vanilla damage rules still affect the result. A value of `3` is not a guarantee of exactly three times the final damage.
+- **Charge speed:** changes how quickly a charging weapon reaches its firing threshold. The weapon's authored threshold remains in place, so a faster charge does not unlock a higher charge level or guarantee an exact timing ratio on every weapon.
+- **Aim speed:** changes the aim-in and aim-out durations supplied to native animation. These are requested animation timings, not a frame-accurate measurement of the visible transition.
+- **Projectile count and smart-projectile speed:** remain experimental. A stat change or a visible shot alone does not establish additional projectiles or a different flight speed.
 
 The damage multiplier does not change authoritative server rules. Raw player-hit damage reports above 300 are rejected by the server; tuning is not permission to bypass that limit.
 
@@ -152,7 +160,9 @@ One resource owns the active tuning profile. A second resource receives `weapon_
 | `restoring` | Profile disabled; old modifier handles still await cleanup. |
 | `waiting_for_restore` | A new profile waits for the previous modifiers on this entity to be removed. |
 
-A holstered weapon can temporarily lose its native statistics object. Cleanup is retried when it becomes available, but replacing that weapon while cleanup is pending can leave cached tuning on its next instance. Restore stock while it is drawn, before switching. A successful `clearTuning()` accepts the disable request; `pendingModifiers` reports queued cleanup but cannot detect the known cached-modifier issue. The bounded cleanup queue can refuse a change with `restore_queue_full`.
+A holstered weapon can temporarily lose its native statistics object. The client keeps the exact modifier handles and associates them with the inventory item even if its engine entity is destroyed. Drawing that same item again allows removal on its current entity; another copy of the same weapon record is a different item. Clearing while the weapon is drawn normally lets cleanup finish immediately.
+
+A successful `clearTuning()` accepts the disable request. `pendingModifiers` reports unfinished cleanup, including after the resource stops; wait for zero before reporting it complete. A new profile on the same item waits for its previous modifiers to be removed. The queue holds at most 32 pending bindings and refuses further changes with `restore_queue_full` rather than dropping cleanup handles.
 
 The state also exposes native readback values and cumulative counters. `impulsesQueued` means events were queued, not that a car visibly moved. `foreignSkipped` indicates nearby vehicles owned elsewhere. `weaponEntity` is an opaque string: do not convert it to a Lua number.
 
@@ -161,7 +171,7 @@ The state also exposes native readback values and cumulative counters. `impulses
 - **No tuning controls:** check for a compatible native client, resource startup and `command.weaponeffects` access.
 - **Waiting for a weapon:** equip and draw the exact selected record, then read state again.
 - **No vehicle movement:** enable a nonzero blast radius and force, hit the vehicle, verify client physics ownership, and check that the vehicle is unfrozen and streamed.
-- **Restoration still pending:** draw the previously tuned weapon and allow cleanup to run before replacing it. Restore stock while it is drawn before switching; replacing it while holstered can leave tuning applied.
+- **Restoration still pending:** draw the same inventory item that was previously tuned, then wait for `pendingModifiers` to reach zero. Another copy of the same record does not complete that item's cleanup.
 - **A stat changes but the behavior does not:** compare the same weapon and inputs with a neutral profile. Some vanilla weapon logic uses its own limits or cached values.
 
 The workshop's `/weaponeffects measure` command logs actual magazine readings for eight seconds. Use it to compare reloads or bursts, and use before/during/after captures to evaluate vehicle movement. Space diagnostic commands by at least half a second to respect the server command limiter.
