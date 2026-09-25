@@ -6,7 +6,7 @@ const nav = JSON.parse(await readFile("content/docs/meta.json", "utf8"));
 const pages = nav.sections.flatMap((section) => section.pages);
 assert.equal(new Set(nav.sections.map((section) => section.id)).size, nav.sections.length, "Duplicate topic IDs");
 assert.equal(new Set(pages.map((page) => page.slug)).size, pages.length, "A guide must have exactly one navigation home");
-assert.equal(pages.length, 117, "Review guide coverage when adding or removing pages");
+assert.equal(pages.length, 118, "Review guide coverage when adding or removing pages");
 const collections = [...new Set(nav.sections.map((section) => section.group))];
 assert.deepEqual(collections, ["Start & host", "Build resources", "Game systems", "Reference & tools"]);
 let previous = "";
@@ -29,6 +29,7 @@ for (const [id, slugs] of Object.entries({
   server: ["host-a-server", "server-startup", "server-licensing", "database"],
   "server-administration": ["warden", "rcon", "metrics", "community-hub-warden", "warden-players"],
   vehicles: ["vehicles", "vehicle-paint", "vehicle-ai", "vehicle-weapons", "armed-vehicles"],
+  weapons: ["weapons-api", "weapon-customization"],
   characters: ["npcs", "npc-behavior", "npc-catalogue", "player-models", "player-model-catalogue"],
   animations: ["rp-animations", "rp-animation-catalogue", "player-interactions", "attachments"],
   map: ["native-map", "blips", "custom-blip-icons", "markers", "world-queries", "zones", "polyzone"],

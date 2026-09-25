@@ -62,7 +62,9 @@
     "inspect:links": "node scripts/inspect-links.mjs",
     "inspect:prose": "node scripts/inspect-prose.mjs",
     "screenshot": "node scripts/screenshot.mjs",
-    "build:brand": "node scripts/build-brand.mjs"
+    "build:brand": "node scripts/build-brand.mjs",
+    "sync:weapon-tuning": "node scripts/sync-weapon-tuning-docs.mjs",
+    "verify:weapon-tuning": "node scripts/check-weapon-tuning-docs.mjs"
   },
   "dependencies": {
     "@shikijs/rehype": "^4.4.3",

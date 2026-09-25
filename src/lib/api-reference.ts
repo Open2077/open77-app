@@ -212,6 +212,10 @@ const RUNTIME_NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGu
 };
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (runtime === "client" && raw.namespace === "Open77.weapons" &&
+      ["setTuning", "clearTuning", "tuning"].includes(raw.name)) {
+    return { usageGuideHref: "/docs/weapon-customization", usageGuideLabel: "Weapon customization & workshop" };
+  }
   if (runtime === "client" && raw.namespace === "Open77.gizmos") {
     return { usageGuideHref: "/docs/gizmos", usageGuideLabel: "Entity gizmos guide" };
   }

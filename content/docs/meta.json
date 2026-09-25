@@ -421,10 +421,10 @@
       ]
     },
     {
-      "id": "cyberware",
-      "title": "Weapons & abilities",
+      "id": "weapons",
+      "title": "Weapons",
       "group": "Game systems",
-      "description": "Manage weapons, loot, cyberware and multiplayer combat abilities.",
+      "description": "Equip weapons, manage ammunition and customize native weapon behavior.",
       "pages": [
         {
           "slug": "weapons-api",
@@ -432,6 +432,22 @@
           "nav": "Weapons",
           "description": "Weapon templates, slots, holstering and server assignments."
         },
+        {
+          "slug": "weapon-customization",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Customization & workshop",
+          "title": "Weapon customization",
+          "description": "Tune reload speed, recoil, advanced weapon statistics and vehicle-impact impulses with native Lua calls and the English weapon workshop."
+        }
+      ]
+    },
+    {
+      "id": "cyberware",
+      "title": "Cyberware & abilities",
+      "group": "Game systems",
+      "description": "Manage loot, cyberware and multiplayer combat abilities.",
+      "pages": [
         {
           "slug": "loot",
           "kind": "guide",

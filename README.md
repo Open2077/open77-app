@@ -74,6 +74,15 @@ src/
 
 ## Documentation pipeline
 
+The authored [weapon customization guide](content/guides/weapon-customization.md)
+links to the public `rp_weapons_effect` example. Update its three native API cards
+with `npm run sync:weapon-tuning -- --from <platform-worktree>/wiki` after
+generating `Open77.weapons` in the platform checkout. This scoped sync preserves
+unrelated public cards and records source provenance. Verify with
+`npm run verify:weapon-tuning`; pass a site URL to also check the HTML and Markdown
+routes. The guide requires a compatible development client and documents
+weapon-dependent settings without treating stat readback as gameplay proof.
+
 Most guides are **not** authored in this repository. They live in the platform repository's
 `wiki/` directory next to the code they describe, and `npm run sync:wiki` copies them into
 `content/docs/`. Editing `content/docs/*.md` directly means the next sync overwrites the change —

@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
   "guides": 94,
-  "apiEntries": 1639,
+  "apiEntries": 1642,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -1077,11 +1077,24 @@
       "target": "content/docs/weapons-api.md",
       "slug": "weapons-api",
       "title": "Weapon Lua API",
-      "bytes": 23385,
-      "sha256": "670e7dc8336b71b1a3bd36a375b039b596f1817736cb3c5ab3ad6c6ccfb41c93",
+      "bytes": 23771,
+      "sha256": "07abf607ce85e34242e9b0a71a21cd67f738e0b94b42405d9d54b4933c40cc4f",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "da99c0133f9086a12e101c45ed777d368e82e592a6c44e0ba7f5042a129e9c43"
+        "upstreamSnapshotSha256": "da99c0133f9086a12e101c45ed777d368e82e592a6c44e0ba7f5042a129e9c43",
+        "weaponTuningAmendment": {
+          "tool": "scripts/sync-weapon-tuning-docs.mjs",
+          "syncedAt": "2026-09-25T03:25:50.090Z",
+          "sourceRevision": "d359b7c039092e740c3b339724e7d9e344813b64",
+          "sourceWorkingTreeDirty": true,
+          "sourceApiSha256": "ede1299fef2080ba810ecf578498005ff961898d0a3eb3b17b3ec4ee2bf08033",
+          "apiRouteIds": [
+            "client:Open77.weapons.clearTuning",
+            "client:Open77.weapons.setTuning",
+            "client:Open77.weapons.tuning"
+          ],
+          "apiMode": "merge-selected-cards-preserve-other-site-entries"
+        }
       }
     },
     {
@@ -1147,9 +1160,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1639,
-      "bytes": 2297894,
-      "sha256": "be79d2f77dbb5b929a4b4a02b167c39727d66e487e9cba933c64d76d1ab18ff2",
+      "entries": 1642,
+      "bytes": 2303463,
+      "sha256": "4bae0b17adedae00fdbe6d68881e4cbf644708c19ce5fc273424c08c0d4906e2",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
@@ -1519,5 +1532,18 @@
     "guideMode": "site-owned-technical-amendment",
     "apiMode": "merge-selected-cards-preserve-other-site-entries",
     "permissionCorrection": "get requires world.markers; shapes is permission-free, verified against Lua handlers"
+  },
+  "weaponTuningSync": {
+    "tool": "scripts/sync-weapon-tuning-docs.mjs",
+    "syncedAt": "2026-09-25T03:25:50.090Z",
+    "sourceRevision": "d359b7c039092e740c3b339724e7d9e344813b64",
+    "sourceWorkingTreeDirty": true,
+    "sourceApiSha256": "ede1299fef2080ba810ecf578498005ff961898d0a3eb3b17b3ec4ee2bf08033",
+    "apiRouteIds": [
+      "client:Open77.weapons.clearTuning",
+      "client:Open77.weapons.setTuning",
+      "client:Open77.weapons.tuning"
+    ],
+    "apiMode": "merge-selected-cards-preserve-other-site-entries"
   }
 }

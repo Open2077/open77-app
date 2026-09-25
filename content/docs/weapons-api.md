@@ -2,6 +2,12 @@
 
 Manage the local player's three `EquipmentArea.Weapon` slots with the asynchronous client API. Use `open77_weapons` for authenticated server-to-owner requests and exact TweakDB IDs such as `Items.Preset_Lexington_Default`.
 
+For reload speed, recoil, advanced native statistics and vehicle-impact impulses,
+see [Weapon customization](weapon-customization.md) and the English
+[rp_weapons_effect workshop](https://github.com/Open2077/open77-rp-examples/tree/main/rp_weapons_effect).
+Tuning requires a compatible development client and uses separate, resource-owned
+`setTuning`, `clearTuning` and `tuning` calls.
+
 The three-slot surface intentionally rejects heavy weapons (`WeaponHeavy`) and
 arm cyberware (`ArmsCW`): those equipment areas have different REDengine
 lifecycles. Grenades are not weapon slots either — they are `QuickSlot`
