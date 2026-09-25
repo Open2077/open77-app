@@ -294,6 +294,13 @@ archives. Each channel reads its own CDN `latest.json` at request time, with
 snapshots; publishing a pointer updates them without redeploying the website.
 Only metadata for immutable, versioned artefacts is cached.
 
+Release downloads use `https://cdn.open77.dev` (S3-compatible object storage).
+`NEXT_PUBLIC_OP77_CDN_URL` can override the origin; the previous official value
+`https://cdn.open2077.net` is migrated automatically. Existing release metadata
+using that exact legacy origin is rewritten to the new domain only after the
+same channel/version validation. Live status feeds remain on their separate
+configured endpoint; this change does not move the master API or server packs.
+
 Server Stable reads `/server/latest.json`; opt-in Unstable reads
 `/server/unstable/latest.json`. Both point to immutable `/server/<version>/`
 archives. The preview section on `/host` is collapsed by default and download

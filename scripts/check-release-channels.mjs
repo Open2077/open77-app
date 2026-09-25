@@ -14,6 +14,31 @@ async function moduleUrl(file, replacements = {}) {
   return `data:text/javascript;base64,${Buffer.from(code).toString("base64")}`;
 }
 const cdnUrl = await moduleUrl("src/lib/cdn.ts");
+const savedCdn = process.env.NEXT_PUBLIC_OP77_CDN_URL;
+try {
+  delete process.env.NEXT_PUBLIC_OP77_CDN_URL;
+  assert.equal((await import(`${cdnUrl}#default`)).CDN_URL, "https://cdn.open77.dev");
+  process.env.NEXT_PUBLIC_OP77_CDN_URL = "https://cdn.open2077.net/";
+  const migrated = await import(`${cdnUrl}#legacy-env`);
+  assert.equal(migrated.CDN_URL, "https://cdn.open77.dev", "old production env follows CDN migration");
+  const old = "https://cdn.open2077.net/server/2.31.13+op77.91/server.zip";
+  assert.equal(migrated.releaseArtefactUrl(old, "server", "2.31.13+op77.91"), old.replace("cdn.open2077.net", "cdn.open77.dev"));
+  for (const bad of [old.replace(".net/", ".net.evil.invalid/"), old.replace("https://", "http://"),
+    old.replace("server.zip", "folder%2fserver.zip"), old.replace("server.zip", "folder%5cserver.zip"),
+    old + "?redirect=evil", old + "#fragment", old.replace("https://", "https://user:pass@"),
+    old.replace("op77.91", "op77.90"), old.replace("/server/", "/launcher/")]) {
+    assert.equal(migrated.releaseArtefactUrl(bad, "server", "2.31.13+op77.91"), null, "legacy aliases keep strict release guards");
+  }
+  process.env.NEXT_PUBLIC_OP77_CDN_URL = "https://downloads.example.invalid/releases/";
+  const custom = await import(`${cdnUrl}#custom-env`);
+  assert.equal(custom.CDN_URL, "https://downloads.example.invalid/releases");
+  assert.equal(custom.releaseArtefactUrl(old, "server", "2.31.13+op77.91"), null, "custom origins never trust official aliases");
+  const own = `${custom.CDN_URL}/server/2.31.13+op77.91/server.zip`;
+  assert.equal(custom.releaseArtefactUrl(own, "server", "2.31.13+op77.91"), own);
+} finally {
+  if (savedCdn === undefined) delete process.env.NEXT_PUBLIC_OP77_CDN_URL;
+  else process.env.NEXT_PUBLIC_OP77_CDN_URL = savedCdn;
+}
 const cdn = await import(cdnUrl);
 const { fetchLatestServerRelease } = await import(await moduleUrl("src/lib/server-release.ts", { "@/lib/cdn": cdnUrl }));
 const { fetchLatestLauncherRelease } = await import(await moduleUrl("src/lib/launcher-release.ts", { "@/lib/cdn": cdnUrl }));

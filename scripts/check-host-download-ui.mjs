@@ -6,7 +6,10 @@ import os from "node:os";
 import path from "node:path";
 
 const origin = process.argv[2] ?? "http://127.0.0.1:3037";
-const cdn = (process.env.NEXT_PUBLIC_OP77_CDN_URL ?? "https://cdn.open2077.net").replace(/\/$/, "");
+const configuredCdn = (process.env.NEXT_PUBLIC_OP77_CDN_URL ?? "https://cdn.open77.dev").replace(/\/$/, "");
+const cdn = configuredCdn === "https://cdn.open2077.net" ? "https://cdn.open77.dev" : configuredCdn;
+const downloadUrl = url => cdn === "https://cdn.open77.dev"
+  ? url.replace(/^https:\/\/cdn\.open2077\.net\//, "https://cdn.open77.dev/") : url;
 const [serverRelease, launcherRelease] = await Promise.all(["server", "launcher"].map(async channel => {
   const response = await fetch(`${cdn}/${channel}/latest.json`, { cache: "no-store" });
   assert.equal(response.status, 200);
@@ -115,8 +118,8 @@ try {
     await waitFor(() => evaluate(`document.querySelectorAll('#download .host-build-cta a').length===2`));
     assert.equal(await evaluate("location.pathname"), "/host");
     assert.equal(await evaluate(`document.querySelector('[data-release-channel="server"]').dataset.releaseVersion`), serverRelease.version);
-    assert.deepEqual((await evaluate(downloadLinks)).sort(), Object.values(serverRelease.builds).map(build => build.url).sort(), "Host offers exactly the current CDN archives");
-    for (const url of await evaluate(downloadLinks)) assert.ok(url.startsWith("https://cdn.open2077.net/server/"));
+    assert.deepEqual((await evaluate(downloadLinks)).sort(), Object.values(serverRelease.builds).map(build => downloadUrl(build.url)).sort(), "Host offers exactly the current CDN archives");
+    for (const url of await evaluate(downloadLinks)) assert.ok(url.startsWith(`${cdn}/server/`));
     assert.ok(await evaluate(`!document.querySelector('.host-locked')`), "Approved non-admin sees downloads");
     assert.ok(await evaluate("__hostTest.meCalls > 0"), "Approval comes from a fresh /me response");
     await evaluate(`document.getElementById('download').scrollIntoView()`);

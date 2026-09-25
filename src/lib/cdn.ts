@@ -6,15 +6,17 @@
  * release pipeline under the same origin, so the origin and the two formatters
  * live here rather than in either page's own module.
  *
- * Every read of this CDN happens server-side on purpose: it is a plain static
- * file server with no CORS headers, so a browser fetch would be blocked while a
- * Node fetch needs nothing.
+ * Metadata reads stay server-side, so release discovery does not require
+ * bucket CORS rules or expose any storage-provider configuration to browsers.
  */
 
 /** Public CDN root, without a trailing slash. */
-export const CDN_URL = (
-  process.env.NEXT_PUBLIC_OP77_CDN_URL ?? "https://cdn.open2077.net"
-).replace(/\/$/, "");
+const PUBLIC_CDN = "https://cdn.open77.dev";
+const LEGACY_CDN = "https://cdn.open2077.net";
+const configuredCdn = (process.env.NEXT_PUBLIC_OP77_CDN_URL ?? PUBLIC_CDN).replace(/\/$/, "");
+// Also migrate deployments still carrying the old official environment value.
+// Explicit custom origins (local development / another provider) remain intact.
+export const CDN_URL = configuredCdn === LEGACY_CDN ? PUBLIC_CDN : configuredCdn;
 
 /** Mutable channel pointers must never be frozen in Next's data/ISR cache. */
 export async function fetchReleasePointer(channel: "server" | "server/unstable" | "launcher") {
@@ -42,11 +44,15 @@ export function releaseArtefactUrl(value: unknown, channel: "server" | "launcher
   try {
     const url = new URL(value);
     const root = new URL(CDN_URL);
+    // Existing immutable release metadata may name the old official origin.
+    // Rewrite only that exact origin, then apply the same channel/version guards.
+    if (root.origin === PUBLIC_CDN && root.pathname === "/" && url.origin === LEGACY_CDN)
+      url.hostname = root.hostname;
     const prefix = `${root.pathname.replace(/\/$/, "")}/${channel}/${version}/`;
     const pathname = decodeURIComponent(url.pathname);
     if (url.origin !== root.origin || url.username || url.password || url.search || url.hash ||
         !pathname.startsWith(prefix) || !pathname.slice(prefix.length) ||
-        pathname.slice(prefix.length).includes("/")) return null;
+        /[/\\]/.test(pathname.slice(prefix.length))) return null;
     return url.href;
   } catch {
     return null;
