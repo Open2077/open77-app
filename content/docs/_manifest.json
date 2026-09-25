@@ -219,8 +219,8 @@
       "target": "content/docs/connection-control.md",
       "slug": "connection-control",
       "title": "Connection control: connect events, whitelists and bans",
-      "bytes": 29278,
-      "sha256": "adc7ee50b5c77470f7190de120d5d18caad85e6c7319cfcd5065dbf0eda45bab",
+      "bytes": 30027,
+      "sha256": "cc9f9377a2d11444601390fa506c8157452134c0d093da5c2cc999f8eeb29625",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1240d7f0440b7b9a26ce04a5023d0bfdf68a93b3042bf76302fc5e3a9706c13f",
@@ -469,8 +469,8 @@
       "target": "content/docs/identity.md",
       "slug": "identity",
       "title": "Player identity and username",
-      "bytes": 7284,
-      "sha256": "5aadab823630e65a3794fc691bb52b62e614daa0e4438044443a8a924aacfacc",
+      "bytes": 7543,
+      "sha256": "c5f016a3e60168ba4904c557e0fbed27abcf24fe89f804528a7c1024926277d7",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b444538454356b45a8207cca544d305f39bccbcd9a08ef19a4674336a4bad1f5",

@@ -194,6 +194,12 @@ identifies the installation's cryptographic identity and remains the key accepte
 **Server Lua, since `2.31.13+op77.101`.** Read identifiers in `onPlayerConnected`, after the
 server has admitted the player. No extra permission or store API call is required in a resource.
 
+**Epic:** server `2.31.15+op77.105` also supports `epic`, a 32-character lowercase
+hexadecimal Epic account ID. Its activation requires the matching Master update,
+which is **not deployed yet**. Until that update, the current Master sends v2
+tickets and `epic` remains absent, even for an Epic-linked account. Existing
+clients are compatible; the server advertises v3 ticket support on each heartbeat.
+
 ```lua
 AddEventHandler("onPlayerConnected", function(playerId)
     local ids, reason = Open77.players.identifiers(playerId)
@@ -205,10 +211,12 @@ AddEventHandler("onPlayerConnected", function(playerId)
     local license = ids.license -- permanent Open77 account ID
     local steamId = ids.steam   -- nil when Steam is not linked
     local gogId = ids.gog       -- nil when GOG is not linked
+    local epicId = ids.epic     -- nil when Epic is not carried by the ticket
 
     print("Open77 license: " .. tostring(license))
     print("Steam: " .. tostring(steamId))
     print("GOG: " .. tostring(gogId))
+    print("Epic: " .. tostring(epicId))
 end)
 ```
 
@@ -219,6 +227,7 @@ The table fields and `GetPlayerIdentifierByType` return **strings without a type
 | `license` | Open77 account GUID as 32 lowercase hexadecimal characters, without dashes | Persistent account key for characters, inventories and progression across linked device identities |
 | `steam` | SteamID in lowercase hexadecimal, without `0x` | Linked Steam account; this is not the decimal SteamID64 representation |
 | `gog` | GOG account ID in decimal | Linked GOG account |
+| `epic` | Epic account ID as 32 lowercase hexadecimal characters | Linked Epic account, carried by a verified v3 ticket |
 | `open77` / `userId` | The existing identity GUID, with dashes | Installation identity; keep using `userId` for APIs such as `Open77.access` that require it |
 
 Keep these values as strings in Lua, JSON and database columns. Do not use `tonumber` to store
@@ -232,8 +241,9 @@ The FiveM-style compatibility functions expose the same values:
 local license = GetPlayerIdentifierByType(playerId, "license")
 local steamId, steamReason = GetPlayerIdentifierByType(playerId, "steam")
 local gogId, gogReason = GetPlayerIdentifierByType(playerId, "gog")
+local epicId, epicReason = GetPlayerIdentifierByType(playerId, "epic")
 
--- Array entries include their prefix: license:..., steam:..., gog:...
+-- Array entries include their prefix: license:..., steam:..., gog:..., epic:...
 for _, identifier in ipairs(GetPlayerIdentifiers(playerId) or {}) do
     print(identifier)
 end
@@ -241,17 +251,17 @@ end
 
 `GetPlayerIdentifiers` also includes the existing `open77:`, `name:` and `fingerprint:` entries.
 Missing identifiers are omitted. `GetPlayerIdentifierByType` accepts type names case-insensitively
-and returns `nil, "identifier_not_linked"` when `license`, `steam` or `gog` is unavailable.
+and returns `nil, "identifier_not_linked"` when `license`, `steam`, `gog` or `epic` is unavailable.
 An unsupported type returns `nil, "unknown_identifier_type"`; a non-string type returns
 `nil, "invalid_identifier_type"`. `Open77.players.identifiers` returns `nil, "invalid_player_id"`
 for an invalid session ID, or `nil, "player_not_found"` when no player matches it.
 
-The Master verifies **Cyberpunk 2077 and Phantom Liberty on the same Steam or GOG account**
+The Master verifies **Cyberpunk 2077 and Phantom Liberty on the same Steam, GOG or Epic account**
 once and permanently links that store account to the Open77 account. One qualifying store is
 sufficient. Starting with `2.31.13+op77.102`, historical proof expiration does not require another
 store login or ownership check. The Master still issues a fresh, short-lived signed ticket for
 each connection. These identifiers come from the ticket verified by the server; scripts do not
-receive raw Steam/GOG tickets, access tokens or passwords. No Discord or Xbox identifier is exposed.
+receive raw store tickets, access tokens or passwords. No Discord or Xbox identifier is exposed.
 
 An Open77 administrator can also approve an account manually, for example when its store cannot
 be verified automatically. On server runtime `2.31.13+op77.102` or later, this account has a valid
@@ -539,8 +549,8 @@ end)
 | `playerConnecting` (event) | `players.gate` | `(name, setKickReason, deferrals)` |
 | `playerJoining` (event) | None | `(oldId)`, `source` = the new player id |
 | `playerDropped` (event) | None | `(reason)`, `source` = the player who left |
-| `Open77.players.identity` / `GetPlayerIdentity` | None | `(playerId) -> { userId, name, publicKey, fingerprint, joinedAt, license?, steam?, gog? }` or `nil` |
-| `Open77.players.identifiers` | None for account/store IDs | `(playerId) -> { open77, userId, name, fingerprint, joinedAt, license?, steam?, gog?, endpoint? }` or `nil, reason`; `endpoint` needs `players.identity.sensitive` |
+| `Open77.players.identity` / `GetPlayerIdentity` | None | `(playerId) -> { userId, name, publicKey, fingerprint, joinedAt, license?, steam?, gog?, epic? }` or `nil` |
+| `Open77.players.identifiers` | None for account/store IDs | `(playerId) -> { open77, userId, name, fingerprint, joinedAt, license?, steam?, gog?, epic?, endpoint? }` or `nil, reason`; `endpoint` needs `players.identity.sensitive` |
 | `GetPlayerIdentifierByType` | None | `(playerId, type) -> bare string` or `nil, reason` |
 | `GetPlayerIdentifiers` | None | `(playerId) -> array of "type:value" strings` or `nil, "player_not_found"` |
 | `Open77.players.identifier` / `name` | None | `(playerId)` |

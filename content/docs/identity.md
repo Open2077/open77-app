@@ -10,7 +10,7 @@ Identifiers have different jobs:
 |---|---|---|
 | `license` | Permanent Open77 account | Characters, inventories and progression across linked devices |
 | `userId` / `open77` | Persistent installation identity | Existing identity-based APIs, including built-in access lists and ACLs |
-| `steam` / `gog` | Linked store account | Store identity supplied by the verified Master ticket |
+| `steam` / `gog` / `epic` | Linked store account | Store identity supplied by the verified Master ticket; Epic needs v3 |
 | `playerId` / `source` | One connection | Addressing the player during the current session |
 | `displayName` | Editable profile field | Chat and presentation only |
 
@@ -22,6 +22,10 @@ needs an explicit migration before switching keys.
 `license`, `steam` and `gog` are available to server Lua since `2.31.13+op77.101`. See
 [Steam, GOG and permanent account identifiers](connection-control.md#steam-gog-and-permanent-account-identifiers)
 for a complete join handler, formats and missing-identifier behavior.
+
+Server `2.31.15+op77.105` adds Epic identifiers. The matching Master update is
+not deployed yet: `epic` stays absent until Master starts issuing v3 tickets to
+compatible servers. A missing store ID never removes the Open77 `license`.
 
 Steam/GOG ownership is verified once and remains linked to the Open77 account. Since
 `2.31.13+op77.102`, an account manually approved by an Open77 administrator can play without a
