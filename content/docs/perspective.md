@@ -9,6 +9,14 @@ same bytes leave your client whether you are in first or third person.
 permissions { "perspective.policy" }   -- server policy, or a client-side forced view
 ```
 
+## Hide the local avatar
+
+Use [setLocalPuppetVisible](local-puppet-visibility.md) to hide the body and held
+weapon without leaving third person. The same request keeps the native body
+hidden when switching to first person. Server `Open77.players.setVisible`
+controls observer visibility separately.
+
+
 ## The player's side
 
 | | |

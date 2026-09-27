@@ -311,6 +311,12 @@
           "description": "Query native player states and apply resource-owned movement, aim and firing restrictions. Includes IsPlayer checks, FreezePosition, FreezeRotation, Allow controls, permissions and replication limits."
         },
         {
+          "slug": "local-puppet-visibility",
+          "kind": "guide",
+          "nav": "Local avatar visibility",
+          "description": "Hide the local player body and held weapon in first or third person, with resource-owned requests and a Prop Hunt example."
+        },
+        {
           "slug": "player-stats",
           "kind": "guide",
           "nav": "Health and stamina",
@@ -422,15 +428,21 @@
     },
     {
       "id": "weapons",
-      "title": "Weapons",
+      "title": "Weapons & consumables",
       "group": "Game systems",
-      "description": "Equip weapons, manage ammunition and customize native weapon behavior.",
+      "description": "Equip weapons, manage ammunition, grenades and healing charges, and customize native behavior.",
       "pages": [
         {
           "slug": "weapons-api",
           "kind": "guide",
           "nav": "Weapons",
           "description": "Weapon templates, slots, holstering and server assignments."
+        },
+        {
+          "slug": "consumables-api",
+          "kind": "guide",
+          "nav": "Grenades & healing",
+          "description": "Configure grenade, MaxDoc inhaler and Bounce Back injector charges, equipment and regeneration with client and server Lua APIs."
         },
         {
           "slug": "weapon-customization",

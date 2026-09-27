@@ -2,12 +2,23 @@
 
 Read native player state and apply client-local controls. Player IDs are network IDs, not entity handles. Omit the ID to target the local player. Failed reads return `nil, reason`; failed controls return `false, reason`.
 
-Available in client **2.31.13+op77.62**, protocol **1.25**. These are client APIs;
+The original checks and controls are available in client **2.31.13+op77.62**, protocol **1.25**. These are client APIs;
 server resources request their own client's actions through permissioned events.
 
 ```lua
 permissions { 'players.read', 'players.controls' }
 ```
+
+## Local avatar visibility
+
+[Local player visibility](local-puppet-visibility.md) explains
+`Open77.players.setLocalPuppetVisible(visible)` and
+`Open77.players.isLocalPuppetVisible()`, including the
+`players.local.visibility` permission and resource cleanup. Hide the native body
+and third-person double while keeping the selected camera, for example in Prop
+Hunt. These functions require a compatible client independently of the utility
+version listed above.
+
 
 ## Read-only checks
 

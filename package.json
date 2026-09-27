@@ -51,7 +51,7 @@
     "verify:voice": "node scripts/check-voice-docs.mjs",
     "sync:utilities": "node scripts/sync-utilities-docs.mjs",
     "verify:utilities": "node scripts/sync-utilities-docs.mjs --check && node scripts/check-utilities-docs.mjs",
-    "verify:docs": "node --test scripts/test-docs-editorial.mjs && node scripts/check-docs-editorial.mjs && node scripts/check-docs-navigation.mjs && node scripts/check-remote-camera-docs.mjs && node scripts/check-marker-docs.mjs && node scripts/check-pause-menu-docs.mjs",
+    "verify:docs": "node --test scripts/test-docs-editorial.mjs && node scripts/check-docs-editorial.mjs && node scripts/check-docs-navigation.mjs && node scripts/check-remote-camera-docs.mjs && node scripts/check-marker-docs.mjs && node scripts/check-pause-menu-docs.mjs && node scripts/check-consumables-visibility-docs.mjs",
     "verify:devblog": "node --test scripts/test-devblog-presentation.mjs",
     "verify:devblog:browser": "node scripts/check-devblog-design.mjs http://127.0.0.1:3113",
     "verify:workshop:browser": "node scripts/check-workshop-design.mjs",
@@ -64,7 +64,9 @@
     "screenshot": "node scripts/screenshot.mjs",
     "build:brand": "node scripts/build-brand.mjs",
     "sync:weapon-tuning": "node scripts/sync-weapon-tuning-docs.mjs",
-    "verify:weapon-tuning": "node scripts/check-weapon-tuning-docs.mjs"
+    "verify:weapon-tuning": "node scripts/check-weapon-tuning-docs.mjs",
+    "sync:consumables-visibility": "node scripts/sync-consumables-visibility-docs.mjs",
+    "verify:consumables-visibility": "node scripts/check-consumables-visibility-docs.mjs"
   },
   "dependencies": {
     "@shikijs/rehype": "^4.4.3",

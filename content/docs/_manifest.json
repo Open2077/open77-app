@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 94,
-  "apiEntries": 1644,
+  "guides": 96,
+  "apiEntries": 1664,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -667,11 +667,42 @@
       "target": "content/docs/perspective.md",
       "slug": "perspective",
       "title": "Third person",
-      "bytes": 16084,
-      "sha256": "f7bbd8d561f42e51ea271a8479ae6b3ae90d5c1fdd66bb5eb5c38a89f043ed88",
+      "bytes": 16385,
+      "sha256": "ffab06d1da7efcff6b7f80b78b2ee6f41eed0f28b440fe0f17bf20c8d6840d59",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "830bbea825f6f6f2185b9ee714b9a3dca5291ede8170bded653a777545d29aec"
+        "upstreamSnapshotSha256": "830bbea825f6f6f2185b9ee714b9a3dca5291ede8170bded653a777545d29aec",
+        "consumablesVisibilityAmendment": {
+          "tool": "scripts/sync-consumables-visibility-docs.mjs",
+          "syncedAt": "2026-09-27T22:40:41.654Z",
+          "sourceRevision": "7b410f9bedb2295426834e64785ea31db3af4388",
+          "sourceWorkingTreeDirty": true,
+          "sourceApiSha256": "e61f08bfdda0a9e75e9f298a490338a21dfc8269c48d9ac01dd13dd6985d5c6d",
+          "apiRouteIds": [
+            "client:Open77.consumables.configure",
+            "client:Open77.consumables.equip",
+            "client:Open77.consumables.get",
+            "client:Open77.consumables.reset",
+            "client:Open77.consumables.setCount",
+            "client:Open77.consumables.setRecharge",
+            "client:Open77.consumables.setType",
+            "client:Open77.consumables.snapshot",
+            "client:Open77.consumables.unequip",
+            "client:Open77.players.isLocalPuppetVisible",
+            "client:Open77.players.setLocalPuppetVisible",
+            "server:Open77.consumables.configure",
+            "server:Open77.consumables.equip",
+            "server:Open77.consumables.get",
+            "server:Open77.consumables.reset",
+            "server:Open77.consumables.setCount",
+            "server:Open77.consumables.setRecharge",
+            "server:Open77.consumables.setType",
+            "server:Open77.consumables.snapshot",
+            "server:Open77.consumables.unequip"
+          ],
+          "apiMode": "merge-selected-cards-preserve-other-site-entries",
+          "upstreamGuideSha256": "76d3176f101f45b4206cdd6d8a73597f3cbd3bf758f3e32141d21568d49f4291"
+        }
       }
     },
     {
@@ -744,11 +775,42 @@
       "target": "content/docs/player-utilities.md",
       "slug": "player-utilities",
       "title": "Player checks and controls",
-      "bytes": 5119,
-      "sha256": "7f257bef2e823fcda9d611e6e535a34872a01ebcc016291019bcea00b773e9c3",
+      "bytes": 5617,
+      "sha256": "79487b1c7bf56c30240b233b17697d0c2fbff421adc28d03f84ef1258e752d8f",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "6d33d0f39f5cdd2af75511d888345506c8cc8dab587fe885f50a6fa57cc352bc"
+        "upstreamSnapshotSha256": "6d33d0f39f5cdd2af75511d888345506c8cc8dab587fe885f50a6fa57cc352bc",
+        "consumablesVisibilityAmendment": {
+          "tool": "scripts/sync-consumables-visibility-docs.mjs",
+          "syncedAt": "2026-09-27T22:40:41.654Z",
+          "sourceRevision": "7b410f9bedb2295426834e64785ea31db3af4388",
+          "sourceWorkingTreeDirty": true,
+          "sourceApiSha256": "e61f08bfdda0a9e75e9f298a490338a21dfc8269c48d9ac01dd13dd6985d5c6d",
+          "apiRouteIds": [
+            "client:Open77.consumables.configure",
+            "client:Open77.consumables.equip",
+            "client:Open77.consumables.get",
+            "client:Open77.consumables.reset",
+            "client:Open77.consumables.setCount",
+            "client:Open77.consumables.setRecharge",
+            "client:Open77.consumables.setType",
+            "client:Open77.consumables.snapshot",
+            "client:Open77.consumables.unequip",
+            "client:Open77.players.isLocalPuppetVisible",
+            "client:Open77.players.setLocalPuppetVisible",
+            "server:Open77.consumables.configure",
+            "server:Open77.consumables.equip",
+            "server:Open77.consumables.get",
+            "server:Open77.consumables.reset",
+            "server:Open77.consumables.setCount",
+            "server:Open77.consumables.setRecharge",
+            "server:Open77.consumables.setType",
+            "server:Open77.consumables.snapshot",
+            "server:Open77.consumables.unequip"
+          ],
+          "apiMode": "merge-selected-cards-preserve-other-site-entries",
+          "upstreamGuideSha256": "8d416d64029d0bff3e60b4f5486bed93ca22b1f85f4eb0d23e3ad1724f4f90cb"
+        }
       }
     },
     {
@@ -1112,8 +1174,8 @@
       "target": "content/docs/weapons-api.md",
       "slug": "weapons-api",
       "title": "Weapon Lua API",
-      "bytes": 23761,
-      "sha256": "72ef22ee05af22544c218628eaf770d756d5e7861b32d14c4da1697debd0395f",
+      "bytes": 24169,
+      "sha256": "b6b8181057ee85bb7a11e2cdaf86188e8d8b7e121f63d9903becad1ed2e1f5b5",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "da99c0133f9086a12e101c45ed777d368e82e592a6c44e0ba7f5042a129e9c43",
@@ -1133,6 +1195,37 @@
             "server:Open77.players.ragdoll"
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries"
+        },
+        "consumablesVisibilityAmendment": {
+          "tool": "scripts/sync-consumables-visibility-docs.mjs",
+          "syncedAt": "2026-09-27T22:40:41.654Z",
+          "sourceRevision": "7b410f9bedb2295426834e64785ea31db3af4388",
+          "sourceWorkingTreeDirty": true,
+          "sourceApiSha256": "e61f08bfdda0a9e75e9f298a490338a21dfc8269c48d9ac01dd13dd6985d5c6d",
+          "apiRouteIds": [
+            "client:Open77.consumables.configure",
+            "client:Open77.consumables.equip",
+            "client:Open77.consumables.get",
+            "client:Open77.consumables.reset",
+            "client:Open77.consumables.setCount",
+            "client:Open77.consumables.setRecharge",
+            "client:Open77.consumables.setType",
+            "client:Open77.consumables.snapshot",
+            "client:Open77.consumables.unequip",
+            "client:Open77.players.isLocalPuppetVisible",
+            "client:Open77.players.setLocalPuppetVisible",
+            "server:Open77.consumables.configure",
+            "server:Open77.consumables.equip",
+            "server:Open77.consumables.get",
+            "server:Open77.consumables.reset",
+            "server:Open77.consumables.setCount",
+            "server:Open77.consumables.setRecharge",
+            "server:Open77.consumables.setType",
+            "server:Open77.consumables.snapshot",
+            "server:Open77.consumables.unequip"
+          ],
+          "apiMode": "merge-selected-cards-preserve-other-site-entries",
+          "upstreamGuideSha256": "a506f7794d4d27e1b9ea67ee45b5596a29befbd15fb7a6507805afec29e6814b"
         }
       }
     },
@@ -1199,9 +1292,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1644,
-      "bytes": 2312482,
-      "sha256": "a1bf4cac9b43a4173ca194e9ab2245a69c12996b7cef970c83cb2e82aceb96f8",
+      "entries": 1664,
+      "bytes": 2348841,
+      "sha256": "1b04f3cd208f1131c1fd48e8383288ff7b3682d84200b613bb67dc5a7c3b175c",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
@@ -1456,6 +1549,90 @@
         "owner": "website",
         "upstreamSnapshotSha256": "33a20d3280ca59495ff8e7c84c06fd1ff2759c069f10b70592d64a6ec14082fd"
       }
+    },
+    {
+      "source": "wiki/consumables-api.md",
+      "target": "content/docs/consumables-api.md",
+      "slug": "consumables-api",
+      "title": "Grenades and healing items",
+      "bytes": 9060,
+      "sha256": "80d8971d265c0ebf22fc7f3cbdc5321ca252ffa5da7475d21a8d580d9045ec5b",
+      "siteEditorial": {
+        "owner": "website",
+        "consumablesVisibilityAmendment": {
+          "tool": "scripts/sync-consumables-visibility-docs.mjs",
+          "syncedAt": "2026-09-27T22:40:41.654Z",
+          "sourceRevision": "7b410f9bedb2295426834e64785ea31db3af4388",
+          "sourceWorkingTreeDirty": true,
+          "sourceApiSha256": "e61f08bfdda0a9e75e9f298a490338a21dfc8269c48d9ac01dd13dd6985d5c6d",
+          "apiRouteIds": [
+            "client:Open77.consumables.configure",
+            "client:Open77.consumables.equip",
+            "client:Open77.consumables.get",
+            "client:Open77.consumables.reset",
+            "client:Open77.consumables.setCount",
+            "client:Open77.consumables.setRecharge",
+            "client:Open77.consumables.setType",
+            "client:Open77.consumables.snapshot",
+            "client:Open77.consumables.unequip",
+            "client:Open77.players.isLocalPuppetVisible",
+            "client:Open77.players.setLocalPuppetVisible",
+            "server:Open77.consumables.configure",
+            "server:Open77.consumables.equip",
+            "server:Open77.consumables.get",
+            "server:Open77.consumables.reset",
+            "server:Open77.consumables.setCount",
+            "server:Open77.consumables.setRecharge",
+            "server:Open77.consumables.setType",
+            "server:Open77.consumables.snapshot",
+            "server:Open77.consumables.unequip"
+          ],
+          "apiMode": "merge-selected-cards-preserve-other-site-entries",
+          "upstreamGuideSha256": "abfcf7a1462e8b387c52773fa5317c60b3726b303bc3fb19ab3f896ce4247767"
+        }
+      }
+    },
+    {
+      "source": "wiki/local-puppet-visibility.md",
+      "target": "content/docs/local-puppet-visibility.md",
+      "slug": "local-puppet-visibility",
+      "title": "Local player visibility",
+      "bytes": 3780,
+      "sha256": "d721c5b2adf88e7bf763bcac7ac4a221c5a15261d8f78d52525c24e196bdf748",
+      "siteEditorial": {
+        "owner": "website",
+        "consumablesVisibilityAmendment": {
+          "tool": "scripts/sync-consumables-visibility-docs.mjs",
+          "syncedAt": "2026-09-27T22:40:41.654Z",
+          "sourceRevision": "7b410f9bedb2295426834e64785ea31db3af4388",
+          "sourceWorkingTreeDirty": true,
+          "sourceApiSha256": "e61f08bfdda0a9e75e9f298a490338a21dfc8269c48d9ac01dd13dd6985d5c6d",
+          "apiRouteIds": [
+            "client:Open77.consumables.configure",
+            "client:Open77.consumables.equip",
+            "client:Open77.consumables.get",
+            "client:Open77.consumables.reset",
+            "client:Open77.consumables.setCount",
+            "client:Open77.consumables.setRecharge",
+            "client:Open77.consumables.setType",
+            "client:Open77.consumables.snapshot",
+            "client:Open77.consumables.unequip",
+            "client:Open77.players.isLocalPuppetVisible",
+            "client:Open77.players.setLocalPuppetVisible",
+            "server:Open77.consumables.configure",
+            "server:Open77.consumables.equip",
+            "server:Open77.consumables.get",
+            "server:Open77.consumables.reset",
+            "server:Open77.consumables.setCount",
+            "server:Open77.consumables.setRecharge",
+            "server:Open77.consumables.setType",
+            "server:Open77.consumables.snapshot",
+            "server:Open77.consumables.unequip"
+          ],
+          "apiMode": "merge-selected-cards-preserve-other-site-entries",
+          "upstreamGuideSha256": "fcdc0448d39e52d9c723e6970c9389280b48cafb61469769f69cd6a8e06e33b4"
+        }
+      }
     }
   ],
   "partialSync": {
@@ -1587,6 +1764,36 @@
       "server:Open77.motion.current",
       "server:Open77.motion.launch",
       "server:Open77.players.ragdoll"
+    ],
+    "apiMode": "merge-selected-cards-preserve-other-site-entries"
+  },
+  "consumablesVisibilitySync": {
+    "tool": "scripts/sync-consumables-visibility-docs.mjs",
+    "syncedAt": "2026-09-27T22:40:41.654Z",
+    "sourceRevision": "7b410f9bedb2295426834e64785ea31db3af4388",
+    "sourceWorkingTreeDirty": true,
+    "sourceApiSha256": "e61f08bfdda0a9e75e9f298a490338a21dfc8269c48d9ac01dd13dd6985d5c6d",
+    "apiRouteIds": [
+      "client:Open77.consumables.configure",
+      "client:Open77.consumables.equip",
+      "client:Open77.consumables.get",
+      "client:Open77.consumables.reset",
+      "client:Open77.consumables.setCount",
+      "client:Open77.consumables.setRecharge",
+      "client:Open77.consumables.setType",
+      "client:Open77.consumables.snapshot",
+      "client:Open77.consumables.unequip",
+      "client:Open77.players.isLocalPuppetVisible",
+      "client:Open77.players.setLocalPuppetVisible",
+      "server:Open77.consumables.configure",
+      "server:Open77.consumables.equip",
+      "server:Open77.consumables.get",
+      "server:Open77.consumables.reset",
+      "server:Open77.consumables.setCount",
+      "server:Open77.consumables.setRecharge",
+      "server:Open77.consumables.setType",
+      "server:Open77.consumables.snapshot",
+      "server:Open77.consumables.unequip"
     ],
     "apiMode": "merge-selected-cards-preserve-other-site-entries"
   }

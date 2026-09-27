@@ -15,6 +15,15 @@ gadgets thrown from a hotkey — and have their own calls, [below](#gadgets-gren
 Parts that go *onto* a weapon (a scope, a silencer, a mod) are
 [components](#weapon-components-scopes-muzzles-and-mods).
 
+## Grenades and healing charges
+
+Use [Open77.consumables](consumables-api.md) to configure usable grenade and
+healing charges, select MaxDoc or Bounce Back, equip or unequip the hotkey,
+and control regeneration. `giveGadget` changes inventory membership; its stack
+count is not the number of throws. The consumables guide covers asynchronous
+completion, actual-use events and server-authoritative healing.
+
+
 ## Client permissions and methods
 
 Declare `player.weapons.read` for `slots`, `snapshot`, and `all`. Declare

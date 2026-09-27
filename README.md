@@ -74,6 +74,18 @@ src/
 
 ## Documentation pipeline
 
+The [consumables guide](content/docs/consumables-api.md) and
+[local avatar visibility guide](content/docs/local-puppet-visibility.md) are
+reviewed public guides. Merge technical changes from the platform wiki manually;
+the curated-guide list preserves their public wording during a full sync.
+After generating `Open77.consumables` and `Open77.players` in the platform
+checkout, run `npm run sync:consumables-visibility -- --from <platform>/wiki`
+to update the 20 feature cards and guide manifest records without replacing
+unrelated content. The manifest records whether the source worktree is dirty.
+Run the same command with `--check` to detect contract or manifest drift, and
+`npm run verify:consumables-visibility -- https://open2077.net` to verify the
+served HTML/Markdown routes, sitemap and agent index as well as the contracts.
+
 The authored [weapon customization guide](content/guides/weapon-customization.md)
 links to the public `rp_weapons_effect` example. Update its weapon-tuning and
 client/server character-launch API cards

@@ -180,6 +180,7 @@ const INPUT_BLOCKING = new Set([
  * link to a page that does not mention it is worse than no link.
  */
 const NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGuideLabel: string }> = {
+  "Open77.consumables": { usageGuideHref: "/docs/consumables-api", usageGuideLabel: "Grenades & healing items guide" },
   "Open77.blips": { usageGuideHref: "/docs/custom-blip-icons", usageGuideLabel: "Custom SVG blips & colors" },
   "Open77.database": { usageGuideHref: "/docs/database", usageGuideLabel: "SQL database setup" },
   MySQL: { usageGuideHref: "/docs/database", usageGuideLabel: "SQL database setup" },
@@ -212,6 +213,10 @@ const RUNTIME_NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGu
 };
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (runtime === "client" && raw.namespace === "Open77.players" &&
+      ["setLocalPuppetVisible", "isLocalPuppetVisible"].includes(raw.name)) {
+    return { usageGuideHref: "/docs/local-puppet-visibility", usageGuideLabel: "Local player visibility & Prop Hunt" };
+  }
   if (raw.namespace === "Open77.motion" && raw.name === "launch") {
     return { usageGuideHref: "/docs/weapon-customization#launch-nearby-characters", usageGuideLabel: "Character launch & weapon blasts" };
   }
