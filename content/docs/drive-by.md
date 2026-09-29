@@ -1,17 +1,19 @@
-# Passenger drive-by
+# Vehicle drive-by
 
-Control whether a passenger can lean out of a vehicle window with a handheld
-weapon, and read that action from client or server Lua. Open77 synchronizes the
-passenger's entry, aim, weapon, shots, reload and exit for other players.
+Control handheld combat from a vehicle and read that action from client or
+server Lua. Passengers use window combat; drivers use the game's native car
+or motorcycle combat pose. Open77 replicates aim, weapons, shots and reload.
 
-Use **Open77 Unstable `2.31.21-unstable+op77.117`** on the client and dedicated
-server, with network protocol **1.42**. This guide covers the Unstable feature.
+Available in **Open77 Unstable `2.31.21-unstable+op77.118`**, protocol **1.43**.
+Use the matching client, server and animation assets. Passenger support first
+shipped in .117 (protocol 1.42); car/motorcycle drivers and the additional state
+fields below require .118. Stable does not include this feature yet.
 
-Drive-by is available from supported passenger seats: `front_right`, `back_left`
-and `back_right`. The passenger draws a suitable handheld weapon using the normal
-game controls. Enabling drive-by permits that action; it does not equip a weapon,
-start shooting or force an animation. Driver-operated mounted weapons have their
-own [vehicle weapon APIs](vehicle-weapons.md).
+Supported passenger seats are `front_right`, `back_left` and `back_right`.
+The driver uses `front_left`, including on motorcycles. Draw a suitable handheld
+weapon using the normal game controls. Enabling drive-by permits that action;
+it does not equip a weapon, start shooting or force an animation. Driver-operated
+mounted weapons have their own [vehicle weapon APIs](vehicle-weapons.md).
 
 ## Functions and permissions
 
@@ -199,11 +201,13 @@ end
 | State field | Meaning |
 |---|---|
 | `enabled` | Effective policy visible to this runtime. |
-| `available` | Action data is available. Remote client observations also require a fresh, presented passenger body. It does not imply an active action. |
+| `available` | Action data is available. Remote client observations also require a fresh, presented occupant body. It does not imply an active action. |
 | `active` | `true` for `entering`, `active` or `exiting`. |
 | `phase` | `none`, `entering`, `active` or `exiting`. |
 | `vehicle` | Canonical Open77 vehicle ID; absent for `none`. |
-| `seat` | `front_right`, `back_left` or `back_right`; absent for `none`. |
+| `seat` | `front_left` for a driver; `front_right`, `back_left` or `back_right` for a passenger. Absent for `none`. |
+| `mode` | Protocol 1.43: `passenger`, `car_driver` or `bike_driver`. Interpret only when `active` is true; inactive data defaults to `passenger`. |
+| `driverYaw`, `driverPitch`, `driverRoll` | Protocol 1.43: native driver aim angles in degrees relative to the seated pose; zero for passengers and inactive data. These are animation inputs, not world-space entity rotation. |
 | `sequence` | Action sequence; zero for `none`. |
 | `duration` | Native entry/exit duration in seconds; zero for `none` and `active`. |
 | `elapsed` | Entry/exit progress in seconds, clamped to `duration`; zero outside those transitions. |
@@ -213,6 +217,32 @@ bucket. Missing or stale action data produces `phase == "none"` with
 `available == false`; it does not prove the player performed an exit animation.
 These reads are observations, not a history or a per-shot event stream. The
 client's fresh local `none` state may still have `available == true`.
+
+### Identify a driver or motorcycle rider
+
+The same reads and restrictions cover all three modes. Driver actions have
+`phase == "active"` while handheld combat is active, with `duration == 0` and
+`elapsed == 0`; the timed `entering`/`exiting` phases belong to passenger window
+combat. A driver can use either first- or third-person camera locally; observers
+receive the native third-person pose.
+
+```lua
+-- Server callback; requires players.life.read.
+RegisterCommand("riderstate", function(playerId)
+    local state, reason = Open77.players.getDriveByState(playerId)
+    if not state then return print(reason) end
+    if not state.available or not state.active then return end
+
+    if state.mode == "bike_driver" then
+        print(("Rider %d on motorcycle %d: yaw %.1f, pitch %.1f")
+            :format(playerId, state.vehicle, state.driverYaw, state.driverPitch))
+    elseif state.mode == "car_driver" then
+        print("Armed driver in vehicle " .. state.vehicle)
+    else
+        print("Passenger window combat: " .. state.seat)
+    end
+end, true)
+```
 
 ## Combining resources and cleanup
 
@@ -232,15 +262,18 @@ Each resource owns one restriction per player on its runtime:
 Disabling a passenger already in window combat requests a native exit. The
 state can remain `exiting` briefly after `enabled` becomes `false`. A successful
 setter acknowledges the policy change, not immediate animation completion.
+For a driver, disabling requests the native return to ordinary driving; the
+remote driver action clears when that state ends.
 
 ## Windows and damage
 
 Open77 opens the passenger's window for replicated drive-by presentation, keeps
 it open through the exit, and restores the authored window state afterward.
-Each passenger has an independent window. Your resource does not need to toggle
-vehicle windows or replay weapon shots to implement drive-by.
+Each passenger has an independent window. Car-driver combat opens both front
+windows; motorcycles do not receive a window overlay. Your resource does not
+need to toggle vehicle windows or replay weapon shots to implement drive-by.
 
-The passenger's ranged shots are filtered against their own vehicle and its
+The occupant's ranged shots are filtered against their own vehicle and its
 occupants. The server also rejects ranged hits between occupants of the same
 vehicle. Exterior targets continue through the normal combat rules. Drive-by
 does not grant general invulnerability to the vehicle or its passengers.

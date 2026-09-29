@@ -33,10 +33,10 @@
         "upstreamSnapshotSha256": "810d219b7f95e33bedb17bb6f0efc96ae920ecf58308bbcf8b6e0b22e50bb0e7",
         "driveByAmendment": {
           "tool": "scripts/sync-drive-by-docs.mjs",
-          "syncedAt": "2026-09-29T11:35:17.922Z",
-          "sourceRevision": "3b704dd58340162e2c9b8e3ce4b7a00457e84c36",
+          "syncedAt": "2026-09-29T16:17:27.531Z",
+          "sourceRevision": "289f1d9185fcdafb101ce0fa51183202071e4f7c",
           "sourceWorkingTreeDirty": false,
-          "sourceApiSha256": "1bc67c2c93483efbff31b7b1a87da459526d5ef9a7d979d10ccf3e990907dd09",
+          "sourceApiSha256": "588c07872450868e908b11ce0d03f67ebd5e26cfed2189cf8dd0ff103db73887",
           "apiRouteIds": [
             "client:Open77.players.getDriveByState",
             "client:Open77.players.isDriveByEnabled",
@@ -831,10 +831,10 @@
         },
         "driveByAmendment": {
           "tool": "scripts/sync-drive-by-docs.mjs",
-          "syncedAt": "2026-09-29T11:35:17.922Z",
-          "sourceRevision": "3b704dd58340162e2c9b8e3ce4b7a00457e84c36",
+          "syncedAt": "2026-09-29T16:17:27.531Z",
+          "sourceRevision": "289f1d9185fcdafb101ce0fa51183202071e4f7c",
           "sourceWorkingTreeDirty": false,
-          "sourceApiSha256": "1bc67c2c93483efbff31b7b1a87da459526d5ef9a7d979d10ccf3e990907dd09",
+          "sourceApiSha256": "588c07872450868e908b11ce0d03f67ebd5e26cfed2189cf8dd0ff103db73887",
           "apiRouteIds": [
             "client:Open77.players.getDriveByState",
             "client:Open77.players.isDriveByEnabled",
@@ -997,10 +997,10 @@
         "upstreamSnapshotSha256": "e7367a5197ea2774f591e48e7f6a7a8645f6611f194e74b0c6b1e6b0841d2ca2",
         "driveByAmendment": {
           "tool": "scripts/sync-drive-by-docs.mjs",
-          "syncedAt": "2026-09-29T11:35:17.922Z",
-          "sourceRevision": "3b704dd58340162e2c9b8e3ce4b7a00457e84c36",
+          "syncedAt": "2026-09-29T16:17:27.531Z",
+          "sourceRevision": "289f1d9185fcdafb101ce0fa51183202071e4f7c",
           "sourceWorkingTreeDirty": false,
-          "sourceApiSha256": "1bc67c2c93483efbff31b7b1a87da459526d5ef9a7d979d10ccf3e990907dd09",
+          "sourceApiSha256": "588c07872450868e908b11ce0d03f67ebd5e26cfed2189cf8dd0ff103db73887",
           "apiRouteIds": [
             "client:Open77.players.getDriveByState",
             "client:Open77.players.isDriveByEnabled",
@@ -1187,10 +1187,10 @@
         "upstreamSnapshotSha256": "57aac056238de1dbaa30823cf9f387f7e8576bd68d15b80ac247460a8dec8aae",
         "driveByAmendment": {
           "tool": "scripts/sync-drive-by-docs.mjs",
-          "syncedAt": "2026-09-29T11:35:17.922Z",
-          "sourceRevision": "3b704dd58340162e2c9b8e3ce4b7a00457e84c36",
+          "syncedAt": "2026-09-29T16:17:27.531Z",
+          "sourceRevision": "289f1d9185fcdafb101ce0fa51183202071e4f7c",
           "sourceWorkingTreeDirty": false,
-          "sourceApiSha256": "1bc67c2c93483efbff31b7b1a87da459526d5ef9a7d979d10ccf3e990907dd09",
+          "sourceApiSha256": "588c07872450868e908b11ce0d03f67ebd5e26cfed2189cf8dd0ff103db73887",
           "apiRouteIds": [
             "client:Open77.players.getDriveByState",
             "client:Open77.players.isDriveByEnabled",
@@ -1365,8 +1365,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1672,
-      "bytes": 2361416,
-      "sha256": "3d6b2e3724711e0b93039e22b786cb3a3d32f34ebffb69b2cdfb5e97abe1a6ae",
+      "bytes": 2362941,
+      "sha256": "193cae628779b7a52d508cf29252e64c8589c84aea18d2a3e8b48fb438041887",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
@@ -1710,11 +1710,11 @@
       "source": "wiki/drive-by.md",
       "target": "content/docs/drive-by.md",
       "slug": "drive-by",
-      "title": "Passenger drive-by",
-      "bytes": 11337,
-      "sha256": "5b0cdab4965ab704e92320da494b985ee62e2d219bc3540aca3ecf0fb00dee33",
-      "sourceRevision": "3b704dd58340162e2c9b8e3ce4b7a00457e84c36",
-      "sourceSyncedAt": "2026-09-29T11:35:17.714Z"
+      "title": "Vehicle drive-by",
+      "bytes": 13189,
+      "sha256": "f7620bca84ea9c1e284b62289ce9481079a68a48859be1f35b4f1816ca36a8ef",
+      "sourceRevision": "289f1d9185fcdafb101ce0fa51183202071e4f7c",
+      "sourceSyncedAt": "2026-09-29T16:17:27.362Z"
     }
   ],
   "partialSync": {
@@ -1881,10 +1881,10 @@
   },
   "driveBySync": {
     "tool": "scripts/sync-drive-by-docs.mjs",
-    "syncedAt": "2026-09-29T11:35:17.922Z",
-    "sourceRevision": "3b704dd58340162e2c9b8e3ce4b7a00457e84c36",
+    "syncedAt": "2026-09-29T16:17:27.531Z",
+    "sourceRevision": "289f1d9185fcdafb101ce0fa51183202071e4f7c",
     "sourceWorkingTreeDirty": false,
-    "sourceApiSha256": "1bc67c2c93483efbff31b7b1a87da459526d5ef9a7d979d10ccf3e990907dd09",
+    "sourceApiSha256": "588c07872450868e908b11ce0d03f67ebd5e26cfed2189cf8dd0ff103db73887",
     "apiRouteIds": [
       "client:Open77.players.getDriveByState",
       "client:Open77.players.isDriveByEnabled",
