@@ -66,7 +66,9 @@
     "sync:weapon-tuning": "node scripts/sync-weapon-tuning-docs.mjs",
     "verify:weapon-tuning": "node scripts/check-weapon-tuning-docs.mjs",
     "sync:consumables-visibility": "node scripts/sync-consumables-visibility-docs.mjs",
-    "verify:consumables-visibility": "node scripts/check-consumables-visibility-docs.mjs"
+    "verify:consumables-visibility": "node scripts/check-consumables-visibility-docs.mjs",
+    "sync:drive-by": "node scripts/sync-drive-by-docs.mjs",
+    "verify:drive-by": "node scripts/sync-drive-by-docs.mjs --check"
   },
   "dependencies": {
     "@shikijs/rehype": "^4.4.3",

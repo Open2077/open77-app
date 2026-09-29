@@ -102,6 +102,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [Native map](native-map.md) | Player waypoints, map lifecycle, marker selection and non-travel point picking. |
 | [Armed vehicle spawn catalogue](armed-vehicles.md) | Exact spawn IDs, mounted-weapon profiles, verified examples, and the complete 2.31 record inventory. |
 | [Vehicle weapon Lua API](vehicle-weapons.md) | Client armament queries: mounted/selected weapons, native ammo, heat, trigger mode and turret aim. |
+| [Passenger drive-by](drive-by.md) | Client/server Lua policy, action phases, permissions, cleanup, synchronized windows and protection of the shooter's own cabin. |
 | [Vehicle paint](vehicle-paint.md) | Server-authoritative RGB paint, cross-resource controls, replication, events, and native limitations. |
 | [NPCs](npcs.md) | Implemented server-owned NPCs, templates, streaming, task queues, authority leases, life, events, and Lua APIs. |
 | [NPC AI, combat and voice](npc-behavior.md) | Server control of one spawned NPC's behavior policy: AI, combat, perception and voice, and what it deliberately does not reach. |

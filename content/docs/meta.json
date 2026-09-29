@@ -516,7 +516,7 @@
       "id": "vehicles",
       "title": "Vehicles & driving",
       "group": "Game systems",
-      "description": "Spawn vehicles, manage seats and paint, automate driving and use mounted weapons.",
+      "description": "Spawn vehicles, manage seats and paint, automate driving, use mounted weapons and control passenger drive-by.",
       "pages": [
         {
           "slug": "vehicles",
@@ -541,6 +541,12 @@
           "kind": "guide",
           "nav": "Armed vehicles & Lua API",
           "description": "Mounted weapons in multiplayer: driver authority, shots and damage, supported models, protocol 1.24, current limitations and twelve read-only client Lua APIs for weapon selection, ammo, heat and turret aim."
+        },
+        {
+          "slug": "drive-by",
+          "kind": "guide",
+          "nav": "Passenger drive-by",
+          "description": "Enable or restrict passenger window combat, read its phases and seat, and combine client/server Lua policies with automatic window and cabin protection."
         },
         {
           "slug": "armed-vehicles",

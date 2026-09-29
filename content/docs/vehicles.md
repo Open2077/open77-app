@@ -2,6 +2,10 @@
 
 Create and manage network vehicles on the server. Resources with `world.vehicles` control canonical state and lifecycle; clients render nearby projections.
 
+[Passenger drive-by](drive-by.md) documents handheld window combat, automatic
+window synchronization, and Lua controls for enabling, restricting and reading
+the action on the client and server (Unstable `.117`, protocol 1.42).
+
 Find weapon-equipped model IDs in the [armed vehicle spawn catalogue](armed-vehicles.md), including mount declarations and special-purpose variants.
 
 For weapon replication, release compatibility, damage policy, current limitations and the twelve client-side armament, ammo, heat and selection queries, see the dedicated [armed vehicles and weapon Lua API guide](vehicle-weapons.md).

@@ -5,6 +5,12 @@ Reference for the dedicated server's Lua runtime. These methods are available in
 Prefer the `Open77.*` names below. FiveM-style globals remain available where listed for familiar
 resource code and as the low-level implementation surface.
 
+For passenger combat, see [Passenger drive-by](drive-by.md):
+`Open77.players.setDriveByEnabled(playerId, enabled)` controls server policy;
+`getDriveByState`, `isDriveByEnabled` and `isInDriveBy` read it.
+Writes require `players.driveby`; reads require `players.life.read`.
+Use the Unstable `.117` client and server, protocol 1.42.
+
 ## Runtime, scheduler, events, commands, and JSON
 
 | Function | Signature | Result / purpose |

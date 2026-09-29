@@ -19,6 +19,13 @@ and third-person double while keeping the selected camera, for example in Prop
 Hunt. These functions require a compatible client independently of the utility
 version listed above.
 
+## Passenger drive-by
+
+[Passenger drive-by](drive-by.md) covers `setLocalDriveByEnabled`,
+`getDriveByState`, `isDriveByEnabled` and `isInDriveBy`, plus the server policy
+`setDriveByEnabled`. It includes client/server examples, permissions, phases and
+cleanup. Use the Unstable `.117` client and server, protocol 1.42.
+
 
 ## Read-only checks
 

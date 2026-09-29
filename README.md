@@ -74,6 +74,12 @@ src/
 
 ## Documentation pipeline
 
+The [passenger drive-by guide](content/docs/drive-by.md) and its eight client/server
+API cards use `npm run sync:drive-by -- --from <platform>/wiki`. Commit the reviewed
+guide and generated `Open77.players` contracts in the platform checkout first.
+This scoped sync preserves other public contracts and editorial guides; verify
+the same source with `npm run verify:drive-by -- --from <platform>/wiki`.
+
 The [consumables guide](content/docs/consumables-api.md) and
 [local avatar visibility guide](content/docs/local-puppet-visibility.md) are
 reviewed public guides. Merge technical changes from the platform wiki manually;

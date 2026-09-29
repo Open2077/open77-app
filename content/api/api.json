@@ -62363,5 +62363,302 @@
   "constant": false,
   "qualified": "Open77.players.setLocalPuppetVisible",
   "route_id": "Open77.players.setLocalPuppetVisible"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "getDriveByState",
+  "handler": "LuaReadDriveBy",
+  "summary": "Reads local or remote passenger drive-by state.",
+  "description": "Client; requires players.read. Omit playerId or pass integer 0 for the local player. Returns enabled, available, active, phase, sequence, duration and elapsed; non-none phases also include canonical vehicle and seat. Phases are none, entering, active, exiting. active includes both transitions. duration/elapsed are seconds. Remote data must be fresh with an attached presented passenger body; unavailable data has phase none. Remote enabled reflects server policy, not another client's local resource restrictions. Returns nil, reason for unavailable players or invalid arguments. Use Unstable 2.31.21-unstable+op77.117 client and server, protocol 1.42. See [Passenger drive-by](/docs/drive-by).",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": "0"
+   }
+  ],
+  "returns": [
+   "state table or nil",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local state, reason = Open77.players.getDriveByState()\n    if state and state.available then print(state.phase, state.vehicle, state.seat)\n    elseif not state then print(reason) end\nend)",
+  "inferred": false,
+  "source_line": 12374,
+  "permissions": [
+   "players.read"
+  ],
+  "reasons": [
+   "expected_player_id",
+   "game_unavailable_on_this_host",
+   "permission_denied:players.read"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.getDriveByState",
+  "route_id": "Open77.players.getDriveByState"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isDriveByEnabled",
+  "handler": "LuaReadDriveBy",
+  "summary": "Reads the effective passenger drive-by permission.",
+  "description": "Client; requires players.read. Omit playerId or use 0 for the local player. Reads the enabled field of getDriveByState: local resource restrictions combine with server policy; remote reads report only server policy. True permits native passenger combat but does not mean the player is currently in it. Returns nil, reason for an unavailable player or invalid arguments. Use Unstable 2.31.21-unstable+op77.117 client and server, protocol 1.42. See [Passenger drive-by](/docs/drive-by).",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": "0"
+   }
+  ],
+  "returns": [
+   "boolean enabled or nil",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local enabled, reason = Open77.players.isDriveByEnabled()\n    if enabled == nil then print(reason) else print(\"Drive-by allowed:\", enabled) end\nend)",
+  "inferred": false,
+  "source_line": 12374,
+  "permissions": [
+   "players.read"
+  ],
+  "reasons": [
+   "expected_player_id",
+   "game_unavailable_on_this_host",
+   "permission_denied:players.read"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.isDriveByEnabled",
+  "route_id": "Open77.players.isDriveByEnabled"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isInDriveBy",
+  "handler": "LuaReadDriveBy",
+  "summary": "Reports whether a player is entering, using or leaving window combat.",
+  "description": "Client; requires players.read. Omit playerId or use 0 for the local player. True for entering, active or exiting; false for none or stale action data. Use getDriveByState().phase == \"active\" when only the combat loop is relevant. Returns nil, reason for an unavailable player or invalid arguments. Use Unstable 2.31.21-unstable+op77.117 client and server, protocol 1.42. See [Passenger drive-by](/docs/drive-by).",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": "0"
+   }
+  ],
+  "returns": [
+   "boolean active or nil",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local active, reason = Open77.players.isInDriveBy()\n    if active == nil then print(reason) else print(\"Window action:\", active) end\nend)",
+  "inferred": false,
+  "source_line": 12374,
+  "permissions": [
+   "players.read"
+  ],
+  "reasons": [
+   "expected_player_id",
+   "game_unavailable_on_this_host",
+   "permission_denied:players.read"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.isInDriveBy",
+  "route_id": "Open77.players.isInDriveBy"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "setLocalDriveByEnabled",
+  "handler": "LuaSetLocalDriveByEnabled",
+  "summary": "Allows or denies native passenger drive-by for the local player.",
+  "description": "Client-only; requires players.driveby. Call with exactly one boolean from a running resource callback/thread. False holds this resource's restriction; true releases only that restriction. Another resource or server denial still wins. Stopping or reloading the resource releases its hold; disconnect resets local holds. Disabling an active passenger requests native exit; it does not equip a weapon or force a pose. Errors include expected_boolean, resource_not_running and owner_limit. Use Unstable 2.31.21-unstable+op77.117 client and server, protocol 1.42. See [Passenger drive-by](/docs/drive-by).",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean accepted",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "RegisterNetEvent(\"safezone:changed\", function(inside)\n    local ok, reason = Open77.players.setLocalDriveByEnabled(not inside)\n    if not ok then print(reason) end\nend)",
+  "inferred": false,
+  "source_line": 12370,
+  "permissions": [
+   "players.driveby"
+  ],
+  "reasons": [
+   "permission_denied:players.driveby"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.setLocalDriveByEnabled",
+  "route_id": "Open77.players.setLocalDriveByEnabled"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "getDriveByState",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reads server-validated passenger drive-by state.",
+  "description": "Server; requires players.life.read and a positive connected player ID. Returns enabled, available, active, phase, sequence, duration and elapsed; non-none phases include canonical vehicle and seat. Phases are none, entering, active, exiting; active includes transitions. duration/elapsed are seconds. Actions must belong to the current canonical seat lifetime, bucket and alive player, and expire when stale. enabled is combined server policy; client-only restrictions are not broadcast. A missing action returns none/unavailable, while an unknown player returns nil, player_unavailable. Use Unstable 2.31.21-unstable+op77.117 client and server, protocol 1.42. See [Passenger drive-by](/docs/drive-by).",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "state table or nil",
+   "reason on failure"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.DriveBy.cs",
+  "example": "RegisterCommand(\"drivebystate\", function(playerId)\n    local state, reason = Open77.players.getDriveByState(playerId)\n    if state then print(state.phase, state.vehicle, state.seat) else print(reason) end\nend, true)",
+  "inferred": false,
+  "source_line": 64,
+  "permissions": [
+   "players.life.read"
+  ],
+  "reasons": [
+   "permission_denied:players.life.read",
+   "player_unavailable"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.getDriveByState",
+  "route_id": "server:Open77.players.getDriveByState"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isDriveByEnabled",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reads combined server policy for passenger drive-by.",
+  "description": "Server; requires players.life.read and a positive connected player ID. True means no server resource denies passenger drive-by. It does not mean the player is in a vehicle or actively fighting, and cannot reveal client-only restrictions. Returns nil, reason for an unavailable player or denied permission. Use Unstable 2.31.21-unstable+op77.117 client and server, protocol 1.42. See [Passenger drive-by](/docs/drive-by).",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean enabled or nil",
+   "reason on failure"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.DriveBy.cs",
+  "example": "RegisterCommand(\"drivebypolicy\", function(playerId)\n    local enabled, reason = Open77.players.isDriveByEnabled(playerId)\n    if enabled == nil then print(reason) else print(\"Allowed:\", enabled) end\nend, true)",
+  "inferred": false,
+  "source_line": 67,
+  "permissions": [
+   "players.life.read"
+  ],
+  "reasons": [
+   "permission_denied:players.life.read",
+   "player_unavailable"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.isDriveByEnabled",
+  "route_id": "server:Open77.players.isDriveByEnabled"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "isInDriveBy",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reports a fresh server-validated passenger window action.",
+  "description": "Server; requires players.life.read and a positive connected player ID. True for entering, active or exiting. False when no fresh admitted action is available, including after death or unmount. Use getDriveByState for the exact phase, canonical vehicle and seat. Returns nil, reason for an unknown player or denied permission. Use Unstable 2.31.21-unstable+op77.117 client and server, protocol 1.42. See [Passenger drive-by](/docs/drive-by).",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean active or nil",
+   "reason on failure"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.DriveBy.cs",
+  "example": "RegisterCommand(\"indriveby\", function(playerId)\n    local active, reason = Open77.players.isInDriveBy(playerId)\n    if active == nil then print(reason) else print(\"Window action:\", active) end\nend, true)",
+  "inferred": false,
+  "source_line": 72,
+  "permissions": [
+   "players.life.read"
+  ],
+  "reasons": [
+   "permission_denied:players.life.read",
+   "player_unavailable"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.isInDriveBy",
+  "route_id": "server:Open77.players.isInDriveBy"
+ },
+ {
+  "namespace": "Open77.players",
+  "name": "setDriveByEnabled",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Allows or denies a player's passenger drive-by on the server.",
+  "description": "Server; requires players.driveby. False holds this resource's denial; true releases only its own denial. Other resources' restrictions remain effective. Stopping the owner resource releases its claims. Denials survive death, respawn and routing-bucket changes; disconnect removes them. Pending native respawn/revive can return transition_in_progress; retry after completion. Disabling requests native exit and rejects passenger ranged damage. Enabling does not force a pose or equip a weapon. Returns false, reason on refusal. Use Unstable 2.31.21-unstable+op77.117 client and server, protocol 1.42. See [Passenger drive-by](/docs/drive-by).",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean accepted",
+   "reason on failure"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.DriveBy.cs",
+  "example": "RegisterCommand(\"drivebyoff\", function(playerId)\n    local ok, reason = Open77.players.setDriveByEnabled(playerId, false)\n    if not ok then print(reason) end\nend, true)",
+  "inferred": false,
+  "source_line": 60,
+  "permissions": [
+   "players.driveby"
+  ],
+  "reasons": [
+   "invalid_argument",
+   "permission_denied:players.driveby",
+   "player_unavailable"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.players.setDriveByEnabled",
+  "route_id": "server:Open77.players.setDriveByEnabled"
  }
 ]

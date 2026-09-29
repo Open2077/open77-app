@@ -213,6 +213,10 @@ const RUNTIME_NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGu
 };
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (raw.namespace === "Open77.players" &&
+      ["setDriveByEnabled", "setLocalDriveByEnabled", "getDriveByState", "isDriveByEnabled", "isInDriveBy"].includes(raw.name)) {
+    return { usageGuideHref: "/docs/drive-by", usageGuideLabel: "Passenger drive-by guide" };
+  }
   if (runtime === "client" && raw.namespace === "Open77.players" &&
       ["setLocalPuppetVisible", "isLocalPuppetVisible"].includes(raw.name)) {
     return { usageGuideHref: "/docs/local-puppet-visibility", usageGuideLabel: "Local player visibility & Prop Hunt" };
