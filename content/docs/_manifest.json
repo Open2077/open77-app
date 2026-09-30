@@ -362,8 +362,8 @@
       "target": "content/docs/doors.md",
       "slug": "doors",
       "title": "Networked world doors",
-      "bytes": 23830,
-      "sha256": "7f6760c5bae20e3c0bc383a7c8d2133f78f21d077a3a125732516fb31195b491",
+      "bytes": 23837,
+      "sha256": "1e01b978792ceac0a5383e1562ac573b5bd6f5937c0da5f4584fd28edefee854",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "32de1fb7c8ac81156208f3f03e4df317422acb97dc59e3f6e20e2f7b5c0355fb",
@@ -641,8 +641,8 @@
       "target": "content/docs/npc-behavior.md",
       "slug": "npc-behavior",
       "title": "NPC AI, combat and voice control",
-      "bytes": 15951,
-      "sha256": "f9d419117c6b1d082416c4a7fdf93d1090dcf81b8d835cd5f55c3adad5d8d39e",
+      "bytes": 15908,
+      "sha256": "25e419223af3023cd0cb1f6017742b5cdf741486e4818e846018c803a47b6d1d",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2fa2bb7f9aed3b7e76d80f865e4b08a40955985e3bb33a3971944202973deb1",
@@ -881,8 +881,8 @@
       "target": "content/docs/prediction.md",
       "slug": "prediction",
       "title": "Prediction",
-      "bytes": 15463,
-      "sha256": "9994bf14afa5a07f03af079c287d43a26624d441e0b8efec90549d0399a8151a",
+      "bytes": 19790,
+      "sha256": "61558130848f3cf1c0548b5bb151afd574a72223d22cabd483bb15557996b73e",
       "siteEditorial": {
         "owner": "website",
         "authoredOnSite": true,
@@ -1946,7 +1946,7 @@
   },
   "predictionSync": {
     "tool": "manual vendoring of wiki/data/api.json and companions (no sync:wiki)",
-    "syncedAt": "2026-09-30T08:24:10.861Z",
+    "syncedAt": "2026-09-30T08:36:13.331Z",
     "sourceRevision": "36772b3b88404ffa9467bb2d06fcf1abd47568d9",
     "sourceWorkingTreeDirty": false,
     "sourceApiSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6",

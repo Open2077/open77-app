@@ -10,21 +10,73 @@ again.
 
 A prediction only changes what the acting player sees before the verdict. It never deals
 damage, never moves anything on other players' screens and never grants authority: every
-outcome is still the server's.
+outcome is still the server's. Client and server must run the same Open77 build.
 
-Client and server must run the same Open77 build. The operator switches, the admin command
-and the telemetry come from the bundled `open77_prediction` system resource; see
-[Server setup](#server-setup).
+## What is built in and what the resources add
 
-## What's new in this update
+| Layer | What it provides | What it needs |
+|---|---|---|
+| **Open77 client** (native) | Car against car (`carContact`), car against a network NPC opted in with [`behavior.vehicleContactEnabled`](npc-behavior.md#vehicle-contact-damage) (`carContact`), car against player (`playerContact`), door (`door`, on the network doors of the bundled `open77_doors` service) and blast (`blast`) prediction. | Nothing: always on. Compiled defaults: every family on, and no new prediction starts above a 250 ms round trip. |
+| **`open77_cyberware`** (bundled system resource, already running) | Melee (`melee`), Ground Slam (`slam`) and quickhack (`hack`) knockdown prediction. | The gamemode's combat policy, published with the local client event [`open77_prediction:policy`](#melee-ground-slam-and-quickhack-predictions); Freeroam publishes one. Without it these three never predict. |
+| **`open77_prediction`** (bundled platform resource, starts automatically) | Only the operator layer: the per-family switches, the round-trip ceiling, the [`open77.prediction` state bag key](#the-published-policy), [telemetry](#operator-controls), the `prediction` admin command and the [`restrict` export](#gamemode-restrictions) for gamemodes. | Nothing depends on it. Without it, clients keep their compiled defaults and the server has no switches and no telemetry. |
+
+## Do I need open77_prediction? No, it is optional
+
+`open77_prediction` is an **extra**. Prediction works without it, for three reasons:
+
+1. **The predictions are native client code, not a resource.** Showing the result early,
+   adopting it when the server confirms and rolling it back when the server refuses all happen
+   in the Open77 client.
+2. **The client ships safe defaults.** Without the resource, every family is on and no new
+   prediction starts above a 250 ms round trip.
+3. **The server still decides everything that counts.** Every hit, damage value, push and death
+   is the server's call, so the game stays correct and fair with or without the resource.
+
+What you lose without it is only **control and visibility**: the per-family switches, the
+ping ceiling setting, gamemode `restrict`, telemetry and the `prediction` admin command. Keep
+it when you want to turn a family off, tune the ceiling or watch refutation rates.
+
+It is loaded by default on every server. It only goes missing when a
+[`resources.load` allowlist](#server-setup) omits it.
+
+Melee, Ground Slam and quickhack prediction need the gamemode's
+[combat policy](#melee-ground-slam-and-quickhack-predictions) either way; that requirement is
+independent of this resource.
+
+## Prediction families
+
+Each kind of prediction is a **family** with its own switch.
+
+| Family | What the acting player sees early |
+|---|---|
+| `melee` | A melee hit knocks the victim down on the attacker's screen before the server's verdict. |
+| `slam` | A Ground Slam knocks nearby players down on the attacker's screen before the server's verdict. |
+| `hack` | A knockdown quickhack drops its target on the hacker's screen before the server's verdict. |
+| `door` | A network door starts opening as soon as it is used, before the server accepts the request. |
+| `blast` | Cars and players another client simulates react to the shooter's own blast before its relay returns. |
+| `carContact` | A remote car struck by the local driver starts moving at once instead of about 250 ms later; an opted-in network NPC the driver hits starts falling at once. |
+| `playerContact` | A player hit by the local driver starts falling at once, before the victim's fall cue returns. |
+
+Every prediction ends in one of three ways, which is what the counters report:
+
+- **adopted**: the server's own reaction took it over or confirmed it;
+- **refuted**: the server refused it, or did not answer in time, and it was rolled back;
+- **skipped**: the policy stopped it before it started, because its family is switched off
+  (`skippedDisabled`) or the round trip is above the latency ceiling (`skippedLatency`).
+
+A late verdict makes a refusal far more visible, so a client whose measured round trip is above
+the **latency ceiling** (250 ms by default) starts no new prediction; one already playing
+finishes normally. An unknown round trip, before the first measurement, does not block anything.
+
+## API at a glance
 
 **Prediction**
 
-- [`Open77.prediction.stats`](/docs/api/client/open77-prediction#stats): read the live
-  prediction policy, this client's round trip and each family's counters.
-- [`Open77.prediction.setPolicy`](/docs/api/client/open77-prediction#setpolicy): set the
-  switches and latency ceiling this client applies. Needs the dedicated `prediction.policy`
-  permission; the bundled `open77_prediction` resource is its only intended caller. See
+- [`Open77.prediction.stats`](/docs/api/client/open77-prediction#stats): the live prediction
+  policy, this client's round trip and each family's counters.
+- [`Open77.prediction.setPolicy`](/docs/api/client/open77-prediction#setpolicy): the switches and
+  latency ceiling this client applies. Needs the dedicated `prediction.policy` permission; the
+  bundled `open77_prediction` resource is its only intended caller. See
   [Advanced](#advanced-native-calls).
 - [`Open77.motion.predictAction`](/docs/api/client/open77-motion#predictaction),
   [`refutePrediction`](/docs/api/client/open77-motion#refuteprediction) and
@@ -41,7 +93,7 @@ and the telemetry come from the bundled `open77_prediction` system resource; see
 
 - [`Open77.npcs.presence`](/docs/api/server/open77-npcs#presence): where an NPC is and which
   client simulates it, in one constant-time read. See [NPC spawning](npcs.md#server-api-reference).
-- [`behavior.vehicleContactEnabled`](npc-behavior.md#vehicle-contact-damage): opt an NPC in to
+- [`behavior.vehicleContactEnabled`](npc-behavior.md#vehicle-contact-damage): opts an NPC in to
   server-priced damage when a car hits it.
 - [`behavior.hitPricing`](npc-behavior.md#who-prices-player-hits-hitpricing): `"platform"` lets
   the server price player hits on a mortal NPC instead of the resource that created it.
@@ -51,16 +103,16 @@ and the telemetry come from the bundled `open77_prediction` system resource; see
 **Doors**
 
 - [`setNpcPassage`](doors.md#npc-passage) and `configure(..., { npcPassage = ... })` with the
-  modes `public`, `resource`, `always` and `never`: choose which network NPCs may open a door.
-- [`npcStats`](doors.md#npc-passage): count NPC door openings admitted and refused.
-- [`resolveAction(ticket, false)`](doors.md#door-actions-force-pay-and-hack) now answers
+  modes `public`, `resource`, `always` and `never`: which network NPCs may open a door.
+- [`npcStats`](doors.md#npc-passage): NPC door openings admitted and refused.
+- [`resolveAction(ticket, false)`](doors.md#door-actions-force-pay-and-hack) answers
   `false, "refused_by_owner"`: `true` only ever means the door opened.
 
 **Weapons and explosions**
 
-- [`Open77.weapons.applyBlast`](/docs/api/client/open77-weapons#applyblast): push the cars this
-  client simulates and knock down its NPC copies for a server-relayed blast.
-- [`relayBlast`](weapons-api.md#explosions-on-every-screen-the-blast-relay): relay a blast
+- [`Open77.weapons.applyBlast`](/docs/api/client/open77-weapons#applyblast): pushes the cars this
+  client simulates and knocks down its NPC copies for a server-relayed blast.
+- [`relayBlast`](weapons-api.md#explosions-on-every-screen-the-blast-relay): relays a blast
   another server resource admitted, so every screen sees cars move and NPCs fall.
 - [`open77_blasts`](weapons-api.md#explosions-on-every-screen-the-blast-relay) convar: `off`
   disables the blast relay.
@@ -68,7 +120,7 @@ and the telemetry come from the bundled `open77_prediction` system resource; see
   a detonation a player's client observed.
 - [`onVehicleWeaponExplosion`](vehicle-weapons.md#current-damage-policy): the server event for a
   mounted weapon's admitted explosion.
-- [`onConsumableUsed`](consumables-api.md#observe-actual-uses-and-apply-healing-policy): now a
+- [`onConsumableUsed`](consumables-api.md#observe-actual-uses-and-apply-healing-policy): a
   reserved host event that also credits grenade charges to the blast relay.
 
 **Server configuration**
@@ -78,39 +130,17 @@ and the telemetry come from the bundled `open77_prediction` system resource; see
 - [`combat.handheldVehicleDamage`](vehicle-weapons.md#handheld-guns-on-cars-another-player-drives)
   (default `false`): the server applies handheld gun hits on cars another player drives.
 
-## Prediction families
-
-Each kind of prediction is a **family** with its own switch.
-
-| Family | What the acting player sees early |
-|---|---|
-| `melee` | A melee hit knocks the victim down on the attacker's screen before the server's verdict. |
-| `slam` | A Ground Slam knocks nearby players down on the attacker's screen before the server's verdict. |
-| `hack` | A knockdown quickhack drops its target on the hacker's screen before the server's verdict. |
-| `door` | A network door starts opening as soon as it is used, before the server accepts the request. |
-| `blast` | Cars and players another client simulates react to the shooter's own blast before its relay returns. |
-| `carContact` | A remote car struck by the local driver starts moving at once instead of about 250 ms later. |
-| `playerContact` | A player hit by the local driver starts falling at once, before the victim's fall cue returns. |
-
-Every prediction ends in one of three ways, which is what the counters report:
-
-- **adopted**: the server's own reaction took it over or confirmed it;
-- **refuted**: the server refused it, or did not answer in time, and it was rolled back;
-- **skipped**: the policy stopped it before it started, because its family is switched off
-  (`skippedDisabled`) or the round trip is above the latency ceiling (`skippedLatency`).
-
-A late verdict makes a refusal far more visible, so a client whose measured round trip is above
-the **latency ceiling** (250 ms by default) starts no new prediction; one already playing
-finishes normally. An unknown round trip, before the first measurement, does not block anything.
-
 ## Server setup
 
-`open77_prediction` is a bundled system resource that starts automatically. Nothing depends on
-it: without it, clients keep their compiled defaults (every family on, 250 ms ceiling), and the
-server has no switches, no admin command and no telemetry.
+`open77_prediction` is a **platform resource**: it ships with every Open77 server and starts
+automatically, so its code is not in your `resources` folder. Do not copy it into your
+resources; the bundled one is the one that runs. Its source is published for reference only,
+read-only:
+[open77_prediction on GitHub](https://github.com/Open2077/open77-rp-examples/tree/main/platform/open77_prediction).
 
-**If `server.jsonc` selects resources with a `resources.load` allowlist, add it.** A resource
-the list does not select is never started, and nothing is logged about it:
+**If `server.jsonc` selects resources with a `resources.load` allowlist, add it** to keep the
+switches, the admin command and the telemetry. A resource the list does not select is never
+started, and nothing is logged about it:
 
 ```jsonc
 "resources": {
@@ -211,16 +241,34 @@ local policy = Open77.state.global:get("open77.prediction")
 if policy then print("blast prediction", policy.families.blast, "ceiling", policy.maxPingMs) end
 
 Open77.state.onChange(Open77.state.global, "open77.prediction", function(_, _, value)
-    print("prediction policy changed; ceiling now", value and value.maxPingMs)
+    print("prediction policy changed; ceiling", value and value.maxPingMs)
 end)
 ```
 
 ## Melee, Ground Slam and quickhack predictions
 
 The three action families are started by the bundled `open77_cyberware` resource, and only
-where the gamemode has told it its combat rules: without that policy they never predict. The
-gamemode publishes it from a client script with a local event. Freeroam does this for the street
-bucket and its spawn safe zones:
+where the gamemode has published its combat policy. Without that policy they **fail closed**:
+they never predict. This is deliberate. Only the gamemode knows whether a hit can land at all:
+its PvP switch, the bucket it plays in, its safe zones and its damage multipliers. A client
+guessing without them would predict knockdowns the server then refuses, and the attacker would
+see the victim fall and get back up. The client must not predict a hit the server will refuse.
+
+The gamemode publishes the policy from a client script with the local event
+`open77_prediction:policy`: sent when the gamemode starts, sent again on
+`open77_prediction:requestPolicy`, and withdrawn with `{ enabled = false }` when it stops.
+Nothing goes over the network and no permission is needed. Freeroam does this for the street
+bucket and its spawn safe zones. A complete example resource is published for reference; copy
+its `client/main.lua` into your gamemode and fill the values from your own configuration:
+[prediction_policy_example on GitHub](https://github.com/Open2077/open77-rp-examples/tree/main/platform/prediction_policy_example).
+
+| Field | Meaning |
+|---|---|
+| `owner` | Your resource name. The policy is dropped when that resource stops. |
+| `enabled` | `true` when PvP is on. `false` or a missing policy means no melee, Slam or hack prediction. |
+| `bucket` | The routing bucket these rules cover. Players in other buckets are not predicted. |
+| `safeZoneRadius`, `safeZones` | No prediction when the attacker or the victim is inside one of these spheres. |
+| `damageMultiplier`, `meleeMultiplier`, `explosionMultiplier`, `headshotMultiplier` | Your damage scales. A contact that might be lethal after them is not predicted. |
 
 ```lua
 -- Client script of a gamemode: allow action predictions in bucket 0, outside the safe zones.
@@ -245,7 +293,8 @@ end)
 
 Keep the multipliers equal to your server's damage policy: a contact that might be lethal is not
 predicted, so the victim is never shown getting up from a hit that killed them. Both players must
-be alive and in the policy's bucket, outside the safe zones and not already knocked down.
+be alive and in the policy's bucket, outside the safe zones and not already knocked down. The
+operator switches and the latency ceiling of `open77_prediction` apply on top of this policy.
 
 ## Advanced: native calls
 

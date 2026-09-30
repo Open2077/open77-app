@@ -135,7 +135,7 @@ Do not forward arbitrary client arguments to privileged server exports.
 | `setAutomatic` | `id, bucket, boolean` | Enable/disable server player-proximity opening. |
 | `setAccess` | `id, bucket, playerId, booleanOrNil` | Grant, deny, or remove a player override. |
 | `setActions` | `id, bucket, actions` | Declare which [door actions](#door-actions-force-pay-and-hack) (force, pay, hack) the door accepts; `nil` or `{}` withdraws them all. |
-| `resolveAction` | `ticket, accept, reason?` | Owner verdict on a pending action. `true` means the door opened (charge now); `false, reason` means nothing opened, including your own refusal, which answers `false, "refused_by_owner"`. |
+| `resolveAction` | `ticket, accept, reason?` | Owner verdict on a pending action. `true` means the door opened (charge the player); `false, reason` means nothing opened, including your own refusal, which answers `false, "refused_by_owner"`. |
 | `setNpcPassage` | `id, bucket, mode` | Which network NPCs may open the door: `'public'` (default), `'resource'`, `'always'` or `'never'`; `nil` restores `'public'`. See [NPC passage](#npc-passage). |
 | `npcStats` | — | `{accepted, refused = {reason = count}}`: NPC openings admitted and refused since the service started. |
 | `linkElevator` | `id, bucket, elevatorId, floor` | Link a registered landing door to a valid same-bucket lift and zero-based floor. |

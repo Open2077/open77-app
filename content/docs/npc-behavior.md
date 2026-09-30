@@ -66,10 +66,10 @@ when supplied data is invalid. Unknown/not-owned NPCs and missing permission ret
 loadout/appearance, changing bucket, or reviving the NPC does not reset these settings.
 They are not stored in client KVP and do not constitute disk persistence across server restarts.
 
-Two more options govern damage rather than AI, and default to the platform's previous behavior:
-`vehicleContactEnabled` (default `false`, [below](#vehicle-contact-damage)) and `hitPricing`
-(default `"resource"`, [below](#who-prices-player-hits-hitpricing)). They are set the same way,
-at creation or later, and read back from `getBehavior`:
+Two further options govern damage rather than AI: `vehicleContactEnabled` (default `false`,
+[below](#vehicle-contact-damage)) and `hitPricing` (default `"resource"`,
+[below](#who-prices-player-hits-hitpricing)). They are set the same way, at creation or later,
+and read back from `getBehavior`:
 
 ```lua
 local npc, reason = Open77.npcs.create({
@@ -91,7 +91,7 @@ policy (`invulnerable`, `immortal` or `mortal`). The client simulating the NPC r
 contact; the server checks its current lease, world readiness, revision, bucket and the
 vehicle's recent trajectory, with a two-second contact cooldown per NPC. Damage uses the same
 speed curve as car impacts on players (the `combat.vehicleHitDamage*` server options), derived
-from accepted positions. No per-frame world-wide contact scan is added.
+from accepted positions. Nothing scans the world for contacts every frame.
 
 An accepted contact adopts an existing native fall or requests a native NPC knockdown. Identical
 ragdoll trajectories on every screen are not guaranteed.

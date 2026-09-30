@@ -252,7 +252,7 @@
           "slug": "prediction",
           "kind": "guide",
           "nav": "Prediction",
-          "description": "Instant feedback for the acting player: the seven prediction families, the server verdict and smooth rollback, operator switches and latency ceiling, gamemode restrictions, telemetry, and what is new in the NPC, door, weapon and combat APIs."
+          "description": "Instant feedback for the acting player: what the client, open77_cyberware and open77_prediction each provide, the seven prediction families, the server verdict and smooth rollback, operator switches and latency ceiling, gamemode restrictions, telemetry, and an index of the related NPC, door, weapon and combat APIs."
         }
       ]
     },
