@@ -266,7 +266,83 @@ and the `open77_weapons` client resource — which knows whether one of its own
 `onGadgetConsumed(playerId, record, remaining[, tweakDbId])`, a reserved name a
 resource cannot forge, and refreshes the cache behind `gadgets()`.
 
-Native grenade explosions already replicate through the thrower's snapshot and report hits to the damage arbiter. Do not also call `Open77.effects.explosion` for the same grenade: that would apply damage twice. There is no native-grenade `onExplosion` event; use `onGadgetConsumed` for the throw and the damage feed for hits. Healing inhalers and other `Consumable` items are outside this API; apply healing through server-owned stats.
+Native grenade explosions already replicate through the thrower's snapshot and report hits to the damage arbiter. Do not also call `Open77.effects.explosion` for the same grenade: that would apply damage twice. Each detonation a player's client observed is republished on the server as the reserved event `onPlayerExplosion(playerId, sequence, x, y, z, count, bucket)`. It is the owner's **report**, not a verdict: a resource that must trust it pairs it with a consumed grenade, which is exactly what the [blast relay](#explosions-on-every-screen-the-blast-relay) does before it moves anything. Healing inhalers and other `Consumable` items are outside this API; apply healing through server-owned stats.
+
+## Explosions on every screen: the blast relay
+
+Only the client that simulates a car can move it, and a vanilla explosion runs its physics on one
+client: the grenade's thrower, the missile's shooter, the simulator of the car that blew up.
+Without help, only that screen sees cars jump and NPCs fall. The server side of `open77_weapons`
+relays every explosion the server can vouch for:
+
+| Source | Accepted when |
+|---|---|
+| Grenade: `onPlayerExplosion` | paired with a frag, incendiary or cutting grenade the same player spent, reported by `onConsumableUsed` (a grenade charge) or `onGadgetConsumed` (a quick-slot stack that shrank): one detonation per grenade, within 80 m of where it was thrown (160 m for a sticky one) and 160 m of the thrower, in the thrower's bucket, three at once then one every two seconds |
+| Car: its canonical `exploded` flag rising | once per explosion; a wreck created as a wreck is not one |
+| Mounted weapon: `onVehicleWeaponExplosion` | the vehicle weapon ticket admitted the projectile's explosion (missiles, cannons and exploding rounds) |
+| `exports.open77_weapons:relayBlast(request)` | another server resource admitted it |
+
+For each accepted blast the relay sends `open77_weapons:blast` to the physics owner of every other
+car in reach, listing that owner's cars (its client pushes them with
+[`Open77.weapons.applyBlast`](/docs/api/client/open77-weapons#applyblast), from its own poses),
+grants an ownerless car to the source, and tells the nearest players within 150 m of the blast
+radius to knock down their own copies of living network NPCs in range. The source's own cars and
+NPC copies are not repeated: its engine already moved them. Radius and impulse come from server
+tables per explosion family (frag: radius 5.5 m); no client supplies them, and the relay deals no
+damage. A client without `Open77.weapons.applyBlast` ignores the relay.
+
+Knocking **players** down is a gamemode rule and is off until a gamemode asks for it:
+
+```lua
+-- Server; publish again whenever this resource or open77_weapons (re)starts.
+local function publishBlastPolicy()
+    local promise, reason = Open77.exports.call("open77_weapons", "setBlastPolicy", {
+        players = true,                                      -- launch players in reach
+        safeZones = { { x = -1448, y = 96, z = 17, radius = 30 } },
+        buckets = { 0 },                                     -- optional
+    })
+    if not promise then print("blast policy not sent: " .. tostring(reason)); return end
+    local accepted, failure = promise:await()
+    if accepted ~= true then print("blast policy refused: " .. tostring(failure)) end
+end
+AddEventHandler("onResourceStart", function(name)
+    if name == GetCurrentResourceName() or name == "open77_weapons" then CreateThread(publishBlastPolicy) end
+end)
+```
+
+The launch is decided twice: when the blast is admitted and again just before each launch, so a
+player who reached a safe zone meanwhile, or a policy turned off meanwhile, is not launched.
+Freeroam does this with its spawn safe zones and the street bucket (its `combat.blastKnockdown`
+setting, on by default). A policy lapses when its resource stops; `players = false` also forbids
+explicit launches requested through `relayBlast`.
+
+| Control | Effect |
+|---|---|
+| convar `open77_blasts` | `off` (or `0`, `false`) turns every source off; default on |
+| `/weapon.blasts` (ACL `command.weapon.blasts`) | prints counters, blasts per kind and refusals by `kind:reason` |
+| `exports.open77_weapons:blastStats()` | the same counters as a table |
+
+`relayBlast(request)` lets another server resource relay a blast it admitted itself. The request is
+`{ kind = "tuned" | "scripted", source = playerId | 0, bucket (when source is 0), x, y, z, radius,
+push, lift, falloff?, serverSide?, players?, diagnostics?, sequence? }`. It refuses anything outside
+the client relay's own limits (radius above 0 and at most 60 m, push and lift 0–40 m/s with a
+non-zero sum, falloff 0–4, default 1), a centre more than 250 m from the source, or a dead source
+for `tuned`. It answers `{ vehicles, owners, characterHolders, accepted, rejected, reasons,
+closest, ... }` or `nil, reason` (`disabled`, `invalid_blast`, `invalid_source`, `invalid_bucket`,
+`position_unavailable`, `body_unavailable`, `out_of_range`, `global_rate`, `source_rate`). It is
+rate-limited per source player, or per invoking resource for a world blast.
+
+```lua
+-- Server: a scripted blast at a fixed point in bucket 0, pushing cars and knocking down NPCs.
+RegisterCommand("testblast", function(source)
+    local result, reason = exports.open77_weapons:relayBlast({
+        kind = "scripted", source = 0, bucket = 0,
+        x = -1442.2, y = 127.4, z = 18.0, radius = 8, push = 10, lift = 8,
+    })
+    if not result then print("blast refused: " .. tostring(reason)); return end
+    print(("blast reached %d cars across %d owners"):format(result.vehicles, result.owners))
+end, true)
+```
 
 ## Reading a player's weapons from the server, synchronously
 

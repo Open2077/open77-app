@@ -6,22 +6,25 @@ const read = (file) => readFile(file, "utf8");
 const contracts = JSON.parse(await read("content/api/door-service-api.json"));
 const expected = {
   server: ["get", "list", "near", "register", "configure", "setOpen", "setLocked", "setSealed",
-    "setAutomatic", "setAccess", "linkElevator", "remove", "setDiscoveryEnabled", "changes"],
+    "setAutomatic", "setAccess", "setActions", "resolveAction", "setNpcPassage", "npcStats",
+    "linkElevator", "remove", "setDiscoveryEnabled", "changes"],
   client: ["get", "list", "requestOpen"],
 };
-assert.equal(contracts.length, 17);
+assert.equal(contracts.length, 21);
 for (const [runtime, names] of Object.entries(expected)) {
   assert.deepEqual(contracts.filter((entry) => entry.runtime === runtime).map((entry) => entry.name).sort(), names.sort());
 }
 for (const entry of contracts) {
-  assert.ok(entry.summary && entry.description && entry.args && entry.returns, entry.name);
+  // `npcStats` takes no argument: its `args` is the empty string.
+  assert.ok(entry.summary && entry.description && typeof entry.args === "string" && entry.returns, entry.name);
 }
 const nav = JSON.parse(await read("content/docs/meta.json"));
 assert.ok(nav.sections.flatMap((section) => section.pages).some((page) => page.slug === "doors" && page.kind === "guide"));
 const guide = await read("content/docs/doors.md");
 for (const needle of ["2.31.13+op77.58", "server exports", "pending:await()",
   "routing bucket", "doorsClosed", "server_authority_required", "anti-tailgating", "not a world attestation",
-  "open77:doors:requestResult", "generation", "4096", "256", "networkInstance"]) {
+  "open77:doors:requestResult", "generation", "4096", "256", "networkInstance",
+  "setNpcPassage", "npcStats", "refused_by_owner", "open77_doors >=1.2.0", "Open77.npcs.presence"]) {
   assert.ok(guide.includes(needle), needle);
 }
 assert.ok((await read("src/lib/api-reference.ts")).includes('usageGuideHref: "/docs/doors"'));
@@ -49,4 +52,4 @@ if (origin) {
     console.log(`served OK ${url}`);
   }
 }
-console.log("Networked doors: guide, 14 server / 3 client exports, authority and deployment limits verified.");
+console.log("Networked doors: guide, 18 server / 3 client exports, authority and deployment limits verified.");

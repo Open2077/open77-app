@@ -66,6 +66,115 @@ when supplied data is invalid. Unknown/not-owned NPCs and missing permission ret
 loadout/appearance, changing bucket, or reviving the NPC does not reset these settings.
 They are not stored in client KVP and do not constitute disk persistence across server restarts.
 
+Two more options govern damage rather than AI, and default to the platform's previous behavior:
+`vehicleContactEnabled` (default `false`, [below](#vehicle-contact-damage)) and `hitPricing`
+(default `"resource"`, [below](#who-prices-player-hits-hitpricing)). They are set the same way,
+at creation or later, and read back from `getBehavior`:
+
+```lua
+local npc, reason = Open77.npcs.create({
+    record = "Character.cpz_maelstrom_grunt1_ranged1_lexington_wa",
+    position = { x = 381.0, y = -2400.0, z = 182.0 },
+    damagePolicy = Open77.npcs.damage.mortal,
+    behavior = { vehicleContactEnabled = true, hitPricing = "platform" },
+})
+if not npc then print(reason); return end
+print(Open77.npcs.getBehavior(npc).hitPricing) --> platform
+```
+
+## Vehicle contact damage
+
+`behavior.vehicleContactEnabled` defaults to `false`. The NPC's creating server resource may opt
+in with `Open77.npcs.setBehavior(id, { vehicleContactEnabled = true })`. This replaces native
+vehicle-hit damage pricing with server-priced contact damage, and it keeps the NPC's damage
+policy (`invulnerable`, `immortal` or `mortal`). The client simulating the NPC reports the
+contact; the server checks its current lease, world readiness, revision, bucket and the
+vehicle's recent trajectory, with a two-second contact cooldown per NPC. Damage uses the same
+speed curve as car impacts on players (the `combat.vehicleHitDamage*` server options), derived
+from accepted positions. No per-frame world-wide contact scan is added.
+
+An accepted contact adopts an existing native fall or requests a native NPC knockdown. Identical
+ragdoll trajectories on every screen are not guaranteed.
+
+## Who prices player hits: `hitPricing`
+
+An NPC's health and death belong to the server. No client lets the game change a network NPC's
+health or kill it on its own: a shot plays its hit reaction, and the NPC loses health or dies only
+when the server's ledger says so, on every client at once.
+
+By default the **resource** that created an NPC prices player hits on it, typically from the
+client event `open77:npcHit` it forwards to its own server script and a weapon table. A resource
+that prices nothing leaves players unable to kill its NPCs: they react to shots but never lose
+health.
+
+A resource can instead **opt in** to the platform's pricing for a **mortal** NPC
+(`damagePolicy = Open77.npcs.damage.mortal`). The shooter's client then sends the engine's own
+price for each hit, and the server applies it with `Open77.npcs.applyDamage` semantics.
+`onNpcDamaged` and `onNpcDied` receive the source `"player:<id>"` and the cause `"player_hit"`.
+
+```lua
+-- A guard that players may kill, with no hit pricing of your own.
+local guard = Open77.npcs.create({
+    record = "Character.cpz_maelstrom_grunt1_ranged1_lexington_wa",
+    position = { x = 381.0, y = -2400.0, z = 182.0 },
+    damagePolicy = Open77.npcs.damage.mortal,
+    behavior = { hitPricing = "platform" },
+})
+-- or later: Open77.npcs.setBehavior(guard, { hitPricing = "platform" })
+```
+
+**Resources that create mortal NPCs and do not price `open77:npcHit` should opt in**, or players
+cannot kill those NPCs. The opt-in exists because the amount is still the shooter's own claim:
+every report must ride shots the server itself admitted (see below), but the server has no weapon
+damage table, so a modified client could still claim one maximum per admitted shot. Price hits in
+your resource when that matters.
+
+The server checks each report before applying it:
+
+- the shooter is alive, has a weapon drawn according to its own recent player snapshot, has a
+  fresh position in the NPC's routing bucket and is within 150 m of it;
+- the report names at least one shot (a spent round or a melee swing) that the server admitted
+  for that drawn weapon at the weapon class's fire rate, fired within the last 3 s (1.5 s for a
+  swing) from within 150 m (12 m for melee) of the NPC, and not yet used against this NPC. Each
+  shot prices a given NPC once. The server option `combat.handheldDischarges` (default `true`)
+  runs this admission; turning it off turns platform pricing off;
+- the NPC is alive, mortal and opted in;
+- one report is worth at most the NPC's maximum health;
+- a player may apply at most 40 reports and 6 × maximum health per second across all NPCs;
+- an NPC may receive at most 24 reports and 2 × maximum health per second from all players.
+
+Immortal and invulnerable NPCs are never priced this way.
+
+| `hitPricing` | Player hits on a mortal NPC |
+| --- | --- |
+| `"resource"` (default) | Never priced by the platform; only what the resource applies changes the NPC. `open77:npcHit` still fires on the shooter's client. |
+| `"platform"` | Priced by the server as above. `open77:npcHit` still fires as well; do not also price it, or each shot counts twice. |
+
+The value must be one of these two strings; anything else returns `npc_behavior_invalid`.
+`Open77.npcs.getBehavior(id).hitPricing` reads it back. The bundled Cordon, Deathmatch and
+Freeroam PvP bots state `"resource"` explicitly.
+
+Damage no player caused is always reported by the client that simulates the NPC: environment,
+falls, fire, explosions without a player instigator, and the NPC's own grenade. Vehicle collisions
+are not player hits; opt in to [vehicle contact damage](#vehicle-contact-damage) for those.
+
+### Server configuration
+
+Both options live in the `combat` section of `server.jsonc` and are read at startup:
+
+```jsonc
+"combat": {
+  "handheldDischarges": true,     // default: admit handheld shots, required by "platform" pricing
+  "handheldVehicleDamage": false  // default: see Armed vehicles & Lua API
+}
+```
+
+`handheldDischarges` (default `true`) makes the server bind each living body and admit fire
+declarations against the drawn catalogued weapon and a per-class cadence. A receipt damages
+nothing by itself; platform-priced NPC hits require one. With `false`, no binding is sent and
+platform-priced NPCs cannot be priced from a player's hit. `handheldVehicleDamage` is described in
+[Armed vehicles & Lua API](vehicle-weapons.md#handheld-guns-on-cars-another-player-drives).
+
 ## Speech: one line, on demand
 
 `Open77.npcs.speak(id, voice, options)` is the ON switch beside `setVoiceEnabled`'s OFF: one

@@ -11,7 +11,7 @@ export const API_CATEGORIES = [
   { id: "ui", label: "Interfaces & markers", namespaces: ["Open77.webui", "WebUI.Page", "Open77.hud", "Open77.chat", "Open77.screen", "Open77.blips", "Open77.map", "Open77.markers", "Open77.anchors", "Open77.nameplates"] },
   { id: "camera", label: "Camera & input", namespaces: ["Open77.camera", "Open77.remoteCamera", "Open77.perspective", "Open77.photoMode", "Open77.input", "Open77.settings"] },
   { id: "audio", label: "Voice & effects", namespaces: ["Open77.voice", "Open77.sound", "Open77.sfx", "Open77.vfx"] },
-  { id: "network", label: "Network & sessions", namespaces: ["Open77.net", "Open77.network", "Open77.callbacks", "Open77.state", "Open77.session"] },
+  { id: "network", label: "Network & sessions", namespaces: ["Open77.net", "Open77.network", "Open77.callbacks", "Open77.state", "Open77.session", "Open77.prediction"] },
   FALLBACK_CATEGORY,
 ] as const;
 

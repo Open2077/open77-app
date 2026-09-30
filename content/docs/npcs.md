@@ -194,6 +194,27 @@ record lookup and asynchronous spawning can still fail; use `onNpcReady` and `on
 | `Open77.npcs.kill` | `npcId, optional reason` | boolean |
 | `Open77.npcs.revive` | `npcId, optional health` | boolean |
 | `Open77.npcs.remove` | `npcId` | boolean |
+| `Open77.npcs.presence` | `npcId` | `{ id, resource, owned, bucket, x, y, z, alive, authorityPlayerId, epoch, leaseMs? }`, or `nil, reason` |
+
+`presence` is the single, constant-time read a rule needs when a client acts **for** an NPC:
+who simulates it (`authorityPlayerId`, `0` when nobody; `epoch`; `leaseMs` only while a lease is
+live), whether it is `alive` (alive flag and health above zero), and its canonical place and
+bucket. `owned` says whether the caller created it and `resource` names who did. Unlike `get`, it
+answers for another resource's NPC too when the caller also declares `npcs.foreign` (otherwise
+`nil, "permission_denied:npcs.foreign"`), exactly like `all({ includeForeign = true })`. Other
+reasons: `invalid_npc_id`, `npc_not_found`, `npcs_unavailable`. The
+[door service](doors.md#npc-passage) uses it to let the simulating client open a door for its NPC.
+
+```lua
+-- open77.lua: permissions { "world.npcs", "npcs.foreign" }
+-- Let a client speak for an NPC only while it simulates it, near the target.
+local function speaksFor(player, npcId, target)
+    local p = Open77.npcs.presence(npcId)
+    if not p or not p.alive or p.authorityPlayerId ~= player or not p.leaseMs then return false end
+    local dx, dy, dz = p.x - target.x, p.y - target.y, p.z - target.z
+    return dx * dx + dy * dy + dz * dz <= 36
+end
+```
 
 An NPC snapshot contains:
 
@@ -379,6 +400,37 @@ local wander = Open77.npcs.tasks.wander(npcId, {
 
 `walk`, `run` and `sprint` are supported movement speeds. Patrol accepts 1 to 64 points. The
 current `onTargetLost` policy waits for the target to become available again.
+
+A walk never arrives by teleport. Before a `moveTo` starts, the client simulating the NPC asks the
+AI navigation for a path. A destination it cannot reach (a locked door in the way, a wall, a point
+off the walkable mesh) is not handed to the engine as is: the NPC walks to the closest reachable
+point, asks a managed door in front of it to open ([NPC passage](doors.md#npc-passage)), and
+re-checks once a second. If the way opens it walks on; if not, after about five seconds the task
+ends with `failure` and reason `path_blocked`. Standing within `acceptanceRadius` + 0.5 m of an
+unreachable point counts as arrived: `success`, reason `nearest_reachable`.
+
+| Task end reason | Meaning |
+|---|---|
+| `path_blocked` | The destination stayed unreachable (the NPC stopped where the path ends), the engine tried to place the body instead of walking it three times, or a `moveTo` made no progress for five seconds three times. |
+| `nearest_reachable` | Success next to a destination that cannot itself be stood on. |
+| `report_jump` | The server refused the position the simulator reported for the task's end (the NPC could not have walked there); the task ends where the server last saw the NPC. |
+
+```lua
+local move = Open77.npcs.tasks.moveTo(npcId, { x = 10, y = 20, z = 30 }, { speed = "walk" })
+AddEventHandler("onNpcTaskState", function(id, taskId, status, reason)
+    if tonumber(taskId) ~= move then return end
+    if status == "failure" and reason == "path_blocked" then
+        print(("NPC %s cannot reach its destination"):format(id))
+    elseif status == "success" and reason == "nearest_reachable" then
+        print(("NPC %s stopped next to an unreachable point"):format(id))
+    end
+end)
+```
+
+A native command that still moves the body farther in one frame than its gait allows (the
+engine's own answer to "no path" is to place the body on the destination) is cancelled and undone
+on the simulating client before anything about it is published. The same guard covers `patrol`,
+`wander`, `follow`, `flee`, `guard` and the walk of `enterVehicle`.
 
 ### Look, hold and animation
 

@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 97,
-  "apiEntries": 1672,
+  "guides": 98,
+  "apiEntries": 1716,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -362,11 +362,16 @@
       "target": "content/docs/doors.md",
       "slug": "doors",
       "title": "Networked world doors",
-      "bytes": 11784,
-      "sha256": "c973865eac0c0fd8001fb0fc5f1e112ed0a627845d630be8c7fa032f22dcbeac",
+      "bytes": 23830,
+      "sha256": "7f6760c5bae20e3c0bc383a7c8d2133f78f21d077a3a125732516fb31195b491",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "32de1fb7c8ac81156208f3f03e4df317422acb97dc59e3f6e20e2f7b5c0355fb"
+        "upstreamSnapshotSha256": "32de1fb7c8ac81156208f3f03e4df317422acb97dc59e3f6e20e2f7b5c0355fb",
+        "predictionAmendment": {
+          "sourceRevision": "36772b3b88404ffa9467bb2d06fcf1abd47568d9",
+          "sourceWorkingTreeDirty": false,
+          "scope": "Door actions (setActions/resolveAction, refused_by_owner), NPC passage (setNpcPassage, configure npcPassage, npcStats), door prediction, snapshot fields and refusal reasons"
+        }
       }
     },
     {
@@ -636,11 +641,16 @@
       "target": "content/docs/npc-behavior.md",
       "slug": "npc-behavior",
       "title": "NPC AI, combat and voice control",
-      "bytes": 9863,
-      "sha256": "e79b3603b3262811e687fc59f9d17cf5904d53f9851481c87c9d880298bf1e41",
+      "bytes": 15951,
+      "sha256": "f9d419117c6b1d082416c4a7fdf93d1090dcf81b8d835cd5f55c3adad5d8d39e",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "a2fa2bb7f9aed3b7e76d80f865e4b08a40955985e3bb33a3971944202973deb1"
+        "upstreamSnapshotSha256": "a2fa2bb7f9aed3b7e76d80f865e4b08a40955985e3bb33a3971944202973deb1",
+        "predictionAmendment": {
+          "sourceRevision": "36772b3b88404ffa9467bb2d06fcf1abd47568d9",
+          "sourceWorkingTreeDirty": false,
+          "scope": "behavior.vehicleContactEnabled, behavior.hitPricing and the combat.handheldDischarges option"
+        }
       }
     },
     {
@@ -660,12 +670,17 @@
       "target": "content/docs/npcs.md",
       "slug": "npcs",
       "title": "Server-owned NPCs",
-      "bytes": 42998,
-      "sha256": "946c6d0f6d130d97beae3e177d3b7d30b919f801948f72ce4fb857bc4b9b1c78",
+      "bytes": 46395,
+      "sha256": "5dd3a3a7f5cee88fbde9bb9d8f6e1be3a51cf1f44681e1057752cd9c9b51caf7",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "86fc7f6b93c095495ee619f115b25139cc339e179cd0e8affac49448f2ac9f52",
-        "alphaAccessAmendment": "Removed retired access-programme wording; native contracts unchanged."
+        "alphaAccessAmendment": "Removed retired access-programme wording; native contracts unchanged.",
+        "predictionAmendment": {
+          "sourceRevision": "36772b3b88404ffa9467bb2d06fcf1abd47568d9",
+          "sourceWorkingTreeDirty": false,
+          "scope": "Open77.npcs.presence and the moveTo end reasons path_blocked, nearest_reachable and report_jump"
+        }
       }
     },
     {
@@ -859,6 +874,20 @@
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "c3afcfa3a68c296efc7c28f61c76215bcbf26e58fbc3fb9e1b4f8cd7ddfcacc1"
+      }
+    },
+    {
+      "source": "site:content/docs/prediction.md",
+      "target": "content/docs/prediction.md",
+      "slug": "prediction",
+      "title": "Prediction",
+      "bytes": 15463,
+      "sha256": "9994bf14afa5a07f03af079c287d43a26624d441e0b8efec90549d0399a8151a",
+      "siteEditorial": {
+        "owner": "website",
+        "authoredOnSite": true,
+        "sourceRevision": "36772b3b88404ffa9467bb2d06fcf1abd47568d9",
+        "basis": "resources/system/open77_prediction, client/src/network/PredictionPolicy.hpp, scripting/src/ResourceHost.cpp, resources/system/open77_cyberware/client/prediction.lua"
       }
     },
     {
@@ -1167,12 +1196,17 @@
       "target": "content/docs/vehicle-weapons.md",
       "slug": "vehicle-weapons",
       "title": "Armed vehicles and weapon Lua API",
-      "bytes": 16984,
-      "sha256": "808b48da7837afbb9b9be316a44c9ade83d88248dbfab3a05fbedaf57c34eaf5",
+      "bytes": 18604,
+      "sha256": "cbd15c9442d2495b91205e5b77a69cd9007a1bebeea0d8be754dd9f69661801e",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "cd8c45353f8c847f48f5a10491dd1b52d46a482c9ef837739364e2a37c3ed0a0",
-        "alphaAccessAmendment": "Replaced retired access-programme label with experimental; compatibility limits unchanged."
+        "alphaAccessAmendment": "Replaced retired access-programme label with experimental; compatibility limits unchanged.",
+        "predictionAmendment": {
+          "sourceRevision": "36772b3b88404ffa9467bb2d06fcf1abd47568d9",
+          "sourceWorkingTreeDirty": false,
+          "scope": "onVehicleWeaponExplosion and combat.handheldVehicleDamage"
+        }
       }
     },
     {
@@ -1246,8 +1280,8 @@
       "target": "content/docs/weapons-api.md",
       "slug": "weapons-api",
       "title": "Weapon Lua API",
-      "bytes": 24169,
-      "sha256": "b6b8181057ee85bb7a11e2cdaf86188e8d8b7e121f63d9903becad1ed2e1f5b5",
+      "bytes": 29385,
+      "sha256": "49a7f9ccd38b6bd169d25bfdb838cf440c1b2932e30f5ad698f594a784ea8652",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "da99c0133f9086a12e101c45ed777d368e82e592a6c44e0ba7f5042a129e9c43",
@@ -1298,6 +1332,11 @@
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries",
           "upstreamGuideSha256": "a506f7794d4d27e1b9ea67ee45b5596a29befbd15fb7a6507805afec29e6814b"
+        },
+        "predictionAmendment": {
+          "sourceRevision": "36772b3b88404ffa9467bb2d06fcf1abd47568d9",
+          "sourceWorkingTreeDirty": false,
+          "scope": "onPlayerExplosion and the open77_weapons blast relay (relayBlast, setBlastPolicy, open77_blasts, applyBlast)"
         }
       }
     },
@@ -1364,41 +1403,43 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1672,
-      "bytes": 2362941,
-      "sha256": "193cae628779b7a52d508cf29252e64c8589c84aea18d2a3e8b48fb438041887",
+      "entries": 1716,
+      "bytes": 2480102,
+      "sha256": "a54e043cc771620932542677d80509352e4c97a964ca198c2675d45ff636a113",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "1a5b5a9bfbfc63245a36a2eb28d005193568dc8be722456fcb256fa7df6cb9fb"
+        "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6"
       },
       "siteAmendment": {
         "sourceCommit": "75f0e59cfa26606e83d9257ec1c7c07c6929c977",
         "scope": "RP native layer/item/sequence descriptions and server animation permissions; no inferred option release version",
         "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete",
         "blipSvgContract": "Native SVG icons and per-blip RGB/RGBA; experimental matching client adapter required. Reviewed against uncommitted open77-base implementation; upstream sync provenance preserved.",
-        "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved."
+        "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved.",
+        "predictionSync": "Vendored from open77-base 36772b3b88404ffa9467bb2d06fcf1abd47568d9 through scripts/doc-api-editorial.json. Preserved site entries: the eight drive-by cards (not on that revision), the four SVG blip cards, named CreateVehicle/ResetVehiclePaint/SetVehicleTransform parameters, and the permission-free Open77.markers.shapes. Open77.prediction.setPolicy/stats carry reviewed signatures and examples from ResourceHost.cpp."
       }
     },
     {
       "source": "wiki/door-service-api.json",
       "target": "content\\api/door-service-api.json",
-      "entries": 17,
-      "bytes": 6605,
-      "sha256": "87a9ccd6bd410ef861915fde508d08f1e247eab123dcf7bdbd10fc5e7a9d68d4"
+      "entries": 21,
+      "bytes": 9530,
+      "sha256": "307f215e5081563acf0fc1397ddec970cadeeedd134d9b21bff0fce59ec348fc"
     },
     {
       "source": "wiki/data/permissions.json",
       "target": "content\\api/permissions.json",
-      "entries": 135,
-      "bytes": 125646,
-      "sha256": "37ad7d7211d0bb390f45c8c594ffaf0e9440edc65c25b75bfddaef8625f91265"
+      "entries": 168,
+      "bytes": 151102,
+      "sha256": "7c687b72f9ea6d03f7ba275312653a6e571d50344fb2a7363bb3e5738dcebc19",
+      "siteAmendment": "Vendored from open77-base 36772b3b88404ffa9467bb2d06fcf1abd47568d9; world.markers keeps the markerSync natives and guides (Open77.markers.shapes needs no permission)."
     },
     {
       "source": "wiki/data/events.json",
       "target": "content\\api/events.json",
-      "entries": 445,
-      "bytes": 318212,
-      "sha256": "93466e5119179014a5e0b3684778a9246b8986220369d2153b7f389202b91988"
+      "entries": 514,
+      "bytes": 368587,
+      "sha256": "cadfb713a4b7bb5f8c3b69b2492b4b8d12c48dc9d28e45cbc7f8c92ee0b010c3"
     },
     {
       "source": "wiki/data/releases.json",
@@ -1470,9 +1511,10 @@
     {
       "source": "wiki/data/schemas/server-config.schema.json",
       "target": "content\\api/schemas/server-config.schema.json",
-      "bytes": 16614,
-      "sha256": "db55637f43e51872762d8ad6dc6c54885258b8a854134fc9a79d436a6f31c4f5",
-      "integrityCorrection": "Checksum reconciled with the tracked site snapshot; content unchanged by editorial review."
+      "bytes": 26685,
+      "sha256": "df644b0808dfc185f2676a05d3c8a41d78688696cf7bd4a9a1e1d0046413ee4f",
+      "integrityCorrection": "Checksum reconciled with the tracked site snapshot; content unchanged by editorial review.",
+      "siteAmendment": "Vendored from open77-base 36772b3b88404ffa9467bb2d06fcf1abd47568d9 (adds the combat section); keeps database.connectionStringEnvironmentVariable, which the server accepts but that revision's schema file omits."
     },
     {
       "source": "server/src/Open77.Server.Core/Vehicles/vehicle-weapons-2.31.json",
@@ -1627,8 +1669,8 @@
       "target": "content/docs/consumables-api.md",
       "slug": "consumables-api",
       "title": "Grenades and healing items",
-      "bytes": 9060,
-      "sha256": "80d8971d265c0ebf22fc7f3cbdc5321ca252ffa5da7475d21a8d580d9045ec5b",
+      "bytes": 9432,
+      "sha256": "ee4adb9419243cce04a4e91c86b96407d11d5a1ae6f52e99d138c923de05a30b",
       "siteEditorial": {
         "owner": "website",
         "consumablesVisibilityAmendment": {
@@ -1661,6 +1703,11 @@
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries",
           "upstreamGuideSha256": "abfcf7a1462e8b387c52773fa5317c60b3726b303bc3fb19ab3f896ce4247767"
+        },
+        "predictionAmendment": {
+          "sourceRevision": "36772b3b88404ffa9467bb2d06fcf1abd47568d9",
+          "sourceWorkingTreeDirty": false,
+          "scope": "onConsumableUsed reservation and its blast-relay credit"
         }
       }
     },
@@ -1896,5 +1943,22 @@
       "server:Open77.players.setDriveByEnabled"
     ],
     "apiMode": "merge-selected-cards-preserve-other-site-entries"
+  },
+  "predictionSync": {
+    "tool": "manual vendoring of wiki/data/api.json and companions (no sync:wiki)",
+    "syncedAt": "2026-09-30T08:24:10.861Z",
+    "sourceRevision": "36772b3b88404ffa9467bb2d06fcf1abd47568d9",
+    "sourceWorkingTreeDirty": false,
+    "sourceApiSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6",
+    "guides": [
+      "prediction",
+      "doors",
+      "npcs",
+      "npc-behavior",
+      "weapons-api",
+      "vehicle-weapons",
+      "consumables-api"
+    ],
+    "apiMode": "vendor-base-api-preserve-site-entries"
   }
 }

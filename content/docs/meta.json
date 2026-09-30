@@ -247,6 +247,12 @@
           "kind": "guide",
           "nav": "Client persistent KVP",
           "description": "Endpoint- and resource-isolated local key/value persistence: CRUD, search, atomic operations, quotas, and why it must never hold secrets."
+        },
+        {
+          "slug": "prediction",
+          "kind": "guide",
+          "nav": "Prediction",
+          "description": "Instant feedback for the acting player: the seven prediction families, the server verdict and smooth rollback, operator switches and latency ceiling, gamemode restrictions, telemetry, and what is new in the NPC, door, weapon and combat APIs."
         }
       ]
     },

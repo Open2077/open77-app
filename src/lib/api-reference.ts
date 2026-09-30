@@ -221,6 +221,13 @@ function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
       ["setLocalPuppetVisible", "isLocalPuppetVisible"].includes(raw.name)) {
     return { usageGuideHref: "/docs/local-puppet-visibility", usageGuideLabel: "Local player visibility & Prop Hunt" };
   }
+  if (raw.namespace === "Open77.prediction" ||
+      (raw.namespace === "Open77.motion" && ["predictAction", "refutePrediction", "predictionStats"].includes(raw.name))) {
+    return { usageGuideHref: "/docs/prediction", usageGuideLabel: "Prediction guide" };
+  }
+  if (runtime === "client" && raw.namespace === "Open77.weapons" && raw.name === "applyBlast") {
+    return { usageGuideHref: "/docs/weapons-api#explosions-on-every-screen-the-blast-relay", usageGuideLabel: "Blast relay guide" };
+  }
   if (raw.namespace === "Open77.motion" && raw.name === "launch") {
     return { usageGuideHref: "/docs/weapon-customization#launch-nearby-characters", usageGuideLabel: "Character launch & weapon blasts" };
   }

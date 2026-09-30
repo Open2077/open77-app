@@ -12,7 +12,8 @@ const cases = [
       "getView", "focus", "recenter", "setZoomLevel", "setCameraMode", "getScreen", "setTitle", "setAccentColor",
       "resetAppearance", "addTab", "removeTab", "selectTab", "setTabLabel"] },
   { namespace: "Open77.vehicles.ai", runtime: "server", slug: "vehicle-ai", section: "vehicles",
-    names: ["attachDriver", "removeDriver", "state", "driveTo", "followRoute", "follow", "chase", "joinTraffic", "stop", "setSpeed", "setBehavior", "on"] },
+    names: ["attachDriver", "removeDriver", "state", "driveTo", "followRoute", "follow", "chase", "joinTraffic", "stop", "setSpeed", "setBehavior", "on",
+      "capacity", "panic", "setTrafficPattern"] },
 ];
 const categories = await read("src/lib/api-categories.ts");
 const reference = await read("src/lib/api-reference.ts");
@@ -95,4 +96,4 @@ if (origin) {
     console.log(`served OK ${url}`);
   }
 }
-console.log("Native map and vehicle AI: 33 API cards, custom tabs, Lua/JS lifecycle, provenance and runtime constraints verified.");
+console.log("Native map and vehicle AI: 36 API cards, custom tabs, Lua/JS lifecycle, provenance and runtime constraints verified.");

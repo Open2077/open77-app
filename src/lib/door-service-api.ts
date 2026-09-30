@@ -18,7 +18,27 @@ const TYPES: Record<string, string> = {
   sealed: "boolean", automatic: "boolean", playerId: "integer",
   allow: "boolean | nil", elevatorId: "integer", floor: "integer",
   enabled: "boolean", cursor: "integer",
+  actions: "table | nil", ticket: "integer", accept: "boolean", reason: "string",
+  mode: '"public" | "resource" | "always" | "never" | nil',
 };
+
+/** Exports added after the first release need a newer open77_doors (door actions 1.1.0, NPC passage 1.2.0). */
+const MINIMUM_VERSION: Record<string, string> = {
+  setActions: "1.1.0", resolveAction: "1.1.0", setNpcPassage: "1.2.0", npcStats: "1.2.0",
+};
+
+function availability(name: string): string {
+  const minimum = MINIMUM_VERSION[name];
+  return minimum
+    ? `Depend on open77_doors >=${minimum} and call Open77.exports.call, not a Lua table named open77_doors.`
+    : "Depend on open77_doors >=1.0.0 and call Open77.exports.call, not a Lua table named open77_doors.";
+}
+
+function release(name: string): string {
+  return MINIMUM_VERSION[name]
+    ? "Requires client and server builds that include this open77_doors version; players on an older client never send the matching requests."
+    : "Available with client and server release 2.31.13+op77.58 on the CDN; older clients do not contain its native projection bridge.";
+}
 
 /** These are exports of a system resource, not Open77.doors server natives. */
 export async function getDoorServiceApi(): Promise<ApiEntryRaw[]> {
@@ -38,7 +58,8 @@ export async function getDoorServiceApi(): Promise<ApiEntryRaw[]> {
         : name === "bucket" && entry.name === "get" ? "0" : null;
       return {
         name, type: TYPES[name] ?? "any", default: defaultValue,
-        optional: defaultValue !== null || (name === "bucket" && entry.name === "list"),
+        optional: defaultValue !== null || (name === "bucket" && entry.name === "list")
+          || (name === "reason" && entry.name === "resolveAction"),
       };
     });
     const signature = `Open77.exports.call("open77_doors", "${entry.name}"${entry.args ? `, ${entry.args}` : ""})`;
@@ -46,7 +67,7 @@ export async function getDoorServiceApi(): Promise<ApiEntryRaw[]> {
       namespace: "open77_doors", name: entry.name, qualified: `open77_doors.${entry.name}`,
       route_id: `${entry.runtime}:open77_doors.${entry.name}`, handler: `export:${entry.name}`,
       summary: entry.summary,
-      description: `${entry.description}\n\nThis is an asynchronous ${entry.runtime}-side resource export. Depend on open77_doors >=1.0.0 and call Open77.exports.call, not a Lua table named open77_doors. The call returns a Promise (or nil, error if it cannot be queued); awaiting it yields: ${entry.returns}. Available with client and server release 2.31.13+op77.58 on the CDN; older clients do not contain its native projection bridge.`,
+      description: `${entry.description}\n\nThis is an asynchronous ${entry.runtime}-side resource export. ${availability(entry.name)} The call returns a Promise (or nil, error if it cannot be queued); awaiting it yields: ${entry.returns}. ${release(entry.name)}`,
       params, returns: ["Promise | nil", "queue error, if any"],
       api_set: entry.runtime === "server" ? "server" : "network", runtime: entry.runtime,
       source: `resources/system/open77_doors/${entry.runtime}/main.lua`,

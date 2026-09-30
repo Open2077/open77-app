@@ -67,6 +67,34 @@ invulnerability and Lua damage arbitration still apply.
 
 Damage requires an admitted projectile terminal and a plausible canonical target in the same bucket. Repeated projectile/target receipts are deduplicated; clients cannot set the damage value. NPC damage remains experimental.
 
+A mounted missile, cannon or exploding round that the server admitted also moves nearby cars and
+knocks down NPCs on every screen through the `open77_weapons` blast relay, which listens to the
+reserved server event `onVehicleWeaponExplosion(playerId, vehicleId, weapon, x, y, z, bucket,
+recordRadius, projectileId)`. See [the blast relay](weapons-api.md#explosions-on-every-screen-the-blast-relay).
+
+### Handheld guns on cars another player drives
+
+**Server option, off by default, experimental.** A car's health belongs to the client that
+simulates it, so a pistol round fired at a car someone else drives does not change it. The server
+option `combat.handheldVehicleDamage` (in `server.jsonc`, default `false`) makes the server apply
+those hits itself:
+
+```jsonc
+"combat": {
+  "handheldDischarges": true,    // default; required
+  "handheldVehicleDamage": true  // default false
+}
+```
+
+Each round must be one the server admitted for the shooter's drawn weapon at that weapon class's
+fire rate (`combat.handheldDischarges`, default `true`), each round damages a given car once, and
+the price is fixed per class, as a fraction of the car's health: sniper 0.090, precision rifle
+0.065, shotgun 0.060, revolver 0.045, handgun 0.028, assault rifle 0.020, SMG 0.015, machine gun
+0.012. Melee weapons, grenade launchers and grenades are not priced this way. Invulnerable,
+destroyed and exploded cars refuse, a car the shooter sits in or simulates is never a target, and
+there is no Lua callback: protect a car with its `invulnerable` state
+(`Open77.vehicles.flags.invulnerable`). An immortal car keeps a small health floor.
+
 ## Start with a known model
 
 Use the [catalogue's spawn examples](armed-vehicles.md#spawn-a-network-vehicle)

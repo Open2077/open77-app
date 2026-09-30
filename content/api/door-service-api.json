@@ -37,7 +37,7 @@
     "args": "id, bucket, patch",
     "returns": "true or false, reason",
     "summary": "Configure a door atomically on the server.",
-    "description": "Requires ownership. Fields: open, locked, sealed, automatic, autoClose, defaultAccess, openRadius, closeRadius, closeDelay. Radii 1–12m, closeRadius >= openRadius, delay 0.2–60s. Invalid patches change nothing. Locks/seals close the door; lift opening is controlled by the elevator."
+    "description": "Requires ownership. Fields: open, locked, sealed, automatic, autoClose, defaultAccess, openRadius, closeRadius, closeDelay, npcPassage ('public', 'resource', 'always' or 'never'). Radii 1–12m, closeRadius >= openRadius, delay 0.2–60s. Invalid patches change nothing. Locks/seals close the door; lift opening is controlled by the elevator."
   },
   {
     "runtime": "server",
@@ -81,6 +81,38 @@
   },
   {
     "runtime": "server",
+    "name": "setActions",
+    "args": "id, bucket, actions",
+    "returns": "true or false, reason",
+    "summary": "Declare which door actions (force, pay, hack) a door accepts.",
+    "description": "Requires ownership; nothing is allowed by default and nil or {} withdraws everything. force/hack: true or { approval = 'auto'|'owner', keepUnlocked, range (hack, 1-60 m, default 30) }. pay: { price = 1..1e9 }, always owner-approved. An accepted action unlocks and opens the door; the lock returns when it shuts unless keepUnlocked. Actions bypass the lock and defaultAccess, never an explicit setAccess denial. Lift doors reject actions; invalid declarations change nothing."
+  },
+  {
+    "runtime": "server",
+    "name": "resolveAction",
+    "args": "ticket, accept, reason",
+    "returns": "true or false, reason",
+    "summary": "Approve or refuse a pending owner-approved door action.",
+    "description": "Tickets arrive in the host-wide open77:doors:action event (stage 'requested') and in changes. Only the door's owner can resolve; a ticket resolves once and expires after 5 s. accept = true re-checks range, seal and price and answers true only if the door was opened: charge on true, never on false. A refusal reason matching [A-Za-z0-9_.:-]{1,48} is forwarded to the client."
+  },
+  {
+    "runtime": "server",
+    "name": "setNpcPassage",
+    "args": "id, bucket, mode",
+    "returns": "true or false, reason",
+    "summary": "Choose which network NPCs may open a door.",
+    "description": "Requires ownership. 'public' (default): any network NPC opens an unlocked door open to everyone. 'resource': the owning resource's own NPCs also pass its locked or private doors. 'always': any network NPC passes locked or private doors. 'never': no NPC. nil restores 'public'. Only the client that simulates an NPC can ask for it; the service checks that client's authority epoch, the NPC's life, bucket and 6 m reach from the server's own NPC state. A lock lifted for an NPC returns when the door shuts. Invalid values (invalid_npc_passage) change nothing."
+  },
+  {
+    "runtime": "server",
+    "name": "npcStats",
+    "args": "",
+    "returns": "{ accepted, refused }",
+    "summary": "Count NPC door openings admitted and refused.",
+    "description": "accepted is the number of NPC openings admitted since the service started; refused maps each refusal reason (not_npc_authority, unknown_npc, npc_not_alive, too_far, wrong_bucket, locked, access_denied, npc_passage_denied, sealed, elevator_controlled, rate_limited, invalid_npc_request, ...) to its count. A refused NPC request is never answered to the client, so this is where it is seen. The result is a copy."
+  },
+  {
+    "runtime": "server",
     "name": "linkElevator",
     "args": "id, bucket, elevatorId, floor",
     "returns": "true or false, reason",
@@ -109,7 +141,7 @@
     "args": "cursor",
     "returns": "{ cursor, reset, events }",
     "summary": "Read a bounded feed of authoritative door changes.",
-    "description": "At most eight events per page, from a 512-event ring. Continue with the returned cursor; if reset is true, rescan list. Supports cross-resource observation without assuming a server event bus."
+    "description": "At most eight events per page, from a 512-event ring. Continue with the returned cursor; if reset is true, rescan list. Kinds: changed, removed, request, action, npc_request (reason = NPC id, value = the simulating player). Supports cross-resource observation without the host-wide event bus; door actions are also published there as open77:doors:action."
   },
   {
     "runtime": "client",

@@ -152,7 +152,11 @@ end)
 
 This event follows the native grenade throw/healing-use path. Changing a count
 through Lua does not fabricate a use. The host rejects stale reports and
-suppresses repeated use sequences. Finite managed stock also limits vanilla
+suppresses repeated use sequences. `onConsumableUsed` is a reserved host event:
+a resource cannot publish it (`reserved_event`). Each frag, incendiary or
+cutting grenade charge it reports also credits the `open77_weapons` [blast relay](weapons-api.md#explosions-on-every-screen-the-blast-relay),
+which lets the matching detonation (`onPlayerExplosion`) move nearby cars and
+knock down NPCs on every screen. Finite managed stock also limits vanilla
 free-use/refund effects; native regeneration is available with `recharge=true`.
 Perks can modify charge costs and refunds. Check the interactions used by your
 game mode when combining native perks with finite managed stock.
