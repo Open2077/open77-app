@@ -10,6 +10,9 @@ Find weapon-equipped model IDs in the [armed vehicle spawn catalogue](armed-vehi
 
 For weapon replication, release compatibility, damage policy, current limitations and the twelve client-side armament, ammo, heat and selection queries, see the dedicated [armed vehicles and weapon Lua API guide](vehicle-weapons.md).
 
+[Changing seats](vehicle-seat-switching.md) covers animated in-cabin moves,
+automatic driver takeover, cancellation and Lua lifecycle events.
+
 ## Manifest
 
 ```lua
@@ -19,8 +22,8 @@ permissions { "world.vehicles", "vehicles.read", "vehicles.presentation", "vehic
 `world.vehicles` is a server permission. `vehicles.read` exposes the read-only client projection.
 `vehicles.presentation` is optional and permits a client resource to select the visual entry path
 for an occupant whose exact player, vehicle, and seat were already validated by the server.
-`vehicles.control` is optional and lets a client resource sound the horn of a vehicle currently
-simulated by that client; it never grants authority over another player's vehicle.
+`vehicles.control` permits locally owned horn control and server-admitted seat
+requests for the local player. It does not grant authority over another player's vehicle.
 
 ## Complete Lua API inventory
 
@@ -29,7 +32,7 @@ The vehicle surface is intentionally asymmetric:
 | Runtime | Surface | Mutation |
 |---|---|---|
 | Server | `Open77.vehicles.*` | Authoritative lifecycle, seats, lock state, horn routing, damage, detached parts, openings, paint, and transform. |
-| Client | `Open77.vehicles.*` | Read-only state, locally-owned horn control, and guarded remote-occupant presentation. |
+| Client | `Open77.vehicles.*` | State reads, locally owned horn control, local seat-switch requests and policy, and guarded remote-occupant presentation. |
 | Client package | `open77_vehicles` exports | Read-only compatibility wrappers. |
 | Server low level | FiveM-style globals | Raw implementation surface; prefer `Open77.vehicles.*`. |
 
@@ -86,6 +89,18 @@ Every method in this table requires `world.vehicles`.
 | `Open77.vehicles.setPlayerExitLocked` | `(playerId, locked, vehicleId?)` | Sets the durable no-exit policy. |
 | `Open77.vehicles.getPlayerSeat` | `(playerId)` | Canonical server seat assignment or `nil`. |
 | `Open77.vehicles.isPlayerExitLocked` | `(playerId)` | Whether the canonical assignment is exit-locked. |
+
+### Server seat-switch controls
+
+These methods require `world.vehicles`.
+
+| Method | Signature | Return / behavior |
+|---|---|---|
+| `Open77.vehicles.switchPlayerSeat` | `(playerId, seat)` | `true, transitionId` on reservation, otherwise `false, reason`; animated move within the current car. |
+| `Open77.vehicles.getPlayerSeatSwitch` | `(playerId)` | Active transition, idle `nil`, or `false, reason` on refusal. |
+| `Open77.vehicles.cancelPlayerSeatSwitch` | `(playerId, transitionId)` | Cancels the matching token; retains the original seat. |
+| `Open77.vehicles.setPlayerAutoSeatSwitchEnabled` | `(playerId, enabled)` | Adds or releases this resource's automatic driver-takeover veto. |
+| `Open77.vehicles.isPlayerAutoSeatSwitchEnabled` | `(playerId)` | Effective server policy, or `false, reason` on refusal. |
 
 ### All server engine, light and siren methods
 
@@ -275,6 +290,11 @@ The remaining `Open77.vehicles.update` fields are `health`, `flags`, `primaryCol
 | `Open77.vehicles.fromEntity` | `vehicles.read` | `(entityId)` | Snapshot for an Open77 or REDengine entity id. |
 | `Open77.vehicles.seatFree` | `vehicles.read` | `(id, seat)` | Reads the replicated occupancy ledger. |
 | `Open77.vehicles.occupantInSeat` | `vehicles.read` | `(id, seat)` | Player id in that seat, or `nil` when free. |
+| `Open77.vehicles.switchSeat` | `vehicles.control` | `(seat)` | Submits a local in-cabin move for server admission; `true` means queued. |
+| `Open77.vehicles.cancelSeatSwitch` | `vehicles.control` | `(transitionId)` | Submits cancellation of the current transition token. |
+| `Open77.vehicles.seatSwitchState` | `vehicles.read` | `()` | `{ active, autoSwitchEnabled, vehicleId?, fromSeat?, id?, toSeat? }`, or `nil, reason`. |
+| `Open77.vehicles.setAutoSeatSwitchEnabled` | `vehicles.control` | `(enabled)` | Adds or releases this resource's local automatic takeover veto. |
+| `Open77.vehicles.isAutoSeatSwitchEnabled` | `vehicles.read` | `()` | Effective client and server policy, or `nil, reason`. |
 
 Client constants are `Open77.vehicles.doors`, `Open77.vehicles.windows`, and
 `Open77.vehicles.seats`. They are tables, not callable methods.
@@ -850,6 +870,38 @@ Normal failures return `false, reason`. Stable reasons are `permission_denied:wo
 `seat_occupied`, `not_occupant`, `vehicle_unavailable`, `exit_locked`, and
 `seat_operation_failed`.
 
+### Animated changes inside a car
+
+Use `switchPlayerSeat` on the server or `switchSeat` on the client when the
+player is already seated. The destination is reserved while the source stays
+occupied, and the in-cabin animation is replicated to other players. These APIs
+require matching protocol 1.44 client/server builds and their animation assets.
+
+```lua
+-- server.lua; permission: world.vehicles
+local ok, tokenOrReason = Open77.vehicles.switchPlayerSeat(playerId, 'rearRight')
+if not ok then print(tokenOrReason) end
+
+-- Keep the front passenger in their seat when the driver leaves.
+Open77.vehicles.setPlayerAutoSeatSwitchEnabled(playerId, false)
+```
+
+`true` accepts or queues a request; it does not mean the move is finished.
+Server events are `onPlayerVehicleSeatSwitchStarted`,
+`onPlayerVehicleSeatSwitchCompleted` and `onPlayerVehicleSeatSwitchFailed`, with
+`(playerId, vehicleId, transitionId, fromSeat, toSeat, reason)`.
+Client equivalents use `open77:vehicleSeatSwitchStarted`,
+`open77:vehicleSeatSwitchCompleted` and `open77:vehicleSeatSwitchFailed`, with
+`(vehicleId, transitionId, fromSeat, toSeat, reason)`. The extra client
+`open77:vehicleSeatSwitchDecision` receives
+`(vehicleId, transitionId, seat, status, reason)` after a request.
+
+Use the [seat-switching guide](vehicle-seat-switching.md) for all ten functions,
+seat aliases, state fields, cancellation, automatic takeover, event payloads,
+resource-owned policy and error handling. It includes server commands and
+client menu examples. Automatic takeover can be disabled without disabling
+explicit seat requests.
+
 ### Server snapshot fields
 
 `Open77.vehicles.get` and each entry returned by `all` contain:
@@ -867,7 +919,7 @@ Normal failures return `false, reason`. Stable reasons are `permission_denied:wo
 | Damage view | `damage = { body, glass, lights, tires, detachedParts }` |
 | Lifetime | `persistent`, `despawnWhenUnobserved`, `ttlMs` (absent when there is no deadline) |
 | Performance | `performance = { topSpeedKph, accelerationScale, taperKph }` (absent when uncapped) |
-| Seats | `occupants[] = { playerId, seat, flags, entering, exiting, forcedEntry, exitLocked, forcedExit }`, plus `driverPlayerId` |
+| Seats | `occupants[] = { playerId, seat, flags, entering, exiting, forcedEntry, exitLocked, forcedExit, switching, switchId, switchSeat, autoSwitchEnabled }`, plus `driverPlayerId` |
 
 `x`, `y` and `z` are unchanged; `position` is the same point as a plain `{ x, y, z }` table, which
 is what an Open77 vector3 is, so `#(a.position - b.position)` works on it without a conversion.
@@ -1272,7 +1324,7 @@ The client snapshot deliberately differs from the server snapshot:
 | Body and damage | `bodyDamage[1..30]`, `damage = { body, glass, lights, tires, detachedParts }` |
 | Drivetrain | `speed` (m/s), `speedKph`, `rpm`, `rpmMax`, `throttle`, `brake`, `gear`, `burnout` |
 | Wheels/suspension | `steering`, `wheelRotation`, `suspensionLongitudinal`, `suspensionTransversal`, `onGround`, `reversing` |
-| Seats | `occupants[] = { playerId, seat, flags, entering, exiting, forcedEntry, exitLocked, forcedExit }` |
+| Seats | `occupants[] = { playerId, seat, flags, entering, exiting, forcedEntry, exitLocked, forcedExit, switching, switchId, switchSeat, autoSwitchEnabled }` |
 
 `position` and `orientation` come from the same source: the latest replicated motion when one
 exists, the canonical create otherwise, so a proximity query answers for a car whose REDengine
@@ -1716,6 +1768,10 @@ Adopting vanilla traffic into the registry is a separate capability that does no
 client and the server agree about who is where. A seat held by an occupant whose entry animation is
 still running counts as **taken**: the seat is reserved and a second warp into it is refused, so
 reporting it free would be a lie the caller then trips over one line later.
+
+During an animated seat switch, both source and destination count as taken.
+The occupant's `seat` stays at the source; `switching`, `switchId` and `switchSeat`
+identify the reserved destination. `switchId` is an opaque string.
 
 `freeSeats(id)` returns canonical seat names in `driver, frontPassenger, rearLeft, rearRight`
 order, so `freeSeats(id)[1]` is a deterministic "put them anywhere" seat. It considers all four

@@ -271,3 +271,9 @@ without client execution:
 Calls fail with `permission_denied:ui.vanilla.hud`, `invalid_hud_arguments`,
 `invalid_hud_component`, or `hud_unavailable_on_this_host`. This API is presentation-only: it
 does not modify health, stamina, ammunition, vehicle speed, or any replicated gameplay state.
+
+## Loading-screen integration
+
+To hide the HUD only during a native load, see [custom loading
+screens](loading-screens.md). The example owns and releases its HUD claims,
+keeps a WebUI cover ready, and closes it when native loading finishes.

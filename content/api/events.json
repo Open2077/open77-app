@@ -16770,6 +16770,243 @@
    "documented": true,
    "inCode": true,
    "lifecycle": true
+  },
+  {
+   "name": "onPlayerVehicleSeatSwitchCompleted",
+   "sides": [
+    "server"
+   ],
+   "payload": "(playerId, vehicleId, transitionId, fromSeat, toSeat, reason)",
+   "guides": [
+    {
+     "file": "vehicle-seat-switching.md",
+     "anchor": "server-api"
+    },
+    {
+     "file": "vehicle-seat-switching.md",
+     "anchor": "events-and-failures"
+    },
+    {
+     "file": "vehicles.md",
+     "anchor": "animated-changes-inside-a-car"
+    }
+   ],
+   "sources": [
+    {
+     "side": "server",
+     "file": "server/src/Open77.Server.Scripting/Hosting/ServerResourceHost.cs",
+     "line": 1861
+    },
+    {
+     "side": "server",
+     "file": "server/src/Open77.Server.Scripting/Runtime/ResourceEventBus.cs",
+     "line": 89
+    }
+   ],
+   "documented": true,
+   "inCode": true,
+   "lifecycle": true
+  },
+  {
+   "name": "onPlayerVehicleSeatSwitchFailed",
+   "sides": [
+    "server"
+   ],
+   "payload": "(playerId, vehicleId, transitionId, fromSeat, toSeat, reason)",
+   "guides": [
+    {
+     "file": "vehicle-seat-switching.md",
+     "anchor": "events-and-failures"
+    },
+    {
+     "file": "vehicles.md",
+     "anchor": "animated-changes-inside-a-car"
+    }
+   ],
+   "sources": [
+    {
+     "side": "server",
+     "file": "server/src/Open77.Server.Scripting/Hosting/ServerResourceHost.cs",
+     "line": 1862
+    },
+    {
+     "side": "server",
+     "file": "server/src/Open77.Server.Scripting/Runtime/ResourceEventBus.cs",
+     "line": 89
+    }
+   ],
+   "documented": true,
+   "inCode": true,
+   "lifecycle": true
+  },
+  {
+   "name": "onPlayerVehicleSeatSwitchStarted",
+   "sides": [
+    "server"
+   ],
+   "payload": "(playerId, vehicleId, transitionId, fromSeat, toSeat, reason)",
+   "guides": [
+    {
+     "file": "vehicle-seat-switching.md",
+     "anchor": "events-and-failures"
+    },
+    {
+     "file": "vehicles.md",
+     "anchor": "animated-changes-inside-a-car"
+    }
+   ],
+   "sources": [
+    {
+     "side": "server",
+     "file": "server/src/Open77.Server.Scripting/Hosting/ServerResourceHost.cs",
+     "line": 1860
+    },
+    {
+     "side": "server",
+     "file": "server/src/Open77.Server.Scripting/Runtime/ResourceEventBus.cs",
+     "line": 89
+    }
+   ],
+   "documented": true,
+   "inCode": true,
+   "lifecycle": true
+  },
+  {
+   "name": "open77:loadingScreen:changed",
+   "sides": [],
+   "payload": "(state)",
+   "guides": [
+    {
+     "file": "loading-screens.md",
+     "anchor": "events"
+    },
+    {
+     "file": "loading-screens.md",
+     "anchor": "hide-your-own-webui-while-loading"
+    },
+    {
+     "file": "loading-screens.md",
+     "anchor": "2-forward-the-loading-state-to-your-page"
+    }
+   ],
+   "sources": [],
+   "documented": true,
+   "inCode": false,
+   "lifecycle": false
+  },
+  {
+   "name": "open77:loadingScreen:finished",
+   "sides": [],
+   "payload": "(state)",
+   "guides": [
+    {
+     "file": "loading-screens.md",
+     "anchor": "events"
+    }
+   ],
+   "sources": [],
+   "documented": true,
+   "inCode": false,
+   "lifecycle": false
+  },
+  {
+   "name": "open77:loadingScreen:started",
+   "sides": [],
+   "payload": "(state)",
+   "guides": [
+    {
+     "file": "loading-screens.md",
+     "anchor": "events"
+    }
+   ],
+   "sources": [],
+   "documented": true,
+   "inCode": false,
+   "lifecycle": false
+  },
+  {
+   "name": "open77:vehicleSeatSwitchCompleted",
+   "sides": [],
+   "payload": "(vehicleId, transitionId, fromSeat, toSeat, reason)",
+   "guides": [
+    {
+     "file": "vehicle-seat-switching.md",
+     "anchor": "client-api"
+    },
+    {
+     "file": "vehicle-seat-switching.md",
+     "anchor": "events-and-failures"
+    },
+    {
+     "file": "vehicles.md",
+     "anchor": "animated-changes-inside-a-car"
+    }
+   ],
+   "sources": [],
+   "documented": true,
+   "inCode": false,
+   "lifecycle": false
+  },
+  {
+   "name": "open77:vehicleSeatSwitchDecision",
+   "sides": [],
+   "payload": "(vehicleId, transitionId, seat, status, reason)",
+   "guides": [
+    {
+     "file": "vehicle-seat-switching.md",
+     "anchor": "client-api"
+    },
+    {
+     "file": "vehicle-seat-switching.md",
+     "anchor": "events-and-failures"
+    },
+    {
+     "file": "vehicles.md",
+     "anchor": "animated-changes-inside-a-car"
+    }
+   ],
+   "sources": [],
+   "documented": true,
+   "inCode": false,
+   "lifecycle": false
+  },
+  {
+   "name": "open77:vehicleSeatSwitchFailed",
+   "sides": [],
+   "payload": "(vehicleId, transitionId, fromSeat, toSeat, reason)",
+   "guides": [
+    {
+     "file": "vehicle-seat-switching.md",
+     "anchor": "events-and-failures"
+    },
+    {
+     "file": "vehicles.md",
+     "anchor": "animated-changes-inside-a-car"
+    }
+   ],
+   "sources": [],
+   "documented": true,
+   "inCode": false,
+   "lifecycle": false
+  },
+  {
+   "name": "open77:vehicleSeatSwitchStarted",
+   "sides": [],
+   "payload": "(vehicleId, transitionId, fromSeat, toSeat, reason)",
+   "guides": [
+    {
+     "file": "vehicle-seat-switching.md",
+     "anchor": "events-and-failures"
+    },
+    {
+     "file": "vehicles.md",
+     "anchor": "animated-changes-inside-a-car"
+    }
+   ],
+   "sources": [],
+   "documented": true,
+   "inCode": false,
+   "lifecycle": false
   }
  ],
  "reservedPrefixes": [
@@ -17355,6 +17592,21 @@
      "side": "server",
      "file": "server/src/Open77.Server.Scripting/Runtime/ResourceEventBus.cs",
      "line": 201
+    }
+   ]
+  },
+  {
+   "prefix": "open77:loadingScreen:",
+   "sources": [
+    {
+     "side": "client",
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 21095
+    },
+    {
+     "side": "client",
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 26761
     }
    ]
   }

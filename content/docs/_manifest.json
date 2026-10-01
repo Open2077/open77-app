@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 98,
-  "apiEntries": 1716,
+  "guides": 100,
+  "apiEntries": 1728,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -26,8 +26,8 @@
       "target": "content/docs/README.md",
       "slug": "index",
       "title": "Open77 resource documentation",
-      "bytes": 19736,
-      "sha256": "1466bde802a96b6adccb6d66b2a7a0599eb2900da8e22e5fed93c2454b4c8452",
+      "bytes": 19969,
+      "sha256": "5e2bc99697d94736a2a0ed537f1069c1eb1f94b39402c39ff9adac6d778dffa3",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "810d219b7f95e33bedb17bb6f0efc96ae920ecf58308bbcf8b6e0b22e50bb0e7",
@@ -48,7 +48,8 @@
             "server:Open77.players.setDriveByEnabled"
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries"
-        }
+        },
+        "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
       }
     },
     {
@@ -480,11 +481,12 @@
       "target": "content/docs/hud-visibility.md",
       "slug": "hud-visibility",
       "title": "Vanilla HUD visibility",
-      "bytes": 12253,
-      "sha256": "3d4bb8b85ef336a59245cfdecb46e805a540525fff7f3a1dd38d237276e23205",
+      "bytes": 12495,
+      "sha256": "0fdb8e9000b2a54837fff6f08e417f51bdb75c9b9ab07ee4b343ca01a3ad7840",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "e86331d8e4533deefdc86c65f0ccfce0d8525ec315a6be96b8e675d1db6da723"
+        "upstreamSnapshotSha256": "e86331d8e4533deefdc86c65f0ccfce0d8525ec315a6be96b8e675d1db6da723",
+        "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
       }
     },
     {
@@ -983,11 +985,12 @@
       "target": "content/docs/screen-transitions.md",
       "slug": "screen-transitions",
       "title": "Native screen transitions",
-      "bytes": 13381,
-      "sha256": "25c79e60ebf68820b5dbd125d9e4a8a231b716316585b34541f29ecb46b7de58",
+      "bytes": 13672,
+      "sha256": "2c18d592224318950f634f0a8cdf2d3996329d57120bfdd58a3d6d271c11feab",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "f9b1d85b91dfb2373f35e33d0e3e772f840bcf8c47d3eaad5632a075afe1f451"
+        "upstreamSnapshotSha256": "f9b1d85b91dfb2373f35e33d0e3e772f840bcf8c47d3eaad5632a075afe1f451",
+        "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
       }
     },
     {
@@ -1136,11 +1139,12 @@
       "target": "content/docs/travel.md",
       "slug": "travel",
       "title": "Travel",
-      "bytes": 7733,
-      "sha256": "af0b73644c7679b16db2580ed5a13c673a230517ad7bb3c051218019aeeef479",
+      "bytes": 8043,
+      "sha256": "071949364579ef4b11561522b3f1a9f90d61c113a12e260fbcc34a41cef1da5b",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "623c2c80ff5542be60fd3864b05c40936532eaf897ce7c344c50dba5d84c57ab"
+        "upstreamSnapshotSha256": "623c2c80ff5542be60fd3864b05c40936532eaf897ce7c344c50dba5d84c57ab",
+        "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
       }
     },
     {
@@ -1214,8 +1218,8 @@
       "target": "content/docs/vehicles.md",
       "slug": "vehicles",
       "title": "Network vehicles",
-      "bytes": 113570,
-      "sha256": "828c1080f7d1c13167b6bcc8d6b669fb4c51c815318f729961c39f595fe0f622",
+      "bytes": 117175,
+      "sha256": "6431b109296191fee213d9271581e63c281c46848cb58a5a3ca36612bccd4b1c",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "57aac056238de1dbaa30823cf9f387f7e8576bd68d15b80ac247460a8dec8aae",
@@ -1236,7 +1240,8 @@
             "server:Open77.players.setDriveByEnabled"
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries"
-        }
+        },
+        "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
       }
     },
     {
@@ -1403,9 +1408,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1716,
-      "bytes": 2480102,
-      "sha256": "a54e043cc771620932542677d80509352e4c97a964ca198c2675d45ff636a113",
+      "entries": 1728,
+      "bytes": 2493285,
+      "sha256": "0ef85244318c5d32c3e77ab6e38c87d3b4051e7664c9a4dfb75072a43b0d9861",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6"
@@ -1416,7 +1421,8 @@
         "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete",
         "blipSvgContract": "Native SVG icons and per-blip RGB/RGBA; experimental matching client adapter required. Reviewed against uncommitted open77-base implementation; upstream sync provenance preserved.",
         "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved.",
-        "predictionSync": "Vendored from open77-base 36772b3b88404ffa9467bb2d06fcf1abd47568d9 through scripts/doc-api-editorial.json. Preserved site entries: the eight drive-by cards (not on that revision), the four SVG blip cards, named CreateVehicle/ResetVehiclePaint/SetVehicleTransform parameters, and the permission-free Open77.markers.shapes. Open77.prediction.setPolicy/stats carry reviewed signatures and examples from ResourceHost.cpp."
+        "predictionSync": "Vendored from open77-base 36772b3b88404ffa9467bb2d06fcf1abd47568d9 through scripts/doc-api-editorial.json. Preserved site entries: the eight drive-by cards (not on that revision), the four SVG blip cards, named CreateVehicle/ResetVehiclePaint/SetVehicleTransform parameters, and the permission-free Open77.markers.shapes. Open77.prediction.setPolicy/stats carry reviewed signatures and examples from ResourceHost.cpp.",
+        "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
       }
     },
     {
@@ -1428,18 +1434,189 @@
     },
     {
       "source": "wiki/data/permissions.json",
-      "target": "content\\api/permissions.json",
-      "entries": 168,
-      "bytes": 151102,
-      "sha256": "7c687b72f9ea6d03f7ba275312653a6e571d50344fb2a7363bb3e5738dcebc19",
-      "siteAmendment": "Vendored from open77-base 36772b3b88404ffa9467bb2d06fcf1abd47568d9; world.markers keeps the markerSync natives and guides (Open77.markers.shapes needs no permission)."
+      "target": "content/api/permissions.json",
+      "entries": 169,
+      "bytes": 152157,
+      "sha256": "0ca092654638433ba795354fb5a246fc4273e91f9ce53cac5624a62e7c82ebf8",
+      "siteAmendment": {
+        "0": "V",
+        "1": "e",
+        "2": "n",
+        "3": "d",
+        "4": "o",
+        "5": "r",
+        "6": "e",
+        "7": "d",
+        "8": " ",
+        "9": "f",
+        "10": "r",
+        "11": "o",
+        "12": "m",
+        "13": " ",
+        "14": "o",
+        "15": "p",
+        "16": "e",
+        "17": "n",
+        "18": "7",
+        "19": "7",
+        "20": "-",
+        "21": "b",
+        "22": "a",
+        "23": "s",
+        "24": "e",
+        "25": " ",
+        "26": "3",
+        "27": "6",
+        "28": "7",
+        "29": "7",
+        "30": "2",
+        "31": "b",
+        "32": "3",
+        "33": "b",
+        "34": "8",
+        "35": "8",
+        "36": "4",
+        "37": "0",
+        "38": "4",
+        "39": "f",
+        "40": "f",
+        "41": "a",
+        "42": "9",
+        "43": "4",
+        "44": "6",
+        "45": "7",
+        "46": "b",
+        "47": "b",
+        "48": "2",
+        "49": "d",
+        "50": "0",
+        "51": "6",
+        "52": "f",
+        "53": "c",
+        "54": "f",
+        "55": "1",
+        "56": "a",
+        "57": "b",
+        "58": "d",
+        "59": "4",
+        "60": "7",
+        "61": "5",
+        "62": "6",
+        "63": "8",
+        "64": "d",
+        "65": "9",
+        "66": ";",
+        "67": " ",
+        "68": "w",
+        "69": "o",
+        "70": "r",
+        "71": "l",
+        "72": "d",
+        "73": ".",
+        "74": "m",
+        "75": "a",
+        "76": "r",
+        "77": "k",
+        "78": "e",
+        "79": "r",
+        "80": "s",
+        "81": " ",
+        "82": "k",
+        "83": "e",
+        "84": "e",
+        "85": "p",
+        "86": "s",
+        "87": " ",
+        "88": "t",
+        "89": "h",
+        "90": "e",
+        "91": " ",
+        "92": "m",
+        "93": "a",
+        "94": "r",
+        "95": "k",
+        "96": "e",
+        "97": "r",
+        "98": "S",
+        "99": "y",
+        "100": "n",
+        "101": "c",
+        "102": " ",
+        "103": "n",
+        "104": "a",
+        "105": "t",
+        "106": "i",
+        "107": "v",
+        "108": "e",
+        "109": "s",
+        "110": " ",
+        "111": "a",
+        "112": "n",
+        "113": "d",
+        "114": " ",
+        "115": "g",
+        "116": "u",
+        "117": "i",
+        "118": "d",
+        "119": "e",
+        "120": "s",
+        "121": " ",
+        "122": "(",
+        "123": "O",
+        "124": "p",
+        "125": "e",
+        "126": "n",
+        "127": "7",
+        "128": "7",
+        "129": ".",
+        "130": "m",
+        "131": "a",
+        "132": "r",
+        "133": "k",
+        "134": "e",
+        "135": "r",
+        "136": "s",
+        "137": ".",
+        "138": "s",
+        "139": "h",
+        "140": "a",
+        "141": "p",
+        "142": "e",
+        "143": "s",
+        "144": " ",
+        "145": "n",
+        "146": "e",
+        "147": "e",
+        "148": "d",
+        "149": "s",
+        "150": " ",
+        "151": "n",
+        "152": "o",
+        "153": " ",
+        "154": "p",
+        "155": "e",
+        "156": "r",
+        "157": "m",
+        "158": "i",
+        "159": "s",
+        "160": "s",
+        "161": "i",
+        "162": "o",
+        "163": "n",
+        "164": ")",
+        "165": ".",
+        "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
+      }
     },
     {
       "source": "wiki/data/events.json",
-      "target": "content\\api/events.json",
-      "entries": 514,
-      "bytes": 368587,
-      "sha256": "cadfb713a4b7bb5f8c3b69b2492b4b8d12c48dc9d28e45cbc7f8c92ee0b010c3"
+      "target": "content/api/events.json",
+      "entries": 524,
+      "bytes": 373962,
+      "sha256": "61495b0b720e032c25c25a8273cd18386b9596ca20fc8ea76cf54179bdcb5039",
+      "siteAmendment": {
+        "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
+      }
     },
     {
       "source": "wiki/data/releases.json",
@@ -1762,6 +1939,30 @@
       "sha256": "f7620bca84ea9c1e284b62289ce9481079a68a48859be1f35b4f1816ca36a8ef",
       "sourceRevision": "289f1d9185fcdafb101ce0fa51183202071e4f7c",
       "sourceSyncedAt": "2026-09-29T16:17:27.362Z"
+    },
+    {
+      "source": "wiki/loading-screens.md",
+      "target": "content/docs/loading-screens.md",
+      "slug": "loading-screens",
+      "title": "Custom loading screens",
+      "bytes": 11948,
+      "sha256": "4c8995e26ec9ffa44a295b923539cc3536f932b51e07d542e111c038f18271c3",
+      "siteEditorial": {
+        "owner": "website",
+        "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
+      }
+    },
+    {
+      "source": "wiki/vehicle-seat-switching.md",
+      "target": "content/docs/vehicle-seat-switching.md",
+      "slug": "vehicle-seat-switching",
+      "title": "Changing seats inside a vehicle",
+      "bytes": 14723,
+      "sha256": "24ba64e789207ec610fb34b34ed6ecf04aa63bdbc1b9b22b5d5ec8551fa5048d",
+      "siteEditorial": {
+        "owner": "website",
+        "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
+      }
     }
   ],
   "partialSync": {
@@ -1960,5 +2161,25 @@
       "consumables-api"
     ],
     "apiMode": "vendor-base-api-preserve-site-entries"
+  },
+  "loadingSeatDocumentation": {
+    "upstreamRevision": "93c3f34fa84b734871b101b1e04f06f0fc78bb51",
+    "sourceWorkingTreeDirty": true,
+    "scope": "Manual review of loading-screen and seat-switch contracts; unrelated site content preserved",
+    "sourceApiSha256": "0bf6fa50c48c82576dfdb7e2a0e92a196d163da45b439a80a7ce09f83b183ac6",
+    "apiRouteIds": [
+      "client:Open77.screen.isLoading",
+      "client:Open77.screen.loadingState",
+      "client:Open77.vehicles.cancelSeatSwitch",
+      "client:Open77.vehicles.isAutoSeatSwitchEnabled",
+      "client:Open77.vehicles.seatSwitchState",
+      "client:Open77.vehicles.setAutoSeatSwitchEnabled",
+      "client:Open77.vehicles.switchSeat",
+      "server:Open77.vehicles.cancelPlayerSeatSwitch",
+      "server:Open77.vehicles.getPlayerSeatSwitch",
+      "server:Open77.vehicles.isPlayerAutoSeatSwitchEnabled",
+      "server:Open77.vehicles.setPlayerAutoSeatSwitchEnabled",
+      "server:Open77.vehicles.switchPlayerSeat"
+    ]
   }
 }

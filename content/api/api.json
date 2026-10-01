@@ -64850,5 +64850,389 @@
   "constant": false,
   "qualified": "promise.new",
   "route_id": "server:promise.new"
+ },
+ {
+  "namespace": "Open77.screen",
+  "name": "isLoading",
+  "handler": "LuaScreenIsLoading",
+  "summary": "Whether the native loading-screen lifecycle is active.",
+  "description": "Client-only; requires screen.read. Observes native opening through delayed hide, including long-distance teleport loads. Returns nil, reason until the guarded observer is available. This is separate from quest fades, background streaming and the Open77 connection cover. See loading-screens.md for events and a complete WebUI example.",
+  "params": [],
+  "returns": [
+   "active, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local active, err = Open77.screen.isLoading()\nif active ~= nil then print('Native loading:', active) else print(err) end",
+  "inferred": false,
+  "source_line": 25418,
+  "permissions": [
+   "screen.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.screen.isLoading",
+  "route_id": "Open77.screen.isLoading"
+ },
+ {
+  "namespace": "Open77.screen",
+  "name": "loadingState",
+  "handler": "LuaScreenLoadingState",
+  "summary": "Read native loading state, cycle ID, kind and real progress.",
+  "description": "Client-only; requires screen.read. Returns active, id (opaque string), revision, kind, progressKnown, progress (nil until reported) and elapsedMs. Subscribe to open77:loadingScreen:started/changed/finished; each event receives one snapshot. Register handlers then query initial state to handle a resource starting mid-load. Progress 100% never implies native hide. The state persists across resource reloads, and network messages cannot forge these events. See loading-screens.md.",
+  "params": [],
+  "returns": [
+   "state, or nil, reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local function apply(s)\n    if s then print('Loading:', s.active, s.kind, s.progress) end\nend\nAddEventHandler('open77:loadingScreen:changed', apply)\napply(Open77.screen.loadingState())",
+  "inferred": false,
+  "source_line": 25419,
+  "permissions": [
+   "screen.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.screen.loadingState",
+  "route_id": "Open77.screen.loadingState"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "cancelSeatSwitch",
+  "handler": "LuaVehicleCancelSeatSwitch",
+  "summary": "Requests cancellation of an active local seat transition.",
+  "description": "Requires vehicles.control. transitionId is the string returned by seatSwitchState or its Started event. A stale ID cannot cancel a later transition. Cancellation releases the destination and restores the source; true means submitted to the server.",
+  "params": [
+   {
+    "name": "transitionId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true when submitted, otherwise false",
+   "reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local s = Open77.vehicles.seatSwitchState()\nif s and s.active then Open77.vehicles.cancelSeatSwitch(s.id) end",
+  "inferred": false,
+  "source_line": 25244,
+  "permissions": [
+   "vehicles.control"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.cancelSeatSwitch",
+  "route_id": "Open77.vehicles.cancelSeatSwitch"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "isAutoSeatSwitchEnabled",
+  "handler": "LuaVehicleAutoSeatSwitchEnabled",
+  "summary": "Reads the effective local automatic driver-takeover policy.",
+  "description": "Requires vehicles.read. Combines client resource vetoes and the authoritative server policy. A true result permits the normal vanilla takeover when its native conditions are met. Returns nil and a reason if no active session can be queried.",
+  "params": [],
+  "returns": [
+   "boolean, or nil",
+   "reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local enabled, reason = Open77.vehicles.isAutoSeatSwitchEnabled()",
+  "inferred": false,
+  "source_line": 25247,
+  "permissions": [
+   "vehicles.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.isAutoSeatSwitchEnabled",
+  "route_id": "Open77.vehicles.isAutoSeatSwitchEnabled"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "seatSwitchState",
+  "handler": "LuaVehicleSeatSwitchState",
+  "summary": "Reads the local canonical seat transition and automatic policy.",
+  "description": "Requires vehicles.read. Returns active and autoSwitchEnabled, plus vehicleId/fromSeat while seated and id/toSeat while switching. IDs are strings. The canonical source stays occupied until native completion. Query on resource start to recover a transition already in progress; nil plus reason means the session or backend is unavailable.",
+  "params": [],
+  "returns": [
+   "state table, or nil",
+   "reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local state, reason = Open77.vehicles.seatSwitchState()",
+  "inferred": false,
+  "source_line": 25245,
+  "permissions": [
+   "vehicles.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.seatSwitchState",
+  "route_id": "Open77.vehicles.seatSwitchState"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "setAutoSeatSwitchEnabled",
+  "handler": "LuaVehicleSetAutoSeatSwitchEnabled",
+  "summary": "Controls this client resource's automatic driver-takeover veto.",
+  "description": "Requires vehicles.control. false blocks automatic front-passenger takeover of an empty driver seat. true releases only this resource's veto; another resource or the server can still disable takeover. Explicit switches remain available. The claim is released when its resource stops.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, otherwise false",
+   "reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "Open77.vehicles.setAutoSeatSwitchEnabled(false)",
+  "inferred": false,
+  "source_line": 25246,
+  "permissions": [
+   "vehicles.control"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.setAutoSeatSwitchEnabled",
+  "route_id": "Open77.vehicles.setAutoSeatSwitchEnabled"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "switchSeat",
+  "handler": "LuaVehicleSwitchSeat",
+  "summary": "Requests an animated move to another seat for the local player.",
+  "description": "Requires vehicles.control and protocol 1.44. Submits a server-authorized in-cabin move. A true return means queued; use open77:vehicleSeatSwitchDecision and the Started/Completed/Failed events for its outcome. Both source and destination stay reserved until completion. Refuses occupied or unsupported seats, exit locks and overlapping requests.",
+  "params": [
+   {
+    "name": "seat",
+    "type": "string|integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true when submitted, otherwise false",
+   "reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local ok, reason = Open77.vehicles.switchSeat('rearRight')",
+  "inferred": false,
+  "source_line": 25243,
+  "permissions": [
+   "vehicles.control"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.switchSeat",
+  "route_id": "Open77.vehicles.switchSeat"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "cancelPlayerSeatSwitch",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Cancels exactly one player seat-transition token.",
+  "description": "Requires world.vehicles. Releases the destination and retains the source. A stale token is refused with stale_transition and cannot affect a newer request.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "transitionId",
+    "type": "string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true or false",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local s = Open77.vehicles.getPlayerSeatSwitch(playerId)\nif s then Open77.vehicles.cancelPlayerSeatSwitch(playerId, s.id) end",
+  "inferred": false,
+  "source_line": 9014,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.cancelPlayerSeatSwitch",
+  "route_id": "server:Open77.vehicles.cancelPlayerSeatSwitch"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getPlayerSeatSwitch",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reads a player's active authoritative seat transition.",
+  "description": "Requires world.vehicles. Returns id (string), playerId, vehicleId, fromSeat, toSeat and automatic. Returns nil when no transition is active; invalid players and missing permission return false plus reason.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "transition table, nil when idle, or false on refusal",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local state = Open77.vehicles.getPlayerSeatSwitch(playerId)",
+  "inferred": false,
+  "source_line": 9014,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.getPlayerSeatSwitch",
+  "route_id": "server:Open77.vehicles.getPlayerSeatSwitch"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "isPlayerAutoSeatSwitchEnabled",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reads the player's effective server takeover policy.",
+  "description": "Requires world.vehicles. False while any server resource holds an automatic takeover veto. Client resources can independently veto their local automatic behavior.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean",
+   "reason on refusal"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local enabled = Open77.vehicles.isPlayerAutoSeatSwitchEnabled(playerId)",
+  "inferred": false,
+  "source_line": 9014,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.isPlayerAutoSeatSwitchEnabled",
+  "route_id": "server:Open77.vehicles.isPlayerAutoSeatSwitchEnabled"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "setPlayerAutoSeatSwitchEnabled",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Controls a resource-owned automatic takeover policy.",
+  "description": "Requires world.vehicles. false adds this resource's veto for the player; true removes only its own veto. Explicit seat requests remain available. Policies are released on resource stop and player disconnect.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true or false",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "Open77.vehicles.setPlayerAutoSeatSwitchEnabled(playerId, false)",
+  "inferred": false,
+  "source_line": 9014,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.setPlayerAutoSeatSwitchEnabled",
+  "route_id": "server:Open77.vehicles.setPlayerAutoSeatSwitchEnabled"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "switchPlayerSeat",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reserves an animated seat change for a seated player.",
+  "description": "Requires world.vehicles and protocol 1.44. Both seats are held until native completion. Returns true and a string transition ID on reservation, or false and a reason. Completion/failure is reported by onPlayerVehicleSeatSwitchCompleted/Failed. Does not board on-foot players or evict occupants. Explicit requests remain allowed when automatic takeover is disabled.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "seat",
+    "type": "string|integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true or false",
+   "transitionId on acceptance, otherwise reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local ok, id = Open77.vehicles.switchPlayerSeat(playerId, 'rearRight')",
+  "inferred": false,
+  "source_line": 9014,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.switchPlayerSeat",
+  "route_id": "server:Open77.vehicles.switchPlayerSeat"
  }
 ]

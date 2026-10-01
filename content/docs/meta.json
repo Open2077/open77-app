@@ -531,6 +531,12 @@
           "description": "Network vehicle identity, streaming, authority leases, seats and proxy replication, doors and glass, damage profiles, and the full asymmetric server and client Lua API."
         },
         {
+          "slug": "vehicle-seat-switching",
+          "kind": "guide",
+          "nav": "Changing seats",
+          "description": "Animate front and rear seat changes, control automatic driver takeover, cancel requests and handle Lua client/server lifecycle events."
+        },
+        {
           "slug": "vehicle-paint",
           "kind": "guide",
           "nav": "Vehicle paint",
@@ -736,6 +742,12 @@
           "nav": "Pause menu branding",
           "title": "Pause menu customization",
           "description": "Customize the OPEN//77 Escape menu with a Lua accent color and a server logo beside OPEN//77. Manifest setup, local assets, image URLs, permissions and resource cleanup."
+        },
+        {
+          "slug": "loading-screens",
+          "kind": "guide",
+          "nav": "Custom loading screens",
+          "description": "Detect native loading cycles, display a branded WebUI with progress, and hide or restore HUDs during teleport loads."
         },
         {
           "slug": "ui-kit",

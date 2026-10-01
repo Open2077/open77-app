@@ -144,3 +144,10 @@ and reports the controller, owning resource, paused input and safety guards.
 `setMapPick` only lets the world map publish a double-clicked point;
 it moves nobody, and it does not bypass the ACL-checked server command that consumes the
 point.
+
+## Loading-screen integration
+
+A long-distance teleport may open Cyberpunk's native loading screen. Use the
+[loading-screen lifecycle](loading-screens.md) to display your own cover or hide
+a HUD. Loading completion is presentation information; keep the travel API's
+settling checks for destination readiness.

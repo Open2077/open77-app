@@ -7,6 +7,10 @@ and manifest-driven lifecycle. Open77 APIs remain independent and reflect REDeng
 
 ## Session model
 
+[Custom loading screens](loading-screens.md) covers branded WebUI covers, native
+loading events and HUD hiding. [Changing seats](vehicle-seat-switching.md)
+covers animated in-cabin moves, automatic driver takeover and Lua controls.
+
 New building blocks: [player checks and controls](player-utilities.md) and
 [package audio, local and networked](package-audio.md).
 

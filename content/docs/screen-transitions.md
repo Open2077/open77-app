@@ -270,3 +270,10 @@ The server relay adds `permission_denied:players.screen` and
 
 See also [visual/audio effects](effects.md), [native HUD visibility](hud-visibility.md)
 and [native implementation research](../docs/research/screen-transitions-and-fades.md).
+
+## Loading-screen integration
+
+For the screen opened by a long-distance teleport or another native load, use
+[custom loading screens](loading-screens.md): state queries, start/progress/end
+events, a WebUI cover and temporary HUD hiding. Quest fades and loading cycles
+are separate signals.
