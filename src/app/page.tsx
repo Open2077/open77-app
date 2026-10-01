@@ -1,17 +1,25 @@
+import { Saira } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 
+import { HomeHeroStage } from "@/components/home-hero-stage";
 import { JsonLd } from "@/components/json-ld";
-import { ArrowDownIcon, ArrowRightIcon, CodeIcon, DiscordIcon, GlobeIcon, PeopleIcon, PlugIcon, ServerRackIcon, ShieldIcon } from "@/components/icons";
+import { ArrowRightIcon, CodeIcon, DiscordIcon, GlobeIcon, PeopleIcon, PlugIcon, ServerRackIcon, ShieldIcon } from "@/components/icons";
 import { SiteFooter } from "@/components/site-footer";
 import { highlightCode } from "@/lib/docs";
 import { PLAYER_REQUIREMENT_SHORT } from "@/lib/requirements";
 import { HOME_CLIENT_LUA, HOME_SERVER_LUA, SCRIPT_DOC_LINKS, SCRIPT_PILLARS, SCRIPT_SAMPLE_NOTE } from "@/lib/scripting";
 import { breadcrumbNode, jsonLdGraph, pageMetadata, softwareApplicationNode } from "@/lib/seo";
 import { site } from "@/lib/site";
+import hero from "./home-hero.module.css";
 import styles from "./home.module.css";
 
 export const metadata = pageMetadata({ description: site.description, path: "/" });
+
+/** Saira's variable width axis gives the hero its expanded, heavy display cut. */
+const heroDisplay = Saira({ subsets: ["latin"], axes: ["wdth"], style: ["normal", "italic"], variable: "--font-hero", display: "swap" });
+
+const MARQUEE_WORDS = ["MULTIPLAYER FOR", "//", "MULTIPLAYER FOR", "//"];
 
 /** The four load-bearing facts about the platform, stated without adjectives. */
 const HERO_FACTS = [
@@ -61,23 +69,37 @@ export default async function HomePage() {
     <>
       <main id="main" className={styles.home}>
         <div className={styles.opening}>
-          <div className={styles.backdrop} aria-hidden="true">
-            <Image src="/assets/home/night-city-wallpaper-v3.webp" alt="" fill preload sizes="100vw" className={styles.heroArt} />
-          </div>
-          <section className={styles.hero} aria-labelledby="home-title">
-            <div className={styles.heroCopy}>
-              <p className={styles.eyebrow}><span aria-hidden="true">{"//"}</span> {site.stage} · ACTIVE</p>
-              <h1 id="home-title">Multiplayer for<br />Cyberpunk <em>2077</em><span className={styles.titleDot}>.</span></h1>
-              <p className={styles.intro}>Play Cyberpunk&nbsp;2077 online on community servers, or create your own server and your own multiplayer experience. Everyone with Alpha access can download the server and start building now.</p>
-              <div className={styles.actions}>
-                <Link className={styles.primary} href="/download">Download launcher<ArrowRightIcon size={20} /></Link>
-                <Link className={styles.secondary} href="/create">Build your server<ArrowRightIcon size={18} /></Link>
-              </div>
-              <Link className={styles.alphaLink} href="/docs/alpha-access"><span aria-hidden="true" />ALPHA ACCESS<span className={styles.alphaText}>Play, host and build. How to get in.</span><ArrowRightIcon size={13} /></Link>
+          <HomeHeroStage className={`${hero.stage} ${heroDisplay.variable}`} labelledBy="home-title">
+            <div className={hero.city} aria-hidden="true">
+              <Image src="/assets/home/hero/city-v1.webp" alt="" fill preload sizes="100vw" />
             </div>
-            <span className={styles.sceneNote} aria-hidden="true">ONE CITY,<br />MANY WORLDS.<i /></span>
-            <a className={styles.scrollHint} href="#discover"><ArrowDownIcon size={30} /><span>SCROLL<br />TO EXPLORE</span></a>
-          </section>
+            <div className={hero.marquee} aria-hidden="true">
+              <div className={hero.marqueeTrack}>
+                {[0, 1].map((half) => <span key={half}>{MARQUEE_WORDS.map((word, index) => <b key={index}>{word}</b>)}</span>)}
+              </div>
+            </div>
+            <div className={`${hero.merc} ${hero.mercLeft}`} aria-hidden="true">
+              <Image src="/assets/home/hero/merc-left-v1.webp" alt="" fill preload sizes="(max-width: 760px) 70vw, 42vw" />
+            </div>
+            <div className={`${hero.merc} ${hero.mercRight}`} aria-hidden="true">
+              <Image src="/assets/home/hero/merc-right-v1.webp" alt="" fill preload sizes="(max-width: 760px) 70vw, 42vw" />
+            </div>
+            <div className={hero.shade} aria-hidden="true" />
+
+            <div className={hero.copy}>
+              <h1 id="home-title" className={hero.title}>
+                <span className={hero.srOnly}>Multiplayer for </span>
+                <span className={hero.game} data-text="Cyberpunk">Cyberpunk</span>
+                <span className={hero.year}><i>2</i><i>0</i><i>7</i><i>7</i></span>
+              </h1>
+              <p className={hero.intro}>Play <strong>Cyberpunk&nbsp;2077 online</strong> on community servers, or create your own server and your own multiplayer experience.</p>
+              <Link className={hero.alpha} href="/docs/alpha-access"><span aria-hidden="true" />Everyone with Alpha access can download the server and start building now.<ArrowRightIcon size={12} /></Link>
+            </div>
+
+            <Link className={`${hero.cta} ${hero.ctaPrimary}`} href="/download"><span>Download launcher</span><i aria-hidden="true" /></Link>
+            <Link className={`${hero.cta} ${hero.ctaSecondary}`} href="/create"><i aria-hidden="true" /><span>Build your server</span></Link>
+            <a className={hero.scroll} href="#discover"><span>SCROLL TO DISCOVER</span><i aria-hidden="true" /></a>
+          </HomeHeroStage>
 
           <div className={styles.gateway}>
             <ul className={styles.facts} aria-label="Platform facts">

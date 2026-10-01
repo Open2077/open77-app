@@ -29,6 +29,8 @@ function isActive(pathname: string, href: string) {
 export function SiteHeader() {
   const pathname = usePathname();
   const isDocumentation = pathname === "/docs" || pathname.startsWith("/docs/");
+  // The home hero gets a centred, borderless bar: links split either side of the logo.
+  const isHome = pathname === "/";
   const { session } = useSession();
   const isAdmin = session?.role === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
@@ -111,7 +113,7 @@ export function SiteHeader() {
   if (isDocumentation) return null;
 
   return (
-    <header ref={headerRef} className={"site-header liquid-header" + (scrolled ? " is-scrolled" : "") + (menuOpen ? " is-open" : "")} id="top">
+    <header ref={headerRef} className={"site-header liquid-header" + (isHome ? " is-home" : "") + (scrolled ? " is-scrolled" : "") + (menuOpen ? " is-open" : "")} id="top">
       <svg className="liquid-optics" aria-hidden="true" focusable="false" width="0" height="0">
         <defs>
           <filter id="open77-nav-glass" x="0%" y="0%" width="100%" height="100%" colorInterpolationFilters="sRGB">
@@ -126,10 +128,20 @@ export function SiteHeader() {
         const rect = event.currentTarget.getBoundingClientRect();
         event.currentTarget.style.setProperty("--glass-x", ((event.clientX - rect.left) / rect.width * 100).toFixed(1) + "%");
       }}>
-        <Wordmark tone="dark" />
-        <nav className="liquid-nav" id="main-nav" aria-label="Main">
-          {mainNav.map((item) => <Link key={item.href} href={item.href} aria-current={current(item.href)}>{item.label}</Link>)}
-        </nav>
+        {isHome ? (
+          <nav className="liquid-nav liquid-nav-split" id="main-nav" aria-label="Main">
+            <div className="liquid-nav-half">{mainNav.slice(0, 4).map((item) => <Link key={item.href} href={item.href} aria-current={current(item.href)}>{item.label}</Link>)}</div>
+            <Wordmark tone="dark" />
+            <div className="liquid-nav-half">{mainNav.slice(4).map((item) => <Link key={item.href} href={item.href} aria-current={current(item.href)}>{item.label}</Link>)}</div>
+          </nav>
+        ) : (
+          <>
+            <Wordmark tone="dark" />
+            <nav className="liquid-nav" id="main-nav" aria-label="Main">
+              {mainNav.map((item) => <Link key={item.href} href={item.href} aria-current={current(item.href)}>{item.label}</Link>)}
+            </nav>
+          </>
+        )}
         <div className="liquid-actions">
           <button className="liquid-icon liquid-search-trigger" aria-label="Search the site" title="Quick navigation (Ctrl / ⌘ K)" onClick={() => searchRef.current?.showModal()}><SearchIcon size={19} /></button>
           <span className="liquid-divider" aria-hidden="true" />
