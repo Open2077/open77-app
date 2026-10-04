@@ -187,7 +187,7 @@ test("public endpoint checks reject HTML errors, unhealthy payloads and catalogu
   assert.equal((await probe(SERVICES[5], async () => new Response("<!doctype html><title>OPEN//77</title>"))).state, "operational");
 });
 
-test("CDN probes follow only same-origin redirects and validate actual partial bytes", async () => {
+test("legacy CDN probes retain alias redirects and validate actual partial bytes", async () => {
   let calls = 0;
   const fetcher = async (url, options) => {
     calls++;
@@ -207,6 +207,103 @@ test("CDN probes follow only same-origin redirects and validate actual partial b
 test("download URLs cannot redirect checks to arbitrary hosts, paths or credentials", () => {
   for (const url of ["http://cdn.open2077.net/launcher/1/a", "https://127.0.0.1/server/1/a", "https://cdn.open2077.net@evil.test/mod/1/a", "https://cdn.open2077.net/server/1/a?token=secret", "https://cdn.open2077.net/launcher/../latest.json"]) assert.throws(() => artifactUrl(url));
   assert.equal(artifactUrl("https://cdn.open2077.net/mod/2.31+op77.90/archive/pc/mod/Open77.archive.op77.bin").hostname, "cdn.open2077.net");
+  assert.equal(artifactUrl("https://cdn.open77.dev/mod/2.31.13+op77.88/red4ext/plugins/Open77/Open77.dll").hostname, "cdn.open77.dev");
+  for (const url of [
+    "http://cdn.open77.dev/launcher/1/a", "https://cdn.open77.dev.evil.test/launcher/1/a",
+    "https://cdn.open77.dev@evil.test/launcher/1/a", "https://user:secret@cdn.open77.dev/launcher/1/a",
+    "https://cdn.open77.dev/launcher/1/a?token=secret", "https://cdn.open77.dev/launcher/1/a#fragment",
+    "https://cdn.open77.dev/status/v1.json", "https://cdn.open77.dev/launcher/latest.json",
+    "https://cdn.open77.dev/launcher/1/%2f..%2fsecret", "https://cdn.open77.dev/launcher/1/%252e%252e/secret",
+    "https://cdn.open77.dev/launcher/1/%5csecret", "https://cdn.open77.dev/launcher/1/%00file",
+  ]) assert.throws(() => artifactUrl(url), url);
+});
+
+test("release probes use the new CDN directly, not its legacy redirect", () => {
+  assert.equal(SERVICES.find(s => s.id === "launcher").url, "https://cdn.open77.dev/launcher/latest.json");
+  assert.equal(SERVICES.find(s => s.id === "server").url, "https://cdn.open77.dev/server/latest.json");
+  assert.equal(SERVICES.find(s => s.id === "client").url, "https://master.open2077.net/api/v1/mod/manifest");
+});
+
+test("client manifest on the master can reference a real partial download on R2", async () => {
+  const requested = [];
+  const result = await probe(SERVICES.find(s => s.id === "client"), async (url, options) => {
+    requested.push(String(url));
+    if (String(url).includes("/api/v1/mod/manifest")) return json({ version: "2.31.13+op77.88",
+      baseUrl: "https://cdn.open77.dev/mod/2.31.13+op77.88/",
+      files: [{ path: "small.txt", size: 8 }, { path: "red4ext/plugins/Open77/Open77.dll", size: 8192 }] });
+    assert.equal(options.redirect, "manual");
+    assert.equal(options.headers.Range, "bytes=0-4095");
+    return partial();
+  });
+  assert.equal(result.state, "operational");
+  assert.equal(requested[1], "https://cdn.open77.dev/mod/2.31.13+op77.88/red4ext/plugins/Open77/Open77.dll");
+});
+
+test("old signed artifact URLs may redirect to the official new CDN", async () => {
+  const requested = [];
+  const result = await probe(SERVICES.find(s => s.id === "launcher"), async (url, options) => {
+    requested.push(String(url));
+    if (String(url).endsWith("latest.json")) return json({ version: "1", url: "https://cdn.open2077.net/launcher/1/app.exe" });
+    assert.equal(options.headers.Range, "bytes=0-4095");
+    if (new URL(url).hostname === "cdn.open2077.net") return new Response(null, { status: 307, headers: { location: "https://cdn.open77.dev/launcher/1/app.exe" } });
+    return partial();
+  });
+  assert.equal(result.state, "operational");
+  assert.equal(requested.length, 3);
+  assert.equal(requested[2], "https://cdn.open77.dev/launcher/1/app.exe");
+});
+
+test("legacy metadata redirects are allowed only to the exact product pointer on a trusted CDN", async () => {
+  const requested = [];
+  const service = { ...SERVICES.find(s => s.id === "launcher"), url: "https://cdn.open2077.net/launcher/latest.json" };
+  const result = await probe(service, async (url, options) => {
+    requested.push(String(url));
+    if (String(url) === service.url) return new Response(null, { status: 307, headers: { location: "https://cdn.open77.dev/launcher/latest.json" } });
+    if (String(url).endsWith("latest.json")) {
+      assert.equal(options.headers["Cache-Control"], "no-cache");
+      return json({ version: "1", url: "https://cdn.open77.dev/launcher/1/app.exe" });
+    }
+    return partial();
+  });
+  assert.equal(result.state, "operational");
+  assert.equal(requested.length, 3);
+});
+
+test("unexpected metadata redirect targets are rejected without fetching them", async () => {
+  for (const location of ["https://evil.test/launcher/latest.json", "http://cdn.open77.dev/launcher/latest.json",
+    "https://cdn.open77.dev/server/latest.json", "/status/v1.json", "https://cdn.open77.dev/launcher/latest.json?token=private"]) {
+    let calls = 0;
+    const result = await probe(SERVICES.find(s => s.id === "launcher"), async () => {
+      calls++;
+      return new Response(null, { status: 307, headers: { location } });
+    });
+    assert.equal(result.state, "outage", location);
+    assert.equal(calls, 1, location);
+  }
+});
+
+test("metadata redirect loops and absent locations are bounded failures", async () => {
+  const service = SERVICES.find(s => s.id === "launcher");
+  let calls = 0;
+  const loop = await probe(service, async () => {
+    calls++;
+    return new Response(null, { status: 307, headers: { location: service.url } });
+  });
+  assert.equal(loop.detail, "Too many release metadata redirects");
+  assert.equal(calls, 4);
+  const missing = await probe(service, async () => new Response(null, { status: 307 }));
+  assert.equal(missing.detail, "Invalid release metadata redirect");
+});
+
+test("artifact redirects cannot escape the trusted CDN origins", async () => {
+  let calls = 0;
+  const result = await probe(SERVICES.find(s => s.id === "launcher"), async url => {
+    calls++;
+    if (String(url).endsWith("latest.json")) return json({ version: "1", url: "https://cdn.open77.dev/launcher/1/app.exe" });
+    return new Response(null, { status: 307, headers: { location: "https://127.0.0.1/private" } });
+  });
+  assert.equal(result.detail, "Unexpected download origin or path");
+  assert.equal(calls, 2);
 });
 
 test("both server platforms are tested, not only the metadata pointer", async () => {
