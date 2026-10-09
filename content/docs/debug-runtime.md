@@ -34,6 +34,12 @@ client.exec 1 return Open77.debug.redscript('debug.trace:hello')
 Use single quotes inside the Lua expression because the server command tokenizer reconstructs the
 source from the remaining whitespace-separated arguments.
 
+When submitting through the external debug bridge, `server_command_sent` means
+the request was sent, not that the Lua finished. Read `net.commands 10` for the
+correlated `result_request` response. If the Lua queues a resource event, also
+check that resource's completion log or state. [Test RTTI in game](/docs/rtti-testing)
+shows this sequence with `agent-play.ps1` and native lifetime counters.
+
 ## Position and rotation clipboard commands
 
 Any authenticated player can copy their own live transform from chat:

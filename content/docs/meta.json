@@ -949,6 +949,14 @@
           "description": "Call reflected native and scripted game functions from client Lua, manage object references, and install synchronous hooks with explicit permissions and coverage limits."
         },
         {
+          "slug": "rtti-testing",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Test RTTI in game",
+          "title": "Test RTTI calls in the running game",
+          "description": "Run the RTTI fixture with agent-play and the debug bridge, interpret results, check stop and reload cleanup, and test both client resource hosts through the server laboratory."
+        },
+        {
           "slug": "debug-runtime",
           "kind": "guide",
           "nav": "Privileged debug runtime",

@@ -42,6 +42,10 @@ open77_down            # stop_game / stop_server to tear down
 Changed only Lua? Skip `open77_build`: `open77_resource_sync` copies the resource and reloads it.
 Server-only resources are served live from the repository — nothing to copy.
 
+For a complete script-based example, follow [Test RTTI in game](/docs/rtti-testing).
+It covers process selection, `agent-play.ps1`, direct bridge commands, queued
+results, multiplayer laboratory access, and hook/reference cleanup checks.
+
 ## The tools
 
 The authoritative list is the `$script:Tools` table in `scripts/agent-mcp.ps1`, which also carries

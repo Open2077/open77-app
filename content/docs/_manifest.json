@@ -69,11 +69,12 @@
       "target": "content/docs/agent-testing.md",
       "slug": "agent-testing",
       "title": "Autonomous agent testing",
-      "bytes": 13932,
-      "sha256": "e200383005ae86da1036160aca3d0c3b4ccdc7f5429c601a31a1bf3393d018d6",
+      "bytes": 14171,
+      "sha256": "e51cb33eb040ae8e80fb422e3fbe821b214b524988a5248c7cb2662cbc0962bc",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "70a4c282f83bbea54c8da16de68390b51a69eccf306f653596bbfab82183d6b7"
+        "upstreamSnapshotSha256": "70a4c282f83bbea54c8da16de68390b51a69eccf306f653596bbfab82183d6b7",
+        "rttiTestingAmendment": "Link the authored RTTI testing procedure and clarify asynchronous debug completion."
       }
     },
     {
@@ -339,11 +340,12 @@
       "target": "content/docs/debug-runtime.md",
       "slug": "debug-runtime",
       "title": "Privileged in-game Lua laboratory",
-      "bytes": 4663,
-      "sha256": "4696ba5b3f5f1cc731ce8de03de93f7855d115737dfd9f6b7cc8eda48031c73e",
+      "bytes": 5061,
+      "sha256": "195edec7f822ccd3a5563e75ac161bf4188b94d0a75c7a1ddc1b7ff93b406040",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "b426f5a4a1f5782400c04c78efaa0a99fa97ddcf251d01f3b9b6287872fece4a"
+        "upstreamSnapshotSha256": "b426f5a4a1f5782400c04c78efaa0a99fa97ddcf251d01f3b9b6287872fece4a",
+        "rttiTestingAmendment": "Link the authored RTTI testing procedure and clarify asynchronous debug completion."
       }
     },
     {
