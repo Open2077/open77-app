@@ -942,6 +942,13 @@
           "description": "Install the OPEN//77 Devkit MCP in one line and give Claude Code, Codex, Cursor or VS Code every Lua native, permission, event and game-data name, pinned to the server build you run."
         },
         {
+          "slug": "rtti",
+          "kind": "guide",
+          "nav": "RTTI calls & hooks",
+          "title": "RTTI calls and hooks",
+          "description": "Call reflected native and scripted game functions from client Lua, manage object references, and install synchronous hooks with explicit permissions and coverage limits."
+        },
+        {
           "slug": "debug-runtime",
           "kind": "guide",
           "nav": "Privileged debug runtime",

@@ -241,7 +241,51 @@ try {
     }
   }
 
-  if (process.argv.includes("--metrics")) {
+  if (process.argv.includes("--rtti")) {
+    for (const width of [1440, 390]) {
+      await session.send("Emulation.setDeviceMetricsOverride", {
+        width, height: 900, deviceScaleFactor: 1, mobile: width < 600,
+      });
+      await visit("/docs/rtti");
+      check(`RTTI ${width}px guide, debugging and navigation render`, await session.evaluate(`
+        return document.querySelector('h1')?.textContent === 'RTTI calls and hooks' &&
+          !!document.querySelector('#debugging-in-the-game') &&
+          document.querySelector('main').textContent.includes('rtti.native') &&
+          !!document.querySelector('a[href="/docs/rtti.md"]') &&
+          document.querySelector('.dx-nav a[aria-current="page"]')?.getAttribute('href') === '/docs/rtti';
+      `));
+      check(`RTTI ${width}px code and tables fit viewport`, await session.evaluate(
+        "return document.documentElement.scrollWidth <= innerWidth;",
+      ));
+      check(`RTTI ${width}px table of contents resolves`, await session.evaluate(`
+        const links = [...document.querySelectorAll('a[href^="#"]')];
+        return links.length > 5 && links.every(a => a.hash.length < 2 || !!document.getElementById(decodeURIComponent(a.hash.slice(1))));
+      `));
+      reportConsole(`RTTI guide ${width}px`);
+      if (width < 600) await session.evaluate(`document.querySelector('.docs-mobile-nav').click();`);
+      await session.evaluate(`
+        const input = document.querySelector('[aria-label="Filter documentation topics"]');
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, 'RTTI');
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        await new Promise(r => setTimeout(r, 150));
+      `);
+      check(`RTTI ${width}px topic search finds the guide`, await session.evaluate(`
+        return document.querySelector('#nav-reference a[href="/docs/rtti"]')?.getBoundingClientRect().height > 0;
+      `));
+      await visit("/docs/api?side=client&namespace=Open77.rtti#client/open77-rtti/hook");
+      const api = await session.evaluate(`
+        const detail = document.querySelector('.api-detail');
+        return { name: detail?.querySelector('h2')?.textContent,
+          count: document.querySelectorAll('.api-function-row').length,
+          guide: detail?.querySelector('a[href="/docs/rtti"]')?.getAttribute('href'),
+          text: detail?.textContent ?? '' };
+      `);
+      check(`RTTI ${width}px explorer exposes five contracts, permission and guide`,
+        api.name === "hook" && api.count === 5 && api.guide === "/docs/rtti" &&
+        api.text.includes("rtti.native"), JSON.stringify(api));
+      reportConsole(`RTTI explorer ${width}px`);
+    }
+  } else if (process.argv.includes("--metrics")) {
     for (const width of [1440, 390]) {
       await session.send("Emulation.setDeviceMetricsOverride", {
         width, height: 900, deviceScaleFactor: 1, mobile: width < 600,

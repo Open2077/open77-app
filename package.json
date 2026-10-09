@@ -68,7 +68,10 @@
     "sync:consumables-visibility": "node scripts/sync-consumables-visibility-docs.mjs",
     "verify:consumables-visibility": "node scripts/check-consumables-visibility-docs.mjs",
     "sync:drive-by": "node scripts/sync-drive-by-docs.mjs",
-    "verify:drive-by": "node scripts/sync-drive-by-docs.mjs --check"
+    "verify:drive-by": "node scripts/sync-drive-by-docs.mjs --check",
+    "sync:rtti": "node scripts/sync-rtti-docs.mjs",
+    "verify:rtti": "node scripts/sync-rtti-docs.mjs --check",
+    "verify:rtti:browser": "node scripts/check-hydration.mjs http://127.0.0.1:3127 --rtti"
   },
   "dependencies": {
     "@shikijs/rehype": "^4.4.3",

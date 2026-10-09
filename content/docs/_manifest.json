@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 100,
-  "apiEntries": 1728,
+  "guides": 101,
+  "apiEntries": 1733,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -1408,9 +1408,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1728,
-      "bytes": 2493285,
-      "sha256": "0ef85244318c5d32c3e77ab6e38c87d3b4051e7664c9a4dfb75072a43b0d9861",
+      "entries": 1733,
+      "bytes": 2500697,
+      "sha256": "08782956b91aa6ceca5a41ad0d37e85f5ab6c932fb2e5094960519dca43d99af",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6"
@@ -1963,6 +1963,16 @@
         "owner": "website",
         "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
       }
+    },
+    {
+      "source": "wiki/rtti.md",
+      "target": "content/docs/rtti.md",
+      "slug": "rtti",
+      "title": "RTTI calls and hooks",
+      "bytes": 9738,
+      "sha256": "42878b7ca500eb41ad7f937dde1ced583612a8f59c279d04be18066ee09747ce",
+      "sourceRevision": "116abc12c473c48767ce0a45ba0c9b1af4b22505",
+      "sourceSyncedAt": "2026-10-09T10:22:49.946Z"
     }
   ],
   "partialSync": {
@@ -2181,5 +2191,20 @@
       "server:Open77.vehicles.setPlayerAutoSeatSwitchEnabled",
       "server:Open77.vehicles.switchPlayerSeat"
     ]
+  },
+  "rttiSync": {
+    "tool": "scripts/sync-rtti-docs.mjs",
+    "syncedAt": "2026-10-09T10:22:49.989Z",
+    "sourceRevision": "116abc12c473c48767ce0a45ba0c9b1af4b22505",
+    "sourceWorkingTreeDirty": false,
+    "sourceApiSha256": "568dd42d67eaf38336b4ab8da1e1109bedc7f74d83a56cc55a6963df28d13c65",
+    "apiRouteIds": [
+      "client:Open77.rtti.call",
+      "client:Open77.rtti.hook",
+      "client:Open77.rtti.release",
+      "client:Open77.rtti.resolve",
+      "client:Open77.rtti.unhook"
+    ],
+    "apiMode": "merge-selected-cards-preserve-other-site-entries"
   }
 }

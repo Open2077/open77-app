@@ -6,7 +6,7 @@ const nav = JSON.parse(await readFile("content/docs/meta.json", "utf8"));
 const pages = nav.sections.flatMap((section) => section.pages);
 assert.equal(new Set(nav.sections.map((section) => section.id)).size, nav.sections.length, "Duplicate topic IDs");
 assert.equal(new Set(pages.map((page) => page.slug)).size, pages.length, "A guide must have exactly one navigation home");
-assert.equal(pages.length, 124, "Review guide coverage when adding or removing pages");
+assert.equal(pages.length, 125, "Review guide coverage when adding or removing pages");
 const collections = [...new Set(nav.sections.map((section) => section.group))];
 assert.deepEqual(collections, ["Start & host", "Build resources", "Game systems", "Reference & tools"]);
 let previous = "";
@@ -26,6 +26,7 @@ for (const section of nav.sections) {
   }
 }
 for (const [id, slugs] of Object.entries({
+  reference: ["rtti", "debug-runtime", "agent-testing"],
   server: ["host-a-server", "server-startup", "server-licensing", "database"],
   "server-administration": ["warden", "rcon", "metrics", "community-hub-warden", "warden-players"],
   vehicles: ["vehicles", "vehicle-seat-switching", "vehicle-paint", "vehicle-ai", "vehicle-weapons", "drive-by", "armed-vehicles"],

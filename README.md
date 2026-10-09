@@ -74,6 +74,13 @@ src/
 
 ## Documentation pipeline
 
+The [RTTI guide](content/docs/rtti.md) and its five client API cards use
+`npm run sync:rtti -- --from <platform>/wiki` after committing the platform guide
+and generated `Open77.rtti` contracts. This scoped sync preserves unrelated
+content. Verify the same source with `npm run verify:rtti -- --from <platform>/wiki`.
+With a production build running on port 3127, `npm run verify:rtti:browser`
+checks the guide, topic search and API explorer on desktop and mobile.
+
 The [passenger drive-by guide](content/docs/drive-by.md) and its eight client/server
 API cards use `npm run sync:drive-by -- --from <platform>/wiki`. Commit the reviewed
 guide and generated `Open77.players` contracts in the platform checkout first.

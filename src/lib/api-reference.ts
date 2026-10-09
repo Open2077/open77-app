@@ -180,6 +180,7 @@ const INPUT_BLOCKING = new Set([
  * link to a page that does not mention it is worse than no link.
  */
 const NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGuideLabel: string }> = {
+  "Open77.rtti": { usageGuideHref: "/docs/rtti", usageGuideLabel: "RTTI calls & hooks guide" },
   "Open77.consumables": { usageGuideHref: "/docs/consumables-api", usageGuideLabel: "Grenades & healing items guide" },
   "Open77.blips": { usageGuideHref: "/docs/custom-blip-icons", usageGuideLabel: "Custom SVG blips & colors" },
   "Open77.database": { usageGuideHref: "/docs/database", usageGuideLabel: "SQL database setup" },

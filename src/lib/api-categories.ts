@@ -1,5 +1,5 @@
 /** Presentation only. Function contracts and runtime always come from wiki/data/api.json. */
-const FALLBACK_CATEGORY = { id: "utilities", label: "Data & utilities", namespaces: ["Open77.assets", "Open77.data", "Open77.kvp", "Open77.clipboard", "Open77.debug", "Open77.inspector"] } as const;
+const FALLBACK_CATEGORY = { id: "utilities", label: "Data & utilities", namespaces: ["Open77.assets", "Open77.data", "Open77.kvp", "Open77.clipboard", "Open77.debug", "Open77.inspector", "Open77.rtti"] } as const;
 
 export const API_CATEGORIES = [
   { id: "core", label: "Core & resources", namespaces: ["_G", "Open77.Promise", "Open77.resource", "Open77.runtime", "Open77.events", "Open77.exports", "Open77.json", "Citizen", "promise", "Open77.EventVerdict", "Open77.convars", "Open77.acl", "Open77.access"] },
