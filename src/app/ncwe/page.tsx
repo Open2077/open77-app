@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
 
-import { NcweBeta } from "@/components/ncwe/ncwe-beta";
+import { NcweLanding } from "@/components/ncwe/ncwe-landing";
+import styles from "@/components/ncwe/ncwe-landing.module.css";
 import { SiteFooter } from "@/components/site-footer";
+import { NCWE_TRAILER } from "@/lib/ncwe-release";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "NCWE closed beta",
+  title: "NCWE, the Night City World Editor",
   description:
-    "NCWE, the Night City World Editor: edit Cyberpunk 2077's city, import your own models and export ArchiveXL mods or OPEN//77 worlds. Apply to the closed beta with your OPEN//77 account.",
+    "NCWE is the free world editor for Cyberpunk 2077, in open beta: fly through the real Night City, move what is there, build with roads, terrain, lights and your own models, and export ArchiveXL mods or OPEN//77 multiplayer worlds. No account needed.",
   path: "/ncwe",
+  image: NCWE_TRAILER.poster,
 });
 
 export default function NcwePage() {
   return <>
-    <NcweBeta />
-    <SiteFooter tone="dark" fineprint="NCWE is in closed beta. Applications are reviewed by the OPEN//77 team; access is given through the OPEN//77 Discord." />
+    <NcweLanding />
+    <div className={styles.footer}><SiteFooter tone="dark" fineprint="NCWE is in open beta and free software (GPL-3.0). It is an independent community project, unaffiliated with CD PROJEKT RED; Cyberpunk 2077 is a trademark of CD PROJEKT S.A. No game data is included." /></div>
   </>;
 }
