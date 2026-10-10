@@ -17,7 +17,7 @@ const SHORTCUTS = [
   { href: "/host", title: "Download dedicated server", detail: "Windows & Linux · Alpha access", keywords: "hosting release" },
   { href: "/docs", title: "Documentation", detail: "Play, host and build: every guide", keywords: "help learn tutorial lua" },
   { href: "/docs/api", title: "Lua API reference", detail: "Search the client and server APIs", keywords: "functions vehicles players native scripting" },
-  { href: "/workshop", title: "Workshop", detail: "Resources made by the community", keywords: "mods packages resources community" },
+  { href: "/ncwe", title: "Map Editor", detail: "NCWE, the Night City World Editor · open beta", keywords: "ncwe editor mapping world builder maps download archivexl" },
   { href: "/devblog", title: "Devblog", detail: "What shipped, one post per working day", keywords: "news updates" },
   { href: "/docs/alpha-access", title: "Alpha access", detail: "/alpha apply on Discord to play, host and build", keywords: "apply discord join access" },
 ];

@@ -102,7 +102,7 @@ export const mainNav = [
   { href: "/create", label: "Create Server" },
   { href: "/docs", label: "Docs" },
   { href: "/devblog", label: "Devblog" },
-  { href: "/workshop", label: "Workshop" },
+  { href: "/ncwe", label: "Map Editor" },
   { href: "/status", label: "Status" },
   { href: "/dev-tracker", label: "Dev Tracker" },
 ] as const;
