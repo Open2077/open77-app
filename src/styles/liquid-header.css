@@ -26,7 +26,7 @@
 .liquid-nav a { position: relative; padding: 12px clamp(9px, .9vw, 17px); border-radius: 9px; font: 500 13px var(--font-body); text-decoration: none; white-space: nowrap; color: #e2edf4; transition: color .2s, background .2s; }
 .liquid-nav a:hover, .liquid-nav a[aria-current] { background: #d1f2ff0c; color: #fff; }
 .liquid-nav a[aria-current]::after { content: ""; position: absolute; bottom: 4px; left: 40%; right: 40%; height: 2px; background: #00dcec; border-radius: 3px; }
-.liquid-nav a[href="/workshop"] { color: #35e9ef; }
+.liquid-nav a[href="/ncwe"] { color: #35e9ef; }
 .liquid-actions { display: flex; flex: none; align-items: center; gap: 8px; }
 .liquid-icon, .liquid-pill { display: inline-flex; flex: none; align-items: center; justify-content: center; gap: 8px; min-height: 42px; border: 1px solid #b8dcec30; border-radius: 11px; background: linear-gradient(140deg, #c4edff0d, #a4d5ee03); color: #edf7fe; text-decoration: none; font: 500 12px var(--font-body); transition: background .2s, border-color .2s, transform .2s; }
 .liquid-icon { width: 42px; }
@@ -87,8 +87,8 @@ body.nav-open, body:has(.liquid-search[open]) { overflow: hidden; }
 .is-home .liquid-nav a { padding: 10px 6px; border-radius: 0; background: none; font: 500 10px var(--font-mono); letter-spacing: .24em; text-transform: uppercase; color: #cfdde6; text-shadow: 0 1px 8px #000a; }
 .is-home .liquid-nav a:hover, .is-home .liquid-nav a[aria-current] { background: none; color: #08dfec; }
 .is-home .liquid-nav a[aria-current]::after { bottom: 2px; left: 6px; right: 6px; height: 1px; }
-.is-home .liquid-nav a[href="/workshop"] { color: #cfdde6; }
-.is-home .liquid-nav a[href="/workshop"]:hover { color: #08dfec; }
+.is-home .liquid-nav a[href="/ncwe"] { color: #cfdde6; }
+.is-home .liquid-nav a[href="/ncwe"]:hover, .is-home .liquid-nav a[href="/ncwe"][aria-current] { color: #08dfec; }
 .is-home .liquid-actions { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); gap: 4px; }
 .is-home .liquid-actions > :is(.liquid-search-trigger, .liquid-divider, .liquid-discord, .liquid-alpha, .liquid-download) { display: none; }
 .is-home .liquid-account { font-size: 0; gap: 0; width: 42px; padding: 0; }

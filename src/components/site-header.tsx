@@ -30,7 +30,8 @@ export function SiteHeader() {
   const pathname = usePathname();
   const isDocumentation = pathname === "/docs" || pathname.startsWith("/docs/");
   // The home hero gets a centred, borderless bar: links split either side of the logo.
-  const isHome = pathname === "/";
+  // The home page's bar (see-through over a hero, logo in the middle) is also the editor's page's.
+  const isHome = pathname === "/" || pathname === "/ncwe";
   const { session } = useSession();
   const isAdmin = session?.role === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
