@@ -17,7 +17,7 @@ the poses the game authored on it) and a resource that lets players use them (`o
 
 Only seats whose pose was **measured** seating a player on two clients are offered by default (about
 16,000 pieces of furniture: the common plastic chairs, benches with chair poses, bar stools, bar
-seats, some wall and counter leans). Beds stay off until lying down is proven.
+seats, some wall and counter leans, and one measured bed). Other beds stay off until they are walked.
 
 ## Turn it on
 
@@ -128,19 +128,21 @@ Proven live on two clients, with a male and a female character:
 - **Teleport.** A Warden teleport of a seated player ended the posture, and the exit left the body
   where it landed, more than 8 m from the stool.
 
-Ten catalogue ids were also played one by one with `playAt`: nine seat or lean correctly with their
-family's arrival radius; beds are refused.
+Ten catalogue ids were also played one by one: all ten seat, lean or lie with their family's arrival
+radius. The bed first failed (the pose ended while the game settled the body on the mattress); the
+client now lets a placed pose settle for two seconds, and beds lie from where the player stands, on
+both body types.
 
-Not yet run live through `open77_seating`: panicking pedestrians leaving and returning to seats, an
-approach blocked by a body or a prop, lying on a bed, and bar seats (seated by `playAt` alone, not
-yet through this resource).
+Also proven live through `open77_seating`: a pedestrian shot off a seat flees, a player takes the
+seat and the pedestrian does not walk back onto it; an approach point on a step is refused
+(`approach_blocked`) and the body put back; a bar seat from where the player stands.
 
 ## Limits
 
 - Only measured furniture families are offered by default; the rest of the catalogue is anchor data
   (`runtimeValidated = false`) until it is qualified on two clients.
-- Beds, couches, ledges, stairs and rails have no player posture yet, or are refused. Beds stay refused
-  until an approach point for lying down is measured.
+- Couches, ledges, stairs and rails have no player posture yet. Beds lie from where the player
+  stands; only the measured bed is offered by default, other beds are `unverified` until walked.
 - The game's own (vanilla) crowd is not coordinated: servers that run Open77's pedestrians suppress
   it.
 - Players reach seats within 3 m; the approach point beside a seat is computed from the furniture kind

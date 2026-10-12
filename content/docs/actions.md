@@ -3,8 +3,8 @@
 > **Experimental.** Names may still change. Proven live on two clients, with a male and a female
 > character and actor and observer swapped, inside two complete jobs: the lifecycle, one winner per
 > spot (`target_claimed`), the cancellations listed under [Refusals](#refusals), carrying across
-> teleports and into a truck, and prompts fired by **E**. Built and tested offline only: the
-> **F**/**R**/**T** choice keys, `lookAt` targets, markers, an `in_doubt` end, and the vehicle,
+> teleports and into a truck, and prompts fired by **E**, **F** and **R**. Built and tested offline
+> only: the fourth choice key (**Y**), `lookAt` targets, markers, an `in_doubt` end, and the vehicle,
 > combat, bucket-change, reservation-timeout and lapsed-claim cancellations. Start with
 > [World interaction](world-interaction.md) for how this fits with the other pieces.
 
@@ -102,9 +102,9 @@ soon as the player is within reach and the card is on screen: there is no need t
 | `arrivalRadius` | 0.5–1.5 m, unset | how close `playAt` must bring the body to this spot ([below](#arrival-radius)) |
 | `requires` | `"carrying"` or `"empty"` | offer the card only to players who carry something, or nothing |
 
-**Choice keys.** A target offers up to four actions. They get **E**, **F**, **R** and **T**, in order,
-unless a choice names its own `key` (one letter or digit). **G** is never a default: it is the
-put-down key. A choice may also set its `label`, `holdSeconds` (0–10) and `icon`.
+**Choice keys.** A target offers up to four actions. They get **E**, **F**, **R** and **Y**, in order,
+unless a choice names its own `key` (one letter or digit). **G** (the put-down key), **T** (it opens
+the chat) and **X** (cancel) are never defaults. A choice may also set its `label`, `holdSeconds` (0–10) and `icon`.
 
 ```lua
 actions:target({ id = "wreck_1", position = p, yaw = 180, label = "Wreck", actions = {

@@ -81,7 +81,8 @@ Proven live on two clients, with both body rigs, actor and observer swapped, on 
   clocking off (`stale_job_epoch`), a restart of the job resource (`owner_stopped`) and a stop of
   `open77_actions` (`resource_stopping`, with no posture or movement lock left behind). Each one
   released the spot.
-- **Prompts by key**: holding **E** on an `open77_actions` card starts the action.
+- **Prompts by key**: **E**, **F** and **R** on an `open77_actions` card each start their own choice;
+  the fourth choice key is **Y** (**T** opens the chat, so it is never a default).
 - **Carrying**: pickup, walking, putting down on the ground and into a truck bed, unloading into the
   hands, carrying across a teleport, a drop on disconnect, on clock-off and on an owner restart;
   crates rebuilt after a restart of `open77_actions` and after a full server restart.
@@ -91,19 +92,18 @@ Proven live on two clients, with both body rigs, actor and observer swapped, on 
 - **Consented hand-over**: offer, accept (one sale with a society share and a tip) and decline
   (nothing paid).
 - **Seating**: NPC occupancy refused, one winner per seat, neighbours on adjacent stools, two players
-  on one bench, **E** sits, **X** stands, exits ([details](furniture.md#status)).
+  on one bench, **E** sits, **X** stands, exits, a pedestrian scared off a seat not walking back onto
+  the player, a bar seat and a bed (lying, both body types) ([details](furniture.md#status)).
 
 Built and covered by offline tests, not yet proven live:
 
-- the second to fourth choice keys of a card (**F**, **R**, **T**): the card shows only the first
-  choice, and a choice key fires only while that card is the nearest candidate;
+- the fourth choice key of a card (**Y**): the card shows only the first choice's label, and a choice
+  key fires only while that card is the nearest candidate;
 - `lookAt = true` targets; cancellation by a vehicle, combat, a bucket change, a reservation timeout
   or a lapsed claim; an action that ends `in_doubt`; an action's own `markers`;
-- seating with panicking pedestrians, with a blocked approach, and on bar seats through
-  `open77_seating`;
 - `open77_containers` `refill`; the coordinator's retention sweep and `world:` expiry on old data.
 
-Not covered: MySQL 8 (only MariaDB was exercised), lying on beds (refused), and the patterns in
+Not covered: MySQL 8 (only MariaDB was exercised), and the patterns in
 [Add a custom stage](#add-a-custom-stage-without-platform-changes), which use documented contracts
 but have not been run as written.
 

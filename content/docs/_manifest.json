@@ -538,8 +538,8 @@
       "target": "content/docs/world-interaction.md",
       "slug": "world-interaction",
       "title": "World interaction: build a job",
-      "bytes": 33945,
-      "sha256": "7444f975ce9ae76df2f80e4276d145ac4428e2ff332d89eecd1ccffd874b4002",
+      "bytes": 34011,
+      "sha256": "dd4845f9b354d61aae32cc2e940c7a2008eed59b2243af54770196d2402c8372",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "90050d5538375c9f43ab8085b42145d3fc88329e461e291b62e06fea5f037f81",
@@ -551,8 +551,8 @@
       "target": "content/docs/actions.md",
       "slug": "actions",
       "title": "Actions and carrying",
-      "bytes": 20928,
-      "sha256": "50cd99a908579abe956a42e727b8f4a1206df247277be1d176d1a1d82b694660",
+      "bytes": 20982,
+      "sha256": "796d8b8b5a6e31af48dabec1161360577de92af0fd20ce41c683768b1d936192",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "fa498e3294c2c0da2c9cf12d0ea2b2024df6b6d193f9cba891c5b70546c78677",
@@ -584,8 +584,8 @@
       "target": "content/docs/furniture.md",
       "slug": "furniture",
       "title": "Furniture: sit and lean",
-      "bytes": 7795,
-      "sha256": "a64d547b02f22dfc6deaeb50b7e6559e684e0727eb9f57c0f5d2f615f0d1d8a1",
+      "bytes": 8073,
+      "sha256": "82dff6e5038eddeec3fd4e686a9223d08a16c13404086deec03eb205cdf46a14",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "149f00cb1091a189abd9a5762c949969c94f4375bfb6ab9e2cc01f728ed06311",
