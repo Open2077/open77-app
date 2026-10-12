@@ -2359,7 +2359,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- Tell the rest of this resource that the menu closed\nTriggerEvent(\"shop:closed\")\nAddEventHandler(\"shop:closed\", function() FreezePosition(false) end)",
   "inferred": false,
-  "source_line": 24470,
+  "source_line": 25380,
   "permissions": [],
   "reasons": [
    "event_payload_not_serializable",
@@ -2369,6 +2369,7 @@
    "reserved_effect_event",
    "reserved_hacking_event",
    "reserved_interaction_event",
+   "reserved_loading_screen_event",
    "reserved_player_model_event",
    "resource_preparing"
   ],
@@ -11239,7 +11240,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- Tell the rest of this resource that the shop closed\nOpen77.events.emit(\"shop:closed\")",
   "inferred": false,
-  "source_line": 24646,
+  "source_line": 25556,
   "permissions": [],
   "reasons": [
    "event_payload_not_serializable",
@@ -11249,6 +11250,7 @@
    "reserved_effect_event",
    "reserved_hacking_event",
    "reserved_interaction_event",
+   "reserved_loading_screen_event",
    "reserved_player_model_event",
    "resource_preparing"
   ],
@@ -28089,6 +28091,12 @@
     "type": "string",
     "optional": false,
     "default": null
+   },
+   {
+    "name": "authorityPolicy",
+    "type": "string",
+    "optional": false,
+    "default": null
    }
   ],
   "returns": [],
@@ -28097,7 +28105,7 @@
   "source": "LuaResourceRuntime.cs",
   "example": "-- The raw positional spawn. Ten of the seventeen arguments are only the\n-- defaults the table form would have filled in, which is why nobody writes\n-- this by hand twice: Open77.npcs.create{ record = ..., position = ... }.\nlocal npcId, reason = CreateNpc(\n    \"Character.Judy\", -1442.2, 127.4, 18.0, 180.0, 0,  -- record, x, y, z, yaw, bucket\n    nil, nil,                                          -- appearance, loadoutJson\n    0, 2,                                              -- aiMode = tasks, damagePolicy = invulnerable\n    100.0, 100.0, 180.0, 40.0,                         -- health, maxHealth, streaming radius/hysteresis\n    false, true, nil)                                  -- despawnWhenUnobserved, persistent, behaviorJson\nif not npcId then return print(\"spawn refused: \" .. tostring(reason)) end\nprint((\"shopkeeper %d is up\"):format(npcId))",
   "inferred": false,
-  "source_line": 1076,
+  "source_line": 1089,
   "permissions": [
    "world.npcs"
   ],
@@ -47131,7 +47139,7 @@
   "name": "create",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Creates an authoritative NPC.",
-  "description": "Requires `world.npcs`. Build one from `record = \"Character.*\"` directly -- no catalogue entry is needed -- or from the legacy `template` alias. Definition fields are `record`, `template`, `position`, `yaw`, `bucket`, `appearance`, `loadout`, `behavior`, `aiMode`, `damagePolicy`, `health`, `maxHealth`, `streamingRadius`, `streamingHysteresis`, `despawnWhenUnobserved` and `persistent`. `aiMode` and `damagePolicy` are **integers** from the constant tables `Open77.npcs.ai` (`tasks = 0`, `frozen = 1`, `native = 2`) and `Open77.npcs.damage` (`mortal = 0`, `immortal = 1`, `invulnerable = 2`; default `immortal`); a string such as `\"invulnerable\"` raises a Lua argument error (`number expected, got string`) in `CreateNpc`. The id comes back at once, but engine readiness is asynchronous: a freshly created NPC is not yet a body in the world. See [NPCs](npcs.md).",
+  "description": "Requires `world.npcs`. Build one from `record = \"Character.*\"` directly -- no catalogue entry is needed -- or from the legacy `template` alias. Definition fields are `record`, `template`, `position`, `yaw`, `bucket`, `appearance`, `loadout`, `behavior`, `aiMode`, `damagePolicy`, `health`, `maxHealth`, `streamingRadius`, `streamingHysteresis`, `despawnWhenUnobserved`, `persistent` and `authorityPolicy`. `aiMode` and `damagePolicy` are **integers** from the constant tables `Open77.npcs.ai` (`tasks = 0`, `frozen = 1`, `native = 2`) and `Open77.npcs.damage` (`mortal = 0`, `immortal = 1`, `invulnerable = 2`; default `immortal`); a string such as `\"invulnerable\"` raises a Lua argument error (`number expected, got string`) in `CreateNpc`. `authorityPolicy` is `\"nearest\"` (default) or `\"balanced\"` (the client simulating the fewest NPCs, with a tenure-gated rebalance); anything else returns `nil, \"npc_authority_policy_invalid\"`. `behavior.observerReplay = true` makes clients that do not simulate the NPC replay the simulator's motion on the shared server clock. The id comes back at once, but engine readiness is asynchronous: a freshly created NPC is not yet a body in the world. See [NPCs](npcs.md).",
   "params": [
    {
     "name": "def",
@@ -47149,11 +47157,12 @@
   "source": "LuaResourceRuntime.cs",
   "example": "-- A shopkeeper standing behind the counter, who never fights back\nlocal shopkeeper, reason = Open77.npcs.create({\n    record = \"Character.Judy\",\n    position = { x = -1442.2, y = 127.4, z = 18.0 },\n    yaw = 180.0,\n    damagePolicy = Open77.npcs.damage.invulnerable,   -- an integer (2), never the string\n    persistent = true,\n})\nif not shopkeeper then print(\"could not spawn the shopkeeper: \" .. reason) end",
   "inferred": false,
-  "source_line": 9230,
+  "source_line": 9266,
   "permissions": [
    "world.npcs"
   ],
   "reasons": [
+   "npc_authority_policy_invalid",
    "npc_record_invalid",
    "npc_template_invalid",
    "npcs_unavailable",
@@ -49613,7 +49622,7 @@
   "name": "workspot",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Puts an NPC into an authored workspot scenario.",
-  "description": "Requires `world.npcs`. FullBody channel, the same one `playAnimation` uses, so a workspot and an animation cannot run on one body at once.\n\n`reference` is either a **catalogue profile id** (`smoke`, `sit`, `phone`, `dance`, `meditate`, ... -- see `Open77.npcs.tasks.workspots`), which brings its own shipped device entity and its own validated clip set, or a **raw clip name** played through the generic device. The catalogue profile is the supported form; a raw clip is an escape hatch whose animset the generic device may not carry.\n\n`durationMs` ends the scenario by **succeeding**, not by timing out: a scenario that ran its course is not a failure, and `timeoutMs` stays free to mean \"no client ever picked the command up\". `loop = true` has no end and runs until cancelled.",
+  "description": "Requires `world.npcs`. FullBody channel, the same one `playAnimation` uses, so a workspot and an animation cannot run on one body at once.\n\n`reference` is either a **catalogue profile id** (`smoke`, `sit`, `phone`, `dance`, `meditate`, ... -- see `Open77.npcs.tasks.workspots`), which brings its own shipped device entity and its own validated clip set, or a **raw clip name** played through the generic device. The catalogue profile is the supported form; a raw clip is an escape hatch whose animset the generic device may not carry. Ambient profiles do not appear in `Open77.animations.list()` or `tasks.workspots()` but resolve directly by id.\n\n`options.anchor = { x, y, z, yaw? }` positions a catalogue profile's workspot at world coordinates. Coordinates must be finite; yaw is degrees about Z, defaults to 0, and must be within -360..360. Anchored workspots play on every client, remain `Executing` without an authority and work on Frozen NPCs. An anchor with a raw clip returns `npc_task_invalid_workspot`; invalid anchor values return `npc_task_invalid_anchor`.\n\n`durationMs` ends the scenario by **succeeding**, not by timing out: a scenario that ran its course is not a failure, and `timeoutMs` stays free to mean \"no client ever picked the command up\". `loop = true` has no end and runs until cancelled.",
   "params": [
    {
     "name": "id",
@@ -49629,21 +49638,21 @@
    },
    {
     "name": "options",
-    "type": "table { durationMs?, loop?, clip?, priority?, timeoutMs? }",
+    "type": "table { durationMs?, loop?, clip?, anchor?: { x, y, z, yaw? }, priority?, timeoutMs? }",
     "optional": true,
     "default": null
    }
   ],
   "returns": [
    "task id, or nil",
-   "reason (`npc_task_invalid_workspot`, `npc_task_invalid_duration`)"
+   "reason (`npc_task_invalid_workspot`, `npc_task_invalid_anchor`, `npc_task_invalid_duration`)"
   ],
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
   "example": "-- The mechanic leans on the car for a minute\nOpen77.npcs.tasks.workspot(mechanicId, \"smoke\", { durationMs = 60000 })",
   "inferred": false,
-  "source_line": 9469,
+  "source_line": 9526,
   "permissions": [
    "world.npcs"
   ],
@@ -49655,6 +49664,7 @@
    "invalid_query",
    "invalid_request",
    "json_too_large",
+   "npc_task_invalid_anchor",
    "npc_task_invalid_duration",
    "npc_task_invalid_workspot",
    "permission_denied:players.animations.control",
@@ -65430,5 +65440,218 @@
   "constant": false,
   "qualified": "Open77.rtti.unhook",
   "route_id": "Open77.rtti.unhook"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "isPointing",
+  "handler": "LuaAnimationServiceExport",
+  "summary": "Check whether a player is pointing in their camera direction.",
+  "description": "Defaults to the local player, or accepts a visible player's network ID. Resolves to true while that player's active synchronized action is the looping camera_point profile and this client has not failed to present it, and to false otherwise, including when the player has no active action. It reads the state this client last received and does not ask the server. Do not use a client observation to grant authoritative rewards. Declare dependency 'open77_animations' in your resource manifest. This asynchronous facade requires the service in the same downloaded resource host, not a separate bootstrap host. Await from a managed coroutine/event handler. No animations.presentation capability is required by the caller; underscore hooks are internal.",
+  "params": [
+   {
+    "name": "playerId",
+    "type": "integer",
+    "optional": true,
+    "default": "local player"
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to true while the player is pointing, otherwise false",
+   "nil, reason if dispatch fails; await() returns nil, reason if rejected"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "CreateThread(function()\n    local pending, err = Open77.animations.isPointing()\n    if not pending then print(err); return end\n    local active, rejected = pending:await()\n    if rejected then print(rejected); return end\n    print('pointing: ' .. tostring(active))\nend)",
+  "inferred": false,
+  "source_line": 25627,
+  "permissions": [],
+  "reasons": [
+   "open77_animations"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.animations.isPointing",
+  "route_id": "Open77.animations.isPointing"
+ },
+ {
+  "namespace": "Open77.animations",
+  "name": "setPointing",
+  "handler": "LuaAnimationServiceExport",
+  "summary": "Start or stop camera-directed finger pointing for the local player.",
+  "description": "true requests the looping camera_point profile for the local player on behalf of the calling resource. It is an upper-body layer on the right arm, so walking continues, and every client aims that arm along the player's replicated camera direction. It resolves to the server-accepted playback state. Repeating true while this resource's pointing action is active resolves to that state without restarting it. Any other active animation, including a pointing action another resource started, rejects with animation_busy; a pending animation request rejects with request_pending; a call before the local player is ready rejects with player_not_ready; and a request the server has not answered within 10 seconds rejects with request_timeout. false stops pointing: it abandons this resource's pending pointing request, whose await then returns nil, cancelled, and cancels the active pointing action this resource started. It resolves to true when cancellation is queued or nothing is pointing, and never stops a different animation; a pointing action owned by another resource, or by an earlier generation of this one, rejects with not_owner. A non-boolean argument rejects with invalid_enabled. The local player's pointing stops when they sprint, slide, vault, swim, leave the ground, are knocked down, draw a weapon, attack or block in melee, or mount a vehicle; that failure reaches onAnimationPlaybackFailed with the reason interrupted. When the owning resource stops or restarts, the service cancels its pointing action. Call true and false from the press and release handlers of an input rather than back to back. Requires matching client, server and animation archives that include the camera_point layer. Declare dependency 'open77_animations' in your resource manifest. This asynchronous facade requires the service in the same downloaded resource host, not a separate bootstrap host. Await from a managed coroutine/event handler. No animations.presentation capability is required by the caller; underscore hooks are internal.",
+  "params": [
+   {
+    "name": "enabled",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "Open77.Promise resolving to the server-accepted playback state when starting, or true when stopping",
+   "nil, reason if dispatch fails; await() returns nil, reason if rejected or timed out"
+  ],
+  "api_set": "network",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "-- Hold B to point; release to stop\nRegisterKeyMapping('point', 'Point with your finger', 'B',\n    function()\n        local pending, err = Open77.animations.setPointing(true)\n        if not pending then print(err); return end\n        CreateThread(function()\n            local playback, rejected = pending:await()\n            if not playback then print(rejected) end\n        end)\n    end,\n    function()\n        local pending, err = Open77.animations.setPointing(false)\n        if not pending then print(err) end\n    end)",
+  "inferred": false,
+  "source_line": 25627,
+  "permissions": [],
+  "reasons": [
+   "open77_animations"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.animations.setPointing",
+  "route_id": "Open77.animations.setPointing"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getSteeringInput",
+  "handler": "LuaVehicleGetSteeringInput",
+  "summary": "Reads normalized vehicle steering input.",
+  "description": "Client-only; requires vehicles.read. Pass a network vehicle ID. Returns the same -1..1 steering input as vehicles.get(id).steering, not the interior wheel angle or rolling tire phase. Returns nil, reason for invalid/missing vehicles or permission denial. See the vehicle steering guide.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer|string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "number input",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local input, reason = Open77.vehicles.getSteeringInput(vehicleId)\nif input ~= nil then print(input) end",
+  "inferred": false,
+  "source_line": 25974,
+  "permissions": [
+   "vehicles.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.getSteeringInput",
+  "route_id": "Open77.vehicles.getSteeringInput"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "getSteeringWheelAngle",
+  "handler": "LuaVehicleGetSteeringWheelAngle",
+  "summary": "Reads the actual rendered steering-wheel angle in degrees.",
+  "description": "Client-only; requires vehicles.read and a streamed vehicle. Reads native steering_wheel and Base slots using the loaded authored rig, removing chassis orientation, column tilt and mesh offsets. Supports locally driven and replicated cars with the required slots and steering_wheel_turn bone. Unsupported rigs, including bikes without a readable wheel, return nil instead of an inferred angle. No first-frame neutral calibration. This is the visible client pose, subject to normal presentation delay, not a server-authoritative angle. Errors: invalid_vehicle_id, vehicle_not_found, vehicle_not_streamed, steering_wheel_unsupported, steering_angle_unavailable, permission_denied:vehicles.read.",
+  "params": [
+   {
+    "name": "vehicleId",
+    "type": "integer|string",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "number degrees",
+   "reason on failure"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "local degrees, reason = Open77.vehicles.getSteeringWheelAngle(vehicleId)\nif degrees ~= nil then\n    print((\"Steering wheel: %.1f degrees\"):format(degrees))\nend",
+  "inferred": false,
+  "source_line": 25975,
+  "permissions": [
+   "vehicles.read"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.getSteeringWheelAngle",
+  "route_id": "Open77.vehicles.getSteeringWheelAngle"
+ },
+ {
+  "namespace": "Open77.npcs.tasks",
+  "name": "traffic",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Puts an NPC into the game's own pedestrian traffic.",
+  "description": "Requires `world.npcs`. Movement channel. The NPC's simulating client puts it into the game's pedestrian traffic (`ReactionSystem.TryAndJoinTraffic`) and keeps it there; the game picks the lanes, the exits and the turns, so there is no destination, route or radius. `speed` is `\"walk\"` (the default) or `\"run\"`; `sprint` is refused with `npc_task_invalid_speed`. `threat = { x, y, z }` is the game's own crowd fear: the NPC stays in traffic and runs away from that point, and no workspot visit happens while it is set; a bad point is refused with `npc_task_invalid_point`. `visits` (boolean, default `true`) says whether the game may send the NPC to its crowd workspots; a non-boolean is refused with `npc_task_invalid_parameters`, and it is ignored while `threat` is set. Options also take `priority` and `timeoutMs` (default 0, no timeout). The task never succeeds while the NPC walks or runs: it runs until it is cancelled or replaced, or the client reports `failure` with a reason (`traffic_unavailable` when the body could not be put into traffic). When the NPC enters a crowd workspot the client ends it with `success` and reason `\"workspot\"`, with the body's placement, and `onNpcTaskState(npcId, taskId, \"success\", \"workspot\")` reaches the resources. Once in traffic the NPC is driven by the game's crowd AI and does not execute other movement commands: to change speed, threat or visits, cancel the active traffic task and enqueue the new one in the same call, which keeps the NPC in traffic; enqueued alone it queues behind the old one. With `behavior.observerReplay` the other clients replay the simulator's motion instead of running their own traffic AI.",
+  "params": [
+   {
+    "name": "id",
+    "type": "NPC id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "options",
+    "type": "table { speed?, threat?, visits?, priority?, timeoutMs? }",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "task id, or nil",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "-- A walker joins the pedestrian crowd, then runs away from a point while staying in it\nlocal walk = Open77.npcs.tasks.traffic(walkerId, { speed = \"walk\" })\nOpen77.npcs.tasks.cancel(walkerId, walk)\nOpen77.npcs.tasks.traffic(walkerId, { speed = \"run\", threat = { x = -1442.2, y = 127.4, z = 18.0 } })",
+  "inferred": false,
+  "source_line": 9429,
+  "permissions": [
+   "world.npcs"
+  ],
+  "reasons": [
+   "npc_task_invalid_point",
+   "permission_denied:world.npcs"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.npcs.tasks.traffic",
+  "route_id": "server:Open77.npcs.tasks.traffic"
+ },
+ {
+  "namespace": "Open77.vehicles",
+  "name": "setLaunchVelocity",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Starts a car nobody has simulated yet moving.",
+  "description": "Requires `world.vehicles`. Sets the canonical linear velocity (m/s, world axes) of a car that has never had a physics owner, so the create every projection receives carries it and the first client to simulate the car writes it into the chassis when it takes over -- the same body write the client uses to keep a car's momentum across an ownership change. The drivetrain `speed` reading is not touched. Refused once any client has simulated the car, even after its ownership was revoked (`vehicle_simulated`; its velocity is then its simulator's report). Viewers that already stream the car receive the velocity at once. A frozen car is refused (`vehicle_frozen`; it is pinned at rest, so thaw it first). Each component is bounded to ±250. A client that only takes the car over more than 6 s after receiving its create starts it from rest.",
+  "params": [
+   {
+    "name": "id",
+    "type": "vehicle id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "velocity",
+    "type": "{ x, y, z? }",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false",
+   "reason: invalid_argument, vehicle_not_found, vehicle_frozen, vehicle_simulated"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "-- Ambient traffic: the car joins its lane already rolling at 10 m/s\nlocal id = assert(Open77.vehicles.create({ record = record, position = point, yaw = yaw }))\nlocal forward = { x = -math.sin(math.rad(yaw)), y = math.cos(math.rad(yaw)) }\nOpen77.vehicles.setLaunchVelocity(id, { x = forward.x * 10, y = forward.y * 10 })",
+  "inferred": false,
+  "source_line": 9035,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.vehicles.setLaunchVelocity",
+  "route_id": "server:Open77.vehicles.setLaunchVelocity"
  }
 ]

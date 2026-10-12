@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
   "guides": 105,
-  "apiEntries": 1733,
+  "apiEntries": 1739,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -1470,9 +1470,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1733,
-      "bytes": 2500697,
-      "sha256": "08782956b91aa6ceca5a41ad0d37e85f5ab6c932fb2e5094960519dca43d99af",
+      "entries": 1739,
+      "bytes": 2514883,
+      "sha256": "eebe6fda968d536453f874cfa5b725343b9a77eb8157202562c14d5f7ece9616",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6"
@@ -1497,9 +1497,9 @@
     {
       "source": "wiki/data/permissions.json",
       "target": "content/api/permissions.json",
-      "entries": 169,
-      "bytes": 152157,
-      "sha256": "0ca092654638433ba795354fb5a246fc4273e91f9ce53cac5624a62e7c82ebf8",
+      "entries": 172,
+      "bytes": 154008,
+      "sha256": "6e3e9b4df8fb50565a5c4697f8f597faba2a12253afccf61dfddd3c3c0193f72",
       "siteAmendment": {
         "0": "V",
         "1": "e",
@@ -1673,9 +1673,9 @@
     {
       "source": "wiki/data/events.json",
       "target": "content/api/events.json",
-      "entries": 524,
-      "bytes": 373962,
-      "sha256": "61495b0b720e032c25c25a8273cd18386b9596ca20fc8ea76cf54179bdcb5039",
+      "entries": 542,
+      "bytes": 383729,
+      "sha256": "06a9e19a60b6f8f1cde359280203d9a18d04d5a2568dfb8b17a722d3408f20d6",
       "siteAmendment": {
         "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
       }
@@ -2280,6 +2280,54 @@
       "actions",
       "transactions",
       "furniture"
+    ]
+  },
+  "apiGapSync": {
+    "tool": "scripts/sync-api-gaps.mjs",
+    "syncedAt": "2026-10-12T11:18:58.990Z",
+    "sourceRevision": "13c990f422bc78241ff8e88f1894b0d803caf2f0",
+    "mode": "append-missing-preserve-site-entries",
+    "added": {
+      "natives": [
+        "client:Open77.animations.isPointing",
+        "client:Open77.animations.setPointing",
+        "client:Open77.vehicles.getSteeringInput",
+        "client:Open77.vehicles.getSteeringWheelAngle",
+        "server:Open77.npcs.tasks.traffic",
+        "server:Open77.vehicles.setLaunchVelocity"
+      ],
+      "events": [
+        "open77:actions:cancel",
+        "open77:actions:carry",
+        "open77:actions:end",
+        "open77:actions:intent",
+        "open77:actions:present",
+        "open77:actions:putdown",
+        "open77:actions:refused",
+        "open77:actions:sync",
+        "open77:actions:targets",
+        "open77:privacy:request",
+        "open77:privacy:set",
+        "open77:privacy:state",
+        "open77:seating:refused",
+        "open77:seating:seats",
+        "open77:seating:sit",
+        "open77:seating:stand",
+        "open77:seating:state",
+        "open77:seating:sync"
+      ],
+      "permissions": [
+        "pause_menu.render",
+        "players.driveby",
+        "rtti.native"
+      ]
+    },
+    "refreshed": [
+      "client:TriggerEvent",
+      "client:Open77.events.emit",
+      "server:CreateNpc",
+      "server:Open77.npcs.create",
+      "server:Open77.npcs.tasks.workspot"
     ]
   }
 }
