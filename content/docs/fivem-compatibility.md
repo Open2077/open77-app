@@ -515,7 +515,7 @@ handle, and the loop goes away with the port.
 |---|---|---|
 | `DrawText` / `SetTextFont` / `SetTextEntry` in a tick | `exports.open77_uikit:textUI({ text, position, key, icon })` | One persistent hint slot per resource (`top` / `center` / `bottom`); a second call **replaces** it; `hideTextUI` removes it. Four resources may show one at once. |
 | the `DrawText3D` pattern (project a coordinate every frame, draw text at it) | `exports.open77_uikit:drawText3D({ position \| entity, text, sublabel, maxDistance, ttl })` → `updateText3D` / `clearText3D` | A native world anchor of render style `card`, projected by the host with the distance band, viewport cull and occlusion the interaction prompts already pay for. **Budgeted:** the kit refuses 8 per owner (`text3d_owner_limit`) and 24 in all (`text3d_limit`), under the anchor quota of 32 per resource / 128 global — draw the nearest eight, not one per entity. |
-| `DrawMarker` | `Open77.markers.*` | A shape/style vocabulary, ground circles through `open77_groundcircle`. |
+| `DrawMarker` | `Open77.markers.*` | A shape/style vocabulary, ground circles through [`open77_groundcircle`](https://github.com/Open2077/open77-resources/tree/main/system/open77_groundcircle). |
 | `DrawLine`, `DrawPoly`, `DrawBox` (zone debug) | `Open77.debugDraw.set(tag, geometry)` / `clear(tag)` | Resource-owned lines and triangles under a tag, replaced atomically per call and kept until cleared; permission `world.debug`. |
 | `DrawSprite`, `DrawRect` | an `<img>` or a `<div>` on a WebUI page | Screen-space art is a page; a rectangle pair every cutscene draws for bars is `exports.open77_uikit:showCinematicBars(true)`. |
 

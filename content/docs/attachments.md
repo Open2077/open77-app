@@ -14,7 +14,7 @@ permissions { 'world.props' }
 server_script 'server.lua'
 ```
 
-The bundled `open77_props` client projection must be running for synchronized
+The bundled [`open77_props`](https://github.com/Open2077/open77-resources/tree/main/system/open77_props) client projection must be running for synchronized
 props. The server owns the object and attachment. Another resource may inspect
 it, but cannot mutate or remove it. Resource stop removes its props.
 

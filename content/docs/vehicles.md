@@ -309,7 +309,7 @@ telemetry and debugging, not gameplay authority.
 
 ### Official package exports
 
-The `open77_vehicles` client package exposes these read-only wrappers:
+The [`open77_vehicles`](https://github.com/Open2077/open77-resources/tree/main/system/open77_vehicles) client package exposes these read-only wrappers:
 
 | Export | Signature | Result |
 |---|---|---|

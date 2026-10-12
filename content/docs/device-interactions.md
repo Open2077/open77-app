@@ -18,7 +18,7 @@ Open77.world.setDeviceInteractionEnabled("VendingMachine", false)
 Open77.world.clearDeviceInteraction("VendingMachine")
 ```
 
-Then draw your own with [contextual interactions](interactions.md) — `open77_interactions` has a
+Then draw your own with [contextual interactions](interactions.md) — [`open77_interactions`](https://github.com/Open2077/open77-resources/tree/main/system/open77_interactions) has a
 `class` target that takes the same class name, so the two halves of this row line up by design.
 
 ## Interaction policy
@@ -102,7 +102,7 @@ end)
 `Open77.world.setDeviceInteractionEnabled` is a **client** capability: the policy has to be held on
 the machine that renders the prompt. Doing the fan-out from a gamemode's own client script means
 every gamemode reimplements the same thing and gets late joins wrong, so the bundled
-`open77_devices` package owns the declaration, the wire and the client claim:
+[`open77_devices`](https://github.com/Open2077/open77-resources/tree/main/system/open77_devices) package owns the declaration, the wire and the client claim:
 
 ```lua
 -- server, in your gamemode

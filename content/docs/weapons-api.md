@@ -1,10 +1,10 @@
 # Weapon Lua API
 
-Manage the local player's three `EquipmentArea.Weapon` slots with the asynchronous client API. Use `open77_weapons` for authenticated server-to-owner requests and exact TweakDB IDs such as `Items.Preset_Lexington_Default`.
+Manage the local player's three `EquipmentArea.Weapon` slots with the asynchronous client API. Use [`open77_weapons`](https://github.com/Open2077/open77-resources/tree/main/system/open77_weapons) for authenticated server-to-owner requests and exact TweakDB IDs such as `Items.Preset_Lexington_Default`.
 
 For reload speed, recoil, advanced native statistics and impact blasts,
 see [Weapon customization](weapon-customization.md) and the English
-[rp_weapons_effect workshop](https://github.com/Open2077/open77-rp-examples/tree/main/rp_weapons_effect).
+[rp_weapons_effect workshop](https://github.com/Open2077/open77-resources/tree/main/rp/rp_weapons_effect).
 Tuning requires a compatible development client and uses separate, resource-owned
 `setTuning`, `clearTuning` and `tuning` calls.
 
@@ -527,7 +527,7 @@ nothing about the quick slots.
 
 ## The admin package's weapons screen
 
-`open77_admin` adds a second, curated front-end over the same API, reachable
+[`open77_admin`](https://github.com/Open2077/open77-resources/tree/main/system/open77_admin) adds a second, curated front-end over the same API, reachable
 from the compact `/admin` menu and from chat:
 
 ```text

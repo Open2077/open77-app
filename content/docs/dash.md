@@ -59,7 +59,7 @@ makes the definition `invalid_definition`.
 `current(player)` returns `projection` (`status` is `pending`, `ready` or `removed`, plus
 the `definition`), `charges`, `cooldownUntil`, `nextChargeAt` (server monotonic
 milliseconds), `airUsed`, `activation`, `phase` and `ownedByCaller`. A grant needs a
-bound cyberware character (the `open77_appearance` adapter supplies it) and an alive,
+bound cyberware character (the [`open77_appearance`](https://github.com/Open2077/open77-resources/tree/main/system/open77_appearance) adapter supplies it) and an alive,
 ready, unmounted body.
 
 ## Options
@@ -111,7 +111,7 @@ Both events are server-local: a client cannot trigger them over the network.
 
 ## Optional resources
 
-`open77_parkour_example` (`auto_start false`) is a self-service resource built on this
+[`open77_parkour_example`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_parkour_example) (`auto_start false`) is a self-service resource built on this
 API. Start it with `ensure open77_parkour_example`, then in chat:
 
 ```text
@@ -128,7 +128,7 @@ holds the binding, presentation, presets, `allowedBuckets` and `canUse(player, p
 mode)`, which must return `true`; the resource re-checks it every 250 ms and revokes the
 grant when it stops passing.
 
-`open77_cyberware_lab` (`auto_start false`) offers the same presets from the `/cyberlab`
+[`open77_cyberware_lab`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_cyberware_lab) (`auto_start false`) offers the same presets from the `/cyberlab`
 panel's Dash card and as commands: `/cyberlab dash install <player> basic air`,
 `/cyberlab dash inspect <player>`, `/cyberlab dash test <player>`,
 `/cyberlab dash remove <player>`.

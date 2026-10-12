@@ -5,13 +5,13 @@ Build multiplayer hacking abilities with server-owned definitions, grants and ta
 Default keys: hold **F8** to upload on the aimed player, **INSERT** to purge yourself,
 **DELETE** to purge the aimed ally, **END** to cancel your own upload. Players rebind them
 in Pause → Settings → KEY BINDINGS; the defaults live in
-`resources/system/open77_hacking/client/config.lua`.
+[`resources/system/open77_hacking/client/config.lua`](https://github.com/Open2077/open77-resources/blob/main/system/open77_hacking/client/config.lua).
 
 ## Minimal example
 
 A resource that defines one Short Circuit deck, one Self-ICE and one purge implant, and
 installs them on the player who runs `/hackkit deck`, `/hackkit ice` or `/hackkit purge`.
-It needs the `open77_appearance` character adapter and a configured database, like every
+It needs the [`open77_appearance`](https://github.com/Open2077/open77-resources/tree/main/system/open77_appearance) character adapter and a configured database, like every
 [cyberware](cyberware.md) resource. Hacking implants are ordinary implants: the hacking
 definition and a cyberware definition with the same ID, version and grade IDs.
 
@@ -204,7 +204,7 @@ Do not infer a second hit from `status_applied` or `completed`; only `impact` an
 
 ## Optional lab
 
-`open77_hacking_lab` (`auto_start false`) ships every kind as a grade of `lab.short_circuit`
+[`open77_hacking_lab`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_hacking_lab) (`auto_start false`) ships every kind as a grade of `lab.short_circuit`
 plus ICE and purge, and installs them through the cyberware APIs. Grant testers the
 `command.hacklab` ACL. With two connected, alive players `1` and `2` in bucket `0`:
 

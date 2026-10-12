@@ -71,7 +71,7 @@ documents records that resolve structurally but should not be spawned.
 
 For mounted weapons, see the [armed vehicle spawn catalogue](armed-vehicles.md): tested Basilisk, Outlaw and Shion records, player variants, and the full inventory of records declaring weapon mounts, with validation caveats.
 
-The official freeroam resource provides these convenient command aliases. The record in the right
+The official [freeroam](https://github.com/Open2077/open77-resources/tree/main/gamemodes/freeroam) resource provides these convenient command aliases. The record in the right
 column is the portable value to store in another resource or database.
 
 | Alias | Vehicle record | Alias | Vehicle record |

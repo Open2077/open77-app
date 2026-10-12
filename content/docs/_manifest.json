@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
   "guides": 105,
-  "apiEntries": 1733,
+  "apiEntries": 1739,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -26,8 +26,8 @@
       "target": "content/docs/README.md",
       "slug": "index",
       "title": "Open77 resource documentation",
-      "bytes": 21162,
-      "sha256": "3c46397cbf250fdf5450aaf0d552e3610bb0f9d5c813c8b273939142d3a16f1a",
+      "bytes": 21025,
+      "sha256": "add1bd5da39c2185f875b86ba26586f02cc40bda1873bddca8c33d5dbaa10643",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "810d219b7f95e33bedb17bb6f0efc96ae920ecf58308bbcf8b6e0b22e50bb0e7",
@@ -83,8 +83,8 @@
       "target": "content/docs/armed-vehicles.md",
       "slug": "armed-vehicles",
       "title": "Armed vehicle spawn catalogue",
-      "bytes": 27090,
-      "sha256": "030349174be7f3912ea49f390719715e4dca94c49a44ae5a3d2458cf610be791",
+      "bytes": 27171,
+      "sha256": "d0d2380f5932b26c50088800969b05fa344d53f5896cc8c5b2072bdbd792f147",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "4f7a65b676fd559650b3cef4ac985f855520c2fb603f89840853d0f59619fdb5"
@@ -95,8 +95,8 @@
       "target": "content/docs/attachments.md",
       "slug": "attachments",
       "title": "Synchronized attachments",
-      "bytes": 8679,
-      "sha256": "f9c49cabc134958ac584b23b64025b52f7174770701808a3d60223c6627d4942",
+      "bytes": 8757,
+      "sha256": "1b9a1eb4b6cce971d50016c2724edf6ed065079df43efa14fd35a238a2d3248c",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "7ea954d90f482bbf1f809497bc5f12dd3c480e2ea80a59e06dfab26d4ad96e22"
@@ -180,8 +180,8 @@
       "target": "content/docs/chat.md",
       "slug": "chat",
       "title": "Chat, slash commands, and completion",
-      "bytes": 6357,
-      "sha256": "106c03f47dcecab6c3b6836e7404503184a4925c15cc833932edee35df8f06fc",
+      "bytes": 6458,
+      "sha256": "23939a12d4e08692c7d62d4582ff06515cee6f342db8c5dc6bfdb027e65b7b4c",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "7505a6e7e18a3ec18766ade43361453fc1b00cbf1eef783db65485ff20ad79b0"
@@ -216,8 +216,8 @@
       "target": "content/docs/clipboard.md",
       "slug": "clipboard",
       "title": "Clipboard API and transform commands",
-      "bytes": 3439,
-      "sha256": "ed74776f0ccfd7dd247ca69672df74022730f1f04adc6a8f0b1af44d2b56a86b",
+      "bytes": 3594,
+      "sha256": "8110f1d3e43d2c7853b1fce92252a8254ab988796c489647db3c6251e91c1afd",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "59b08f01e55b79eb542e2b151f9334bfc586528a13809b8cf42d00642e6ca3b2"
@@ -257,8 +257,8 @@
       "target": "content/docs/context-menu.md",
       "slug": "context-menu",
       "title": "Generic context menu â€” open77_contextmenu",
-      "bytes": 20418,
-      "sha256": "991709b808c59afbd18dac716e67813b9bf9845b995deaad2c9034fd635a6f00",
+      "bytes": 20688,
+      "sha256": "8d09931c5a267f9e2ecea1189eb7a66db120de497f0927c0980f9767e5322410",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "12b2dca35e93ff4623ffc3b5440e1a5f3c3df88d9c2367e7406618940a6fe267"
@@ -269,8 +269,8 @@
       "target": "content/docs/cordon.md",
       "slug": "cordon",
       "title": "Cordon â€” battle royale",
-      "bytes": 15653,
-      "sha256": "3b99e1775daca0271124763393c54586fef2b85457d305ce7dbf0cef39a009a6",
+      "bytes": 16033,
+      "sha256": "a6da1b1158cc08b7999b8ec11ca97c7bc1edc821fb2d95a5e3abb868bc3a3b7e",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "08680a8f1655179c7a6f83cf6f1baea54ae3f3c883558096889545a1f25e9d88"
@@ -281,8 +281,8 @@
       "target": "content/docs/cyberware.md",
       "slug": "cyberware",
       "title": "Cyberware",
-      "bytes": 14904,
-      "sha256": "6c88b099b5c22980d07cabeeaaafe4ebd8cb6c3963937465c0ec570584feb835",
+      "bytes": 15251,
+      "sha256": "72d338e991657b502d4ebf833415e2a24ec1aa9c16159d6658ff1dc8505343d0",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "3cca32beb48f07bf401139ea0d4436920b72c5971df4ea02c9d26cff883b93c1"
@@ -293,8 +293,8 @@
       "target": "content/docs/dash.md",
       "slug": "dash",
       "title": "Native Dash and Air Dash",
-      "bytes": 8312,
-      "sha256": "68297c298c0d14b3482a6cbcb481798c8b85b4b9b8c56cb64fc3d3a652317f21",
+      "bytes": 8575,
+      "sha256": "4570a6de2debc36c9e8447fc33e2fef3dc9ddd367455bf200983d6e21b4ef1af",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a30abb61154d8b4c5870ea9cee770a2d96b719bbbcd6da22ce3516daeb3d91c1"
@@ -317,8 +317,8 @@
       "target": "content/docs/data-reference.md",
       "slug": "data-reference",
       "title": "Game data reference",
-      "bytes": 9774,
-      "sha256": "7d7d15e85a8e30a8f57f3c3278b0dcf0d4b416f525f2c9d239db5f7a7b852d6d",
+      "bytes": 9851,
+      "sha256": "2d510ac7c988d84c9e5dea9822bab26394af047a9e7087b3e2a51a9dba4d164c",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "2da5030cd67ded5b2169ddd93b3eab33d0e69eea77db8c3f487566399b3f3641"
@@ -329,8 +329,8 @@
       "target": "content/docs/deathmatch.md",
       "slug": "deathmatch",
       "title": "Deathmatch â€” running the Kabuki Arena PvP mode",
-      "bytes": 23023,
-      "sha256": "a4367f998b1c0f8a56b3e4a45447ddf13ff9c8e8835ddcae832508a7e923f028",
+      "bytes": 23363,
+      "sha256": "729e9b5a23e417f40027dc6ad0421da42c5ba257af29070ac237ee69b307f596",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a378366ecfa599c26a54cd13b3d9510353371356e16e25b6aa68dcf128b2f298"
@@ -341,8 +341,8 @@
       "target": "content/docs/debug-runtime.md",
       "slug": "debug-runtime",
       "title": "Privileged in-game Lua laboratory",
-      "bytes": 5061,
-      "sha256": "195edec7f822ccd3a5563e75ac161bf4188b94d0a75c7a1ddc1b7ff93b406040",
+      "bytes": 5241,
+      "sha256": "2f867d9794d406827d5e0725bb1329db43c05be3d33612a5045bff5c8a052242",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b426f5a4a1f5782400c04c78efaa0a99fa97ddcf251d01f3b9b6287872fece4a",
@@ -354,8 +354,8 @@
       "target": "content/docs/device-interactions.md",
       "slug": "device-interactions",
       "title": "Overriding a vanilla device prompt",
-      "bytes": 7487,
-      "sha256": "d919ec512ec8031507523c3f12fcfe5643eae391aa6fc88424f6344aa9caceea",
+      "bytes": 7652,
+      "sha256": "9605a53ee557d0f2407521433510d1d86a69c749fb949445f4fd985f8b148639",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "e599569c2e8fdfce55d2aef510182ad210f9d905486f5850b5a8f8ec5e35a0c3"
@@ -366,8 +366,8 @@
       "target": "content/docs/doors.md",
       "slug": "doors",
       "title": "Networked world doors",
-      "bytes": 23837,
-      "sha256": "1e01b978792ceac0a5383e1562ac573b5bd6f5937c0da5f4584fd28edefee854",
+      "bytes": 24184,
+      "sha256": "4384c103921cfb7c9711a6f11acd796cef5e04c995530e4356cc9e2ba9180120",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "32de1fb7c8ac81156208f3f03e4df317422acb97dc59e3f6e20e2f7b5c0355fb",
@@ -383,8 +383,8 @@
       "target": "content/docs/effects.md",
       "slug": "effects",
       "title": "Visual and audio effects",
-      "bytes": 56056,
-      "sha256": "cd5e77fb7cf64b949a2a6d0ecf1d76deb05698e5938a3b9e5cd98c701b2bbaa8",
+      "bytes": 56097,
+      "sha256": "9e310029c8f07078392496197b411a54f0dc4c5eafbf3137c625ae56dce5b0e5",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "f4ebae4059c6e6343ab8c73cef07aef1c610f2cb706625f319c26254d52b364d"
@@ -395,8 +395,8 @@
       "target": "content/docs/elevators.md",
       "slug": "elevators",
       "title": "Network elevators",
-      "bytes": 9885,
-      "sha256": "72dfcbb2686ae0c5cbc36afd98b73fd66f60d015488227879829c58cfa624f92",
+      "bytes": 10045,
+      "sha256": "6bb98017975e2e1959113259d1d08b03942b55dc7a2cf43d1519949d4e008dcc",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "cc8d1c613c1a025c037b124ca5862182e2cb90cec9a10947d101e1697c517bd0"
@@ -407,8 +407,8 @@
       "target": "content/docs/fivem-compatibility.md",
       "slug": "fivem-compatibility",
       "title": "FiveM compatibility aliases",
-      "bytes": 43044,
-      "sha256": "3d7b4a37904e86cd87409550fb7bf520ded1d255007ece98528f735c9a98b705",
+      "bytes": 43129,
+      "sha256": "fc7e8cc32b83b0b0d4bc1a2872641e075542285051a4a28651ede87614b3a1c9",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "10e78aeaa47519b78b454843f78818f896665ecba967ca53db992d70f6440fc4",
@@ -424,8 +424,8 @@
       "target": "content/docs/gamemode-kernel.md",
       "slug": "gamemode-kernel",
       "title": "The gamemode kernel and shared server services",
-      "bytes": 5382,
-      "sha256": "6130c623f078f61f5c54a9b65b04e06dd71915f1960d78ecfd460eaf31b69691",
+      "bytes": 5474,
+      "sha256": "a9ee5d712c1c57e3c6f6bc839e35b57732533be7bc30b4e034cc3e3d62ef8e31",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "8812349a9274f32821a3099db49e6cde5c0ad7379ca2a614b4f54a9232ae5686"
@@ -436,8 +436,8 @@
       "target": "content/docs/gorilla-arms.md",
       "slug": "gorilla-arms",
       "title": "Gorilla Arms",
-      "bytes": 9982,
-      "sha256": "be14b321f10dc7078a1fd0ab4436a2828e0f4da6c8728b0e092e8f2ead02b882",
+      "bytes": 10334,
+      "sha256": "a8c106c43e241384a10fa36b8152064237a5862816500112ab79c8edecf9a461",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "3111c8726ad0ef0a4c2030c45a6edc900a267651c7d644f25354bfac58973a93"
@@ -448,8 +448,8 @@
       "target": "content/docs/ground-slam.md",
       "slug": "ground-slam",
       "title": "Ground Slam / Quake",
-      "bytes": 11011,
-      "sha256": "006681ca52d7be8cb2d7272c7e86b3e3861e8b0d5fa632f6103f97e30a4e81cc",
+      "bytes": 11182,
+      "sha256": "d0f22244ff6bc61b0d6163ff1005bc156aaef26619978f8f731e638c48a0afd4",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "4735d9b7609142043141154037930b99781a4d853abdb9a352526ec889eed54d"
@@ -460,8 +460,8 @@
       "target": "content/docs/hacking.md",
       "slug": "hacking",
       "title": "Hacking and counterplay",
-      "bytes": 17076,
-      "sha256": "b6af981dfbb52ff896a58351fa62ce8ae2c4fba989d4f0c279915a4342eae01d",
+      "bytes": 17344,
+      "sha256": "8528e1b77b0e990a0e09910538a4a2b039f7be555b3dd19db73094124cf1a311",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a9413a4cdf399f794daebaa30fba2c4cb5022e52a12b0905a4dd26c960bb64a3"
@@ -484,8 +484,8 @@
       "target": "content/docs/hud-visibility.md",
       "slug": "hud-visibility",
       "title": "Vanilla HUD visibility",
-      "bytes": 12757,
-      "sha256": "24b7c6d55e54c1e8e7b65933904667660ed07aad8583b96dabb8f909fc483cc0",
+      "bytes": 12835,
+      "sha256": "a13f83a6c43c8069f82a39d625a9a35a5b434fffc1095fff84114733c5bb7a20",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "e86331d8e4533deefdc86c65f0ccfce0d8525ec315a6be96b8e675d1db6da723",
@@ -526,8 +526,8 @@
       "target": "content/docs/interactions.md",
       "slug": "interactions",
       "title": "Contextual world interactions",
-      "bytes": 34676,
-      "sha256": "9be44aed26c211615f7b186411b9ec638b94e4393edb650fde835d25ce64e4c3",
+      "bytes": 34793,
+      "sha256": "74c40fea11414f63a4afae5f3f5c66463add5d1ea7e17cf75695a5b9b5aeb421",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "d57e5889e7469aa2adf7b35d75efe4d9312d51d787d365a7465f0b13c2cc9009"
@@ -538,8 +538,8 @@
       "target": "content/docs/world-interaction.md",
       "slug": "world-interaction",
       "title": "World interaction: build a job",
-      "bytes": 34729,
-      "sha256": "908487495487c0b169c6d6b15f9f3d2f6bce8a1ce7055755d0d0bcebdaf2bca7",
+      "bytes": 29903,
+      "sha256": "3be98b0484d1953ede0e71843c9a24a23d6255caa9a232ffbf9933b5d6a47b8a",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "90050d5538375c9f43ab8085b42145d3fc88329e461e291b62e06fea5f037f81",
@@ -551,8 +551,8 @@
       "target": "content/docs/actions.md",
       "slug": "actions",
       "title": "Actions and carrying",
-      "bytes": 20982,
-      "sha256": "796d8b8b5a6e31af48dabec1161360577de92af0fd20ce41c683768b1d936192",
+      "bytes": 30785,
+      "sha256": "5eaa58518684a43c803fffbbd0d07aeaaaf7c439862142bf54eeed8043160d7f",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "fa498e3294c2c0da2c9cf12d0ea2b2024df6b6d193f9cba891c5b70546c78677",
@@ -564,8 +564,8 @@
       "target": "content/docs/transactions.md",
       "slug": "transactions",
       "title": "Durable transactions",
-      "bytes": 17980,
-      "sha256": "9033f3fae512f870a32c14804fb5ba80b6ef2e98476793d736b9b5663682ddf0",
+      "bytes": 23541,
+      "sha256": "1ea84e800a68149eacf6d0bbe4843b66aa49e7e49a6cdff7a9bc476f50bf1f66",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "d6d7d4982c4ca41255e46838c60a4e0566620154234301efa012afbca32e3180",
@@ -584,8 +584,8 @@
       "target": "content/docs/furniture.md",
       "slug": "furniture",
       "title": "Furniture: sit and lean",
-      "bytes": 8073,
-      "sha256": "82dff6e5038eddeec3fd4e686a9223d08a16c13404086deec03eb205cdf46a14",
+      "bytes": 11916,
+      "sha256": "c1c3c50ae5f6652e83fbb04d1c0ddd4d34fe8d9d4e69c72d701de9f85737e3fe",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "149f00cb1091a189abd9a5762c949969c94f4375bfb6ab9e2cc01f728ed06311",
@@ -609,8 +609,8 @@
       "target": "content/docs/loot.md",
       "slug": "loot",
       "title": "Server loot and ground drops",
-      "bytes": 9322,
-      "sha256": "23166381ec92e9dec1149986f0ed039aad4c7a146e5624e7b0dfddeae7b33ff7",
+      "bytes": 9399,
+      "sha256": "4ee579fd5f838322056b5ea006377a15569c957138d106393beb7af9a8d3b090",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a6ec8b61538a55fbc949063cf67ab74a1ce3fcae621efc5690690381b85a6608"
@@ -633,8 +633,8 @@
       "target": "content/docs/mods.md",
       "slug": "mods",
       "title": "Mods: the complete guide",
-      "bytes": 19118,
-      "sha256": "416395ed3c8dd26c9476fbaa72d494eb062ef800fbc8a48d58012ba7391d6b76",
+      "bytes": 19367,
+      "sha256": "52dac65074b853489e7740e48a34c3e23d7df8fcc6a0ddda6fb6ff706dd86ca1",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "73ead75509eb48e2118ba3ff96a3d5e3ed5f02e63fbb180342a4e4a7312d7ace"
@@ -693,8 +693,8 @@
       "target": "content/docs/notifications.md",
       "slug": "notifications",
       "title": "WebUI notifications",
-      "bytes": 6827,
-      "sha256": "e16424ccc0df916b02282d8399b652b5aedb3564bb42eb347b26dfd8db1fada9",
+      "bytes": 6946,
+      "sha256": "6ddde49690d3361dae7894341179bce7d2e5a751c215c129025ef6da74759805",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "5e3c3d38001321ab2925caa66e99afba3862d243e05042ba5bca375b09e5886a"
@@ -705,8 +705,8 @@
       "target": "content/docs/npc-behavior.md",
       "slug": "npc-behavior",
       "title": "NPC AI, combat and voice control",
-      "bytes": 15908,
-      "sha256": "25e419223af3023cd0cb1f6017742b5cdf741486e4818e846018c803a47b6d1d",
+      "bytes": 15988,
+      "sha256": "ba9e71caba580ea6534038648d58c6876922bdee4f73b437c66cb29b6747bd23",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2fa2bb7f9aed3b7e76d80f865e4b08a40955985e3bb33a3971944202973deb1",
@@ -734,8 +734,8 @@
       "target": "content/docs/npcs.md",
       "slug": "npcs",
       "title": "Server-owned NPCs",
-      "bytes": 46395,
-      "sha256": "5dd3a3a7f5cee88fbde9bb9d8f6e1be3a51cf1f44681e1057752cd9c9b51caf7",
+      "bytes": 46437,
+      "sha256": "5e3fdc900c1247b1df7001d1e45c795e8ebff5d4e0eede0b4d89ce1861deeb9d",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "86fc7f6b93c095495ee619f115b25139cc339e179cd0e8affac49448f2ac9f52",
@@ -764,8 +764,8 @@
       "target": "content/docs/perspective.md",
       "slug": "perspective",
       "title": "Third person",
-      "bytes": 16385,
-      "sha256": "ffab06d1da7efcff6b7f80b78b2ee6f41eed0f28b440fe0f17bf20c8d6840d59",
+      "bytes": 16549,
+      "sha256": "113e1d5d50d98b3077c4b15d65dcffd6f9ff459a033282473790ea8c67ffc4fe",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "830bbea825f6f6f2185b9ee714b9a3dca5291ede8170bded653a777545d29aec",
@@ -848,8 +848,8 @@
       "target": "content/docs/player-interactions.md",
       "slug": "player-interactions",
       "title": "Player interactions",
-      "bytes": 14571,
-      "sha256": "54eb5802d3b213a34e5760c5fb6941ac66318476b17ed54d3b6a2b8dfba43241",
+      "bytes": 14746,
+      "sha256": "b703bd0fb3483bc16ad09f6b6a2a9195456593db0c515748ab809c7d7e66e220",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "d98aa416968053d959999cee4f94b7184746669cdfe0aa19b7ad5bbcdaae42d4"
@@ -933,8 +933,8 @@
       "target": "content/docs/polyzone.md",
       "slug": "polyzone",
       "title": "PolyZone",
-      "bytes": 12918,
-      "sha256": "fac6e62bcd0b60c694dc099dac58673fdce2e3698fee5e867b60405327376253",
+      "bytes": 13016,
+      "sha256": "4d5a4ee3e0340683a85fd6aff2f3af8a82c1ee424d58fd40f48e4d3328fd0d10",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "c3afcfa3a68c296efc7c28f61c76215bcbf26e58fbc3fb9e1b4f8cd7ddfcacc1"
@@ -945,8 +945,8 @@
       "target": "content/docs/prediction.md",
       "slug": "prediction",
       "title": "Prediction",
-      "bytes": 19790,
-      "sha256": "61558130848f3cf1c0548b5bb151afd574a72223d22cabd483bb15557996b73e",
+      "bytes": 19938,
+      "sha256": "9dbb49f7d4b30be67841166126c196f16dc2befcee3e9e7dc4c4a8ccaee32896",
       "siteEditorial": {
         "owner": "website",
         "authoredOnSite": true,
@@ -959,8 +959,8 @@
       "target": "content/docs/props.md",
       "slug": "props",
       "title": "Server-owned world props",
-      "bytes": 44300,
-      "sha256": "e8a2e49f1431d8a60f8e787c36eb4953ebe1cc1165051dad27466033a4faa3d6",
+      "bytes": 44423,
+      "sha256": "4bb462d875a2401279283e7f3617b155af096f421c9705594db479ae439d2f5f",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "873fb103dc149227b7aed7587dd49f6c8f2d1eba00a868982a7858180abaf4dd"
@@ -971,8 +971,8 @@
       "target": "content/docs/reflex-overdrive.md",
       "slug": "reflex-overdrive",
       "title": "Reflex overdrive",
-      "bytes": 14925,
-      "sha256": "9156178dfe19e9133182eebebd91d13b1d8a8cd7630289e380f662152bcef710",
+      "bytes": 15173,
+      "sha256": "3d365b3ff36a5aca5bef661c3773faaa378b8749f0c36d1ad35a3811268a90dd",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "f5c3f1a307ccc7a6c8db177712a42eee61a70195995078ad7d7d94438191f488"
@@ -983,8 +983,8 @@
       "target": "content/docs/resource-exports.md",
       "slug": "resource-exports",
       "title": "Official resource exports",
-      "bytes": 38459,
-      "sha256": "ec06da20444763bf152cbab213b322ff2bef9a78acd3c4c345d750b12b44ca17",
+      "bytes": 38872,
+      "sha256": "e7420412d9838f9837725ab40c13c640c0db9c6f39604868d9b0420f6d5d8eeb",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "7e1c4a507b28b9441863585bb4103134dc407b59c0ac5f29361eb0e771543871"
@@ -1007,8 +1007,8 @@
       "target": "content/docs/rp-animations.md",
       "slug": "rp-animations",
       "title": "Role-play animations",
-      "bytes": 40555,
-      "sha256": "b6cec067aac48f7d4ae3657900136415ac5619cde827409569c0d8f4032f2ca7",
+      "bytes": 40747,
+      "sha256": "8e562a4c3776ee8a9497b81e509f9092fed1f539e15c54e91e6eb41674f01836",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b5c104b760c0540f4725de2a5f1fb1c7f5c7cb6dd4397495943490d9ca8d167a"
@@ -1023,8 +1023,8 @@
       "target": "content/docs/rp-kit.md",
       "slug": "rp-kit",
       "title": "The role-play kit",
-      "bytes": 9839,
-      "sha256": "f791307f908e10c5f5b52ecaab2a76dc9a8202ef30d73a2937d05bd150bef8c7",
+      "bytes": 9950,
+      "sha256": "9a778ead9ad8ecc1addca4ead8c28cbade182eaf676d93e98bee19e1e793b6ac",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "596629429ee4bdc8836012e7f00bbdc66630c08c8aaacf88f58fabfd0b036b76"
@@ -1072,8 +1072,8 @@
       "target": "content/docs/server-acl.md",
       "slug": "server-acl",
       "title": "Public identity, server commands, and ACL",
-      "bytes": 11086,
-      "sha256": "1bddee2abbffcbf6bd847c6a412c47ab953654f16829faf04cf6a9bec6ae9618",
+      "bytes": 11164,
+      "sha256": "9f34d488ebc54d0af756dab28aa67b2bb50712e69c50906ee43fddd7c00efa36",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "400b354bfe6f9117e2f3debb2520c515ded93a89347cf92131fdb979b1adecba"
@@ -1084,8 +1084,8 @@
       "target": "content/docs/server-api.md",
       "slug": "server-api",
       "title": "Complete server Lua API",
-      "bytes": 206854,
-      "sha256": "f63b4d4ecaa02792e04ba9c4fba49e2ed6f4033cd1db5eea2fa92c5569ec61a4",
+      "bytes": 207271,
+      "sha256": "449b0059706bd57fe8000a94e404cd862030ef46133625d00c8f82d902e48930",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "e7367a5197ea2774f591e48e7f6a7a8645f6611f194e74b0c6b1e6b0841d2ca2",
@@ -1129,8 +1129,8 @@
       "target": "content/docs/server-mods.md",
       "slug": "server-mods",
       "title": "Mods your server requires",
-      "bytes": 25174,
-      "sha256": "f8a348cd48d4def2732da7712b34d319bfc5f386233b276e814652f6b02b625d",
+      "bytes": 25328,
+      "sha256": "98e71ab85d7a14fa874575b251e241fb5cd0606679e7cf50355140820ed18897",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "13424252825d09c7baa5492752e42fb157bd2f9681dcd109e583189765ad8e90"
@@ -1153,8 +1153,8 @@
       "target": "content/docs/sky-advertising.md",
       "slug": "sky-advertising",
       "title": "Sky hologram advertisements",
-      "bytes": 4671,
-      "sha256": "46c384a2823b18ea2b9b26f2c8cc91161d5fc0e4aa4598847f01cf91cb238c90",
+      "bytes": 4755,
+      "sha256": "faf59bb290bc45f4b71a50ce8481e75d4823ba514786819da224eb73648ab983",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "af723acd5977f209d6f5c2f3003cac1fd16c8490136c91159420a11bc7a925f5"
@@ -1165,8 +1165,8 @@
       "target": "content/docs/sound.md",
       "slug": "sound",
       "title": "Resource audio",
-      "bytes": 15330,
-      "sha256": "1ed985400b61419524bf8403e280f6ec71a37c804dd7f14d6c872c0273cefcb2",
+      "bytes": 15433,
+      "sha256": "ea9d9d1eda3966a11bffe6645f2abaaa04f3e5865a69ce13dc6017d7dac23acb",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b2446ac160ff53357dddc4d4c9a10d6e37f406b7e82495236ce4d07325a5a2b1"
@@ -1177,8 +1177,8 @@
       "target": "content/docs/state-bags.md",
       "slug": "state-bags",
       "title": "Replicated state bags",
-      "bytes": 20818,
-      "sha256": "c7d05a9ca43ef26c894b9718ecbb472c98cadd0f536eea6f3342bdf4611b2088",
+      "bytes": 20895,
+      "sha256": "acabd68342d22a85242944859e3295b8f47754d78f4b8dc96453dee30377d196",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "ed562c7f79cb6b2998028abd608275bbb0092aedea50979f5f95e75cefcdb35a"
@@ -1214,8 +1214,8 @@
       "target": "content/docs/ui-kit.md",
       "slug": "ui-kit",
       "title": "The UI kit",
-      "bytes": 46616,
-      "sha256": "61fd700caa271e683bcc38bcbdcc925b439f6a01828f1b8161efbcb33155d855",
+      "bytes": 46719,
+      "sha256": "c764bea210eef4c718a0e796e27301d645a7aca7d715dabcf5b89b46403ba004",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "c8c3e519ab3d86e014be592a371a88bf787d9819a8b560178408e7cbb4db4b0c"
@@ -1262,8 +1262,8 @@
       "target": "content/docs/vehicle-weapons.md",
       "slug": "vehicle-weapons",
       "title": "Armed vehicles and weapon Lua API",
-      "bytes": 18604,
-      "sha256": "cbd15c9442d2495b91205e5b77a69cd9007a1bebeea0d8be754dd9f69661801e",
+      "bytes": 18765,
+      "sha256": "af0025b72b2a2dd4800eb5300a05df36713df50a9a9800c013becd187a5b6796",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "cd8c45353f8c847f48f5a10491dd1b52d46a482c9ef837739364e2a37c3ed0a0",
@@ -1280,8 +1280,8 @@
       "target": "content/docs/vehicles.md",
       "slug": "vehicles",
       "title": "Network vehicles",
-      "bytes": 117175,
-      "sha256": "6431b109296191fee213d9271581e63c281c46848cb58a5a3ca36612bccd4b1c",
+      "bytes": 117256,
+      "sha256": "e48fe26191c31a9e6927170558b538398fd5969d27f11b45de3d41c8b7ce4ea4",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "57aac056238de1dbaa30823cf9f387f7e8576bd68d15b80ac247460a8dec8aae",
@@ -1311,8 +1311,8 @@
       "target": "content/docs/voice-lipsync.md",
       "slug": "voice-lipsync",
       "title": "Voice lipsync",
-      "bytes": 5797,
-      "sha256": "d617b34892e044e60f0627659a4f562f8d3c760db2ab3e181dfc546230f3cb31",
+      "bytes": 5893,
+      "sha256": "996882b16e69141f69b160cf6944f317bab6af95fc39cb5ab194b9b544276dae",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "ab40c7aadb52bc081d633856e45bfd9082802278c380817dfc062e4e211fbca9"
@@ -1323,8 +1323,8 @@
       "target": "content/docs/voice.md",
       "slug": "voice",
       "title": "Integrated voice chat",
-      "bytes": 15054,
-      "sha256": "487ec8752a34dcf4aefa40efb17bc59eb4a77fbc1811b848f290d4e17a5bbd5c",
+      "bytes": 15208,
+      "sha256": "a11e9ec474d1ff4278c3eef1996aa1ff621add86e754d6267431c1727572940f",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "55226fd769b2cce01f9a32c02b88b53eb77e1eff4ced607562311149f90451a0"
@@ -1347,8 +1347,8 @@
       "target": "content/docs/weapons-api.md",
       "slug": "weapons-api",
       "title": "Weapon Lua API",
-      "bytes": 29385,
-      "sha256": "49a7f9ccd38b6bd169d25bfdb838cf440c1b2932e30f5ad698f594a784ea8652",
+      "bytes": 29544,
+      "sha256": "80dc212ee3cfa00b4040e2b148c2c5331abcc8ffd52a8c3569be0c0b3acf7e6f",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "da99c0133f9086a12e101c45ed777d368e82e592a6c44e0ba7f5042a129e9c43",
@@ -1412,8 +1412,8 @@
       "target": "content/docs/weather.md",
       "slug": "weather",
       "title": "Synchronised time and weather",
-      "bytes": 14922,
-      "sha256": "139a38b3dca5feadd243c1ba2fe567d4ada22030cba8cb799dbc20b08f6813c7",
+      "bytes": 15029,
+      "sha256": "a4d87c53f5543ad1d3f839dddab7a8e5adef395f6fffbfee6c62bcffeb9863c6",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b0de41604e131e9a838035ac6c4efe83952df8b5212739c33b4b28e208299e5a"
@@ -1448,8 +1448,8 @@
       "target": "content/docs/worldui.md",
       "slug": "worldui",
       "title": "World-anchored POIs",
-      "bytes": 6861,
-      "sha256": "e96ebb9958ee04c0457c026af51b70652e163ac8677212bd4574f3e70be25d54",
+      "bytes": 7117,
+      "sha256": "cef4a5837f9148cefb1d633a456fea3c2a20649e1b76b42a4e2d9512e7bf1fd8",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "50f1882f9187fa0e0832a1590b5a86917873d7dff0e1cfb360cb783a1118066c"
@@ -1460,8 +1460,8 @@
       "target": "content/docs/zones.md",
       "slug": "zones",
       "title": "Zones",
-      "bytes": 22383,
-      "sha256": "3d73c77a91f23c8001787c79d9ed947e261398e24d15ce5f5d38bc2ebe9ff7f7",
+      "bytes": 22486,
+      "sha256": "d9ebd138bccd14b615443ed4143d2208a4d419d5f964ed4842f6437d9579658a",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "ea360f2398fbc5afaf58d8c60188b38b3d0326aad5c6b0b9c2b28901782e9dbb"
@@ -1470,9 +1470,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1733,
-      "bytes": 2500697,
-      "sha256": "08782956b91aa6ceca5a41ad0d37e85f5ab6c932fb2e5094960519dca43d99af",
+      "entries": 1739,
+      "bytes": 2514883,
+      "sha256": "eebe6fda968d536453f874cfa5b725343b9a77eb8157202562c14d5f7ece9616",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6"
@@ -1497,9 +1497,9 @@
     {
       "source": "wiki/data/permissions.json",
       "target": "content/api/permissions.json",
-      "entries": 169,
-      "bytes": 152157,
-      "sha256": "0ca092654638433ba795354fb5a246fc4273e91f9ce53cac5624a62e7c82ebf8",
+      "entries": 172,
+      "bytes": 154008,
+      "sha256": "6e3e9b4df8fb50565a5c4697f8f597faba2a12253afccf61dfddd3c3c0193f72",
       "siteAmendment": {
         "0": "V",
         "1": "e",
@@ -1673,9 +1673,9 @@
     {
       "source": "wiki/data/events.json",
       "target": "content/api/events.json",
-      "entries": 524,
-      "bytes": 373962,
-      "sha256": "61495b0b720e032c25c25a8273cd18386b9596ca20fc8ea76cf54179bdcb5039",
+      "entries": 542,
+      "bytes": 383729,
+      "sha256": "06a9e19a60b6f8f1cde359280203d9a18d04d5a2568dfb8b17a722d3408f20d6",
       "siteAmendment": {
         "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
       }
@@ -1818,8 +1818,8 @@
       "source": "wiki/remote-camera.md",
       "target": "content/docs/remote-camera.md",
       "slug": "remote-camera",
-      "bytes": 17758,
-      "sha256": "7ec9d68f24199556d22a4df517845a0037f1adf021a986a22a960c55b79a4611",
+      "bytes": 17844,
+      "sha256": "8840c39a439bb7f71fcfd0fdc6963fa95c5ef8c1491c166122d78c0dc0df6baa",
       "title": "Remote cameras and world screens",
       "siteEditorial": {
         "owner": "website",
@@ -1861,8 +1861,8 @@
       "target": "content/docs/markers.md",
       "slug": "markers",
       "sourceRevision": "1bee38c70ed776f3ba97a64a085482147219890b",
-      "bytes": 10374,
-      "sha256": "4ae2b0bbc2632088e008eb1090a443ece5d86c55b877bd1d66af0c70849b3085",
+      "bytes": 10534,
+      "sha256": "e94cb52b0777eb9533791a92d2b922a1fdcf51ac75263c76993583649b231efd",
       "title": "3D world markers",
       "siteEditorial": {
         "owner": "website",
@@ -1896,8 +1896,8 @@
       "source": "wiki/gizmos.md",
       "slug": "gizmos",
       "title": "Entity gizmos (client Lua)",
-      "bytes": 21277,
-      "sha256": "e4c4a53b22a183712a44667a9baa01c3677845b410d3410e9099fc081b55b6eb",
+      "bytes": 21319,
+      "sha256": "c0ca0b6856fe38d6839e0a197a44c45a1524dcfa07efa9ebd29eab4c055dd318",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "33a20d3280ca59495ff8e7c84c06fd1ff2759c069f10b70592d64a6ec14082fd"
@@ -1908,8 +1908,8 @@
       "target": "content/docs/consumables-api.md",
       "slug": "consumables-api",
       "title": "Grenades and healing items",
-      "bytes": 9432,
-      "sha256": "ee4adb9419243cce04a4e91c86b96407d11d5a1ae6f52e99d138c923de05a30b",
+      "bytes": 9512,
+      "sha256": "fd35e79da497c25534f0f088574e41521800445fde056cd24155971e231d9b4b",
       "siteEditorial": {
         "owner": "website",
         "consumablesVisibilityAmendment": {
@@ -2007,8 +2007,8 @@
       "target": "content/docs/loading-screens.md",
       "slug": "loading-screens",
       "title": "Custom loading screens",
-      "bytes": 11948,
-      "sha256": "4c8995e26ec9ffa44a295b923539cc3536f932b51e07d542e111c038f18271c3",
+      "bytes": 12037,
+      "sha256": "1223666022d3d50e314d408e98b23e9f4c1a0d84608cf1c994b9d6e8352587c0",
       "siteEditorial": {
         "owner": "website",
         "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
@@ -2019,8 +2019,8 @@
       "target": "content/docs/vehicle-seat-switching.md",
       "slug": "vehicle-seat-switching",
       "title": "Changing seats inside a vehicle",
-      "bytes": 14723,
-      "sha256": "24ba64e789207ec610fb34b34ed6ecf04aa63bdbc1b9b22b5d5ec8551fa5048d",
+      "bytes": 14809,
+      "sha256": "b98e5517638e27c27b0b68f696853647458ef5c9fe3fe61607f4a7d6587f3551",
       "siteEditorial": {
         "owner": "website",
         "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
@@ -2280,6 +2280,54 @@
       "actions",
       "transactions",
       "furniture"
+    ]
+  },
+  "apiGapSync": {
+    "tool": "scripts/sync-api-gaps.mjs",
+    "syncedAt": "2026-10-12T11:18:58.990Z",
+    "sourceRevision": "13c990f422bc78241ff8e88f1894b0d803caf2f0",
+    "mode": "append-missing-preserve-site-entries",
+    "added": {
+      "natives": [
+        "client:Open77.animations.isPointing",
+        "client:Open77.animations.setPointing",
+        "client:Open77.vehicles.getSteeringInput",
+        "client:Open77.vehicles.getSteeringWheelAngle",
+        "server:Open77.npcs.tasks.traffic",
+        "server:Open77.vehicles.setLaunchVelocity"
+      ],
+      "events": [
+        "open77:actions:cancel",
+        "open77:actions:carry",
+        "open77:actions:end",
+        "open77:actions:intent",
+        "open77:actions:present",
+        "open77:actions:putdown",
+        "open77:actions:refused",
+        "open77:actions:sync",
+        "open77:actions:targets",
+        "open77:privacy:request",
+        "open77:privacy:set",
+        "open77:privacy:state",
+        "open77:seating:refused",
+        "open77:seating:seats",
+        "open77:seating:sit",
+        "open77:seating:stand",
+        "open77:seating:state",
+        "open77:seating:sync"
+      ],
+      "permissions": [
+        "pause_menu.render",
+        "players.driveby",
+        "rtti.native"
+      ]
+    },
+    "refreshed": [
+      "client:TriggerEvent",
+      "client:Open77.events.emit",
+      "server:CreateNpc",
+      "server:Open77.npcs.create",
+      "server:Open77.npcs.tasks.workspot"
     ]
   }
 }

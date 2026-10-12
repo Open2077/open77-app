@@ -2,6 +2,8 @@
 
 `open77_contextmenu` provides a resource-extensible ALT/click menu. It has no Freeroam dependency, built-in admin permissions or default gameplay actions; consumer resources register the available actions.
 
+Source: [`open77_contextmenu`](https://github.com/Open2077/open77-resources/tree/main/system/open77_contextmenu).
+
 ## Built-in consumers, not built-in actions
 
 `open77_contextmenu` itself has **zero default actions**, including on the sky,
@@ -13,8 +15,8 @@ The bundled consumers are independent integrations using the same public exports
 
 | Consumer | Actions |
 |---|---|
-| `freeroam` | Copy a network player's ID; copy a network vehicle's ID/model; open Freeroam or animations from your visible F7 body. |
-| `open77_admin` | Player management, heal/revive, kick/ban with reason and confirmation; visual/full vehicle repair, lock/unlock and confirmed deletion; door ID/state, manual open/close, locks, seals and automatic mode; time/weather presets from empty sky. |
+| [`freeroam`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/freeroam) | Copy a network player's ID; copy a network vehicle's ID/model; open Freeroam or animations from your visible F7 body. |
+| [`open77_admin`](https://github.com/Open2077/open77-resources/tree/main/system/open77_admin) | Player management, heal/revive, kick/ban with reason and confirmation; visual/full vehicle repair, lock/unlock and confirmed deletion; door ID/state, manual open/close, locks, seals and automatic mode; time/weather presets from empty sky. |
 
 Admin entries require `command.admin` and their exact action ACL. The server
 checks permissions again when executing, not just when displaying the menu.

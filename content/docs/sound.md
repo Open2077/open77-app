@@ -19,6 +19,8 @@ If you need to fade something or bend its pitch, it has to be your file.
 Read [What this is not](#what-this-is-not) before you build on it. It is a short
 list and every item on it is load-bearing.
 
+Source: [`open77_sound`](https://github.com/Open2077/open77-resources/tree/main/system/open77_sound).
+
 ## The model
 
 One hidden CEF surface, owned by the bundled `open77_sound` resource, runs the

@@ -2,7 +2,7 @@
 
 Ground loot is server-authoritative. Native containers and drops display the server's items; Take and Take All send pickup requests checked against the drop, routing bucket and player distance. The local inventory changes only after authorization.
 
-The official `open77_loot` resource must stay started. Its manifest asks for `network.events` and
+The official [`open77_loot`](https://github.com/Open2077/open77-resources/tree/main/system/open77_loot) resource must stay started. Its manifest asks for `network.events` and
 `world.loot`, and its client is distributed with the server's resource set.
 
 Vanilla loot suppression is a client session policy, independent of this resource. A server

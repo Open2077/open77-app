@@ -1,152 +1,208 @@
 # Furniture: sit and lean
 
-> **Experimental.** Names may still change. Most of the two-client test plan was proven live: see
-> [Status](#status) for what was seen and what was not run. How seating fits with actions and jobs:
-> [World interaction](world-interaction.md).
+A player walks into a bar. Over a real bar stool, a prompt appears: **E Sit on the stool**. They
+press E and sit down at the counter; a banner says "Press X to stand up", and X stands them up. A
+second player who tries the same stool is told "Someone is already sitting there." and takes the
+next one. A pedestrian already sitting on a stool keeps it: that stool shows no prompt.
 
-Night City is full of chairs, benches, bar stools, counters and walls that the game's own pedestrians
-use. Open77 ships a catalogue of them (`open77_furniture`: about 38,000 pieces of furniture, each with
-the poses the game authored on it) and a resource that lets players use them (`open77_seating`):
+Two resources do this. `open77_furniture` is a catalogue of about 38,000 pieces of furniture in
+Night City, with the poses the game authored on each. `open77_seating` turns them into prompts and
+seats. The server decides everything: distance, routing bucket, whether the player is alive, in a
+car or fighting, and who already sits there.
 
-- a player walking up to a table sees at most three "Sit on the chair" / "Lean on the wall" prompts,
-  only for seats within 3 m, only for seats nobody (player or pedestrian) is using;
-- **E** sits, **X** stands up (rebindable in Settings, Key bindings); `/sit` takes the nearest free
-  seat, `/stand` gets up;
-- the server decides everything: distance, bucket, whether the player is alive, in a car or fighting,
-  who already sits there.
+Building a job with prompts, animations and pay? See [Build a job](world-interaction.md).
 
-Only seats whose pose was **measured** seating a player on two clients are offered by default (about
-16,000 pieces of furniture: the common plastic chairs, benches with chair poses, bar stools, bar
-seats, some wall and counter leans, and one measured bed). Other beds stay off until they are walked.
+Source: [`open77_furniture`](https://github.com/Open2077/open77-resources/tree/next/system/open77_furniture), [`open77_seating`](https://github.com/Open2077/open77-resources/tree/next/system/open77_seating).
 
-## Turn it on
+## Let players sit on any chair
 
-Add the resources to your server's `resources.load` (they are opt-in, `auto_start false`), then start
-them with `ensure`, dependencies first. A `resources.load` entry alone does not start an opt-in
-resource:
+Add the resources to `resources.load` ([selecting resources](server-resources.md)), then start them
+from the server console, in this order:
 
 ```text
-open77_furniture, open77_actions, open77_interactions, open77_seating
+# server.jsonc
+resources.load: [ ..., "open77_animations", "open77_props", "open77_interactions", "open77_uikit",
+                  "open77_actions", "open77_furniture", "open77_seating" ]
+
+# server console
+ensure open77_furniture
+ensure open77_actions
+ensure open77_seating
 ```
 
-`open77_furniture` must be in that list even though nothing declares it as a dependency. The
-catalogue is server-only, and `open77_seating` ships a client script: a client refuses to activate a
-resource whose manifest names a server-only dependency (`missing_dependency:open77_furniture`). So
-seating reaches the catalogue through its exports and answers `furniture_unavailable` until
-`open77_furniture` runs.
+- These three do not start on their own (`auto_start false`). A name missing from `resources.load`
+  is never started, and nothing is logged. Without `open77_furniture`, every request is refused.
+- If your server runs the crowd ([`open77_pedestrians`](https://github.com/Open2077/open77-resources/tree/main/system/open77_pedestrians)), seating uses it on its own: a seat a
+  pedestrian uses gets no prompt, and no pedestrian walks onto a seat a player uses.
 
-`open77_pedestrians`, when it runs, keeps its NPCs off the seats players use and refuses a seat an NPC
-sits on. Without it, seating works the same; there is simply no NPC to coordinate with.
+Players can now sit with the prompts, with `/sit` (the nearest free seat within 3 m) and `/stand`.
 
-| Convar | Default | Meaning |
-|---|---|---|
-| `open77_seating_verification` | `measured` | `unverified` or `all` also offers the seats of untested furniture families |
-| `open77_seating_exit` | `approach` | after standing up, put the body back where it walked in from (`approach`), only when it ended somewhere odd (`check`), or never (`none`) |
-| `open77_seating_buckets` | `all` | routing buckets where players can sit, a comma list |
+## What the player sees
 
-## Use it from your resource
+1. Up to three free seats within 3 m show a prompt, nearest first. A seat in use shows none.
+2. **E**: the body is placed beside the seat (behind a chair, in front of a wall), then sits down.
+   The camera switches to third person, and a banner says "Press X to stand up".
+3. **X** or `/stand`: the player stands, and is put back where they stood before sitting if the body
+   ended somewhere odd. X can be rebound in Settings, Key bindings ("Stand up from a seat").
+4. Drawing a weapon, dying, getting into a car or changing routing bucket also stands the player up,
+   and the banner says why ("You stood up: combat"). A player teleported away is never pulled back.
 
-Seat a player on a known piece of furniture (an RP bar's stools, a waiting room's bench):
+## Which seats are offered
+
+| Furniture | Prompt | The body starts from | Offered by default |
+|---|---|---|---|
+| Chairs, lean-back chairs, benches with chair poses | Sit on the chair | 1.2 m behind the seat | about 14,500 |
+| Bar stools | Sit on the stool | 1.2 m behind the stool | about 1,600 |
+| Bar seats | Sit on the bar seat | where the player stands | 18 |
+| Walls | Lean on the wall | 1 m in front of the wall | about 50 |
+| Counters | Lean on the counter | 1 m back from the counter | about 30 |
+
+By default only seats whose pose is verified for players are offered: about 16,000 pieces of
+furniture. Set `open77_seating_verification` to `all` to also offer about 5,600 more, mostly wall
+leans and chairs, at the risk of a player clipping into the furniture. If the spot beside a seat is
+blocked by a step or a wall, the player is told "Something is in the way." and put back.
+
+A bench row seats several players side by side, at least 0.6 m apart. Couches, armchairs, ledges,
+steps, curbs, rails and tables have no player pose and are never offered.
+
+**Beds.** One double-bed family (four beds in the city) has a lying pose verified for players, and
+the player lies down from where they stand. Seating offers only sitting and leaning, so beds get no
+prompt and `/sit` skips them: an operator lays a player on one with the `seating.sit` command.
+
+## Sit a player from your own resource
+
+Seat a player on furniture you chose: the interrogation chair of your police station, a stool in
+your bar. Get its id with the `furniture.near` console command, then:
 
 ```lua
 -- server
-local seat, why = exports.open77_seating:sit(playerId, "9160494166749203069")
-if not seat then print("cannot sit: " .. why) end      -- e.g. seat_taken, too_far, npc_occupied
+local CHAIR = "9160494166749203069"   -- a furniture id, from furniture.near
 
-exports.open77_seating:stand(playerId)
-local where = exports.open77_seating:current(playerId)   -- nil when standing
-```
+RegisterCommand("interrogate", function(source, args)
+    -- check here that `source` is a police officer
+    local seat, why = exports.open77_seating:sit(tonumber(args[1]), CHAIR)
+    if not seat then Open77.chat.send(source, "Cannot seat the suspect: " .. why) end
+end)
 
-Find furniture near a point with the catalogue (no world query, a few tens of microseconds):
-
-```lua
-local stools = exports.open77_furniture:nearby(barCounter, 6, { kind = "barstool", playable = true, limit = 8 })
-for _, stool in ipairs(stools or {}) do
-    print(stool.id, stool.pose.profile, stool.pose.arrivalRadius)
-end
-```
-
-Follow what happens:
-
-```lua
 AddEventHandler("open77_seating:seated", function(e)
-    -- e.playerId, e.furnitureId, e.kind, e.posture ("sit" | "lean"), e.bucket
-end)
-AddEventHandler("open77_seating:stood", function(e)
-    -- e.playerId, e.furnitureId, e.reason ("stood", "dead", "disconnected", "combat", "moved", ...)
+    if e.furnitureId == CHAIR then Open77.chat.send(e.playerId, "The detective is on his way.") end
 end)
 ```
 
-`exports.open77_seating:occupants(bucket, furnitureId)` lists who sits on a piece of furniture.
-`sitNearest(playerId)` picks the nearest free seat for you.
+- The player must already be within 3 m of the seat: `sit` never brings a player across the room.
+- `sit` answers at once. The player is seated a moment later, when `open77_seating:seated` fires; if
+  they cannot get there, `open77_seating:stood` fires instead, with the reason.
+- `sitNearest(playerId)` picks the nearest free seat for you, like `/sit`.
 
-### Keep players off furniture your job uses
+## Keep players off seats during a job
 
-Seating claims every occupied piece of furniture in the claims service of
-[`open77_actions`](actions.md#shared-spots-without-an-action), under the key
-`furniture:<catalogue version>:<furniture id>`, per routing bucket. A resource that claims the same
-key keeps players from sitting there (they are told the seat is in use):
+Seating shares the one-winner claims of [`open77_actions`](actions.md). A seated player holds the key
+`furniture:<catalogue version>:<furniture id>` in their routing bucket. Claim the same key and no
+player can sit there: they are told "This seat is in use."
 
 ```lua
+-- server: close the bar stools while the bartender cleans the counter
+local counter, bucket = { x = 0.0, y = 0.0, z = 0.0 }, 0   -- your counter and its routing bucket
 local version = exports.open77_furniture:status().version
-local token = exports.open77_actions:claim(bucket, "furniture:" .. version .. ":" .. tableId, 60000)
--- ... clean the table ...
-exports.open77_actions:releaseClaim(token)
+local stools = exports.open77_furniture:nearby(counter, 6, { kind = "barstool", playable = true, limit = 8 })
+local tokens = {}
+for _, stool in ipairs(stools or {}) do
+    local token = exports.open77_actions:claim(bucket, "furniture:" .. version .. ":" .. stool.id, 60000)
+    if token then tokens[#tokens + 1] = token end   -- nil, "target_claimed" while someone sits there
+end
+-- ... the cleaning job, then:
+for _, token in ipairs(tokens) do exports.open77_actions:releaseClaim(token) end
 ```
 
-## What a player experiences
+A claim lasts its time to live (60 s here, one hour at most): call `renewClaim(token, ttlMs)` for a
+longer job. A claim never stands up a player already seated, so claim before the job starts. Your
+claims are released when your resource stops.
 
-1. Looking at the seat's card ("Sit on the stool") and pressing **E**: the body is placed beside the
-   furniture (behind a chair or a stool, in front of a wall), then the sitting posture carries it onto
-   the seat. Workspot postures switch to third person while they play and give the view back when
-   they end.
-2. While seated nothing else holds the player's controls; drawing a weapon, getting killed, entering a
-   car or changing bucket stands them up.
-3. Pressing **X**: the posture stops and, if the body did not end up on a clear spot, it is put back
-   where it walked in from.
-4. A player moved away while seated (a Warden teleport, a vehicle) is never pulled back: when the body
-   ends more than 4 m from the seat, the exit leaves it where it is.
+## Reference
 
-Each furniture family has its own arrival radius, the distance at which the body counts as arrived on
-the seat: 0.5 m for chairs, benches and leans, 0.75 m for bar seats, 1.0 m for bar stools, whose
-counter stops the body short. The catalogue carries it in `pose.arrivalRadius`.
+### Settings
 
-## Status
+Set these in the `convars` block of `server.jsonc`; `open77_seating` reads them when it starts.
 
-Proven live on two clients, with a male and a female character:
+| Convar | Default | Meaning |
+|---|---|---|
+| `open77_seating_verification` | `measured` | `measured`: verified seats only. `all`: every seat with a player pose. `unverified`: only the seats that are not verified |
+| `open77_seating_exit` | `approach` | after standing up, put the body back where it stood before sitting (`approach`), only when it ended somewhere odd (`check`), or never (`none`) |
+| `open77_seating_buckets` | `all` | routing buckets where players can sit, a comma list such as `0,3` |
+| `open77_seating_trace` | `0` | `1` prints every sit, seat and stand in the server log |
 
-- **NPC occupancy.** With `open77_pedestrians` and its crowd on, every food-court seat reported an NPC
-  seated on it, and `sit` answered `npc_occupied`.
-- **One winner per seat.** The first player sat on a measured bar stool; the second, sent to the same
-  stool, got `seat_taken`, then sat on the next stool. Both bodies sat on their stools at the counter,
-  each claim held by `open77_seating`.
-- **Two on one bench.** Both players on a 1.33 m bench: two spots 1.34 m apart, one claim shared by
-  both, no overlap.
-- **Keys.** Looking at the stool's card and holding **E** seated the player; **X** stood them up, and
-  the natural exit was already clear, so the body was not moved.
-- **Lean.** A wall lean against vending machines, with the exit in front of them.
-- **Teleport.** A Warden teleport of a seated player ended the posture, and the exit left the body
-  where it landed, more than 8 m from the stool.
+### Exports
 
-Ten catalogue ids were also played one by one: all ten seat, lean or lie with their family's arrival
-radius. The bed first failed (the pose ended while the game settled the body on the mattress); the
-client now lets a placed pose settle for two seconds, and beds lie from where the player stands, on
-both body types.
+| Server export | Answers |
+|---|---|
+| `open77_seating:sit(playerId, furnitureId, options?)` | the seat, or `nil, reason`. `options`: `spot` (one place on a bench row), `approach` (`back`, `front`, `left`, `right`, `player`, `none`), `exit` (`approach`, `check`, `none`) |
+| `open77_seating:sitNearest(playerId, options?)` | the nearest free seat within 3 m, or `nil, reason` |
+| `open77_seating:stand(playerId)` | `true`, or `nil, "not_seated"` |
+| `open77_seating:current(playerId)` | the player's seat, or `nil` when standing |
+| `open77_seating:occupants(bucket, furnitureId)` | the ids of the players sitting on that furniture |
+| `open77_furniture:nearby(position, radius?, filter?)` | furniture within `radius` m (10 by default, 50 at most), nearest first, read from memory without a world query; or `nil, reason`. `filter`: `kind`, `posture`, `verification`, `playable`, `vertical`, `limit` (5 by default, 32 at most), `poses` |
+| `open77_furniture:get(id)` | one piece of furniture with all its poses (`poseList`), or `nil, "unknown_furniture"` |
+| `open77_furniture:status()` | `indexed`, `version`, `furniture`, `spots` |
 
-Also proven live through `open77_seating`: a pedestrian shot off a seat flees, a player takes the
-seat and the pedestrian does not walk back onto it; an approach point on a step is refused
-(`approach_blocked`) and the body put back; a bar seat from where the player stands.
+A seat has `playerId`, `furnitureId`, `spot`, `kind`, `posture`, `profile`, `state` (`approaching`,
+then `seated`), `bucket` and `anchor`. A piece of furniture has `id`, `kind`, `posture`, `distance`,
+`x`, `y`, `z`, `yaw` and its best `pose` (`profile`, `verification`, `arrivalRadius`: 0.5 m for
+chairs and leans, 0.75 m for bar seats, 1 m for bar stools and the bed). Catalogue lookups answer
+`nil, "indexing"` for the first seconds after it starts.
 
-## Limits
+### Events
 
-- Only measured furniture families are offered by default; the rest of the catalogue is anchor data
-  (`runtimeValidated = false`) until it is qualified on two clients.
-- Couches, ledges, stairs and rails have no player posture yet. Beds lie from where the player
-  stands; only the measured bed is offered by default, other beds are `unverified` until walked.
-- The game's own (vanilla) crowd is not coordinated: servers that run Open77's pedestrians suppress
-  it.
-- Players reach seats within 3 m; the approach point beside a seat is computed from the furniture kind
-  and refused when the body cannot stand there.
-- Reasons a request can be refused include `seat_taken`, `target_claimed`, `npc_occupied`, `too_far`,
-  `no_playable_pose`, `already_seated`, `actor_busy`, `in_combat`, `player_in_vehicle`,
-  `player_not_alive`, `approach_blocked` and `furniture_unavailable`.
+| Event | Fields |
+|---|---|
+| `open77_seating:seated` | `playerId`, `furnitureId`, `spot`, `kind`, `posture` (`sit`, `lean`, or `lie` on a bed), `profile`, `bucket`, `playbackId` |
+| `open77_seating:stood` | `playerId`, `furnitureId`, `spot`, `bucket`, `reason` |
+
+`reason` is `stood` (X, `/stand` or your `stand` call), `cancelled_by_player`, `moved`, `dead`,
+`disconnected`, `vehicle`, `combat`, `bucket_changed`, `claim_lost`, `furniture_changed`,
+`resource_stopping`, `anchor_unreached` or `animation_interrupted`. When the player never sat down:
+`approach_blocked`, `approach_failed`, `approach_timeout`, `animation_refused` or `actor_busy`.
+
+### What the player is told
+
+| Reason | Banner |
+|---|---|
+| `seat_taken`, `npc_occupied` | Someone is already sitting there. |
+| `target_claimed` | This seat is in use. |
+| `too_far` | Too far away. |
+| `already_seated` | You are already seated. |
+| `not_seated` | You are not seated. |
+| `actor_busy` | Finish what you are doing first. |
+| `in_combat` | Not while fighting. |
+| `player_in_vehicle` | Not from a vehicle. |
+| `no_playable_pose` | There is no free seat here. |
+| `approach_blocked` | Something is in the way. |
+| `approach_failed` | You cannot get there. |
+| `indexing` | Seats are not ready yet. |
+
+Any other reason shows as "Refused: " followed by the reason, such as `furniture_unavailable`,
+`player_not_alive` or `bucket_not_enabled`. Your own `sit` calls return the reason to you; only a
+failure after the request was accepted, such as `approach_blocked`, reaches the player's screen.
+
+### Console commands
+
+Restricted commands; the server console can always run them.
+
+| Command | Does |
+|---|---|
+| `furniture.near <playerId> [count] [radius] [kind]` | lists the furniture nearest a player, with ids |
+| `seating.near <playerId> [count] [radius]` | lists the seats nearest a player and who holds each |
+| `seating.status`, `seating.claims` | the catalogue version and settings; every seated player and claim |
+| `seating.sit <playerId> <furnitureId>` | seats a player within 4.5 m, skipping the verified-only and sit-or-lean filters (beds work); occupancy still applies |
+| `seating.stand <playerId>` | stands a player up |
+| `seating.verification <value>`, `seating.exit <value>` | changes that setting until the next restart |
+
+## Operator notes
+
+- **List `open77_furniture` next to `open77_seating`.** The catalogue runs on the server only, and a
+  client refuses a resource that depends on a server-only one, so seating does not name it as a
+  dependency: it calls its exports and answers `furniture_unavailable` while it is not running.
+- **Restarting `open77_seating`** stands every seated player up where they are and removes the
+  prompts. `ensure open77_actions` restarts seating too, since seating depends on it.
+- **Restarting `open77_furniture`** leaves seated players seated. New requests are refused until the
+  catalogue is indexed again. If a new catalogue no longer has a seat, the player on it stands up.
+- **The game's own crowd is not coordinated.** Servers that run `open77_pedestrians` suppress it.

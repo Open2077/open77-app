@@ -341,7 +341,7 @@ that an autonomous NPC or a physics vehicle will remain stationary afterwards.
 ## Authoritative server integration
 
 See the complete opt-in
-[server-authorized prop editor](../resources/examples/open77_gizmos_editor/README.md)
+[server-authorized prop editor](https://github.com/Open2077/open77-resources/blob/main/examples/open77_gizmos_editor/README.md)
 for the client/server implementation and runnable rejection tests. Its policy
 has automated coverage and a one-client/server pointer-driven acceptance run.
 This does not by itself prove cross-client presentation or persistence.

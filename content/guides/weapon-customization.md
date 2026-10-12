@@ -4,7 +4,7 @@ Tune the local held weapon from Lua, then test it in the English weapon workshop
 
 **Requires a compatible development client with native weapon tuning and inventory-instance restoration.** Check that `Open77.weapons.setTuning` exists before enabling this feature, and use a development build containing the restoration fix. Function availability alone does not distinguish older experimental builds. Installing the example resource does not add missing native functions to an older client.
 
-Ground-contact blasts and network character launches require matching client and server builds with `Open77.motion.launch`, plus the corresponding `open77_cyberware` system resource. Headless victims also need the updated bot executable. The earlier vehicle-only workshop does not provide these extensions.
+Ground-contact blasts and network character launches require matching client and server builds with `Open77.motion.launch`, plus the corresponding [`open77_cyberware`](https://github.com/Open2077/open77-resources/tree/main/system/open77_cyberware) system resource. Headless victims also need the updated bot executable. The earlier vehicle-only workshop does not provide these extensions.
 
 **Experimental controls:** projectile count and smart-projectile speed expose native statistics, but their effects on actual projectile multiplicity and flight speed remain unverified. Aim speed supplies native animation timings; it does not promise an exact visible transition duration. Check the weapon-specific behavior below before using a profile in a gamemode.
 
@@ -14,7 +14,7 @@ For weapon grants, slots, ammunition, components and grenades, see the [weapon A
 
 ## Open the workshop
 
-Download [rp_weapons_effect from the public examples repository](https://github.com/Open2077/open77-rp-examples/tree/main/rp_weapons_effect). Copy that folder into your server's resources directory, add `rp_weapons_effect` to `resources.load`, and grant administrators `command.weaponeffects` through the [server ACL](server-acl.md).
+Download [rp_weapons_effect from the roleplay pack in open77-resources](https://github.com/Open2077/open77-resources/tree/main/rp/rp_weapons_effect). Copy that folder into your server's resources directory, add `rp_weapons_effect` to `resources.load`, and grant administrators `command.weaponeffects` through the [server ACL](server-acl.md).
 
 Start the resource, then enter `/weaponeffects` in chat. Choose a weapon from the 137-record catalogue, equip it in slot 1, select a preset or adjust the sliders, and click **Apply settings**. Close the interface to shoot. **Restore stock** removes this resource's modifiers; it preserves other bonuses, the weapon and ammunition already granted.
 
@@ -247,4 +247,4 @@ The workshop's `/weaponeffects measure` command logs actual magazine readings fo
 
 For a single-setting comparison, `/weaponeffects set reloadSpeed 3 Items.Preset_Lexington_Default` applies that field and resets every other setting to its default. The syntax is `/weaponeffects set <field> <value> [record]`; omitting the record selects the catalogue's first weapon.
 
-See the native reference cards for [setTuning](/docs/api/client/open77-weapons#settuning), [clearTuning](/docs/api/client/open77-weapons#cleartuning), [tuning](/docs/api/client/open77-weapons#tuning), [server launch](/docs/api/server/open77-motion#launch) and [client launch](/docs/api/client/open77-motion#launch), or inspect the [complete example resource](https://github.com/Open2077/open77-rp-examples/tree/main/rp_weapons_effect).
+See the native reference cards for [setTuning](/docs/api/client/open77-weapons#settuning), [clearTuning](/docs/api/client/open77-weapons#cleartuning), [tuning](/docs/api/client/open77-weapons#tuning), [server launch](/docs/api/server/open77-motion#launch) and [client launch](/docs/api/client/open77-motion#launch), or inspect the [complete example resource](https://github.com/Open2077/open77-resources/tree/main/rp/rp_weapons_effect).

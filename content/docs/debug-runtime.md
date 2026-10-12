@@ -6,6 +6,8 @@ This is intentionally not a public gameplay API. It is available only inside the
 `open77_debug` resource. A downloaded server resource cannot enable it by adding a permission to
 its manifest.
 
+Source: [`open77_debug`](https://github.com/Open2077/open77-resources/tree/main/system/open77_debug).
+
 ## Admin command
 
 Run this from the in-game Open77 terminal or chat:
@@ -52,7 +54,7 @@ Any authenticated player can copy their own live transform from chat:
 `/pos` writes a reusable Lua field such as
 `position = { x = -1442.200000, y = 127.400000, z = 18.000000 }`. `/rot` writes the complete
 quaternion plus horizontal yaw. The server command targets the authenticated caller, while the
-downloaded `open77_chat` client reads the transform and writes the clipboard. The server receives a
+downloaded [`open77_chat`](https://github.com/Open2077/open77-resources/tree/main/system/open77_chat) client reads the transform and writes the clipboard. The server receives a
 bounded success result but never sees prior clipboard contents. The result appears in chat and in a
 middle-left WebUI notification.
 

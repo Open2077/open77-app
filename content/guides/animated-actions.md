@@ -6,8 +6,8 @@ and everyone around sees it.
 
 Three server calls do it. Copy the examples, change the names. Both examples come from a
 complete roleplay server you can read and run:
-[Open2077/open77-rp-examples](https://github.com/Open2077/open77-rp-examples) — the crate
-convoy is `rp_nomade`, the repair is `rp_mecano`.
+[the roleplay pack in Open2077/open77-resources](https://github.com/Open2077/open77-resources/tree/main/rp) — the crate
+convoy is [`rp_nomade`](https://github.com/Open2077/open77-resources/tree/main/rp/rp_nomade), the repair is [`rp_mecano`](https://github.com/Open2077/open77-resources/tree/main/rp/rp_mecano).
 
 ## The three calls
 
@@ -225,5 +225,5 @@ the platform's catalogue.
 
 [Synchronized animations](rp-animations.md) · [Synchronized attachments](attachments.md) ·
 [Props and effects](props-and-effects.md) · [The UI kit](ui-kit.md) ·
-[open77-rp-examples on GitHub](https://github.com/Open2077/open77-rp-examples) — 35 resources
+[the roleplay pack in open77-resources](https://github.com/Open2077/open77-resources/tree/main/rp) — 35 resources
 using all of this for real

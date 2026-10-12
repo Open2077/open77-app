@@ -10,6 +10,8 @@ The prompt is fully data-driven. `Utiliser` is only an example: labels such as `
 `Consulter les offres`, `Ouvrir le coffre`, or `Réparer le véhicule` are accepted, together with a
 custom description, key, short icon, colour, press/hold behavior, and up to four choices.
 
+Source: [`open77_interactions`](https://github.com/Open2077/open77-resources/tree/main/system/open77_interactions).
+
 ## Add the dependency
 
 ```lua

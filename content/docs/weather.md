@@ -13,6 +13,8 @@ clock. From the server the entry point is
 [`Open77.environment.*`](#api-for-a-server-resource), which the host installs everywhere and gates
 behind `world.environment`; a routing bucket can hold an environment of its own.
 
+Source: [`open77_weather`](https://github.com/Open2077/open77-resources/tree/main/system/open77_weather).
+
 ## Network model
 
 ```text

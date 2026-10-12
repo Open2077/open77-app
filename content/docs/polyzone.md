@@ -2,6 +2,8 @@
 
 Use the PolyZone API in an Open77 client resource with ordinary `{x, y, z}` coordinates. Queries and watchers run inside the importing resource. Names follow [PolyZone 2.6.2](https://github.com/mkafrin/PolyZone); engine integration and the editor are Open77-specific.
 
+Source: [`polyzone`](https://github.com/Open2077/open77-resources/tree/main/libraries/polyzone).
+
 ## Install and import
 
 New to `require`? Read [Lua modules and require](lua-modules.md) for local

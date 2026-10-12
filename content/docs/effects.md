@@ -808,7 +808,7 @@ Failures are values: `nil, reason` or `false, reason`, never a raise.
 
 ### Reference resource and terminal commands
 
-The bundled [`open77_effects`](../resources/system/open77_effects/) resource carries both halves: the client exports documented above, and a server half that owns the admin commands. Type these into the developer terminal opened with `²` in Cyberpunk.
+The bundled [`open77_effects`](https://github.com/Open2077/open77-resources/tree/main/system/open77_effects) resource carries both halves: the client exports documented above, and a server half that owns the admin commands. Type these into the developer terminal opened with `²` in Cyberpunk.
 
 ```text
 fx.play explosion.frag -1448.2 96.1 17.5 0

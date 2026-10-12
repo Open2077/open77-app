@@ -6518,6 +6518,100 @@
      "line": 19242
     }
    ]
+  },
+  {
+   "name": "pause_menu.render",
+   "runtimes": [
+    "client"
+   ],
+   "summary": "Enforced by the client; gates 0 natives.",
+   "curated": false,
+   "natives": [],
+   "guides": [],
+   "sources": [
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 20457
+    },
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 20457
+    }
+   ]
+  },
+  {
+   "name": "players.driveby",
+   "runtimes": [
+    "client",
+    "server"
+   ],
+   "summary": "Enforced by the client and server; gates 2 natives in Open77.players.",
+   "curated": false,
+   "natives": [
+    "Open77.players.setLocalDriveByEnabled",
+    "server:Open77.players.setDriveByEnabled"
+   ],
+   "guides": [
+    "drive-by.md"
+   ],
+   "sources": [
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 13039
+    },
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 13040
+    },
+    {
+     "file": "server/src/Open77.Server.Scripting/Runtime/LuaResourceRuntime.DriveBy.cs",
+     "line": 29
+    }
+   ]
+  },
+  {
+   "name": "rtti.native",
+   "runtimes": [
+    "client"
+   ],
+   "summary": "Enforced by the client; gates 5 natives in Open77.rtti.",
+   "curated": false,
+   "natives": [
+    "Open77.rtti.call",
+    "Open77.rtti.hook",
+    "Open77.rtti.release",
+    "Open77.rtti.resolve",
+    "Open77.rtti.unhook"
+   ],
+   "guides": [
+    "rtti.md"
+   ],
+   "sources": [
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 6947
+    },
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 6966
+    },
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 7002
+    },
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 7038
+    },
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 7099
+    },
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 7111
+    }
+   ]
   }
  ]
 }

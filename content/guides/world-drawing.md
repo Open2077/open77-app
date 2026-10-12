@@ -17,7 +17,7 @@ tells clients what to draw through net events.
 | A contextual prompt with several choices, hold keys, entity attachment | `open77_interactions` | the interactions package |
 | A label above remote players | `Open77.nameplates` | the plugin, per frame |
 | A pin on the map or minimap | `Open77.blips` | vanilla mappin system |
-| "Did the player walk into this circle?" — no drawing at all | `open77_zones` | nothing |
+| "Did the player walk into this circle?" — no drawing at all | [`open77_zones`](https://github.com/Open2077/open77-resources/tree/main/system/open77_zones) | nothing |
 | A one-shot screen coordinate for a world point | `Open77.camera.project` | you |
 
 ## The rule behind all of it
@@ -86,7 +86,7 @@ exactly the ground height with no lift, it is co-planar with the floor: the
 entity spawns, the effect scales, the registry reports `rendered = true`,
 and **nothing is visible**. If a marker refuses to appear while the registry
 insists it is rendered, suspect the height before anything else. The
-`open77_worldui` facade below defaults to a 0.06 m lift precisely so callers
+[`open77_worldui`](https://github.com/Open2077/open77-resources/tree/main/system/open77_worldui) facade below defaults to a 0.06 m lift precisely so callers
 do not rediscover this.
 
 ## World anchors — `Open77.anchors`
@@ -684,7 +684,7 @@ already handles it needs no edit.
 
 ## HUD ground circles — `open77_groundcircle`
 
-`open77_groundcircle` samples points on a world-space circle, projects each
+[`open77_groundcircle`](https://github.com/Open2077/open77-resources/tree/main/system/open77_groundcircle) samples points on a world-space circle, projects each
 one with `Open77.camera.project`, and strokes the result as an SVG polyline
 on a transparent HUD surface. It needs no game asset at all, so what the
 player sees is exactly what Lua computed, with no engine-side render path
@@ -781,7 +781,7 @@ AddEventHandler("onClientResourceStop", function(name)
 end)
 ```
 
-This is the pattern the shipped `race` resource uses verbatim.
+This is the pattern the shipped [`race`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/race) resource uses verbatim.
 
 ### Ownership comes from the caller, never from an argument
 
@@ -793,7 +793,7 @@ own, do the same — accepting an owner name as a normal Lua argument would
 let any resource act as any other.
 
 Native `Open77.markers` calls use the calling resource's identity. The thin
-`open77_markers` export facade instead owns its markers itself; use the native
+[`open77_markers`](https://github.com/Open2077/open77-resources/tree/main/system/open77_markers) export facade instead owns its markers itself; use the native
 API directly for automatic cleanup under your own resource.
 
 ## Quotas at a glance

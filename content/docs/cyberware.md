@@ -6,8 +6,8 @@ Define and install persistent cyberware through the server-owned implant framewo
 
 A self-service resource that installs double-jump legs on the player who runs
 `/legs install` and removes them with `/legs remove`. It needs a configured server
-database and the `open77_appearance` character adapter, which binds the player's
-character; the `open77_cyberware` support resource is running by default.
+database and the [`open77_appearance`](https://github.com/Open2077/open77-resources/tree/main/system/open77_appearance) character adapter, which binds the player's
+character; the [`open77_cyberware`](https://github.com/Open2077/open77-resources/tree/main/system/open77_cyberware) support resource is running by default.
 
 `open77.lua`:
 
@@ -172,7 +172,7 @@ previous reaction. Second-jump refusals are `implant_unavailable`, `stale_incarn
 
 ## Optional resources
 
-`open77_ripperdoc_example` (`auto_start false`) is a consent-and-payment clinic. Doctors
+[`open77_ripperdoc_example`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_ripperdoc_example) (`auto_start false`) is a consent-and-payment clinic. Doctors
 need the `command.doc` ACL; both players must be alive, in one bucket and within three
 metres. Arms: `/doc offer <patient> training|industrial|cosmetic`, `/doc inspect <patient>`,
 `/doc remove <patient>`. Legs: `/doc offer <patient> training|athlete legs`,
@@ -181,7 +181,7 @@ doctor and holds **E** to accept, **F** to decline, or types `/implantaccept` /
 `/implantcancel`. Its example prices are 100 credits for training legs, 250 for athlete
 and 25 for a removal, from an in-memory balance of 500 that resets with the resource.
 
-`open77_cyberware_lab` (`auto_start false`) is an open test panel: `/cyberlab` opens it on
+[`open77_cyberware_lab`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_cyberware_lab) (`auto_start false`) is an open test panel: `/cyberlab` opens it on
 your own character, `/cyberlab ui <player>` on somebody else's; pick Gorilla Arms or
 Double Jump, a grade, and Install or Remove, or grant Dash, Ground Slam or Overdrive from
 their cards further down. The same controls exist as commands:

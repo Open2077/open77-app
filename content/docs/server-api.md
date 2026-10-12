@@ -814,7 +814,7 @@ every accepted write.
 
 ## Notifications
 
-These methods route to the official `open77_notifications` client package. IDs and mutation rights
+These methods route to the official [`open77_notifications`](https://github.com/Open2077/open77-resources/tree/main/system/open77_notifications) client package. IDs and mutation rights
 are isolated per calling server resource.
 
 | Function | Signature | Result |
@@ -955,7 +955,7 @@ runtime with different arguments; see the generated client reference.
 
 ## Player clothing
 
-These asynchronous methods target the official `open77_equipment` client relay. The calling server
+These asynchronous methods target the official [`open77_equipment`](https://github.com/Open2077/open77-resources/tree/main/standalone/open77_equipment) client relay. The calling server
 resource must declare `network.events`. Request IDs are prefixed with the resource name, and only
 that resource VM can match the completion.
 
@@ -1085,7 +1085,7 @@ the network form — schema version, game build, catalogue digest, gender, and t
 option identities and values — with the editor's local metadata stripped. It is the
 same shape `apply` takes, so a capture can be stored and handed straight back.
 
-`apply` does not reach the native layer behind `open77_appearance`'s back. The
+`apply` does not reach the native layer behind [`open77_appearance`](https://github.com/Open2077/open77-resources/tree/main/system/open77_appearance)'s back. The
 snapshot becomes that player's new appearance **record** — the server's word about
 what they wear — and the resource's ordinary reconciliation puts it on the body.
 That is the road a stored appearance already takes at world entry, so a relayed
@@ -1124,7 +1124,7 @@ Open77.appearance.apply(playerId, stored[playerId])
 
 ## Player weapons
 
-These asynchronous methods target the official `open77_weapons` client relay.
+These asynchronous methods target the official [`open77_weapons`](https://github.com/Open2077/open77-resources/tree/main/system/open77_weapons) client relay.
 The calling resource declares `network.events` and depends on
 `open77_weapons >=0.1.0`.
 
@@ -1181,7 +1181,7 @@ record. See [Record catalogues](data-catalogues.md).
 An item in one of the body's ten equipment slots, given through the engine's own
 transaction system, so it is genuinely held rather than following the body. The
 other half of the attachment surface: `Open77.props.attach` **follows**, this
-**holds**. These asynchronous methods target the official `open77_helditems`
+**holds**. These asynchronous methods target the official [`open77_helditems`](https://github.com/Open2077/open77-resources/tree/main/system/open77_helditems)
 client relay; the calling resource declares `network.events`.
 
 | Function | Signature | Result |

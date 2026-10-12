@@ -30,7 +30,7 @@ for (const [runtime, permission, params] of [
   assert.deepEqual(matches[0].params.map((param) => param.name), params);
   assert.ok(matches[0].permissions.includes(permission));
 }
-for (const text of ["compatible development client", 'type(Open77.weapons.setTuning)', "pendingModifiers", "waiting_for_restore", "weapon_tuning_owned_by_another_resource", "300", "512", "64", "--fleet-mode passenger", "-HostPhysics", "Ground coverage", "open77:weaponBlast", "projectileContacts", "trackedProjectiles", "bounded ballistic", "not a network player ID", "https://github.com/Open2077/open77-rp-examples/tree/main/rp_weapons_effect"])
+for (const text of ["compatible development client", 'type(Open77.weapons.setTuning)', "pendingModifiers", "waiting_for_restore", "weapon_tuning_owned_by_another_resource", "300", "512", "64", "--fleet-mode passenger", "-HostPhysics", "Ground coverage", "open77:weaponBlast", "projectileContacts", "trackedProjectiles", "bounded ballistic", "not a network player ID", "https://github.com/Open2077/open77-resources/tree/main/rp/rp_weapons_effect"])
   assert.ok(guide.toLowerCase().includes(text.toLowerCase()), text);
 const manifest = JSON.parse(await read("content/docs/_manifest.json"));
 for (const target of ["content/api/api.json", "content/docs/weapons-api.md", "content/docs/player-freeze.md"]) {

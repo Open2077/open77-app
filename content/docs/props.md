@@ -431,7 +431,7 @@ The price of being real:
 
 - **An item record, not an entity.** `Items.Something`, not `base/…/crate.ent`. If what you want
   to show has no item record, `props.attach` is the tool, not this.
-- **The client half must be running.** `open77_helditems` owns the `open77:helditem:request`
+- **The client half must be running.** [`open77_helditems`](https://github.com/Open2077/open77-resources/tree/main/system/open77_helditems) owns the `open77:helditem:request`
   handler; without it a request times out after ten seconds rather than failing fast, exactly as a
   weapon request does without `open77_weapons`.
 - **It fights `Open77.weapons` over `WeaponRight`.** Both write the same slot. Pick one per
@@ -679,7 +679,7 @@ The catalogue carries identifiers and provenance only. Open77 does not redistrib
 
 ## Reference resource and terminal commands
 
-The bundled [`open77_props`](../resources/system/open77_props/) resource is the reference
+The bundled [`open77_props`](https://github.com/Open2077/open77-resources/tree/main/system/open77_props) resource is the reference
 implementation. Its client half mirrors the registry into the native projection layer and
 acknowledges each projection back to the server; nothing there runs on a tick, and a prop is
 projected once when its record arrives rather than polled. Its server half registers the admin

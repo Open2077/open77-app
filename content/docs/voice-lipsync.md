@@ -53,7 +53,7 @@ local status = Open77.voice.getLipSyncStatus()
 local player, reason = Open77.voice.getPlayerLipSyncState(42)
 ```
 
-The reference `open77_voice/shared/config.lua` exposes `lipSyncEnabled = true`.
+The reference [`open77_voice/shared/config.lua`](https://github.com/Open2077/open77-resources/blob/main/system/open77_voice/shared/config.lua) exposes `lipSyncEnabled = true`.
 Set it to `false` to disable the effect for clients using that package. Do not
 call the setters every frame.
 

@@ -20,7 +20,7 @@ time".
 
 ## Turn it on first
 
-`open77_reflex` must be named in your server's `resources.load`. That array is an
+[`open77_reflex`](https://github.com/Open2077/open77-resources/tree/main/system/open77_reflex) must be named in your server's `resources.load`. That array is an
 allowlist: a resource present on disk but absent from it is never started, never
 mentioned in the log, and produces no warning to grep for. Nothing on this page
 happens until the name is there.
@@ -31,7 +31,7 @@ happens until the name is there.
 }
 ```
 
-It depends on `open77_effects`, so list that too. A dependency your list does not
+It depends on [`open77_effects`](https://github.com/Open2077/open77-resources/tree/main/system/open77_effects), so list that too. A dependency your list does not
 resolve is worse than a silent omission: the automatic start aborts on the first
 unresolved name and **no resource starts at all**, which looks like a dead server
 rather than a configuration error. Grep the log for `Automatic resource start
@@ -252,7 +252,7 @@ a self-applied boost in a session would be a self-granted advantage.
 
 ## Optional lab workflow
 
-`open77_cyberware_lab` exposes the whole flow through the same public APIs, with
+[`open77_cyberware_lab`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_cyberware_lab) exposes the whole flow through the same public APIs, with
 two replaceable presets — `street` (tier `reflex`, 6 s, 20 s cooldown, one
 charge) and `combat` (tier `reflex_heavy`, 4 s, 25 s cooldown, two charges):
 

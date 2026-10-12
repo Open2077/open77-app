@@ -13,7 +13,7 @@ are not accepted by this system.
 
 See the [profile and clip catalogue](rp-animation-catalogue.md) for 76 profiles and 456 selectable clips. The `chair`, `lean` and `lie` profiles support anchored placement; see [Portable workspots](#portable-workspots-sit-lean-and-lie-anywhere). Male and female bindings are included, but not every clip is compatible with every body or proxy graph.
 
-To build a job action out of a profile, a prop attached to the hands and a progress bar, with complete server examples, see [Animated actions](animated-actions.md); a whole roleplay server built on these profiles is published at [Open2077/open77-rp-examples](https://github.com/Open2077/open77-rp-examples).
+To build a job action out of a profile, a prop attached to the hands and a progress bar, with complete server examples, see [Animated actions](animated-actions.md); a whole roleplay server built on these profiles is published as [the roleplay pack in Open2077/open77-resources](https://github.com/Open2077/open77-resources/tree/main/rp).
 
 ## How it works
 
@@ -35,7 +35,7 @@ replaces the locomotion or combat controller.
 
 ## Upper-body actions for jobs and inventory
 
-Run `open77_animations` and `open77_props` with matching client, server and archive
+Run [`open77_animations`](https://github.com/Open2077/open77-resources/tree/main/system/open77_animations) and [`open77_props`](https://github.com/Open2077/open77-resources/tree/main/system/open77_props) with matching client, server and archive
 support. The server runtime owns playback and temporary item lifetime; the native
 client animates the body and attaches the item. Your RP resource owns inventory
 validation, consumption, job permissions and rewards.
@@ -196,7 +196,7 @@ Animation cleanup preserves that item and suppresses the default while the hand
 is occupied. The animation-owned item is cleaned up on completion, cancellation,
 death, disconnect, bucket changes and resource shutdown.
 
-See the public [RP examples and held-action guide](https://github.com/Open2077/open77-rp-examples/blob/main/docs/held-actions.md)
+See the public [RP examples and held-action guide](https://github.com/Open2077/open77-resources/blob/main/rp/docs/held-actions.md)
 for inventory, bar and phone integration.
 
 ### Third-person and first-person support

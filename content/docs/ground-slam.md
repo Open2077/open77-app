@@ -95,7 +95,7 @@ means the player can use the key.
 | `impactEffect`, `impactSound` | `nil`, `nil` | Effect catalogue key (up to 96 chars) / sound event (up to 128 chars); ASCII letters, digits, `_.-` |
 | `effectOnOwner`, `soundOnOwner` | `false`, `false` | Also play the effect / sound for the slammer |
 
-The shipped `open77_cyberware_lab` uses `impactEffect = "impact.ground_slam"` and
+The shipped [`open77_cyberware_lab`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_cyberware_lab) uses `impactEffect = "impact.ground_slam"` and
 `impactSound = "w_cyb_strongarms_hit_back"`.
 
 ## Events
@@ -179,7 +179,7 @@ client evidence with a bounded budget (four native queries per frame, 32 rays pe
 challenge, 64 queued challenges), not a server physics simulation, so two colluding
 modified clients can lie to each other.
 
-**Presentation.** `impactEffect` is drawn by the shipped `open77_cyberware` adapter as one
+**Presentation.** `impactEffect` is drawn by the shipped [`open77_cyberware`](https://github.com/Open2077/open77-resources/tree/main/system/open77_cyberware) adapter as one
 instance at the contact point plus a ring of three around it, for observers within 90 m;
 the slammer sees it only with `effectOnOwner`. `impactSound` plays once as a three-second
 spatial one-shot, excluding the slammer unless `soundOnOwner`. The slammer's own camera

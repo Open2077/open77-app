@@ -8,6 +8,8 @@ The mode is two resources: `open77_deathmatch` (authoritative) and
 
 The configuration reference includes options that may not be connected to gameplay in every package. Use `resources/gamemodes/open77_deathmatch/shared/config.lua` as the authoritative configuration schema; do not treat an option's presence as a gameplay guarantee.
 
+Source: [`open77_deathmatch`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_deathmatch), [`open77_deathmatch_hud`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_deathmatch_hud).
+
 ## What players get
 
 Two formats with genuinely different lifecycles, which is why the mode does not
@@ -81,7 +83,7 @@ The four in the middle are the way into the mode, and each one is load-bearing:
 |---|---|
 | [`open77_worldui`](worldui.md) | No station at all. It owns the ring, the prompt card and the action key. |
 | [`open77_interactions`](interactions.md) | Required by both the gamemode and `open77_worldui`. If missing, startup fails with `missing_dependency:open77_interactions` or a repeated `Automatic resource start failed` message. Add it to the resource set. |
-| [`open77_groundcircle`](../resources/system/open77_groundcircle/README.md) | The station works and is invisible. On 2.31 the native 3D interaction ring **does not draw at all**; the ground circle is the entire visual, and it follows real ground per vertex. |
+| [`open77_groundcircle`](https://github.com/Open2077/open77-resources/tree/main/system/open77_groundcircle) | The station works and is invisible. On 2.31 the native 3D interaction ring **does not draw at all**; the ground circle is the entire visual, and it follows real ground per vertex. |
 | [`open77_zones`](zones.md) | No client-side boundary hysteresis. The server still re-derives every containment claim, so this is a smoothness loss rather than an authority one. |
 
 Two more rules about the set:
@@ -90,7 +92,7 @@ Two more rules about the set:
   death; `freeroam`'s `autoRespawn` answers every `kill → respawn` placement this
   mode issues, so players respawn at the freeroam spawn point mid-round. One
   server, one gamemode — the resource list is how that is expressed.
-- **`open77_npcs` is not required for bots.** It is the reference resource for
+- **[`open77_npcs`](https://github.com/Open2077/open77-resources/tree/main/system/open77_npcs) is not required for bots.** It is the reference resource for
   the [NPC API](npcs.md); the API itself is a server global available to any
   resource holding the `world.npcs` permission.
 

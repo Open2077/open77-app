@@ -75,7 +75,7 @@ AddEventHandler("onResourceStart", function(name)
 end)
 ```
 
-Select `open77_sky_ads` in `resources.load` and leave `requiredMods.enabled` set to `true`. Restart
+Select [`open77_sky_ads`](https://github.com/Open2077/open77-resources/tree/main/standalone/open77_sky_ads) in `resources.load` and leave `requiredMods.enabled` set to `true`. Restart
 the dedicated server. Its effective required-mod digest now includes the resource package; players
 receive it through the normal launcher Connect flow before Cyberpunk starts.
 

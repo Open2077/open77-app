@@ -328,7 +328,7 @@ server log, once per window, so the failure is attributable.
 ## The fuel sample (`open77_fuel`)
 
 Cyberpunk has no fuel model, so FiveM's `GetVehicleFuelLevel` / `SetVehicleFuelLevel` have no
-native to adapt. Fuel is a bag field, and `resources/system/open77_fuel` is the canonical sample
+native to adapt. Fuel is a bag field, and [`resources/system/open77_fuel`](https://github.com/Open2077/open77-resources/tree/main/system/open77_fuel) is the canonical sample
 of the pattern -- small enough to copy, and shipped so the three places that already cited it
 were telling the truth.
 

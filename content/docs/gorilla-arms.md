@@ -6,7 +6,7 @@ Install native Gorilla Arms through the [Cyberware framework](cyberware.md). The
 
 A self-service resource: an ACL-authorized player installs a free implant on their own
 character with `/gorilla_install` and removes it with `/gorilla_remove`. It needs a
-configured database, the `open77_appearance` character adapter and the `open77_cyberware`
+configured database, the [`open77_appearance`](https://github.com/Open2077/open77-resources/tree/main/system/open77_appearance) character adapter and the [`open77_cyberware`](https://github.com/Open2077/open77-resources/tree/main/system/open77_cyberware)
 support resource (both are running by default).
 
 `resources/gamemodes/my_gorilla/open77.lua`:
@@ -164,7 +164,7 @@ touching installation or damage.
 
 ## Optional clinic and arena
 
-`open77_ripperdoc_example` (`auto_start false`) is a consent-and-payment clinic. Grant
+[`open77_ripperdoc_example`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_ripperdoc_example) (`auto_start false`) is a consent-and-payment clinic. Grant
 doctors `command.doc`. With both players alive, in one bucket and within three metres:
 `/doc offer <patient> training` (or `industrial`, `cosmetic`), `/doc inspect <patient>`,
 `/doc remove <patient>`. The patient looks at the doctor and holds **E** to accept or
@@ -172,7 +172,7 @@ presses **F** to decline (`/implantaccept` and `/implantcancel` do the same in c
 Prices, grades, range and consent time are in its `server/config.lua`; its credit
 balance is an in-memory demonstration that resets with the resource.
 
-`open77_cyberarena_example` (`auto_start false`) hands out temporary loadouts inside a
+[`open77_cyberarena_example`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_cyberarena_example) (`auto_start false`) hands out temporary loadouts inside a
 configured bucket: `/cyberarena join [grade]`, `/cyberarena loadout <grade>`,
 `/cyberarena leave`. Leaving restores the paid implant. Training and industrial grades are
 nonlethal, cosmetic does no damage, lethal is an explicit choice.

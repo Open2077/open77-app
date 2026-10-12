@@ -16,6 +16,8 @@ exports.open77_rp_basics:carry(officerId, targetId)   --> false, "carry_unsuppor
 
 Use the resource as a dependency or adapt its source. Preserve ownership tracking and cleanup so an interrupted action cannot leave a player frozen.
 
+Source: [`open77_rp_basics`](https://github.com/Open2077/open77-resources/tree/main/system/open77_rp_basics).
+
 ## What each verb is, physically
 
 | Verb | The body | The controls | Ends when |

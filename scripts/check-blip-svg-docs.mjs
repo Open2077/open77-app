@@ -41,7 +41,7 @@ for (const target of ["content/docs/blips.md", "content/api/api.json"]) {
 }
 assert.equal(manifest.apiEntries, api.length);
 for (const [, href] of guide.matchAll(/\]\(([^)]+)\)/g)) {
-  if (href.startsWith("/docs/api/")) continue;
+  if (href.startsWith("/docs/api/") || href.startsWith("https://github.com/Open2077/open77-resources/")) continue;
   assert.ok(pages.some((page) => page.slug === href.replace(/\.md(?:#.*)?$/, "")), href);
 }
 

@@ -22,7 +22,7 @@ Do not substitute `Vehicle.v_sport1_herrera_outlaw_player` for the armed Heist v
 
 Client HUDs can inspect a live vehicle through the [vehicle weapon Lua API](vehicle-weapons.md), including actual attached weapons, selection and available native ammunition counters.
 
-With the system resource `open77_vehicles` running, enter this in the **server console** (replace `1` with the connected player's ID):
+With the system resource [`open77_vehicles`](https://github.com/Open2077/open77-resources/tree/main/system/open77_vehicles) running, enter this in the **server console** (replace `1` with the connected player's ID):
 
 ```text
 vehicle.create.player 1 Vehicle.v_militech_basilisk

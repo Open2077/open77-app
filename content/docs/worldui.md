@@ -4,8 +4,10 @@
 
 It is mode-agnostic: nothing in its API names a role, a match, a team, or
 any other gamemode-shaped concept, and both official consumers
-(`resources/gamemodes/pursuit` and `resources/gamemodes/race`) call it through the same three
+([`resources/gamemodes/pursuit`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/pursuit) and [`resources/gamemodes/race`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/race)) call it through the same three
 functions below with no special-casing on either side.
+
+Source: [`open77_worldui`](https://github.com/Open2077/open77-resources/tree/main/system/open77_worldui).
 
 ## Add the dependency
 
