@@ -2,6 +2,8 @@
 
 Cordon is a 64-slot battle royale with staging, equipment collection and a moving exclusion zone. Solo, Duo and Squad formats share the same match rules.
 
+Source: [`open77_cordon`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_cordon), [`open77_cordon_hud`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_cordon_hud).
+
 ## Joining and controls
 
 The current lobby is Afterlife. Staging players can move and sprint; combat and
@@ -171,7 +173,7 @@ building with the repository's documented build procedure:
 ```
 
 Keep the mode's declared dependencies and the profile's shared resources.
-`open77_worldui` and `open77_interactions` supply the physical revive/loot prompts;
+[`open77_worldui`](https://github.com/Open2077/open77-resources/tree/main/system/open77_worldui) and [`open77_interactions`](https://github.com/Open2077/open77-resources/tree/main/system/open77_interactions) supply the physical revive/loot prompts;
 weapon and loot APIs underpin inventory; the HUD supplies match/combat/map views.
 Do not combine Cordon with a second gamemode that also owns spawn and death.
 Do not put laboratory resources or test control-file hooks on a public server.

@@ -2,11 +2,13 @@
 
 `open77_doors` synchronizes native doors through a server-owned registry. Automatic doors use routing-bucket proximity; elevator landing doors follow the cabin. Native animations, sound and collision are retained.
 
+Source: [`open77_doors`](https://github.com/Open2077/open77-resources/tree/main/system/open77_doors).
+
 ## Installation
 
 ### Context menu administration
 
-With `open77_admin` and `open77_contextmenu`, ALT-click a streamed door to copy
+With [`open77_admin`](https://github.com/Open2077/open77-resources/tree/main/system/open77_admin) and [`open77_contextmenu`](https://github.com/Open2077/open77-resources/tree/main/system/open77_contextmenu), ALT-click a streamed door to copy
 its exact ID, inspect its state, open/close it manually, change its lock/seal,
 or restore automatic proximity opening. The menu framework defines no actions;
 the admin package supplies them. See [context menu integrations](context-menu.md).
@@ -32,7 +34,7 @@ Use a client containing the native door projection bridge and a server supportin
 dependency 'open77_doors >=1.0.0'
 ```
 
-Freeroam includes it. The service depends on `open77_elevators`. If your server
+Freeroam includes it. The service depends on [`open77_elevators`](https://github.com/Open2077/open77-resources/tree/main/system/open77_elevators). If your server
 uses an explicit `resources.load` allowlist, include both system resources.
 Other gamemodes can opt in without importing Freeroam.
 

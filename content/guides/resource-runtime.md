@@ -326,7 +326,7 @@ fail the resource rather than falling back to arbitrary disk access.
 
 ### Notifications from a server resource
 
-A server resource can target the shared `open77_notifications` WebUI without
+A server resource can target the shared [`open77_notifications`](https://github.com/Open2077/open77-resources/tree/main/system/open77_notifications) WebUI without
 defining a network protocol of its own:
 
 ```lua

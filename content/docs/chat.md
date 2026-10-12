@@ -2,6 +2,8 @@
 
 `open77_chat` provides chat, authenticated slash commands, command suggestions, history and keyboard completion. Its interface text is in English.
 
+Source: [`open77_chat`](https://github.com/Open2077/open77-resources/tree/main/system/open77_chat).
+
 Quick usage:
 
 ```text

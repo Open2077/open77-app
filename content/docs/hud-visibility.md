@@ -259,7 +259,7 @@ Refusals: `permission_denied:ui.vanilla.hud`, `invalid_notification_text`,
 
 ## Debug commands
 
-When the privileged `open77_debug` resource is loaded, an authorized player can test the policy
+When the privileged [`open77_debug`](https://github.com/Open2077/open77-resources/tree/main/system/open77_debug) resource is loaded, an authorized player can test the policy
 without client execution:
 
 ```text

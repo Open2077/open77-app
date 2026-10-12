@@ -160,7 +160,7 @@ During an active session, the external bridge allows read-only diagnostics such
 as `rtti.state`, but direct resource mutation is restricted. Send the test event
 through the [privileged debug laboratory](/docs/debug-runtime). The authenticated
 caller needs `command.client.exec` in the [server ACL](/docs/server-acl), and the
-target client needs the trusted bundled `open77_debug` resource.
+target client needs the trusted bundled [`open77_debug`](https://github.com/Open2077/open77-resources/tree/main/system/open77_debug) resource.
 
 Replace `1` below with the target server player ID from `net.state`; keep the
 Windows process ID in `-ProcessId`:

@@ -1,404 +1,511 @@
 # Actions and carrying
 
-> **Experimental.** Names may still change. Proven live on two clients, with a male and a female
-> character and actor and observer swapped, inside two complete jobs: the lifecycle, one winner per
-> spot (`target_claimed`), the cancellations listed under [Refusals](#refusals), carrying across
-> teleports and into a truck, and prompts fired by **E**, **F** and **R**. Built and tested offline
-> only: the fourth choice key (**Y**), `lookAt` targets, markers, an `in_doubt` end, and the vehicle,
-> combat, bucket-change, reservation-timeout and lapsed-claim cancellations. Start with
-> [World interaction](world-interaction.md) for how this fits with the other pieces.
+A technician walks up to a broken vending machine. A card floats above it: **E** Repair the
+machine. They hold **E**, kneel at the machine with a welding torch, and a six-second bar fills.
+When it ends, one fuse leaves their pockets and 40 eddies arrive. If they walk off, die or press
+**X**, the work stops cleanly and nothing is paid. A second technician who presses **E** on the
+same machine reads "Someone is already using this."
 
-`open77_actions` runs the part every role-play action repeats, so a job resource writes only its
-rules:
+`open77_actions` runs all of that for you: the prompt, the claim on the spot, the animation, the
+bar, the checks at the start and at the end, and the clean-up. Your resource writes only its rules:
+who may do it, what it costs, what it pays. It also lets players carry things: pick up a crate,
+walk with it, put it down on the ground or in a truck. It is optional: a resource that wants its
+own prompt or animation keeps using the raw natives.
 
-```text
-prompt ─► server validates ─► claims the spot ─► reserves (your hook) ─► plays the animation
-       ─► server re-checks ─► commits (your hook) ─► puts things where they belong
-```
+New to jobs? Start with [Build a job](world-interaction.md). Two complete jobs use everything here:
+[rp_salvage](https://github.com/Open2077/open77-resources/tree/main/rp/rp_salvage) (cut a wreck,
+carry the crate to a truck, sell it) and
+[rp_streetfood](https://github.com/Open2077/open77-resources/tree/main/rp/rp_streetfood) (cook at a
+grill, serve a customer).
 
-It also carries things: pick a crate up, walk with it, put it down on the ground or in a truck.
+Source: [`open77_actions`](https://github.com/Open2077/open77-resources/tree/next/system/open77_actions).
 
-What it guarantees, so you do not re-implement it:
-
-- **The server decides.** The player's client can say "I chose this prompt" and "cancel mine". It
-  can never say "done". Completion comes from the server's clock, after the server re-checks that
-  the player is alive, close enough, in the same bucket and still allowed.
-- **One winner.** Two players pressing **E** on the same spot: one gets it, the other is told
-  `target_claimed`.
-- **Every way an action can end is handled.** Death, disconnect, getting in a car, a bucket change,
-  combat, walking away, being shoved out of the animation, a newer action, your resource restarting,
-  this resource restarting. Each one releases the spot, stops the animation, gives the player their
-  controls back and tells your `cancel` hook, once.
-- **Late answers cannot touch the next action.** Every message carries an operation id (`opId`); an
-  answer for an old operation is dropped.
-
-Nothing here replaces the raw natives. A resource that wants its own prompt, its own animation call
-or its own inventory keeps using them; this library is optional.
-
-## Add it to a resource
+## Your first action
 
 ```lua
--- my_job/open77.lua
-resource "my_job"
+-- my_repairs/open77.lua
+resource "my_repairs"
 version "1.0.0"
 dependency "open77_actions >=0.1.0"
 server_script "server/main.lua"
 ```
 
-No client script and no permission are needed for actions declared this way: prompts, progress bars
-and control blocking are drawn by `open77_actions`' own client half. `open77_actions` is opt-in
-(`auto_start false`): list it in your server's `resources.load`, then start it with
-`ensure open77_actions` before your job (see the [operator notes](world-interaction.md#operator-notes)).
-
-## A first action
-
 ```lua
--- my_job/server/main.lua
+-- my_repairs/server/main.lua
 local actions = exports.open77_actions
+local broken = { machine_1 = true }   -- your own state
 
 local function declare()
     actions:define({
-        id = "weld",
-        label = "Weld the frame",
-        durationMs = 8000,                      -- the server's clock decides when it is done
-        maxDistance = 2.5,                      -- re-checked at the start AND before the commit
+        id = "repair",
+        label = "Repair the machine",
+        durationMs = 6000,                    -- the server's clock decides when it is done
         animation = { profile = "amb_1056d7_kneel_welder", at = "target" },
-        progress = { label = "Welding" },       -- a bar on the player's screen; X cancels
-        hooks = { validate = "canWeld", commit = "payWeld", cancel = "weldCancelled" },
+        progress = { label = "Repairing" },   -- the bar; X cancels
+        hooks = { validate = "repairValidate", commit = "repairCommit" },
     })
     actions:target({
-        id = "frame_1",
-        position = { x = -1410.2, y = 958.4, z = 23.4 },
-        yaw = 90.0,                             -- the welder faces this way
-        bucket = 0,
-        label = "Car frame",
-        actions = { "weld" },                   -- up to four choices
+        id = "machine_1",
+        position = { x = -1410.2, y = 958.4, z = 23.4 },   -- where the player stands: /pos on the spot
+        yaw = 90.0,                                          -- the way they face while working
+        label = "Broken vending machine",
+        actions = { "repair" },                              -- the E choice
     })
 end
-
 CreateThread(declare)
--- If open77_actions restarts, it forgets everything; declare again.
-AddEventHandler("open77_actions:ready", declare)
-```
+AddEventHandler("open77_actions:ready", declare)   -- it forgets everything when it restarts
 
-`at = "target"` uses `Open77.animations.playAt`: the body is placed on the target (within 5 m)
-facing `yaw`. Workspot animations switch the player to third person while they play and restore the
-view afterwards. The job profiles (`amb_*`, such as this kneeling welder) play only on a client whose
-`Open77RP.archive` ships them; on an older archive the posture does not play
-([status](world-interaction.md#status)).
-
-### Prompts and choice keys
-
-The target's `position` is where the player stands, usually a floor point (read it with `/pos`
-standing on the spot). Its prompt card is drawn `promptHeight` metres above that point and fires as
-soon as the player is within reach and the card is on screen: there is no need to aim at it.
-
-| Target field | Range, default | What it does |
-|---|---|---|
-| `distance` | 0.5–25 m, 2.0 | how close the player must be. The card measures its reach to the lifted point, `sqrt(distance² + promptHeight²)`, which equals the server's 3D test on level ground |
-| `markerDistance` | 1–120 m, 12 | from how far the dot is drawn (raised to the reach when lower) |
-| `promptHeight` | 0–3 m, 1.0 | how high above `position` the card sits. Use a lower value when `position` is already at the height of the thing (a counter top) |
-| `lookAt` | `false` | `true` also needs the crosshair on the card. Use it only for spots closer to each other than their `distance`, where the player picks by looking; otherwise the nearest spot in reach wins. Not proven live |
-| `arrivalRadius` | 0.5–1.5 m, unset | how close `playAt` must bring the body to this spot ([below](#arrival-radius)) |
-| `requires` | `"carrying"` or `"empty"` | offer the card only to players who carry something, or nothing |
-
-**Choice keys.** A target offers up to four actions. They get **E**, **F**, **R** and **Y**, in order,
-unless a choice names its own `key` (one letter or digit). **G** (the put-down key), **T** (it opens
-the chat) and **X** (cancel) are never defaults. A choice may also set its `label`, `holdSeconds` (0–10) and `icon`.
-
-```lua
-actions:target({ id = "wreck_1", position = p, yaw = 180, label = "Wreck", actions = {
-    "cut",                                       -- E, labelled with the action's own label
-    { action = "pry", label = "Pry it open" },   -- F
-    { action = "inspect", key = "Q" },           -- Q instead of R
-} })
-```
-
-The card shows the **first** choice with its key and "+N more" for the others: a player cannot read
-the labels or keys of the second to fourth choices, and **F** is also the game's own interact key.
-Only **E** has been proven live; a choice key fires only while its card is the nearest candidate, so
-a second card close by (a crate next to a wreck) takes it over. Put the common choice first, and give
-rarer choices their own target or a command when players need to discover them.
-
-Prompt labels must be plain ASCII: non-ASCII glyphs such as `€` render as `?` on the card.
-
-Automated tests that inject keys should hold them at least 250 ms. A short tap can fall between two
-input polls of a slow client and never reach the server.
-
-### Arrival radius
-
-`playAt` moves the body onto the spot before the posture starts, and counts it as arrived within
-0.5 m; a body that then drifts past that radius ends the action. Some spots push the body back: the
-market grill of the street-food stall stands behind a counter, and with the default radius every cook
-was interrupted (`player_moving`) because the stall pushed the cook off the anchor. Raise the radius
-for such spots:
-
-```lua
-actions:target({ id = "grill", position = grill, yaw = 64.0, arrivalRadius = 1.0, actions = { "cook" } })
--- or per action, which wins over the target's:
-actions:define({ id = "cook", durationMs = 10000,
-    animation = { profile = "amb_704dff_cook", at = "target", arrivalRadius = 1.0 }, ... })
-```
-
-Both fields take 0.5 to 1.5 m; unset means the platform default, 0.5 m. With 1.0 on the grill and the
-counter, cooks committed on both body rigs. Furniture needs the same: a bar stool at its counter stops
-the body 0.732 m from the anchor, and 1.0 seats it.
-
-### Hooks are exports: check who calls them
-
-Functions cannot cross between resources, so a hook is the **name** of an export in your resource.
-Any resource can call an export, so a hook checks the caller first:
-
-```lua
-local function fromActions() return GetInvokingResource() == "open77_actions" end
-
--- Synchronous: must answer at once (no Wait, no await).
-exports("canWeld", function(ctx)
-    if not fromActions() then return false, "not_owner" end
-    if not isMechanic(ctx.playerId) then return false, "not_a_mechanic" end   -- your rule
+-- A hook is the NAME of one of your exports. Any resource can call an export: check the caller.
+exports("repairValidate", function(ctx)
+    if GetInvokingResource() ~= "open77_actions" then return false, "not_owner" end
+    if not broken[ctx.target.id] then return false, "already_fixed" end   -- your own token
     return true
 end)
 
--- Asynchronous: may Wait or await. Return a table on success, nil + reason on refusal.
-exports("payWeld", function(ctx)
-    if not fromActions() then return nil, "not_owner" end
-    if not exports.open77_actions:verify(ctx.opId, "commit") then return nil, "not_owner" end
-    givePay(ctx.playerId, 45)   -- see "Durable rewards" below for the safe way
-    return { paid = 45 }
-end)
-
-exports("weldCancelled", function(ctx)
-    if not fromActions() then return end
-    print(("weld %s cancelled: %s"):format(ctx.opId, ctx.reason))
+exports("repairCommit", function(ctx)
+    if GetInvokingResource() ~= "open77_actions" then return nil, "not_owner" end
+    if not actions:verify(ctx.opId, "commit") then return nil, "not_owner" end   -- really ours, now
+    broken[ctx.target.id] = nil
+    return { fixed = ctx.target.id }
 end)
 ```
 
-| Hook | When | Called | Answers |
+No client script and no permission are needed: `open77_actions` draws the prompt, the bar and the
+control locks itself. It is opt-in: the operator lists it in `resources.load` and starts it with
+`ensure open77_actions` before your resource. `at = "target"` places the body on the target (up to
+5 m away) facing `yaw`, through `Open77.animations.playAt`; workspot animations switch the player
+to third person while they play. Job postures such as `amb_1056d7_kneel_welder` ship in
+`Open77RP.archive`, so players need a client archive that includes them
+([RP animations](rp-animations.md)).
+
+### What happens when the player presses E
+
+1. The client sends one thing: "I chose `repair` on `machine_1`". It may ask to cancel its own
+   action; it can never say "done".
+2. The server reads the player itself (alive, loaded, not in a vehicle, not aiming, same bucket,
+   within `maxDistance`, 2.5 m by default), then asks your `validate` hook.
+3. The server claims the spot. One player wins; the others are refused `target_claimed`.
+4. Your `reserve` hook runs, if you have one: hold the fuse and the pay here.
+5. The animation plays and the bar fills for `durationMs`.
+6. When the server's clock says done, step 2 runs again (with 0.75 m of slack).
+7. Your `commit` hook runs. This is the one place where value moves.
+8. The spot is released and the player gets their controls back.
+
+Any other end (death, disconnect, **X**, walking off, a car, aiming, being shoved out of the
+animation, a newer action, a restart of either resource) also releases the spot, stops the
+animation, gives the controls back and calls your `cancel` hook once. Every message carries an
+operation id (`opId`), so a late answer for an old action never touches the next one.
+
+| Hook | When | Runs | Answers |
 |---|---|---|---|
-| `validate` | before starting (`ctx.phase = "begin"`) and before committing (`"complete"`) | synchronously | `true`, or `false, reason` |
-| `reserve` | after validation and the spot claim, before the animation | asynchronously | a table (kept as `ctx.reservation`), or `nil, reason` |
-| `commit` | when the server's clock says done and every check passed again | asynchronously | a table (the receipt), or `nil, reason` |
+| `validate` | step 2 (`ctx.phase = "begin"`) and step 6 (`"complete"`) | synchronously: no `Wait`, no `await` | `true`, or `false, reason` |
+| `reserve` | step 4 | asynchronously | a table (kept as `ctx.reservation`), or `nil, reason` |
+| `commit` | step 7 | asynchronously | a table (the receipt), or `nil, reason` |
 | `cancel` | once, on any end that is not a commit | asynchronously | ignored |
-| `marker` | at each `markers` entry (`ctx.marker`) | synchronously | ignored: presentation only |
+| `marker` | at each of the action's `markers` (`ctx.marker`) | synchronously | ignored |
 
-`ctx` carries `opId`, `action`, `playerId`, `bucket`, `phase`, `target = { key, id, position, yaw,
-data }`, `data`, `reservation`, `receipt`, `playbackId`, and `reason` for `cancel`.
+Keep the tables `reserve` and `commit` return under 2 KB. `verify(opId, "reserve" | "commit")`
+answers `true` only for your own operation, in that phase.
 
-### Starting an action from your own code
+## Take a fuse and pay 40 eddies
+
+A progress bar is not a payment. Move value through the
+[`open77_transactions` coordinator](transactions.md): hold it in `reserve`, apply it in `commit`,
+release it in `cancel`. A crash, a retry or a double press then never pays twice. Add
+`dependency "open77_transactions >=0.1.0"` to the manifest, and `reserve = "repairReserve"` and
+`cancel = "repairCancel"` to the action's hooks:
+
+```lua
+local tx = exports.open77_transactions
+local function call(name, ...)   -- mutating coordinator exports yield: use the promise form
+    local promise, why = Open77.exports.call("open77_transactions", name, ...)
+    if not promise then return nil, why end
+    return promise:await()
+end
+
+exports("repairReserve", function(ctx)
+    if GetInvokingResource() ~= "open77_actions" then return nil, "not_owner" end
+    if not actions:verify(ctx.opId, "reserve") then return nil, "not_owner" end
+    local pockets, cash = tx:account(ctx.playerId, "char"), tx:account(ctx.playerId, "cash")
+    if not pockets or not cash then return nil, "no_account" end
+    local txOpId = "repairs:" .. ctx.opId                 -- one business id per action
+    local held, why = call("reserve", { opId = txOpId, kind = "repair", lines = {
+        { item = "fuse", count = 1, from = pockets, to = "sys:repairs" },   -- the fuse is used up
+        { money = 40, from = "sys:repairs", to = cash },                    -- the pay
+    } })
+    if not held then return nil, why end                  -- insufficient_items: no bar starts
+    return { txOpId = txOpId }                            -- becomes ctx.reservation
+end)
+
+exports("repairCommit", function(ctx)
+    if GetInvokingResource() ~= "open77_actions" then return nil, "not_owner" end
+    if not actions:verify(ctx.opId, "commit") then return nil, "not_owner" end
+    local receipt, why = call("commit", ctx.reservation.txOpId)
+    if not receipt then return nil, why end
+    broken[ctx.target.id] = nil
+    return { paid = 40 }
+end)
+
+exports("repairCancel", function(ctx)
+    if GetInvokingResource() ~= "open77_actions" then return end
+    if ctx.reservation and ctx.reason ~= "in_doubt" then tx:cancel(ctx.reservation.txOpId, ctx.reason) end
+end)
+```
+
+If `commit` answers `in_doubt`, `busy` or an export timeout, the library calls it again with the
+same context (`commitRetries`, 2 by default), and the coordinator replays a commit that already
+happened. Still unknown after the retries, the action ends `in_doubt`, not `failed`: leave the hold
+alone and settle it with the coordinator's `status`. An answer that says nothing was applied
+(`store_unavailable`, `coordinator_unavailable`, `conflict`) is retried the same way, then ends
+`failed`. The operator must let `my_repairs` write pockets and create the pay (`writers` and mint
+rules, in [Durable transactions](transactions.md)).
+
+## Tell the player why it was refused
+
+| When | What the player sees by itself |
+|---|---|
+| a prompt is refused at the start (your `validate` hook, the claim, the distance) | a short sentence for common reasons ("Too far away."), otherwise `Refused: <token>`, such as `Refused: already_fixed` |
+| the action ends after the bar started | `Action stopped: <reason>`, except after **X** or a newer action |
+| your `reserve` hook refuses, or runs out of time | nothing: the action ends before anything was shown |
+| the action commits, or your own `request` call is refused | nothing |
+
+So tell the player yourself, from the `open77_actions:transition` event. Every resource receives
+it: filter on `op.owner`.
+
+```lua
+local RESOURCE = GetCurrentResourceName()
+local TEXT = { insufficient_items = "You need a fuse.", no_account = "Your character is not ready." }
+
+AddEventHandler("open77_actions:transition", function(op)
+    if op.owner ~= RESOURCE then return end
+    if op.state == "failed" and op.stage == "reserve" then
+        Open77.chat.send(op.playerId, TEXT[op.reason] or ("You cannot repair this: " .. op.reason))
+    elseif op.state == "committed" then
+        Open77.chat.send(op.playerId, ("Machine repaired: +%d eddies."):format(op.receipt.paid))
+    end
+end)
+```
+
+To word a start refusal yourself, send your message from the `validate` hook before returning
+`false` (the notice still shows). The built-in sentences cover `target_claimed`, `too_far`,
+`carrying`, `not_carrying`, `actor_busy`, `in_combat` and `player_in_vehicle`.
+
+## Start an action from your own code
 
 A prompt is not required. From a command, an NPC event or your own net event:
 
 ```lua
-local op, reason = exports.open77_actions:request(playerId, "weld", "frame_1")
-if not op then print("refused: " .. reason) end
+local op, reason, info = actions:request(playerId, "repair", "machine_1", { supersede = true })
+if not op then Open77.chat.send(playerId, "Refused: " .. reason) end
 ```
 
-`request` answers at once; the end arrives as an event (below). With a `reserve` hook, use the
-asynchronous form if you want to wait for the reservation:
+`request` answers at once with a summary (`op.opId`, `op.state`...), or `nil, reason, info` where
+`info.stage` names the step that refused and `info.retryable` is `true` for `target_claimed`,
+`destination_claimed` and `actor_busy`. The options are `supersede` (replace the player's running
+action, which ends `superseded`) and `data` (up to 2 KB, given to hooks as `ctx.data`). With a
+`reserve` hook, `begin` takes the same arguments and also waits for the reservation; it yields, so
+call it as `Open77.exports.call("open77_actions", "begin", ...):await()` from a thread. A resource
+starts only its own actions; `cancel(opId, reason)` stops one, `status(opId)` and
+`current(playerId)` read the summary.
+
+## Place the prompt and choose its keys
+
+The target's `position` is where the player stands, usually a floor point (stand there, type
+`/pos`). The card is drawn `promptHeight` (1 m) above it and fires once the player is within
+`distance` (2 m) and the card is on screen; there is no need to aim at it. The server then checks
+the action's `maxDistance` (2.5 m): keep it at least as large as the target's `distance`.
+
+A target offers up to four choices, on **E**, **F**, **R** and **Y** in order, unless a choice
+names its own `key` (one letter or digit). **G** (put down), **T** (it opens the chat) and **X**
+(cancel) are never given by default. Each action must be defined first:
 
 ```lua
-CreateThread(function()
-    local op, reason = Open77.exports.call("open77_actions", "begin", playerId, "weld", "frame_1"):await()
-end)
-```
-
-### Following what happens
-
-```lua
-AddEventHandler("open77_actions:transition", function(op)
-    if op.owner ~= GetCurrentResourceName() then return end
-    -- op.opId, op.state ("presenting", "committed", "cancelled", "failed", "in_doubt"), op.reason
-end)
-```
-
-`exports.open77_actions:status(opId)` and `:current(playerId)` read the same summary.
-
-## Durable rewards
-
-A progress bar is not a payment. Anything that moves items or money should go through the
-[`open77_transactions` coordinator](transactions.md) from **your** hooks, so a crash, a retry or a
-double press can never pay twice:
-
-```lua
-local function tx(name, ...) return Open77.exports.call("open77_transactions", name, ...):await() end
-
-exports("salvageReserve", function(ctx)
-    if GetInvokingResource() ~= "open77_actions" then return nil, "not_owner" end
-    local txOpId = "salvage:" .. ctx.opId                 -- one business id per action
-    local r, why = tx("reserve", { opId = txOpId, kind = "salvage", lines = {
-        { capacityG = 2000, from = "sys:salvage", to = "char:" .. subjectOf(ctx.playerId) },
+actions:target({ id = "machine_2", position = { x = -1404.8, y = 961.0, z = 23.4 }, yaw = 90,
+    label = "Vending machine", actions = {
+        "repair",                                              -- E, with the action's own label
+        { action = "inspect", label = "Check the fuse box" },  -- F
+        { action = "restock", key = "Q", holdSeconds = 1 },    -- Q instead of R, held one second
     } })
-    if not r then return nil, why end                     -- e.g. capacity_exceeded: refused before the bar
-    return { txOpId = txOpId }
-end)
-
-exports("salvageCommit", function(ctx)
-    if GetInvokingResource() ~= "open77_actions" then return nil, "not_owner" end
-    return tx("commit", ctx.reservation.txOpId, { lines = rollLoot(ctx) })
-end)
-
-exports("salvageCancel", function(ctx)
-    if GetInvokingResource() ~= "open77_actions" then return end
-    if ctx.reservation then tx("cancel", ctx.reservation.txOpId) end
-end)
 ```
 
-If the commit answers `in_doubt` or `busy`, the library retries it with the same context; the
-coordinator replays a commit that already happened, so it can never apply twice. If the outcome is
-still unknown after the retries, the action ends `in_doubt` (not `failed`): settle it with the
-coordinator's `status`.
+- A card shows its first choice's label and key, then "+N more". The other choices fire on their
+  keys, but the player cannot read them: put the common choice first, give rare ones their own
+  target or a command. **F** is also the game's own interact key.
+- Keys work only on the nearest card in reach: a crate next to the machine takes them over.
+- Use plain ASCII in labels: a character such as the euro sign shows as `?`.
+- `target` with an existing `id` replaces that target; `untarget(id)` removes it.
 
-## Jobs, duty and grades
+### Spots that push the player back
+
+`playAt` counts the body as arrived within 0.5 m of the spot, and a body that drifts past that ends
+the action (`animation_interrupted`). A grill behind its counter, or a bar stool (which stops the
+body 0.73 m from its anchor), pushes the body back. Raise the radius there, up to 1.5 m:
+
+```lua
+actions:target({ id = "grill", position = { x = -397.6, y = 715.1, z = 115.0 }, yaw = 64.0,
+    arrivalRadius = 1.0, actions = { "cook" } })
+-- or per action, which wins over the target's: animation = { ..., arrivalRadius = 1.0 }
+```
+
+## Only on duty: jobs, grades and duty
 
 The library knows nothing about jobs. Plug in your framework:
 
 ```lua
 actions:define({
-    id = "weld", durationMs = 8000,
-    -- asked at the start and again before the commit; any export answering ok | nil, reason
-    eligibility = { resource = "rp_jobs", export = "eligible", args = { job = "mechanic", duty = true } },
-    -- captured at the start; if it changed by the commit (job, grade or duty changed), refused
+    id = "repair", durationMs = 6000,
+    -- asked at the start and before the commit: any export answering true, or nil + reason
+    eligibility = { resource = "rp_jobs", export = "eligible", args = { job = "technician", duty = true } },
+    -- read at the start; if it changed by the commit (job, grade or duty changed), refused
     epochs = { resource = "rp_jobs", read = "workEpoch", event = "rp_jobs:workEpoch" },
 })
 ```
 
-The `event` also ends the running action at once (`stale_job_epoch`), and drops a carried item.
+The eligibility export is called synchronously with `(playerId, args)`; its reason (such as
+`off_duty`) reaches the player, or `not_eligible` when it gives none. Each field also takes a list
+of up to four, which must all pass. When the epoch `event` fires for the player with a new value,
+the running action ends at once (`stale_job_epoch`) and a carried item is dropped.
 
-## Carrying things
+## Carry a crate to a truck
+
+A scrapper finishes cutting a wreck and a crate appears beside it. The card reads **E** Pick up
+scrap crate; they lift it and walk to their truck at walking pace, unable to jump or fire. Others
+see the crate in their hands; in first person it sits low on the right, under a "Put down scrap
+crate" hint. **G** (rebindable in Settings, Key bindings) sets it down in front of them.
 
 ```lua
 actions:carryDefine({
-    id = "scrap_box",
-    model = "crate.cardboard",          -- choose a model that fits two hands; tune `binding` for it
-    label = "scrap box",
-    gripMs = 800,                       -- when the hands close on it (calibrate in game)
-    releaseMs = 1300,                   -- when the hands let go
-    hooks = { pickup = "boxPicked", putdown = "boxPutDown", dropped = "boxDropped" },
+    id = "crate",
+    model = "crate.ammo_box",        -- a box at hand scale
+    label = "scrap crate",           -- the card reads "Pick up scrap crate"
+    hooks = { pickup = "cratePickup", putdown = "cratePutdown", dropped = "crateDropped" },
 })
 
-local itemId = actions:carryPlace("scrap_box", {
-    position = { x = -1408.0, y = 960.1, z = 23.4 }, yaw = 0, bucket = 0,
-    data = { container = "world:7f3a" },          -- your durable id; every hook receives it
+-- A crate on the ground: its pickup prompt (E) appears by itself.
+local itemId = actions:carryPlace("crate", {
+    position = { x = 1369.6, y = -1689.4, z = 49.3 }, yaw = 0, bucket = 0,
+    data = { crate = "crate_17" },   -- your own id: every hook receives it
 })
+
+-- Into the truck, from your own command or prompt.
+RegisterCommand("load", function(source)
+    local truckId = myTruckNear(source)   -- yours: the vehicle id of a truck this player may use
+    if not truckId then return end
+    local op, why = actions:carryPutdown(source, { kind = "vehicle", vehicleId = truckId,
+        offset = { x = 0.0, y = -1.5, z = 1.0 },      -- in the truck's frame: the bed
+        claimKey = "truck:" .. truckId .. ":slot1" }) -- one crate per slot
+    if not op then Open77.chat.send(source, "Cannot load: " .. why) end
+end, false)
 ```
 
-The player walks up, presses **E** ("Pick up scrap box"), lifts it, and walks with it: slower (walk
-pace), no jumping, no firing. **G** (rebindable in Settings, Key bindings) puts it down in front of
-them. Other players see it in their hands; in first person it sits low on the right of the view, with
-a "Put down [G]" hint.
-
-Putting it into a truck is your decision, through your own prompt or command. Vehicle ids are 64-bit
-engine ids; `vehicleId` accepts any whole number up to 2^53.
-
-```lua
-local op, why = actions:carryPutdown(playerId, {
-    kind = "vehicle", vehicleId = truckId,
-    offset = { x = 0.0, y = -1.6, z = 1.1 },   -- in the truck's frame
-    claimKey = "veh:" .. plate .. ":slot2",    -- one crate per slot
-})
-```
-
-**Custody changes only in your `putdown` hook.** The library moves the prop *after* your hook
-commits; it never decides who owns the goods:
+`vehicleId` is the engine's 64-bit vehicle id (any whole number up to 2^53), and the player must
+stand within `vehicleReach` (4 m) of the truck. **Custody changes only in your `putdown` hook**:
+the library moves the prop after your hook commits, and never decides who owns the goods. For a
+durable record, move the crate with a coordinator `transfer` there (into `veh:<plate>:cargo` for a
+truck); if it refuses, return its reason and the player keeps the crate. Lifting moves no value, so
+`cratePickup` can simply check its caller and answer `{ crate = ctx.carry.data.crate }`.
 
 ```lua
-exports("boxPutDown", function(ctx)
+exports("cratePutdown", function(ctx)
     if GetInvokingResource() ~= "open77_actions" then return nil, "not_owner" end
-    local dest = ctx.carry.destination
-    if dest.kind == "vehicle" then
-        local r, why = tx("transfer", { opId = "load:" .. ctx.opId, kind = "load", lines = {
-            { item = "scrap", count = 1, from = ctx.carry.data.container, to = "veh:" .. plateOf(dest.vehicleId) .. ":cargo" },
-        } })
-        if not r then return nil, why end      -- refused: the player keeps carrying it
+    local dest = ctx.carry.destination               -- kind = "ground", "point" or "vehicle"
+    if dest.kind == "vehicle" and truckIsFull(dest.vehicleId) then
+        return nil, "truck_full"                     -- refused: the player keeps carrying it
     end
-    return { placement = dest }                -- or { placement = { kind = "remove" } } once sold
+    saveCrate(ctx.carry.data.crate, dest)            -- yours: write where it is now
+    return { placement = dest }
+end)
+
+exports("crateDropped", function(ctx)   -- ctx.reason says why; ctx.data is the item's data
+    if GetInvokingResource() ~= "open77_actions" then return end
+    saveCrate(ctx.data.crate, { kind = "point", position = ctx.position })
 end)
 ```
 
-| Event of the carry | What happens to the item |
-|---|---|
-| your `pickup` hook refuses | it goes back exactly where it was |
-| your `putdown` hook refuses, or the player cancels | the player keeps carrying it |
-| a server teleport of the carrier (a Warden move) | the hold is suspended and replayed when the player is back, within 15 s: they keep carrying it (`carry_suspended`, then `carry_resumed`) |
-| death, disconnect, getting in a car, a bucket change, combat, the carry pose broken, your resource stopping, a job change | **dropped** at the player's feet; your `dropped` hook is told why; custody unchanged |
-| the truck attachment fails after your commit | retried, then left on the ground (`projection_failed`); the commit stands |
+`placement` says where the prop goes: `{ kind = "ground" }`, `{ kind = "point", position, yaw }`,
+`{ kind = "vehicle", vehicleId, offset, rotation }`, or `{ kind = "remove" }` once the crate is
+sold or handed to another resource (`rp_salvage` hands truck loads to [`rp_cargo`](https://github.com/Open2077/open77-resources/tree/main/rp/rp_cargo) this way). Without
+`placement`, the destination is used.
 
-A restart of your resource or of `open77_actions` removes the props they own: rebuild your items from
-your durable record when you start. The scrapyard reference job puts every crate back at its last
-durable placement, and redraws the ones in a truck bed when the truck is taken out again.
-
-A **drop zone** needs no code of its own: a target that offers the built-in put-down shows a prompt to
-players who carry something, and puts the item on that point (your `putdown` hook sees `ctx.target`,
-and can sell it with `placement = { kind = "remove" }`):
+A target that offers the built-in put-down is a drop zone with no code of its own: its card shows
+only to players who carry something, and the item lands on that point. Your `putdown` hook sees
+`ctx.target`, and sells the crate by answering `{ placement = { kind = "remove" } }`:
 
 ```lua
-actions:target({ id = "scrap_counter", position = counterPos, yaw = 180, requires = "carrying",
-    actions = { { action = "open77_actions:carry_putdown", label = "Sell" } } })
+actions:target({ id = "counter", position = { x = 1375.1, y = -1684.0, z = 49.3 }, yaw = 90,
+    label = "Scrap buyer", requires = "carrying", data = { bay = "sell" },
+    actions = { { action = "open77_actions:carry_putdown", label = "Sell the crate" } } })
 ```
 
-`carryPickup(playerId, itemId)` takes an item out of a truck (players cannot do that from the item's
-prompt), `carrying(playerId)` and `carryGet(itemId)` read the state, `carryRemove(itemId)` deletes an
-item, `carryDrop(playerId)` forces a drop. Only the resource that placed an item may change it.
+### What happens to a carried crate
 
-## Shared spots without an action
+| Event | What happens to the item |
+|---|---|
+| your `pickup` hook refuses | it goes back exactly where it was |
+| your `putdown` hook refuses, or the destination is no longer valid | the player keeps carrying it |
+| the server teleports the carrier | the hold resumes when the player is back; after 15 s away, it is dropped |
+| death, disconnect, a vehicle, a bucket change, combat, the carry pose broken, your resource stopping, a job change | **dropped** at the player's feet; your `dropped` hook gets `ctx.reason`; custody is unchanged |
+| the truck attachment fails after your commit | retried, then left on the ground (`projection_failed`); the commit stands |
 
-Seats, benches and anything else you run yourself can use the same one-winner claims:
+A restart of your resource or of `open77_actions` removes your carry items: place them again from
+your own record when you start and on `open77_actions:ready`, as `rp_salvage` does.
+`carryPickup(playerId, itemId)` starts a pickup from your code, also from a truck bed (players
+cannot lift from a truck through a prompt). `carrying(playerId)` and `carryGet(itemId)` read the
+state, `carryRemove(itemId)` deletes an item, `carryDrop(playerId)` forces a drop. Only the
+resource that placed an item may change it.
+
+## Keep a spot for yourself
+
+Benches and anything else you run yourself can use the same one-winner claims:
 
 ```lua
-local token, why = actions:claim(bucket, "seat:" .. benchId, 60000)   -- or nil, "target_claimed"
+local token, why = actions:claim(bucket, "bench:" .. benchId, 60000)   -- or nil, "target_claimed"
 actions:renewClaim(token, 60000)
 actions:releaseClaim(token)
 ```
 
-Claims are released when your resource stops or reloads. Players seated on world furniture by
-`open77_seating` hold the key `furniture:<catalogue version>:<furniture id>` (see
-[Furniture](furniture.md)): claim the same key to keep players off a table your job uses.
+A claim lasts its time (1 s to 1 h, 30 s by default) unless renewed, and goes when your resource
+stops or reloads; `claimHolder(bucket, key)` says who holds a key. Players seated on world
+furniture hold `furniture:<catalogue version>:<furniture id>` ([Furniture](furniture.md)): claim it
+to keep players off a table your job uses.
 
-## Refusals
+On the server console, `actions.status [playerId]` shows what runs and who carries what,
+`actions.claims [bucket]` lists the claims, and `actions.trace` (`actions.trace off`) logs every
+step of every action.
 
-| Reason | Meaning |
+## Reference
+
+### Action fields
+
+| Field | Default | What it does |
+|---|---|---|
+| `id`, `durationMs` | required | up to 48 letters, digits, `_ . -`; 250 to 600,000 ms on the server's clock |
+| `label` | the id | the choice and bar label |
+| `commitAtMs` | `durationMs` | commit earlier; the animation still runs to the end |
+| `maxDistance` | 2.5 m | the server's distance check (0.5 to 25), plus `completeSlack` (0.75 m) at the end |
+| `animation` | none | `{ profile, at = "self" or "target", yaw, yawOffset, clip, loop = true, required = true, arrivalRadius }`; with `required`, an animation that cannot start fails the action |
+| `progress` | a bar with the label | `{ label, position = "bottom", "top" or "center", style = "bar" or "circle", color = "#rrggbb", cancellable = true }`, or `false` |
+| `claims` | `{ move = true, attack = true }` | controls locked while it runs: `move`, `attack`, `jump`, `walkSpeed` (0.5 to 2.5 m/s); `false` for none |
+| `claim`, `claimTtlMs` | `true`, duration + 30 s | one player per target at a time (`false`: several), for that long (1 s to 1 h) |
+| `cancelOn` | `{ combat = true, vehicle = true, moved = true, weaponDrawn = false }` | which events end it |
+| `moveTolerance` | 1.0 m | without an animation, moving this far ends it (`moved`) |
+| `maxPositionAgeMs` | 2,000 | an older server position is refused (`position_stale`) |
+| `reserveTimeoutMs` | 20,000 | a slower `reserve` hook ends it (`reserve_timeout`) |
+| `commitRetries` | 2 | retries of an unsure `commit` (0 to 5) |
+| `cooldownMs` | 0 | after a commit, the same player waits this long (`actor_busy`) |
+| `supersede`, `requiresTarget`, `whileCarrying` | `false`, `true`, `false` | replace a running action; refuse `request` without a target; allow it while carrying |
+| `markers` | none | up to 8 `{ name, atMs }`: the `marker` hook and event fire then |
+
+### Target fields
+
+| Field | Default | What it does |
+|---|---|---|
+| `id`, `position`, `actions` | required | up to 48 characters; where the player stands; 1 to 4 choices |
+| a choice | | an action id, or `{ action, label, key, holdSeconds (0 to 10), icon }` |
+| `yaw`, `bucket` | none, 0 | the way the player faces with `at = "target"`; the routing bucket |
+| `label`, `description` | none | the fallback choice label; the choices' description |
+| `distance`, `promptHeight` | 2.0 m, 1.0 m | reach of the card (0.5 to 25); its height above `position` (0 to 3, lower for a counter top) |
+| `markerDistance` | 12 m | from how far the dot is drawn (1 to 120) |
+| `marker`, `color`, `icon` | `dot` | the dot's shape ([Interactions](interactions.md)), `#rrggbb`, a short icon |
+| `lookAt` | `false` | also require the crosshair on the card, for spots closer together than their `distance` |
+| `arrivalRadius` | 0.5 m | how close `playAt` must bring the body (0.5 to 1.5) |
+| `requires` | none | `"carrying"` or `"empty"`: offer the card only to players with, or without, an item |
+| `data` | none | your table (up to 1 KB), given to hooks as `ctx.target.data` |
+
+### Carry fields
+
+| Field | Default | What it does |
+|---|---|---|
+| `id`, `model`, `label` | required, required, the id | a prop alias such as `crate.ammo_box`; the name in "Pick up ..." |
+| `reach`, `vehicleReach` | 2.0 m, 4.0 m | pickup distance (0.5 to 5); distance to a truck (1 to 8) |
+| `dropAhead` | 0.7 m | how far in front of the player **G** or a drop sets it (0 to 2) |
+| `gripMs`, `releaseMs` | 60 % of the pickup clip, 55 % of the put-down clip | when the hands close and open, on the server clock: calibrate them |
+| `pickupProfile`, `holdProfile`, `putdownProfile` | `carry_pickup`, `carry`, `carry_putdown` | the animations; `pickupMs` and `putdownMs` override the clip lengths |
+| `binding` | on the chest, between the hands | `{ bone, offset, rotation, firstPerson }`; another model may need its own offsets; `firstPerson = "hide"` hides it in first person |
+| `claims`, `cancelOn` | `{ walkSpeed = 1.2, jump = true, attack = true }`, `{ combat = true, weaponDrawn = true }` | what the carrier cannot do; aiming or a drawn weapon drops it (a vehicle always does) |
+| `hooks`, `eligibility`, `epochs` | none | `validate`, `pickup`, `putdown`, `dropped`, `cancel`; job checks as for actions |
+
+### Hook context
+
+| Field | What it holds |
 |---|---|
-| `target_claimed`, `destination_claimed` | someone else holds it; retryable |
-| `too_far`, `wrong_bucket`, `position_stale`, `position_unavailable` | the server's own position read refused it |
-| `player_not_alive`, `player_not_ready`, `player_in_vehicle`, `in_combat`, `player_unavailable` | the player cannot act now |
-| `actor_busy` | the player already has an action (or a cooldown); pass `supersede` to replace it |
-| `carrying`, `not_carrying`, `item_unavailable` | carry state |
-| `destination_invalid`, `destination_too_far`, `vehicle_unavailable` | put-down destination |
-| `not_eligible`, `stale_job_epoch` | your eligibility provider or epoch guard |
-| `refused_by_owner`, `hook_failed`, your own token | your hook said no, or raised |
-| `animation_refused`, `attach_failed` | presentation could not start |
-| `not_owner`, `unknown_action`, `unknown_target`, `invalid_*` | a programming error |
+| `opId` | the operation id: derive your business ids from it |
+| `action`, `actionId`, `owner` | `"my_repairs:repair"`, `"repair"`, `"my_repairs"` |
+| `playerId`, `bucket`, `phase` | the player, their bucket at the start, and `begin`, `complete`, `reserve`, `commit`, `cancel` or `marker` |
+| `kind` | `action`, `carry_pickup` or `carry_putdown` |
+| `target` | `{ key, id, position, yaw, data }`, or `nil` without a target |
+| `data`, `reservation`, `receipt` | the `data` option of `request`; what `reserve` and `commit` returned |
+| `carry` | carry hooks: `{ itemId, kind, data, destination }` |
+| `reason`, `marker` | `cancel`: why it ended; `marker`: the marker's name |
+| `playbackId`, `startedAtMs`, `generation`, `ownerGeneration` | animation and restart bookkeeping |
 
-Ends of a running action: `cancelled_by_player`, `dead`, `disconnected`, `bucket_changed`, `vehicle`,
-`combat`, `moved`, `animation_interrupted`, `superseded`, `owner_stopped`, `resource_stopping`,
-`claim_lost`, `reserve_timeout`, `stale_job_epoch`, and a commit's own reason (`failed`) or
-`in_doubt`.
+The `dropped` hook gets `{ itemId, kind, playerId, reason, position, data, sessionId }`. The exports
+are `define`, `undefine`, `target`, `untarget`, `request`, `begin`, `cancel`, `status`, `verify`,
+`current`, `claim`, `renewClaim`, `releaseClaim`, `claimHolder`, `carryDefine`, `carryPlace`,
+`carryPickup`, `carryPutdown`, `carryDrop`, `carryRemove`, `carryGet` and `carrying`. All answer at
+once except `begin`; a refusal answers `nil, reason`.
 
-Seen live, each with the spot released: `target_claimed` (two players on one wreck, two cooks on one
-grill), `item_unavailable` (two players lifting one crate), `actor_busy` (a second press during a
-sale, paid once), `cancelled_by_player` (**X** on the bar), `animation_interrupted` (a teleport during
-the animation), `superseded`, `dead`, `stale_job_epoch` (clock-off, which also dropped a carried
-crate), `owner_stopped`, `resource_stopping` (no posture or movement lock left), and `failed` with
-`store_unavailable` while the database was paused: nothing moved, and the next action committed once
-the database was back. A coordinator answer that says nothing was applied (`store_unavailable`,
-`coordinator_unavailable`, `conflict`) is retried with the same operation id and then ends `failed`,
-never `in_doubt`.
+### Events
 
-What the player sees without your help: a refusal at the start (your `validate` hook, the claim, the
-distance) as `Refused: <token>`, or a short sentence for the common ones; an end after the bar started
-as `Action stopped: <reason>` (not for **X** or `superseded`). A refusal by your `reserve` hook ends
-the action `failed`, `stage = "reserve"`, before anything is shown, and the client says nothing: tell
-the player from `open77_actions:transition`, which carries `reason` and `stage`.
+Server events every resource receives: filter on `owner`.
 
-## Limits
+| Event | Payload |
+|---|---|
+| `open77_actions:ready` | `{ generation, version }`: `open77_actions` started; declare again |
+| `open77_actions:transition` | `{ opId, action, actionId, owner, playerId, bucket, target, state, reason, stage, receipt, kind, itemId, playbackId, startedAtMs, completeAtMs, trailing }` |
+| `open77_actions:marker` | `{ opId, marker, owner, playerId, playbackId }` |
+| `open77_actions:carry` | `{ phase, itemId, kind, owner, state, carrier }`, plus `playerId`, `reason`, `opId` or `placement` by phase |
 
-- Prompts: the player sees at most the 12 nearest eligible prompts at once (the prompt service draws
-  at most 32 anchors per resource); 64 actions and 64 targets per resource.
-- Grip and release are scheduled on the server clock, not read from the animation: calibrate them.
-- The walk-pace and no-jump restrictions are applied by the player's client; the server sees
-  positions, not inputs.
-- An unarmed punch is seen only through the carry pose breaking, not as a server event.
-- There are no station "recipes", by design: the two reference jobs share the lifecycle but differ in
-  custody, in where value comes from and in the two-player hand-over, and no recipe format would have
-  removed code from either. Add a stage with your hooks or a second action
-  ([how](world-interaction.md#add-a-custom-stage-without-platform-changes)).
+`state` goes `validating`, `reserving` (with a `reserve` hook), `presenting`, `committing`, and ends
+`committed`, `cancelled`, `failed` or `in_doubt`. `stage` names the step an end came from:
+`request`, `validate`, `reserve`, `present`, `complete`, `commit`, `cancel` or `carry`. `target` is
+the target key (`"my_repairs:machine_1"`). Carry phases: `placed`, `gripped`, `picked_up`,
+`put_down`, `dropped`, `removed`, `carry_suspended`, `carry_resumed`, `projection_failed`, and
+`pickup_<state>` or `putdown_<state>` when a pickup or put-down ends without a commit.
+
+### Why was it refused
+
+| Reason | What it means | What to do |
+|---|---|---|
+| `target_claimed` | another player holds the spot | wait: it frees up when they finish |
+| `destination_claimed` | another item holds that put-down `claimKey` | use another slot |
+| `actor_busy` | the player already runs an action, or `cooldownMs` has not passed | wait, or pass `supersede = true` |
+| `too_far` | beyond `maxDistance`, or the item's `reach` | move closer; keep `maxDistance` at least the target's `distance` |
+| `destination_too_far` | over `reach` + 1 m (5 m at most) from the drop point, or beyond `vehicleReach` | stand closer |
+| `wrong_bucket` | not in the bucket of the target, item or truck | check the target's `bucket` |
+| `position_stale`, `position_unavailable`, `player_not_ready`, `player_unavailable` | no fresh position yet, still loading in, or gone | retry once the player is in the world |
+| `player_not_alive`, `player_in_vehicle`, `in_combat` | dead, in a vehicle, aiming or firing | retry once alive, on foot and not aiming |
+| `carrying` | hands full, and the action has no `whileCarrying` | put the item down, or set `whileCarrying = true` |
+| `not_carrying`, `item_unavailable` | nothing in hands; the item is gone or someone else is lifting it | nothing |
+| `destination_invalid`, `vehicle_unavailable` | a malformed destination; no vehicle with that id | check `kind`, `vehicleId`, `claimKey` |
+| `not_eligible`, or the provider's token | your eligibility export said no | clock in, or get the job |
+| `stale_job_epoch` | job, grade or duty changed since the start | start again |
+| `refused_by_owner` | your hook said no without a reason | return your own token, such as `already_fixed` |
+| `hook_failed` | your hook raised an error | read the server log |
+| `animation_refused`, `attach_failed` | the animation could not start; the carried prop could not be held | check the profile or the model, or set `required = false` |
+| `owner_unavailable`, `not_owner`, `unknown_action`, `unknown_target`, `invalid_*` | a reload since `define`, someone else's action or item, a failed `verify`, a wrong id or table | declare again; fix the call |
+| `cancelled_by_player`, `superseded` | **X** on the bar; a newer action | nothing |
+| `dead`, `disconnected`, `bucket_changed`, `vehicle`, `combat` | the player died, left, changed bucket, got in a car, aimed or fired | nothing |
+| `moved` | moved past `moveTolerance` (an action without animation), or a server move took the body | nothing |
+| `animation_interrupted` | the posture broke: shoved, pushed off the spot, teleported | raise `arrivalRadius` at spots that push back |
+| `claim_lost`, `reserve_timeout` | the claim ran out (`claimTtlMs`); your `reserve` hook was too slow (the player sees nothing) | raise the limit, or make the hook faster |
+| `owner_stopped`, `resource_stopping`, `cancelled` | your resource or `open77_actions` stopped; `cancel(opId)` without a reason | nothing |
+| `in_doubt` | the commit's outcome is still unknown after the retries | settle it with the coordinator's `status` |
+
+A start reason can also end a running action, when the end-of-time checks refuse it (`too_far`,
+`not_eligible`, your token). A `commit` that answers `nil, reason` ends the action `failed` with
+that reason.
+
+### Limits
+
+- 64 actions and 64 targets per resource, 512 targets per server, 128 carry items per resource,
+  4 choices per target, 8 markers per action.
+- A player sees at most the 12 nearest prompts, and their client sends at most six choices a second.
+- The walk pace and jump lock of a carry are applied by the player's client; the server sees
+  positions, not inputs. An unarmed punch ends a carry only if it breaks the carry pose.
+- There are no station "recipes": add a stage with your own hooks or a second action, as
+  [Build a job](world-interaction.md) shows.
+
+See also: [Durable transactions](transactions.md), [Furniture](furniture.md),
+[Interactions](interactions.md), [Player interactions](player-interactions.md),
+[RP animations](rp-animations.md), [Props](props.md), [UI kit](ui-kit.md).

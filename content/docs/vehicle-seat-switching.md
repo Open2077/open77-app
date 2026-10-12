@@ -291,7 +291,7 @@ Existing `vehicleEntered`/`vehicleLeft` and server equivalents continue to
 describe the change of seat. Use the dedicated switch events to distinguish an
 internal move from leaving the car.
 
-The optional `resources/examples/open77_seat_switch` resource provides
+The optional [`resources/examples/open77_seat_switch`](https://github.com/Open2077/open77-resources/tree/main/examples/open77_seat_switch) resource provides
 `/seats move <seat>`, `/seats auto on|off`, `/seats cancel`, and `/seats status`,
 plus `/seats local <seat>` and `/seats localauto on|off` to exercise client calls.
 

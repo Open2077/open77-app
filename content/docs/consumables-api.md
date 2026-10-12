@@ -5,7 +5,7 @@ selected item type and **usable charges**. On the server, the same API takes a
 `playerId` first and sends a correlated request to that player's client.
 
 Requires a client exposing `Open77.consumables`, a server runtime providing the
-server methods, and `open77_weapons` resource 0.2.0. Treat the API as experimental
+server methods, and [`open77_weapons`](https://github.com/Open2077/open77-resources/tree/main/system/open77_weapons) resource 0.2.0. Treat the API as experimental
 and check compatibility before enabling consumable loadouts.
 
 Use `kind = "grenade"` for the grenade hotkey or `"healing"` for inhalers and

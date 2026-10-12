@@ -51,8 +51,8 @@ retry instead of looping every frame.
 
 ## Built-in `/pos` and `/rot` commands
 
-The official debug resource (`open77_debug`) registers these two authenticated commands; the
-clipboard permission that backs them is declared by `open77_chat`:
+The official debug resource ([`open77_debug`](https://github.com/Open2077/open77-resources/tree/main/system/open77_debug)) registers these two authenticated commands; the
+clipboard permission that backs them is declared by [`open77_chat`](https://github.com/Open2077/open77-resources/tree/main/system/open77_chat):
 
 ```text
 /pos

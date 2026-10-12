@@ -228,7 +228,7 @@ and missing manifest capability return `false, reason`. `roles` returns the
 matching role labels, or an empty array for an unknown session. Neither writes
 roles or grants rights. Continue registering privileged commands as restricted.
 
-The standalone `open77_admin` resource uses these bindings for `/admin` and
+The standalone [`open77_admin`](https://github.com/Open2077/open77-resources/tree/main/system/open77_admin) resource uses these bindings for `/admin` and
 rechecks commands at execution. See its README and role examples for deployment.
 Its `/pos` and `/rot` utilities intentionally require no admin ACL.
 

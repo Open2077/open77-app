@@ -19,7 +19,7 @@ Each viewer renders the feed on their own client. The server distributes definit
 
 Use matching client/server builds and the Open77 archive containing the capture-slot assets. A client resource calling `Open77.remoteCamera` needs `camera.capture`; add `local.events` to subscribe to the lifecycle events below. Aim raycasts need `world.query`, and parent-frame conversions need `world.transform`.
 
-For provider-managed cameras, start `open77_remote_camera` and declare this dependency in the consuming resource's `open77.lua`:
+For provider-managed cameras, start [`open77_remote_camera`](https://github.com/Open2077/open77-resources/tree/main/system/open77_remote_camera) and declare this dependency in the consuming resource's `open77.lua`:
 
 ```lua
 dependency "open77_remote_camera >=0.3.0"

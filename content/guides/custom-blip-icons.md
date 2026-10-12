@@ -168,7 +168,7 @@ Curves and thick strokes can generate multiple polygons. A small file can still 
 
 ## Ready-made icons: open77_icons
 
-The standalone `open77_icons` Lua resource bundles **2,112 Lucide icons**. It
+The standalone [`open77_icons`](https://github.com/Open2077/open77-resources/tree/main/standalone/open77_icons) Lua resource bundles **2,112 Lucide icons**. It
 requires a client implementing SVG blips with the expanded limits above. This
 integration is experimental. It needs no LightRP/Freeroam framework, font
 installation or runtime CDN.

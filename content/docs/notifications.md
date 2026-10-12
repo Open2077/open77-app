@@ -5,6 +5,8 @@
 The WebUI is transparent and never captures input. Copy is inserted with DOM `textContent`, queues
 are bounded, and notifications disappear automatically when their owner stops or reloads.
 
+Source: [`open77_notifications`](https://github.com/Open2077/open77-resources/tree/main/system/open77_notifications).
+
 > **Not the only toast in the build.** `Open77.hud.notify`, `log` and `menu` write to Cyberpunk's
 > *own* notification pipelines — see [vanilla toasts](hud-visibility.md#vanilla-toasts). Reach for
 > those when you want something that looks like the game's own popup and costs no dependency and no

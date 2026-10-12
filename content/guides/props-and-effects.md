@@ -188,7 +188,7 @@ The exact alias strings are not reproduced here, because 183 rows is a wall
 and the list moves. Two places always have the current one: `admin.props.catalog`
 in the terminal, or the **Props** tab of the admin panel, where the alias
 buttons are grouped by family and clicking one fills the model box without
-spawning anything. (`prop.catalog`, from the bundled `open77_props` resource,
+spawning anything. (`prop.catalog`, from the bundled [`open77_props`](https://github.com/Open2077/open77-resources/tree/main/system/open77_props) resource,
 answers client-side only — see below.)
 
 **Not every alias is guaranteed to draw.** An alias whose target the asset
@@ -489,7 +489,7 @@ If you want something genuinely **held as gear**, that is a different API:
 `Open77.heldItems.hold(playerId, record, options?)` puts a real *item* in one of
 the ten equipment slots through the engine's own transaction system, so it
 behaves as equipment in first and third person. The price is that it takes an
-item record rather than an entity path, needs `open77_helditems` running on the
+item record rather than an entity path, needs [`open77_helditems`](https://github.com/Open2077/open77-resources/tree/main/system/open77_helditems) running on the
 client, competes with `Open77.weapons` over `WeaponRight`, and nothing persists
 it across a world entry. `props.attach` binds a prop; `heldItems.hold` equips
 an item. The older `attach(id, { kind = , id = }, opts)` spelling still works
@@ -694,7 +694,7 @@ seen it blink.
 
 ## Trying it from the terminal
 
-The bundled `open77_props` and `open77_effects` resources ship admin
+The bundled `open77_props` and [`open77_effects`](https://github.com/Open2077/open77-resources/tree/main/system/open77_effects) resources ship admin
 commands. Type them into the developer terminal that `²` opens in Cyberpunk.
 They are the fastest way to survey a scene and to check that an alias renders
 before you write it into Lua.

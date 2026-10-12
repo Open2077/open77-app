@@ -156,7 +156,7 @@ Resource stop/reload and disconnect clean up native markers, including pending s
 
 Markers are local and are **not automatically replicated**. A server resource can send validated definitions to relevant clients, but visual markers are never proof of a player's position, routing bucket, permission or completed interaction.
 
-The optional `open77_markers` package exports the same seven functions. Its markers belong to that facade package, not automatically to each resource calling its exports. Prefer the native API directly when you need your own resource's quota and automatic cleanup. The separate `open77_worldui` POI facade still exposes only ring/cylinder presets and prompt colors; use this native API for the full shape and RGBA options.
+The optional [`open77_markers`](https://github.com/Open2077/open77-resources/tree/main/system/open77_markers) package exports the same seven functions. Its markers belong to that facade package, not automatically to each resource calling its exports. Prefer the native API directly when you need your own resource's quota and automatic cleanup. The separate [`open77_worldui`](https://github.com/Open2077/open77-resources/tree/main/system/open77_worldui) POI facade still exposes only ring/cylinder presets and prompt colors; use this native API for the full shape and RGBA options.
 
 ## See also
 

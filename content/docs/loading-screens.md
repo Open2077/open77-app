@@ -231,7 +231,7 @@ triggers Cyberpunk's loading screen to check the cover and HUD restoration;
 short teleports may not open one.
 
 The repository also includes the optional
-`resources/examples/open77_loading_screen` resource. Enable it using
+[`resources/examples/open77_loading_screen`](https://github.com/Open2077/open77-resources/tree/main/examples/open77_loading_screen) resource. Enable it using
 `examples/open77_loading_screen` in `resources.load`; its resource name is
 `open77_loading_screen`. Run only one loading cover at a time.
 

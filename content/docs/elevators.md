@@ -3,7 +3,7 @@
 Synchronize elevators through the dedicated server while retaining native platform movement, sounds, collision and floor markers.
 
 For synchronized landing doors, enable [networked doors](doors.md). The
-`open77_doors` service discovers each landing's native lift/floor relationship
+[`open77_doors`](https://github.com/Open2077/open77-resources/tree/main/system/open77_doors) service discovers each landing's native lift/floor relationship
 and projects its server-approved state; it never opens a landing just because a
 player is near an empty shaft. Cabin inner-door animation stays with the lift.
 
@@ -164,7 +164,7 @@ AddEventHandler("open77:elevator:streamedOut", function(id) end)
 
 ## Reference resource and commands
 
-`resources/system/open77_elevators` is auto-started and is both a working package and an example for other
+[`resources/system/open77_elevators`](https://github.com/Open2077/open77-resources/tree/main/system/open77_elevators) is auto-started and is both a working package and an example for other
 developers. Server resources use the native `Open77.elevators` namespace directly; client-side
 convenience exports are also provided. Its restricted commands use the normal Open77 ACL:
 

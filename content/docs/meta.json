@@ -734,31 +734,31 @@
       "id": "world-interaction",
       "title": "Jobs & world interaction",
       "group": "Game systems",
-      "description": "Experimental libraries for role-play jobs: server-owned actions and carrying, durable item and money transactions, and seats on the world's own furniture.",
+      "description": "Build role-play jobs: prompts and timed animations on real spots, items and money moved exactly once, carrying crates, and seats on the world's own furniture.",
       "pages": [
         {
           "slug": "world-interaction",
           "kind": "guide",
           "nav": "Build a job",
-          "description": "Experimental: how prompts, `open77_actions`, the transaction coordinator, durable containers, carrying and seats fit together; who decides what; a small job built step by step with every server check explained; custom stages; operator notes and a FiveM mapping."
+          "description": "Start here: a vending-machine repair job built step by step, then grown with skill checks, questions and two-step work; why an action is refused; operator notes and a FiveM mapping."
         },
         {
           "slug": "actions",
           "kind": "guide",
           "nav": "Actions & carrying",
-          "description": "Experimental: `open77_actions`, the server-owned action lifecycle (validate, claim, reserve, animate, commit) with every cancellation path, prompt keys, one-winner claims, job eligibility, and carrying crates into trucks."
+          "description": "`open77_actions`: prompts on spots, timed animations, checks at the start and the end, hooks that pay, one player per spot, job and duty gates, and carrying crates into trucks."
         },
         {
           "slug": "transactions",
           "kind": "guide",
           "nav": "Durable transactions",
-          "description": "Experimental: `open77_transactions` moves items and money exactly once across pockets, wallets, vehicles, stashes and ground crates, with receipts, replay, mint caps, crash recovery and durable world containers."
+          "description": "`open77_transactions`: pay for a job, give items, sell between players, stock a stall and keep crates across restarts, every move made exactly once with a receipt."
         },
         {
           "slug": "furniture",
           "kind": "guide",
           "nav": "Sitting & leaning",
-          "description": "Experimental: `open77_seating` over the `open77_furniture` catalogue: seat prompts, `/sit` and `/stand`, server-validated seats on the world's real chairs, stools, benches and walls, one-winner claims and pedestrians kept off players' seats."
+          "description": "`open77_seating`: players sit and lean on the world's real chairs, stools, benches and walls with E or `/sit`, one player per seat, and seats kept free during a job."
         }
       ]
     },

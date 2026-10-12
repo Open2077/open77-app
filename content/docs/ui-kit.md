@@ -7,6 +7,8 @@ Widgets share one WebUI surface and a common design system. Resources do not nee
 `lib.notify` already exists and is not here: toasts are
 [`open77_notifications`](notifications.md). Use that.
 
+Source: [`open77_uikit`](https://github.com/Open2077/open77-resources/tree/main/system/open77_uikit).
+
 ## Add the dependency
 
 ```lua

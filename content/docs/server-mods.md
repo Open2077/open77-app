@@ -258,8 +258,8 @@ With the flag on:
   a join that did not carry the confirmation.
 - Warden's Mods page shows a red `unsecured` chip next to the set digest.
 
-The loaders themselves are resources, so several worlds can share them. `resources/assets/loaders/archivexl` and
-`resources/assets/loaders/tweakxl` each wrap the official release zip in a `preload_mod` and carry the upstream
+The loaders themselves are resources, so several worlds can share them. [`resources/assets/loaders/archivexl`](https://github.com/Open2077/open77-resources/tree/main/libraries/archivexl) and
+[`resources/assets/loaders/tweakxl`](https://github.com/Open2077/open77-resources/tree/main/libraries/tweakxl) each wrap the official release zip in a `preload_mod` and carry the upstream
 version in their manifest; a world declares what it needs and the server starts the loaders first:
 
 ```lua

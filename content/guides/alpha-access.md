@@ -72,7 +72,7 @@ cross-resource calls do not turn a client export into a server export.
 
 For character actions, read the [RP animation guide](/docs/rp-animations) and its
 linked client/server API entries. For a working gamemode example, browse the
-[Freeroam source](https://github.com/Open2077/freeroam).
+[Freeroam source](https://github.com/Open2077/open77-resources/tree/main/gamemodes/freeroam).
 
 ## Alpha expectations
 

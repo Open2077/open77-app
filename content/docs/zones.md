@@ -4,6 +4,8 @@ Define world-space areas for shops, safe zones, checkpoints and other gameplay r
 
 `Open77.zones.contains` uses the same Lua implementation on the client and server, including boundary and vertex handling. Use client queries for presentation and server queries to validate gameplay.
 
+Source: [`open77_zones`](https://github.com/Open2077/open77-resources/tree/main/system/open77_zones).
+
 ## Presentation and validation are different jobs
 
 **The client zone service is presentation. It is never proof.**

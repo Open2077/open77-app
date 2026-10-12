@@ -235,7 +235,7 @@ Options: `ignoreFrustum` (default `true`) plays even when the NPC is off-screen;
 Requires `world.npcs` and ownership, like every NPC mutator. The line rides the existing
 effect one-shot to every client in the NPC's routing bucket; a client that does not have the
 body streamed resolves no target and drops it, which is the same rule an entity-bound sound
-follows. On the client the bundled `open77_effects` resource queues the engine's own
+follows. On the client the bundled [`open77_effects`](https://github.com/Open2077/open77-resources/tree/main/system/open77_effects) resource queues the engine's own
 `SoundPlayVo` event on the puppet through `Open77.sfx.playVoice`, which a client resource may
 also use for a purely local bark (see [Effects](effects.md)).
 

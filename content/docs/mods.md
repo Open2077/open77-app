@@ -113,7 +113,7 @@ server_script "server/main.lua"
   wrapping folder (`MyMod/archive/pc/mod/…`) must be stripped.
 - Up to eight packages per resource, 1 byte to 64 MiB each; every declared path must exist.
 - A dependency must itself be in `resources.load`. The loaders ship as resources
-  (`resources/assets/loaders/archivexl`, `resources/assets/loaders/tweakxl`) that wrap the upstream release zip, so several worlds
+  ([`resources/assets/loaders/archivexl`](https://github.com/Open2077/open77-resources/tree/main/libraries/archivexl), [`resources/assets/loaders/tweakxl`](https://github.com/Open2077/open77-resources/tree/main/libraries/tweakxl)) that wrap the upstream release zip, so several worlds
   share one copy and the server starts them first.
 - `requiredMods.enabled` must be `true`. Executable content (a `.dll`, a `.reds`, CET Lua, `.asi`)
   in a preload is refused unless the server is [unsecured](server-mods.md#unsecured-mode) or the
@@ -222,7 +222,7 @@ fix* (Nexus 28744); CET is listed only for its spawn command and is not needed h
    archive mounted and the tweak records registered.
 
 6. **Spawn it.** The freeroam `/car` command accepts any `Vehicle.*` record when
-   `Config.vehicles.allowCustomModels` is `true` (`resources/gamemodes/freeroam/shared/config.lua`):
+   `Config.vehicles.allowCustomModels` is `true` ([`resources/gamemodes/freeroam/shared/config.lua`](https://github.com/Open2077/open77-resources/blob/main/gamemodes/freeroam/shared/config.lua)):
 
    ```text
    /car Vehicle.aventador_svj_01

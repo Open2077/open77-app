@@ -2,7 +2,7 @@
 
 Create server-owned NPCs and control their identity, routing bucket, health, tasks and simulation authority. Clients project nearby NPCs into the world but cannot create or mutate their canonical state.
 
-The reference implementation is [`resources/system/open77_npcs`](../resources/system/open77_npcs/README.md).
+The reference implementation is [`resources/system/open77_npcs`](https://github.com/Open2077/open77-resources/blob/main/system/open77_npcs/README.md).
 
 Spawn directly from `Character.*` record IDs, without registering a
 virtual template. Browse the [NPC record catalogue](npc-catalogue.md) for IDs, appearances

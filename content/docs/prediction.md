@@ -16,7 +16,7 @@ outcome is still the server's. Client and server must run the same Open77 build.
 
 | Layer | What it provides | What it needs |
 |---|---|---|
-| **Open77 client** (native) | Car against car (`carContact`), car against a network NPC opted in with [`behavior.vehicleContactEnabled`](npc-behavior.md#vehicle-contact-damage) (`carContact`), car against player (`playerContact`), door (`door`, on the network doors of the bundled `open77_doors` service) and blast (`blast`) prediction. | Nothing: always on. Compiled defaults: every family on, and no new prediction starts above a 250 ms round trip. |
+| **Open77 client** (native) | Car against car (`carContact`), car against a network NPC opted in with [`behavior.vehicleContactEnabled`](npc-behavior.md#vehicle-contact-damage) (`carContact`), car against player (`playerContact`), door (`door`, on the network doors of the bundled [`open77_doors`](https://github.com/Open2077/open77-resources/tree/main/system/open77_doors) service) and blast (`blast`) prediction. | Nothing: always on. Compiled defaults: every family on, and no new prediction starts above a 250 ms round trip. |
 | **`open77_cyberware`** (bundled system resource, already running) | Melee (`melee`), Ground Slam (`slam`) and quickhack (`hack`) knockdown prediction. | The gamemode's combat policy, published with the local client event [`open77_prediction:policy`](#melee-ground-slam-and-quickhack-predictions); Freeroam publishes one. Without it these three never predict. |
 | **`open77_prediction`** (bundled platform resource, starts automatically) | Only the operator layer: the per-family switches, the round-trip ceiling, the [`open77.prediction` state bag key](#the-published-policy), [telemetry](#operator-controls), the `prediction` admin command and the [`restrict` export](#gamemode-restrictions) for gamemodes. | Nothing depends on it. Without it, clients keep their compiled defaults and the server has no switches and no telemetry. |
 
@@ -136,7 +136,7 @@ finishes normally. An unknown round trip, before the first measurement, does not
 automatically, so its code is not in your `resources` folder. Do not copy it into your
 resources; the bundled one is the one that runs. Its source is published for reference only,
 read-only:
-[open77_prediction on GitHub](https://github.com/Open2077/open77-rp-examples/tree/main/platform/open77_prediction).
+[open77_prediction on GitHub](https://github.com/Open2077/open77-resources/tree/main/system/open77_prediction).
 
 **If `server.jsonc` selects resources with a `resources.load` allowlist, add it** to keep the
 switches, the admin command and the telemetry. A resource the list does not select is never
@@ -247,7 +247,7 @@ end)
 
 ## Melee, Ground Slam and quickhack predictions
 
-The three action families are started by the bundled `open77_cyberware` resource, and only
+The three action families are started by the bundled [`open77_cyberware`](https://github.com/Open2077/open77-resources/tree/main/system/open77_cyberware) resource, and only
 where the gamemode has published its combat policy. Without that policy they **fail closed**:
 they never predict. This is deliberate. Only the gamemode knows whether a hit can land at all:
 its PvP switch, the bucket it plays in, its safe zones and its damage multipliers. A client
@@ -260,7 +260,7 @@ The gamemode publishes the policy from a client script with the local event
 Nothing goes over the network and no permission is needed. Freeroam does this for the street
 bucket and its spawn safe zones. A complete example resource is published for reference; copy
 its `client/main.lua` into your gamemode and fill the values from your own configuration:
-[prediction_policy_example on GitHub](https://github.com/Open2077/open77-rp-examples/tree/main/platform/prediction_policy_example).
+[prediction_policy_example on GitHub](https://github.com/Open2077/open77-resources/tree/main/rp/prediction_policy_example).
 
 | Field | Meaning |
 |---|---|

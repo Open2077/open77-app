@@ -156,12 +156,12 @@ and the precise native playback validation limits.
 | `revision` | `revision()` | Last canonical appearance revision. |
 | `characterKey` | `characterKey()` | Durable character key associated with the synchronized appearance. |
 
-See the package README at `resources/system/open77_appearance/README.md` for the transaction lifecycle.
+See the package README at [`resources/system/open77_appearance/README.md`](https://github.com/Open2077/open77-resources/blob/main/system/open77_appearance/README.md) for the transaction lifecycle.
 
 ### `open77_equipment`
 
-There is no `open77_clothing` package. Client-side clothing lives in `resources/open77_equipment`,
-and the wardrobe it can hide lives in `resources/open77_wardrobe`; `Open77.clothing` is a
+There is no `open77_clothing` package. Client-side clothing lives in [`resources/open77_equipment`](https://github.com/Open2077/open77-resources/tree/main/standalone/open77_equipment),
+and the wardrobe it can hide lives in [`resources/open77_wardrobe`](https://github.com/Open2077/open77-resources/tree/main/standalone/open77_wardrobe); `Open77.clothing` is a
 **server** namespace whose requests this package answers.
 
 | Export | Signature | Result |
@@ -625,7 +625,7 @@ See [Weather](weather.md). This package intentionally exposes no client mutation
 | `list` | `list()` | Snapshots of every POI owned by the caller. |
 | `dump` | `dump()` | Diagnostic: logs and returns the native marker registry, including `rendered`. |
 
-Mode-agnostic; both official consumers (`resources/gamemodes/pursuit`, `resources/gamemodes/race`) call it
+Mode-agnostic; both official consumers ([`resources/gamemodes/pursuit`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/pursuit), [`resources/gamemodes/race`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/race)) call it
 unmodified. See [World-anchored POIs](worldui.md).
 
 ### `open77_zones`

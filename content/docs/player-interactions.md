@@ -6,7 +6,7 @@ An accepted interaction confirms server admission, not successful native animati
 
 ## Setup
 
-The server must load `open77_player_interactions`, `open77_animations` and the
+The server must load [`open77_player_interactions`](https://github.com/Open2077/open77-resources/tree/main/system/open77_player_interactions), [`open77_animations`](https://github.com/Open2077/open77-resources/tree/main/system/open77_animations) and the
 matching client animation/proxy archives. The default server configuration loads
 the new system resource. Existing custom configurations must add it explicitly.
 

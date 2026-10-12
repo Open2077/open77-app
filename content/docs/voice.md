@@ -9,7 +9,7 @@ scope is only a request.
 
 ## Enable the reference resource
 
-`open77_voice` is an auto-start reference package. Its manifest requests `voice.manage` on the
+[`open77_voice`](https://github.com/Open2077/open77-resources/tree/main/system/open77_voice) is an auto-start reference package. Its manifest requests `voice.manage` on the
 server and `voice.client`, `input.actions`, and `ui.nameplates` on the client. The default PTT key is
 `N`. The pause menu has a dedicated **VOICE** tab for:
 
@@ -73,7 +73,7 @@ PCM or Opus payloads.
 
 ## `open-voice` gameplay package
 
-`open-voice` is the pma-voice-style gameplay layer and auto-starts after
+[`open-voice`](https://github.com/Open2077/open77-resources/tree/main/system/open-voice) is the pma-voice-style gameplay layer and auto-starts after
 `open77_voice`. The native resource remains the only capture/PTT/VAD/codec
 driver. `open-voice` adds a retained bottom-right HUD and an authoritative reach-mode policy. The
 CyberM/Open77 panel renders the real normalized native input level, encoder transmission state,

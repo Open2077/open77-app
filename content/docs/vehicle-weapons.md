@@ -7,7 +7,7 @@ Read mounted armament from client Lua for vehicle HUDs and diagnostics. The API 
 Requires client and server **2.31.13+op77.53** or later, with compatible network protocols, on Cyberpunk 2077 **2.31 / build 23100**. The feature was introduced with protocol **1.24**; protocol **1.23** cannot join a **1.24** session.
 
 This is **experimental** functionality, not a claim that every armed model
-or visual effect is fully validated. Keep `open77_vehicles` loaded for the shared
+or visual effect is fully validated. Keep [`open77_vehicles`](https://github.com/Open2077/open77-resources/tree/main/system/open77_vehicles) loaded for the shared
 vehicle helpers and diagnostic commands. Native replication runs in the client
 and server binaries; a HUD resource does not need to forward shots itself.
 
@@ -68,7 +68,7 @@ invulnerability and Lua damage arbitration still apply.
 Damage requires an admitted projectile terminal and a plausible canonical target in the same bucket. Repeated projectile/target receipts are deduplicated; clients cannot set the damage value. NPC damage remains experimental.
 
 A mounted missile, cannon or exploding round that the server admitted also moves nearby cars and
-knocks down NPCs on every screen through the `open77_weapons` blast relay, which listens to the
+knocks down NPCs on every screen through the [`open77_weapons`](https://github.com/Open2077/open77-resources/tree/main/system/open77_weapons) blast relay, which listens to the
 reserved server event `onVehicleWeaponExplosion(playerId, vehicleId, weapon, x, y, z, bucket,
 recordRadius, projectileId)`. See [the blast relay](weapons-api.md#explosions-on-every-screen-the-blast-relay).
 
