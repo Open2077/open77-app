@@ -484,8 +484,8 @@
       "target": "content/docs/hud-visibility.md",
       "slug": "hud-visibility",
       "title": "Vanilla HUD visibility",
-      "bytes": 12495,
-      "sha256": "0fdb8e9000b2a54837fff6f08e417f51bdb75c9b9ab07ee4b343ca01a3ad7840",
+      "bytes": 12757,
+      "sha256": "24b7c6d55e54c1e8e7b65933904667660ed07aad8583b96dabb8f909fc483cc0",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "e86331d8e4533deefdc86c65f0ccfce0d8525ec315a6be96b8e675d1db6da723",
@@ -538,8 +538,8 @@
       "target": "content/docs/world-interaction.md",
       "slug": "world-interaction",
       "title": "World interaction: build a job",
-      "bytes": 34011,
-      "sha256": "dd4845f9b354d61aae32cc2e940c7a2008eed59b2243af54770196d2402c8372",
+      "bytes": 34729,
+      "sha256": "908487495487c0b169c6d6b15f9f3d2f6bce8a1ce7055755d0d0bcebdaf2bca7",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "90050d5538375c9f43ab8085b42145d3fc88329e461e291b62e06fea5f037f81",
