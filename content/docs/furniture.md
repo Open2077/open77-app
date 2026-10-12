@@ -1,20 +1,23 @@
-# Furniture: sit and lean
+# Furniture: sitting and leaning
 
-A player walks into a bar. Over a real bar stool, a prompt appears: **E Sit on the stool**. They
-press E and sit down at the counter; a banner says "Press X to stand up", and X stands them up. A
-second player who tries the same stool is told "Someone is already sitting there." and takes the
-next one. A pedestrian already sitting on a stool keeps it: that stool shows no prompt.
+Let players sit together at a café, use stools in a bar or wait on a bench. With seating enabled,
+supported furniture gets a nearby prompt: **E** to sit or lean, **X** to stand up. A seat already
+used by another player is unavailable.
 
-Two resources do this. `open77_furniture` is a catalogue of about 38,000 pieces of furniture in
-Night City, with the poses the game authored on each. `open77_seating` turns them into prompts and
-seats. The server decides everything: distance, routing bucket, whether the player is alive, in a
-car or fighting, and who already sits there.
+You can enable this without writing Lua or installing a job, inventory or economy. Two resources
+provide it: `open77_furniture` holds a catalogue of city furniture locations and poses;
+`open77_seating` adds prompts, player placement and occupancy rules. When `open77_pedestrians`
+is running, it also coordinates seats used by those NPCs.
 
-Building a job with prompts, animations and pay? See [Build a job](world-interaction.md).
+The catalogue includes about 38,000 furniture entries, but only supported playable poses are
+offered. This is not automatic support for every visible chair, spawned prop or custom interior.
+Use the coverage section below and check the furniture at your venue.
+
+To connect seating to a café or another job, see [Jobs and world interaction](world-interaction.md).
 
 Source: [`open77_furniture`](https://github.com/Open2077/open77-resources/tree/next/system/open77_furniture), [`open77_seating`](https://github.com/Open2077/open77-resources/tree/next/system/open77_seating).
 
-## Let players sit on any chair
+## Enable seating
 
 Add the resources to `resources.load` ([selecting resources](server-resources.md)), then start them
 from the server console, in this order:
@@ -57,8 +60,9 @@ Players can now sit with the prompts, with `/sit` (the nearest free seat within 
 | Walls | Lean on the wall | 1 m in front of the wall | about 50 |
 | Counters | Lean on the counter | 1 m back from the counter | about 30 |
 
-By default only seats whose pose is verified for players are offered: about 16,000 pieces of
-furniture. Set `open77_seating_verification` to `all` to also offer about 5,600 more, mostly wall
+By default, seating offers entries from supported player-pose families: about 16,000 pieces of
+furniture. This does not mean every individual location has a clear approach and exit; check
+the seats you want to use. Set `open77_seating_verification` to `all` to offer about 5,600 more, mostly wall
 leans and chairs, at the risk of a player clipping into the furniture. If the spot beside a seat is
 blocked by a step or a wall, the player is told "Something is in the way." and put back.
 

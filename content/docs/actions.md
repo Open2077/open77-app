@@ -1,26 +1,37 @@
 # Actions and carrying
 
-A technician walks up to a broken vending machine. A card floats above it: **E** Repair the
-machine. They hold **E**, kneel at the machine with a welding torch, and a six-second bar fills.
-When it ends, one fuse leaves their pockets and 40 eddies arrive. If they walk off, die or press
-**X**, the work stops cleanly and nothing is paid. A second technician who presses **E** on the
-same machine reads "Someone is already using this."
+Use `open77_actions` when an activity needs a prompt, an animation, a duration and a result:
+repair a terminal, cook a dish, inspect a wreck or carry a crate. It provides the progress bar,
+checks whether the player can act, prevents two workers using an exclusive spot and cleans up
+the animation and controls when work ends.
 
-`open77_actions` runs all of that for you: the prompt, the claim on the spot, the animation, the
-bar, the checks at the start and at the end, and the clean-up. Your resource writes only its rules:
-who may do it, what it costs, what it pays. It also lets players carry things: pick up a crate,
-walk with it, put it down on the ground or in a truck. It is optional: a resource that wants its
-own prompt or animation keeps using the raw natives.
+Your Lua resource supplies the requirements and result. The action library does not define your
+recipes, inventory or pay rates. Connect those through its hooks—the functions it calls before,
+after or when cancelling work.
 
-New to jobs? Start with [Build a job](world-interaction.md). Two complete jobs use everything here:
-[rp_salvage](https://github.com/Open2077/open77-resources/tree/main/rp/rp_salvage) (cut a wreck,
-carry the crate to a truck, sell it) and
-[rp_streetfood](https://github.com/Open2077/open77-resources/tree/main/rp/rp_streetfood) (cook at a
-grill, serve a customer).
+This page is the reference for Lua authors. For an introduction and existing jobs, see
+[Jobs and world interaction](world-interaction.md). For a complete example with installation,
+test items and payment, follow [Build your first Lua job](build-a-job.md).
+
+## Action, target and hook
+
+| Term | Meaning | Example |
+|---|---|---|
+| Action | What the player does. Defines the label, duration and animation. | Repair, taking six seconds. |
+| Target | Where an action is offered. Several targets can use the same action. | A work spot beside each of three machines. |
+| Hook | A Lua function your resource exports for an action to call. | Check for a spare part or apply a payment. |
+
+These are configured work spots. To attach a simple prompt directly to another kind of object
+or NPC, see [contextual interactions](interactions.md). Adding a target does not change a vanilla
+device's functionality.
 
 Source: [`open77_actions`](https://github.com/Open2077/open77-resources/tree/next/system/open77_actions).
 
 ## Your first action
+
+This example adds a repair prompt, animation and an in-memory repaired flag. It does not consume
+items, pay a reward or save the machine's state across restarts. The next section adds item and
+payment hooks; the [full tutorial](build-a-job.md) includes their setup.
 
 ```lua
 -- my_repairs/open77.lua
@@ -80,16 +91,17 @@ to third person while they play. Job postures such as `amb_1056d7_kneel_welder` 
 
 ### What happens when the player presses E
 
-1. The client sends one thing: "I chose `repair` on `machine_1`". It may ask to cancel its own
-   action; it can never say "done".
-2. The server reads the player itself (alive, loaded, not in a vehicle, not aiming, same bucket,
-   within `maxDistance`, 2.5 m by default), then asks your `validate` hook.
-3. The server claims the spot. One player wins; the others are refused `target_claimed`.
-4. Your `reserve` hook runs, if you have one: hold the fuse and the pay here.
-5. The animation plays and the bar fills for `durationMs`.
-6. When the server's clock says done, step 2 runs again (with 0.75 m of slack).
-7. Your `commit` hook runs. This is the one place where value moves.
-8. The spot is released and the player gets their controls back.
+1. **Check requirements.** The library checks the player's distance, life state, vehicle,
+   combat and world instance, then calls `validate` with `ctx.phase = "begin"`.
+2. **Reserve the spot and materials.** An exclusive target admits one worker. If present,
+   your `reserve` hook holds the required items or money before any animation starts.
+3. **Present the work.** The animation and progress bar run for `durationMs`.
+4. **Apply the result.** The library checks the player again and calls `validate` with
+   `ctx.phase = "complete"`, then calls `commit` to apply your result.
+5. **Finish.** The library releases the spot and its control claims.
+
+The server times completion. `maxDistance` defaults to 2.5 m, with 0.75 m of slack at completion.
+Use the hooks to add your server's own requirements and item/payment operations.
 
 Any other end (death, disconnect, **X**, walking off, a car, aiming, being shoved out of the
 animation, a newer action, a restart of either resource) also releases the spot, stops the
@@ -98,9 +110,9 @@ operation id (`opId`), so a late answer for an old action never touches the next
 
 | Hook | When | Runs | Answers |
 |---|---|---|---|
-| `validate` | step 2 (`ctx.phase = "begin"`) and step 6 (`"complete"`) | synchronously: no `Wait`, no `await` | `true`, or `false, reason` |
-| `reserve` | step 4 | asynchronously | a table (kept as `ctx.reservation`), or `nil, reason` |
-| `commit` | step 7 | asynchronously | a table (the receipt), or `nil, reason` |
+| `validate` | steps 1 (`ctx.phase = "begin"`) and 4 (`"complete"`) | synchronously: no `Wait`, no `await` | `true`, or `false, reason` |
+| `reserve` | step 2 | asynchronously | a table (kept as `ctx.reservation`), or `nil, reason` |
+| `commit` | step 4 | asynchronously | a table (the receipt), or `nil, reason` |
 | `cancel` | once, on any end that is not a commit | asynchronously | ignored |
 | `marker` | at each of the action's `markers` (`ctx.marker`) | synchronously | ignored |
 
@@ -109,9 +121,10 @@ answers `true` only for your own operation, in that phase.
 
 ## Take a fuse and pay 40 eddies
 
-A progress bar is not a payment. Move value through the
-[`open77_transactions` coordinator](transactions.md): hold it in `reserve`, apply it in `commit`,
-release it in `cancel`. A crash, a retry or a double press then never pays twice. Add
+To consume a part and pay the worker together, use
+[`open77_transactions`](transactions.md): hold the transfer in `reserve`, apply it in `commit`
+and release an unused hold in `cancel`. Retrying the same transaction id returns its existing
+result instead of applying another payment. A new id can pay again. Add
 `dependency "open77_transactions >=0.1.0"` to the manifest, and `reserve = "repairReserve"` and
 `cancel = "repairCancel"` to the action's hooks:
 
@@ -267,6 +280,14 @@ of up to four, which must all pass. When the epoch `event` fires for the player 
 the running action ends at once (`stale_job_epoch`) and a carried item is dropped.
 
 ## Carry a crate to a truck
+
+Use the carry helper for the visible pickup, carrying pose and put-down interaction. Your
+resource still owns the goods and must save their contents and placement. If you use the RP
+pack, start with `rp_salvage` and `rp_cargo` for a complete inventory and vehicle integration.
+
+The following is an integration sketch. Supply `myTruckNear`, `truckIsFull` and `saveCrate`
+from your vehicle access and storage code; they are not Open77 exports. Also register the
+`cratePickup` hook described below. The snippets do not form a standalone cargo job.
 
 A scrapper finishes cutting a wreck and a crate appears beside it. The card reads **E** Pick up
 scrap crate; they lift it and walk to their truck at walking pace, unable to jump or fire. Others
@@ -504,7 +525,7 @@ that reason.
 - The walk pace and jump lock of a carry are applied by the player's client; the server sees
   positions, not inputs. An unarmed punch ends a carry only if it breaks the carry pose.
 - There are no station "recipes": add a stage with your own hooks or a second action, as
-  [Build a job](world-interaction.md) shows.
+  [Build your first Lua job](build-a-job.md) shows.
 
 See also: [Durable transactions](transactions.md), [Furniture](furniture.md),
 [Interactions](interactions.md), [Player interactions](player-interactions.md),

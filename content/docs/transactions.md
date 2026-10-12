@@ -1,21 +1,44 @@
-# Durable transactions
+# Items, payments and storage
 
-A technician repairs a broken vending machine: one fuse leaves their pockets and 40 eddies arrive
-in their wallet. Then the server crashes mid-payment, the player presses the key twice, or the
-database drops for a few seconds, and a naive script takes two fuses, pays twice, or takes the fuse
-and never pays.
+Use `open77_transactions` to save the item and money changes that belong together. A recipe can
+consume ingredients and create a meal in one operation. A sale can transfer that meal to the
+customer and pay the business in the same operation.
 
-`open77_transactions` moves items and money **exactly once**. Each operation is one database
-transaction with an id you choose, and it leaves a receipt: ask again with the same id and you get
-the same receipt, never a second payment. Your resource keeps its own rules (who may repair, what a
-fuse costs); the coordinator only moves value.
+An **operation** is one group of transfers. They are saved together in a database transaction:
+all of its lines commit, or none do. Its operation id identifies the result, so retrying the
+same id returns a saved receipt without repeating the transfer. Creating a new id creates a
+new operation; your job must keep the original id when retrying an uncertain payment.
 
-New to jobs? Start with [Build a job](world-interaction.md), which shows the whole repair action;
-the hooks these calls live in are described in [Actions](actions.md).
+This page is for authors integrating inventory, recipes, sales or storage. Server owners
+enabling an existing job should start with [Jobs and world interaction](world-interaction.md).
+For a worked Lua example, see [Build your first Lua job](build-a-job.md).
+
+## Choose your inventory integration
+
+| Your server uses… | Integration to use |
+|---|---|
+| The RP pack's inventory and economy | Define items through `rp_inventory`; use its asynchronous transfer operations and `rp_economy` sales/payments. Follow the salvage or street-food example. |
+| Your own inventory and economy | Use the coordinator directly and decide which resource manages each account, item definition and capacity. |
+| No inventory yet; you want to learn | Follow the repair tutorial, which creates test pockets and fuses directly. |
+
+The RP inventory's `transactions` backend uses this coordinator underneath. Its legacy
+synchronous exports can acknowledge a queued change before it is saved. New job code should
+wait for asynchronous transfer results before treating an item exchange as complete.
+
+The coordinator saves the transfers you submit. It does not also save a machine's repaired
+state, deliver a notification or apply a health effect. Your resource must manage those results
+and their recovery separately. Avoid treating a durable payment as proof that every step of a
+job has finished.
 
 Source: [`open77_transactions`](https://github.com/Open2077/open77-resources/tree/next/system/open77_transactions), [`open77_containers`](https://github.com/Open2077/open77-resources/tree/next/system/open77_containers).
 
-## The short version
+## Reserve, commit and cancel
+
+For timed work, reserve the planned transfer before the animation starts. Commit it after the
+work succeeds, or cancel the reservation if it ends before committing. The three numbered
+blocks below belong in separate action hooks; the cancel block is an alternative to committing,
+not a step to run after a successful commit. Complete hook definitions are in the
+[repair tutorial](build-a-job.md#step-3-the-four-hooks).
 
 ```lua
 -- my_repairs/server/main.lua: each step runs inside one of your action's hooks
@@ -51,11 +74,11 @@ answers its result, or `nil, reason, info`; `info.retryable` says whether trying
 ## Five ideas
 
 1. **One operation is one database transaction**: all its lines commit together, or none do.
-2. **The operation id makes it happen once**: committing an id again returns its stored receipt
-   with `replay = true` and moves nothing, so a retry, a double press or a restart cannot pay twice.
+2. **Reuse the id for a retry**: committing an id again returns its stored receipt with
+   `replay = true` and moves nothing. A new id is another operation, even for the same player and job.
 3. **Reserve holds value before the work**, so a player with no fuse is refused before the bar.
-4. **Commit makes it final, cancel releases it**: nothing moves before the commit, so a cancelled
-   bar leaves nothing to undo.
+4. **Commit makes it final, cancel releases an unused hold**: nothing moves before the commit.
+   If the database stops answering during commit, resolve that result before deciding it failed.
 5. **`in_doubt` means "not sure yet"**: the database stopped answering mid-commit. Retry with the
    **same** id, or ask `status(opId)`; a new id could pay twice.
 

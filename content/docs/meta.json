@@ -734,31 +734,39 @@
       "id": "world-interaction",
       "title": "Jobs & world interaction",
       "group": "Game systems",
-      "description": "Build role-play jobs: prompts and timed animations on real spots, items and money moved exactly once, carrying crates, and seats on the world's own furniture.",
+      "description": "Add jobs and social activities to your server: workstations, shared animations, carrying, storage, payments and seating.",
       "pages": [
         {
           "slug": "world-interaction",
           "kind": "guide",
-          "nav": "Build a job",
-          "description": "Start here: a vending-machine repair job built step by step, then grown with skill checks, questions and two-step work; why an action is refused; operator notes and a FiveM mapping."
+          "nav": "Overview & setup",
+          "description": "Choose and enable job resources, customize the salvage and street-food examples, and understand which world interactions are supported."
+        },
+        {
+          "slug": "build-a-job",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Build your first job",
+          "title": "Build your first Lua job",
+          "description": "Create a repair activity in Lua: place a work spot, choose an animation, require a part, pay the worker and handle cancellation."
         },
         {
           "slug": "actions",
           "kind": "guide",
           "nav": "Actions & carrying",
-          "description": "`open77_actions`: prompts on spots, timed animations, checks at the start and the end, hooks that pay, one player per spot, job and duty gates, and carrying crates into trucks."
+          "description": "Lua reference for timed actions, work spots, eligibility, hooks and carrying. Connect your job rules to prompts, animations and progress bars."
         },
         {
           "slug": "transactions",
           "kind": "guide",
-          "nav": "Durable transactions",
-          "description": "`open77_transactions`: pay for a job, give items, sell between players, stock a stall and keep crates across restarts, every move made exactly once with a receipt."
+          "nav": "Items, payments & storage",
+          "description": "Connect inventories and wallets, save recipes and sales as one operation, handle payment retries and create persistent world containers."
         },
         {
           "slug": "furniture",
           "kind": "guide",
           "nav": "Sitting & leaning",
-          "description": "`open77_seating`: players sit and lean on the world's real chairs, stools, benches and walls with E or `/sit`, one player per seat, and seats kept free during a job."
+          "description": "Enable seating on supported city furniture, check your venue's seats and approaches, and call seating from your own Lua resources."
         }
       ]
     },
