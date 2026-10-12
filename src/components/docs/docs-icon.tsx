@@ -14,6 +14,7 @@ const paths: Record<string, string> = {
   world: "m12 2 9 5v10l-9 5-9-5V7l9-5m0 10v10M3 7l9 5 9-5",
   map: "m3 5 6-3 6 3 6-3v17l-6 3-6-3-6 3V5m6-3v17m6-14v17",
   targeting: "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16m0-3v6m0 10v6M1 12h6m10 0h6m-11-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4",
+  "world-interaction": "M4 9h16v11H4V9m-1-5h18v5H3V4m7 9h4",
   interfaces: "M3 3h18v18H3V3m0 5h18M9 8v13",
   cameras: "M4 6h4l2-3h4l2 3h4v14H4V6m4 7a4 4 0 1 0 8 0 4 4 0 0 0-8 0",
   audio: "M3 9h4l5-5v16l-5-5H3V9m13-2a7 7 0 0 1 0 10m3-13a11 11 0 0 1 0 16",

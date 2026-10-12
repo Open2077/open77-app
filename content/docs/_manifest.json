@@ -3,7 +3,7 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 101,
+  "guides": 105,
   "apiEntries": 1733,
   "files": [
     {
@@ -26,8 +26,8 @@
       "target": "content/docs/README.md",
       "slug": "index",
       "title": "Open77 resource documentation",
-      "bytes": 19969,
-      "sha256": "5e2bc99697d94736a2a0ed537f1069c1eb1f94b39402c39ff9adac6d778dffa3",
+      "bytes": 21162,
+      "sha256": "3c46397cbf250fdf5450aaf0d552e3610bb0f9d5c813c8b273939142d3a16f1a",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "810d219b7f95e33bedb17bb6f0efc96ae920ecf58308bbcf8b6e0b22e50bb0e7",
@@ -49,7 +49,8 @@
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries"
         },
-        "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
+        "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts.",
+        "worldInteractionAmendment": "Four index rows; see worldInteractionDocumentation."
       }
     },
     {
@@ -530,6 +531,65 @@
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "d57e5889e7469aa2adf7b35d75efe4d9312d51d787d365a7465f0b13c2cc9009"
+      }
+    },
+    {
+      "source": "wiki/world-interaction.md",
+      "target": "content/docs/world-interaction.md",
+      "slug": "world-interaction",
+      "title": "World interaction: build a job",
+      "bytes": 33945,
+      "sha256": "7444f975ce9ae76df2f80e4276d145ac4428e2ff332d89eecd1ccffd874b4002",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "90050d5538375c9f43ab8085b42145d3fc88329e461e291b62e06fea5f037f81",
+        "amendment": "See worldInteractionDocumentation."
+      }
+    },
+    {
+      "source": "wiki/actions.md",
+      "target": "content/docs/actions.md",
+      "slug": "actions",
+      "title": "Actions and carrying",
+      "bytes": 20928,
+      "sha256": "50cd99a908579abe956a42e727b8f4a1206df247277be1d176d1a1d82b694660",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "fa498e3294c2c0da2c9cf12d0ea2b2024df6b6d193f9cba891c5b70546c78677",
+        "amendment": "See worldInteractionDocumentation."
+      }
+    },
+    {
+      "source": "wiki/transactions.md",
+      "target": "content/docs/transactions.md",
+      "slug": "transactions",
+      "title": "Durable transactions",
+      "bytes": 17980,
+      "sha256": "9033f3fae512f870a32c14804fb5ba80b6ef2e98476793d736b9b5663682ddf0",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "d6d7d4982c4ca41255e46838c60a4e0566620154234301efa012afbca32e3180",
+        "mergedSections": [
+          {
+            "source": "wiki/props.md",
+            "upstreamSnapshotSha256": "374060a5f4685f0a210ac232b22b686d55d57d252cc71835d120b8cb5f235f55",
+            "section": "Durable world containers"
+          }
+        ],
+        "amendment": "See worldInteractionDocumentation."
+      }
+    },
+    {
+      "source": "wiki/furniture.md",
+      "target": "content/docs/furniture.md",
+      "slug": "furniture",
+      "title": "Furniture: sit and lean",
+      "bytes": 7795,
+      "sha256": "a64d547b02f22dfc6deaeb50b7e6559e684e0727eb9f57c0f5d2f615f0d1d8a1",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "149f00cb1091a189abd9a5762c949969c94f4375bfb6ab9e2cc01f728ed06311",
+        "amendment": "See worldInteractionDocumentation."
       }
     },
     {
@@ -2208,5 +2268,18 @@
       "client:Open77.rtti.unhook"
     ],
     "apiMode": "merge-selected-cards-preserve-other-site-entries"
+  },
+  "worldInteractionDocumentation": {
+    "tool": "manual site adaptation of the platform wiki (no sync:wiki)",
+    "upstreamRevision": "a33b7b1d676199b65b4b6129cbc71fc55e4d3576",
+    "upstreamBranch": "feat/world-interaction",
+    "sourceWorkingTreeDirty": false,
+    "scope": "Experimental world-interaction guides (open77_actions, open77_transactions, open77_containers, open77_seating, open77_furniture) adapted for the site; internal provenance, plan rows and lab notes removed; API data unchanged",
+    "guides": [
+      "world-interaction",
+      "actions",
+      "transactions",
+      "furniture"
+    ]
   }
 }
