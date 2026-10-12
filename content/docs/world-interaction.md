@@ -81,8 +81,10 @@ Proven live on two clients, with both body rigs, actor and observer swapped, on 
   clocking off (`stale_job_epoch`), a restart of the job resource (`owner_stopped`) and a stop of
   `open77_actions` (`resource_stopping`, with no posture or movement lock left behind). Each one
   released the spot.
-- **Prompts by key**: **E**, **F** and **R** on an `open77_actions` card each start their own choice;
-  the fourth choice key is **Y** (**T** opens the chat, so it is never a default).
+- **Prompts by key**: **E**, **F**, **R** and **Y** on an `open77_actions` card each start their own
+  choice while that card is the nearest one (**T** opens the chat, so it is never a default).
+- **Refusals on screen**: a refusal at the start shows its sentence or `Refused: <token>` in the
+  banner, for example "REFUSED: ALREADY_FIXED" or "YOU ARE NOT SEATED.".
 - **Carrying**: pickup, walking, putting down on the ground and into a truck bed, unloading into the
   hands, carrying across a teleport, a drop on disconnect, on clock-off and on an owner restart;
   crates rebuilt after a restart of `open77_actions` and after a full server restart.
@@ -94,18 +96,21 @@ Proven live on two clients, with both body rigs, actor and observer swapped, on 
 - **Seating**: NPC occupancy refused, one winner per seat, neighbours on adjacent stools, two players
   on one bench, **E** sits, **X** stands, exits, a pedestrian scared off a seat not walking back onto
   the player, a bar seat and a bed (lying, both body types) ([details](furniture.md#status)).
+- **The job panel** of the RP pack: units and wear, a full stash, the cargo column with keys given
+  and revoked, the Give dialog, closing on reconnect, death and distance, and a store fenced by a
+  database outage (nothing lost or duplicated).
+- **This page's job**: the walkthrough below as written (an empty pocket refused, a repair paid,
+  `already_fixed` refused on screen, **X** during the bar with the fuse kept), and the four
+  [custom stages](#add-a-custom-stage-without-platform-changes) merged into one resource.
 
 Built and covered by offline tests, not yet proven live:
 
-- the fourth choice key of a card (**Y**): the card shows only the first choice's label, and a choice
-  key fires only while that card is the nearest candidate;
-- `lookAt = true` targets; cancellation by a vehicle, combat, a bucket change, a reservation timeout
-  or a lapsed claim; an action that ends `in_doubt`; an action's own `markers`;
+- `lookAt = true` targets; cancellation of an action by a vehicle, combat, a bucket change, a
+  reservation timeout or a lapsed claim; an action that ends `in_doubt`; an action's own `markers`;
 - `open77_containers` `refill`; the coordinator's retention sweep and `world:` expiry on old data.
 
-Not covered: MySQL 8 (only MariaDB was exercised), and the patterns in
-[Add a custom stage](#add-a-custom-stage-without-platform-changes), which use documented contracts
-but have not been run as written.
+Not covered: MySQL 8 (only MariaDB was exercised). A card shows only its first choice's label; the
+other choices answer to their keys.
 
 **Job animations need a newer archive.** The job profiles (`amb_*`, such as the kneeling welder and
 the market-grill cook) play only on a client whose `Open77RP.archive` ships them. The archives in
@@ -360,7 +365,10 @@ is a word of letters, digits, `_`, `:`, `.` or `-`, up to 64 characters; anythin
 There is no station or recipe language, by design: the two reference jobs share the lifecycle but
 differ in custody, in where value comes from, and in the two-player hand-over, and no recipe format
 would have removed code from either. A stage is your hooks, and when you need more, a second action.
-The patterns below use only documented contracts; they have not been run live as written.
+The four patterns below were run live together in one resource: with no skill the second stage was
+refused `skill_too_low`; with skill 2 the inspection chained into the repair, the question appeared,
+**Enter** paid 40 inside a 60 reservation, and **Esc** ended the repair `declined` at `reserve` with
+the fuse untouched.
 
 ### A rule of your own: a skill check
 

@@ -218,9 +218,13 @@ if not ok then print(reason) end
 -- Replace what is on screen instead of queueing behind it.
 Open77.hud.notify("ARREST WARRANT", { replace = true })
 
--- Borrow a vanilla preset's styling. With a preset, the text is optional.
+-- A vanilla preset: the engine shows the preset's own localized title.
 Open77.hud.notify(nil, { preset = "combat_blocked" })
 ```
+
+**A preset replaces your text.** Called with `"Refused: already_fixed"` and the `action_blocked`
+preset, the popup showed only the localized "ACTION IMPOSSIBLE". To tell the player *why*, use the
+default `generic` preset, which draws your text in the same banner.
 
 `options.preset` accepts `generic` (the default), `action_blocked`, `combat_blocked`,
 `cant_save_action`, `cant_save_combat`, `cant_save_quest`, `cant_save_death`, `save_slots_full`,
