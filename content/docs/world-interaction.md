@@ -21,6 +21,7 @@ use compatible server resources and client animation assets, and test your chose
 | A custom work activity | Inspect, repair, collect or process something at a location you choose. | [Lua job tutorial](build-a-job.md) |
 | Physical deliveries | Pick up a visible crate, put it down and load it into a vehicle. | [Actions and carrying](actions.md#carry-a-crate-to-a-truck) |
 | Shared storage and production | Move ingredients into a pantry, products into a crate or goods between players. | [Items, payments and storage](transactions.md) |
+| A ripperdoc clinic | Quote a patient, operate in Vik's chair and install real cyberware, paid once. | [Ripperdoc](rp-job-ripperdoc.md), one of the [roleplay jobs](rp-jobs.md) |
 
 Salvage and street food are example jobs you can configure. Other professions still need their
 own rules, locations and content. A resource node can support a mining job, for example, but
@@ -157,4 +158,5 @@ machine's repaired state, a depleted node or a pending order. Test recovery acro
 - [Actions and carrying](actions.md): action fields, work spots, duty checks, carrying and events.
 - [Items, payments and storage](transactions.md): saved transfers, recipes, sales and containers.
 - [Furniture](furniture.md): enable seating and use it from your own resources.
+- [Roleplay jobs](rp-jobs.md): ready-made Night City jobs built on these libraries, starting with the ripperdoc.
 - [FiveM compatibility](fivem-compatibility.md): concepts and API differences for authors coming from FiveM.

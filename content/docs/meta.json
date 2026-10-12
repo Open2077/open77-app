@@ -771,6 +771,30 @@
       ]
     },
     {
+      "id": "rp-jobs",
+      "title": "Roleplay jobs",
+      "group": "Game systems",
+      "description": "Ready-made Night City jobs for roleplay servers: how each one plays, and how to set it up on your server.",
+      "pages": [
+        {
+          "slug": "rp-jobs",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Overview",
+          "title": "Roleplay jobs",
+          "description": "Ready-made Night City jobs for a roleplay server: the ripperdoc and the jobs coming next, what they have in common and the setup steps every job shares."
+        },
+        {
+          "slug": "rp-job-ripperdoc",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Ripperdoc",
+          "title": "Ripperdoc: Viktor's clinic",
+          "description": "Run a ripperdoc at Viktor's clinic: quotes the patient accepts on an offer card, the operating chair, real cyberware installed and paid once, what happens on a cancel or a restart, chrome from the Kabuki dealer, server setup, configuration and console commands."
+        }
+      ]
+    },
+    {
       "id": "interfaces",
       "title": "WebUI, HUD & input",
       "group": "Game systems",

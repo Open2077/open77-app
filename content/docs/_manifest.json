@@ -539,13 +539,14 @@
       "target": "content/docs/world-interaction.md",
       "slug": "world-interaction",
       "title": "Jobs and world interaction",
-      "bytes": 10830,
-      "sha256": "584c47797c44a019078bec132defda9b062105f274b0c8157bbb35a5ec303ff3",
+      "bytes": 11122,
+      "sha256": "706115732beed130913c234caa611b4b70b1b8d582b759b36a85ecf0a8541b44",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "90050d5538375c9f43ab8085b42145d3fc88329e461e291b62e06fea5f037f81",
         "amendment": "See worldInteractionDocumentation.",
-        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions."
+        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions.",
+        "rpJobsAmendment": "Links the site-authored roleplay jobs pages (rp-jobs, rp-job-ripperdoc) from the activity table and the next-steps list."
       }
     },
     {
