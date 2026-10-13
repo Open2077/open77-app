@@ -1694,9 +1694,9 @@
     {
       "source": "wiki/data/releases.json",
       "target": "content\\api/releases.json",
-      "entries": 46,
-      "bytes": 3884,
-      "sha256": "17a908bb37d0f2e6901e1797bde7b93e02d11fbab04d301fcbb9013e982be106"
+      "entries": 81,
+      "bytes": 6893,
+      "sha256": "b89cc1c0da9df65f245db34f9564f5ac0a3fd392f72cf256c5477161ad2126f1"
     },
     {
       "source": "wiki/data/catalogues/animations.json",
