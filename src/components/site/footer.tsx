@@ -1,9 +1,6 @@
 "use client";
 
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { footerNav, site } from "@/lib/site";
 
@@ -17,7 +14,6 @@ import { NUIXW_PATHS } from "@/components/ui/svg-data";
 import styles from "./footer.module.css";
 import socialStyles from "./socials.module.css";
 
-gsap.registerPlugin(ScrollTrigger);
 
 const SOCIALS: Array<{ label: string; href: string | null; icon: string }> = [
   { label: "Discord", href: site.links.discord, icon: discord },
@@ -52,17 +48,36 @@ export function Footer() {
   const logoRef = useRef<HTMLDivElement>(null);
   const markRef = useRef<HTMLDivElement>(null);
 
-  useGSAP(() => {
-    gsap.fromTo(
-      markRef.current,
-      { yPercent: 50 },
-      {
-        yPercent: 0,
-        ease: "none",
-        scrollTrigger: { trigger: logoRef.current, start: "top bottom", end: "bottom bottom", scrub: true },
-      },
-    );
-  });
+  // The mark rises from half-hidden to seated as the foot of the page scrolls in
+  // (top of the logo band at the bottom of the screen → its bottom there). Read
+  // from the band's live position on every frame, never from cached offsets: the
+  // footer outlives page changes, and pages grow after they load.
+  useEffect(() => {
+    const logo = logoRef.current;
+    const mark = markRef.current;
+    if (!logo || !mark) return;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const box = logo.getBoundingClientRect();
+      const progress = box.height ? Math.min(1, Math.max(0, (innerHeight - box.top) / box.height)) : 1;
+      mark.style.transform = `translateY(${(1 - progress) * 50}%)`;
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    const observer = new ResizeObserver(schedule);
+    observer.observe(document.body);
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+    };
+  }, []);
 
   return (
     <footer className={styles.footer}>

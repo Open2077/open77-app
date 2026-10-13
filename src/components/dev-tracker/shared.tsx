@@ -40,6 +40,7 @@ export function TrackerShell({ children }: { children: ReactNode }) {
       {list ? (
         <PageHero
           size="compact"
+          art={{ src: "/home/img/devs-bg.webp", position: "center 62%" }}
           watermark="Ideas"
           eyebrow="// Your ideas. Our next chapter."
           title={["Dev", "tracker."]}

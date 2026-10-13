@@ -10,7 +10,7 @@ import { cx } from "@/components/ui/cx";
 import { Dialog, type DialogHandle } from "@/components/ui/dialog";
 import { Glitch } from "@/components/ui/glitch";
 import { Icon } from "@/components/ui/icon";
-import { arrowRight01, discord, download02, menu09, search01, user02 } from "@/components/ui/icons";
+import { arrowRight01, discord, download02, menu09, search01, shield01, user02 } from "@/components/ui/icons";
 import { Logo } from "@/components/ui/logo";
 import { SmartLink } from "@/components/ui/smart-link";
 import { useSession } from "@/lib/account/session";
@@ -176,6 +176,18 @@ export function Header() {
               onClick={() => setMenuOpen((open) => !open)}
             />
           </div>
+          {isAdmin ? (
+            <Button
+              lines="none"
+              icon={shield01}
+              iconOnly
+              className={cx(styles.button, styles.admin)}
+              href="/admin"
+              aria-label="Admin console"
+              title="Admin console"
+              aria-current={current("/admin")}
+            />
+          ) : null}
           <Button
             lines="none"
             icon={user02}

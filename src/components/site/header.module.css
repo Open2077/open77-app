@@ -129,7 +129,10 @@
 .buttons:before {
   background-color: #ffffff03;
 }
-.buttons .button {
+/* Scoped under .header: the Button primitive's colour variant (.btn.yellow) has the
+   same weight as a two-class rule, and production CSS chunking does not keep import
+   order, so a plain .buttons .button could lose and paint a yellow icon on yellow. */
+.header .buttons .button {
   --color: oklch(from var(--text-primary) l c h / 5%);
   transition: color var(--transition-link);
   color: var(--active-color);
@@ -139,13 +142,13 @@
     display: none;
   }
 }
-.buttons .button:hover {
+.header .buttons .button:hover {
   color: var(--body);
 }
-.buttons .button:hover:before {
+.header .buttons .button:hover:before {
   background-color: var(--active-color);
 }
-.buttons .button:before {
+.header .buttons .button:before {
   transition: background-color var(--transition-link);
   border: 0;
 }
@@ -341,4 +344,60 @@
   mask: none;
   background-color: oklch(from var(--body) l c h / 0.6);
   inset: 0;
+}
+
+/* Admins reach the console from the bar, beside their account, in the admin red. */
+.header .buttons .admin {
+  --active-color: var(--red);
+}
+
+/* The wordmark answers the pointer: a short RGB-split glitch in slices on hover,
+   the slashes kick forward, and it presses in on click. Motion only when the
+   visitor accepts it. */
+.logo svg {
+  transition: transform 0.2s var(--ease-out-expo);
+}
+.logo svg path:first-child {
+  transition:
+    translate 0.4s var(--ease-out-expo),
+    fill 0.3s var(--cubic);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .logo:hover svg {
+    animation: logo-glitch 0.55s steps(1, end) 1;
+  }
+  .logo:hover svg path:first-child {
+    translate: 22px 0;
+  }
+}
+.logo:active svg {
+  transform: scale(0.95);
+}
+@keyframes logo-glitch {
+  0% {
+    filter: drop-shadow(3px 0 var(--red)) drop-shadow(-3px 0 var(--blue));
+    clip-path: inset(0 0 52% 0);
+    transform: translateX(-3px);
+  }
+  14% {
+    filter: drop-shadow(-2px 0 var(--red)) drop-shadow(2px 0 var(--blue));
+    clip-path: inset(46% 0 0 0);
+    transform: translateX(4px);
+  }
+  28% {
+    filter: none;
+    clip-path: inset(0);
+    transform: none;
+  }
+  42% {
+    filter: drop-shadow(2px 0 var(--red)) drop-shadow(-2px 0 var(--blue));
+    clip-path: inset(18% 0 34% 0);
+    transform: translateX(-2px);
+  }
+  56%,
+  100% {
+    filter: none;
+    clip-path: inset(0);
+    transform: none;
+  }
 }

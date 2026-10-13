@@ -97,6 +97,7 @@ export function StatusDashboard() {
     <>
       <PageHero
         size="compact"
+        art={{ src: "/assets/home/hero/city-v1.webp", position: "center 58%" }}
         watermark="Uptime"
         eyebrow="// Open network · service status"
         title={["The network.", "At a glance."]}
