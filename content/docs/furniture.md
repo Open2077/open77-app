@@ -1,8 +1,8 @@
 # Furniture: sitting and leaning
 
 Let players sit together at a café, use stools in a bar or wait on a bench. With seating enabled,
-supported furniture gets a nearby prompt: **E** to sit or lean, **X** to stand up. A seat already
-used by another player is unavailable.
+supported furniture gets a nearby prompt: **E** to sit, lean or lie down, **X** to stand up. A seat
+already used by another player is unavailable.
 
 You can enable this without writing Lua or installing a job, inventory or economy. Two resources
 provide it: `open77_furniture` holds a catalogue of city furniture locations and poses;
@@ -59,6 +59,7 @@ Players can now sit with the prompts, with `/sit` (the nearest free seat within 
 | Bar seats | Sit on the bar seat | where the player stands | 18 |
 | Walls | Lean on the wall | 1 m in front of the wall | about 50 |
 | Counters | Lean on the counter | 1 m back from the counter | about 30 |
+| Beds | Lie down on the bed | where the player stands | 4 |
 
 By default, seating offers entries from supported player-pose families: about 16,000 pieces of
 furniture. This does not mean every individual location has a clear approach and exit; check
@@ -69,9 +70,9 @@ blocked by a step or a wall, the player is told "Something is in the way." and p
 A bench row seats several players side by side, at least 0.6 m apart. Couches, armchairs, ledges,
 steps, curbs, rails and tables have no player pose and are never offered.
 
-**Beds.** One double-bed family (four beds in the city) has a lying pose verified for players, and
-the player lies down from where they stand. Seating offers only sitting and leaning, so beds get no
-prompt and `/sit` skips them: an operator lays a player on one with the `seating.sit` command.
+**Beds.** One double-bed family (four beds in the city) has a lying pose verified for players. Its
+beds get a "Lie down on the bed" prompt and `/sit` takes them; the player lies down from where they
+stand, and a bed holds one player. Other bed families stay unverified until they are checked.
 
 ## Sit a player from your own resource
 
@@ -131,6 +132,7 @@ Set these in the `convars` block of `server.jsonc`; `open77_seating` reads them 
 | Convar | Default | Meaning |
 |---|---|---|
 | `open77_seating_verification` | `measured` | `measured`: verified seats only. `all`: every seat with a player pose. `unverified`: only the seats that are not verified |
+| `open77_seating_postures` | `all` | the postures prompts, `/sit` and the exports offer: a comma list of `sit`, `lean` and `lie`. `sit,lean` turns the bed prompts off |
 | `open77_seating_exit` | `approach` | after standing up, put the body back where it stood before sitting (`approach`), only when it ended somewhere odd (`check`), or never (`none`) |
 | `open77_seating_buckets` | `all` | routing buckets where players can sit, a comma list such as `0,3` |
 | `open77_seating_trace` | `0` | `1` prints every sit, seat and stand in the server log |

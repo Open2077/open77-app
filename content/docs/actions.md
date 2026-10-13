@@ -177,8 +177,8 @@ rules, in [Durable transactions](transactions.md)).
 
 | When | What the player sees by itself |
 |---|---|
-| a prompt is refused at the start (your `validate` hook, the claim, the distance) | a short sentence for common reasons ("Too far away."), otherwise `Refused: <token>`, such as `Refused: already_fixed` |
-| the action ends after the bar started | `Action stopped: <reason>`, except after **X** or a newer action |
+| a prompt is refused at the start (your `validate` hook, the claim, the distance) | a short sentence for common reasons ("Too far away."), otherwise "Not possible right now." |
+| the action ends after the bar started | a short sentence ("You moved away.", "Someone else took it."), otherwise "Stopped."; nothing after **X** or a newer action |
 | your `reserve` hook refuses, or runs out of time | nothing: the action ends before anything was shown |
 | the action commits, or your own `request` call is refused | nothing |
 
@@ -199,9 +199,23 @@ AddEventHandler("open77_actions:transition", function(op)
 end)
 ```
 
-To word a start refusal yourself, send your message from the `validate` hook before returning
-`false` (the notice still shows). The built-in sentences cover `target_claimed`, `too_far`,
-`carrying`, `not_carrying`, `actor_busy`, `in_combat` and `player_in_vehicle`.
+The built-in sentences cover `target_claimed`, `spot_taken`, `too_far`, `carrying`, `weapon_drawn`,
+`not_carrying`, `actor_busy`, `in_combat` and `player_in_vehicle`. To word any other reason, your
+own tokens included, give the action `messages`: a reason and the plain text shown instead, or
+`false` to show nothing when your resource tells the player itself. Up to 96 entries of 200
+characters each.
+
+```lua
+actions:define({
+    id = "repair", label = "Repair the machine", durationMs = 6000,
+    hooks = { validate = "repairValidate", commit = "repairCommit" },
+    messages = {
+        already_fixed = "This machine already works.",   -- your validate hook's token
+        not_eligible = "Clock in first: /service.",
+        moved = false,                                    -- your own handler words this one
+    },
+})
+```
 
 ## Start an action from your own code
 
@@ -227,6 +241,31 @@ The target's `position` is where the player stands, usually a floor point (stand
 `/pos`). The card is drawn `promptHeight` (1 m) above it and fires once the player is within
 `distance` (2 m) and the card is on screen; there is no need to aim at it. The server then checks
 the action's `maxDistance` (2.5 m): keep it at least as large as the target's `distance`.
+
+A few target fields change where the card is drawn and who sees it, not what the server allows:
+
+```lua
+actions:target({ id = "station", position = station, yaw = 55,   -- where the worker stands
+    promptAt = seat,             -- draw the card over the patient's seat instead (within 3 m)
+    hideFor = { patientId },     -- the patient gets no card for this target
+    keepCrowdOff = true,         -- pedestrians keep 0.8 m off the stand point
+    actions = { "operate" } })
+```
+
+- `promptHeight` (0 to 3 m, 1 m by default) is the card's height above its point. Lower it when
+  the point is already at the height of the thing, such as a counter top.
+- `promptAt` draws the card `promptHeight` above another point, within 3 m of `position`. The
+  player still stands at `position`, the server still measures `distance` from there, and the card
+  is live wherever `position` is in reach. Use it when the card would otherwise sit under the
+  worker's own feet, out of view: a ripperdoc's station shows its card over the patient.
+- `lookAt = true` also requires the crosshair on the card. Use it only for spots closer together
+  than their `distance`, where the player picks by looking; otherwise the nearest card in reach wins.
+- `hideFor` lists up to 8 player ids who get no card for this target. It only hides the card: an
+  intent one of them sends is still judged by the action's own rules. A downed patient is not shown
+  the medic's card over their own body. Call `target` again with the same `id` to change the list.
+- `keepCrowdOff` keeps the crowd's pedestrians off the stand point while the target exists: `true`
+  for 0.8 m, or a radius from 0.3 to 1.5 m. It needs `open77_pedestrians` running and does nothing
+  without it. Walkers stay out; a pedestrian already standing there is not moved.
 
 A target offers up to four choices, on **E**, **F**, **R** and **Y** in order, unless a choice
 names its own `key` (one letter or digit). **G** (put down), **T** (it opens the chat) and **X**
@@ -260,6 +299,22 @@ actions:target({ id = "grill", position = { x = -397.6, y = 715.1, z = 115.0 }, 
 -- or per action, which wins over the target's: animation = { ..., arrivalRadius = 1.0 }
 ```
 
+### A player already on the spot
+
+An action with `animation = { at = "target" }` places the actor on the target's stand point.
+While another player stands within 0.45 m of that point (and within 2 m above or below it), the
+action is refused with `spot_taken` and the player reads "Someone is standing there.": placing the
+body would put it on top of the other one.
+
+- The check runs after the player's own state, the job and duty checks, the epochs and your
+  `validate` hook, so an off-duty player is told that first.
+- A player working this same target is left to the target's claim: the second player reads
+  `target_claimed` ("Someone is already using this.").
+- A player held in a placed action at another target does not block: a patient seated in a chair
+  0.7 m from the ripperdoc's station does not stop the ripperdoc.
+- A neighbour half a metre off the point, such as a helper beside a bench, does not block either.
+- Actions played `at = "self"`, or without an animation, are never refused this way.
+
 ## Only on duty: jobs, grades and duty
 
 The library knows nothing about jobs. Plug in your framework:
@@ -290,7 +345,7 @@ from your vehicle access and storage code; they are not Open77 exports. Also reg
 `cratePickup` hook described below. The snippets do not form a standalone cargo job.
 
 A scrapper finishes cutting a wreck and a crate appears beside it. The card reads **E** Pick up
-scrap crate; they lift it and walk to their truck at walking pace, unable to jump or fire. Others
+scrap crate; they lift it and walk to their truck at walking pace, unable to sprint, jump or fight. Others
 see the crate in their hands; in first person it sits low on the right, under a "Put down scrap
 crate" hint. **G** (rebindable in Settings, Key bindings) sets it down in front of them.
 
@@ -406,7 +461,7 @@ step of every action.
 | `maxDistance` | 2.5 m | the server's distance check (0.5 to 25), plus `completeSlack` (0.75 m) at the end |
 | `animation` | none | `{ profile, at = "self" or "target", yaw, yawOffset, clip, loop = true, required = true, arrivalRadius }`; with `required`, an animation that cannot start fails the action |
 | `progress` | a bar with the label | `{ label, position = "bottom", "top" or "center", style = "bar" or "circle", color = "#rrggbb", cancellable = true }`, or `false` |
-| `claims` | `{ move = true, attack = true }` | controls locked while it runs: `move`, `attack`, `jump`, `walkSpeed` (0.5 to 2.5 m/s); `false` for none |
+| `claims` | `{ move = true, attack = true }` | controls locked while it runs: `move`, `attack` (firing and punching), `jump`, `sprint`, `walkSpeed` (0.5 to 2.5 m/s); `false` for none |
 | `claim`, `claimTtlMs` | `true`, duration + 30 s | one player per target at a time (`false`: several), for that long (1 s to 1 h) |
 | `cancelOn` | `{ combat = true, vehicle = true, moved = true, weaponDrawn = false }` | which events end it |
 | `moveTolerance` | 1.0 m | without an animation, moving this far ends it (`moved`) |
@@ -429,6 +484,9 @@ step of every action.
 | `markerDistance` | 12 m | from how far the dot is drawn (1 to 120) |
 | `marker`, `color`, `icon` | `dot` | the dot's shape ([Interactions](interactions.md)), `#rrggbb`, a short icon |
 | `lookAt` | `false` | also require the crosshair on the card, for spots closer together than their `distance` |
+| `promptAt` | none | draw the card over this point instead, within 3 m of `position`; the reach is still measured from `position` |
+| `hideFor` | none | up to 8 player ids who get no card for this target; an intent they send is still judged as usual |
+| `keepCrowdOff` | none | `true` (0.8 m) or 0.3 to 1.5 m: the crowd's pedestrians keep off the stand point (needs `open77_pedestrians`) |
 | `arrivalRadius` | 0.5 m | how close `playAt` must bring the body (0.5 to 1.5) |
 | `requires` | none | `"carrying"` or `"empty"`: offer the card only to players with, or without, an item |
 | `data` | none | your table (up to 1 KB), given to hooks as `ctx.target.data` |
@@ -440,10 +498,11 @@ step of every action.
 | `id`, `model`, `label` | required, required, the id | a prop alias such as `crate.ammo_box`; the name in "Pick up ..." |
 | `reach`, `vehicleReach` | 2.0 m, 4.0 m | pickup distance (0.5 to 5); distance to a truck (1 to 8) |
 | `dropAhead` | 0.7 m | how far in front of the player **G** or a drop sets it (0 to 2) |
+| `promptHeight` | 0.2 m | how far the "Pick up" card sits above the item's top (0 to 2). The item's target stands on its base, the point the server measures `reach` from, so a card drawn in reach is one the server accepts |
 | `gripMs`, `releaseMs` | 60 % of the pickup clip, 55 % of the put-down clip | when the hands close and open, on the server clock: calibrate them |
 | `pickupProfile`, `holdProfile`, `putdownProfile` | `carry_pickup`, `carry`, `carry_putdown` | the animations; `pickupMs` and `putdownMs` override the clip lengths |
 | `binding` | on the chest, between the hands | `{ bone, offset, rotation, firstPerson }`; another model may need its own offsets; `firstPerson = "hide"` hides it in first person |
-| `claims`, `cancelOn` | `{ walkSpeed = 1.2, jump = true, attack = true }`, `{ combat = true, weaponDrawn = true }` | what the carrier cannot do; aiming or a drawn weapon drops it (a vehicle always does) |
+| `claims`, `cancelOn` | `{ walkSpeed = 1.2, jump = true, attack = true, sprint = true }`, `{ combat = true, weaponDrawn = true }` | what the carrier cannot do; aiming or a drawn weapon drops it (a vehicle always does) |
 | `hooks`, `eligibility`, `epochs` | none | `validate`, `pickup`, `putdown`, `dropped`, `cancel`; job checks as for actions |
 
 ### Hook context
@@ -489,6 +548,7 @@ the target key (`"my_repairs:machine_1"`). Carry phases: `placed`, `gripped`, `p
 | Reason | What it means | What to do |
 |---|---|---|
 | `target_claimed` | another player holds the spot | wait: it frees up when they finish |
+| `spot_taken` | another player stands on the stand point of an action placed `at = "target"` | wait for them to step off ([details](#a-player-already-on-the-spot)) |
 | `destination_claimed` | another item holds that put-down `claimKey` | use another slot |
 | `actor_busy` | the player already runs an action, or `cooldownMs` has not passed | wait, or pass `supersede = true` |
 | `too_far` | beyond `maxDistance`, or the item's `reach` | move closer; keep `maxDistance` at least the target's `distance` |
@@ -522,8 +582,13 @@ that reason.
 - 64 actions and 64 targets per resource, 512 targets per server, 128 carry items per resource,
   4 choices per target, 8 markers per action.
 - A player sees at most the 12 nearest prompts, and their client sends at most six choices a second.
-- The walk pace and jump lock of a carry are applied by the player's client; the server sees
-  positions, not inputs. An unarmed punch ends a carry only if it breaks the carry pose.
+- The walk pace and the sprint, jump and fighting locks of a carry are applied by the player's
+  client; the server sees positions, not inputs. A client too old to block melee or sprinting
+  answers `action_not_blockable`, and the carry runs without those two locks.
+- Identical targets stacked on one point (within 5 cm, with the same choices, reach and card), such
+  as two crates set down on the same spot, show one card: the target with the smallest key. **E**
+  acts on that one, and the next takes the card once it is gone. Two different things on one point
+  keep a card each.
 - There are no station "recipes": add a stage with your own hooks or a second action, as
   [Build your first Lua job](build-a-job.md) shows.
 

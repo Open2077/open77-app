@@ -181,13 +181,22 @@ doctor and holds **E** to accept, **F** to decline, or types `/implantaccept` /
 `/implantcancel`. Its example prices are 100 credits for training legs, 250 for athlete
 and 25 for a removal, from an in-memory balance of 500 that resets with the resource.
 
-[`open77_cyberware_lab`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_cyberware_lab) (`auto_start false`) is an open test panel: `/cyberlab` opens it on
-your own character, `/cyberlab ui <player>` on somebody else's; pick Gorilla Arms or
-Double Jump, a grade, and Install or Remove, or grant Dash, Ground Slam or Overdrive from
-their cards further down. The same controls exist as commands:
-`cyberlab installlegs <player> training <operation-id>`, `cyberlab removelegs <player>
-<operation-id>`, `cyberlab state <player>`. Add it to `resources.load` and run
-`ensure open77_cyberware_lab`; after editing its manifest run `refresh` first.
+[`open77_cyberware_lab`](https://github.com/Open2077/open77-resources/tree/main/gamemodes/open77_cyberware_lab) (`auto_start false`) is a test panel: `/cyberlab` opens it on
+your own character; pick Gorilla Arms or Double Jump, a grade, and Install or Remove, or
+grant Dash, Ground Slam or Overdrive from their cards further down. The same controls exist
+as commands: `cyberlab installlegs <player> training <operation-id>`, `cyberlab removelegs
+<player> <operation-id>`, `cyberlab state <player>`. Every player may use the panel and the
+commands on themselves. Acting on another player (`/cyberlab ui <player>`, any command
+naming someone else) or on the whole server (`pvp`, `load`) needs the server console or the
+ACL right `command.cyberlab.others`; anyone else is refused with `operator_required` and sees
+only themselves in the panel. Grant the right in your [ACL file](server-acl.md):
+
+```json
+"permissions": [ "command.cyberlab.others" ]
+```
+
+Add the resource to `resources.load` and run `ensure open77_cyberware_lab`; after updating
+it or editing its manifest, run `refresh` first so its `acl.read` permission is loaded.
 
 ## Limits
 
