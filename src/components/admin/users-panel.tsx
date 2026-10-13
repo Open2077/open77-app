@@ -23,11 +23,13 @@ import { formatDateTime } from "@/components/admin/format";
 import { ErrorStrip, useAdminData } from "@/components/admin/use-admin-data";
 import { Button } from "@/components/admin/admin-button";
 import type { DialogHandle } from "@/components/ui/dialog";
+import { Field, Input } from "@/components/ui/field";
 import { Loader } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
-import { mail01, tick02, users } from "@/components/ui/icons";
+import { mail01, shield01, tick02, userRemove01, users } from "@/components/ui/icons";
 import { MasterApiError } from "@/lib/account/api";
 import * as admin from "@/lib/account/admin-api";
+import { useSession } from "@/lib/account/session";
 
 import styles from "./users-panel.module.css";
 
@@ -40,13 +42,71 @@ export function UsersPanel() {
   const [verificationError, setVerificationError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const dialog = useRef<DialogHandle>(null);
+  const roleDialog = useRef<DialogHandle>(null);
   const mutationInFlight = useRef(false);
   const { begin } = useAdminActivity();
+  const { session } = useSession();
+  // A role change in progress: whom, to what, and the actor's password for it.
+  const [roleChange, setRoleChange] = useState<{ user: admin.AdminUser; role: "admin" | "user" } | null>(null);
+  const [rolePassword, setRolePassword] = useState("");
+  const [roleError, setRoleError] = useState<string | null>(null);
 
   useEffect(() => {
     if (verification) dialog.current?.open();
     else dialog.current?.close();
   }, [verification]);
+
+  useEffect(() => {
+    if (roleChange) roleDialog.current?.open();
+    else roleDialog.current?.close();
+  }, [roleChange]);
+
+  function startRoleChange(user: admin.AdminUser, role: "admin" | "user") {
+    setNotice(null);
+    setError(null);
+    setRoleError(null);
+    setRolePassword("");
+    setRoleChange({ user, role });
+  }
+
+  async function changeRole() {
+    if (!token || !roleChange || mutationInFlight.current) return;
+    if (!rolePassword) {
+      setRoleError("Enter your password to confirm.");
+      return;
+    }
+    mutationInFlight.current = true;
+    setBusy(true);
+    setRoleError(null);
+    const finish = begin();
+    try {
+      const updated = await admin.setUserRole(token, roleChange.user.accountId, roleChange.role, roleChange.user.email, rolePassword);
+      setData((current) => current?.map((user) => (user.accountId === updated.accountId ? updated : user)) ?? null);
+      setNotice(
+        roleChange.role === "admin"
+          ? `${updated.email} is now an administrator. The change was recorded in the audit log.`
+          : `${updated.email} is no longer an administrator. The change was recorded in the audit log.`,
+      );
+      setRolePassword("");
+      setRoleChange(null);
+      reload();
+      finish(true);
+    } catch (err) {
+      setRoleError(
+        err instanceof MasterApiError
+          ? err.code === "reauth_failed"
+            ? "Your password was not accepted."
+            : err.code === "not_eligible"
+              ? "Only an active account with a verified e-mail can become an administrator."
+              : err.message
+          : "Request failed. Try again.",
+      );
+      finish(false);
+    } finally {
+      mutationInFlight.current = false;
+      setBusy(false);
+    }
+  }
 
   // Debounced search: the query state the loader depends on trails the input.
   useEffect(() => {
@@ -125,6 +185,9 @@ export function UsersPanel() {
             {" "}
             Suspension blocks sign-in and invalidates active sessions on their next request; it does not
             touch the account&apos;s licenses. Revoke those separately if needed.
+            {" "}
+            Role changes ask for your password, apply on the account&apos;s next request and are audited;
+            you cannot change your own role.
           </>
         }
       >
@@ -192,6 +255,37 @@ export function UsersPanel() {
                           Verify e-mail
                         </Button>
                       ) : null}
+                      {user.accountId !== session?.accountId ? (
+                        user.role === "admin" ? (
+                          <Button
+                            size="sm"
+                            color="neutral"
+                            border
+                            lines="none"
+                            icon={userRemove01}
+                            iconPosition="left"
+                            disabled={busy || loading}
+                            data-role-action="demote"
+                            onClick={() => startRoleChange(user, "user")}
+                          >
+                            Remove admin
+                          </Button>
+                        ) : user.status === "active" && user.emailVerified ? (
+                          <Button
+                            size="sm"
+                            color="neutral"
+                            border
+                            lines="none"
+                            icon={shield01}
+                            iconPosition="left"
+                            disabled={busy || loading}
+                            data-role-action="promote"
+                            onClick={() => startRoleChange(user, "admin")}
+                          >
+                            Make admin
+                          </Button>
+                        ) : null
+                      ) : null}
                       {user.status === "active" ? (
                         <ArmButton
                           label="Suspend"
@@ -252,11 +346,79 @@ export function UsersPanel() {
           <p className={styles.explain}>
             Only continue after confirming this address belongs to the account owner.
             This replaces the e-mail link verification and is recorded in the audit log.
-            It does not grant alpha access, change roles or lift a suspension.
+            It does not grant alpha access, change the role or lift a suspension.
           </p>
           <ErrorStrip message={verificationError} />
           {busy ? <Loader label="Verifying…" /> : null}
         </div>
+      </GuardedDialog>
+
+      <GuardedDialog
+        ref={roleDialog}
+        size="sm"
+        eyebrow={roleChange?.role === "admin" ? "Grant administrator" : "Remove administrator"}
+        title={roleChange?.role === "admin" ? "Make this account an administrator?" : "Remove administrator access?"}
+        locked={() => mutationInFlight.current}
+        onClose={() => {
+          setRolePassword("");
+          setRoleChange(null);
+        }}
+        footer={
+          <>
+            <Button size="sm" color="neutral" border lines="none" disabled={busy} onClick={() => setRoleChange(null)}>
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              color="red"
+              lines="none"
+              icon={roleChange?.role === "admin" ? shield01 : userRemove01}
+              iconPosition="left"
+              disabled={busy || !token || !rolePassword}
+              busy={busy}
+              data-role-confirm=""
+              onClick={changeRole}
+            >
+              {roleChange?.role === "admin" ? "Make admin" : "Remove admin"}
+            </Button>
+          </>
+        }
+      >
+        <form
+          className={styles.dialogBody}
+          onSubmit={(event) => {
+            event.preventDefault();
+            void changeRole();
+          }}
+        >
+          <div className={styles.target}>
+            <span className={styles.targetIcon} aria-hidden="true">
+              <Icon glyph={roleChange?.role === "admin" ? shield01 : userRemove01} />
+            </span>
+            <span>
+              <Primary>{roleChange?.user.displayName}</Primary>
+              <Sub>{roleChange?.user.email}</Sub>
+            </span>
+          </div>
+          <p className={styles.explain}>
+            {roleChange?.role === "admin"
+              ? "An administrator can moderate accounts, revoke licenses, publish builds and change roles. Only grant it to someone you trust with the whole platform."
+              : "The account keeps its data, licenses and alpha access; it loses the admin console on its next request."}
+            {" "}Confirm with your own password. The change is recorded in the audit log.
+          </p>
+          <Field label="Your password">
+            <Input
+              type="password"
+              autoComplete="current-password"
+              value={rolePassword}
+              onChange={(event) => setRolePassword(event.target.value)}
+              disabled={busy}
+              data-role-password=""
+            />
+          </Field>
+          <ErrorStrip message={roleError} />
+          {busy ? <Loader label="Saving…" /> : null}
+        </form>
       </GuardedDialog>
     </>
   );

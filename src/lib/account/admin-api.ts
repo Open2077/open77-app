@@ -201,6 +201,22 @@ export function reinstateUser(token: string, accountId: string): Promise<void> {
   return masterCall(`/api/v1/admin/users/${accountId}/reinstate`, { method: "POST", token });
 }
 
+/**
+ * Promote an account to administrator or return it to a regular account. The master
+ * checks the acting administrator's own password again, refuses self-changes and
+ * unverified or suspended targets, and audits every attempt. `email` is the address
+ * the panel showed, so a stale row cannot change a different account.
+ */
+export function setUserRole(
+  token: string,
+  accountId: string,
+  role: "admin" | "user",
+  email: string,
+  password: string,
+): Promise<AdminUser> {
+  return masterCall(`/api/v1/admin/users/${accountId}/role`, { method: "POST", token, body: { role, email, password } });
+}
+
 /** Idempotent, audited admin override. The confirmed address must still match. */
 export function verifyUserEmail(token: string, accountId: string, email: string): Promise<AdminUser> {
   return masterCall(`/api/v1/admin/users/${accountId}/verify-email`, {
