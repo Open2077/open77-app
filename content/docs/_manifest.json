@@ -555,13 +555,14 @@
       "target": "content/docs/actions.md",
       "slug": "actions",
       "title": "Actions and carrying",
-      "bytes": 31966,
-      "sha256": "7108e5b8ccbdb6d3d2e3a62a9b4277a181d19d3781186a3801d87769c2213b5d",
+      "bytes": 36618,
+      "sha256": "5c48a6a8e65f36b447db014586d719d68386137ab5f15d74da2ea29eb1b1c106",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "fa498e3294c2c0da2c9cf12d0ea2b2024df6b6d193f9cba891c5b70546c78677",
         "amendment": "See worldInteractionDocumentation.",
-        "builderGuideReview": "Added a builder overview and separate Lua tutorial; updated reference links."
+        "builderGuideReview": "Added a builder overview and separate Lua tutorial; updated reference links.",
+        "w3JobsAmendment": "Scoped merge from the platform wiki and open77_actions source (feat/wave3-jobs): target promptAt, hideFor and keepCrowdOff with promptHeight and lookAt explained; carry kind promptHeight; spot_taken (0.45 m, after eligibility and the validate hook, deferred to the claim on the same target, skipped for a body placed at another target); action messages and the current fallback sentences; sprint claim; stacked identical items show one card."
       }
     },
     {
@@ -569,8 +570,8 @@
       "target": "content/docs/transactions.md",
       "slug": "transactions",
       "title": "Items, payments and storage",
-      "bytes": 25200,
-      "sha256": "e57fcfe3efb4699027e41ff50f95f972b298d26bd789d0ba76b95469bf1a4bcf",
+      "bytes": 26597,
+      "sha256": "8d818a9d64b064610f01b95bc6d15c5d756c6dfbba9e4e4141060a620c8dcf0d",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "d6d7d4982c4ca41255e46838c60a4e0566620154234301efa012afbca32e3180",
@@ -582,7 +583,8 @@
           }
         ],
         "amendment": "See worldInteractionDocumentation.",
-        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions."
+        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions.",
+        "w3JobsAmendment": "writers2 to writers4 continue the writers list (open77_transactions c70a4b57); a text tunable holds at most 256 characters (ResourceTunables.MaximumTextLength), so long mint rules are spread over mintN slots; a continued example and a link to rp-jobs."
       }
     },
     {
