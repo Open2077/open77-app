@@ -1481,8 +1481,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1739,
-      "bytes": 2514883,
-      "sha256": "eebe6fda968d536453f874cfa5b725343b9a77eb8157202562c14d5f7ece9616",
+      "bytes": 2515353,
+      "sha256": "205cb623e32e1340cd79d7b586f0f2f5619496f017b55a1b1a2f3edf5880d672",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6"
@@ -1494,7 +1494,8 @@
         "blipSvgContract": "Native SVG icons and per-blip RGB/RGBA; experimental matching client adapter required. Reviewed against uncommitted open77-base implementation; upstream sync provenance preserved.",
         "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved.",
         "predictionSync": "Vendored from open77-base 36772b3b88404ffa9467bb2d06fcf1abd47568d9 through scripts/doc-api-editorial.json. Preserved site entries: the eight drive-by cards (not on that revision), the four SVG blip cards, named CreateVehicle/ResetVehiclePaint/SetVehicleTransform parameters, and the permission-free Open77.markers.shapes. Open77.prediction.setPolicy/stats carry reviewed signatures and examples from ResourceHost.cpp.",
-        "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
+        "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved.",
+        "w3InputActions": "Open77.input.setActionBlocked lists Melee, Jump, Sprint and WeaponWheel, and Open77.movement.setWalkMode tells how to hold a player to the pace (block Sprint); both from open77-base feat/wave3-jobs a56f501e (wiki/data/api.json). Other site wording preserved."
       }
     },
     {
