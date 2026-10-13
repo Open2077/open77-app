@@ -37,14 +37,14 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: site.name,
+    siteName: site.socialName,
     locale: site.locale,
     url: SITE_URL,
-    title: `${site.name} · Cyberpunk 2077 Multiplayer`,
+    title: `${site.socialName} · Cyberpunk 2077 Multiplayer`,
     description: site.description,
     images: [{ url: site.ogImage, ...site.ogImageSize, alt: `${site.name}: ${site.tagline}` }],
   },
-  twitter: { card: "summary_large_image", images: [site.ogImage] },
+  twitter: { card: "summary_large_image", title: `${site.socialName} · Cyberpunk 2077 Multiplayer`, images: [site.ogImage] },
   robots: IS_PRODUCTION_DEPLOY ? { index: true, follow: true } : { index: false, follow: false },
   other: {
     // Read by the docs surfaces and by anyone auditing what stage this is.

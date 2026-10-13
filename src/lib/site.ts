@@ -18,6 +18,12 @@ export const IS_PRODUCTION_DEPLOY =
 
 export const site = {
   name: "OPEN//77",
+  /**
+   * The name as link previews show it (Discord, X, Telegram), in the styled
+   * Unicode letters of the nuixw reference. Only share tags use it: the page
+   * <title> keeps plain text, which search engines match against "OPEN77".
+   */
+  socialName: "𝙊𝙋𝙀𝙉//𝟳𝟳",
   /** Used where "//" would be read as a comment or a path separator. */
   plainName: "OPEN77",
   url: SITE_URL,

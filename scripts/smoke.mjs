@@ -23,7 +23,7 @@ const origin = process.argv[2] ?? "http://127.0.0.1:3000";
  * }[]}
  */
 const CHECKS = [
-  { path: "/docs/cyberware", expect: 200, contains: "Weapons &amp; abilities" },
+  { path: "/docs/cyberware", expect: 200, contains: "Cyberware &amp; abilities" },
   { path: "/docs/gorilla-arms", expect: 200, contains: "Gorilla Arms" },
   { path: "/docs/gorilla-arms.md", expect: 200, contains: "gorilla_install" },
   { path: "/docs/cyberware.md", expect: 200, contains: "onCyberwareOperationCompleted" },
@@ -36,13 +36,13 @@ const CHECKS = [
   { path: "/llms.txt", expect: 200, contains: "/docs/cyberware" },
   { path: "/", expect: 200, contains: "OPEN//77", type: "text/html" },
   { path: "/", expect: 200, contains: "Phantom Liberty" },
-  { path: "/", expect: 200, contains: "own Night City." },
+  { path: "/", expect: 200, contains: "Run your own Night City" },
   // The launcher page's version and digest come from the CDN at build time, so
   // the assertions are on the copy that is always there, not on a build number.
   // The headline rather than the button: the button reads "Download for Windows"
   // when a release resolves and "Get the launcher" when none does, and this has
   // to hold in both states.
-  { path: "/download", expect: 200, contains: "OPEN//77 launcher.", type: "text/html" },
+  { path: "/download", expect: 200, contains: "Download the OPEN//77 launcher", type: "text/html" },
   { path: "/download", expect: 200, contains: "SHA-256" },
   // Listings load from the live master in the browser; SSR has no fixed sample server.
   { path: "/servers", expect: 200, contains: "OPEN//77 server browser", type: "text/html" },

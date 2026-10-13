@@ -456,8 +456,9 @@ export function ServerBrowser({
       data-compact-header={isActive ? "" : undefined}
     >
       {/* The list is the page: the header marks "Servers" as current and the
-          table head counts them, so the title is for assistive technology only. */}
-      <h1 className="sr-only">Server browser</h1>
+          table head counts them, so the title is for assistive technology only.
+          A profile shown in its place brings its own h1, so this one steps aside. */}
+      {isActive ? <h1 className="sr-only">Server browser</h1> : null}
       <div className={styles.backdrop} aria-hidden="true">
         <Image src="/home/img/players-bg.webp" alt="" fill sizes="100vw" quality={75} loading="eager" />
       </div>

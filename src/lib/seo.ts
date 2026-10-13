@@ -31,6 +31,8 @@ type PageMetadataInput = {
  */
 export function pageMetadata(input: PageMetadataInput): Metadata {
   const title = input.title ? `${input.title} · ${site.name}` : `${site.name} · Cyberpunk 2077 Multiplayer`;
+  // Link previews carry the styled name; the <title> stays plain for search.
+  const shareTitle = input.title ? `${input.title} · ${site.socialName}` : `${site.socialName} · Cyberpunk 2077 Multiplayer`;
   const image = absoluteUrl(input.image ?? site.ogImage);
   const canonical = absoluteUrl(input.path);
 
@@ -46,9 +48,9 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
     },
     openGraph: {
       type: input.type ?? "website",
-      siteName: site.name,
+      siteName: site.socialName,
       locale: site.locale,
-      title,
+      title: shareTitle,
       description: input.description,
       url: canonical,
       images: [{ url: image, ...site.ogImageSize, alt: `${site.name}: ${input.title ?? site.tagline}` }],
@@ -57,7 +59,7 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: shareTitle,
       description: input.description,
       images: [image],
     },
