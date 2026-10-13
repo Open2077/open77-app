@@ -400,7 +400,8 @@ For a smaller clinic written from scratch, see `open77_ripperdoc_example` in
 
 ## When something is refused
 
-The clinic explains every refusal in words. The ones an operator can fix:
+The clinic explains every refusal in words; a refusal it has no words for reads "That did not work.
+Try again in a moment.", and the server log keeps the reason. The ones an operator can fix:
 
 | The player reads | Fix |
 |---|---|
@@ -417,8 +418,10 @@ The clinic explains every refusal in words. The ones an operator can fix:
 ## Limits
 
 - **One procedure per clinic at a time**, and one stock per clinic.
-- **Prompts close together.** The default chair and station are less than a metre apart, and a card
-  answers the nearest player. Move `station` if the wrong card shows.
+- **Prompts close together.** The default station is 0.7 m from the chair, and a card answers the
+  nearest player. Move `station` if the wrong card shows. The patient seated in the chair does not
+  block the station; another player standing on the station's point (within about half a metre)
+  does, and the ripperdoc reads "Someone is standing there."
 - **Seating mode** needs a furniture id near the clinic (`chair.furniture`) and the seating prompt
   for it; until then, keep the chair `placed`.
 - **Postures.** A server whose animation catalogue lacks a configured posture runs the action

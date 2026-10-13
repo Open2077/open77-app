@@ -282,11 +282,12 @@
       "target": "content/docs/cyberware.md",
       "slug": "cyberware",
       "title": "Cyberware",
-      "bytes": 15251,
-      "sha256": "72d338e991657b502d4ebf833415e2a24ec1aa9c16159d6658ff1dc8505343d0",
+      "bytes": 15718,
+      "sha256": "d81585dc8aa71ea33025b445c8ee6c700ba3e7c172fa99e3da5b33c641d77496",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "3cca32beb48f07bf401139ea0d4436920b72c5971df4ea02c9d26cff883b93c1"
+        "upstreamSnapshotSha256": "3cca32beb48f07bf401139ea0d4436920b72c5971df4ea02c9d26cff883b93c1",
+        "w3PrereqsAmendment": "open77_cyberware_lab: acting on another player or the whole server needs the console or command.cyberlab.others; operator_required refusal; refresh for acl.read (open77_cyberware_lab 44160a86, merged with w3/prereqs)."
       }
     },
     {
@@ -539,14 +540,14 @@
       "target": "content/docs/world-interaction.md",
       "slug": "world-interaction",
       "title": "Jobs and world interaction",
-      "bytes": 11122,
-      "sha256": "706115732beed130913c234caa611b4b70b1b8d582b759b36a85ecf0a8541b44",
+      "bytes": 11429,
+      "sha256": "eb9bf6ffa94b5404afbecb681d1b4064206df06e83a974256bb7eaef22226852",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "90050d5538375c9f43ab8085b42145d3fc88329e461e291b62e06fea5f037f81",
         "amendment": "See worldInteractionDocumentation.",
         "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions.",
-        "rpJobsAmendment": "Links the site-authored roleplay jobs pages (rp-jobs, rp-job-ripperdoc) from the activity table and the next-steps list."
+        "rpJobsAmendment": "Links the site-authored roleplay jobs pages (rp-jobs and the seven job pages) from the activity table, the example-jobs paragraph and the next-steps list."
       }
     },
     {
@@ -589,13 +590,14 @@
       "target": "content/docs/furniture.md",
       "slug": "furniture",
       "title": "Furniture: sitting and leaning",
-      "bytes": 12144,
-      "sha256": "8bd44a70d9e34bd5c22370d5ee91c50dc12dd63bc1c6163b536d1ab3989f847b",
+      "bytes": 12384,
+      "sha256": "40057a1d64b0310d526c3ff73ecad2b448e8bcd890b100d0ad3b0d480382fa76",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "149f00cb1091a189abd9a5762c949969c94f4375bfb6ab9e2cc01f728ed06311",
         "amendment": "See worldInteractionDocumentation.",
-        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions."
+        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions.",
+        "w3PrereqsAmendment": "Beds of the measured double-bed family get the 'Lie down on the bed' prompt and /sit takes them; the open77_seating_postures convar (open77_seating 66bf8f25, merged with w3/prereqs)."
       }
     },
     {
