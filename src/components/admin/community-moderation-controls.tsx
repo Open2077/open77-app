@@ -1,8 +1,16 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+
+import { Button } from "@/components/admin/admin-button";
+import { Checkbox, Field, Textarea } from "@/components/ui/field";
+import { refresh } from "@/components/ui/icons";
 import * as api from "@/lib/community/client-api";
 import type { CommunityModerationState, CommunityRelease } from "@/lib/community/types";
+import { Disclosure, FormActions, StatusTag } from "./admin-kit";
+import { ErrorStrip } from "./use-admin-data";
+
+import styles from "./community-panels.module.css";
 
 export function ProjectModerationControls({ token, projectId, updated }: { token: string; projectId: string; updated: () => void }) {
   const [state, setState] = useState<CommunityModerationState | null>(null);
@@ -28,16 +36,36 @@ export function ProjectModerationControls({ token, projectId, updated }: { token
     finally { setBusy(false); }
   }
   const restoring = state?.state === "suspended";
-  return <details className="hub-release"><summary>Project suspension and restoration</summary>
-    {error && <p className="hub-notice" role="alert">{error}</p>}
-    <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => setAttempt(value => value + 1)}>Refresh moderation state</button>
-    {state && <form className="hub-form" onSubmit={submit}><p>Current state: {state.state} · moderation revision {state.moderationRevision}</p>
-      <p>{restoring ? `Restore this project to its previous state: ${state.suspendedFromState ?? "unknown; operator reconciliation required"}.` : "Suspend public access and creator edits while preserving the project, releases and review history."}</p>
-      <label>Reason shared with the creator<textarea required maxLength={5000} value={reason} onChange={event => setReason(event.target.value)} /></label>
-      <label className="hub-review-confirm"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)} />I have checked the project and this moderation action.</label>
-      <button className="btn btn-primary" disabled={busy || !confirmed || !reason.trim() || (restoring && !state.suspendedFromState)}>{busy ? "Applying…" : restoring ? "Restore previous state" : "Suspend project"}</button>
-    </form>}
-  </details>;
+  return (
+    <Disclosure summary="Project suspension and restoration">
+      <ErrorStrip message={error || null} />
+      <div>
+        <Button size="sm" color="neutral" border lines="none" icon={refresh} iconPosition="left" disabled={busy} onClick={() => setAttempt(value => value + 1)}>
+          Refresh moderation state
+        </Button>
+      </div>
+      {state ? (
+        <form className={styles.controlForm} onSubmit={submit}>
+          <p className={styles.state}>
+            Current state <StatusTag status={state.state === "suspended" ? "danger" : "neutral"}>{state.state}</StatusTag>
+            <span>moderation revision {state.moderationRevision}</span>
+          </p>
+          <p>{restoring ? `Restore this project to its previous state: ${state.suspendedFromState ?? "unknown; operator reconciliation required"}.` : "Suspend public access and creator edits while preserving the project, releases and review history."}</p>
+          <Field label="Reason shared with the creator">
+            <Textarea required maxLength={5000} rows={3} value={reason} onChange={event => setReason(event.target.value)} />
+          </Field>
+          <Checkbox checked={confirmed} onChange={event => setConfirmed(event.target.checked)}>
+            I have checked the project and this moderation action.
+          </Checkbox>
+          <FormActions>
+            <Button type="submit" size="sm" color="red" lines="none" busy={busy} disabled={!confirmed || !reason.trim() || (restoring && !state.suspendedFromState)}>
+              {busy ? "Applying…" : restoring ? "Restore previous state" : "Suspend project"}
+            </Button>
+          </FormActions>
+        </form>
+      ) : null}
+    </Disclosure>
+  );
 }
 
 export function ReleaseRevocationControls({ token, release, updated }: { token: string; release: CommunityRelease; updated: () => void }) {
@@ -53,11 +81,23 @@ export function ReleaseRevocationControls({ token, release, updated }: { token: 
     finally { setBusy(false); }
   }
   if (release.state !== "published") return null;
-  return <details><summary>Revoke this release</summary><form className="hub-form" onSubmit={submit}>
-    <p>Revoke version {release.version}, revision {release.revision}. New download requests will be denied; release history and its original bytes are retained.</p>
-    {error && <p className="hub-notice" role="alert">{error}</p>}
-    <label>Revocation reason<textarea required maxLength={5000} value={reason} onChange={event => setReason(event.target.value)} /></label>
-    <label className="hub-review-confirm"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)} />I checked this exact release and its digest.</label>
-    <button className="btn btn-primary" disabled={busy || !confirmed || !reason.trim()}>{busy ? "Revoking…" : "Revoke release"}</button>
-  </form></details>;
+  return (
+    <Disclosure summary="Revoke this release">
+      <form className={styles.controlForm} onSubmit={submit}>
+        <p>Revoke version {release.version}, revision {release.revision}. New download requests will be denied; release history and its original bytes are retained.</p>
+        <ErrorStrip message={error || null} />
+        <Field label="Revocation reason">
+          <Textarea required maxLength={5000} rows={3} value={reason} onChange={event => setReason(event.target.value)} />
+        </Field>
+        <Checkbox checked={confirmed} onChange={event => setConfirmed(event.target.checked)}>
+          I checked this exact release and its digest.
+        </Checkbox>
+        <FormActions>
+          <Button type="submit" size="sm" color="red" lines="none" busy={busy} disabled={!confirmed || !reason.trim()}>
+            {busy ? "Revoking…" : "Revoke release"}
+          </Button>
+        </FormActions>
+      </form>
+    </Disclosure>
+  );
 }

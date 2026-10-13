@@ -170,76 +170,82 @@ try {
     await session.send("Input.dispatchKeyEvent", { type: "keyUp", key, code, windowsVirtualKeyCode: vkey, modifiers });
     await delay(100);
   };
+  // The site header: the reference bar of the home page concept, on every route.
+  const headerFits = `
+    const header=document.querySelector("header");
+    const visible=[...header.querySelectorAll("a, button")].filter(x=>x.getClientRects().length && getComputedStyle(x).visibility!=="hidden");
+    return document.documentElement.scrollWidth <= innerWidth && visible.every(x=>{const r=x.getBoundingClientRect(); return r.left>=-1 && r.right<=innerWidth+1;});
+  `;
   for (const width of [1680, 1440, 1280, 1100, 768, 420, 375, 320]) {
     await resize(width);
     await visit();
     const layout = await session.evaluate(`
-      const h=document.querySelector('.liquid-bar').getBoundingClientRect();
-      const visible=[...document.querySelectorAll('.liquid-bar a, .liquid-bar button')].filter(x=>x.getClientRects().length && getComputedStyle(x).visibility!=='hidden');
-      return { fit: document.documentElement.scrollWidth <= innerWidth && h.right <= innerWidth,
-        controlsFit: visible.every(x=>x.getBoundingClientRect().right <= h.right+1),
-        singleTitle: document.querySelectorAll('h1').length===1,
-        heroLoaded: [...document.images].filter(x=>x.src.includes('night-city')).every(x=>x.complete && x.naturalWidth>0),
-        glass: getComputedStyle(document.querySelector('.liquid-bar')).backdropFilter,
-        title: document.querySelector('h1')?.textContent };
+      return { fit: (() => { ${headerFits} })(),
+        singleTitle: document.querySelectorAll("h1").length===1,
+        heroLoaded: [...document.images].filter(x=>x.src.includes("cyberpunk-logo")).every(x=>x.complete && x.naturalWidth>0) };
     `);
-    check(width + "px: page and header fit", layout.fit && layout.controlsFit);
-    if (!layout.fit || !layout.controlsFit) console.log(await session.evaluate("return [...document.querySelectorAll('.liquid-bar a, .liquid-bar button')].filter(x=>x.getClientRects().length).map(x=>({text:x.textContent,rect:x.getBoundingClientRect().toJSON()}));"));
-    check(width + "px: hero image and heading", layout.singleTitle && layout.heroLoaded);
-    if ([1680, 420].includes(width)) await shot("home-liquid-" + width, width===420);
-    if (width===1440) await shot("home-liquid-full", true);
+    check(width + "px: page and header fit", layout.fit);
+    if (!layout.fit) console.log(await session.evaluate("return [...document.querySelectorAll('header a, header button')].filter(x=>x.getClientRects().length).map(x=>({label:x.getAttribute('aria-label')??x.textContent,rect:x.getBoundingClientRect().toJSON()}));"));
+    check(width + "px: hero logo and a single heading", layout.singleTitle && layout.heroLoaded);
+    if ([1680, 420].includes(width)) await shot("home-" + width);
   }
   await resize(1440);
-  await visit();
+  await visit("/servers");
   await session.evaluate("window.scrollTo({top:800,behavior:'instant'});");
   await delay(250);
-  check("header remains at the top when scrolling", await session.evaluate("return document.querySelector('.liquid-bar').getBoundingClientRect().top===12 && document.querySelector('.liquid-header').classList.contains('is-scrolled');"));
-  await session.evaluate("document.querySelector('.liquid-search-trigger').focus(); document.querySelector('.liquid-search-trigger').click();");
-  check("search opens as accessible modal", await session.evaluate("return document.querySelector('.liquid-search').open && document.activeElement.type==='search';"));
-  await session.evaluate(`
-    const input=document.querySelector('.liquid-search input');
-    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,'lua');
-    input.dispatchEvent(new Event('input',{bubbles:true}));
-  `);
-  await delay(150);
-  check("search filters destinations", await session.evaluate("return document.querySelectorAll('.liquid-search-results a').length===2 && document.querySelector('.liquid-search-results').textContent.includes('Lua API');"));
-  await shot("home-liquid-search");
-  await key("Escape","Escape",27);
-  check("Escape closes search and restores focus", await session.evaluate("return !document.querySelector('.liquid-search').open && document.activeElement.classList.contains('liquid-search-trigger');"));
+  check("header stays fixed at the top when scrolling", await session.evaluate("return document.querySelector('header').getBoundingClientRect().top===0;"));
   await session.evaluate("document.activeElement.blur();");
   await key("k","KeyK",75,2);
-  check("Ctrl+K opens navigation", await session.evaluate("return document.querySelector('.liquid-search').open;"));
+  check("Ctrl+K opens quick navigation as a modal with the search focused", await session.evaluate("return !!document.querySelector('dialog[open] input[type=search]') && document.activeElement.type==='search';"));
+  await session.evaluate(`
+    const input=document.querySelector("dialog[open] input[type=search]");
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value").set.call(input,"lua");
+    input.dispatchEvent(new Event("input",{bubbles:true}));
+  `);
+  await delay(150);
+  check("quick navigation filters destinations", await session.evaluate("const links=document.querySelectorAll('dialog[open] a'); return links.length===2 && [...links].some(a=>a.textContent.includes('Lua API'));"));
+  await shot("quick-navigation");
   await key("Escape","Escape",27);
+  check("Escape closes quick navigation", await session.evaluate("return !document.querySelector('dialog[open]');"));
   await resize(420,900);
   await visit();
-  const oldHeight=await session.evaluate("return getComputedStyle(document.documentElement).getPropertyValue('--header-h');");
-  await session.evaluate("document.querySelector('#nav-toggle').focus(); document.querySelector('#nav-toggle').click();");
-  await delay(100);
-  check("mobile menu opens without shifting page", await session.evaluate("return !document.querySelector('#mobile-nav').hidden && document.body.classList.contains('nav-open') && getComputedStyle(document.documentElement).getPropertyValue('--header-h')===" + JSON.stringify(oldHeight) + ";"));
-  await shot("home-liquid-mobile-menu");
+  await session.evaluate("const t=document.querySelector('button[aria-controls=site-menu]'); t.focus(); t.click();");
+  await delay(150);
+  check("mobile menu opens and locks the page", await session.evaluate("return !document.getElementById('site-menu').hidden && document.documentElement.style.overflow==='hidden' && document.querySelector('button[aria-controls=site-menu]').getAttribute('aria-expanded')==='true';"));
+  await shot("mobile-menu");
   await key("Escape","Escape",27);
-  check("Escape closes mobile navigation", await session.evaluate("return document.querySelector('#mobile-nav').hidden && !document.body.classList.contains('nav-open') && document.activeElement.id==='nav-toggle';"));
-  await session.evaluate("document.querySelector('#nav-toggle').click(); document.querySelector('#mobile-nav a[href=\"/create\"]').click();");
-  await delay(1200);
-  check("navigation closes menu", await session.evaluate("return location.pathname==='/create' && document.querySelector('#mobile-nav').hidden && !document.body.classList.contains('nav-open');"));
+  check("Escape closes the menu and returns focus to its toggle", await session.evaluate("return document.getElementById('site-menu').hidden && document.documentElement.style.overflow!=='hidden' && document.activeElement.getAttribute('aria-controls')==='site-menu';"));
+  await session.evaluate("document.querySelector('button[aria-controls=site-menu]').click();");
+  await delay(150);
+  await session.evaluate("document.querySelector('#site-menu a[href$=create]').click();");
+  await delay(1500);
+  check("navigating closes the menu", await session.evaluate("return location.pathname==='/create' && document.getElementById('site-menu').hidden && document.documentElement.style.overflow!=='hidden';"));
   for (const route of ["/download", "/docs", "/servers", "/account", "/admin"]) {
     await resize(1440);
     await visit(route);
-    // The documentation has its own single header bar; every other route shares the liquid bar.
-    check(route + ": shared header fits", await session.evaluate("return document.querySelector('.liquid-bar, .docs-header-bar').getBoundingClientRect().right<=innerWidth && document.documentElement.scrollWidth<=innerWidth;"));
+    check(route + ": shared header fits", await session.evaluate(headerFits));
   }
   await resize(1680,1000);
   await session.send("Emulation.setEmulatedMedia", { features: [{ name:"prefers-reduced-motion", value:"reduce" }] });
   await visit();
-  check("reduced motion respected", await session.evaluate("return getComputedStyle(document.querySelector('h1').parentElement).animationName==='none';"));
+  check("reduced motion: grain off, home scenes stacked vertically", await session.evaluate("return [...document.querySelectorAll('[class*=noise]')].every(x=>getComputedStyle(x).display==='none') && document.documentElement.dataset.scroll!=='horizontal';"));
+  // Back to full motion: the stacked reduced-motion home is wider than the viewport by design
+  // (as on the reference), clipped by html overflow-x, which scrollWidth still reports.
+  await session.send("Emulation.setEmulatedMedia", { features: [{ name:"prefers-reduced-motion", value:"no-preference" }] });
+  await visit();
   // A synthetic profile tests only header visibility, never authenticates or calls a master.
   await session.evaluate("localStorage.setItem('open77.session',JSON.stringify({token:'local-header-layout-fixture',expiresAtUtc:'2099-01-01',role:'admin',accountId:'fixture',displayName:'Layout',emailVerified:true})); window.dispatchEvent(new StorageEvent('storage',{key:'open77.session'}));");
   await delay(100);
   for (const width of [1680, 1440, 1366, 1280, 1100, 1024, 900, 768, 420]) {
     await resize(width);
     await delay(80);
-    check(width + "px: admin navigation fits", await session.evaluate("const bar=document.querySelector('.liquid-bar').getBoundingClientRect(); return [...document.querySelectorAll('.liquid-bar a, .liquid-bar button')].filter(x=>x.getClientRects().length).every(x=>x.getBoundingClientRect().right<=bar.right+1);"));
+    check(width + "px: signed-in header fits", await session.evaluate(headerFits));
   }
+  await resize(420,900);
+  await session.evaluate("document.querySelector('button[aria-controls=site-menu]').click();");
+  await delay(150);
+  check("admins find the admin console in the menu", await session.evaluate("return !!document.querySelector('#site-menu a[href$=admin]');"));
+  await key("Escape","Escape",27);
   await session.evaluate("localStorage.removeItem('open77.session'); window.dispatchEvent(new StorageEvent('storage',{key:'open77.session'}));");
   check("no browser errors", errors.length===0);
   if(errors.length) console.log(errors);

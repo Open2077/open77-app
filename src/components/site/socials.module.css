@@ -1,0 +1,49 @@
+/* Where to follow the project: each network named next to its mark, in the
+   slanted outline of the site's chips, so they read as links at a glance. */
+.socials {
+  flex-wrap: wrap;
+  gap: 0.6rem 0.7rem;
+  margin: 1.6em 0 auto;
+  padding-left: 4px;
+  display: flex;
+}
+.socials a {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-dim);
+  isolation: isolate;
+  align-items: center;
+  gap: 0.6em;
+  height: 2.4rem;
+  padding: 0 1em;
+  font-size: 0.66rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+  position: relative;
+}
+.socials a:before {
+  content: "";
+  border: 1px solid var(--line-strong);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.socials a svg {
+  flex: none;
+  width: 1.45em;
+  height: 1.45em;
+  font-size: 1rem;
+}
+.socials a:hover {
+  color: var(--text-primary);
+}
+.socials a:hover:before {
+  background: oklch(from var(--text-primary) l c h / 6%);
+  border-color: var(--text-primary);
+}

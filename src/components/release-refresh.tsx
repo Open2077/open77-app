@@ -3,8 +3,15 @@
 import { useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-/** Re-read request-time CDN pointers without losing scroll, access state or focus. */
-export function ReleaseRefresh() {
+/**
+ * Re-read request-time CDN pointers without losing scroll, access state or focus.
+ *
+ * Unstyled on purpose: it imports nothing but React and the router, so the
+ * release-channel regression (scripts/check-release-channels.mjs) can run the
+ * real effect in Node. The caller styles it through `className`
+ * (see `ReleaseStatus` in components/downloads).
+ */
+export function ReleaseRefresh({ className }: { className?: string } = {}) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -30,11 +37,19 @@ export function ReleaseRefresh() {
   }, [router]);
 
   return (
-    <div className="release-refresh" data-release-refresh>
+    <div className={className} data-release-refresh data-pending={pending || undefined}>
       <span>Live CDN versions · checked every minute while this page is visible.</span>
-      <button className="btn btn-ghost" type="button" disabled={pending}
-        onClick={() => startTransition(() => router.refresh())}>
-        {pending ? <span className="release-spinner" aria-hidden="true" /> : null}
+      <button type="button" disabled={pending} onClick={() => startTransition(() => router.refresh())}>
+        <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true">
+          <path
+            d="M20.25 12a8.25 8.25 0 1 1-2.42-5.83M20.25 3.75v4.5h-4.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
         <span role="status">{pending ? "Checking CDN…" : "Check for updates"}</span>
       </button>
     </div>

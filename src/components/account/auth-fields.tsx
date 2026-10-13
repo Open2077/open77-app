@@ -1,31 +1,55 @@
 "use client";
 
-import { useId, useState, type InputHTMLAttributes } from "react";
-import { AuthIcon } from "@/components/account/auth-icon";
+import { useState, type InputHTMLAttributes, type ReactNode } from "react";
 
-type FieldProps = InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: string; icon?: string };
+import { Field, Input } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
+import { mail01, view, viewOff } from "@/components/ui/icons";
+import { padlock } from "./kit";
 
-export function AuthField({ label, hint, icon = "mail", id: suppliedId, ...props }: FieldProps) {
-  const generatedId = useId();
-  const id = suppliedId ?? generatedId;
-  return <div className="auth-field">
-    <label htmlFor={id}>{label}</label>
-    <div className="auth-input-wrap"><AuthIcon name={icon} size={19} /><input {...props} id={id} className="ac-input" aria-describedby={hint ? `${id}-hint` : undefined} /></div>
-    {hint && <p className="ac-hint" id={`${id}-hint`}>{hint}</p>}
-  </div>;
+import styles from "./auth-fields.module.css";
+
+type FieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "id"> & {
+  label: string;
+  hint?: ReactNode;
+  error?: ReactNode;
+  /** A glyph from `ui/icons`. */
+  icon?: string;
+};
+
+/** A labelled text input with a leading glyph, its hint and its error. */
+export function AuthField({ label, hint, error, icon = mail01, ...props }: FieldProps) {
+  return (
+    <Field label={label} hint={hint} error={error}>
+      <Input icon={icon} inputSize="lg" {...props} />
+    </Field>
+  );
 }
 
-export function PasswordField({ label = "Password", hint, id: suppliedId, ...props }: Omit<FieldProps, "type" | "icon">) {
-  const generatedId = useId();
-  const id = suppliedId ?? generatedId;
+/** A password input that can be revealed without losing its value or submitting the form. */
+export function PasswordField({ label = "Password", hint, error, ...props }: Omit<FieldProps, "type" | "icon">) {
   const [visible, setVisible] = useState(false);
-  return <div className="auth-field">
-    <label htmlFor={id}>{label}</label>
-    <div className="auth-input-wrap auth-password">
-      <AuthIcon name="lock" size={19} />
-      <input {...props} type={visible ? "text" : "password"} id={id} className="ac-input" aria-describedby={hint ? `${id}-hint` : undefined} />
-      <button type="button" className="auth-reveal" disabled={props.disabled} aria-label={`${visible ? "Hide" : "Show"} ${label.toLowerCase()}`} aria-pressed={visible} aria-controls={id} onClick={() => setVisible(value => !value)}><AuthIcon name={visible ? "hidden" : "eye"} size={20} /></button>
-    </div>
-    {hint && <p className="ac-hint" id={`${id}-hint`}>{hint}</p>}
-  </div>;
+  return (
+    <Field label={label} hint={hint} error={error}>
+      <Input
+        icon={padlock}
+        inputSize="lg"
+        {...props}
+        type={visible ? "text" : "password"}
+        trailing={
+          <button
+            type="button"
+            className={styles.reveal}
+            disabled={props.disabled}
+            aria-label={`${visible ? "Hide" : "Show"} ${label.toLowerCase()}`}
+            aria-pressed={visible}
+            data-reveal
+            onClick={() => setVisible((value) => !value)}
+          >
+            <Icon glyph={visible ? viewOff : view} />
+          </button>
+        }
+      />
+    </Field>
+  );
 }

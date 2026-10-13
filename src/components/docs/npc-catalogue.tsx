@@ -2,6 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Tag } from "@/components/ui/chip";
+import { EmptyState, Loader, Notice } from "@/components/ui/feedback";
+import { Field, Input, Select } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
+import { copy01, download02, search01, tick02 } from "@/components/ui/icons";
+import { Display, Eyebrow } from "@/components/ui/typography";
+
+import styles from "./npc-catalogue.module.css";
+
 type NpcRecord = {
   record: string; category: string; risk: string; affiliation: string;
   entity_template: string; default_appearance: string; all_appearances: string; source: string;
@@ -14,6 +24,10 @@ const RISK_LABELS: Record<string, string> = {
 };
 const label = (value: string) => value.replace(/^Factions\./, "").replaceAll("_", " ");
 
+/**
+ * The searchable TweakDB NPC catalogue on the NPC and player-model guides:
+ * downloaded once, validated, filtered and paged in the browser.
+ */
 export function NpcCatalogue() {
   const [data, setData] = useState<Catalogue | null>(null);
   const [error, setError] = useState("");
@@ -55,6 +69,7 @@ export function NpcCatalogue() {
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, pages - 1);
   const visible = filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
+  const filtering = Boolean(query || category || risk || faction);
 
   async function copy(record: string) {
     try { await navigator.clipboard.writeText(record); setCopied(record); setCopyError(""); }
@@ -63,43 +78,133 @@ export function NpcCatalogue() {
   function reset() { setQuery(""); setCategory(""); setRisk(""); setFaction(""); setPage(0); }
 
   return (
-    <section className="npc-catalogue" aria-labelledby="npc-browser-title" aria-busy={!data && !error}>
-      <div className="npc-catalogue-heading">
-        <div><span className="npc-catalogue-eyebrow">TWEAKDB · GAME 2.31</span><h2 id="npc-browser-title">Explore NPC records</h2></div>
-        <a href="/data/npc-records-2.31.json" download>Download JSON ↗</a>
+    <section className={styles.catalogue} aria-labelledby="npc-browser-title" aria-busy={!data && !error} data-npc-catalogue>
+      <div className={styles.heading}>
+        <div className={styles.headingCopy}>
+          <Eyebrow>TweakDB · Game 2.31</Eyebrow>
+          <Display size="sm" as="h2" id="npc-browser-title">
+            Explore NPC records
+          </Display>
+        </div>
+        <a className={styles.download} href="/data/npc-records-2.31.json" download>
+          <Icon glyph={download02} />
+          Download JSON
+        </a>
       </div>
-      <p className="npc-catalogue-notice">IDs are extracted, not certified. Review the warnings and test your chosen record in game.</p>
+      <p className={styles.notice}>IDs are extracted, not certified. Review the warnings and test your chosen record in game.</p>
       <noscript>Enable JavaScript to search, or use the CSV and JSON downloads above.</noscript>
-      {error ? <div role="alert" className="npc-catalogue-empty"><p>{error}</p><button onClick={() => { setError(""); setAttempt((value) => value + 1); }}>Retry download</button></div>
-        : !data ? <p role="status" className="npc-catalogue-empty"><span className="npc-catalogue-spinner" /> Loading NPC catalogue…</p>
-          : <>
-            <div className="npc-catalogue-filters">
-              <label className="npc-catalogue-search">Search records<input type="search" placeholder="Character ID, faction or appearance…" value={query} onChange={(event) => { setQuery(event.target.value); setPage(0); }} /></label>
-              <label>Category<select value={category} onChange={(event) => { setCategory(event.target.value); setPage(0); }}><option value="">All categories</option>{options.categories.map((value) => <option key={value} value={value}>{label(value)}</option>)}</select></label>
-              <label>Classification<select value={risk} onChange={(event) => { setRisk(event.target.value); setPage(0); }}><option value="">All classifications</option>{options.risks.map((value) => <option key={value} value={value}>{RISK_LABELS[value] ?? label(value)}</option>)}</select></label>
-              <label>Faction<select value={faction} onChange={(event) => { setFaction(event.target.value); setPage(0); }}><option value="">All factions</option>{options.factions.map((value) => <option key={value} value={value}>{label(value)}</option>)}</select></label>
-            </div>
-            <div className="npc-catalogue-results"><p role="status">{filtered.length.toLocaleString("en-GB")} of {data.count.toLocaleString("en-GB")} records · Page {currentPage + 1} / {pages}</p><button onClick={reset} disabled={!query && !category && !risk && !faction}>Reset filters</button></div>
-            <p className="npc-catalogue-copy-status" role="status">{copyError || (copied ? `Copied ${copied}` : "Copy a record ID, or expand it to inspect its assets.")}</p>
-            <ul className="npc-catalogue-list">
-              {visible.map((record) => <li key={record.record}>
-                <div className="npc-catalogue-record">
-                  <code>{record.record}</code><button aria-label={`Copy ${record.record}`} onClick={() => void copy(record.record)}>{copied === record.record ? "Copied ✓" : "Copy ID"}</button>
+
+      {error ? (
+        <Notice
+          kind="danger"
+          title="Catalogue unavailable"
+          action={
+            <Button size="sm" lines="none" border color="red" onClick={() => { setError(""); setAttempt((value) => value + 1); }}>
+              Retry download
+            </Button>
+          }
+        >
+          {error}
+        </Notice>
+      ) : !data ? (
+        <Loader label="NPC catalogue" className={styles.loader} />
+      ) : (
+        <>
+          <div className={styles.filters}>
+            <Field label="Search records" className={styles.searchField}>
+              <Input
+                icon={search01}
+                type="search"
+                placeholder="Character ID, faction or appearance…"
+                value={query}
+                onChange={(event) => { setQuery(event.target.value); setPage(0); }}
+              />
+            </Field>
+            <Field label="Category">
+              <Select value={category} onChange={(event) => { setCategory(event.target.value); setPage(0); }}>
+                <option value="">All categories</option>
+                {options.categories.map((value) => <option key={value} value={value}>{label(value)}</option>)}
+              </Select>
+            </Field>
+            <Field label="Classification">
+              <Select value={risk} onChange={(event) => { setRisk(event.target.value); setPage(0); }}>
+                <option value="">All classifications</option>
+                {options.risks.map((value) => <option key={value} value={value}>{RISK_LABELS[value] ?? label(value)}</option>)}
+              </Select>
+            </Field>
+            <Field label="Faction">
+              <Select value={faction} onChange={(event) => { setFaction(event.target.value); setPage(0); }}>
+                <option value="">All factions</option>
+                {options.factions.map((value) => <option key={value} value={value}>{label(value)}</option>)}
+              </Select>
+            </Field>
+          </div>
+
+          <div className={styles.results} data-npc-results>
+            <p role="status">
+              {filtered.length.toLocaleString("en-GB")} of {data.count.toLocaleString("en-GB")} records · Page {currentPage + 1} / {pages}
+            </p>
+            <Button size="sm" lines="none" color="neutral" onClick={reset} disabled={!filtering}>
+              Reset filters
+            </Button>
+          </div>
+          <p className={styles.copyStatus} role="status">
+            {copyError || (copied ? `Copied ${copied}` : "Copy a record ID, or expand it to inspect its assets.")}
+          </p>
+
+          <ul className={styles.list} data-npc-list>
+            {visible.map((record) => (
+              <li key={record.record} className={styles.item}>
+                <div className={styles.record}>
+                  <code>{record.record}</code>
+                  <button type="button" className={styles.copy} aria-label={`Copy ${record.record}`} onClick={() => void copy(record.record)}>
+                    <Icon glyph={copied === record.record ? tick02 : copy01} />
+                    {copied === record.record ? "Copied" : "Copy ID"}
+                  </button>
                 </div>
-                <div className="npc-catalogue-tags"><span>{label(record.category)}</span><span data-risk={record.risk}>{RISK_LABELS[record.risk] ?? label(record.risk)}</span>{record.affiliation ? <span>{label(record.affiliation)}</span> : null}</div>
-                <details><summary>Asset details</summary><dl>
-                  <dt>Entity template</dt><dd><code>{record.entity_template || "Not resolved"}</code></dd>
-                  <dt>Default appearance</dt><dd><code>{record.default_appearance || "Not specified"}</code></dd>
-                  <dt>Extracted appearances</dt><dd><code>{record.all_appearances.split(";").join(", ") || "Not specified"}</code></dd>
-                  <dt>Database source</dt><dd>{record.source} · Not a DLC compatibility guarantee.</dd>
-                </dl></details>
-              </li>)}
-            </ul>
-            {!visible.length ? <div className="npc-catalogue-empty"><h3>No matching NPCs</h3><p>Try a shorter ID or remove a filter.</p><button onClick={reset}>Show all records</button></div> : null}
-            <nav className="npc-catalogue-pagination" aria-label="NPC catalogue pages">
-              <button disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>← Previous</button><span>{currentPage + 1} / {pages}</span><button disabled={currentPage >= pages - 1} onClick={() => setPage(currentPage + 1)}>Next →</button>
-            </nav>
-          </>}
+                <div className={styles.tags}>
+                  <Tag tone="neutral">{label(record.category)}</Tag>
+                  <span data-risk={record.risk}>
+                    <Tag tone={record.risk === "candidate" ? "blue" : "yellow"}>{RISK_LABELS[record.risk] ?? label(record.risk)}</Tag>
+                  </span>
+                  {record.affiliation ? <Tag tone="neutral">{label(record.affiliation)}</Tag> : null}
+                </div>
+                <details className={styles.details}>
+                  <summary>Asset details</summary>
+                  <dl>
+                    <dt>Entity template</dt><dd><code>{record.entity_template || "Not resolved"}</code></dd>
+                    <dt>Default appearance</dt><dd><code>{record.default_appearance || "Not specified"}</code></dd>
+                    <dt>Extracted appearances</dt><dd><code>{record.all_appearances.split(";").join(", ") || "Not specified"}</code></dd>
+                    <dt>Database source</dt><dd>{record.source} · Not a DLC compatibility guarantee.</dd>
+                  </dl>
+                </details>
+              </li>
+            ))}
+          </ul>
+
+          {!visible.length ? (
+            <div data-npc-empty>
+              <EmptyState
+                eyebrow="// 0 records"
+                title="No matching NPCs"
+                action={<Button size="sm" lines="none" border color="red" onClick={reset}>Show all records</Button>}
+              >
+                Try a shorter ID or remove a filter.
+              </EmptyState>
+            </div>
+          ) : null}
+
+          <nav className={styles.pagination} aria-label="NPC catalogue pages">
+            <Button size="sm" lines="none" border color="red" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}>
+              Previous
+            </Button>
+            <span>{currentPage + 1} / {pages}</span>
+            <Button size="sm" lines="none" border color="red" disabled={currentPage >= pages - 1} onClick={() => setPage(currentPage + 1)}>
+              Next
+            </Button>
+          </nav>
+        </>
+      )}
     </section>
   );
 }

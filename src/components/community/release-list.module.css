@@ -1,0 +1,209 @@
+/* Releases as a timeline: a skewed node per version on a hairline spine. */
+.releases {
+  flex-direction: column;
+  display: flex;
+}
+.release {
+  scroll-margin-top: calc(var(--header-height) + 1.5rem);
+  grid-template-columns: 2.4rem minmax(0, 1fr);
+  display: grid;
+  position: relative;
+}
+.release:before {
+  content: "";
+  background: var(--line);
+  width: 1px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0.55rem;
+}
+.release:last-child:before {
+  bottom: auto;
+  height: 1.6rem;
+}
+.node {
+  background: var(--body);
+  border: 1px solid var(--tone);
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 1.55rem;
+  position: relative;
+  transform: skewX(var(--skew));
+}
+.release[data-channel="stable"]:first-child .node {
+  background: var(--tone);
+}
+.release[data-state="revoked"] .node {
+  border-color: var(--red);
+}
+.card {
+  border-bottom: 1px solid var(--line);
+  flex-direction: column;
+  gap: 1.1rem;
+  min-width: 0;
+  padding: 1.3rem 0 2rem;
+  display: flex;
+}
+.head {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.8rem 1.5rem;
+  display: flex;
+}
+.headCopy {
+  flex-direction: column;
+  gap: 0.6rem;
+  display: flex;
+}
+.version {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  overflow-wrap: anywhere;
+  font-size: calc(0.6vw + 18px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.95;
+}
+.version span {
+  color: var(--tone);
+}
+.meta {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  font-size: 0.62rem;
+  display: flex;
+}
+.compat {
+  border: 1px solid var(--line);
+  background: var(--surface-1);
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1rem 1.2rem;
+  display: flex;
+}
+.compatTitle {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-size: 0.62rem;
+  font-weight: 350;
+}
+.text {
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.text a {
+  color: var(--tone);
+}
+.builds {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-left: 0.3rem;
+  display: flex;
+}
+.more summary,
+.pre > summary {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  cursor: pointer;
+  width: fit-content;
+  font-size: 0.62rem;
+  list-style: none;
+  transition: color var(--transition-link);
+}
+.more summary::-webkit-details-marker,
+.pre > summary::-webkit-details-marker {
+  display: none;
+}
+.more summary:before,
+.pre > summary:before {
+  content: "+";
+  color: var(--tone);
+  font-family: var(--font-mono);
+  margin-right: 0.8em;
+}
+.more[open] summary:before,
+.pre[open] > summary:before {
+  content: "−";
+}
+.more summary:hover,
+.pre > summary:hover {
+  color: var(--text-primary);
+}
+.moreBody {
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-top: 1rem;
+  display: flex;
+}
+.resources {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  display: flex;
+}
+.resources li {
+  border-bottom: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.75rem 0;
+  display: flex;
+}
+.resourceName {
+  font-family: var(--font-mono);
+  font-variation-settings: "wght" 400;
+  color: var(--text-primary);
+  font-size: 0.86rem;
+}
+.resourceName span {
+  color: var(--text-faint);
+}
+.digest {
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  overflow-wrap: anywhere;
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+.source {
+  flex-direction: column;
+  gap: 0.5rem;
+  display: flex;
+}
+.foot {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem 2.4rem;
+  display: flex;
+}
+.foot > * {
+  flex: 1 1 14rem;
+}
+.pre {
+  margin-top: 1.4rem;
+}
+.pre > :not(summary) {
+  margin-top: 1.2rem;
+}
+
+/* Changelogs are written as documents; their headings step down inside a release. */
+.notes.notes :global(h2) {
+  font-size: 1.15em;
+}
+.notes.notes :global(h3) {
+  font-size: 1em;
+}

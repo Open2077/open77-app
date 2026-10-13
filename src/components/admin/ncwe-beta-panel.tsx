@@ -1,18 +1,46 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { CheckIcon, SearchIcon } from "@/components/icons";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+import { Button } from "@/components/admin/admin-button";
+import { Chip } from "@/components/ui/chip";
+import type { DialogHandle } from "@/components/ui/dialog";
+import { Loader } from "@/components/ui/feedback";
+import { Checkbox, Field, Textarea } from "@/components/ui/field";
+import { beaker, refresh, tick02 } from "@/components/ui/icons";
 import { MasterApiError } from "@/lib/account/api";
 import * as beta from "@/lib/account/ncwe-beta-api";
 import type { AdminNcweBetaDecision, AdminNcweBetaRow, NcweBetaStatusValue } from "@/lib/account/ncwe-beta-api";
+import {
+  AdminPanel,
+  AdminTable,
+  EmptyBlock,
+  Filters,
+  Footnote,
+  GuardedDialog,
+  LoadingBlock,
+  Mono,
+  Pager,
+  Primary,
+  SearchBox,
+  Stack,
+  StatusTag,
+  Sub,
+  SuccessStrip,
+  SubHeading,
+  Toolbar,
+  cell,
+} from "./admin-kit";
 import { ArmButton } from "./arm-button";
 import { formatDateTime, safeHttpUrl } from "./format";
 import { ErrorStrip, useAdminData } from "./use-admin-data";
+
 import styles from "./ncwe-beta-panel.module.css";
 
 type Filter = NcweBetaStatusValue | "all";
 const STATUS_LABEL: Record<NcweBetaStatusValue, string> = { pending: "Pending", approved: "Accepted", rejected: "Declined" };
+const STATUS_TAG: Record<NcweBetaStatusValue, "warn" | "ok" | "danger"> = { pending: "warn", approved: "ok", rejected: "danger" };
 const DEFAULT_AVATAR = "https://cdn.discordapp.com/embed/avatars/0.png";
 
 /** Discord CDN avatars only: the URL comes from the master, which built it from Discord's answer. */
@@ -33,6 +61,13 @@ function outcome(decision: AdminNcweBetaDecision, verb: string): string {
   return `${verb} ${who}.`;
 }
 
+function DiscordAvatar({ url, size }: { url: string | null; size: number }) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element -- Discord CDN avatar
+    <img className={styles.avatar} src={avatar(url)} alt="" width={size} height={size} referrerPolicy="no-referrer" />
+  );
+}
+
 export function NcweBetaPanel() {
   const [input, setInput] = useState("");
   const [query, setQuery] = useState("");
@@ -45,15 +80,13 @@ export function NcweBetaPanel() {
   const [mutationError, setMutationError] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
   const inFlight = useRef(false);
-  const dialog = useRef<HTMLDialogElement>(null);
-  const titleId = useId();
-  const noteId = useId();
+  const dialog = useRef<DialogHandle>(null);
   useEffect(() => {
     const timer = setTimeout(() => { setQuery(input.trim()); setPage(1); }, 350);
     return () => clearTimeout(timer);
   }, [input]);
   useEffect(() => {
-    if (selection) { if (!dialog.current?.open) dialog.current?.showModal(); }
+    if (selection) dialog.current?.open();
     else dialog.current?.close();
   }, [selection]);
   const load = useCallback((token: string) => beta.adminNcweBeta(token, filter === "all" ? undefined : filter, query, page), [filter, query, page]);
@@ -86,111 +119,227 @@ export function NcweBetaPanel() {
   const counts: Record<Filter, number | undefined> = { pending: data?.pending, approved: data?.approved, rejected: data?.rejected,
     all: data ? data.pending + data.approved + data.rejected : undefined };
   const current = selection?.application;
+  const created = current ? snowflakeDate(current.discord.userId) : null;
 
-  return <section className="adm-panel">
-    <div className="adm-panel-head">
-      <h2 className="adm-panel-title"><CheckIcon size={16} /> NCWE closed beta</h2>
-      <div className="adm-search"><SearchIcon size={13} /><input value={input} onChange={e => setInput(e.target.value)}
-        placeholder="Search e-mail, name, Discord user or ID…" aria-label="Search NCWE beta applications" maxLength={96} spellCheck={false} /></div>
-    </div>
-    <p className="adm-footnote">Applications from <Link href="/ncwe">/ncwe</Link>. Accepting gives the Discord account the NCWE Preview role and posts a
-      welcome tagging the member; declining an accepted application takes the role back. Notes are shown to the applicant.</p>
-    <div className="adm-toolbar"><div className="adm-filters" role="group" aria-label="Filter applications">
-      {([["pending", "Pending"], ["approved", "Accepted"], ["rejected", "Declined"], ["all", "All"]] as const).map(([value, label]) =>
-        <button key={value} type="button" className={`ac-iconbtn${filter === value ? " is-copied" : ""}`} aria-pressed={filter === value}
-          onClick={() => { setFilter(value); setPage(1); }}>{label}{counts[value] !== undefined ? <span className={styles.count}>{counts[value]}</span> : null}</button>)}
-    </div><button type="button" className="ac-iconbtn" disabled={loading} onClick={reload}>Refresh list</button></div>
-    <ErrorStrip message={error} />
-    {notice ? <p className="ac-success" role="status" style={{ marginBottom: 12 }}><CheckIcon />{notice}</p> : null}
-    {loading && !data ? <p className="ac-loading" role="status">Loading applications…</p> : null}
-    {data && !data.items.length ? <p className="adm-empty">{filter === "pending" && !query ? "No application is waiting for review." : "No application matches."}</p> : null}
-    {data?.items.length ? <div className="adm-tablewrap"><table className="adm-table"><thead><tr>
-      <th>Account</th><th>Discord</th><th>Why NCWE</th><th>Sent</th><th>Status</th><th>Actions</th>
-    </tr></thead><tbody>{data.items.map(row => {
-      const app = row.application;
-      return <tr key={app.accountId}>
-        <td><strong>{row.displayName}</strong><span className={styles.sub}>{row.email}{row.emailVerified ? "" : " · unverified"}</span></td>
-        <td><div className={styles.who}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- Discord CDN avatar */}
-          <img src={avatar(app.discord.avatarUrl)} alt="" width={32} height={32} referrerPolicy="no-referrer" />
-          <div><strong>{app.discord.displayName || app.discord.username}</strong><small>@{app.discord.username}</small></div>
-        </div></td>
-        <td><div className={styles.excerpt}>{app.motivation}</div></td>
-        <td><span className={styles.sub}>{formatDateTime(app.createdAtUtc)}</span></td>
-        <td><span className={styles.status} data-status={app.status}>{STATUS_LABEL[app.status]}</span>
-          {row.discordState === "failed" ? <span className={styles.discordState} data-state="failed">Discord failed</span> : null}</td>
-        <td><button type="button" className="ac-iconbtn" disabled={busy} onClick={() => open(row)}>Review</button></td>
-      </tr>;
-    })}</tbody></table></div> : null}
-    {data ? <div className="adm-pager"><span className="adm-pager-range">{data.total} applications · page {data.page} of {pages}</span>
-      <div className="adm-pager-controls"><button type="button" className="ac-iconbtn" disabled={loading || page <= 1} onClick={() => setPage(page - 1)}>Previous</button>
-        <button type="button" className="ac-iconbtn" disabled={loading || page >= pages} onClick={() => setPage(page + 1)}>Next</button></div></div> : null}
+  return (
+    <>
+      <AdminPanel
+        title="NCWE closed beta"
+        icon={beaker}
+        brackets
+        actions={
+          <SearchBox value={input} onChange={setInput} placeholder="Search e-mail, name, Discord user or ID…" label="Search NCWE beta applications" maxLength={96} />
+        }
+        footnote="Every decision is recorded in the audit log with its author. The Discord account was checked on the server when the applicant confirmed it and again when they submitted."
+      >
+        <Footnote>
+          Applications from <Link href="/ncwe">/ncwe</Link>. Accepting gives the Discord account the NCWE Preview role and
+          posts a welcome tagging the member; declining an accepted application takes the role back. Notes are shown to the
+          applicant.
+        </Footnote>
+        <Toolbar>
+          <Filters label="Filter applications">
+            {([["pending", "Pending"], ["approved", "Accepted"], ["rejected", "Declined"], ["all", "All"]] as const).map(([value, label]) => (
+              <Chip key={value} pressed={filter === value} count={counts[value]} onClick={() => { setFilter(value); setPage(1); }}>
+                {label}
+              </Chip>
+            ))}
+          </Filters>
+          <Button size="sm" color="neutral" border lines="none" icon={refresh} iconPosition="left" disabled={loading} onClick={reload}>
+            Refresh list
+          </Button>
+        </Toolbar>
+        <ErrorStrip message={error} />
+        <SuccessStrip message={notice} />
+        {loading && !data ? <LoadingBlock label="Loading applications…" /> : null}
+        {data && !data.items.length ? (
+          <EmptyBlock icon={beaker}>{filter === "pending" && !query ? "No application is waiting for review." : "No application matches."}</EmptyBlock>
+        ) : null}
+        {data?.items.length ? (
+          <AdminTable caption="NCWE beta applications" minWidth="64rem">
+            <thead>
+              <tr>
+                <th>Account</th>
+                <th>Discord</th>
+                <th>Why NCWE</th>
+                <th>Sent</th>
+                <th>Status</th>
+                <th className={cell.actions}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.items.map(row => {
+                const app = row.application;
+                return (
+                  <tr key={app.accountId} className={selection?.application.accountId === app.accountId ? cell.active : undefined}>
+                    <td>
+                      <Primary>{row.displayName}</Primary>
+                      <Sub>{row.email}{row.emailVerified ? "" : " · unverified"}</Sub>
+                    </td>
+                    <td>
+                      <span className={styles.who}>
+                        <DiscordAvatar url={app.discord.avatarUrl} size={32} />
+                        <span>
+                          <Primary>{app.discord.displayName || app.discord.username}</Primary>
+                          <Sub>@{app.discord.username}</Sub>
+                        </span>
+                      </span>
+                    </td>
+                    <td>
+                      <span className={styles.excerpt}>{app.motivation}</span>
+                    </td>
+                    <td className={cell.nowrap}>
+                      <Mono tone="dim">{formatDateTime(app.createdAtUtc)}</Mono>
+                    </td>
+                    <td>
+                      <Stack>
+                        <StatusTag status={STATUS_TAG[app.status]}>{STATUS_LABEL[app.status]}</StatusTag>
+                        {row.discordState === "failed" ? <StatusTag status="danger">Discord failed</StatusTag> : null}
+                      </Stack>
+                    </td>
+                    <td className={cell.actions}>
+                      <Button size="sm" color="neutral" border lines="none" disabled={busy} onClick={() => open(row)}>
+                        Review
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </AdminTable>
+        ) : null}
+        {data ? (
+          <Pager
+            summary={`${data.total} applications · page ${data.page} of ${pages}`}
+            previous={{ disabled: loading || page <= 1, onClick: () => setPage(page - 1) }}
+            next={{ disabled: loading || page >= pages, onClick: () => setPage(page + 1) }}
+          />
+        ) : null}
+      </AdminPanel>
 
-    <dialog ref={dialog} className={`adm-email-dialog ${styles.dialog}`} aria-labelledby={titleId}
-      onCancel={e => { if (inFlight.current) e.preventDefault(); else setSelection(null); }} onClose={() => { if (!inFlight.current) setSelection(null); }}>
-      {selection && current ? <>
-        <div className={styles.dialogHead}>
-          <h2 id={titleId}>{selection.displayName}</h2>
-          <span className={styles.status} data-status={current.status}>{STATUS_LABEL[current.status]}</span>
-        </div>
-        <div className={styles.cards}>
-          <div className={styles.card}><h3>OPEN//77 account</h3>
-            <strong>{selection.displayName}</strong>
-            <span className={styles.sub}>{selection.email} · {selection.emailVerified ? "verified" : "not verified"}</span>
-            <span className={styles.sub}>{selection.role} · {selection.accountStatus} · since {formatDateTime(selection.accountCreatedAtUtc)}</span>
-            <span className={styles.sub}>{current.accountId}</span>
-          </div>
-          <div className={styles.card}><h3>Discord</h3>
-            <div className={styles.who}>
-              {/* eslint-disable-next-line @next/next/no-img-element -- Discord CDN avatar */}
-              <img src={avatar(current.discord.avatarUrl)} alt="" width={48} height={48} referrerPolicy="no-referrer" />
-              <div><strong>{current.discord.displayName || current.discord.username}</strong>
-                <small>@{current.discord.username} · {current.discord.userId}</small></div>
+      <GuardedDialog
+        ref={dialog}
+        size="lg"
+        eyebrow={current ? <>NCWE beta · <span className={styles.eyebrowStatus}>{STATUS_LABEL[current.status]}</span></> : "NCWE beta"}
+        title={selection?.displayName ?? "Application"}
+        locked={() => inFlight.current}
+        onClose={() => setSelection(null)}
+        footer={
+          current && selection ? (
+            <>
+              <Button size="sm" color="neutral" border lines="none" disabled={busy} onClick={() => setSelection(null)}>
+                Close
+              </Button>
+              {current.status === "rejected" ? (
+                <Button size="sm" color="neutral" border lines="none" disabled={busy || !token} onClick={() => void decide("reopen", "Reopened")}>
+                  Back to pending
+                </Button>
+              ) : null}
+              {current.status === "approved" && selection.discordState === "failed" ? (
+                <Button size="sm" color="red" lines="none" disabled={busy || !token}
+                  onClick={() => void run((t, row) => beta.retryNcweDiscord(t, row.application.accountId, true), "Retried Discord for")}>
+                  Retry Discord
+                </Button>
+              ) : null}
+              {current.status !== "rejected" ? (
+                <ArmButton
+                  label={current.status === "approved" ? "Withdraw access" : "Decline"}
+                  confirmLabel={current.status === "approved" ? "Confirm: take the role back" : "Confirm decline"}
+                  disabled={busy || !token}
+                  onConfirm={() => void decide("reject", "Declined")}
+                />
+              ) : null}
+              {current.status !== "approved" ? (
+                <Button size="sm" color="red" lines="none" icon={tick02} iconPosition="left" disabled={busy || !token} onClick={() => void decide("approve", "Accepted")}>
+                  Accept & give the role
+                </Button>
+              ) : null}
+            </>
+          ) : null
+        }
+      >
+        {selection && current ? (
+          <div className={styles.review}>
+            <div className={styles.cards}>
+              <section className={styles.card} aria-label="OPEN//77 account">
+                <SubHeading>OPEN//77 account</SubHeading>
+                <Primary>{selection.displayName}</Primary>
+                <Sub>{selection.email} · {selection.emailVerified ? "verified" : "not verified"}</Sub>
+                <Sub>{selection.role} · {selection.accountStatus} · since {formatDateTime(selection.accountCreatedAtUtc)}</Sub>
+                <Sub>{current.accountId}</Sub>
+              </section>
+              <section className={styles.card} aria-label="Discord account">
+                <SubHeading>Discord</SubHeading>
+                <span className={styles.who}>
+                  <DiscordAvatar url={current.discord.avatarUrl} size={48} />
+                  <span>
+                    <Primary>{current.discord.displayName || current.discord.username}</Primary>
+                    <Sub>@{current.discord.username} · {current.discord.userId}</Sub>
+                  </span>
+                </span>
+                <Sub plain>
+                  {current.discord.joinedServerAtUtc ? `On the server since ${formatDateTime(current.discord.joinedServerAtUtc)}` : "Join date unknown"}
+                  {created ? ` · account created ${formatDateTime(created)}` : ""}
+                </Sub>
+              </section>
             </div>
-            <span className={styles.sub} style={{ marginTop: 8 }}>
-              {current.discord.joinedServerAtUtc ? `On the server since ${formatDateTime(current.discord.joinedServerAtUtc)}` : "Join date unknown"}
-              {snowflakeDate(current.discord.userId) ? ` · account created ${formatDateTime(snowflakeDate(current.discord.userId)!)}` : ""}
-            </span>
+            <dl className={styles.answers}>
+              <div><dt>Why NCWE</dt><dd>{current.motivation}</dd></div>
+              <div><dt>First build</dt><dd>{current.plans}</dd></div>
+              <div><dt>Experience</dt><dd>{current.experience}</dd></div>
+              <div><dt>Time for the beta</dt><dd>{beta.NCWE_AVAILABILITY.find(([value]) => value === current.availability)?.[1] ?? current.availability}</dd></div>
+              {current.portfolioUrl ? (
+                <div>
+                  <dt>Portfolio</dt>
+                  <dd>
+                    {safeHttpUrl(current.portfolioUrl)
+                      ? <a href={safeHttpUrl(current.portfolioUrl)!} target="_blank" rel="noopener noreferrer nofollow">{current.portfolioUrl}</a>
+                      : current.portfolioUrl}
+                  </dd>
+                </div>
+              ) : null}
+              <div>
+                <dt>Submitted</dt>
+                <dd>
+                  {formatDateTime(current.createdAtUtc)}
+                  {current.status === "pending" && current.updatedAtUtc !== current.createdAtUtc ? ` · edited ${formatDateTime(current.updatedAtUtc)}` : ""}
+                  {" · "}revision {current.revision}
+                </dd>
+              </div>
+            </dl>
+            {current.decidedAtUtc ? (
+              <div className={styles.decision} data-failed={selection.discordState === "failed"}>
+                {STATUS_LABEL[current.status]} {current.decidedAtUtc ? formatDateTime(current.decidedAtUtc) : ""}{selection.decidedByName ? ` by ${selection.decidedByName}` : ""}.
+                {selection.discordState ? (
+                  <>
+                    {" "}Discord: <strong>{selection.discordState}</strong>{selection.discordError ? ` (${selection.discordError})` : ""}
+                    {selection.discordDoneAtUtc && selection.discordState === "done" ? `, ${formatDateTime(selection.discordDoneAtUtc)}` : ""}.
+                  </>
+                ) : null}
+              </div>
+            ) : null}
+            <form className={styles.form} onSubmit={e => e.preventDefault()}>
+              <Field label="Note to the applicant" optional hint="Shown on their /ncwe page.">
+                <Textarea
+                  value={note}
+                  onChange={e => setNote(e.target.value)}
+                  maxLength={beta.NCWE_LIMITS.noteMax}
+                  rows={3}
+                  placeholder="Welcome aboard! Builds, news and feedback are in the NCWE channels on Discord."
+                  disabled={busy}
+                />
+              </Field>
+              {current.status !== "approved" ? (
+                <Checkbox checked={announce} disabled={busy} onChange={e => setAnnounce(e.target.checked)}>
+                  Post the welcome message on Discord, tagging the member
+                </Checkbox>
+              ) : null}
+            </form>
+            <ErrorStrip message={mutationError} />
+            {busy ? <Loader label="Saving decision and updating Discord…" /> : null}
           </div>
-        </div>
-        <dl className={styles.answers}>
-          <div><dt>Why NCWE</dt><dd>{current.motivation}</dd></div>
-          <div><dt>First build</dt><dd>{current.plans}</dd></div>
-          <div><dt>Experience</dt><dd>{current.experience}</dd></div>
-          <div><dt>Time for the beta</dt><dd>{beta.NCWE_AVAILABILITY.find(([value]) => value === current.availability)?.[1] ?? current.availability}</dd></div>
-          {current.portfolioUrl ? <div><dt>Portfolio</dt><dd>{safeHttpUrl(current.portfolioUrl)
-            ? <a href={safeHttpUrl(current.portfolioUrl)!} target="_blank" rel="noopener noreferrer nofollow">{current.portfolioUrl}</a> : current.portfolioUrl}</dd></div> : null}
-          <div><dt>Submitted</dt><dd>{formatDateTime(current.createdAtUtc)}{current.status === "pending" && current.updatedAtUtc !== current.createdAtUtc ? ` · edited ${formatDateTime(current.updatedAtUtc)}` : ""} · revision {current.revision}</dd></div>
-        </dl>
-        {current.decidedAtUtc ? <div className={styles.decision} data-failed={selection.discordState === "failed"}>
-          {STATUS_LABEL[current.status]} {current.decidedAtUtc ? formatDateTime(current.decidedAtUtc) : ""}{selection.decidedByName ? ` by ${selection.decidedByName}` : ""}.
-          {selection.discordState ? <> Discord: <strong>{selection.discordState}</strong>{selection.discordError ? ` (${selection.discordError})` : ""}
-            {selection.discordDoneAtUtc && selection.discordState === "done" ? `, ${formatDateTime(selection.discordDoneAtUtc)}` : ""}.</> : null}
-        </div> : null}
-        <form className={styles.form} onSubmit={e => e.preventDefault()}>
-          <label htmlFor={noteId}>Note to the applicant (optional, shown on their /ncwe page)</label>
-          <textarea id={noteId} className="adm-ownership-reason-input" value={note} onChange={e => setNote(e.target.value)} maxLength={beta.NCWE_LIMITS.noteMax}
-            rows={3} placeholder="Welcome aboard! Builds, news and feedback are in the NCWE channels on Discord." disabled={busy} />
-          {current.status !== "approved" ? <label className={styles.check}><input type="checkbox" checked={announce} disabled={busy}
-            onChange={e => setAnnounce(e.target.checked)} />Post the welcome message on Discord, tagging the member</label> : null}
-          <ErrorStrip message={mutationError} />
-          {busy ? <p role="status">Saving decision and updating Discord…</p> : null}
-          <div className="adm-user-actions">
-            <button type="button" className="ac-iconbtn" disabled={busy} onClick={() => setSelection(null)}>Close</button>
-            {current.status === "rejected" ? <button type="button" className="ac-iconbtn" disabled={busy || !token}
-              onClick={() => void decide("reopen", "Reopened")}>Back to pending</button> : null}
-            {current.status === "approved" && selection.discordState === "failed" ? <button type="button" className="ac-iconbtn adm-primary" disabled={busy || !token}
-              onClick={() => void run((t, row) => beta.retryNcweDiscord(t, row.application.accountId, true), "Retried Discord for")}>Retry Discord</button> : null}
-            {current.status !== "rejected" ? <ArmButton label={current.status === "approved" ? "Withdraw access" : "Decline"}
-              confirmLabel={current.status === "approved" ? "Confirm: take the role back" : "Confirm decline"} disabled={busy || !token}
-              onConfirm={() => void decide("reject", "Declined")} /> : null}
-            {current.status !== "approved" ? <button type="button" className="ac-iconbtn adm-primary" disabled={busy || !token}
-              onClick={() => void decide("approve", "Accepted")}>Accept &amp; give the role</button> : null}
-          </div>
-        </form>
-      </> : null}
-    </dialog>
-    <p className="adm-footnote">Every decision is recorded in the audit log with its author. The Discord account was checked on the server when the applicant
-      confirmed it and again when they submitted.</p>
-  </section>;
+        ) : null}
+      </GuardedDialog>
+    </>
+  );
 }

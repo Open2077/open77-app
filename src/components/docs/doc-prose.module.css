@@ -1,0 +1,149 @@
+/* Reading size: about 16px running text at 1.7, a measure of about 72
+   characters; code, tables and figures use the full column. The rules that
+   resize what the shared Prose already sizes are scoped under `.reader`, so
+   they win on specificity rather than on stylesheet order. */
+.doc {
+  font-size: var(--doc-text, 1rem);
+  line-height: 1.7;
+}
+.doc > :global(:where(p, ul, ol, h2, h3, h4, h5)) {
+  max-width: 35em;
+}
+.doc > :global(blockquote) {
+  max-width: 38em;
+}
+
+/* Headings a step above the text, not a poster: h2 about 1.5rem, h3 about 1.15rem. */
+.reader .doc :global(h2) {
+  margin: 2.4em 0 0.75em;
+  font-size: 1.5em;
+  line-height: 1.02;
+}
+.reader .doc :global(h3) {
+  margin: 1.9em 0 0.5em;
+  font-size: 1.15em;
+  line-height: 1.35;
+}
+.reader .doc :global(:where(h4, h5)) {
+  margin: 1.8em 0 0.5em;
+}
+.reader .doc :global(li + li) {
+  margin-top: 0.35em;
+}
+
+/* Code at the size of the text around it, a touch smaller. */
+.reader .doc :global(pre) {
+  padding: 1rem 1.2rem;
+  font-size: 0.84em;
+  line-height: 1.65;
+}
+
+/* Sections open on a hairline with a tone segment, as the page head does. */
+.doc :global(h2) {
+  background: linear-gradient(90deg, var(--tone) 0 2.4rem, var(--line) 2.4rem) top left / 100% 1px no-repeat;
+  max-width: none;
+  padding-top: 1.1em;
+}
+.doc > :global(h2:first-child) {
+  background: none;
+  padding-top: 0;
+}
+.doc :global(:where(h2, h3) code) {
+  font-size: 0.9em;
+  color: inherit;
+  text-transform: none;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+/* Shiki blocks: the language, in the terminal voice of the home code panels. */
+.doc :global(pre[data-language]):before {
+  content: "// " attr(data-language);
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--tone);
+  margin-bottom: 0.9rem;
+  font-size: 0.6rem;
+  display: block;
+}
+.doc :global(pre) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.doc :global(pre):focus-visible {
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+
+/* Reference tables: a frame, a raised head row and room on both sides. */
+.doc :global(.dx-table-wrap) {
+  border: 1px solid var(--line);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.doc :global(.dx-table-wrap th) {
+  background: var(--surface-1);
+}
+.doc :global(.dx-table-wrap :where(th, td)) {
+  padding-inline: 0.85rem;
+}
+.doc :global(.dx-table-wrap tbody tr:last-child td) {
+  border-bottom: 0;
+}
+.doc :global(.dx-table-wrap tbody tr:hover) {
+  background: var(--surface-1);
+}
+.doc :global(.dx-table-wrap table) {
+  font-size: 0.9em;
+  line-height: 1.55;
+}
+.doc :global(.dx-table-wrap td) {
+  color: var(--text-dim);
+}
+.doc :global(.dx-table-wrap td:first-child) {
+  color: var(--text-primary);
+}
+/* Identifiers in a table must not break inside a word: splitting
+   `Open77.vehicles.create` into `Open77.vehicles.c` / `reate` is unreadable and
+   defeats the browser's own search. Code wraps at its spaces only (a long
+   parameter list folds), each cell claims its longest token, and the wrapper
+   scrolls when even that does not fit. */
+.doc :global(.dx-table-wrap :where(th, td) code) {
+  overflow-wrap: normal;
+  word-break: normal;
+  background: var(--surface-1);
+  padding-inline: 0.3em;
+  font-size: 0.82em;
+}
+
+/* Blockquotes carry the guides' callouts ("**Before you reach for a mod**"). */
+.reader .doc :global(blockquote) {
+  color: var(--text-dim);
+  background: oklch(from var(--tone) l c h / 5%);
+  border: 1px solid oklch(from var(--tone) l c h / 22%);
+  padding: 0.85em 1.2em 0.85em 1.4em;
+}
+.doc :global(blockquote):before {
+  inset: -1px auto -1px -1px;
+  width: 3px;
+  transform: none;
+}
+.doc :global(blockquote > :first-child) {
+  margin-top: 0;
+}
+.doc :global(blockquote > :last-child) {
+  margin-bottom: 0;
+}
+.doc :global(blockquote p) {
+  margin: 0.6em 0;
+}
+
+.doc :global(img) {
+  display: block;
+}
+.doc :global(details[open] > summary) {
+  margin-bottom: 0.6em;
+}

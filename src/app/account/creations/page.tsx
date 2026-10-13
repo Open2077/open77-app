@@ -1,7 +1,22 @@
-import Link from "next/link";
-import { HubPageHead, HubShell } from "@/components/community/hub-shell";
+import type { Metadata } from "next";
+
+import { AccountShell } from "@/components/account/account-shell";
 import { CreatorDashboard } from "@/components/community/creator-workspace";
-export const metadata = { title: "My creations", robots: { index: false, follow: false } };
+import { Button } from "@/components/ui/button";
+import { add01 } from "@/components/ui/icons";
+
+export const metadata: Metadata = { title: "My creations", robots: { index: false, follow: false } };
+
 export default function CreationsPage() {
-  return <HubShell workspace><HubPageHead kicker="CREATOR WORKSPACE" title="My creations" actions={<Link className="btn btn-primary btn-small" href="/account/creations/new">New creation</Link>}><p>Drafts, releases, review status and everything you have published.</p></HubPageHead><CreatorDashboard /></HubShell>;
+  return (
+    <AccountShell
+      eyebrow="Creator workspace"
+      title={["My", "creations"]}
+      lead="Drafts, releases, review status and everything you have published."
+      guestLead="Sign in to open your creator workspace: drafts, releases, review status and everything you have published."
+      actions={<Button href="/account/creations/new" icon={add01}>New creation</Button>}
+    >
+      <CreatorDashboard />
+    </AccountShell>
+  );
 }

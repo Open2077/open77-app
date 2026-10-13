@@ -1,0 +1,52 @@
+.actions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem 2rem;
+  padding-left: 3.5em;
+  display: flex;
+}
+.fav {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  isolation: isolate;
+  align-items: center;
+  gap: 0.65rem;
+  height: 3.2rem;
+  padding: 0 1.4rem;
+  font-size: 0.64rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+  position: relative;
+}
+.fav:before {
+  content: "";
+  border: 1px solid var(--line-strong);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition: border-color var(--transition-link);
+}
+.fav svg {
+  font-size: 1.3rem;
+}
+.fav:hover {
+  color: var(--text-primary);
+}
+.fav:hover:before {
+  border-color: var(--tone);
+}
+.fav[aria-pressed="true"] {
+  color: var(--tone);
+}
+.fav[aria-pressed="true"] :global(svg path) {
+  fill: currentColor;
+}
+@media screen and (max-width: 700px) {
+  .actions {
+    padding-left: 2.5em;
+  }
+}

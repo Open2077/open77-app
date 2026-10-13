@@ -1,0 +1,125 @@
+/* The Workshop strip: a hairline band under the site header, transparent so the
+   page art runs behind it. */
+.bar {
+  --tone: var(--blue);
+  border-bottom: 1px solid var(--line);
+  height: var(--hub-bar-height, 3.4rem);
+  z-index: 20;
+  position: relative;
+}
+.bar:after {
+  content: "";
+  background: var(--tone);
+  width: 4.5rem;
+  height: 1px;
+  position: absolute;
+  bottom: -1px;
+  left: var(--page-gutter);
+}
+.inner {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  align-items: center;
+  gap: 2rem;
+  height: 100%;
+  margin-inline: auto;
+  display: flex;
+}
+
+.brand {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  color: var(--text-primary);
+  white-space: nowrap;
+  flex: none;
+  align-items: baseline;
+  gap: 0.45em;
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1;
+  display: flex;
+}
+.mark {
+  color: var(--tone);
+  letter-spacing: -0.12em;
+}
+
+.tabs {
+  flex: 1;
+  align-self: stretch;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+.list {
+  height: 100%;
+  display: flex;
+}
+.tab {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  white-space: nowrap;
+  align-items: center;
+  height: 100%;
+  padding: 0 1.1em;
+  font-size: 0.66rem;
+  transition: color var(--transition-link);
+  display: flex;
+  position: relative;
+}
+.tab:after {
+  content: "";
+  background: var(--tone);
+  opacity: 0;
+  height: 2px;
+  transition: opacity var(--transition-link);
+  position: absolute;
+  bottom: -1px;
+  left: 0.6em;
+  right: 0.6em;
+  transform: skewX(var(--skew));
+}
+.tab:hover {
+  color: var(--text-primary);
+}
+.tab[aria-current="page"] {
+  color: var(--tone);
+}
+.tab[aria-current="page"]:after {
+  opacity: 1;
+}
+
+.cta {
+  flex: none;
+}
+/* Scoped under .cta: a bare class ties with Button's own display rule, and the
+   production CSS order then decides which wins. */
+.cta .ctaIcon {
+  display: none;
+}
+
+@media screen and (max-width: 700px) {
+  .inner {
+    gap: 0.75rem;
+  }
+  .brand {
+    font-size: 0.9rem;
+  }
+  .tab {
+    padding: 0 0.8em;
+    font-size: 0.6rem;
+  }
+  .cta .ctaWide {
+    display: none;
+  }
+  .cta .ctaIcon {
+    display: inline-flex;
+  }
+}

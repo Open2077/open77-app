@@ -1,0 +1,423 @@
+/* Block ------------------------------------------------------------------ */
+
+.block {
+  flex-direction: column;
+  gap: 1.4rem;
+  min-width: 0;
+  padding-top: 1.4rem;
+  display: flex;
+  position: relative;
+  scroll-margin-top: calc(var(--header-height) + 1.5rem);
+}
+/* The rule of the design: a tone segment, then a hairline. */
+.block:before {
+  content: "";
+  background: linear-gradient(90deg, var(--tone) 0 4.5rem, var(--line) 4.5rem 100%);
+  height: 1px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.block:focus-visible {
+  outline-offset: 6px;
+}
+.blockHead {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem 2rem;
+  display: flex;
+}
+.blockCopy {
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+  max-width: 46rem;
+  display: flex;
+}
+.blockLead {
+  color: var(--text-dim);
+  max-width: 40em;
+  line-height: 1.55;
+}
+.blockActions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  display: flex;
+}
+
+/* Rows ------------------------------------------------------------------- */
+
+.rows {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  display: flex;
+}
+.row {
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.5rem 1.6rem;
+  min-width: 0;
+  padding: 1.15rem 0.25rem 1.15rem 1.1rem;
+  transition: background-color var(--transition-link);
+  display: grid;
+  position: relative;
+}
+.row.withLeading {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+.row:hover {
+  background: oklch(from var(--surface-1) l c h / 0.7);
+}
+/* The skewed tick: something new, selected or needing attention. */
+.row:before {
+  content: "";
+  background: var(--line-strong);
+  width: 3px;
+  position: absolute;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  left: 0;
+  transform: skewX(var(--skew));
+  transition: background-color var(--transition-link);
+}
+.row.marked:before {
+  background: var(--tone);
+}
+.row.muted .rowTitle,
+.row.muted .rowText {
+  color: var(--text-faint);
+}
+.rowLeading {
+  padding-top: 0.1rem;
+}
+.rowMain {
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+  display: flex;
+}
+.rowMeta {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.9rem;
+  font-size: 0.62rem;
+  line-height: 1.5;
+  display: flex;
+}
+.rowTitle {
+  overflow-wrap: anywhere;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.rowTitle a {
+  transition: color var(--transition-link);
+}
+.rowTitle a:hover {
+  color: var(--tone);
+}
+.rowText {
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+  max-width: 62ch;
+  line-height: 1.55;
+}
+.rowText code,
+.rowMain code {
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  font-size: 0.85em;
+  font-weight: 300;
+}
+.rowAside {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+  display: flex;
+}
+@media screen and (max-width: 700px) {
+  .row,
+  .row.withLeading {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .row.withLeading {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .row.withLeading .rowAside {
+    grid-column: 2;
+  }
+  .rowAside {
+    justify-content: flex-start;
+  }
+}
+
+/* Glyph tile ------------------------------------------------------------- */
+
+.glyph {
+  color: var(--tone);
+  isolation: isolate;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  font-size: 1.25rem;
+  display: inline-flex;
+  position: relative;
+}
+.glyph:before {
+  content: "";
+  background: oklch(from var(--tone) l c h / 8%);
+  border: 1px solid oklch(from var(--tone) l c h / 45%);
+  z-index: -1;
+  position: absolute;
+  inset: 0 0.2rem;
+  transform: skewX(var(--skew));
+}
+
+.glyphNeutral {
+  color: var(--text-faint);
+}
+.glyphNeutral:before {
+  background: none;
+  border-color: var(--line-strong);
+}
+
+/* State tag -------------------------------------------------------------- */
+
+.state {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--tone);
+  white-space: nowrap;
+  isolation: isolate;
+  align-items: center;
+  gap: 0.55em;
+  height: 1.55rem;
+  padding: 0 0.8em;
+  font-size: 0.6rem;
+  line-height: 1;
+  display: inline-flex;
+  position: relative;
+}
+.state:before {
+  content: "";
+  border: 1px solid oklch(from var(--tone) l c h / 55%);
+  background: oklch(from var(--tone) l c h / 7%);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+.state:after {
+  content: "";
+  background: currentColor;
+  order: -1;
+  width: 0.38em;
+  height: 0.38em;
+  transform: skewX(var(--skew));
+}
+.stateNeutral {
+  color: var(--text-dim);
+}
+.stateNeutral:before {
+  border-color: var(--line-strong);
+  background: none;
+}
+
+/* Layout helpers --------------------------------------------------------- */
+
+.pager {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  padding-top: 0.5rem;
+  display: flex;
+}
+.actions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  display: flex;
+}
+.align-end {
+  justify-content: flex-end;
+}
+.align-between {
+  justify-content: space-between;
+}
+.fine {
+  color: var(--text-faint);
+  max-width: 62ch;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+.fine a,
+.fine button {
+  color: var(--text-dim);
+  text-underline-offset: 0.2em;
+  text-decoration: underline;
+  transition: color var(--transition-link);
+}
+.fine a:hover,
+.fine button:hover {
+  color: var(--tone);
+}
+.pending {
+  padding: 1.2rem 0;
+}
+
+.arrowLink {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--tone);
+  align-items: center;
+  gap: 0.55em;
+  font-size: 0.66rem;
+  line-height: 1.4;
+  transition: gap var(--transition-link), color var(--transition-link);
+  display: inline-flex;
+}
+.arrowLink svg {
+  flex: none;
+  font-size: 1.35em;
+}
+.arrowLink:hover {
+  color: var(--text-primary);
+  gap: 0.9em;
+}
+
+/* Disclosure ------------------------------------------------------------- */
+
+.disclosure {
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+.disclosure.framed {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  padding-inline: 1.1rem;
+}
+.summary {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  cursor: pointer;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  font-size: 0.66rem;
+  line-height: 1.5;
+  list-style: none;
+  transition: color var(--transition-link);
+  display: flex;
+}
+.summary::-webkit-details-marker {
+  display: none;
+}
+.summary:hover,
+.disclosure[open] > .summary {
+  color: var(--tone);
+}
+.chevron {
+  flex: none;
+  font-size: 1.3em;
+  transition: transform 0.3s var(--cubic);
+}
+.disclosure[open] > .summary .chevron {
+  transform: rotate(180deg);
+}
+/* Chrome renders <details> children under ::details-content, which the global
+   box-sizing reset does not reach: restore border-box for the whole body. */
+.disclosureBody {
+  box-sizing: border-box;
+  flex-direction: column;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  display: flex;
+}
+
+/* File input ------------------------------------------------------------- */
+
+.file {
+  color: var(--text-dim);
+  border: 1px dashed var(--line-strong);
+  cursor: pointer;
+  width: 100%;
+  min-width: 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  transition: border-color var(--transition-link), background-color var(--transition-link);
+}
+.file:hover {
+  border-color: var(--tone);
+  background: var(--surface-1);
+}
+.file:focus-visible {
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+.file:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.file::file-selector-button {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--body);
+  background: var(--tone);
+  cursor: pointer;
+  clip-path: polygon(0.6em 0, 100% 0, calc(100% - 0.6em) 100%, 0 100%);
+  border: 0;
+  margin-right: 1rem;
+  padding: 0.65em 1.6em;
+  font-size: 0.62rem;
+}
+
+/* Progress --------------------------------------------------------------- */
+
+.progress {
+  align-items: center;
+  gap: 1rem;
+  display: flex;
+}
+.progressValue {
+  font-family: var(--font-mono);
+  color: var(--tone);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+  font-size: 0.8rem;
+}
+
+/* Dialog body ------------------------------------------------------------ */
+
+.dialogBody {
+  color: var(--text-dim);
+  flex-direction: column;
+  gap: 1rem;
+  line-height: 1.55;
+  display: flex;
+}
+.dialogBody strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}

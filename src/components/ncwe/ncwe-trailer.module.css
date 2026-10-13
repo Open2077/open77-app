@@ -1,0 +1,121 @@
+/* The hero button: a size step down on narrow screens, where its label cannot wrap. */
+.trigger {
+  display: inline-flex;
+}
+@media screen and (max-width: 560px) {
+  .trigger {
+    font-size: 0.86rem;
+  }
+}
+
+/* Trailer dialog ------------------------------------------------------------ */
+
+.screen {
+  background: var(--body);
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  position: relative;
+}
+.screen iframe {
+  border: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+/* Reel: the poster as a play button ------------------------------------------- */
+
+/* A cinematic band rather than a 16:9 screen: at 16:9 the poster was taller
+   than a short laptop window. The trailer itself plays 16:9 in the dialog. */
+.reel {
+  isolation: isolate;
+  aspect-ratio: 21 / 9;
+  text-align: left;
+  border: 1px solid var(--line);
+  width: 100%;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.reel img {
+  object-fit: cover;
+  transition:
+    transform 0.6s var(--cubic),
+    filter 0.6s var(--cubic);
+  filter: saturate(0.85) brightness(0.8);
+}
+.reel:after {
+  content: "";
+  background: linear-gradient(to top, oklch(from var(--body) l c h / 0.85) 0%, oklch(from var(--body) l c h / 0) 55%);
+  position: absolute;
+  inset: 0;
+}
+.reel:hover img,
+.reel:focus-visible img {
+  filter: none;
+  transform: scale(1.03);
+}
+.reel:focus-visible {
+  outline: var(--focus);
+  outline-offset: 4px;
+}
+.reelPlay {
+  color: var(--body);
+  z-index: 1;
+  justify-content: center;
+  align-items: center;
+  width: calc(2vw + 64px);
+  height: calc(1.4vw + 48px);
+  font-size: calc(0.6vw + 20px);
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.reelPlay:before {
+  content: "";
+  background: var(--tone);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition: transform var(--transition-link);
+}
+.reel:hover .reelPlay:before {
+  transform: skewX(var(--skew)) scale(1.08);
+}
+.reelPlay svg * {
+  stroke-width: 1.8px;
+}
+.reelLabel {
+  z-index: 1;
+  align-items: baseline;
+  gap: 1rem;
+  display: flex;
+  position: absolute;
+  bottom: 1.4rem;
+  left: 1.6rem;
+}
+.reelTitle {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.07em;
+  color: var(--text-primary);
+  font-size: calc(0.6vw + 16px);
+  font-style: italic;
+  font-weight: 500;
+}
+.reelLength {
+  font-family: var(--font-nippo);
+  letter-spacing: 0.2em;
+  color: var(--tone);
+  font-size: 0.66rem;
+}
+/* On a phone the band would be a sliver: back to the screen's own shape. */
+@media screen and (max-width: 700px) {
+  .reel {
+    aspect-ratio: 16 / 9;
+  }
+}

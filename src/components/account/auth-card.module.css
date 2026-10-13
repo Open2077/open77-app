@@ -1,0 +1,60 @@
+.card {
+  --panel-fill: oklch(from var(--surface-1) l c h / 0.94);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  /* The primary button's speed lines must not push a phone layout sideways;
+     the margin keeps the skewed corner brackets and field frames visible. */
+  overflow: clip;
+  overflow-clip-margin: 0.6rem;
+  flex-direction: column;
+  gap: 1.4rem;
+  width: 100%;
+  display: flex;
+}
+.head {
+  align-items: center;
+  gap: 1.1rem;
+  display: flex;
+}
+.headCopy {
+  flex-direction: column;
+  gap: 0.55rem;
+  min-width: 0;
+  display: flex;
+}
+.body {
+  flex-direction: column;
+  gap: 1.2rem;
+  display: flex;
+}
+.text {
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+.text strong {
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+  font-weight: 500;
+}
+.actions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.3rem;
+  padding-top: 0.2rem;
+  display: flex;
+}
+.footer {
+  border-top: 1px solid var(--line);
+  color: var(--text-faint);
+  padding-top: 1.1rem;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.footer a {
+  color: var(--text-dim);
+  text-underline-offset: 0.2em;
+  text-decoration: underline;
+}
+.footer a:hover {
+  color: var(--tone);
+}

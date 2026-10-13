@@ -1,0 +1,99 @@
+.content {
+  width: max-content;
+  padding-top: calc(var(--header-height) / 2);
+  padding-left: calc(var(--padding) * 0.75);
+  align-items: center;
+  display: flex;
+  position: relative;
+}
+@media screen and (max-width: 1084px) {
+  .content {
+    width: var(--container-width);
+    max-width: var(--container-max);
+    padding-left: 0;
+  }
+}
+.server {
+  aspect-ratio: 1827/1423;
+  height: 100%;
+}
+.server img {
+  width: 100%;
+  transform: translateY(0%);
+}
+@media screen and (max-width: 1084px) {
+  .server {
+    width: 85%;
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    transform: translateY(-80%);
+  }
+}
+@media screen and (max-width: 1084px) and (max-width: 1084px) {
+  .server {
+    width: 100%;
+    min-width: 800px;
+    left: 50%;
+  }
+}
+@media screen and (min-width: 1086px) and (hover: none),
+  screen and (min-width: 1086px) and (pointer: coarse),
+  screen and (min-width: 1086px) and (prefers-reduced-motion: reduce) {
+  .server {
+    width: 85%;
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    transform: translateY(-80%);
+  }
+}
+@media screen and (min-width: 1086px) and (hover: none) and (max-width: 1084px),
+  screen and (min-width: 1086px) and (pointer: coarse) and (max-width: 1084px),
+  screen and (min-width: 1086px) and (prefers-reduced-motion: reduce) and (max-width: 1084px) {
+  .server {
+    width: 100%;
+    min-width: 800px;
+    left: 50%;
+  }
+}
+@media screen and (min-width: 1086px) {
+  html[data-scroll="vertical"] .server {
+    width: 85%;
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    transform: translateY(-80%);
+  }
+}
+@media screen and (min-width: 1086px) and (max-width: 1084px) {
+  html[data-scroll="vertical"] .server {
+    width: 100%;
+    min-width: 800px;
+    left: 50%;
+  }
+}
+.list {
+  z-index: 100;
+  flex-direction: column;
+  gap: calc(2.22222vw + 24.8889px);
+  display: flex;
+}
+.title {
+  font-family: var(--font-heading);
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  font-size: calc(1.11111vw + 20.4444px);
+  line-height: 0.95;
+}
+.title > span {
+  display: block;
+}
+.description {
+  text-wrap: balance;
+  width: calc(13.8889vw + 255.556px);
+  margin-top: 0.75em;
+  font-size: calc(0.37037vw + 14.8148px);
+  line-height: 1.33;
+}

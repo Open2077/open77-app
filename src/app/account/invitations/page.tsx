@@ -1,9 +1,23 @@
-import Link from "next/link";
-import { HubPageHead, HubShell } from "@/components/community/hub-shell";
+import { AccountShell } from "@/components/account/account-shell";
+import { Button } from "@/components/ui/button";
 import { InvitationInbox } from "@/components/community/invitation-inbox";
 
 export const metadata = { title: "Project invitations", robots: { index: false, follow: false } };
 
 export default function InvitationsPage() {
-  return <HubShell><HubPageHead kicker="INBOX" title="Project invitations" actions={<Link className="btn btn-ghost btn-small" href="/account/notifications">Notifications</Link>}><p>Choose which projects you help maintain. Invitations expire after seven days.</p></HubPageHead><InvitationInbox /></HubShell>;
+  return (
+    <AccountShell
+      eyebrow="Inbox"
+      title={["Project", "invitations"]}
+      lead="Choose which projects you help maintain. Invitations expire after seven days."
+      guestLead="Sign in to accept or decline the projects you were invited to maintain."
+      actions={
+        <Button lines="none" border color="neutral" size="sm" href="/account/notifications">
+          Notifications
+        </Button>
+      }
+    >
+      <InvitationInbox />
+    </AccountShell>
+  );
 }

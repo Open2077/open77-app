@@ -1,0 +1,468 @@
+.article {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  margin-inline: auto;
+}
+
+/* Header ------------------------------------------------------------------ */
+
+.head {
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 19rem);
+  align-items: end;
+  gap: 2rem 4.5rem;
+  padding: 1.6rem 0 2rem;
+  display: grid;
+  position: relative;
+}
+.head:after {
+  content: "";
+  background: linear-gradient(90deg, var(--tone) 0 18%, var(--line) 18% 100%);
+  height: 1px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.headCopy {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  min-width: 0;
+  display: flex;
+}
+.crumbs {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.62rem;
+  display: flex;
+}
+.back {
+  color: var(--text-dim);
+  align-items: center;
+  gap: 0.55rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+}
+.back:hover {
+  color: var(--tone);
+}
+.back svg {
+  font-size: 1.45em;
+}
+.separator {
+  color: var(--tone);
+  letter-spacing: -0.05em;
+}
+.title {
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+.lead {
+  max-width: 46em;
+}
+/* Date, reading time and topics share one row. */
+.facts {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.6rem;
+  margin-top: 0.2rem;
+  display: flex;
+}
+/* The cover is a signature, not a poster: short enough to sit beside the
+   title block without making it taller. */
+.head .cover {
+  aspect-ratio: 1.9;
+}
+.meta {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  flex-wrap: wrap;
+  gap: 0.5rem 1.1rem;
+  font-size: 0.6rem;
+  display: flex;
+}
+.meta > * + :before {
+  content: "//";
+  color: var(--tone);
+  letter-spacing: -0.05em;
+  margin-right: 1.1rem;
+}
+.topics {
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding-left: 0.3rem;
+  display: flex;
+}
+@media screen and (max-width: 1084px) {
+  .head {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 1.4rem;
+  }
+  /* Stacked, the cover would sit between the title and the text: the article
+     comes straight after its title instead. */
+  .head .cover {
+    display: none;
+  }
+}
+
+/* Body -------------------------------------------------------------------- */
+
+.layout {
+  grid-template-columns: minmax(0, 46rem) minmax(14rem, 17rem);
+  justify-content: space-between;
+  align-items: start;
+  gap: 3rem 4rem;
+  padding-top: 2.25rem;
+  display: grid;
+}
+@media screen and (max-width: 1084px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.body {
+  min-width: 0;
+}
+.prose {
+  font-size: calc(0.12vw + 16px);
+}
+
+.mobileToc {
+  border: 1px solid var(--line);
+  margin-bottom: 2.25rem;
+  display: none;
+}
+@media screen and (max-width: 1084px) {
+  .mobileToc {
+    display: block;
+  }
+}
+.mobileToc summary {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.2rem;
+  font-size: 0.64rem;
+  list-style: none;
+  display: flex;
+}
+.mobileToc summary::-webkit-details-marker {
+  display: none;
+}
+.toggle {
+  flex: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  position: relative;
+}
+.toggle:before,
+.toggle:after {
+  content: "";
+  background: var(--tone);
+  position: absolute;
+  inset: calc(50% - 0.5px) 0;
+  transition: transform var(--transition-link);
+}
+.toggle:after {
+  transform: rotate(90deg);
+}
+.mobileToc[open] .toggle:after {
+  transform: rotate(0);
+}
+.mobileToc nav {
+  box-sizing: border-box;
+}
+.mobileToc ol {
+  border-top: 1px solid var(--line);
+  counter-reset: toc;
+  padding: 0.6rem 1.2rem 1rem;
+}
+.mobileToc li {
+  counter-increment: toc;
+}
+.mobileToc a {
+  color: var(--text-dim);
+  gap: 0.8rem;
+  padding: 0.55rem 0;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  display: flex;
+}
+.mobileToc a:before {
+  content: counter(toc, decimal-leading-zero);
+  font-family: var(--font-mono);
+  color: var(--tone);
+  font-size: 0.72rem;
+  line-height: 1.7;
+}
+
+.signoff {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  margin-top: 3rem;
+  font-size: 0.58rem;
+}
+
+.cta {
+  flex-direction: column;
+  gap: 1.6rem;
+  margin-top: 2.75rem;
+  display: flex;
+}
+.ctaCopy {
+  flex-direction: column;
+  gap: 1rem;
+  display: flex;
+}
+.ctaCopy p {
+  color: var(--text-dim);
+  max-width: 34rem;
+  line-height: 1.5;
+}
+/* Inset so the primary button's speed lines stay inside the panel. */
+.ctaActions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.6rem;
+  padding-left: 2.4rem;
+  display: flex;
+}
+@media screen and (max-width: 480px) {
+  .ctaActions {
+    padding-left: 1.6rem;
+  }
+  .ctaActions > * {
+    max-width: 100%;
+    font-size: 0.9rem;
+  }
+}
+
+.pager {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 2.75rem;
+  display: grid;
+}
+.pagerLink {
+  background: oklch(from var(--surface-1) l c h / 55%);
+  border: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.8rem;
+  min-width: 0;
+  padding: 1.35rem 1.5rem;
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+  display: flex;
+}
+.pagerLink:hover,
+.pagerLink:focus-visible {
+  background: var(--surface-1);
+  border-color: oklch(from var(--tone) l c h / 70%);
+}
+.pagerLink[data-next] {
+  text-align: right;
+  align-items: flex-end;
+}
+.pagerLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--tone);
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.6rem;
+  display: inline-flex;
+}
+.pagerLabel svg {
+  font-size: 1.5em;
+}
+.pagerTitle {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  overflow-wrap: anywhere;
+  font-size: calc(0.2vw + 14px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.02;
+}
+.pagerDate {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+  font-size: 0.55rem;
+}
+@media screen and (max-width: 640px) {
+  .pager {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pager > span:empty {
+    display: none;
+  }
+}
+
+/* Tools rail -------------------------------------------------------------- */
+
+.tools {
+  max-height: calc(100vh - var(--header-height) - 3rem);
+  position: sticky;
+  top: calc(var(--header-height) + 1.5rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+@media screen and (max-width: 1084px) {
+  .tools {
+    max-height: none;
+    position: static;
+    overflow: visible;
+  }
+}
+.toolsInner {
+  flex-direction: column;
+  gap: 2.25rem;
+  display: flex;
+}
+.toolsLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--tone);
+  margin-bottom: 1rem;
+  font-size: 0.6rem;
+  font-weight: 350;
+}
+.toc {
+  display: block;
+}
+@media screen and (max-width: 1084px) {
+  .toc {
+    display: none;
+  }
+}
+.toc ol {
+  border-left: 1px solid var(--line);
+  flex-direction: column;
+  display: flex;
+}
+.toc a {
+  color: var(--text-dim);
+  border-left: 1px solid #0000;
+  gap: 0.75rem;
+  margin-left: -1px;
+  padding: 0.5rem 0 0.5rem 1rem;
+  font-size: 0.86rem;
+  line-height: 1.35;
+  transition:
+    color var(--transition-link),
+    border-color var(--transition-link);
+  display: flex;
+}
+.toc a:hover {
+  color: var(--text-primary);
+}
+.toc a[aria-current] {
+  color: var(--text-primary);
+  border-left-color: var(--tone);
+}
+.tocIndex {
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  flex: none;
+  font-size: 0.7rem;
+  line-height: 1.75;
+}
+.toc a[aria-current] .tocIndex {
+  color: var(--tone);
+}
+
+.share {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.95rem;
+  padding-top: 1.5rem;
+  display: flex;
+}
+.share .toolsLabel {
+  margin-bottom: 0.2rem;
+}
+.copy {
+  padding-left: 0.4rem;
+  display: block;
+}
+.fallback {
+  flex-direction: column;
+  gap: 0.45rem;
+  width: 100%;
+  display: flex;
+}
+.fallback span {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  font-size: 0.56rem;
+}
+.fallback input {
+  font-family: var(--font-mono);
+  background: var(--surface-1);
+  border: 1px solid var(--line-strong);
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.74rem;
+}
+.toolLink {
+  color: var(--text-dim);
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.88rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+}
+.toolLink:hover {
+  color: var(--tone);
+}
+.toolLink svg {
+  color: var(--tone);
+  flex: none;
+  font-size: 1.15rem;
+}
+
+/* Reading progress: a tone hairline along the top of the viewport. */
+.progress {
+  z-index: 1000;
+  pointer-events: none;
+  height: 2px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.progress span {
+  background: var(--tone);
+  transform-origin: 0;
+  height: 100%;
+  display: block;
+  transform: scaleX(0);
+}

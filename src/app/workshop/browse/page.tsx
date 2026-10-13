@@ -1,9 +1,13 @@
 import { JsonLd } from "@/components/json-ld";
+import { Display } from "@/components/ui/typography";
 import { ResourceDirectory } from "@/components/community/resource-directory";
+import { WorkshopHero, spaced } from "@/components/community/workshop-hero";
 import { WorkshopShell } from "@/components/community/workshop-shell";
 import { listProjects } from "@/lib/community/public-api";
 import { directorySorts } from "@/lib/community/directory";
 import { breadcrumbNode, collectionPageNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
+
+import styles from "./browse.module.css";
 
 type Search = Record<string, string | string[] | undefined>;
 
@@ -25,8 +29,19 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Pr
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(search)) if (typeof value === "string" && value) query.set(key, value);
   return <>
-    <WorkshopShell><header className="workshop-browse-head"><p className="hub-kicker">THE WORKSHOP</p><h1>Find your next <em>idea.</em></h1><p>Resources, tools and inspiration for a Night City of your own.</p></header>
-      <ResourceDirectory initial={initial} initialSort={sort} initialSearch={query.toString() ? `?${query}` : ""} /></WorkshopShell>
+    <WorkshopShell>
+      <WorkshopHero
+        size="compact"
+        art={{ src: "/home/img/server-custom-worlds.webp", position: "50% 35%" }}
+        watermark="Library"
+        crumbs={[{ label: "Workshop", href: "/workshop" }, { label: "Browse" }]}
+        title={<Display as="h1" size="lg" lines={spaced(["Find your", "next idea"])} accent={[1]} glitch />}
+        aside={<p className={styles.lead}>Resources, tools and inspiration for a Night City of your own.</p>}
+      />
+      <div className={styles.library}>
+        <ResourceDirectory initial={initial} initialSort={sort} initialSearch={query.toString() ? `?${query}` : ""} />
+      </div>
+    </WorkshopShell>
     <JsonLd data={jsonLdGraph(
       collectionPageNode({ name: "OPEN//77 Workshop library", description: "Community-made resources, gamemodes, maps and tools for OPEN//77 servers.", path: "/workshop/browse" }),
       breadcrumbNode([{ name: "Home", path: "/" }, { name: "Workshop", path: "/workshop" }, { name: "Browse", path: "/workshop/browse" }]),

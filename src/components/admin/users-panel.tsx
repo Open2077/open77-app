@@ -1,14 +1,35 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { AdminSpinner, useAdminActivity } from "@/components/admin/admin-activity";
+import { useAdminActivity } from "@/components/admin/admin-activity";
+import {
+  AdminPanel,
+  AdminTable,
+  Count,
+  EmptyBlock,
+  GuardedDialog,
+  LoadingBlock,
+  Mono,
+  Primary,
+  SearchBox,
+  StatusTag,
+  Sub,
+  SuccessStrip,
+  cell,
+} from "@/components/admin/admin-kit";
 import { ArmButton } from "@/components/admin/arm-button";
 import { formatDateTime } from "@/components/admin/format";
 import { ErrorStrip, useAdminData } from "@/components/admin/use-admin-data";
-import { CheckIcon, PeopleIcon, SearchIcon } from "@/components/icons";
+import { Button } from "@/components/admin/admin-button";
+import type { DialogHandle } from "@/components/ui/dialog";
+import { Loader } from "@/components/ui/feedback";
+import { Icon } from "@/components/ui/icon";
+import { mail01, tick02, users } from "@/components/ui/icons";
 import { MasterApiError } from "@/lib/account/api";
 import * as admin from "@/lib/account/admin-api";
+
+import styles from "./users-panel.module.css";
 
 /** Account search, moderation and explicit administrator-assisted e-mail verification. */
 export function UsersPanel() {
@@ -18,20 +39,13 @@ export function UsersPanel() {
   const [verification, setVerification] = useState<admin.AdminUser | null>(null);
   const [verificationError, setVerificationError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const dialog = useRef<HTMLDialogElement>(null);
-  const cancelButton = useRef<HTMLButtonElement>(null);
+  const dialog = useRef<DialogHandle>(null);
   const mutationInFlight = useRef(false);
-  const dialogTitle = useId();
-  const dialogDescription = useId();
   const { begin } = useAdminActivity();
 
   useEffect(() => {
-    if (verification) {
-      dialog.current?.showModal();
-      cancelButton.current?.focus();
-    } else {
-      dialog.current?.close();
-    }
+    if (verification) dialog.current?.open();
+    else dialog.current?.close();
   }, [verification]);
 
   // Debounced search: the query state the loader depends on trails the input.
@@ -98,32 +112,28 @@ export function UsersPanel() {
   }
 
   return (
-    <section className="adm-panel">
-      <div className="adm-panel-head">
-        <h2 className="adm-panel-title">
-          <PeopleIcon size={17} />
-          Users
-        </h2>
-        <div className="adm-search">
-          <SearchIcon size={13} />
-          <input
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            placeholder="Search e-mail or display name…"
-            aria-label="Search users"
-            spellCheck={false}
-          />
-        </div>
-      </div>
-      <ErrorStrip message={error} />
-      {notice ? <p className="ac-success" role="status"><CheckIcon size={14} />{notice}</p> : null}
-      {loading && !data ? <p className="ac-loading">Loading users…</p> : null}
-      {data && data.length === 0 ? (
-        <p className="adm-empty">No account matches “{query}”.</p>
-      ) : null}
-      {data && data.length > 0 ? (
-        <div className="adm-tablewrap">
-          <table className="adm-table">
+    <>
+      <AdminPanel
+        title="Users"
+        icon={users}
+        brackets
+        meta={data ? <Count>{data.length} shown</Count> : undefined}
+        actions={<SearchBox value={input} onChange={setInput} placeholder="Search e-mail or display name…" label="Search users" />}
+        footnote={
+          <>
+            Manual e-mail verification is for delivery problems after checking the account owner&apos;s identity.
+            {" "}
+            Suspension blocks sign-in and invalidates active sessions on their next request; it does not
+            touch the account&apos;s licenses. Revoke those separately if needed.
+          </>
+        }
+      >
+        <ErrorStrip message={error} />
+        <SuccessStrip message={notice} />
+        {loading && !data ? <LoadingBlock label="Loading users" /> : null}
+        {data && data.length === 0 ? <EmptyBlock icon={users}>No account matches “{query}”.</EmptyBlock> : null}
+        {data && data.length > 0 ? (
+          <AdminTable caption="Accounts" minWidth="56rem">
             <thead>
               <tr>
                 <th>Account</th>
@@ -131,52 +141,56 @@ export function UsersPanel() {
                 <th>Status</th>
                 <th>E-mail</th>
                 <th>Created</th>
-                <th className="adm-actions-cell">Actions</th>
+                <th className={cell.actions}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {data.map((user) => (
-                <tr key={user.accountId} className={user.status === "suspended" ? "is-muted" : ""}>
+                <tr key={user.accountId} className={user.status === "suspended" ? cell.muted : undefined}>
                   <td>
-                    <div>{user.displayName}</div>
-                    <div className="adm-mono adm-faint">{user.email}</div>
+                    <Primary>{user.displayName}</Primary>
+                    <Sub>{user.email}</Sub>
                   </td>
                   <td>
-                    <span className={`adm-chip ${user.role === "admin" ? "adm-chip-role" : "adm-chip-dim"}`}>
-                      {user.role}
-                    </span>
+                    <StatusTag status={user.role === "admin" ? "accent" : "neutral"}>{user.role}</StatusTag>
                   </td>
                   <td>
                     {user.status === "active" ? (
-                      <span className="adm-chip adm-chip-ok">active</span>
+                      <StatusTag status="ok">active</StatusTag>
                     ) : (
-                      <span className="adm-chip adm-chip-warn">suspended</span>
+                      <StatusTag status="danger">suspended</StatusTag>
                     )}
                   </td>
                   <td>
                     {user.emailVerified ? (
-                      <span className="adm-chip adm-chip-ok">verified</span>
+                      <StatusTag status="ok">verified</StatusTag>
                     ) : (
-                      <span className="adm-chip adm-chip-warn">unverified</span>
+                      <StatusTag status="warn">unverified</StatusTag>
                     )}
                   </td>
-                  <td className="adm-mono adm-faint">{formatDateTime(user.createdAtUtc)}</td>
-                  <td className="adm-actions-cell">
-                    <div className="adm-user-actions">
+                  <td className={cell.nowrap}>
+                    <Mono tone="dim">{formatDateTime(user.createdAtUtc)}</Mono>
+                  </td>
+                  <td className={cell.actions}>
+                    <div className={styles.actions}>
                       {!user.emailVerified ? (
-                        <button
-                          type="button"
-                          className="ac-iconbtn adm-primary"
+                        <Button
+                          size="sm"
+                          color="neutral"
+                          border
+                          lines="none"
+                          icon={tick02}
+                          iconPosition="left"
                           disabled={busy || loading}
-                        onClick={() => {
-                          setNotice(null);
-                          setError(null);
-                          setVerificationError(null);
+                          onClick={() => {
+                            setNotice(null);
+                            setError(null);
+                            setVerificationError(null);
                             setVerification(user);
                           }}
                         >
-                          <CheckIcon size={13} /> Verify e-mail
-                        </button>
+                          Verify e-mail
+                        </Button>
                       ) : null}
                       {user.status === "active" ? (
                         <ArmButton
@@ -186,55 +200,64 @@ export function UsersPanel() {
                           onConfirm={() => setStatus(user.accountId, "suspend")}
                         />
                       ) : (
-                        <button
-                          className="ac-iconbtn"
-                          type="button"
+                        <Button
+                          size="sm"
+                          color="neutral"
+                          border
+                          lines="none"
                           disabled={busy}
                           onClick={() => setStatus(user.accountId, "reinstate")}
                         >
                           Reinstate
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </td>
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-      ) : null}
-      <dialog
+          </AdminTable>
+        ) : null}
+      </AdminPanel>
+
+      <GuardedDialog
         ref={dialog}
-        className="adm-email-dialog"
-        aria-labelledby={dialogTitle}
-        aria-describedby={dialogDescription}
-        onCancel={(event) => {
-          if (mutationInFlight.current) event.preventDefault();
-          else setVerification(null);
-        }}
+        size="sm"
+        eyebrow="Manual verification"
+        title="Verify this e-mail manually?"
+        locked={() => mutationInFlight.current}
+        focusFooter
         onClose={() => setVerification(null)}
+        footer={
+          <>
+            <Button size="sm" color="neutral" border lines="none" disabled={busy} onClick={() => setVerification(null)}>
+              Cancel
+            </Button>
+            <Button size="sm" color="red" lines="none" icon={tick02} iconPosition="left" disabled={busy || !token} busy={busy} onClick={verifyEmail}>
+              Confirm verification
+            </Button>
+          </>
+        }
       >
-        <h2 id={dialogTitle}>Verify this e-mail manually?</h2>
-        <p className="adm-email-target"><strong>{verification?.displayName}</strong><br />{verification?.email}</p>
-        <p id={dialogDescription}>
-          Only continue after confirming this address belongs to the account owner.
-          This replaces the e-mail link verification and is recorded in the audit log.
-          It does not grant alpha access, change roles or lift a suspension.
-        </p>
-        <ErrorStrip message={verificationError} />
-        <div className="adm-user-actions">
-          <button ref={cancelButton} type="button" className="ac-iconbtn" disabled={busy} onClick={() => setVerification(null)}>Cancel</button>
-          <button type="button" className="ac-iconbtn adm-primary" disabled={busy || !token} onClick={verifyEmail}>
-            {busy ? <AdminSpinner label="Verifying…" /> : "Confirm verification"}
-          </button>
+        <div className={styles.dialogBody}>
+          <div className={styles.target}>
+            <span className={styles.targetIcon} aria-hidden="true">
+              <Icon glyph={mail01} />
+            </span>
+            <span>
+              <Primary>{verification?.displayName}</Primary>
+              <Sub>{verification?.email}</Sub>
+            </span>
+          </div>
+          <p className={styles.explain}>
+            Only continue after confirming this address belongs to the account owner.
+            This replaces the e-mail link verification and is recorded in the audit log.
+            It does not grant alpha access, change roles or lift a suspension.
+          </p>
+          <ErrorStrip message={verificationError} />
+          {busy ? <Loader label="Verifying…" /> : null}
         </div>
-      </dialog>
-      <p className="adm-footnote">
-        Manual e-mail verification is for delivery problems after checking the account owner&apos;s identity.
-        {" "}
-        Suspension blocks sign-in and invalidates active sessions on their next request; it does not
-        touch the account&apos;s licenses. Revoke those separately if needed.
-      </p>
-    </section>
+      </GuardedDialog>
+    </>
   );
 }

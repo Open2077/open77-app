@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { AgentNote } from "@/components/docs/agent-note";
 import { DocPager } from "@/components/docs/doc-pager";
-import { DocToc } from "@/components/docs/doc-toc";
+import { DocProse } from "@/components/docs/doc-prose";
 import { DocsShell } from "@/components/docs/docs-shell";
 import { NpcCatalogue } from "@/components/docs/npc-catalogue";
 import { JsonLd } from "@/components/json-ld";
@@ -63,6 +63,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           { label: guide.sectionTitle },
           { label: guide.nav },
         ]}
+        eyebrow={guide.sectionTitle}
         title={guide.title}
         lede={guide.description}
         meta={
@@ -112,10 +113,10 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             ) : null}
           </>
         }
-        toc={<DocToc entries={guide.toc} />}
+        toc={guide.toc}
       >
         {slug === "npc-catalogue" || slug === "player-model-catalogue" ? <NpcCatalogue /> : null}
-        <div className="dx-prose" dangerouslySetInnerHTML={{ __html: guide.html }} />
+        <DocProse html={guide.html} />
         <AgentNote markdownHref={docMarkdownHref(slug)} />
         <DocPager {...neighbours} />
       </DocsShell>

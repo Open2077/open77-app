@@ -1,0 +1,109 @@
+.gate {
+  isolation: isolate;
+  width: var(--container-width);
+  max-width: var(--container-max);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem 4rem;
+  margin-inline: auto;
+  padding: 6vh 0 2rem;
+  display: grid;
+  position: relative;
+}
+.gate[data-has-aside] {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 31rem);
+  align-items: start;
+}
+.watermark {
+  z-index: -1;
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  white-space: nowrap;
+  color: #0000;
+  -webkit-text-stroke: 1px var(--line);
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  font-size: clamp(7rem, 22vw, 22rem);
+  font-style: italic;
+  line-height: 0.8;
+  position: absolute;
+  top: 2vh;
+  right: -0.04em;
+}
+.copy {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.4rem;
+  min-width: 0;
+  display: flex;
+}
+.operator {
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+  font-size: 0.85rem;
+  font-weight: 300;
+}
+.operator strong {
+  color: var(--text-primary);
+  font-weight: 400;
+}
+.facts {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.85rem;
+  max-width: 34rem;
+  margin-top: 0.4rem;
+  padding-top: 1.3rem;
+  display: flex;
+}
+.facts li {
+  color: var(--text-dim);
+  align-items: flex-start;
+  gap: 0.85rem;
+  line-height: 1.5;
+  display: flex;
+}
+.factIcon {
+  color: var(--tone);
+  flex: none;
+  margin-top: 0.05rem;
+  font-size: 1.2rem;
+}
+.aside {
+  min-width: 0;
+}
+.denied {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  max-width: 42rem;
+  margin-top: 0.6rem;
+  display: flex;
+}
+.deniedMark {
+  color: var(--tone);
+  font-size: 2.2rem;
+  line-height: 1;
+}
+.deniedText {
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.deniedText strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.deniedActions {
+  flex-wrap: wrap;
+  gap: 0.9rem 1.2rem;
+  margin-top: 0.4rem;
+  display: flex;
+}
+@media screen and (max-width: 1083px) {
+  .gate[data-has-aside] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

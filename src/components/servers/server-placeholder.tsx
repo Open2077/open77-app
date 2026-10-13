@@ -1,30 +1,33 @@
+import styles from "./server-placeholder.module.css";
+
 /**
- * Placeholder artwork for servers that have not uploaded their own.
- *
- * The icon tile shows the OPEN//77 mark, muted — the platform's default
- * avatar, the way a server without a logo reads on any network. It never
- * competes with real icons, and the game type is already written on the row.
- * The moment an operator uploads an icon, `ServerImage` shows that instead.
+ * Placeholder for servers that have not uploaded an icon: the OPEN//77 "//77"
+ * mark, muted. It never competes with real icons, and the game type is
+ * already written on the row. The moment an operator uploads an icon,
+ * `ServerImage` shows that instead.
  */
 export function BrandTile() {
-  // The mark is a CSS background so the "//77" band can be cropped to the tile.
-  return <span className="brand-tile" aria-hidden="true" />;
+  return (
+    <span className={styles.tile} aria-hidden="true">
+      <span className={styles.slash}>{"//"}</span>77
+    </span>
+  );
 }
 
-/** Wide artwork for a game type, for covers when the server set no banner. */
+/** Wide key art for a game type, for covers when the server set no banner. */
 export function modeArt(mode: string): string {
   switch (mode) {
     case "Roleplay":
-      return "/assets/exp-roleplay.jpg";
+      return "/home/img/server-roleplay.webp";
     case "Racing":
-      return "/assets/exp-racing.jpg";
+      return "/home/img/server-racing.webp";
     case "PvP":
-      return "/assets/exp-combat.jpg";
+      return "/home/img/devs-bg.webp";
     case "Freeroam":
-      return "/assets/exp-exploration.jpg";
+      return "/home/img/players-bg.webp";
     case "Social":
-      return "/assets/play-together.jpg";
+      return "/home/img/creators-bg.webp";
     default:
-      return "/assets/exp-custom.jpg";
+      return "/home/img/server-custom-worlds.webp";
   }
 }

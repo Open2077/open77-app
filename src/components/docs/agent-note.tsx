@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { CodeIcon } from "@/components/icons";
+import styles from "./agent-note.module.css";
 
 /**
  * Points machine readers at the machine-readable copy of the page.
@@ -12,14 +12,13 @@ import { CodeIcon } from "@/components/icons";
  */
 export function AgentNote({ markdownHref }: { markdownHref: string }) {
   return (
-    <p className="dx-agent-note">
-      <CodeIcon size={13} />
-      For agents and LLMs:{" "}
-      <a href={markdownHref}>this page as Markdown</a>
-      {" · "}
-      <Link href="/llms.txt">llms.txt</Link>
-      {" · "}
-      <Link href="/llms-full.txt">llms-full.txt</Link>
+    <p className={styles.note}>
+      <span className={styles.label}>{"// For agents & LLMs"}</span>
+      <span className={styles.links}>
+        <a href={markdownHref}>this page as Markdown</a>
+        <Link href="/llms.txt">llms.txt</Link>
+        <Link href="/llms-full.txt">llms-full.txt</Link>
+      </span>
     </p>
   );
 }

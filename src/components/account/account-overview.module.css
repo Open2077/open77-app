@@ -1,0 +1,403 @@
+.overview {
+  flex-direction: column;
+  gap: calc(40px + 24 * (100vw - 320px) / 1080);
+  min-width: 0;
+  display: flex;
+}
+
+/* Verification callout -------------------------------------------------- */
+
+.verify {
+  flex-direction: column;
+  gap: 1.2rem;
+  display: flex;
+}
+.verifyHead {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem 1.4rem;
+  display: grid;
+}
+.verifyCopy {
+  flex-direction: column;
+  gap: 0.35rem;
+  display: flex;
+}
+.verifyTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.verifyText {
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.verifyActions {
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  display: flex;
+}
+.toggle {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  text-underline-offset: 0.35em;
+  padding: 0.5rem 0.4rem;
+  font-size: 0.64rem;
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  transition: color var(--transition-link);
+}
+.toggle:hover:not(:disabled),
+.toggle[aria-expanded="true"] {
+  color: var(--tone);
+}
+.toggle:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.verifyForm {
+  border-top: 1px solid var(--line);
+  grid-template-columns: minmax(0, 26rem) auto;
+  align-items: end;
+  gap: 1rem 1.4rem;
+  padding-top: 1.2rem;
+  display: grid;
+}
+@media screen and (max-width: 860px) {
+  .verifyHead {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .verifyActions {
+    grid-column: 1 / -1;
+  }
+  .verifyForm {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+}
+
+/* The pass: who you are and what you can do. ---------------------------- */
+
+.pass {
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: end;
+  gap: 2rem 3rem;
+  display: grid;
+}
+.passMain {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  min-width: 0;
+  display: flex;
+}
+.passStatus {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  display: flex;
+}
+.status {
+  white-space: nowrap;
+}
+.passTitle {
+  overflow-wrap: anywhere;
+}
+.passName {
+  color: var(--tone);
+  overflow-wrap: anywhere;
+  display: block;
+}
+.passText {
+  color: var(--text-dim);
+  max-width: 44ch;
+  line-height: 1.55;
+}
+.facts {
+  min-width: 0;
+}
+.email {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  display: inline-flex;
+}
+.email > span:first-child {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.emailState {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--yellow);
+  white-space: nowrap;
+  font-size: 0.58rem;
+}
+.emailState.verified {
+  color: var(--blue);
+}
+@media screen and (max-width: 1250px) {
+  .pass {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Shortcut cards: the slanted cards of the home page. -------------------- */
+
+.cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.6rem 2.2rem;
+  padding-inline: 0.6rem;
+  display: grid;
+}
+.card {
+  isolation: isolate;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 1.5rem 2.1rem 1.6rem;
+  display: flex;
+  position: relative;
+}
+.card:before {
+  content: "";
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.card:after {
+  content: "";
+  border: 1px solid var(--tone);
+  border-width: 0 1px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  inset: 25% -8px;
+  transform: skewX(var(--skew));
+  transition: opacity var(--transition-link);
+}
+a.card:hover:before,
+a.card:focus-visible:before {
+  border-color: oklch(from var(--tone) l c h / 75%);
+  background: var(--surface-2);
+}
+a.card:hover:after,
+a.card:focus-visible:after {
+  opacity: 1;
+}
+a.card:focus-visible {
+  outline: var(--focus);
+  outline-offset: 6px;
+}
+.cardTop {
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+  margin-bottom: 0.4rem;
+  display: flex;
+}
+.cardArrow {
+  color: var(--text-faint);
+  font-size: 1.4rem;
+  transition:
+    transform var(--transition-link),
+    color var(--transition-link);
+}
+a.card:hover .cardArrow {
+  color: var(--tone);
+  transform: translateX(0.3rem);
+}
+.cardLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--tone);
+  font-size: 0.62rem;
+}
+.cardTitle {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.07em;
+  font-size: calc(0.4vw + 17px);
+  font-style: italic;
+  line-height: 1;
+}
+.cardText {
+  color: var(--text-dim);
+  max-width: 44ch;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.cardAction {
+  margin-top: 0.5rem;
+}
+.os {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  font-size: 0.58rem;
+}
+@media screen and (max-width: 860px) {
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: 0.9rem;
+  }
+}
+
+/* Identities and settings ------------------------------------------------ */
+
+.details {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 2.4rem 3rem;
+  display: grid;
+}
+@media screen and (max-width: 1250px) {
+  .details {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.count {
+  color: var(--tone);
+  margin-left: 0.3em;
+}
+.mono {
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+  font-weight: 300;
+}
+.date {
+  color: var(--text-faint);
+  white-space: nowrap;
+  font-size: 0.82rem;
+}
+.empty {
+  border: 1px dashed var(--line);
+  align-items: flex-start;
+  gap: 1.2rem;
+  padding: 1.5rem 1.4rem;
+  display: flex;
+}
+.emptyCopy {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  display: flex;
+}
+.emptyTitle {
+  font-weight: 600;
+}
+.emptyText {
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+.shield {
+  align-items: center;
+  gap: 0.5rem;
+  display: flex;
+}
+.shield svg {
+  color: var(--tone);
+  flex: none;
+}
+
+.settings {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  display: flex;
+}
+.setting {
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 1rem 0.5rem 1rem 0.25rem;
+  transition:
+    background-color var(--transition-link),
+    color var(--transition-link);
+  display: grid;
+}
+.setting:hover,
+.setting:focus-visible {
+  background: var(--surface-1);
+}
+.settingGlyph {
+  color: var(--tone);
+  font-size: 1.3rem;
+}
+.settingCopy {
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  display: flex;
+}
+.settingCopy strong {
+  font-weight: 600;
+}
+.settingCopy small {
+  color: var(--text-dim);
+  font-size: 0.86rem;
+}
+.settingArrow {
+  color: var(--text-faint);
+  font-size: 1.3rem;
+  transition:
+    transform var(--transition-link),
+    color var(--transition-link);
+}
+.setting:hover .settingArrow {
+  color: var(--tone);
+  transform: translateX(0.25rem);
+}
+
+/* Explore ---------------------------------------------------------------- */
+
+.explore {
+  border-block: 1px solid var(--line);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem 2rem;
+  padding: 1.2rem 0;
+  display: flex;
+}
+.exploreLabel {
+  color: var(--text-dim);
+  align-items: center;
+  gap: 0.75rem;
+  display: flex;
+}
+.live {
+  background: var(--tone);
+  width: 0.5rem;
+  height: 0.5rem;
+  animation: 2s infinite pulse;
+  transform: skewX(var(--skew));
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+.exploreLinks {
+  flex-wrap: wrap;
+  gap: 0.8rem 1.8rem;
+  display: flex;
+}

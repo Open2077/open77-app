@@ -1,0 +1,161 @@
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+}
+
+/* Controls inside a disclosure. */
+.controlForm {
+  flex-direction: column;
+  gap: 1rem;
+  display: flex;
+}
+.state {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.8rem;
+  display: flex;
+}
+.lookup {
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.9rem 1.1rem;
+  display: flex;
+}
+.lookupField {
+  flex: 1 1 20rem;
+  max-width: 28rem;
+}
+
+/* Submission review and project pages. */
+.summary {
+  color: var(--text-primary);
+  max-width: 70ch;
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+.tags {
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  display: flex;
+}
+.links {
+  flex-direction: column;
+  gap: 0.4rem;
+  display: flex;
+}
+.links a {
+  font-family: var(--font-mono);
+  color: var(--tone);
+  text-underline-offset: 0.2em;
+  overflow-wrap: anywhere;
+  font-size: 0.82rem;
+  font-weight: 300;
+  text-decoration: underline;
+}
+.media {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: 1rem;
+  display: grid;
+}
+.media:empty {
+  display: none;
+}
+.media figure {
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+  display: flex;
+}
+.media figcaption {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+.section {
+  flex-direction: column;
+  gap: 0.8rem;
+  display: flex;
+}
+.queueNav {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.9rem;
+  display: flex;
+}
+.queueNav:empty {
+  display: none;
+}
+.back {
+  align-self: flex-start;
+}
+
+/* Reports and releases as cards. */
+.cards {
+  flex-direction: column;
+  gap: 1rem;
+  display: flex;
+}
+.card {
+  background: var(--body);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--tone);
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+  padding: 1.1rem 1.2rem 1.2rem;
+  display: flex;
+}
+.cardHead {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  display: flex;
+}
+.cardTitle {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.1;
+}
+.cardMeta {
+  color: var(--text-dim);
+  font-size: 0.86rem;
+}
+.inline {
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.9rem 1.1rem;
+  display: flex;
+}
+.inline > :first-child {
+  flex: 1 1 20rem;
+  max-width: 34rem;
+}
+.digest {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  display: flex;
+}
+.digest > span:first-child {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  font-size: 0.6rem;
+}
+
+/* Quotas. */
+.quotaGrid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: 1.1rem 1.3rem;
+  display: grid;
+}
+.quotaInput {
+  font-family: var(--font-mono);
+}

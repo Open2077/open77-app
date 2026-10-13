@@ -1,0 +1,69 @@
+/* A quiet disclosure: one small line until someone needs it. */
+.report {
+  min-width: 0;
+}
+.report summary {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  cursor: pointer;
+  align-items: center;
+  gap: 0.7em;
+  width: fit-content;
+  font-size: 0.6rem;
+  list-style: none;
+  transition: color var(--transition-link);
+  display: inline-flex;
+}
+.report summary::-webkit-details-marker {
+  display: none;
+}
+.report summary svg {
+  font-size: 1.15em;
+}
+.report summary:hover,
+.report[open] summary {
+  color: var(--red);
+}
+.body {
+  border-left: 1px solid oklch(from var(--red) l c h / 45%);
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 0.9rem;
+  padding: 0.2rem 0 0.2rem 1rem;
+  display: flex;
+}
+.text {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.text a {
+  color: var(--tone);
+  text-underline-offset: 0.2em;
+  text-decoration: underline;
+}
+.form {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  display: flex;
+}
+.form > :first-child {
+  align-self: stretch;
+}
+.error {
+  color: var(--red);
+  font-size: 0.86rem;
+}
+.sent {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tone);
+  font-size: 0.62rem;
+  line-height: 1.6;
+}

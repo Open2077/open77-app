@@ -1,10 +1,18 @@
 import type { ReactNode } from "react";
-import { SiteFooter } from "@/components/site-footer";
+
+import { Page } from "@/components/ui/page";
 import { HubBar } from "./hub-bar";
 
-/** Public Workshop only: creator/admin workspaces keep their existing layout. */
+import styles from "./workshop-shell.module.css";
+
+/** Public Workshop only: creator/admin workspaces keep their own layout. */
 export function WorkshopShell({ children }: { children: ReactNode }) {
-  return <><main id="main" className="hub-main workshop-surface">
-    <HubBar /><div className="hub-wrap">{children}</div>
-  </main><SiteFooter tone="dark" /></>;
+  return (
+    <Page tone="blue" className={styles.shell}>
+      <HubBar />
+      <div className={styles.body} data-workshop-surface>
+        {children}
+      </div>
+    </Page>
+  );
 }

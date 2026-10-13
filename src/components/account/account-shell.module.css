@@ -1,0 +1,87 @@
+.identity {
+  isolation: isolate;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.9rem 1.1rem;
+  width: 22rem;
+  max-width: 100%;
+  padding: 1.1rem 1.4rem 1.2rem;
+  display: grid;
+  position: relative;
+}
+/* A slanted glass tile with a tone bracket on its side, like the home cards. */
+.identity:before {
+  content: "";
+  background: oklch(from var(--body) l c h / 0.62);
+  border: 1px solid var(--line-strong);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+.identity:after {
+  content: "";
+  border: 1px solid var(--tone);
+  border-width: 0 1px;
+  pointer-events: none;
+  position: absolute;
+  inset: 22% -9px;
+  transform: skewX(var(--skew));
+}
+.who {
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+  display: flex;
+}
+.kicker {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--tone);
+  font-size: 0.6rem;
+}
+.name {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: calc(0.3vw + 15px);
+  font-style: italic;
+  line-height: 1.05;
+  overflow: hidden;
+}
+.email {
+  color: var(--text-dim);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  overflow: hidden;
+}
+.signOut {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+@media screen and (max-width: 1084px) {
+  .identity {
+    width: 100%;
+    max-width: 30rem;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    padding: 0.9rem 1.4rem;
+  }
+  .signOut {
+    grid-column: auto;
+  }
+}
+@media screen and (max-width: 520px) {
+  .identity {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .signOut {
+    grid-column: 1 / -1;
+  }
+}

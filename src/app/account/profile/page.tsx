@@ -1,8 +1,28 @@
-import { HubPageHead, HubShell } from "@/components/community/hub-shell";
+import { AccountShell } from "@/components/account/account-shell";
+import { Button } from "@/components/ui/button";
 import { ProfileEditor } from "@/components/community/profile-editor";
-import Link from "next/link";
 
 export const metadata = { title: "Creator profile", robots: { index: false, follow: false } };
+
 export default function ProfilePage() {
-  return <HubShell><HubPageHead kicker="PUBLIC IDENTITY" title="Creator profile" actions={<><Link className="btn btn-ghost btn-small" href="/account/github">GitHub</Link><Link className="btn btn-ghost btn-small" href="/account/connections">Wardens</Link></>}><p>Your handle, bio and links are public. Everything else stays private.</p></HubPageHead><ProfileEditor /></HubShell>;
+  return (
+    <AccountShell
+      eyebrow="Public identity"
+      title={["Creator", "profile"]}
+      lead="Your handle, bio and links are public. Everything else stays private."
+      guestLead="Sign in to edit the handle, bio and links other creators see on the Workshop."
+      actions={
+        <>
+          <Button lines="none" border color="neutral" size="sm" href="/account/github">
+            GitHub
+          </Button>
+          <Button lines="none" border color="neutral" size="sm" href="/account/connections">
+            Wardens
+          </Button>
+        </>
+      }
+    >
+      <ProfileEditor />
+    </AccountShell>
+  );
 }

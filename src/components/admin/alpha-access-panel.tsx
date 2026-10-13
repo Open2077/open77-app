@@ -2,10 +2,30 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import {
+  AdminPanel,
+  AdminTable,
+  Count,
+  EmptyBlock,
+  Filters,
+  LoadingBlock,
+  Mono,
+  Pager,
+  Primary,
+  SearchBox,
+  Stack,
+  StatusTag,
+  Sub,
+  Toolbar,
+  cell,
+} from "@/components/admin/admin-kit";
 import { ArmButton } from "@/components/admin/arm-button";
 import { formatDateTime, shortId } from "@/components/admin/format";
 import { ErrorStrip, useAdminData } from "@/components/admin/use-admin-data";
-import { CheckIcon, InfoIcon, SearchIcon } from "@/components/icons";
+import { Button } from "@/components/admin/admin-button";
+import { Chip } from "@/components/ui/chip";
+import { Notice } from "@/components/ui/feedback";
+import { ticket01 } from "@/components/ui/icons";
 import { MasterApiError } from "@/lib/account/api";
 import * as admin from "@/lib/account/admin-api";
 import type { AlphaAccessPage, AlphaAccessRow } from "@/lib/account/admin-api";
@@ -146,55 +166,57 @@ export function AlphaAccessPanel() {
   const lastShown = data ? (data.page - 1) * data.pageSize + data.items.length : 0;
 
   return (
-    <section className="adm-panel">
-      <div className="adm-panel-head">
-        <h2 className="adm-panel-title">
-          <CheckIcon size={16} />
-          Alpha access
-        </h2>
-        <div className="adm-search">
-          <SearchIcon size={13} />
-          <input
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            placeholder="Search e-mail, name or account ID…"
-            aria-label="Search accounts"
-            spellCheck={false}
-            maxLength={96}
-          />
-        </div>
-      </div>
-
+    <AdminPanel
+      title="Alpha access"
+      icon={ticket01}
+      brackets
+      actions={
+        <SearchBox
+          value={input}
+          onChange={setInput}
+          placeholder="Search e-mail, name or account ID…"
+          label="Search accounts"
+          maxLength={96}
+        />
+      }
+      footnote={
+        <>
+          Alpha access is an entitlement, not a role: it lets somebody join a world and grants no
+          staff powers. Administrators hold it implicitly through their role, so those rows show
+          access with no granter. Granting one explicitly anyway is what survives a later demotion,
+          and revoking one only clears that explicit record while the role keeps them in. Both
+          actions are idempotent and land in the audit log.
+        </>
+      }
+    >
       {data ? <GateBanner required={data.alphaAccessRequired} /> : null}
       <ErrorStrip message={error} />
 
-      <div className="adm-toolbar">
-        <div className="adm-filters" role="group" aria-label="Filter by access">
+      <Toolbar>
+        <Filters label="Filter by access">
           {FILTERS.map((option) => (
-            <button
+            <Chip
               key={option.value}
-              className={`ac-iconbtn${filter === option.value ? " is-copied" : ""}`}
-              type="button"
-              aria-pressed={filter === option.value}
+              pressed={filter === option.value}
               onClick={() => {
                 setFilter(option.value);
                 setPage(1);
               }}
             >
               {option.label}
-            </button>
+            </Chip>
           ))}
-        </div>
+        </Filters>
         {data ? (
-          <span className="adm-count">
+          <Count>
             {total} account{total === 1 ? "" : "s"} matched
-          </span>
+          </Count>
         ) : null}
-      </div>
+      </Toolbar>
 
-      {loading && !data ? <p className="ac-loading">Loading accounts…</p> : null}
+      {loading && !data ? <LoadingBlock label="Loading accounts" /> : null}
       {data && data.items.length === 0 ? (
-        <p className="adm-empty">
+        <EmptyBlock icon={ticket01}>
           {query
             ? `No account matches “${query}”.`
             : filter === "granted"
@@ -202,72 +224,42 @@ export function AlphaAccessPanel() {
               : filter === "withheld"
                 ? "Every account already has alpha access."
                 : "There are no accounts."}
-        </p>
+        </EmptyBlock>
       ) : null}
 
       {data && data.items.length > 0 ? (
-        <>
-          <div className="adm-tablewrap">
-            <table className="adm-table">
-              <thead>
-                <tr>
-                  <th>Account</th>
-                  <th>Role</th>
-                  <th>Status</th>
-                  <th>Alpha access</th>
-                  <th>Granted by</th>
-                  <th>Granted</th>
-                  <th className="adm-actions-cell">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.items.map((row) => (
-                  <AccessRow
-                    key={row.accountId}
-                    row={row}
-                    busy={pending.includes(row.accountId)}
-                    onSet={(granted) => setAccess(row, granted)}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {pageCount > 1 ? (
-            <div className="adm-pager">
-              <span className="adm-pager-range">
-                {firstShown}–{lastShown} of {total} · page {data.page} of {pageCount}
-              </span>
-              <div className="adm-pager-controls">
-                <button
-                  className="ac-iconbtn"
-                  type="button"
-                  disabled={data.page <= 1}
-                  onClick={() => setPage((value) => Math.max(1, value - 1))}
-                >
-                  Previous
-                </button>
-                <button
-                  className="ac-iconbtn"
-                  type="button"
-                  disabled={data.page >= pageCount}
-                  onClick={() => setPage((value) => value + 1)}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          ) : null}
-        </>
+        <AdminTable caption="Alpha access by account" minWidth="62rem">
+          <thead>
+            <tr>
+              <th>Account</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Alpha access</th>
+              <th>Granted by</th>
+              <th>Granted</th>
+              <th className={cell.actions}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.items.map((row) => (
+              <AccessRow
+                key={row.accountId}
+                row={row}
+                busy={pending.includes(row.accountId)}
+                onSet={(granted) => setAccess(row, granted)}
+              />
+            ))}
+          </tbody>
+        </AdminTable>
       ) : null}
-
-      <p className="adm-footnote">
-        Alpha access is an entitlement, not a role: it lets somebody join a world and grants no
-        staff powers. Administrators hold it implicitly through their role, so those rows show
-        access with no granter. Granting one explicitly anyway is what survives a later demotion,
-        and revoking one only clears that explicit record while the role keeps them in. Both
-        actions are idempotent and land in the audit log.
-      </p>
-    </section>
+      {data && data.items.length > 0 && pageCount > 1 ? (
+        <Pager
+          summary={`${firstShown}–${lastShown} of ${total} · page ${data.page} of ${pageCount}`}
+          previous={{ disabled: data.page <= 1, onClick: () => setPage((value) => Math.max(1, value - 1)) }}
+          next={{ disabled: data.page >= pageCount, onClick: () => setPage((value) => value + 1) }}
+        />
+      ) : null}
+    </AdminPanel>
   );
 }
 
@@ -275,26 +267,18 @@ export function AlphaAccessPanel() {
 function GateBanner({ required }: { required: boolean }) {
   if (required) {
     return (
-      <p className="ac-notice adm-gate is-on">
-        <CheckIcon size={15} />
-        <span>
-          <strong>The alpha gate is on.</strong> Only the accounts listed here as having access can
-          join a world; everyone else can install, sign in and stay updated, and is refused when
-          their client asks for a connect ticket.
-        </span>
-      </p>
+      <Notice kind="info" title="The alpha gate is on.">
+        Only the accounts listed here as having access can join a world; everyone else can install,
+        sign in and stay updated, and is refused when their client asks for a connect ticket.
+      </Notice>
     );
   }
   return (
-    <p className="ac-notice adm-gate is-off" role="status">
-      <InfoIcon />
-      <span>
-        <strong>The alpha gate is off, so grants decide nothing today.</strong> Every signed-in
-        account can join a world regardless of this list. Grants made here are still recorded and
-        take effect the moment the gate is switched on in the master configuration, but granting
-        one now lets nobody in who was not already in.
-      </span>
-    </p>
+    <Notice kind="warning" title="The alpha gate is off, so grants decide nothing today.">
+      Every signed-in account can join a world regardless of this list. Grants made here are still
+      recorded and take effect the moment the gate is switched on in the master configuration, but
+      granting one now lets nobody in who was not already in.
+    </Notice>
   );
 }
 
@@ -315,53 +299,40 @@ function AccessRow({
       : null;
 
   return (
-    <tr className={row.status === "suspended" ? "is-muted" : ""}>
+    <tr className={row.status === "suspended" ? cell.muted : undefined}>
       <td>
-        <div>{row.displayName}</div>
-        <div className="adm-mono adm-faint">{row.email}</div>
+        <Primary>{row.displayName}</Primary>
+        <Sub>{row.email}</Sub>
       </td>
       <td>
-        <span className={`adm-chip ${row.role === "admin" ? "adm-chip-role" : "adm-chip-dim"}`}>
-          {row.role}
-        </span>
+        <StatusTag status={row.role === "admin" ? "accent" : "neutral"}>{row.role}</StatusTag>
       </td>
       <td>
         {row.status === "active" ? (
-          <span className="adm-chip adm-chip-dim">active</span>
+          <StatusTag status="neutral">active</StatusTag>
         ) : (
-          <span className="adm-chip adm-chip-warn">suspended</span>
+          <StatusTag status="danger">suspended</StatusTag>
         )}
       </td>
       <td>
-        <div className="adm-access">
-          {row.alphaAccess ? (
-            <span className="adm-chip adm-chip-ok">access</span>
-          ) : (
-            <span className="adm-chip adm-chip-dim">no access</span>
-          )}
-          {row.alphaAccessImplicit ? (
-            <span className="adm-access-note">
-              via admin role{explicit ? " + granted" : ""}
-            </span>
-          ) : null}
-        </div>
+        <Stack>
+          {row.alphaAccess ? <StatusTag status="ok">access</StatusTag> : <StatusTag status="neutral">no access</StatusTag>}
+          {row.alphaAccessImplicit ? <Sub plain>via admin role{explicit ? " + granted" : ""}</Sub> : null}
+        </Stack>
       </td>
-      <td className="adm-mono adm-faint">{grantedBy ?? "—"}</td>
-      <td className="adm-mono adm-faint">
-        {row.grantedAtUtc ? formatDateTime(row.grantedAtUtc) : "—"}
+      <td>
+        <Mono tone="dim">{grantedBy ?? "—"}</Mono>
       </td>
-      <td className="adm-actions-cell">
+      <td className={cell.nowrap}>
+        <Mono tone="dim">{row.grantedAtUtc ? formatDateTime(row.grantedAtUtc) : "—"}</Mono>
+      </td>
+      <td className={cell.actions}>
         {explicit ? (
-          <ArmButton
-            label="Revoke"
-            confirmLabel="Confirm revoke?"
-            disabled={busy}
-            onConfirm={() => onSet(false)}
-          />
+          <ArmButton label="Revoke" confirmLabel="Confirm revoke?" disabled={busy} onConfirm={() => onSet(false)} />
         ) : (
-          <button className="ac-iconbtn" type="button" disabled={busy} onClick={() => onSet(true)}>
+          <Button size="sm" color="neutral" border lines="none" disabled={busy} onClick={() => onSet(true)}>
             Grant
-          </button>
+          </Button>
         )}
       </td>
     </tr>

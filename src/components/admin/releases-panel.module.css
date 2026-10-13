@@ -1,0 +1,150 @@
+.code {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  font-size: 0.92em;
+  font-weight: 300;
+}
+
+/* Enforcement posture: three switches on one hairline strip. */
+.posture {
+  background: var(--line);
+  border: 1px solid var(--line);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  display: grid;
+}
+.tile {
+  background: var(--body);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 1.1rem 1.2rem 1.15rem;
+  display: flex;
+}
+.tile[data-state="danger"] {
+  box-shadow: inset 0 2px 0 var(--red);
+}
+.tile[data-state="on"] {
+  box-shadow: inset 0 2px 0 var(--blue);
+}
+.tileLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  font-size: 0.62rem;
+}
+.tileText {
+  color: var(--text-dim);
+  font-size: 0.86rem;
+}
+@media screen and (max-width: 700px) {
+  .posture {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Live channels. */
+.channels {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.1rem;
+  display: grid;
+}
+@media screen and (max-width: 1250px) {
+  .channels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.channel {
+  background: var(--body);
+  border: 1px solid var(--line);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 1.1rem 1.2rem 0;
+  display: flex;
+  position: relative;
+}
+.channel:before {
+  content: "";
+  background: var(--tone);
+  width: 2.4rem;
+  height: 2px;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+}
+.channel[data-empty]:before {
+  background: var(--line-strong);
+}
+.channelTitle {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--tone);
+  font-size: 0.64rem;
+  font-weight: 350;
+}
+.version {
+  font-family: var(--font-mono);
+  overflow-wrap: anywhere;
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.channelMeta {
+  color: var(--text-dim);
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.84rem;
+  display: flex;
+}
+.links {
+  flex-wrap: wrap;
+  gap: 0.6rem 0.8rem;
+  margin-top: 0.2rem;
+  padding-left: 0.3rem;
+  display: flex;
+}
+.channelEmpty {
+  color: var(--text-dim);
+  padding: 0.6rem 0 0.4rem;
+  line-height: 1.5;
+}
+.source {
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  border-top: 1px solid var(--line);
+  align-self: stretch;
+  margin-top: auto;
+  padding: 0.65rem 0 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 300;
+}
+
+.versionCell {
+  align-items: center;
+  gap: 0.7rem;
+  display: inline-flex;
+}
+.current {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  font-size: 0.6rem;
+}
+.kindFilter {
+  width: 11rem;
+}
+/* Two levers in one cell stack instead of widening the table. */
+.actions {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  display: inline-flex;
+}

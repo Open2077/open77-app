@@ -1,0 +1,474 @@
+.back {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.64rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+}
+.back:hover {
+  color: var(--tone);
+}
+.back svg {
+  font-size: 1.2em;
+}
+
+/* States */
+.stateView {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  flex-direction: column;
+  gap: 2rem;
+  min-height: 60vh;
+  margin-inline: auto;
+  padding-top: 5vh;
+  display: flex;
+}
+.stateBody {
+  flex-direction: column;
+  gap: 1rem;
+  display: flex;
+}
+.stateTitle {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.07em;
+  font-size: calc(2vw + 22px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.9;
+}
+.stateText {
+  color: var(--text-dim);
+}
+.stateActions {
+  flex-wrap: wrap;
+  gap: 1rem;
+  display: flex;
+}
+
+/* Hero */
+.hero {
+  margin-top: calc(var(--header-height) * -1);
+  padding: calc(var(--header-height) + 4vh) 0 5vh;
+  isolation: isolate;
+  flex-direction: column;
+  justify-content: flex-end;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+.cover {
+  z-index: -1;
+  background-position: center;
+  background-size: cover;
+  position: absolute;
+  inset: 0;
+}
+/* The hero is only as tall as its copy, so a wide banner is cropped: start it
+   where the fixed header stops covering it, so the crop is centred on what is
+   visible, and fade it in under the header's own fade. */
+.cover .banner {
+  -webkit-mask: linear-gradient(#0000, #000 calc(var(--header-height) * 0.4));
+  mask: linear-gradient(#0000, #000 calc(var(--header-height) * 0.4));
+  position: absolute;
+  inset: calc(var(--header-height) * 0.7) 0 0;
+}
+.cover:after {
+  content: "";
+  background:
+    linear-gradient(to top, var(--body) 0%, oklch(from var(--body) l c h / 0.6) 50%, oklch(from var(--body) l c h / 0.8) 100%),
+    linear-gradient(90deg, oklch(from var(--body) l c h / 0.85) 0%, oklch(from var(--body) l c h / 0) 75%);
+  position: absolute;
+  inset: 0;
+}
+.heroInner {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-inline: auto;
+  display: flex;
+}
+.identity {
+  align-items: flex-end;
+  gap: 1.75rem;
+  display: flex;
+}
+.icon {
+  clip-path: polygon(16% 0, 100% 0, 84% 100%, 0 100%);
+  flex: none;
+  width: clamp(4.5rem, 7vw, 7rem);
+  height: clamp(4.5rem, 7vw, 7rem);
+  font-size: 1.6rem;
+}
+.titleBlock {
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+  display: flex;
+}
+.kicker {
+  align-items: center;
+  gap: 1.25rem;
+  display: flex;
+}
+.live,
+.offline {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 400;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.62rem;
+  display: inline-flex;
+}
+.live {
+  color: var(--tone);
+}
+.offline {
+  color: var(--text-faint);
+}
+.pulse {
+  background: currentColor;
+  width: 7px;
+  height: 7px;
+  transform: skewX(var(--skew));
+}
+.live .pulse {
+  animation: beat 1.6s infinite;
+}
+@keyframes beat {
+  50% {
+    opacity: 0.25;
+  }
+}
+.name {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  font-size: calc(3vw + 20px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.9;
+}
+/* A long name steps down so it stays on one line and the key facts stay in the first screen. */
+.name.long {
+  font-size: calc(2.2vw + 18px);
+}
+.name [data-glitch] {
+  white-space: normal;
+}
+.sub {
+  color: var(--text-dim);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.4rem;
+  display: flex;
+}
+@media screen and (max-width: 700px) {
+  .identity {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  /* A phone shows the banner whole, as a bright strip under the header with
+     the identity below it, instead of a dimmed sliver blown up behind it; the
+     mode art behind steps back to a texture. */
+  .hero[data-banner] {
+    padding-top: calc(var(--header-height) + 100vw / 3 + 0.75rem);
+  }
+  .hero[data-banner] .banner {
+    -webkit-mask: linear-gradient(#000 70%, #0000);
+    mask: linear-gradient(#000 70%, #0000);
+    z-index: 1;
+    aspect-ratio: 3;
+    inset: var(--header-height) 0 auto;
+  }
+  .hero[data-banner] .cover:after {
+    background: linear-gradient(to top, var(--body) 0%, oklch(from var(--body) l c h / 0.86) 45%, oklch(from var(--body) l c h / 0.9) 100%);
+  }
+}
+
+/* Stat strip */
+.stats {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  border-block: 1px solid var(--line);
+  grid-template-columns: 1.6fr repeat(5, 1fr);
+  margin-inline: auto;
+  display: grid;
+}
+.stat {
+  border-left: 1px solid var(--line);
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.55rem;
+  min-width: 0;
+  padding: 1.3rem 1.4rem;
+  display: flex;
+}
+.stat:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+.stat dt {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  font-size: 0.6rem;
+}
+.stat dd {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1rem;
+  overflow: hidden;
+}
+.players dd {
+  color: var(--text-faint);
+}
+.players b {
+  font-family: var(--font-heading);
+  letter-spacing: -0.06em;
+  color: var(--text-primary);
+  font-size: 2rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.9;
+}
+.meter {
+  max-width: 16rem;
+}
+.pop-mid .meter,
+.pop-high .meter {
+  --meter: var(--tone);
+}
+.pop-high b {
+  color: var(--tone);
+}
+.pop-full .meter {
+  --meter: var(--red);
+}
+.pop-full b {
+  color: var(--red);
+}
+@media screen and (max-width: 1084px) {
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .stat:nth-child(3n + 1) {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .stat:nth-child(n + 4) {
+    border-top: 1px solid var(--line);
+  }
+}
+@media screen and (max-width: 600px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stat:nth-child(3n + 1) {
+    border-left: 1px solid var(--line);
+    padding-left: 1.4rem;
+  }
+  .stat:nth-child(2n + 1) {
+    border-left: 0;
+    padding-left: 0;
+  }
+  .stat:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+}
+
+/* Body */
+.body {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  align-items: start;
+  gap: 3.5rem;
+  margin: 3.5rem auto 0;
+  display: grid;
+}
+@media screen and (max-width: 1084px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.main {
+  flex-direction: column;
+  gap: 3rem;
+  display: flex;
+}
+.section {
+  flex-direction: column;
+  gap: 1.1rem;
+  display: flex;
+}
+.h2 {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  align-items: baseline;
+  gap: 0.9rem;
+  font-size: 1.45rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+  display: flex;
+}
+.h2:before {
+  content: "//";
+  color: var(--tone);
+  letter-spacing: -0.12em;
+}
+.h2Count {
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+  color: var(--text-dim);
+  margin-left: auto;
+  font-size: 0.85rem;
+  font-style: normal;
+}
+.desc {
+  color: oklch(from var(--text-primary) l c h / 86%);
+  white-space: pre-line;
+  max-width: 44em;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+.tags {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-left: 3px;
+  display: flex;
+}
+.connectBox {
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--tone);
+  background: var(--surface-1);
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.1rem 1.2rem 1.1rem 1.4rem;
+  display: flex;
+}
+.endpoint {
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+  display: flex;
+}
+.label {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  font-size: 0.6rem;
+}
+.endpoint code {
+  font-family: var(--font-mono);
+  overflow-wrap: anywhere;
+  font-size: 1rem;
+}
+.note {
+  color: var(--text-dim);
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  display: flex;
+}
+.note svg {
+  color: var(--tone);
+  flex: none;
+}
+.links {
+  flex-wrap: wrap;
+  gap: 1rem;
+  display: flex;
+}
+.muted {
+  color: var(--text-dim);
+}
+
+.side {
+  flex-direction: column;
+  gap: 2rem;
+  display: flex;
+}
+.panel {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.4rem 1.5rem;
+  display: flex;
+  position: relative;
+}
+.panel:first-child:before {
+  content: "";
+  border: 1px solid var(--tone);
+  border-width: 1px 0 0 1px;
+  pointer-events: none;
+  width: 44px;
+  height: 44px;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+}
+.panel .h2 {
+  font-size: 1.15rem;
+}
+.roster {
+  scrollbar-width: thin;
+  max-height: calc(10 * 2.35rem);
+  overflow-y: auto;
+}
+.roster:focus-visible {
+  outline-offset: 4px;
+}
+.roster ul {
+  flex-direction: column;
+  display: flex;
+}
+.roster li {
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+  gap: 0.75rem;
+  height: 2.35rem;
+  display: flex;
+}
+.rosterDot {
+  background: var(--tone);
+  flex: none;
+  width: 6px;
+  height: 6px;
+  transform: skewX(var(--skew));
+}
+.rosterName {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.rosterSince {
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  font-size: 0.78rem;
+}
+.rosterMore {
+  color: var(--text-faint);
+  font-size: 0.8rem;
+}

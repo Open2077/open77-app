@@ -1,0 +1,158 @@
+/* Wide enough for "Run your own" on one line: a two-line title, not three. */
+.hero {
+  --hero-copy: min(56rem, 60vw);
+  --hero-lead: min(44em, 44vw);
+}
+/* Stacked, the copy takes the full width again. */
+@media screen and (max-width: 1084px) {
+  .hero {
+    --hero-copy: 100%;
+    --hero-lead: 38em;
+  }
+}
+.actions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.2rem 1.6rem;
+  margin-top: 0.6rem;
+  display: flex;
+}
+.heroNote {
+  color: var(--text-faint);
+  align-items: flex-start;
+  gap: 0.7rem;
+  max-width: 36rem;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  display: flex;
+}
+.heroNote svg {
+  color: var(--tone);
+  flex: none;
+  margin-top: 0.05rem;
+  font-size: 1.1rem;
+}
+
+/* Experiences ------------------------------------------------------------------- */
+
+.experiences {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem 3rem;
+  padding-inline: 1rem;
+  display: grid;
+}
+.modes {
+  flex-wrap: wrap;
+  gap: 0.6rem 0.9rem;
+  margin-top: 2.5rem;
+  padding-inline: 0.5rem;
+  display: flex;
+}
+@media screen and (max-width: 1084px) {
+  .experiences {
+    grid-template-columns: 1fr;
+    padding-inline: 0.5rem;
+  }
+}
+
+/* Benefits ---------------------------------------------------------------------- */
+
+.benefits {
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  align-items: center;
+  gap: 3rem;
+  display: grid;
+}
+.benefitsCopy {
+  flex-direction: column;
+  gap: 1.2rem;
+  display: flex;
+}
+.benefitsTitle {
+  margin-bottom: 1.6rem;
+}
+/* The rack bleeds into the right gutter, never past the viewport. */
+.rack {
+  --bleed: min(28%, calc(var(--page-gutter) - 4px));
+  width: calc(100% + var(--bleed));
+  margin-right: calc(var(--bleed) * -1);
+}
+.rack img {
+  pointer-events: none;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+@media screen and (max-width: 1084px) {
+  .benefits {
+    grid-template-columns: 1fr;
+  }
+  .rack {
+    order: -1;
+    width: min(100%, 560px);
+    margin: 0 auto -2rem;
+  }
+}
+
+.notice {
+  margin-top: 3rem;
+}
+
+/* Alpha band ---------------------------------------------------------------------- */
+
+.band {
+  isolation: isolate;
+  min-height: 70vh;
+  margin-top: var(--margin-1);
+  padding: 12vh 0;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+.bandArt {
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+}
+.bandArt video {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+.bandArt > * {
+  position: absolute;
+  inset: 0;
+}
+.bandArt:after {
+  content: "";
+  background:
+    linear-gradient(to bottom, var(--body) 0%, oklch(from var(--body) l c h / 0.35) 30% 70%, var(--body) 100%),
+    linear-gradient(90deg, oklch(from var(--body) l c h / 0.92) 0%, oklch(from var(--body) l c h / 0.2) 75%);
+  position: absolute;
+  inset: 0;
+}
+.bandInner {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.4rem;
+  margin-inline: auto;
+  display: flex;
+}
+.bandText {
+  color: var(--text-dim);
+  max-width: 40rem;
+  font-size: calc(0.3vw + 15px);
+  line-height: 1.55;
+}
+.bandText code {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  background: var(--surface-2);
+  padding: 0.1em 0.35em;
+  font-size: 0.86em;
+}

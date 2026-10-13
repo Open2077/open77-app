@@ -4,6 +4,8 @@ import { useCallback, useState, type ReactNode } from "react";
 
 import { isConformantBanner, isConformantIcon } from "@/lib/server-images";
 
+import styles from "./server-image.module.css";
+
 type Kind = "icon" | "banner";
 
 /**
@@ -47,9 +49,13 @@ export function ServerImage({
   const loaded = Boolean(src) && loadedSource === src;
 
   return (
-    <span className={`svimg svimg-${kind}${loaded ? " is-loaded" : ""}${className ? ` ${className}` : ""}`}>
-      <span className="svimg-fallback" aria-hidden="true">
-        {fallback ?? (label ? <span className="svimg-initial">{label}</span> : null)}
+    <span
+      className={[styles.image, styles[kind], loaded ? styles.loaded : "", className ?? ""].filter(Boolean).join(" ")}
+      data-server-image={kind}
+      data-loaded={loaded || undefined}
+    >
+      <span className={styles.fallback} aria-hidden="true">
+        {fallback ?? (label ? <span className={styles.initial}>{label}</span> : null)}
       </span>
       {src ? (
         // Server-provided cross-origin URL; the app uses plain <img> for all
@@ -58,7 +64,7 @@ export function ServerImage({
         <img
           key={src}
           ref={validate}
-          className="svimg-img"
+          className={styles.img}
           src={src}
           alt={alt}
           loading="lazy"

@@ -1,0 +1,36 @@
+.mod {
+  min-width: 13rem;
+  max-width: 20rem;
+}
+.source {
+  margin-top: 0.45rem;
+  display: block;
+}
+.asker {
+  min-width: 11rem;
+}
+.decision {
+  min-width: 10rem;
+  max-width: 18rem;
+}
+.actions {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  display: inline-flex;
+}
+.explain {
+  color: var(--text-dim);
+  max-width: 64rem;
+  line-height: 1.55;
+}
+.explain strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.redistHint {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  display: inline-flex;
+}

@@ -1,11 +1,7 @@
-import Link from "next/link";
-
-import { SlashMark } from "@/components/brand";
 import { AgentNote } from "@/components/docs/agent-note";
 import { DocPager } from "@/components/docs/doc-pager";
-import { DocToc } from "@/components/docs/doc-toc";
+import { DocLink, DocNote, DocSection, DocText, Facts, Snippet, Steps } from "@/components/docs/docs-blocks";
 import { DocsShell } from "@/components/docs/docs-shell";
-import { ArrowRightIcon, InfoIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
 import { getDocsNeighbours, highlightCode, type TocEntry } from "@/lib/docs";
 import {
@@ -46,23 +42,6 @@ const TOC: TocEntry[] = [
   { id: "managing", text: "Managing your keys", depth: 2 },
 ];
 
-function Snippet({ filename, badge, html }: { filename: string; badge: string; html: string }) {
-  return (
-    <div className="code-window docs-code">
-      <div className="code-titlebar">
-        <span className="client-dots" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </span>
-        <span className="code-filename">{filename}</span>
-        <span className="client-badge">{badge}</span>
-      </div>
-      <div className="dx-snippet" dangerouslySetInnerHTML={{ __html: html }} />
-    </div>
-  );
-}
-
 export default async function ServerLicensingPage() {
   const [envHtml, configHtml, neighbours] = await Promise.all([
     highlightCode(ENV_SAMPLE, "bash"),
@@ -73,98 +52,51 @@ export default async function ServerLicensingPage() {
   return (
     <>
       <DocsShell
+        tone="blue"
         breadcrumbs={[{ label: "Docs", href: "/docs" }, { label: "Server licensing" }]}
+        eyebrow="Hosting & administration"
         title="Server licensing."
         lede={LICENSING_LEDE}
-        toc={<DocToc entries={TOC} />}
+        meta={<a href="/docs/server-licensing.md">Markdown</a>}
+        toc={TOC}
       >
-        <section className="docs-section" id="overview">
-          <h2 className="docs-title">
-            <SlashMark /> Overview
-          </h2>
-          <p className="docs-p">{LICENSING_OVERVIEW}</p>
-        </section>
+        <DocSection id="overview" title="Overview" intro={LICENSING_OVERVIEW} />
 
-        <section className="docs-section" id="onboarding">
-          <h2 className="docs-title">
-            <SlashMark /> From zero to a listed server
-          </h2>
-          <ol className="steps steps-2">
-            {ONBOARDING_STEPS.map((step) => (
-              <li className="step" key={step.num}>
-                <span className="step-num">{step.num}</span>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-                <Link className="doc-inline-link" href={step.href}>
-                  {step.linkText}
-                  <ArrowRightIcon size={14} />
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </section>
+        <DocSection id="onboarding" title="From zero to a listed server">
+          <Steps
+            items={ONBOARDING_STEPS.map((step) => ({
+              num: step.num,
+              title: step.title,
+              body: step.body,
+              link: { href: step.href, label: step.linkText },
+            }))}
+          />
+        </DocSection>
 
-        <section className="docs-section" id="your-key">
-          <h2 className="docs-title">
-            <SlashMark /> Your license key
-          </h2>
-          <p className="docs-p">{KEY_SHAPE}</p>
-          {KEY_FACTS.map((fact) => (
-            <p className="docs-p" key={fact.label}>
-              <strong>{fact.label}.</strong> {fact.body}
-            </p>
-          ))}
-        </section>
+        <DocSection id="your-key" title="Your license key" intro={KEY_SHAPE}>
+          <Facts items={KEY_FACTS.map((fact) => ({ label: fact.label, body: fact.body }))} />
+        </DocSection>
 
-        <section className="docs-section" id="linking-the-key">
-          <h2 className="docs-title">
-            <SlashMark /> Linking the key to your server
-          </h2>
-          <p className="docs-p">{LINKING_INTRO}</p>
-          <p className="docs-p">{ENV_INTRO}</p>
-          <Snippet filename="shell" badge="ENVIRONMENT" html={envHtml} />
-          <p className="docs-p">{CONFIG_INTRO}</p>
-          <Snippet filename="server.jsonc" badge="SERVER CONFIG" html={configHtml} />
-          <p className="status-note" role="note">
-            <InfoIcon />
-            <span>{LINKING_OUTRO}</span>
-          </p>
-        </section>
+        <DocSection id="linking-the-key" title="Linking the key to your server" intro={LINKING_INTRO}>
+          <DocText>{ENV_INTRO}</DocText>
+          <Snippet filename="shell" badge="Environment" code={ENV_SAMPLE} html={envHtml} />
+          <DocText>{CONFIG_INTRO}</DocText>
+          <Snippet filename="server.jsonc" badge="Server config" code={CONFIG_SAMPLE} html={configHtml} />
+          <DocNote>{LINKING_OUTRO}</DocNote>
+        </DocSection>
 
-        <section className="docs-section" id="authorisation">
-          <h2 className="docs-title">
-            <SlashMark /> How the master authorises your server
-          </h2>
-          <p className="docs-p">{AUTH_INTRO}</p>
-          <ol className="steps steps-2">
-            {AUTH_STEPS.map((step, index) => (
-              <li className="step" key={step.title}>
-                <span className="step-num">{String(index + 1).padStart(2, "0")}</span>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-              </li>
-            ))}
-          </ol>
-          <p className="status-note" role="note">
-            <InfoIcon />
-            <span>
-              <strong>Honest status:</strong> {AUTH_NOTE}
-            </span>
-          </p>
-        </section>
+        <DocSection id="authorisation" title="How the master authorises your server" intro={AUTH_INTRO}>
+          <Steps items={AUTH_STEPS.map((step) => ({ title: step.title, body: step.body }))} />
+          <DocNote title="Honest status:">
+            {AUTH_NOTE}
+          </DocNote>
+        </DocSection>
 
-        <section className="docs-section" id="managing">
-          <h2 className="docs-title">
-            <SlashMark /> Managing your keys
-          </h2>
-          <p className="docs-p">{MANAGE_INTRO}</p>
-          <p className="docs-p">
-            <Link className="doc-inline-link" href="/account/keys">
-              Open the keymaster
-              <ArrowRightIcon size={14} />
-            </Link>
-          </p>
-        </section>
+        <DocSection id="managing" title="Managing your keys" intro={MANAGE_INTRO}>
+          <DocText>
+            <DocLink href="/account/keys">Open the keymaster</DocLink>
+          </DocText>
+        </DocSection>
 
         <AgentNote markdownHref="/docs/server-licensing.md" />
         <DocPager {...neighbours} />

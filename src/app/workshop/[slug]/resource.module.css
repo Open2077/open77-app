@@ -1,0 +1,187 @@
+/* Workshop item pages: overview, versions and discussion share this frame. */
+.layout {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  grid-template-columns: minmax(0, 1fr) minmax(19rem, 23rem);
+  align-items: start;
+  gap: 3rem calc(2rem + 2.5vw);
+  margin-inline: auto;
+  padding-top: 3rem;
+  display: grid;
+}
+/* Discussion runs under the main column while the side panel continues. */
+.layout:not(.single) {
+  grid-template-areas: "main side" "talk side";
+  grid-template-rows: auto 1fr;
+  row-gap: calc(2.6rem + 1.5vw);
+}
+.layout:not(.single) > .main {
+  grid-area: main;
+}
+.layout:not(.single) > .side {
+  grid-area: side;
+}
+.talk {
+  grid-area: talk;
+  min-width: 0;
+}
+/* One column, left-aligned under the header, at a readable width. */
+.single {
+  grid-template-columns: minmax(0, 62rem);
+}
+.main {
+  flex-direction: column;
+  gap: calc(2.6rem + 1.5vw);
+  min-width: 0;
+  display: flex;
+}
+.side {
+  flex-direction: column;
+  gap: 1.8rem;
+  min-width: 0;
+  display: flex;
+}
+.notice {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  margin: 2rem auto 0;
+}
+
+/* A numbered block of the page: "01 // About". */
+.block {
+  scroll-margin-top: calc(var(--header-height) + 1.5rem);
+  flex-direction: column;
+  gap: 1.3rem;
+  min-width: 0;
+  display: flex;
+}
+.head {
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 0.8rem 2rem;
+  padding-bottom: 0.9rem;
+  display: flex;
+  position: relative;
+}
+.head:after {
+  content: "";
+  background: var(--tone);
+  width: 3.5rem;
+  height: 1px;
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+}
+.headCopy {
+  flex-direction: column;
+  gap: 0.7rem;
+  display: flex;
+}
+.headAside {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.2rem;
+  display: flex;
+}
+.headNote {
+  color: var(--text-faint);
+  max-width: 30rem;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+.more {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tone);
+  font-size: 0.66rem;
+}
+
+/* The facts panel. */
+.panelTitle {
+  margin-bottom: 0.9rem;
+}
+.facts dd {
+  font-size: 0.92rem;
+}
+.panelStack {
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-top: 1.3rem;
+  display: flex;
+}
+.details {
+  border-top: 1px solid var(--line);
+  padding-top: 0.9rem;
+}
+.details summary {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.64rem;
+  list-style: none;
+}
+.details summary::-webkit-details-marker {
+  display: none;
+}
+.details summary:before {
+  content: "+";
+  color: var(--tone);
+  font-family: var(--font-mono);
+  margin-right: 0.8em;
+}
+.details[open] summary:before {
+  content: "−";
+}
+.details summary:hover {
+  color: var(--text-primary);
+}
+.details > :not(summary) {
+  margin-top: 0.9rem;
+}
+.digest {
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  overflow-wrap: anywhere;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.links {
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  display: flex;
+}
+.footnote {
+  color: var(--text-faint);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.pagination {
+  flex-wrap: wrap;
+  gap: 1rem;
+  display: flex;
+}
+
+@media screen and (max-width: 1084px) {
+  .layout,
+  .layout:not(.single) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "main" "side" "talk";
+    grid-template-rows: auto;
+  }
+}
+
+/* Creator-written Markdown sits under the block title: its own headings step down. */
+.readme.readme :global(h2) {
+  font-size: 1.3em;
+}
+.readme.readme :global(h3) {
+  font-size: 1.1em;
+}

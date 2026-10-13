@@ -1,0 +1,33 @@
+/* A single transient message, bottom centre, in the design's slanted frame. */
+.toast {
+  z-index: 400;
+  color: var(--text-primary);
+  pointer-events: none;
+  opacity: 0;
+  isolation: isolate;
+  max-width: min(90vw, 560px);
+  padding: 0.95rem 1.6rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  transition:
+    opacity 0.25s var(--cubic),
+    transform 0.25s var(--cubic);
+  position: fixed;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translate(-50%, 0.75rem);
+}
+.toast:before {
+  content: "";
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--tone);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}

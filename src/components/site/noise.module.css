@@ -1,0 +1,54 @@
+.noise {
+  z-index: 1000;
+  opacity: 0.5;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  mix-blend-mode: overlay;
+  background-image: url(/home/img/grain.png);
+  background-repeat: repeat;
+  background-size: 80px 80px;
+  width: calc(100% + 128px);
+  height: calc(100% + 128px);
+  animation: 0.48s step-end infinite noise;
+  position: fixed;
+  top: -64px;
+  left: -64px;
+}
+@media screen and (max-width: 1250px) {
+  .noise {
+    opacity: 0.25;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .noise {
+    animation: none;
+    display: none;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .noise {
+    animation: none;
+    display: none;
+  }
+}
+@media print {
+  .noise {
+    animation: none;
+    display: none;
+  }
+}
+@keyframes noise {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-32px, 18px);
+  }
+  50% {
+    transform: translate(20px, -28px);
+  }
+  75% {
+    transform: translate(-14px, -22px);
+  }
+}

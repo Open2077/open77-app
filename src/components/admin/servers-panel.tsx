@@ -1,12 +1,36 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { AdminSpinner, useAdminActivity } from "@/components/admin/admin-activity";
+
+import { useAdminActivity } from "@/components/admin/admin-activity";
+import {
+  AdminPanel,
+  AdminTable,
+  Count,
+  EmptyBlock,
+  Footnote,
+  LoadingBlock,
+  Mono,
+  Primary,
+  Stack,
+  StatusTag,
+  Sub,
+  SuccessStrip,
+  Toolbar,
+  ToolbarGroup,
+  cell,
+} from "@/components/admin/admin-kit";
 import { formatAge, shortId } from "@/components/admin/format";
 import { ErrorStrip, useAdminData } from "@/components/admin/use-admin-data";
-import { ServerRackIcon } from "@/components/icons";
+import { Button } from "@/components/admin/admin-button";
+import { Meter } from "@/components/ui/feedback";
+import { Checkbox, Field, Input, Select } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
+import { alert02, refresh, serverStack01 } from "@/components/ui/icons";
 import { MasterApiError } from "@/lib/account/api";
 import * as admin from "@/lib/account/admin-api";
+
+import styles from "./servers-panel.module.css";
 
 /** Master-owned labels are independent of owner-controlled metadata and heartbeats. */
 export function ServersPanel() {
@@ -45,29 +69,64 @@ export function ServersPanel() {
     (filter === "all" || (filter === "hidden" ? row.hidden : filter === "visible" ? !row.hidden : filter === "official" ? row.official : row.featured)) &&
     `${row.name} ${row.connectEndpoint} ${row.serverId} ${row.ownerEmail || ""}`.toLowerCase().includes(query.toLowerCase()));
 
-  return <section className="adm-panel">
-    <div className="adm-panel-head">
-      <h2 className="adm-panel-title"><ServerRackIcon size={16} /> Server directory</h2>
-      <button className="ac-iconbtn" type="button" onClick={reload} disabled={loading || busy}>
-        {loading ? <AdminSpinner /> : null} Refresh
-      </button>
-    </div>
-    <p className="adm-footnote">Hide a server to remove it from public lists on the website and launcher, including Featured. It remains manageable here and accessible by direct connection: this is not a ban. Visibility and labels persist across restarts and are audited. Lower featured order appears first.</p>
-    <div className="adm-directory-toolbar">
-      <label>Find a server<input className="ac-input" type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Name, address, owner or server ID" /></label>
-      <label>Show<select className="ac-input" value={filter} onChange={e => setFilter(e.target.value)}><option value="all">All servers</option><option value="visible">Not hidden</option><option value="hidden">Hidden</option><option value="featured">Featured</option><option value="official">Official</option></select></label>
-      <span className="adm-count">{shown?.length ?? 0} / {data?.length ?? 0}</span>
-    </div>
-    <ErrorStrip message={error} />
-    <p className="adm-directory-notice" role="status">{notice}</p>
-    {loading && !data ? <p className="ac-loading"><AdminSpinner /> Loading servers…</p> : null}
-    {shown?.length === 0 ? <p className="adm-empty">No servers match this view.</p> : null}
-    {shown && shown.length > 0 ? <div className="adm-tablewrap"><table className="adm-table adm-directory-table">
-      <thead><tr><th>Server / owner</th><th>Players / heartbeat</th><th>Public visibility</th><th>Official</th><th>Featured</th><th>Featured order</th><th>Save settings</th></tr></thead>
-      <tbody>{shown.map(server => <ServerRow key={`${server.serverId}:${server.directoryRevision ?? 0}`} server={server} disabled={busy || loading} save={save} />)}</tbody>
-    </table></div> : null}
-    <p className="adm-footnote">Active sessions, hidden servers and offline curated servers are listed. Unhiding an offline server does not bring it online. Settings are tied to the stable server ID, not an IP address, and never bypass security checks or local-address filtering.</p>
-  </section>;
+  return (
+    <AdminPanel
+      title="Server directory"
+      icon={serverStack01}
+      brackets
+      actions={
+        <Button size="sm" color="neutral" border lines="none" icon={refresh} iconPosition="left" onClick={reload} busy={loading} disabled={busy}>
+          Refresh
+        </Button>
+      }
+      footnote="Active sessions, hidden servers and offline curated servers are listed. Unhiding an offline server does not bring it online. Settings are tied to the stable server ID, not an IP address, and never bypass security checks or local-address filtering."
+    >
+      <Footnote>
+        Hide a server to remove it from public lists on the website and launcher, including Featured. It remains manageable
+        here and accessible by direct connection: this is not a ban. Visibility and labels persist across restarts and are
+        audited. Lower featured order appears first.
+      </Footnote>
+      <Toolbar className={styles.toolbar}>
+        <ToolbarGroup className={styles.fields}>
+          <Field label="Find a server" className={styles.find}>
+            <Input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Name, address, owner or server ID" className={styles.compact} />
+          </Field>
+          <Field label="Show" className={styles.show}>
+            <Select value={filter} onChange={e => setFilter(e.target.value)} compact>
+              <option value="all">All servers</option>
+              <option value="visible">Not hidden</option>
+              <option value="hidden">Hidden</option>
+              <option value="featured">Featured</option>
+              <option value="official">Official</option>
+            </Select>
+          </Field>
+        </ToolbarGroup>
+        <Count>{shown?.length ?? 0} / {data?.length ?? 0} servers</Count>
+      </Toolbar>
+      <ErrorStrip message={error} />
+      <SuccessStrip message={notice} />
+      {loading && !data ? <LoadingBlock label="Loading servers" /> : null}
+      {shown?.length === 0 ? <EmptyBlock icon={serverStack01}>No servers match this view.</EmptyBlock> : null}
+      {shown && shown.length > 0 ? (
+        <AdminTable caption="Server directory settings" minWidth="60rem">
+          <thead>
+            <tr>
+              <th>Server / owner</th>
+              <th>Players / heartbeat</th>
+              <th>Public visibility</th>
+              <th>Official / featured order</th>
+              <th className={cell.actions}>Save settings</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shown.map(server => (
+              <ServerRow key={`${server.serverId}:${server.directoryRevision ?? 0}`} server={server} disabled={busy || loading} save={save} />
+            ))}
+          </tbody>
+        </AdminTable>
+      ) : null}
+    </AdminPanel>
+  );
 }
 
 function ServerRow({ server, disabled, save }: {
@@ -90,13 +149,79 @@ function ServerRow({ server, disabled, save }: {
     catch (err) { setError(err instanceof MasterApiError ? err.message : "Save failed. Please try again."); }
     finally { setSaving(false); }
   }
-  return <tr>
-    <td><strong>{server.name}</strong><div className="adm-mono adm-dim">{server.connectEndpoint}</div><div className="adm-faint" title={server.serverId}>{shortId(server.serverId)} · {server.ownerEmail ?? "Legacy enrollment"}</div><span className="adm-chip adm-chip-dim">{server.licenseLabel ?? "unlicensed"}</span></td>
-    <td>{server.online === false ? <span className="adm-chip adm-chip-dim">Offline / not listed</span> : <><span className="adm-mono">{server.connectedPlayers}/{server.maximumPlayers}</span><div className="adm-faint">{formatAge(server.lastHeartbeatUtc)} ago</div></>}</td>
-    <td><label className="adm-directory-toggle"><input type="checkbox" checked={hidden} onChange={e => setHidden(e.target.checked)} disabled={disabled || !canEditVisibility} aria-label={`Hide from public list: ${server.name}`} /><span>Hide from list</span></label><span className={`adm-chip ${server.hidden ? "adm-chip-warn" : "adm-chip-dim"}`}>{!canEditVisibility ? "Update master first" : server.hidden ? "Hidden" : "Not hidden"}</span></td>
-    <td><label className="adm-directory-toggle"><input type="checkbox" checked={official} onChange={e => setOfficial(e.target.checked)} disabled={disabled} aria-label={`Official: ${server.name}`} /><span>{official ? "Official" : "Community"}</span></label></td>
-    <td><label className="adm-directory-toggle"><input type="checkbox" checked={featured} onChange={e => setFeatured(e.target.checked)} disabled={disabled} aria-label={`Featured: ${server.name}`} /><span>{featured ? "Featured" : "Standard"}</span></label></td>
-    <td><input className="ac-input adm-directory-order" type="number" min={0} max={999} step={1} value={order} onChange={e => setOrder(e.target.value)} disabled={disabled || !featured} aria-invalid={!validOrder} aria-label={`Featured order: ${server.name}`} /></td>
-    <td><button type="button" className="ac-iconbtn" disabled={disabled || !changed || !validOrder} onClick={submit}>{saving ? <AdminSpinner /> : null}{saving ? "Saving…" : changed ? "Save changes" : "Saved"}</button><ErrorStrip message={error} /></td>
-  </tr>;
+  const occupancy = server.maximumPlayers ? (server.connectedPlayers / server.maximumPlayers) * 100 : 0;
+  return (
+    <tr className={changed ? cell.active : undefined}>
+      <td className={styles.server}>
+        <Primary>{server.name}</Primary>
+        <Sub>{server.connectEndpoint}</Sub>
+        <Sub plain title={server.serverId}>{shortId(server.serverId)} · {server.ownerEmail ?? "Legacy enrollment"}</Sub>
+        <span className={styles.license}>
+          <StatusTag status="neutral">{server.licenseLabel ?? "unlicensed"}</StatusTag>
+        </span>
+      </td>
+      <td className={styles.players}>
+        {server.online === false ? (
+          <StatusTag status="neutral">Offline / not listed</StatusTag>
+        ) : (
+          <>
+            <Mono>{server.connectedPlayers}/{server.maximumPlayers}</Mono>
+            <Meter value={occupancy} label={`${server.connectedPlayers} of ${server.maximumPlayers} players`} />
+            <Sub>{formatAge(server.lastHeartbeatUtc)} ago</Sub>
+          </>
+        )}
+      </td>
+      <td className={cell.nowrap}>
+        <Stack>
+          <Checkbox checked={hidden} onChange={e => setHidden(e.target.checked)} disabled={disabled || !canEditVisibility} aria-label={`Hide from public list: ${server.name}`}>
+            Hide from list
+          </Checkbox>
+          <StatusTag status={!canEditVisibility || server.hidden ? "warn" : "neutral"}>
+            {!canEditVisibility ? "Update master first" : server.hidden ? "Hidden" : "Not hidden"}
+          </StatusTag>
+        </Stack>
+      </td>
+      <td className={styles.labels}>
+        <Checkbox checked={official} onChange={e => setOfficial(e.target.checked)} disabled={disabled} aria-label={`Official: ${server.name}`}>
+          {official ? "Official" : "Community"}
+        </Checkbox>
+        <span className={styles.featured}>
+          <Checkbox checked={featured} onChange={e => setFeatured(e.target.checked)} disabled={disabled} aria-label={`Featured: ${server.name}`}>
+            {featured ? "Featured" : "Standard"}
+          </Checkbox>
+          <Input
+          type="number"
+          min={0}
+          max={999}
+          step={1}
+          value={order}
+          onChange={e => setOrder(e.target.value)}
+          disabled={disabled || !featured}
+          aria-invalid={!validOrder}
+          aria-label={`Featured order: ${server.name}`}
+          className={styles.order}
+          />
+        </span>
+      </td>
+      <td className={cell.actions}>
+        <Button
+          size="sm"
+          color={changed ? "red" : "neutral"}
+          border={!changed}
+          lines="none"
+          busy={saving}
+          disabled={disabled || !changed || !validOrder}
+          onClick={submit}
+        >
+          {saving ? "Saving…" : changed ? "Save changes" : "Saved"}
+        </Button>
+        {error ? (
+          <p className={styles.rowError} role="alert">
+            <Icon glyph={alert02} />
+            {error}
+          </p>
+        ) : null}
+      </td>
+    </tr>
+  );
 }

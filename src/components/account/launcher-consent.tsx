@@ -3,12 +3,17 @@
 import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { AuthPanel } from "@/components/account/auth-panel";
-import { AuthLoading } from "@/components/account/auth-scene";
-import { AuthIcon } from "@/components/account/auth-icon";
-import { ShieldIcon } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { DefinitionList } from "@/components/ui/data";
+import { Notice } from "@/components/ui/feedback";
+import { checkmarkBadge01, computer, link01, shield01 } from "@/components/ui/icons";
 import { authorizeLauncher, MasterApiError } from "@/lib/account/api";
 import { useSession } from "@/lib/account/session";
+import { AuthCard, CardText } from "./auth-card";
+import { AuthPanel } from "./auth-panel";
+import { AuthLoading } from "./auth-scene";
+
+import styles from "./auth-forms.module.css";
 
 type LauncherRequest = {
   redirectUri: string;
@@ -47,8 +52,7 @@ function parseRequest(params: URLSearchParams): { request?: LauncherRequest; err
     url.hash === "";
   if (!loopback) {
     return {
-      error:
-        "This launcher link points somewhere it shouldn't. For your safety the sign-in was stopped.",
+      error: "This launcher link points somewhere it shouldn't. For your safety the sign-in was stopped.",
     };
   }
   if (!state) {
@@ -104,33 +108,19 @@ export function LauncherConsent() {
   // A bad or hostile launcher link — never redirect, just explain.
   if (linkError) {
     return (
-      <div className="auth-panel ac-card">
-        <span className="auth-state-icon"><AuthIcon name="shield" size={24} /></span>
-        <div className="auth-panel-heading"><h2>Connection stopped.</h2></div>
-        <p className="ac-error" role="alert">
-          <ShieldIcon size={15} />
-          <span>{linkError}</span>
-        </p>
-        <p className="ac-hint">Start the OPEN//77 launcher again to get a fresh sign-in link.</p>
-      </div>
+      <AuthCard glyph={shield01} tone="red" eyebrow="Launcher" title="Connection stopped" footer="Start the OPEN//77 launcher again to get a fresh sign-in link.">
+        <Notice kind="danger">{linkError}</Notice>
+      </AuthCard>
     );
   }
 
   if (!ready) return <AuthLoading />;
 
+  // The scene's title and lead already say why; the form itself must stay in the first screen.
   if (!session) {
     return (
       <>
-        <section className="ac-launch" aria-label="Launcher sign-in">
-          <h2>
-            <ShieldIcon size={19} />
-            Sign in to authorize your launcher
-          </h2>
-          <p>
-            Sign in, or create an account, and you can connect the OPEN//77 launcher on this
-            device to your platform account.
-          </p>
-        </section>
+        {error ? <Notice kind="danger">{error}</Notice> : null}
         <AuthPanel />
       </>
     );
@@ -138,63 +128,43 @@ export function LauncherConsent() {
 
   if (handedOff) {
     return (
-      <div className="auth-panel ac-card">
-        <span className="auth-state-icon"><AuthIcon name="link" size={24} /></span>
-        <div className="ac-success" role="status">
-          <h2 className="ac-reveal-title">
-            <ShieldIcon size={19} />
-            Launcher authorized.
-          </h2>
-          <p>
-            You can return to the OPEN//77 launcher. It&apos;s signing you in now. You may close
-            this tab.
-          </p>
-        </div>
-      </div>
+      <AuthCard glyph={checkmarkBadge01} tone="blue" eyebrow="Launcher" title="Launcher authorized">
+        <Notice kind="success" title="You can return to the OPEN//77 launcher.">
+          It&apos;s signing you in now. You may close this tab.
+        </Notice>
+      </AuthCard>
     );
   }
 
   return (
-    <div className="auth-panel ac-card">
-      <span className="auth-state-icon"><AuthIcon name="link" size={24} /></span>
-      <div className="ac-card-head">
-        <h2 className="ac-card-title">
-          <ShieldIcon size={19} />
-          Authorize the launcher
-        </h2>
-      </div>
-      <p className="ac-lead" style={{ margin: "0 0 6px" }}>
-        The OPEN//77 launcher on this device wants to sign in as:
+    <AuthCard
+      glyph={computer}
+      eyebrow="Launcher"
+      title="Authorize the launcher"
+      actions={
+        <>
+          <Button key={busy ? "Authorizing…" : "Authorize launcher"} icon={link01} busy={busy} onClick={onAuthorize}>
+            {busy ? "Authorizing…" : "Authorize launcher"}
+          </Button>
+          <Button lines="none" border color="neutral" disabled={busy} onClick={onCancel}>
+            Cancel
+          </Button>
+        </>
+      }
+    >
+      <CardText>The OPEN//77 launcher on this device wants to sign in as:</CardText>
+      <DefinitionList
+        className={styles.facts}
+        items={[
+          { label: "Account", value: session.displayName },
+          ...(session.email ? [{ label: "E-mail", value: session.email }] : []),
+        ]}
+      />
+      <p className={styles.hint}>
+        The launcher receives a short-lived, single-use code over a local connection, never your password. Only authorize a launcher you
+        started yourself.
       </p>
-      <dl className="ac-profile-grid">
-        <div>
-          <dt className="ac-label">Account</dt>
-          <dd>{session.displayName}</dd>
-        </div>
-        {session.email ? (
-          <div>
-            <dt className="ac-label">E-mail</dt>
-            <dd>{session.email}</dd>
-          </div>
-        ) : null}
-      </dl>
-      <p className="ac-hint">
-        The launcher receives a short-lived, single-use code over a local connection, never your
-        password. Only authorize a launcher you started yourself.
-      </p>
-      {error ? (
-        <p className="ac-error" role="alert" style={{ marginTop: 12 }}>
-          {error}
-        </p>
-      ) : null}
-      <div className="ac-form-actions" style={{ marginTop: 16 }}>
-        <button className="btn btn-primary" type="button" onClick={onAuthorize} disabled={busy}>
-          {busy ? "Authorizing…" : "Authorize launcher"}
-        </button>
-        <button className="btn btn-ghost" type="button" onClick={onCancel} disabled={busy}>
-          Cancel
-        </button>
-      </div>
-    </div>
+      {error ? <Notice kind="danger">{error}</Notice> : null}
+    </AuthCard>
   );
 }

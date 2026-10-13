@@ -2,11 +2,21 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { configureIncidentDiscord, incidentDiscord, incidentError } from "@/lib/account/incidents-api";
+
+import { Button } from "@/components/admin/admin-button";
+import { Field, Input } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
+import { arrowDown01, discord } from "@/components/ui/icons";
+import { Panel } from "@/components/ui/panel";
 import { MasterApiError } from "@/lib/account/api";
+import { configureIncidentDiscord, incidentDiscord, incidentError } from "@/lib/account/incidents-api";
 import { useSession } from "@/lib/account/session";
 import { AdminSpinner, useAdminActivity } from "./admin-activity";
+import { Footnote, FormActions, StatusTag } from "./admin-kit";
+import { ArmButton } from "./arm-button";
 import { ErrorStrip, useAdminData } from "./use-admin-data";
+
+import styles from "./incidents-panel.module.css";
 
 export function IncidentDiscordPanel() {
   const { token, data, setData, error, loading } = useAdminData(incidentDiscord);
@@ -16,14 +26,13 @@ export function IncidentDiscordPanel() {
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [failure, setFailure] = useState<string | null>(null);
-  const [removeArmed, setRemoveArmed] = useState(false);
   async function save(enabled: boolean, remove = false) {
     if (!token) return;
     setBusy(true); setNotice(""); setFailure(null);
     const finish = begin();
     try {
       const next = await configureIncidentDiscord(token, { enabled, remove, ...(enabled && !remove && url.trim() ? { webhookUrl: url.trim() } : {}) });
-      setData(next); setUrl(""); setRemoveArmed(false); setNotice(remove ? "Webhook removed." : "Discord settings saved. Future reports follow this configuration."); finish(true);
+      setData(next); setUrl(""); setNotice(remove ? "Webhook removed." : "Discord settings saved. Future reports follow this configuration."); finish(true);
     } catch (e) { if (e instanceof MasterApiError && e.status === 401) clear(); setFailure(incidentError(e)); finish(false); }
     finally { setBusy(false); }
   }
@@ -34,18 +43,53 @@ export function IncidentDiscordPanel() {
     }
     void save(true);
   }
-  return <details className="adm-panel adm-webhook">
-    <summary><span>Discord notifications <span className="adm-faint">· Configure integration</span></span><span className={`adm-chip ${data?.enabled ? "adm-chip-ok" : "adm-chip-dim"}`}>{loading ? "Loading…" : data?.enabled ? "Enabled" : "Disabled"}</span></summary>
-    <p className="adm-footnote">Only the incident ID, type, server ID, fingerprint and a private admin link are sent. No logs, account details or attachments. Existing reports are not replayed when enabling. The secret URL is never returned by the API.</p>
-    <ErrorStrip message={failure ?? error} />
-    <form className="adm-webhook-form" onSubmit={submit}>
-      <label className="ac-label">{data?.configured ? "Replace webhook URL (leave blank to keep it)" : "Discord webhook URL"}<input className="ac-input" type="password" value={url} onChange={e => setUrl(e.target.value)} autoComplete="new-password" spellCheck={false} maxLength={300} placeholder={data?.destination ?? "https://discord.com/api/webhooks/…"} /></label>
-      <button className="ac-iconbtn adm-primary" disabled={loading || busy || (!data?.configured && !url.trim())}>{busy ? <AdminSpinner label="Saving" /> : "Save & enable"}</button>
-    </form>
-    <div className="adm-toolbar" style={{ marginTop: 16 }}>
-      <p className="adm-footnote">Delivery: {data?.delivery.state ?? "unknown"}{data?.delivery.lastSuccessUtc ? ` · Last sent ${new Date(data.delivery.lastSuccessUtc).toLocaleString()}` : " · No delivery recorded this runtime"}</p>
-      <div className="adm-action-row"><button className="ac-iconbtn" disabled={!data?.enabled || busy || loading} onClick={() => void save(false)}>Disable</button><button className="ac-iconbtn" disabled={!data?.configured || busy || loading} onBlur={() => setRemoveArmed(false)} onClick={() => { if (removeArmed) void save(false, true); else setRemoveArmed(true); }}>{removeArmed ? "Confirm removal" : "Remove webhook"}</button></div>
-    </div>
-    {notice ? <p className="adm-footnote" role="status">{notice}</p> : null}
-  </details>;
+  return (
+    <Panel as="details" padding="none" className={styles.webhook}>
+      <summary className={styles.webhookSummary}>
+        <Icon glyph={discord} className={styles.webhookIcon} />
+        <span className={styles.webhookTitle}>
+          Discord notifications <span className={styles.webhookHint}>· Configure integration</span>
+        </span>
+        <StatusTag status={data?.enabled ? "ok" : "neutral"}>{loading ? "Loading…" : data?.enabled ? "Enabled" : "Disabled"}</StatusTag>
+        <Icon glyph={arrowDown01} className={styles.webhookChevron} />
+      </summary>
+      <div className={styles.webhookBody}>
+        <Footnote>
+          Only the incident ID, type, server ID, fingerprint and a private admin link are sent. No logs, account details or
+          attachments. Existing reports are not replayed when enabling. The secret URL is never returned by the API.
+        </Footnote>
+        <ErrorStrip message={failure ?? error} />
+        <form className={styles.webhookForm} onSubmit={submit}>
+          <Field label={data?.configured ? "Replace webhook URL (leave blank to keep it)" : "Discord webhook URL"} className={styles.webhookField}>
+            <Input
+              type="password"
+              value={url}
+              onChange={e => setUrl(e.target.value)}
+              autoComplete="new-password"
+              spellCheck={false}
+              maxLength={300}
+              placeholder={data?.destination ?? "https://discord.com/api/webhooks/…"}
+            />
+          </Field>
+          <Button type="submit" size="sm" color="red" lines="none" busy={busy} disabled={loading || (!data?.configured && !url.trim())}>
+            {busy ? "Saving" : "Save & enable"}
+          </Button>
+        </form>
+        <div className={styles.webhookFoot}>
+          <p className={styles.delivery}>
+            Delivery: <strong>{data?.delivery.state ?? "unknown"}</strong>
+            {data?.delivery.lastSuccessUtc ? ` · Last sent ${new Date(data.delivery.lastSuccessUtc).toLocaleString()}` : " · No delivery recorded this runtime"}
+          </p>
+          <FormActions>
+            <Button size="sm" color="neutral" border lines="none" disabled={!data?.enabled || busy || loading} onClick={() => void save(false)}>
+              Disable
+            </Button>
+            <ArmButton label="Remove webhook" confirmLabel="Confirm removal" disabled={!data?.configured || busy || loading} onConfirm={() => void save(false, true)} />
+          </FormActions>
+        </div>
+        {busy ? <AdminSpinner label="Saving" /> : null}
+        <Footnote role="status">{notice}</Footnote>
+      </div>
+    </Panel>
+  );
 }

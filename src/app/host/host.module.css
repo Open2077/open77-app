@@ -1,0 +1,136 @@
+/* Hero ------------------------------------------------------------------------ */
+
+/* A wider copy column: the lead in three lines, the action higher in the screen. */
+.hero {
+  --hero-copy: 56rem;
+  --hero-lead: min(44em, 44vw);
+}
+/* Stacked, the copy takes the full width again. */
+@media screen and (max-width: 1084px) {
+  .hero {
+    --hero-copy: 100%;
+    --hero-lead: 38em;
+  }
+}
+
+.actions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.2rem 1.6rem;
+  margin-top: 0.6rem;
+  display: flex;
+}
+.heroFoot {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  display: flex;
+}
+.heroNote {
+  color: var(--text-faint);
+  align-items: flex-start;
+  gap: 0.7rem;
+  max-width: 36rem;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  display: flex;
+}
+.heroNote svg {
+  color: var(--tone);
+  flex: none;
+  margin-top: 0.05rem;
+  font-size: 1.1rem;
+}
+
+/* Downloads -------------------------------------------------------------------- */
+
+.download {
+  scroll-margin-top: calc(var(--header-height) + 1rem);
+}
+.downloadHead {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: end;
+  gap: 2rem 4rem;
+  margin-bottom: 3rem;
+  display: grid;
+}
+.downloadIntro {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  display: flex;
+}
+.downloadLead {
+  color: var(--text-dim);
+  max-width: 32rem;
+  font-size: calc(0.3vw + 15px);
+  line-height: 1.5;
+}
+.archive {
+  flex-direction: column;
+  display: flex;
+}
+.archive li {
+  border-top: 1px solid var(--line);
+  align-items: center;
+  gap: 1rem;
+  padding: 0.95rem 0;
+  line-height: 1.4;
+  display: flex;
+}
+.archive li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.archiveTick {
+  color: var(--body);
+  isolation: isolate;
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  font-size: 0.85rem;
+  display: flex;
+  position: relative;
+}
+.archiveTick:before {
+  content: "";
+  background: var(--tone);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+.archiveTick svg * {
+  stroke-width: 2.2px;
+}
+.status {
+  border-top: 1px solid var(--line);
+  margin-top: 2.5rem;
+  padding-top: 1.4rem;
+}
+@media screen and (max-width: 1084px) {
+  .downloadHead {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sections --------------------------------------------------------------------- */
+
+.notice {
+  margin-top: 3rem;
+}
+.requirementsGrid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 3rem 4rem;
+  display: grid;
+}
+.faqLabel {
+  margin-bottom: 0.9rem;
+}
+@media screen and (max-width: 1084px) {
+  .requirementsGrid {
+    grid-template-columns: 1fr;
+  }
+}

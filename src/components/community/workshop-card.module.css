@@ -1,0 +1,461 @@
+/*
+ * The Workshop card is the home page server card (players.module.css) carried
+ * over to user content: a skewed frame in the tone, side brackets riding the
+ * slant, key art masked into the parallelogram with a dark fade from the copy
+ * side, and the copy following the slanted edge through a floated wedge.
+ */
+.card {
+  --frame: oklch(from var(--tone) l c h / 50%);
+  --space: calc(4px + 2 * (100vw - 320px) / 1080);
+  --pad: calc(20px + 10 * (100vw - 320px) / 1080);
+  --transition: 0.4s var(--cubic);
+  --card-min: 17.5rem;
+  isolation: isolate;
+  min-width: 0;
+  min-height: var(--card-min);
+  padding: var(--pad) calc(var(--pad) * 0.9) var(--pad) calc(var(--pad) * 0.5);
+  position: relative;
+}
+.card:before {
+  content: "";
+  border: 1px solid var(--frame);
+  pointer-events: none;
+  transition:
+    border-width var(--transition),
+    border-color var(--transition);
+  position: absolute;
+  inset: calc(var(--space) * -1);
+  transform: skewX(var(--skew));
+}
+.card:after {
+  content: "";
+  border: 1px solid var(--tone);
+  border-width: 0 1px;
+  pointer-events: none;
+  position: absolute;
+  inset: 25% calc(var(--space) * -2.25);
+  transform: skewX(var(--skew));
+}
+.card.hover:before,
+.card:focus-within:before,
+.card[data-selected]:before {
+  border-width: var(--space);
+  border-color: var(--tone);
+}
+
+/* The art is a link of its own (out of the tab order: the title link is the
+   one keyboard stop), so a click anywhere on the card opens the creation. */
+.cover {
+  z-index: 0;
+  position: absolute;
+  inset: 0;
+}
+.bg {
+  z-index: -1;
+  background: var(--surface-1);
+  -webkit-user-select: none;
+  user-select: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform: skewX(var(--skew));
+}
+.bg:before {
+  content: "";
+  z-index: 1;
+  background: linear-gradient(263deg, oklch(from var(--body) l c h / 0.3) 0%, oklch(from var(--body) l c h / 0.95) 75%);
+  position: absolute;
+  inset: 0;
+}
+.bg img,
+.bg video {
+  object-fit: cover;
+  object-position: center;
+  transform-origin: 0;
+  width: 120%;
+  max-width: 120%;
+  height: 100%;
+  transition: transform var(--transition);
+  position: absolute;
+  inset: 0 -10%;
+  transform: skewX(var(--skew-reverse)) scale(1);
+}
+.card.hover .bg img,
+.card.hover .bg video {
+  transform: skewX(var(--skew-reverse)) scale(1.08);
+}
+
+/* No picture yet: the category mark, outlined, where the art would be. */
+.placeholder {
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 9%;
+  display: flex;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew-reverse));
+}
+.placeholderMark {
+  font-family: var(--font-heading);
+  letter-spacing: -0.08em;
+  color: transparent;
+  -webkit-text-stroke: 1px oklch(from var(--tone) l c h / 45%);
+  white-space: nowrap;
+  font-size: calc(3vw + 62px);
+  font-style: italic;
+  line-height: 1;
+}
+.placeholderIcon {
+  color: var(--tone);
+  position: absolute;
+  bottom: 16%;
+  right: 12%;
+}
+
+/* Hangs over the top edge of the frame, the hairline running through it. */
+.rank {
+  z-index: 1;
+  font-family: var(--font-heading);
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--tone);
+  pointer-events: none;
+  font-size: calc(2.4vw + 40px);
+  font-style: italic;
+  line-height: 0.8;
+  position: absolute;
+  top: -0.64em;
+  right: calc(var(--pad) * 1.2);
+}
+
+/* The wedge the copy wraps around, so every line follows the slanted edge.
+   Sized from the card's minimum height, not its final height: a wedge that
+   depends on the height it creates pushes the last lines out of the frame. A
+   taller card keeps its copy inside up to twice that height. */
+.slant {
+  float: left;
+  aspect-ratio: tan(var(--skew-reverse));
+  shape-outside: polygon(0 0, 100% 0, 0 100%);
+  pointer-events: none;
+  width: auto;
+  height: calc(var(--card-min) - var(--pad) * 2);
+}
+
+/* Copy is click-through (to the cover link) except for its own controls. */
+.content {
+  z-index: 1;
+  pointer-events: none;
+  position: relative;
+}
+.content a,
+.content button {
+  pointer-events: auto;
+}
+
+.sub {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--tone);
+  font-size: 0.66rem;
+  font-weight: 300;
+  line-height: 1.6;
+}
+.sub > span {
+  margin-right: 0.9em;
+}
+.flag {
+  color: var(--body);
+  padding: 0.15em 0.6em;
+  display: inline-block;
+  position: relative;
+}
+.flag:before {
+  content: "";
+  background: var(--tone);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+.status {
+  color: var(--text-dim);
+}
+.stable {
+  color: var(--text-primary);
+}
+.clip {
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.clip svg {
+  vertical-align: -0.15em;
+  margin-right: 0.35em;
+  display: inline-block;
+}
+
+.titleBlock {
+  margin: calc(var(--pad) * 0.6) 0 calc(var(--pad) * 0.35);
+  position: relative;
+}
+.title {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.07em;
+  color: var(--tone);
+  overflow-wrap: break-word;
+  transition: opacity var(--transition);
+  font-size: calc(0.75vw + 17px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.95;
+}
+.link:focus-visible {
+  outline-offset: 4px;
+}
+.hover .title {
+  opacity: 0;
+}
+.marquee {
+  color: var(--tone);
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(to right, transparent 0%, var(--body) 10% 90%, transparent 100%);
+  mask: linear-gradient(to right, transparent 0%, var(--body) 10% 90%, transparent 100%);
+  animation: marquee-in 0.4s var(--cubic) both;
+  width: calc(100% + var(--pad) * 1.5);
+  font-size: calc(2.2vw + 40px);
+  font-style: italic;
+  position: absolute;
+  top: 50%;
+  left: calc(var(--pad) * -0.75);
+  overflow: hidden;
+  transform: translateY(-50%) skewX(var(--skew));
+  line-height: 1 !important;
+}
+.marquee > * {
+  width: 120%;
+  position: relative;
+  top: 0.05em;
+  left: -10%;
+  transform: skewX(var(--skew-reverse));
+}
+@keyframes marquee-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.author {
+  overflow-wrap: anywhere;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.authorLink {
+  transition: color var(--transition-link);
+}
+.authorLink:hover {
+  color: var(--tone);
+}
+.summary {
+  text-wrap: pretty;
+  overflow-wrap: anywhere;
+  color: var(--text-dim);
+  width: 82%;
+  margin-top: 0.7rem;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.foot {
+  margin-top: 1.1rem;
+}
+.stats {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  align-items: center;
+  gap: 1.3em;
+  font-size: 0.62rem;
+  display: inline-flex;
+}
+.stats > span {
+  color: var(--text-primary);
+  align-items: center;
+  gap: 0.45em;
+  display: inline-flex;
+}
+.stats svg {
+  color: var(--tone);
+  font-size: 1.25em;
+}
+/* Inline so the row follows the slanted edge like the copy above it. */
+.footActions {
+  margin-top: 1rem;
+}
+.actions {
+  z-index: 2;
+  vertical-align: middle;
+  align-items: center;
+  gap: 0.7rem;
+  display: inline-flex;
+  position: relative;
+}
+
+.tags {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 70%;
+  margin-top: 1rem;
+  display: inline-flex;
+}
+.tags li {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-dim);
+  isolation: isolate;
+  padding: 0.45em 0.8em;
+  font-size: 0.58rem;
+  position: relative;
+}
+.tags li:before {
+  content: "";
+  border: 1px solid var(--line-strong);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+
+/* The editorial spotlight. */
+.feature {
+  --pad: calc(28px + 22 * (100vw - 320px) / 1080);
+  --card-min: 27rem;
+  padding-right: 38%;
+}
+.feature .bg:before {
+  background: linear-gradient(263deg, oklch(from var(--body) l c h / 0) 0%, oklch(from var(--body) l c h / 0.25) 30%, var(--body) 72%);
+}
+.feature .title {
+  font-size: calc(1.6vw + 20px);
+}
+.feature .marquee {
+  font-size: calc(4.5vw + 56px);
+  width: calc(160% + var(--pad));
+}
+.feature .summary {
+  width: 100%;
+  font-size: calc(0.2vw + 14.5px);
+  line-height: 1.45;
+}
+.cta {
+  margin-top: 1.8rem;
+  padding-left: 0.5rem;
+}
+
+@media screen and (max-width: 1084px) {
+  .feature {
+    --card-min: 24rem;
+    padding-right: calc(var(--pad) * 0.9);
+  }
+  .feature .marquee {
+    width: calc(100% + var(--pad) * 1.5);
+  }
+  .feature .bg:before {
+    background: linear-gradient(263deg, oklch(from var(--body) l c h / 0.2) 0%, oklch(from var(--body) l c h / 0.94) 75%);
+  }
+}
+@media screen and (max-width: 700px) {
+  .card {
+    --card-min: 16rem;
+  }
+  /* The whole card is the link; the button would not fit beside the slant. */
+  .cta {
+    display: none;
+  }
+  /* On a phone the spotlight is a tile: a taller card only widens the wedge. */
+  .feature {
+    --pad: calc(20px + 10 * (100vw - 320px) / 1080);
+    --card-min: 16rem;
+  }
+  .feature .title {
+    font-size: 1.45rem;
+  }
+  .feature .marquee {
+    font-size: calc(2.2vw + 40px);
+  }
+  .summary {
+    width: 100%;
+  }
+  .title {
+    font-size: 1.3rem;
+  }
+  .rank {
+    font-size: 2.6rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    display: none;
+  }
+  .hover .title {
+    opacity: 1;
+  }
+}
+
+/* A grid of cards, spaced so the slanted frames and brackets never touch. */
+.grid {
+  --columns: 3;
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  gap: 3.4rem calc(2.6rem + 1.5vw);
+  padding-inline: calc(1.6rem + 0.6vw);
+  display: grid;
+}
+.grid > li {
+  display: grid;
+}
+/* Ranked shelves leave room above each row for the hanging numbers. */
+.grid:has(.ranked) {
+  row-gap: 5rem;
+  padding-top: 1.8rem;
+}
+.two {
+  --columns: 2;
+}
+@media screen and (max-width: 1250px) {
+  .grid {
+    --columns: 2;
+  }
+}
+@media screen and (max-width: 760px) {
+  .grid {
+    --columns: 1;
+    gap: 2.6rem;
+    /* Room for the slanted corners: they lean ~h/2·tan(12°) past the box.
+       A very tall card on a very narrow screen may lean into the gutter: let
+       it, but never past the screen edge. */
+    padding-inline: 2rem;
+    overflow: clip;
+    overflow-clip-margin: var(--page-gutter);
+  }
+}
+/* The smallest phones: cards grow tall, and their corners lean further out. */
+@media screen and (max-width: 360px) {
+  .card {
+    --pad: 18px;
+  }
+  .title {
+    font-size: 1.12rem;
+  }
+  .summary {
+    font-size: 0.84rem;
+  }
+}

@@ -1,0 +1,58 @@
+/* Upright, bar-marked mono token: deliberately not the slanted tag shape. */
+.perm {
+  --perm: var(--text-dim);
+  font-family: var(--font-mono);
+  color: var(--perm);
+  border-left: 3px solid var(--perm);
+  background: oklch(from var(--perm) l c h / 8%);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  align-items: center;
+  height: 1.55rem;
+  padding: 0 0.6em;
+  font-size: 0.74rem;
+  font-weight: 400;
+  line-height: 1;
+  display: inline-flex;
+}
+.perm[data-value="granted"] {
+  --perm: var(--blue);
+}
+.perm[data-value="unknown"] {
+  --perm: var(--yellow);
+}
+.perm[data-value="refused"] {
+  --perm: var(--red);
+}
+
+/* Source pages typed by humans: a link only when it is absolute http(s). */
+.source {
+  font-family: var(--font-mono);
+  color: var(--tone);
+  text-underline-offset: 0.25em;
+  overflow-wrap: anywhere;
+  align-items: center;
+  gap: 0.35em;
+  font-size: 0.8rem;
+  font-weight: 300;
+  text-decoration: underline;
+  text-decoration-color: oklch(from var(--tone) l c h / 40%);
+  display: inline-flex;
+}
+.source:hover {
+  color: var(--text-primary);
+}
+.source svg {
+  flex: none;
+}
+/* An unlinkable value stays readable, marked so nobody mistakes it for a link. */
+.unsafe {
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+  border-left: 2px solid var(--yellow);
+  padding-left: 0.5em;
+  font-size: 0.78rem;
+  font-weight: 300;
+  display: inline-block;
+}

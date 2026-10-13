@@ -1,0 +1,275 @@
+.inspector {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  max-height: calc(100dvh - var(--sticky-top, 180px) - 2rem);
+  scrollbar-width: thin;
+  transition: top 0.35s var(--ease-out-expo);
+  position: sticky;
+  top: calc(var(--sticky-top, 180px) + 1rem);
+  overflow-y: auto;
+}
+.inspector:before {
+  content: "";
+  border: 1px solid var(--tone);
+  border-width: 1px 0 0 1px;
+  pointer-events: none;
+  z-index: 2;
+  width: 48px;
+  height: 48px;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+}
+@media screen and (max-width: 1359px) {
+  .inspector {
+    display: none;
+  }
+}
+
+/* Cover: banner art with the server's mark and name over its dark foot. */
+.cover {
+  background-position: center;
+  background-size: cover;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 8.5rem;
+  padding: 2.5rem 1.25rem 0.9rem;
+  display: flex;
+  position: relative;
+}
+.banner {
+  position: absolute;
+  inset: 0;
+}
+.coverShade {
+  background: linear-gradient(to top, var(--surface-1) 6%, oklch(from var(--surface-1) l c h / 0.55) 55%, oklch(from var(--body) l c h / 0.1) 100%);
+  position: absolute;
+  inset: 0;
+}
+.close {
+  color: var(--text-primary);
+  z-index: 1;
+  justify-content: center;
+  align-items: center;
+  width: 2rem;
+  height: 2rem;
+  font-size: 0.95rem;
+  display: flex;
+  position: absolute;
+  top: 0.65rem;
+  right: 0.8rem;
+}
+.close:before {
+  content: "";
+  background: oklch(from var(--body) l c h / 0.6);
+  border: 1px solid var(--line-strong);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+.close:hover:before {
+  border-color: var(--tone);
+}
+.head {
+  align-items: flex-end;
+  gap: 0.9rem;
+  display: flex;
+  position: relative;
+}
+.icon {
+  clip-path: polygon(16% 0, 100% 0, 84% 100%, 0 100%);
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+}
+.title {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+  min-width: 0;
+  display: flex;
+}
+.mode {
+  margin-left: 3px;
+}
+.name {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  overflow-wrap: anywhere;
+  font-size: 1.15rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.body {
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.9rem 1.25rem 1.3rem;
+  display: flex;
+}
+
+/* Connect, the favourite, and the way into the full profile, at the top. */
+.actions {
+  align-items: center;
+  gap: 0.8rem;
+  display: flex;
+}
+.connect {
+  flex: 1;
+  font-size: 0.9rem;
+}
+.fav {
+  color: var(--text-dim);
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  font-size: 1rem;
+  transition: color var(--transition-link);
+  display: flex;
+  position: relative;
+}
+.fav:before {
+  content: "";
+  border: 1px solid var(--line-strong);
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition: border-color var(--transition-link);
+}
+.fav:hover:before {
+  border-color: var(--tone);
+}
+.fav[aria-pressed="true"] {
+  color: var(--tone);
+}
+.fav[aria-pressed="true"] :global(svg path) {
+  fill: currentColor;
+}
+.more {
+  isolation: isolate;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.7rem 0.95rem;
+  display: grid;
+  position: relative;
+}
+.more:before {
+  content: "";
+  border: 1px solid oklch(from var(--tone) l c h / 55%);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.more span {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--tone);
+  font-size: 0.64rem;
+}
+.more small {
+  color: var(--text-faint);
+  font-size: 0.78rem;
+}
+.more svg {
+  color: var(--tone);
+  align-self: center;
+}
+.more:hover:before {
+  background: oklch(from var(--tone) l c h / 10%);
+  border-color: var(--tone);
+}
+
+.capacity {
+  border-block: 1px solid var(--line);
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  padding: 0.8rem 0;
+  display: grid;
+}
+.capacityValue {
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+.capacityValue b {
+  font-family: var(--font-heading);
+  letter-spacing: -0.06em;
+  color: var(--text-primary);
+  font-size: 1.6rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.9;
+}
+.capacityLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  justify-self: end;
+  font-size: 0.6rem;
+}
+.meter {
+  grid-column: 1 / -1;
+}
+.pop-mid .meter,
+.pop-high .meter {
+  --meter: var(--tone);
+}
+.pop-high .capacityValue b {
+  color: var(--tone);
+}
+.pop-full .meter {
+  --meter: var(--red);
+}
+.pop-full .capacityValue b {
+  color: var(--red);
+}
+.facts dd {
+  font-size: 0.9rem;
+}
+.country {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  display: inline-flex;
+}
+.desc {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.tags {
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding-left: 3px;
+  display: flex;
+}
+.links {
+  flex-wrap: wrap;
+  gap: 0.6rem 1.4rem;
+  display: flex;
+}
+.links a {
+  color: var(--text-dim);
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+}
+.links a:hover {
+  color: var(--tone);
+}

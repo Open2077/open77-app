@@ -1,0 +1,84 @@
+.identity {
+  align-items: flex-end;
+  gap: 1.6rem 2rem;
+  min-width: 0;
+  display: flex;
+}
+.avatar {
+  isolation: isolate;
+  flex: none;
+  width: 112px;
+  aspect-ratio: 1;
+  position: relative;
+}
+.avatarFrame {
+  background: var(--surface-2);
+  border: 1px solid var(--tone);
+  position: absolute;
+  inset: 0 10%;
+  overflow: hidden;
+  transform: skewX(var(--skew));
+}
+.avatarFrame img {
+  object-fit: cover;
+  width: 130%;
+  max-width: 130%;
+  height: 100%;
+  margin-left: -15%;
+  transform: skewX(var(--skew-reverse));
+}
+.avatar:after {
+  content: "";
+  border: 1px solid var(--tone);
+  border-width: 0 1px;
+  position: absolute;
+  inset: 22% -2%;
+  transform: skewX(var(--skew));
+}
+.handle {
+  min-width: 0;
+}
+.handle [data-glitch] {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+.links {
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  display: flex;
+}
+.stats {
+  border-left: 1px solid var(--line);
+  gap: 2.4rem;
+  padding-left: 2rem;
+  display: flex;
+}
+.pagination {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 3rem;
+  display: flex;
+}
+.notice {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  margin: 2rem auto 0;
+}
+@media screen and (max-width: 1084px) {
+  .stats {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding: 1.3rem 0 0;
+  }
+}
+@media screen and (max-width: 700px) {
+  .identity {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .stats {
+    gap: 1.6rem;
+  }
+}

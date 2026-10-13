@@ -1,0 +1,56 @@
+.stage {
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+  display: flex;
+}
+.clip {
+  flex-direction: column;
+  gap: 0.7rem;
+  display: flex;
+}
+.player {
+  border: 1px solid var(--line);
+  background: var(--surface-1);
+  position: relative;
+}
+.player:before,
+.player:after {
+  content: "";
+  border: 1px solid var(--tone);
+  pointer-events: none;
+  z-index: 1;
+  width: 56px;
+  height: 56px;
+  position: absolute;
+  transform: skewX(var(--skew));
+}
+.player:before {
+  border-width: 1px 0 0 1px;
+  top: -5px;
+  left: -5px;
+}
+.player:after {
+  border-width: 0 1px 1px 0;
+  bottom: -5px;
+  right: -5px;
+}
+.player video {
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: var(--body);
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.caption {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-size: 0.62rem;
+}
+.caption span {
+  color: var(--tone);
+}

@@ -3,11 +3,18 @@
 import Link from "next/link";
 import { useCallback } from "react";
 
+import { AdminPanel, AdminTable, EmptyBlock, LoadingBlock, Mono, Primary, StatusTag, Sub, cell } from "@/components/admin/admin-kit";
 import { formatDateTime, shortId } from "@/components/admin/format";
 import { ErrorStrip, useAdminData } from "@/components/admin/use-admin-data";
-import { CodeIcon, InfoIcon, ServerRackIcon, DownloadIcon } from "@/components/icons";
+import { Button } from "@/components/admin/admin-button";
+import { Meter, Stat } from "@/components/ui/feedback";
+import { Icon } from "@/components/ui/icon";
+import { activity01, arrowRight01, bug01, packageBox, serverStack01, ticket01 } from "@/components/ui/icons";
+import { Panel } from "@/components/ui/panel";
 import * as admin from "@/lib/account/admin-api";
 import { incidents } from "@/lib/account/incidents-api";
+
+import styles from "./overview-panel.module.css";
 
 const TILES = [
   ["usersTotal", "Accounts"],
@@ -15,6 +22,12 @@ const TILES = [
   ["playersOnline", "Players online"],
   ["licensesActive", "Active licenses"],
   ["bansActive", "Active bans"],
+] as const;
+
+const QUICK = [
+  { href: "/admin/incidents", glyph: bug01, title: "Investigate a crash", text: "Correlate reports and inspect evidence" },
+  { href: "/admin/releases", glyph: packageBox, title: "Manage releases", text: "Channels, compatibility and trusted builds" },
+  { href: "/admin/alpha-access", glyph: ticket01, title: "Manage Alpha access", text: "Find an account and review its permissions" },
 ] as const;
 
 /** The dashboard: five platform metrics plus the freshest audit entries. */
@@ -30,77 +43,175 @@ export function OverviewPanel() {
   return (
     <>
       <ErrorStrip message={error} />
-      {loading && !data ? <p className="ac-loading">Loading overview…</p> : null}
-      {loading && !data ? <div className="adm-skeleton-list" aria-hidden="true"><div /><div /><div /></div> : null}
+      {loading && !data ? <LoadingBlock label="Loading overview" rows={3} /> : null}
 
       {metrics ? (
-        <div className="adm-stats">
+        <section className={styles.metrics} aria-label="Platform metrics">
           {TILES.map(([key, label]) => (
-            <div className="adm-stat" key={key}>
-              <div className="adm-stat-value">{metrics[key]}</div>
-              <div className="adm-stat-label">{label}</div>
-            </div>
+            <Stat key={key} value={metrics[key]} label={label} className={styles.metric} />
           ))}
-        </div>
+        </section>
       ) : null}
 
-      <div className="adm-quicklinks">
-        <Link className="adm-quicklink" href="/admin/incidents"><InfoIcon size={22} /><div><strong>Investigate a crash</strong><span>Correlate reports and inspect evidence</span></div></Link>
-        <Link className="adm-quicklink" href="/admin/releases"><DownloadIcon size={22} /><div><strong>Manage releases</strong><span>Channels, compatibility and trusted builds</span></div></Link>
-        <Link className="adm-quicklink" href="/admin/alpha-access"><ServerRackIcon size={22} /><div><strong>Manage Alpha access</strong><span>Find an account and review its permissions</span></div></Link>
-      </div>
+      <nav className={styles.quick} aria-label="Frequent operations">
+        {QUICK.map((item) => (
+          <Panel key={item.href} as={Link} href={item.href} shape="slant" interactive padding="md" className={styles.quickCard}>
+            <Icon glyph={item.glyph} className={styles.quickIcon} />
+            <span className={styles.quickCopy}>
+              <strong>{item.title}</strong>
+              <span>{item.text}</span>
+            </span>
+            <Icon glyph={arrowRight01} className={styles.quickArrow} />
+          </Panel>
+        ))}
+      </nav>
 
-      {data ? <div className="adm-overview-grid">
-        <section className="adm-panel"><div className="adm-panel-head"><h2 className="adm-panel-title"><ServerRackIcon size={16} /> Active worlds</h2><Link href="/admin/servers" className="ac-iconbtn">All servers</Link></div>
-          {servers?.length ? <div className="adm-tablewrap"><table className="adm-table"><thead><tr><th>World</th><th>Players</th><th>Last heartbeat</th></tr></thead><tbody>{[...servers].sort((a,b) => b.connectedPlayers - a.connectedPlayers).slice(0,6).map(server => <tr key={server.serverId}><td>{server.name}<span className="adm-cell-sub">{server.connectEndpoint}</span></td><td className="adm-mono">{server.connectedPlayers} / {server.maximumPlayers}</td><td className="adm-mono adm-faint">{formatDateTime(server.lastHeartbeatUtc)}</td></tr>)}</tbody></table></div> : <p className="adm-empty">No active servers are reporting a heartbeat.</p>}
-        </section>
-        <section className="adm-panel"><div className="adm-panel-head"><h2 className="adm-panel-title"><InfoIcon size={16} /> Recent reports</h2><Link href="/admin/incidents" className="ac-iconbtn">Open inbox</Link></div>
-          {reports?.items.length ? <div className="adm-tablewrap"><table className="adm-table"><thead><tr><th>Incident</th><th>Received</th></tr></thead><tbody>{reports.items.slice(0,5).map(report => <tr key={report.incidentId}><td><Link href={`/admin/incidents?incidentId=${report.incidentId}`} className="adm-text-button adm-mono">{shortId(report.incidentId)}</Link><span className="adm-cell-sub">{report.kind}</span></td><td className="adm-mono adm-faint">{formatDateTime(report.receivedAtUtc)}</td></tr>)}</tbody></table></div> : <p className="adm-empty">{reports ? "No diagnostic reports received yet." : "Incident receiver unavailable. Open the inbox for details."}</p>}
-          <p className="adm-footnote">Private player evidence · receipt order, not a live crash counter.</p>
-        </section>
-      </div> : null}
-
-      {latest ? (
-        <section className="adm-panel">
-          <div className="adm-panel-head">
-            <h2 className="adm-panel-title">
-              <CodeIcon size={15} />
-              Latest activity
-            </h2>
-            <Link className="ac-iconbtn" href="/admin/audit">
-              Full audit log
-            </Link>
-          </div>
-          {latest.length === 0 ? (
-            <p className="adm-empty">The audit log is empty.</p>
-          ) : (
-            <div className="adm-tablewrap">
-              <table className="adm-table">
+      {data ? (
+        <div className={styles.split}>
+          <AdminPanel
+            title="Active worlds"
+            icon={serverStack01}
+            meta={servers ? `${servers.length} reporting` : undefined}
+            actions={
+              <Button href="/admin/servers" size="sm" color="neutral" border lines="none">
+                All servers
+              </Button>
+            }
+          >
+            {servers?.length ? (
+              <AdminTable caption="Active worlds, most players first" minWidth="30rem">
                 <thead>
                   <tr>
-                    <th>Time</th>
-                    <th>Action</th>
-                    <th>Subject</th>
-                    <th>Actor</th>
+                    <th>World</th>
+                    <th>Players</th>
+                    <th>Last heartbeat</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {latest.map((entry) => (
-                    <tr key={entry.id}>
-                      <td className="adm-mono adm-faint">{formatDateTime(entry.atUtc)}</td>
-                      <td className="adm-mono">{entry.action}</td>
-                      <td className="adm-mono adm-dim">{entry.subject ?? "—"}</td>
-                      <td className="adm-mono adm-faint">
-                        {entry.actorAccountId ? shortId(entry.actorAccountId) : "system"}
+                  {[...servers]
+                    .sort((a, b) => b.connectedPlayers - a.connectedPlayers)
+                    .slice(0, 6)
+                    .map((server) => (
+                      <tr key={server.serverId}>
+                        <td>
+                          <Primary>{server.name}</Primary>
+                          <Sub>{server.connectEndpoint}</Sub>
+                        </td>
+                        <td className={styles.players}>
+                          <Mono>
+                            {server.connectedPlayers} / {server.maximumPlayers}
+                          </Mono>
+                          <Meter
+                            value={server.maximumPlayers ? (server.connectedPlayers / server.maximumPlayers) * 100 : 0}
+                            label={`${server.connectedPlayers} of ${server.maximumPlayers} players`}
+                          />
+                        </td>
+                        <td className={cell.nowrap}>
+                          <Mono tone="dim">{formatDateTime(server.lastHeartbeatUtc)}</Mono>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </AdminTable>
+            ) : (
+              <EmptyBlock icon={serverStack01}>No active servers are reporting a heartbeat.</EmptyBlock>
+            )}
+          </AdminPanel>
+
+          <AdminPanel
+            title="Recent reports"
+            icon={bug01}
+            actions={
+              <Button href="/admin/incidents" size="sm" color="neutral" border lines="none">
+                Open inbox
+              </Button>
+            }
+            footnote="Private player evidence · receipt order, not a live crash counter."
+          >
+            {reports?.items.length ? (
+              <AdminTable caption="Most recent crash reports" minWidth="26rem">
+                <thead>
+                  <tr>
+                    <th>Incident</th>
+                    <th>Received</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reports.items.slice(0, 5).map((report) => (
+                    <tr key={report.incidentId}>
+                      <td>
+                        <Link href={`/admin/incidents?incidentId=${report.incidentId}`} className={styles.incident}>
+                          {shortId(report.incidentId)}
+                        </Link>
+                        <span className={styles.kind}>
+                          <StatusTag status={report.kind === "engine-crash" ? "danger" : "neutral"}>{report.kind}</StatusTag>
+                        </span>
+                      </td>
+                      <td className={cell.nowrap}>
+                        <Mono tone="dim">{formatDateTime(report.receivedAtUtc)}</Mono>
                       </td>
                     </tr>
                   ))}
                 </tbody>
-              </table>
-            </div>
+              </AdminTable>
+            ) : (
+              <EmptyBlock icon={bug01}>
+                {reports ? "No diagnostic reports received yet." : "Incident receiver unavailable. Open the inbox for details."}
+              </EmptyBlock>
+            )}
+          </AdminPanel>
+        </div>
+      ) : null}
+
+      {latest ? (
+        <AdminPanel
+          title="Latest activity"
+          icon={activity01}
+          actions={
+            <Button href="/admin/audit" size="sm" color="neutral" border lines="none">
+              Full audit log
+            </Button>
+          }
+        >
+          {latest.length === 0 ? (
+            <EmptyBlock icon={activity01}>The audit log is empty.</EmptyBlock>
+          ) : (
+            <AdminTable caption="Latest audit entries">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Action</th>
+                  <th>Subject</th>
+                  <th>Actor</th>
+                </tr>
+              </thead>
+              <tbody>
+                {latest.map((entry) => (
+                  <tr key={entry.id}>
+                    <td className={cell.nowrap}>
+                      <Mono tone="dim">{formatDateTime(entry.atUtc)}</Mono>
+                    </td>
+                    <td>
+                      <Mono className={styles.action}>{entry.action}</Mono>
+                    </td>
+                    <td>
+                      <Mono tone="dim" className={styles.subject}>
+                        {entry.subject ?? "—"}
+                      </Mono>
+                    </td>
+                    <td className={cell.nowrap}>
+                      <Mono tone="dim" title={entry.actorAccountId ?? undefined}>
+                        {entry.actorAccountId ? shortId(entry.actorAccountId) : "system"}
+                      </Mono>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </AdminTable>
           )}
-        </section>
+        </AdminPanel>
       ) : null}
     </>
   );
 }
+

@@ -1,0 +1,197 @@
+.keymaster {
+  flex-direction: column;
+  gap: calc(32px + 20 * (100vw - 320px) / 1080);
+  min-width: 0;
+  display: flex;
+}
+
+/* Server launch brief ---------------------------------------------------- */
+
+.brief {
+  flex-direction: column;
+  gap: 1.1rem;
+  display: flex;
+}
+.briefHead {
+  align-items: center;
+  gap: 1.1rem;
+  display: flex;
+}
+.briefCopy {
+  flex-direction: column;
+  gap: 0.45rem;
+  display: flex;
+}
+.briefTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.briefText {
+  color: var(--text-dim);
+  max-width: 62ch;
+  line-height: 1.55;
+}
+.steps {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  display: flex;
+}
+.steps li {
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+  gap: 1.1rem;
+  padding: 0.75rem 0;
+  line-height: 1.5;
+  display: flex;
+}
+.steps code,
+.briefText code {
+  font-family: var(--font-mono);
+  color: var(--tone);
+  font-size: 0.88em;
+  font-weight: 300;
+}
+.stepIndex {
+  font-family: var(--font-mono);
+  color: var(--tone);
+  flex: none;
+  font-size: 0.8rem;
+}
+
+/* The one-time reveal ---------------------------------------------------- */
+
+.reveal {
+  flex-direction: column;
+  gap: 1.3rem;
+  display: flex;
+}
+.revealHead {
+  flex-direction: column;
+  gap: 0.7rem;
+  display: flex;
+}
+.revealTitle {
+  overflow-wrap: anywhere;
+}
+.keyBox {
+  isolation: isolate;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  padding: 0.95rem 1.2rem 0.95rem 1.5rem;
+  display: flex;
+  position: relative;
+}
+.keyBox:before {
+  content: "";
+  background: var(--body);
+  border: 1px solid oklch(from var(--tone) l c h / 60%);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+.key {
+  font-family: var(--font-mono);
+  color: var(--tone);
+  overflow-wrap: anywhere;
+  user-select: all;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.copy {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  white-space: nowrap;
+  flex: none;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5rem 0.4rem;
+  font-size: 0.6rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+}
+.copy svg {
+  font-size: 1.3em;
+}
+.copy:hover,
+.copied {
+  color: var(--tone);
+}
+
+.snippet {
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--tone);
+  background: var(--body);
+  min-width: 0;
+}
+.snippetBar {
+  border-bottom: 1px solid var(--line);
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.4rem 0.8rem 0.4rem 1.2rem;
+  display: flex;
+}
+.snippetTitle {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.12em;
+  color: var(--tone);
+  font-size: 0.68rem;
+}
+.snippetBody {
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  white-space: pre;
+  padding: 1rem 1.3rem;
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.65;
+  overflow-x: auto;
+}
+.tokKey {
+  color: var(--blue);
+}
+.tokStr {
+  color: var(--yellow);
+}
+
+/* Creation form and list ------------------------------------------------- */
+
+.create {
+  border: 1px solid var(--line);
+  background: var(--surface-1);
+  grid-template-columns: minmax(0, 28rem) auto;
+  align-items: start;
+  gap: 1.2rem 1.6rem;
+  padding: 1.3rem 1.4rem;
+  display: grid;
+}
+.createActions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1.2rem;
+  padding-top: 1.45rem;
+  display: flex;
+}
+@media screen and (max-width: 860px) {
+  .create {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .createActions {
+    padding-top: 0;
+  }
+}
+.hint {
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  font-weight: 300;
+}

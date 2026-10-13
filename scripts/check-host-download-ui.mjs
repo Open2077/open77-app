@@ -93,7 +93,7 @@ try {
     await call("Emulation.setDeviceMetricsOverride", { width, height:900, deviceScaleFactor:1, mobile:false });
     await visit("/download");
     await waitFor(() => evaluate(`!!document.querySelector('[data-release-channel="server"]')`));
-    await waitFor(() => evaluate(`!!document.querySelector('.copy-line-btn')`));
+    await waitFor(() => evaluate(`!!document.querySelector('[data-copy-line] button')`));
     assert.equal(await evaluate(`document.querySelector('[data-channel-summary="server"] h2').textContent`), serverRelease.version);
     assert.equal(await evaluate(`document.querySelector('[data-channel-summary="launcher"] h2').textContent`), launcherRelease.version);
     assert.equal(await evaluate(`document.querySelector('[data-release-channel="server"]').dataset.releaseVersion`), serverRelease.version);
@@ -114,14 +114,14 @@ try {
     const hostCta = `Array.from(document.querySelectorAll('a[href="/host"]')).find(a=>a.textContent.trim()==='Download server')`;
     assert.ok(await evaluate(`!!(${hostCta})`), "Create page offers the server download");
     assert.ok(await evaluate(`!!document.querySelector('a[href="/docs/host-a-server"]')`));
-    assert.ok(await evaluate(`!!document.querySelector('.footer-nav a[href="/host"]')`));
+    assert.ok(await evaluate(`!!document.querySelector('footer a[href="/host"]')`));
     await evaluate(`(${hostCta}).click()`);
     await waitFor(() => evaluate(`(${downloadLinks}).length===2`));
     assert.equal(await evaluate("location.pathname"), "/host");
     assert.equal(await evaluate(`document.querySelector('[data-release-channel="server"]').dataset.releaseVersion`), serverRelease.version);
     assert.deepEqual((await evaluate(downloadLinks)).sort(), Object.values(serverRelease.builds).map(build => downloadUrl(build.url)).sort(), "Host offers exactly the current CDN archives");
     for (const url of await evaluate(downloadLinks)) assert.ok(url.startsWith(`${cdn}/server/`));
-    assert.ok(await evaluate(`!document.querySelector('.host-locked')`), "Approved non-admin sees downloads");
+    assert.ok(await evaluate(`!document.querySelector('[data-host-locked]')`), "Approved non-admin sees downloads");
     assert.ok(await evaluate("__hostTest.meCalls > 0"), "Approval comes from a fresh /me response");
     await evaluate(`document.getElementById('download').scrollIntoView()`);
     await pause(150);
@@ -145,17 +145,17 @@ try {
     await visit("/host", mode);
     if (mode === "admin") await waitFor(() => evaluate(`(${downloadLinks}).length===2`));
     else {
-      await waitFor(() => evaluate(`!!document.querySelector('.host-locked')`));
+      await waitFor(() => evaluate(`!!document.querySelector('[data-host-locked]')`));
       assert.deepEqual(await evaluate(downloadLinks), [], `${mode} must not see archive buttons`);
       if (mode === "failure") {
-        assert.ok(await evaluate(`document.querySelector('.host-locked').textContent.includes('Unable to verify')`));
-        await evaluate(`__hostTest.mode='alpha';document.querySelector('.host-locked button').click()`);
+        assert.ok(await evaluate(`document.querySelector('[data-host-locked]').textContent.includes('Unable to verify')`));
+        await evaluate(`__hostTest.mode='alpha';document.querySelector('[data-host-locked] button').click()`);
         await waitFor(() => evaluate(`(${downloadLinks}).length===2`));
       }
     }
   }
   await visit("/account", "member");
-  await waitFor(() => evaluate(`!!document.querySelector('.ac-profile-grid')`));
+  await waitFor(() => evaluate(`!!document.querySelector('[data-account-overview]')`));
   assert.ok(await evaluate(`!document.querySelector('[data-server-download]')`));
   assert.deepEqual(errors, []);
   console.log("PASS: download page shows independent live launcher/server versions; host links match current CDN; refresh preserves scroll; alpha/admin and other account gates; desktop/mobile; no hydration errors.");

@@ -1,0 +1,541 @@
+/* New idea ---------------------------------------------------------------- */
+
+.compose {
+  grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 3rem 3.75rem;
+  display: grid;
+}
+@media screen and (max-width: 1084px) {
+  .compose {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.composePanel {
+  flex-direction: column;
+  gap: 1.35rem;
+  display: flex;
+}
+.guide {
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-top: 1.25rem;
+  display: flex;
+}
+.guideSteps li {
+  border-top: 1px solid var(--line);
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 0.9rem;
+  padding: 1.15rem 0;
+  display: grid;
+}
+.guideIndex {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.14em;
+  color: var(--tone);
+  padding-top: 0.2rem;
+  font-size: 0.62rem;
+}
+.guideSteps strong {
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  display: block;
+}
+.guideSteps p {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.textLink {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--tone);
+  margin-top: 0.7rem;
+  font-size: 0.58rem;
+  display: inline-block;
+}
+.guideNote {
+  color: var(--text-faint);
+  border-top: 1px solid var(--line);
+  padding-top: 1.15rem;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.form {
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+  display: flex;
+}
+.allowance {
+  background: oklch(from var(--tone) l c h / 5%);
+  border: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1rem 1.2rem 1.1rem;
+  display: flex;
+}
+.allowanceHead {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.4rem 1.5rem;
+  display: flex;
+}
+.allowanceHead strong {
+  font-weight: 600;
+}
+.allowanceHead span {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+  font-size: 0.55rem;
+}
+.allowanceNext {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.actions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.25rem;
+  padding-left: 0.5rem;
+  display: flex;
+}
+/* Room for the speed lines of the primary button. */
+.actionsPrimary {
+  padding-left: 2.4rem;
+}
+.fineprint {
+  color: var(--text-faint);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+.checks {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.95rem;
+  display: flex;
+}
+
+/* Staff and owner drawers. */
+.drawer {
+  background: var(--surface-1);
+  border: 1px solid var(--line-strong);
+}
+.drawer[data-kind="staff"] {
+  border-left: 2px solid var(--tone);
+}
+.drawer summary {
+  cursor: pointer;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.05rem 1.4rem;
+  list-style: none;
+  display: flex;
+}
+.drawer summary::-webkit-details-marker {
+  display: none;
+}
+.drawerLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--tone);
+  font-size: 0.62rem;
+  line-height: 1.6;
+}
+/* <details> slots its content through a UA shadow slot, which breaks the
+   global box-sizing inheritance: restore it on the slotted child. */
+.drawer .form {
+  box-sizing: border-box;
+  border-top: 1px solid var(--line);
+  margin-top: 0;
+  padding: 1.4rem;
+}
+.toggle {
+  flex: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  position: relative;
+}
+.toggle:before,
+.toggle:after {
+  content: "";
+  background: var(--tone);
+  position: absolute;
+  inset: calc(50% - 0.5px) 0;
+  transition: transform var(--transition-link);
+}
+.toggle:after {
+  transform: rotate(90deg);
+}
+details[open] > summary .toggle:after {
+  transform: rotate(0);
+}
+
+/* Idea ---------------------------------------------------------------------- */
+
+.detail {
+  flex-direction: column;
+  gap: 1.25rem;
+  display: flex;
+}
+.idea {
+  flex-direction: column;
+  gap: 1.75rem;
+  display: flex;
+}
+.ideaHead {
+  align-items: flex-start;
+  gap: 1.75rem;
+  display: flex;
+}
+.ideaHeadCopy {
+  flex-direction: column;
+  flex: 1;
+  gap: 1rem;
+  min-width: 0;
+  display: flex;
+}
+.tags {
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding-left: 0.3rem;
+  display: flex;
+}
+.ideaTitle {
+  overflow-wrap: anywhere;
+}
+/* A long proposal title steps down so the proposal itself starts in the first screen. */
+.ideaTitle.long.long {
+  font-size: calc(0.9vw + 18px);
+  line-height: 0.98;
+}
+.byline {
+  color: var(--text-dim);
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.92rem;
+  display: flex;
+}
+.byline b {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+/* The proposal reads in a measured column; the facts ride beside it. */
+.ideaBody {
+  grid-template-columns: minmax(0, 46rem) minmax(14rem, 17rem);
+  justify-content: space-between;
+  align-items: start;
+  gap: 2rem 3.5rem;
+  padding-left: 5.55rem;
+  display: grid;
+}
+.proposal {
+  color: oklch(from var(--text-primary) l c h / 86%);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-width: 0;
+  font-size: 1.04rem;
+  line-height: 1.7;
+}
+.facts {
+  border-top: 1px solid var(--line-strong);
+  position: sticky;
+  top: calc(var(--header-height) + 1.5rem);
+}
+.facts dd {
+  font-size: 0.9rem;
+}
+.tally {
+  justify-content: flex-end;
+  gap: 1rem;
+  display: inline-flex;
+}
+.tally > span {
+  font-variant-numeric: tabular-nums;
+  align-items: center;
+  gap: 0.35rem;
+  display: inline-flex;
+}
+.tally svg {
+  color: var(--tone);
+  font-size: 1.15em;
+}
+@media screen and (max-width: 1084px) {
+  .ideaBody {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .facts {
+    position: static;
+  }
+}
+@media screen and (max-width: 700px) {
+  .ideaHead {
+    gap: 1.1rem;
+  }
+  .ideaBody {
+    padding-left: 0;
+  }
+}
+.withdraw {
+  padding-left: 0.5rem;
+}
+
+/* Discussion + staff activity ------------------------------------------------ */
+
+.discussionLayout {
+  grid-template-columns: minmax(0, 1.8fr) minmax(16rem, 1fr);
+  align-items: start;
+  gap: 2.5rem 3rem;
+  margin-top: 1.5rem;
+  display: grid;
+}
+@media screen and (max-width: 1084px) {
+  .discussionLayout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .timeline {
+    order: -1;
+  }
+}
+.discussion {
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+  display: flex;
+}
+.discussionHead {
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  display: flex;
+}
+.discussionCount {
+  color: var(--tone);
+  margin-left: 0.2em;
+}
+.muted {
+  color: var(--text-faint);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.comments {
+  border-top: 1px solid var(--line);
+}
+.comment {
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.35rem 0;
+  display: grid;
+}
+.comment[data-reply="true"] {
+  border-left: 1px solid var(--line-strong);
+  margin-left: 2.6rem;
+  padding-left: 1.1rem;
+}
+.comment[data-staff] .commentAvatar {
+  --tone: var(--red);
+}
+.commentMain {
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  display: flex;
+}
+.commentHead {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+  display: flex;
+}
+.commentHead strong {
+  font-size: 0.96rem;
+  font-weight: 600;
+}
+.commentHead time,
+.replyMark {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-faint);
+  font-size: 0.54rem;
+}
+.commentBody {
+  color: oklch(from var(--text-primary) l c h / 86%);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+.staffNote {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--yellow);
+  font-size: 0.55rem;
+}
+.commentActions {
+  gap: 1.2rem;
+  display: flex;
+}
+.commentActions button {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  font-size: 0.56rem;
+  transition: color var(--transition-link);
+}
+.commentActions button:hover,
+.commentActions button[aria-expanded="true"] {
+  color: var(--tone);
+}
+.commentActions button:disabled {
+  opacity: 0.4;
+}
+.inlineForm {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  width: 100%;
+  margin-top: 0.4rem;
+  display: flex;
+}
+.inlineForm > :first-child {
+  width: 100%;
+}
+.composer {
+  background: oklch(from var(--surface-1) l c h / 60%);
+  border: 1px solid var(--line);
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.35rem 1.4rem;
+  display: flex;
+}
+.replying {
+  color: var(--text-dim);
+  background: var(--surface-2);
+  border-left: 2px solid var(--tone);
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.9rem;
+  display: flex;
+}
+.replying b {
+  color: var(--text-primary);
+}
+.textButton {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--tone);
+  font-size: 0.56rem;
+}
+.textButton:hover {
+  color: var(--text-primary);
+}
+.pagination {
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  display: flex;
+}
+.pageInfo {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+  font-size: 0.58rem;
+}
+.empty {
+  border-style: solid;
+}
+
+.timeline {
+  border: 1px solid var(--line);
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.6rem 1.5rem;
+  display: flex;
+}
+.timelineList {
+  flex-direction: column;
+  gap: 1.4rem;
+  margin: 0.5rem 0;
+  padding-left: 1.4rem;
+  display: flex;
+  position: relative;
+}
+.timelineList:before {
+  content: "";
+  background: var(--line-strong);
+  width: 1px;
+  position: absolute;
+  top: 0.45rem;
+  bottom: 0.45rem;
+  left: 0.3rem;
+}
+.timelineItem {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55rem;
+  display: flex;
+  position: relative;
+}
+.timelineItem:before {
+  content: "";
+  background: var(--tone);
+  width: 0.55rem;
+  height: 0.55rem;
+  position: absolute;
+  top: 0.45rem;
+  left: -1.35rem;
+  transform: skewX(var(--skew));
+}
+.timelineItem[data-origin]:before {
+  background: var(--body);
+  border: 1px solid var(--line-strong);
+}
+.timelineMessage {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+.timelineItem small {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-faint);
+  font-size: 0.54rem;
+}
+.timelineOrigin {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  font-size: 0.6rem;
+}
+.notice {
+  margin: 0;
+}

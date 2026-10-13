@@ -1,0 +1,50 @@
+.preview {
+  border: 1px dashed var(--line-strong);
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+  padding: calc(18px + 12 * (100vw - 320px) / 1080);
+  display: flex;
+  position: relative;
+}
+.head {
+  flex-direction: column;
+  gap: 0.8rem;
+  display: flex;
+}
+.title {
+  overflow-wrap: anywhere;
+}
+.summary {
+  color: var(--text-dim);
+  max-width: 60ch;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+.clip,
+.media figure {
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  display: flex;
+}
+.clip {
+  max-width: 28rem;
+}
+.clip figcaption,
+.media figcaption {
+  color: var(--text-faint);
+  font-size: 0.82rem;
+}
+.media {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: 1rem;
+  display: grid;
+}
+.part {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.9rem;
+  padding-top: 1.2rem;
+  display: flex;
+}

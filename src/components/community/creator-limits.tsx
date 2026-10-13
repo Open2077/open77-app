@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { DefinitionList } from "@/components/ui/data";
+import { Notice } from "@/components/ui/feedback";
+import { refresh } from "@/components/ui/icons";
 import { myQuotas, uploadLimits, type AccountQuota, type UploadLimits } from "@/lib/community/quotas";
+import { Disclosure, Fine, Pending } from "@/components/account/kit";
+
+const mib = (bytes: number) => `${(bytes / 1048576).toLocaleString()} MiB`;
 
 export function CreatorLimits({ token }: { token: string }) {
   const [value, setValue] = useState<{ account: AccountQuota; limits: UploadLimits } | null>(null);
@@ -14,12 +22,32 @@ export function CreatorLimits({ token }: { token: string }) {
     }).catch(error => { if (!controller.signal.aborted) setError(error instanceof Error ? error.message : "Your current limits could not be loaded."); });
     return () => controller.abort();
   }, [token, attempt]);
-  return <details className="hub-notice"><summary>Your publishing limits</summary>
-    {error && <p role="alert">{error}</p>}
-    {!value && !error && <p role="status">Loading your current allowances…</p>}
-    {value && <><p>Up to {value.account.effective.draftProjectsPerAccount} unpublished projects, {value.account.effective.activeUploadsPerAccount} active uploads and {(value.account.effective.pendingBytesPerAccount / 1048576).toLocaleString()} MiB reserved at once. GitHub imports: {value.account.effective.gitHubImportsPerDay} per day.</p>
-      <p>New ZIPs: {(value.limits.packageBytes / 1048576).toLocaleString()} MiB. Images: {(value.limits.imageBytes / 1048576).toLocaleString()} MiB and {(value.limits.imagePixels / 1000000).toLocaleString()} megapixels.{value.limits.clipBytes ? ` Hover clips: ${(value.limits.clipBytes / 1048576).toLocaleString()} MiB and ${value.limits.clipSeconds ?? 8} seconds.` : ""} Expanded packages: {(value.limits.expandedBytes / 1048576).toLocaleString()} MiB across {value.limits.archiveEntries.toLocaleString()} entries, including nested preloads.</p>
-      <p>These are allowances, not remaining usage. Existing reservations keep their reviewed inspection limits. The server checks current availability when you submit.</p></>}
-    <button type="button" className="btn btn-ghost" onClick={() => { setError(""); setAttempt(value => value + 1); }}>Refresh limits</button>
-  </details>;
+  return (
+    <Disclosure summary="Your publishing limits">
+      {error ? <Notice kind="danger">{error}</Notice> : null}
+      {!value && !error ? <Pending label="Loading your current allowances" /> : null}
+      {value ? (
+        <>
+          <DefinitionList
+            items={[
+              { label: "Unpublished projects", value: value.account.effective.draftProjectsPerAccount },
+              { label: "Active uploads", value: value.account.effective.activeUploadsPerAccount },
+              { label: "Reserved at once", value: mib(value.account.effective.pendingBytesPerAccount) },
+              { label: "GitHub imports / day", value: value.account.effective.gitHubImportsPerDay },
+              { label: "New ZIPs", value: mib(value.limits.packageBytes) },
+              { label: "Images", value: `${mib(value.limits.imageBytes)} · ${(value.limits.imagePixels / 1000000).toLocaleString()} MP` },
+              ...(value.limits.clipBytes ? [{ label: "Hover clips", value: `${mib(value.limits.clipBytes)} · ${value.limits.clipSeconds ?? 8} s` }] : []),
+              { label: "Expanded packages", value: `${mib(value.limits.expandedBytes)} · ${value.limits.archiveEntries.toLocaleString()} entries` },
+            ]}
+          />
+          <Fine>Expanded package limits include nested preloads. These are allowances, not remaining usage. Existing reservations keep their reviewed inspection limits. The server checks current availability when you submit.</Fine>
+        </>
+      ) : null}
+      <div>
+        <Button lines="none" color="neutral" border size="sm" icon={refresh} iconPosition="left" onClick={() => { setError(""); setAttempt(value => value + 1); }}>
+          Refresh limits
+        </Button>
+      </div>
+    </Disclosure>
+  );
 }

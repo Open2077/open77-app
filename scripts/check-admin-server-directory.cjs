@@ -43,7 +43,7 @@ const { resolve } = require('node:path');
     await page.getByRole('button',{name:'Save changes',exact:true}).click(); await page.getByRole('button',{name:'Saving…',exact:true}).waitFor();
     reply('conflict'); await page.getByRole('alert').filter({hasText:'Another administrator'}).waitFor();
     assert.equal(calls[1].body.revision,1);
-    await page.locator('.adm-panel').getByRole('button',{name:'Refresh',exact:true}).click();
+    await page.locator('[data-admin-panel]').getByRole('button',{name:'Refresh',exact:true}).click();
     await page.getByRole('checkbox',{name:'Official: Night City Test',exact:true}).waitFor();
     await page.waitForTimeout(300);
     assert(await page.getByRole('checkbox',{name:'Official: Night City Test',exact:true}).isChecked());

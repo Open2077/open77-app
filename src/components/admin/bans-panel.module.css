@@ -1,0 +1,9 @@
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+}
+.reason {
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+}

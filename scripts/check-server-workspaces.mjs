@@ -168,51 +168,51 @@ try {
   const click=async selector=>{await session.evaluate(`document.querySelector(${JSON.stringify(selector)}).click();`);await delay(100);};
   async function shot(name){await fs.mkdir('.shots',{recursive:true});const {data}=await session.send('Page.captureScreenshot',{format:'png'});await fs.writeFile('.shots/'+name+'.png',Buffer.from(data,'base64'));}
   await resize(1440,900);await visit('/servers?mode=Roleplay');
-  await session.evaluate(`window.__listNode=document.querySelector('.sb-list');document.querySelector('.sb-col-main').scrollTop=200;window.__listScroll=document.querySelector('.sb-col-main').scrollTop;document.querySelector('.sb-row-link').click();`);
+  await session.evaluate(`window.__listNode=document.querySelector('[data-server-list]');window.scrollTo(0,600);window.__listScroll=window.scrollY;document.querySelector('[data-server-link]').click();`);
   await delay(80);
-  check('single name click selects the inspector without navigation',await session.evaluate(`return location.pathname==='/servers'&&!document.querySelector('.directory-profile-view')&&document.querySelector('.directory-detail-name')?.textContent==='Night City Roleplay'&&document.querySelector('.sb-row').dataset.selected==='true';`));
-  await click('.sb-row-link');
-  check('repeat click keeps the same server selected',await session.evaluate(`return !!document.querySelector('.directory-detail-name')&&location.pathname==='/servers';`));
-  await session.evaluate(`document.querySelector('.sb-row-link').dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));`);
+  check('single name click selects the inspector without navigation',await session.evaluate(`return location.pathname==='/servers'&&!document.querySelector('[data-server-profile],[data-detail-state]')&&document.querySelector('[data-inspector-name]')?.textContent==='Night City Roleplay'&&document.querySelector('[data-server-id]').dataset.selected==='true';`));
+  await click('[data-server-link]');
+  check('repeat click keeps the same server selected',await session.evaluate(`return !!document.querySelector('[data-inspector-name]')&&location.pathname==='/servers';`));
+  await session.evaluate(`document.querySelector('[data-server-link]').dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));`);
   await delay(80);
-  check('name double-click opens detail in place immediately without loading flash',await session.evaluate(`return !!document.querySelector('.sv-name')&&!document.querySelector('.directory-profile-view .sb-offline')&&window.__listNode===document.querySelector('.sb-list')&&location.pathname==='/servers/fixture-0';`));
+  check('name double-click opens detail in place immediately without loading flash',await session.evaluate(`return !!document.querySelector('[data-profile-name]')&&!document.querySelector('[data-detail-state]')&&window.__listNode===document.querySelector('[data-server-list]')&&location.pathname==='/servers/fixture-0';`));
   await delay(450);
-  check('full details complete the directory snapshot',await session.evaluate(`return document.querySelectorAll('.sv-playerlist li').length===16;`));
-  check('long roster is keyboard scrollable',await session.evaluate(`const r=document.querySelector('.sv-playerlist-box');return r.tabIndex===0&&r.scrollHeight>r.clientHeight;`));
+  check('full details complete the directory snapshot',await session.evaluate(`return document.querySelectorAll('[data-roster] li').length===16;`));
+  check('long roster is keyboard scrollable',await session.evaluate(`const r=document.querySelector('[data-roster]');return r.tabIndex===0&&r.scrollHeight>r.clientHeight;`));
   await shot('server-profile-desktop');
-  await click('.directory-profile-toolbar button');
-  check('Back restores list, filters and scroll',await session.evaluate(`return location.pathname==='/servers'&&location.search==='?mode=Roleplay'&&window.__listNode===document.querySelector('.sb-list')&&document.querySelector('.sb-col-main').scrollTop===window.__listScroll&&!document.querySelector('.directory-list-view').hidden;`));
+  await click('[data-profile-back]');
+  check('Back restores list, filters and scroll',await session.evaluate(`return location.pathname==='/servers'&&location.search==='?mode=Roleplay'&&window.__listNode===document.querySelector('[data-server-list]')&&Math.abs(window.scrollY-window.__listScroll)<=1&&!document.querySelector('[data-list-view]').hidden;`));
   await session.evaluate('history.forward();');await delay(450);
-  check('browser Forward restores profile',await session.evaluate(`return location.pathname==='/servers/fixture-0'&&!!document.querySelector('.sv-name');`));
+  check('browser Forward restores profile',await session.evaluate(`return location.pathname==='/servers/fixture-0'&&!!document.querySelector('[data-profile-name]');`));
   await session.evaluate('history.back();');await delay(150);
-  await click('.sb-row');
-  check('single row click keeps inspector visible',await session.evaluate(`return !document.querySelector('.directory-profile-view')&&!!document.querySelector('.directory-detail-name');`));
-  await session.evaluate(`document.querySelector('.sb-row .fav-btn').dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));`);
-  check('row action double-click does not open profile',await session.evaluate(`return !document.querySelector('.directory-profile-view');`));
-  await session.evaluate(`document.querySelector('.sb-row').dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));`);await delay(100);
-  check('whole row double-click opens profile',await session.evaluate(`return !!document.querySelector('.sv-name');`));
-  await click('.directory-profile-toolbar button');
-  await click('.directory-detail-more');
-  check('View details opens profile in place',await session.evaluate(`return !!document.querySelector('.sv-name')&&window.__listNode===document.querySelector('.sb-list');`));
+  await click('[data-server-id]');
+  check('single row click keeps inspector visible',await session.evaluate(`return !document.querySelector('[data-server-profile],[data-detail-state]')&&!!document.querySelector('[data-inspector-name]');`));
+  await session.evaluate(`document.querySelector('[data-server-id] [data-favorite]').dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));`);
+  check('row action double-click does not open profile',await session.evaluate(`return !document.querySelector('[data-server-profile],[data-detail-state]');`));
+  await session.evaluate(`document.querySelector('[data-server-id]').dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));`);await delay(100);
+  check('whole row double-click opens profile',await session.evaluate(`return !!document.querySelector('[data-profile-name]');`));
+  await click('[data-profile-back]');
+  await click('[data-inspector-more]');
+  check('View details opens profile in place',await session.evaluate(`return !!document.querySelector('[data-profile-name]')&&window.__listNode===document.querySelector('[data-server-list]');`));
   await delay(350);
   for(const width of [1920,1440,1024,800,640,420,375,320]){
     await resize(width,900);await delay(100);
-    const layout=await session.evaluate(`const p=document.querySelector('.directory-profile-scroll');return {fits:document.documentElement.scrollWidth<=innerWidth&&p.scrollWidth<=p.clientWidth+1,pageScroll:document.documentElement.scrollHeight<=innerHeight+1};`);
-    check('profile '+width+'px fits inside directory',layout.fits&&layout.pageScroll);if(!layout.fits)console.log(layout);
+    const layout=await session.evaluate(`return {fits:document.documentElement.scrollWidth<=innerWidth};`);
+    check('profile '+width+'px has no horizontal overflow',layout.fits);if(!layout.fits)console.log(layout);
     if(width===375)await shot('server-profile-mobile');
   }
   await resize(1440);await visit('/servers/fixture-0');
-  check('direct detail URL renders same workspace',await session.evaluate(`return !!document.querySelector('.directory-profile-view .sv-name');`));
-  await click('.directory-profile-toolbar button');
-  check('direct detail URL can return to populated list',await session.evaluate(`return location.pathname==='/servers'&&document.querySelectorAll('.sb-row').length===32;`));
+  check('direct detail URL renders same workspace',await session.evaluate(`return !!document.querySelector('[data-profile-name]');`));
+  await click('[data-profile-back]');
+  check('direct detail URL can return to populated list',await session.evaluate(`return location.pathname==='/servers'&&document.querySelectorAll('[data-server-id]').length===32;`));
   await visit('/servers/6b611fe7-f168-4959-8b28-2a7cdb673b24');
-  check('static server snapshot hydrates and receives browser data',await session.evaluate(`return !!document.querySelector('.directory-profile-view .sv-name');`));
+  check('static server snapshot hydrates and receives browser data',await session.evaluate(`return !!document.querySelector('[data-profile-name]');`));
   for(const scenario of ['missing','error']){
     await session.evaluate(`sessionStorage.setItem('scenario',${JSON.stringify(scenario)});`);await visit('/servers/fixture-0');
-    check('detail '+scenario+' state',await session.evaluate(`return !!document.querySelector('.directory-profile-view .sb-offline h1');`));
+    check('detail '+scenario+' state',await session.evaluate(`return document.querySelector('[data-detail-state]')?.dataset.detailState===${JSON.stringify(scenario)};`));
   }
-  await session.evaluate(`sessionStorage.removeItem('scenario');`);await click('.sb-offline-ctas button');await delay(450);
-  check('detail retry recovers',await session.evaluate(`return !!document.querySelector('.sv-name');`));
+  await session.evaluate(`sessionStorage.removeItem('scenario');`);await click('[data-retry]');await delay(450);
+  check('detail retry recovers',await session.evaluate(`return !!document.querySelector('[data-profile-name]');`));
   for(const route of ['/account/keys','/account/creations','/account/creations/new']){
     await resize(1440);await visit(route);
     for(const width of [1440,1024,768,420,375,320]){
@@ -223,17 +223,17 @@ try {
     check(route+' keeps noindex',await session.evaluate(`return document.querySelector('meta[name="robots"]').content.includes('noindex');`));
     if(route==='/account/keys'){
       await session.evaluate(`[...document.querySelectorAll('button')].find(b=>b.textContent==='New key').click();`);await delay(150);
-      check('key form opens with working disabled empty submit',await session.evaluate(`return !!document.querySelector('.ac-input')&&document.querySelector('.ac-form button[type=submit]').disabled;`));
+      check('key form opens with working disabled empty submit',await session.evaluate(`return !!document.querySelector('[data-key-form] input')&&document.querySelector('[data-key-form] button[type=submit]').disabled;`));
       await shot('keymaster-create-mobile');
       await session.evaluate(`[...document.querySelectorAll('button')].find(b=>b.textContent==='Cancel').click();`);
     }
   }
   await session.evaluate(`sessionStorage.setItem('scenario','empty');`);
-  await visit('/account/creations');check('empty creations state',await session.evaluate(`return !!document.querySelector('.hub-empty');`));await shot('creations-empty');
-  await visit('/account/keys');check('empty keys state',await session.evaluate(`return !!document.querySelector('.ac-key-empty');`));
+  await visit('/account/creations');check('empty creations state',await session.evaluate(`return !!document.querySelector('[data-empty="creations"]');`));await shot('creations-empty');
+  await visit('/account/keys');check('empty keys state',await session.evaluate(`return !!document.querySelector('[data-empty="keys"]');`));
   await session.evaluate(`sessionStorage.setItem('guest','true');`);
   for(const route of ['/account/keys','/account/creations']){
-    await visit(route);check(route+' signed-out gate',await session.evaluate(`return !!document.querySelector('.auth-panel')&&document.documentElement.scrollWidth<=innerWidth;`));
+    await visit(route);check(route+' signed-out gate',await session.evaluate(`return !!document.querySelector('[data-auth-panel]')&&document.documentElement.scrollWidth<=innerWidth;`));
   }
   check('no browser exceptions or console errors',errors.length===0);if(errors.length)console.log(errors);
   session.socket.close();

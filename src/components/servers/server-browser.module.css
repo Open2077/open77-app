@@ -1,0 +1,825 @@
+.browser {
+  --gutter: clamp(16px, 2.8vw, 48px);
+  --rail-width: 208px;
+  --inspector-width: 340px;
+  --sticky-top: calc(var(--header-live) + var(--command-h, 64px));
+  position: relative;
+}
+
+/* Key art behind the slim header and the bar, fading into the page like the
+   other pages' heroes, so the tool page keeps the site's colour. */
+.backdrop {
+  z-index: -1;
+  pointer-events: none;
+  height: calc(var(--header-live) + var(--command-h, 64px) + 16rem);
+  position: absolute;
+  top: calc(var(--header-live) * -1);
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+.backdrop img {
+  object-fit: cover;
+  object-position: center 40%;
+}
+.backdrop:after {
+  content: "";
+  background:
+    linear-gradient(to top, var(--body) 0%, oklch(from var(--body) l c h / 0.7) 45%, oklch(from var(--body) l c h / 0.15) 100%),
+    linear-gradient(90deg, oklch(from var(--body) l c h / 0.5) 0%, oklch(from var(--body) l c h / 0) 50%, oklch(from var(--body) l c h / 0.4) 100%);
+  position: absolute;
+  inset: 0;
+}
+
+/* Command bar ------------------------------------------------------------ */
+
+.command {
+  z-index: 200;
+  background: oklch(from var(--body) l c h / 0.62);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border-block: 1px solid var(--line);
+  transition: top 0.35s var(--ease-out-expo);
+  position: sticky;
+  top: var(--header-live);
+}
+.commandInner {
+  align-items: center;
+  gap: 0.75rem 1rem;
+  padding: 0.7rem var(--gutter);
+  display: flex;
+}
+.search {
+  flex: 1 1 260px;
+  min-width: 200px;
+  max-width: 440px;
+}
+.search kbd {
+  font-size: 0.7rem;
+}
+.modes {
+  scrollbar-width: none;
+  flex: 0 1 auto;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 2px 8px;
+  display: flex;
+  overflow-x: auto;
+}
+.modes::-webkit-scrollbar {
+  display: none;
+}
+.sort {
+  flex: none;
+  align-items: center;
+  gap: 0.6rem;
+  margin-left: auto;
+  display: flex;
+}
+/* Freshness of the directory and the refresh button, at the end of the bar. */
+.status {
+  flex: none;
+}
+/* Mid-size screens: the bar keeps its controls on one line by dropping the
+   words around them (the sort list names itself, the freshness dot stays and
+   its text remains for assistive technology). */
+@media screen and (max-width: 1640px) {
+  .sort .selectLabel {
+    display: none;
+  }
+  .status :global([role="status"]) {
+    clip-path: inset(50%);
+    white-space: nowrap;
+    width: 1px;
+    height: 1px;
+    position: absolute;
+    overflow: hidden;
+  }
+}
+.sort select {
+  min-width: 9.5rem;
+}
+.selectLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+  font-size: 0.6rem;
+}
+.railToggle {
+  color: var(--text-dim);
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 2.7rem;
+  height: 2.7rem;
+  font-size: 1.05rem;
+  transition: color var(--transition-link);
+  display: flex;
+  position: relative;
+}
+.railToggle:before {
+  content: "";
+  border: 1px solid var(--line);
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.railToggle[aria-pressed="true"] {
+  color: var(--tone);
+}
+.railToggle[aria-pressed="true"]:before {
+  border-color: oklch(from var(--tone) l c h / 60%);
+}
+.railToggle:hover {
+  color: var(--text-primary);
+}
+.badge {
+  font-family: var(--font-mono);
+  color: var(--body);
+  background: var(--tone);
+  text-align: center;
+  min-width: 1.1rem;
+  height: 1.1rem;
+  padding: 0 0.25rem;
+  font-size: 0.65rem;
+  line-height: 1.1rem;
+  position: absolute;
+  top: -0.35rem;
+  right: -0.45rem;
+}
+.drawerToggle {
+  display: none !important;
+}
+@media screen and (max-width: 1240px) {
+  .commandInner {
+    flex-wrap: wrap;
+  }
+  .search {
+    max-width: none;
+  }
+  .modes {
+    order: 3;
+    flex-basis: 100%;
+  }
+}
+
+/* Workspace: the inspector column exists only while a server is selected,
+   so an idle list gets the whole width. ------------------------------------ */
+
+.workspace {
+  grid-template-columns: var(--rail-width) minmax(0, 1fr);
+  align-items: start;
+  gap: 1.5rem;
+  margin: 1rem var(--gutter) 0;
+  display: grid;
+}
+.railCollapsed .workspace {
+  grid-template-columns: minmax(0, 1fr);
+}
+.railCollapsed .rail {
+  display: none;
+}
+@media screen and (min-width: 1360px) {
+  .hasSelection .workspace {
+    grid-template-columns: var(--rail-width) minmax(0, 1fr) var(--inspector-width);
+  }
+  .railCollapsed.hasSelection .workspace {
+    grid-template-columns: minmax(0, 1fr) var(--inspector-width);
+  }
+  /* The inspector carries Connect for the selected server; the rows give their
+     button width back to the names while it is open. */
+  .hasSelection .table {
+    --actions-width: 2.25rem;
+  }
+  .hasSelection .connect {
+    display: none !important;
+  }
+}
+
+/* Rail */
+.rail {
+  max-height: calc(100dvh - var(--sticky-top) - 1rem);
+  scrollbar-width: thin;
+  transition: top 0.35s var(--ease-out-expo);
+  position: sticky;
+  top: calc(var(--sticky-top) + 1rem);
+  overflow-y: auto;
+}
+.railInner {
+  flex-direction: column;
+  gap: 1.4rem;
+  padding-bottom: 1rem;
+  display: flex;
+}
+.railHead {
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+}
+.railClose {
+  color: var(--text-dim);
+  font-size: 1.2rem;
+  display: none;
+}
+.collections {
+  flex-direction: column;
+  gap: 0.3rem;
+  display: flex;
+}
+.collection,
+.modeRow {
+  color: var(--text-dim);
+  isolation: isolate;
+  text-align: left;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.55rem 0.9rem;
+  transition: color var(--transition-link);
+  display: flex;
+  position: relative;
+}
+.collection:before,
+.modeRow:before {
+  content: "";
+  border: 1px solid #0000;
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.collection:hover,
+.modeRow:hover {
+  color: var(--text-primary);
+}
+.collection:hover:before,
+.modeRow:hover:before {
+  border-color: var(--line);
+}
+.collection[aria-pressed="true"],
+.modeRow[aria-pressed="true"] {
+  color: var(--text-primary);
+}
+.collection[aria-pressed="true"]:before,
+.modeRow[aria-pressed="true"]:before {
+  background: oklch(from var(--tone) l c h / 8%);
+  border-color: oklch(from var(--tone) l c h / 60%);
+}
+.collection svg {
+  color: var(--tone);
+  flex: none;
+}
+.collection span,
+.modeRow span {
+  flex: 1;
+}
+.collection small,
+.modeRow small {
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  font-size: 0.78rem;
+}
+.modeRow {
+  padding-block: 0.4rem;
+  font-size: 0.9rem;
+}
+.railSection {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.7rem;
+  padding-top: 1.2rem;
+  display: flex;
+}
+.railModes {
+  gap: 0.15rem;
+}
+.railTitle {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--text-faint);
+  margin-bottom: 0.3rem;
+  font-size: 0.62rem;
+  font-weight: 350;
+}
+.you {
+  color: var(--text-dim);
+}
+.chipRow {
+  flex-wrap: wrap;
+  gap: 0.45rem 0.55rem;
+  padding-left: 4px;
+  display: flex;
+}
+.stackedSelect {
+  flex-direction: column;
+  gap: 0.45rem;
+  display: flex;
+}
+.railLinks {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.7rem;
+  padding-top: 1.2rem;
+  display: flex;
+}
+.railLinks a {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  font-size: 0.64rem;
+  transition: color var(--transition-link);
+}
+.railLinks a:hover {
+  color: var(--tone);
+}
+.scrim {
+  display: none;
+}
+
+/* The list ------------------------------------------------------------- */
+
+.main {
+  container: list / inline-size;
+  scroll-margin-top: calc(var(--sticky-top) + 0.5rem);
+  min-width: 0;
+}
+.activeFilters {
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.8rem;
+  padding-left: 4px;
+  display: flex;
+}
+.activeFilter,
+.clear {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  isolation: isolate;
+  align-items: center;
+  gap: 0.5em;
+  height: 1.9rem;
+  padding: 0 0.85em;
+  font-size: 0.6rem;
+  display: inline-flex;
+  position: relative;
+}
+.activeFilter {
+  color: var(--text-primary);
+}
+.activeFilter:before {
+  content: "";
+  background: oklch(from var(--tone) l c h / 10%);
+  border: 1px solid oklch(from var(--tone) l c h / 55%);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+.activeFilter svg {
+  color: var(--tone);
+}
+.activeFilter:hover:before {
+  border-color: var(--tone);
+}
+.clear {
+  color: var(--text-dim);
+  text-underline-offset: 0.3em;
+  text-decoration: underline;
+}
+.clear:hover {
+  color: var(--tone);
+}
+
+/* One grid for the head and every row, so the columns line up. */
+.table {
+  --cols: 40px minmax(0, 2.3fr) minmax(0, 1.6fr) 6.75rem 6.5rem var(--actions-width, 9rem);
+  background: oklch(from var(--surface-1) l c h / 0.88);
+  border: 1px solid var(--line);
+  position: relative;
+}
+.table:before {
+  content: "";
+  border: solid var(--tone);
+  border-width: 1px 0 0 1px;
+  pointer-events: none;
+  z-index: 6;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+}
+.columns,
+.row {
+  grid-template-columns: var(--cols);
+  align-items: center;
+  column-gap: 1.1rem;
+  display: grid;
+}
+.columns {
+  z-index: 5;
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  /* Opaque: the table's own tint over the page colour, so rows never show through. */
+  background:
+    linear-gradient(oklch(from var(--surface-1) l c h / 0.88), oklch(from var(--surface-1) l c h / 0.88)),
+    var(--body);
+  border-bottom: 1px solid var(--line);
+  padding: 0.65rem 1rem;
+  font-size: 0.58rem;
+  transition: top 0.35s var(--ease-out-expo);
+  position: sticky;
+  top: var(--sticky-top);
+}
+.columns > * {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  overflow: hidden;
+}
+.colServer {
+  color: var(--text-dim);
+  grid-column: span 2;
+}
+.colServer b {
+  font-family: var(--font-heading);
+  letter-spacing: -0.05em;
+  color: var(--tone);
+  margin-left: 0.4em;
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: 500;
+}
+.colServer i {
+  font-family: var(--font-main);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-faint);
+  font-size: 0.78rem;
+  font-style: normal;
+}
+.colPlayers {
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  text-align: left;
+}
+.colPlayers:hover {
+  color: var(--tone);
+}
+.list {
+  flex-direction: column;
+  display: flex;
+}
+
+/* Rows: hairline-separated lines, not cards, so forty servers read as a list. */
+.row {
+  cursor: pointer;
+  scroll-margin-top: calc(var(--sticky-top) + 2.6rem);
+  scroll-margin-bottom: 1rem;
+  padding: 0.55rem 1rem;
+  transition: background-color var(--transition-link);
+  position: relative;
+}
+.row + .row {
+  border-top: 1px solid var(--line);
+}
+.row:before {
+  content: "";
+  background: var(--tone);
+  opacity: 0;
+  width: 3px;
+  transition:
+    opacity var(--transition-link),
+    inset var(--transition-link);
+  position: absolute;
+  top: 22%;
+  bottom: 22%;
+  left: -1px;
+}
+.row:hover {
+  background: oklch(from var(--surface-2) l c h / 0.75);
+}
+.row:hover:before {
+  opacity: 0.7;
+}
+.selected,
+.selected:hover {
+  background: oklch(from var(--tone) l c h / 7%);
+}
+.selected:before {
+  opacity: 1;
+  top: 0;
+  bottom: 0;
+}
+.thumb {
+  clip-path: polygon(16% 0, 100% 0, 84% 100%, 0 100%);
+  width: 40px;
+  height: 40px;
+  font-size: 0.7rem;
+}
+.identity {
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  display: flex;
+}
+.rowLink {
+  text-align: left;
+  max-width: 100%;
+}
+.rowLink:hover .name,
+.rowLink:focus-visible .name {
+  color: var(--tone);
+}
+.name {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.3;
+  transition: color var(--transition-link);
+  display: block;
+  overflow: hidden;
+}
+.desc {
+  color: var(--text-dim);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.82rem;
+  overflow: hidden;
+}
+/* The facts are table cells on a wide list. */
+.facts {
+  display: contents;
+}
+/* One line of tags: a tag that does not fit wraps onto a hidden second line
+   instead of being cut in the middle of its word. */
+.tags {
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: center;
+  gap: 1.5rem 0.4rem;
+  min-width: 0;
+  max-height: 1.75rem;
+  padding: 0.1rem 0 0 3px;
+  display: flex;
+  overflow: hidden;
+}
+.tags > * {
+  flex: none;
+}
+.locale {
+  min-width: 0;
+}
+.near {
+  color: var(--tone);
+}
+.players {
+  flex-direction: column;
+  gap: 0.35rem;
+  display: flex;
+}
+.count {
+  white-space: nowrap;
+  align-items: baseline;
+  gap: 0.15rem;
+  display: flex;
+}
+.count b {
+  font-family: var(--font-heading);
+  letter-spacing: -0.05em;
+  font-size: 1.05rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+}
+.count span {
+  color: var(--text-faint);
+  font-size: 0.78rem;
+}
+.meter {
+  --meter: var(--text-faint);
+}
+.pop-low .count b {
+  color: var(--text-dim);
+}
+.pop-mid .meter,
+.pop-high .meter {
+  --meter: var(--tone);
+}
+.pop-high .count b {
+  color: var(--tone);
+}
+.pop-full .meter {
+  --meter: var(--red);
+}
+.pop-full .count b {
+  color: var(--red);
+}
+.actions {
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  display: flex;
+}
+.fav {
+  color: var(--text-faint);
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1rem;
+  transition: color var(--transition-link);
+  display: flex;
+}
+.fav:hover {
+  color: var(--text-primary);
+}
+.fav[aria-pressed="true"] {
+  color: var(--tone);
+}
+.fav[aria-pressed="true"] :global(svg path) {
+  fill: currentColor;
+}
+/* Quiet until the row is in focus, so forty buttons do not shout at once. */
+.connect {
+  --btn-padding-x: 1.05em;
+  --btn-padding-y: 1.35em;
+  font-size: 0.7rem;
+}
+.row:hover .connect,
+.selected .connect {
+  color: var(--body);
+}
+.row:hover .connect:before,
+.selected .connect:before {
+  background: var(--tone);
+  border-color: var(--tone);
+}
+.full .connect {
+  opacity: 0.55;
+}
+.hints {
+  color: var(--text-faint);
+  margin-top: 1.1rem;
+  padding: 0 0 0 0.6rem;
+  font-size: 0.8rem;
+  line-height: 2;
+}
+.hints kbd {
+  font-size: 0.7rem;
+}
+.hints a {
+  color: var(--text-dim);
+  text-underline-offset: 0.25em;
+  text-decoration: underline;
+}
+.hints a:hover {
+  color: var(--tone);
+}
+
+/* The columns follow the list's own width (rail and inspector take their share). */
+@container list (max-width: 1060px) {
+  .table {
+    --cols: 40px minmax(0, 1fr) 7.25rem 6.5rem 5.75rem var(--actions-width, 8.75rem);
+  }
+  .extraTag {
+    display: none;
+  }
+}
+/* Cards: on a narrow list each server becomes a two-line card. The switch is
+   made in server-browser.tsx from the list's real width and whether the
+   inspector is open (the rows then drop their Connect button and the table
+   still fits), so opening the inspector never reflows rows above the viewport. */
+.cards .columns {
+  display: none;
+}
+.cards .row {
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "thumb identity actions"
+    "thumb facts facts";
+  row-gap: 0.5rem;
+  padding: 0.75rem 0.9rem;
+}
+.cards .thumb {
+  grid-area: thumb;
+  align-self: start;
+}
+.cards .identity {
+  grid-area: identity;
+}
+.cards .actions {
+  grid-area: actions;
+}
+.cards .tags {
+  max-height: none;
+  row-gap: 0.4rem;
+}
+.cards .facts {
+  flex-wrap: wrap;
+  grid-area: facts;
+  align-items: center;
+  gap: 0.45rem 1rem;
+  display: flex;
+}
+.cards .players {
+  flex-direction: row;
+  align-items: baseline;
+}
+.cards .meter {
+  display: none;
+}
+.cards .desc {
+  white-space: normal;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+}
+/* A phone cannot run the launcher: the row keeps the favourite, the profile
+   (a tap away) keeps Connect. */
+@container list (max-width: 480px) {
+  .connect {
+    display: none !important;
+  }
+}
+
+/* Narrow layouts -------------------------------------------------------- */
+
+@media screen and (max-width: 1084px) {
+  .drawerToggle {
+    display: inline-flex !important;
+  }
+  .railToggle {
+    display: none;
+  }
+  .workspace,
+  .railCollapsed .workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .railCollapsed .rail {
+    display: block;
+  }
+  .rail {
+    z-index: 320;
+    background: var(--surface-1);
+    border-right: 1px solid var(--line);
+    width: min(88vw, 360px);
+    max-height: none;
+    padding: 1.5rem 1.4rem;
+    transition: transform 0.35s var(--ease-out-expo);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-105%);
+  }
+  .filtersOpen .rail {
+    transform: none;
+  }
+  .railClose {
+    display: block;
+  }
+  .scrim {
+    z-index: 310;
+    background: oklch(from var(--body) l c h / 0.7);
+    position: fixed;
+    inset: 0;
+  }
+  .filtersOpen .scrim {
+    display: block;
+  }
+}
+@media screen and (max-width: 760px) {
+  .commandInner {
+    gap: 0.6rem;
+    padding-block: 0.6rem;
+  }
+  .search {
+    flex-basis: 100%;
+    order: -1;
+  }
+  .sort select {
+    min-width: 0;
+  }
+}

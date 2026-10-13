@@ -1,0 +1,126 @@
+.nav {
+  flex-direction: column;
+  gap: 1.6rem;
+  display: flex;
+  position: relative;
+}
+.group {
+  flex-direction: column;
+  gap: 0.5rem;
+  display: flex;
+}
+.groupLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--text-faint);
+  padding-left: 0.9rem;
+  font-size: 0.6rem;
+}
+.list {
+  flex-direction: column;
+  display: flex;
+}
+.link {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  white-space: nowrap;
+  isolation: isolate;
+  align-items: center;
+  gap: 0.8rem;
+  height: 2.6rem;
+  padding: 0 0.9rem;
+  font-size: 0.68rem;
+  transition: color var(--transition-link);
+  display: flex;
+  position: relative;
+}
+.link:before {
+  content: "";
+  z-index: -1;
+  border: 1px solid #0000;
+  position: absolute;
+  inset: 0.2rem 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.link:hover {
+  color: var(--text-primary);
+}
+.link:hover:before {
+  background: var(--surface-1);
+}
+.link[aria-current="page"] {
+  color: var(--tone);
+}
+.link[aria-current="page"]:before {
+  background: oklch(from var(--tone) l c h / 7%);
+  border-color: oklch(from var(--tone) l c h / 45%);
+  box-shadow: inset 3px 0 0 var(--tone);
+}
+.index {
+  font-family: var(--font-mono);
+  font-variation-settings: normal;
+  letter-spacing: 0;
+  color: var(--text-faint);
+  font-size: 0.68rem;
+}
+.link[aria-current="page"] .index {
+  color: var(--tone);
+}
+.glyph {
+  flex: none;
+  font-size: 1.15rem;
+}
+.label {
+  position: relative;
+  top: 0.05em;
+}
+
+/* Below the two-column layout the navigation is a scrolling strip. */
+@media screen and (max-width: 1084px) {
+  .nav {
+    border-block: 1px solid var(--line);
+    scrollbar-width: none;
+    flex-direction: row;
+    gap: 0;
+    padding: 0 var(--page-gutter);
+    overflow-x: auto;
+  }
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+  .group {
+    flex-direction: row;
+    flex: none;
+    align-items: center;
+    gap: 0;
+  }
+  .group + .group {
+    border-left: 1px solid var(--line);
+    margin-left: 0.6rem;
+    padding-left: 0.6rem;
+  }
+  .groupLabel {
+    display: none;
+  }
+  .list {
+    flex-direction: row;
+  }
+  .link {
+    height: 3.2rem;
+    padding: 0 1rem;
+  }
+  .link:before {
+    inset: 0.55rem 0;
+  }
+  .index {
+    display: none;
+  }
+}

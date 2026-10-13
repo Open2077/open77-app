@@ -1,0 +1,131 @@
+:where(.dialog) {
+  --tone: var(--active-color);
+  color: var(--text-primary);
+  background: none;
+  border: 0;
+  width: min(92vw, var(--dialog-width, 640px));
+  max-width: none;
+  max-height: min(86dvh, 900px);
+  margin: auto;
+  padding: 0;
+  overflow: visible;
+}
+:where(.sm) {
+  --dialog-width: 460px;
+}
+:where(.lg) {
+  --dialog-width: 900px;
+}
+.dialog::backdrop {
+  background: oklch(from var(--body) l c h / 0.72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+.dialog[open] {
+  animation: enter 0.28s var(--ease-out-expo);
+}
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+.frame {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  max-height: inherit;
+  flex-direction: column;
+  display: flex;
+  position: relative;
+}
+/* Skewed tone brackets on two corners, the design's frame signature. */
+.frame:before,
+.frame:after {
+  content: "";
+  border: 1px solid var(--tone);
+  pointer-events: none;
+  width: 56px;
+  height: 56px;
+  position: absolute;
+  transform: skewX(var(--skew));
+}
+.frame:before {
+  border-width: 1px 0 0 1px;
+  top: -5px;
+  left: -5px;
+}
+.frame:after {
+  border-width: 0 1px 1px 0;
+  bottom: -5px;
+  right: -5px;
+}
+.head {
+  border-bottom: 1px solid var(--line);
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.4rem 1.6rem 1.2rem;
+  display: flex;
+}
+.eyebrow {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--tone);
+  margin-bottom: 0.6rem;
+  font-size: 0.7rem;
+}
+.title {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.6rem;
+  line-height: 0.95;
+}
+.close {
+  color: var(--text-dim);
+  flex: none;
+  justify-content: center;
+  align-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 1.15rem;
+  transition: color var(--transition-link);
+  display: flex;
+  position: relative;
+}
+.close:before {
+  content: "";
+  border: 1px solid var(--line);
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition: border-color var(--transition-link);
+}
+.close:hover {
+  color: var(--text-primary);
+}
+.close:hover:before {
+  border-color: var(--tone);
+}
+.body {
+  overscroll-behavior: contain;
+  padding: 1.4rem 1.6rem;
+  line-height: 1.5;
+  overflow-y: auto;
+}
+.foot {
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem 1.25rem;
+  padding: 1.1rem 1.6rem;
+  display: flex;
+}
+.close:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

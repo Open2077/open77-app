@@ -262,6 +262,34 @@ export function rehypeWrapTables() {
   };
 }
 
+/**
+ * Names the language of every highlighted block.
+ *
+ * Shiki records it as a `language-*` class on the inner `<code>`; the docs
+ * frame shows it as a label on the `<pre>`, which CSS can only read from an
+ * attribute of that element. Plain-text blocks get no label.
+ */
+export function rehypeLabelCode() {
+  return (tree: HastRoot) => {
+    visit(tree, "element", (node: Element) => {
+      if (node.tagName !== "pre") return;
+      const code = node.children.find(
+        (child): child is Element => child.type === "element" && child.tagName === "code",
+      );
+      // Shiki writes its hast with a `class` property, rehype with `className`.
+      const className: unknown = code?.properties?.className ?? code?.properties?.class;
+      const classes: string[] = Array.isArray(className)
+        ? className.map(String)
+        : typeof className === "string"
+          ? className.split(" ")
+          : [];
+      const language = classes.find((name) => name.startsWith("language-"))?.slice("language-".length);
+      if (!language || language === "text" || language === "plaintext") return;
+      node.properties = { ...node.properties, dataLanguage: language };
+    });
+  };
+}
+
 function textOf(node: Element): string {
   let out = "";
   visit(node, "text", (child) => {
@@ -357,6 +385,7 @@ async function renderGuide(slug: string): Promise<RenderedGuide | null> {
       fallbackLanguage: "text",
       addLanguageClass: true,
     })
+    .use(rehypeLabelCode)
     .use(rehypeStringify)
     .process(markdown);
 

@@ -2,10 +2,22 @@
 
 import { useCallback, useState } from "react";
 
+import {
+  AdminPanel,
+  AdminTable,
+  EmptyBlock,
+  LoadingBlock,
+  Mono,
+  StatusTag,
+  cell,
+} from "@/components/admin/admin-kit";
 import { ArmButton } from "@/components/admin/arm-button";
 import { formatDateTime } from "@/components/admin/format";
+import { HashCell } from "@/components/admin/hash-cell";
 import { ErrorStrip, useAdminData } from "@/components/admin/use-admin-data";
-import { DownloadIcon, ServerRackIcon, ShieldIcon } from "@/components/icons";
+import { Button } from "@/components/admin/admin-button";
+import { Select } from "@/components/ui/field";
+import { download02, layers01, packageBox, serverStack01, shield01 } from "@/components/ui/icons";
 import { masterCall, MasterApiError, MASTER_URL } from "@/lib/account/api";
 import * as admin from "@/lib/account/admin-api";
 import type {
@@ -14,6 +26,8 @@ import type {
   BuildStatus,
   ModManifestSummary,
 } from "@/lib/account/admin-api";
+
+import styles from "./releases-panel.module.css";
 
 /** The live mod manifest as served publicly (a subset of the signed document). */
 type RawManifest = {
@@ -39,10 +53,10 @@ const KIND_LABEL: Record<BuildKind, string> = {
   launcher: "Launcher",
 };
 
-const STATUS_CHIP: Record<BuildStatus, string> = {
-  active: "adm-chip-ok",
-  deprecated: "adm-chip-dim",
-  revoked: "adm-chip-warn",
+const STATUS_TAG: Record<BuildStatus, "ok" | "neutral" | "danger"> = {
+  active: "ok",
+  deprecated: "neutral",
+  revoked: "danger",
 };
 
 function formatMs(ms: number): string {
@@ -84,15 +98,6 @@ function serverUrls(cdnBaseUrl: string, version: string): { href: string; label:
     { href: `${base}-win-x64.zip`, label: "windows zip" },
     { href: `${base}-linux-x64.tar.gz`, label: "linux tar.gz" },
   ];
-}
-
-function DownloadLink({ href, label }: { href: string; label: string }) {
-  return (
-    <a className="adm-download" href={href} target="_blank" rel="noreferrer noopener" title={href}>
-      <DownloadIcon size={13} />
-      {label}
-    </a>
-  );
 }
 
 /**
@@ -141,18 +146,24 @@ export function ReleasesPanel() {
   return (
     <>
       <ErrorStrip message={error} />
-      {loading && !data ? <p className="ac-loading">Loading release state…</p> : null}
+      {loading && !data ? <LoadingBlock label="Loading release state" rows={3} /> : null}
 
       {enforcement ? (
-        <section className="adm-panel">
-          <div className="adm-panel-head">
-            <h2 className="adm-panel-title">
-              <ShieldIcon size={16} />
-              Enforcement posture
-            </h2>
-            <span className="adm-faint adm-mono">game build {enforcement.requiredGameBuild}</span>
-          </div>
-          <div className="adm-stats">
+        <AdminPanel
+          title="Enforcement posture"
+          icon={shield01}
+          brackets
+          meta={<>game build {enforcement.requiredGameBuild}</>}
+          footnote={
+            <>
+              Enforcement is set in the master config (<code className={styles.code}>MasterOptions</code>) and shown
+              read-only here. Revoked builds are always refused; unknown-build lock-down is the future full
+              posture. Enforcement is fast-revocation + forced-upgrade, not tamper-proofing. A patched client can
+              lie about its own hash.
+            </>
+          }
+        >
+          <div className={styles.posture}>
             <PostureTile
               label="Revoked builds"
               on={enforcement.rejectRevokedBuilds}
@@ -173,66 +184,61 @@ export function ReleasesPanel() {
               offText="Permitted (beta)"
             />
           </div>
-          <p className="adm-footnote">
-            Enforcement is set in the master config (<span className="adm-mono">MasterOptions</span>) and shown
-            read-only here. Revoked builds are always refused; unknown-build lock-down is the future full
-            posture. Enforcement is fast-revocation + forced-upgrade, not tamper-proofing. A patched client can
-            lie about its own hash.
-          </p>
-        </section>
+        </AdminPanel>
       ) : null}
 
-      <section className="adm-panel">
-        <div className="adm-panel-head">
-          <h2 className="adm-panel-title">
-            <DownloadIcon size={15} />
-            Live channels
-          </h2>
-          <span className="adm-faint">what players and owners download now</span>
-        </div>
-        <div className="adm-channels">
-          <ChannelCard
-            title="Client mod"
-            version={liveMod?.version ?? null}
-            published={liveMod ? formatMs(liveMod.issuedAtMs) : null}
-            meta={liveMod ? `${liveMod.fileCount} files · needs game ${liveMod.requiredGameBuild}` : null}
-            links={
-              liveMod
-                ? [
-                    { href: `${MASTER_URL}/api/v1/mod/manifest`, label: "Signed manifest" },
-                    { href: liveMod.baseUrl, label: "Mod file root" },
-                  ]
-                : []
-            }
-            empty="No mod manifest published."
-            source="GET /api/v1/mod/manifest"
-          />
-          <ChannelCard
-            title="Launcher"
-            version={launcher?.version ?? null}
-            published={launcher ? formatDateTime(launcher.releasedAtUtc) : null}
-            meta={launcher ? `sha ${launcher.sha256.slice(0, 12)}…` : null}
-            links={launcher && cdn ? [{ href: launcherUrl(cdn, launcher.version), label: "Open77Launcher.exe" }] : []}
-            empty="No active launcher build registered."
-            source="latest active launcher build"
-          />
-          <ChannelCard
-            title="Server"
-            version={server?.version ?? null}
-            published={server ? formatDateTime(server.releasedAtUtc) : null}
-            meta={server ? `sha ${server.sha256.slice(0, 12)}…` : null}
-            links={server && cdn ? serverUrls(cdn, server.version) : []}
-            empty="No active server build registered."
-            source="latest active server build"
-          />
-        </div>
-        <p className="adm-footnote">
-          Launcher / server versions and links come from the master&apos;s build allowlist (the latest
-          <span className="adm-mono"> active</span> build of each kind); the actual CDN pointer that a client
-          follows is <span className="adm-mono">latest.json</span> on <span className="adm-mono">{cdn || "the CDN"}</span>,
-          maintained on the CDN box. The mod card reflects the live signed manifest directly.
-        </p>
-      </section>
+      {data ? (
+        <AdminPanel
+          title="Live channels"
+          icon={download02}
+          meta="what players and owners download now"
+          footnote={
+            <>
+              Launcher / server versions and links come from the master&apos;s build allowlist (the latest{" "}
+              <code className={styles.code}>active</code> build of each kind); the actual CDN pointer that a client
+              follows is <code className={styles.code}>latest.json</code> on <code className={styles.code}>{cdn || "the CDN"}</code>,
+              maintained on the CDN box. The mod card reflects the live signed manifest directly.
+            </>
+          }
+        >
+          <div className={styles.channels}>
+            <ChannelCard
+              title="Client mod"
+              version={liveMod?.version ?? null}
+              published={liveMod ? formatMs(liveMod.issuedAtMs) : null}
+              meta={liveMod ? `${liveMod.fileCount} files · needs game ${liveMod.requiredGameBuild}` : null}
+              links={
+                liveMod
+                  ? [
+                      { href: `${MASTER_URL}/api/v1/mod/manifest`, label: "Signed manifest" },
+                      { href: liveMod.baseUrl, label: "Mod file root" },
+                    ]
+                  : []
+              }
+              empty="No mod manifest published."
+              source="GET /api/v1/mod/manifest"
+            />
+            <ChannelCard
+              title="Launcher"
+              version={launcher?.version ?? null}
+              published={launcher ? formatDateTime(launcher.releasedAtUtc) : null}
+              meta={launcher ? `sha ${launcher.sha256.slice(0, 12)}…` : null}
+              links={launcher && cdn ? [{ href: launcherUrl(cdn, launcher.version), label: "Open77Launcher.exe" }] : []}
+              empty="No active launcher build registered."
+              source="latest active launcher build"
+            />
+            <ChannelCard
+              title="Server"
+              version={server?.version ?? null}
+              published={server ? formatDateTime(server.releasedAtUtc) : null}
+              meta={server ? `sha ${server.sha256.slice(0, 12)}…` : null}
+              links={server && cdn ? serverUrls(cdn, server.version) : []}
+              empty="No active server build registered."
+              source="latest active server build"
+            />
+          </div>
+        </AdminPanel>
+      ) : null}
 
       <ModHistory manifests={manifests} busy={busy} onRollback={(v) => run(() => admin.rollbackMod(token!, v))} />
 
@@ -258,16 +264,13 @@ function PostureTile({
   offText: string;
   dangerWhenOff?: boolean;
 }) {
-  const chip = on ? "adm-chip-ok" : dangerWhenOff ? "adm-chip-warn" : "adm-chip-dim";
   return (
-    <div className="adm-stat">
-      <div className="adm-stat-value">
-        <span className={`adm-chip ${chip}`}>{on ? "ON" : "OFF"}</span>
-      </div>
-      <div className="adm-stat-label">{label}</div>
-      <div className="adm-faint" style={{ fontSize: 12, marginTop: 4 }}>
-        {on ? onText : offText}
-      </div>
+    <div className={styles.tile} data-state={on ? "on" : dangerWhenOff ? "danger" : "off"}>
+      <span className={styles.tileLabel}>{label}</span>
+      <span className={styles.tileValue}>
+        <StatusTag status={on ? "live" : dangerWhenOff ? "danger" : "neutral"}>{on ? "ON" : "OFF"}</StatusTag>
+      </span>
+      <span className={styles.tileText}>{on ? onText : offText}</span>
     </div>
   );
 }
@@ -290,28 +293,30 @@ function ChannelCard({
   source: string;
 }) {
   return (
-    <div className="adm-channel">
-      <div className="adm-channel-title">{title}</div>
+    <article className={styles.channel} data-empty={version ? undefined : ""}>
+      <h3 className={styles.channelTitle}>{title}</h3>
       {version ? (
         <>
-          <div className="adm-channel-version adm-mono">{version}</div>
-          <div className="adm-faint adm-channel-meta">
+          <p className={styles.version}>{version}</p>
+          <div className={styles.channelMeta}>
             {published ? <span>published {published}</span> : null}
-            {meta ? <span className="adm-mono">{meta}</span> : null}
+            {meta ? <Mono tone="dim">{meta}</Mono> : null}
           </div>
-          <div className="adm-channel-links">
-            {links.map((link) => (
-              <DownloadLink key={link.href} href={link.href} label={link.label} />
-            ))}
-          </div>
+          {links.length ? (
+            <div className={styles.links}>
+              {links.map((link) => (
+                <Button key={link.href} href={link.href} size="sm" color="neutral" border lines="none" icon={download02} iconPosition="left" title={link.href}>
+                  {link.label}
+                </Button>
+              ))}
+            </div>
+          ) : null}
         </>
       ) : (
-        <div className="adm-empty" style={{ padding: "12px 0" }}>
-          {empty}
-        </div>
+        <p className={styles.channelEmpty}>{empty}</p>
       )}
-      <div className="adm-channel-source adm-faint adm-mono">{source}</div>
-    </div>
+      <p className={styles.source}>{source}</p>
+    </article>
   );
 }
 
@@ -326,66 +331,71 @@ function ModHistory({
 }) {
   if (!manifests) return null;
   return (
-    <section className="adm-panel">
-      <div className="adm-panel-head">
-        <h2 className="adm-panel-title">
-          <DownloadIcon size={15} />
-          Mod manifest history
-        </h2>
-        <span className="adm-faint">rollback candidates</span>
-      </div>
+    <AdminPanel
+      title="Mod manifest history"
+      icon={layers01}
+      meta="rollback candidates"
+      footnote={
+        <>
+          Rollback re-serves a prior manifest&apos;s exact signed bytes as the live one. The launcher re-syncs the
+          mod to that version&apos;s files on its next check (those files already live on the CDN). It does{" "}
+          <strong>not</strong> move the launcher or server <code className={styles.code}>latest.json</code> pointers;
+          those live on the CDN box and are rolled back there.
+        </>
+      }
+    >
       {manifests.length === 0 ? (
-        <p className="adm-empty">
+        <EmptyBlock icon={layers01}>
           No archived mod manifest yet. The archive fills as manifests are published; only versions the master
           has archived can be rolled back to.
-        </p>
+        </EmptyBlock>
       ) : (
-        <div className="adm-tablewrap">
-          <table className="adm-table">
-            <thead>
-              <tr>
-                <th>Version</th>
-                <th>Published</th>
-                <th>Files</th>
-                <th>Game build</th>
-                <th className="adm-actions-cell">Actions</th>
+        <AdminTable caption="Archived mod manifests" minWidth="44rem">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Published</th>
+              <th className={cell.num}>Files</th>
+              <th>Game build</th>
+              <th className={cell.actions}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {manifests.map((m) => (
+              <tr key={m.version} className={m.current ? cell.active : undefined}>
+                <td className={cell.nowrap}>
+                  <span className={styles.versionCell}>
+                    <Mono>{m.version}</Mono>
+                    {m.current ? <StatusTag status="live">live</StatusTag> : null}
+                  </span>
+                </td>
+                <td className={cell.nowrap}>
+                  <Mono tone="dim">{formatMs(m.issuedAtMs)}</Mono>
+                </td>
+                <td className={cell.num}>
+                  <Mono>{m.fileCount}</Mono>
+                </td>
+                <td>
+                  <Mono tone="dim">{m.requiredGameBuild}</Mono>
+                </td>
+                <td className={cell.actions}>
+                  {m.current ? (
+                    <span className={styles.current}>current</span>
+                  ) : (
+                    <ArmButton
+                      label="Roll back"
+                      confirmLabel="Re-publish this?"
+                      disabled={busy}
+                      onConfirm={() => onRollback(m.version)}
+                    />
+                  )}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {manifests.map((m) => (
-                <tr key={m.version} className={m.current ? "" : "is-muted"}>
-                  <td className="adm-mono">
-                    {m.version}{" "}
-                    {m.current ? <span className="adm-chip adm-chip-ok">live</span> : null}
-                  </td>
-                  <td className="adm-mono adm-faint">{formatMs(m.issuedAtMs)}</td>
-                  <td className="adm-num">{m.fileCount}</td>
-                  <td className="adm-mono adm-dim">{m.requiredGameBuild}</td>
-                  <td className="adm-actions-cell">
-                    {m.current ? (
-                      <span className="adm-faint">current</span>
-                    ) : (
-                      <ArmButton
-                        label="Roll back"
-                        confirmLabel="Re-publish this?"
-                        disabled={busy}
-                        onConfirm={() => onRollback(m.version)}
-                      />
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </AdminTable>
       )}
-      <p className="adm-footnote">
-        Rollback re-serves a prior manifest&apos;s exact signed bytes as the live one. The launcher re-syncs the
-        mod to that version&apos;s files on its next check (those files already live on the CDN). It does{" "}
-        <strong>not</strong> move the launcher or server <span className="adm-mono">latest.json</span> pointers;
-        those live on the CDN box and are rolled back there.
-      </p>
-    </section>
+    </AdminPanel>
   );
 }
 
@@ -403,87 +413,94 @@ function BuildsTable({
   const shown = kindFilter === "all" ? builds : builds.filter((b) => b.kind === kindFilter);
 
   return (
-    <section className="adm-panel">
-      <div className="adm-panel-head">
-        <h2 className="adm-panel-title">
-          <ServerRackIcon size={16} />
-          Authorized builds
-        </h2>
-        <select
-          className="adm-select"
+    <AdminPanel
+      title="Authorized builds"
+      icon={serverStack01}
+      meta={<>{shown.length} of {builds.length}</>}
+      actions={
+        <Select
+          compact
           value={kindFilter}
           onChange={(event) => setKindFilter(event.target.value as BuildKind | "all")}
           aria-label="Filter builds by kind"
+          className={styles.kindFilter}
         >
           <option value="all">All kinds</option>
           <option value="client">Client mod</option>
           <option value="server">Server</option>
           <option value="launcher">Launcher</option>
-        </select>
-      </div>
+        </Select>
+      }
+      footnote={
+        <>
+          This is the anti-crack allowlist consulted at connect-ticket time (clients) and heartbeat (servers).
+          <strong> Revoking a client build is the fleet kill switch</strong>: those clients stop getting connect
+          tickets on their next join and are told to update. Revoking a server build stops it getting run leases.
+          Re-activate to undo.
+        </>
+      }
+    >
       {shown.length === 0 ? (
-        <p className="adm-empty">No builds registered for this filter.</p>
+        <EmptyBlock icon={packageBox}>No builds registered for this filter.</EmptyBlock>
       ) : (
-        <div className="adm-tablewrap">
-          <table className="adm-table">
-            <thead>
-              <tr>
-                <th>Kind</th>
-                <th>Version</th>
-                <th>SHA-256</th>
-                <th>Game</th>
-                <th>Status</th>
-                <th>Registered</th>
-                <th className="adm-actions-cell">Actions</th>
+        <AdminTable caption="Authorized builds" minWidth="62rem">
+          <thead>
+            <tr>
+              <th>Kind</th>
+              <th>Version</th>
+              <th>SHA-256</th>
+              <th>Game</th>
+              <th>Status</th>
+              <th>Registered</th>
+              <th className={cell.actions}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shown.map((b) => (
+              <tr key={b.buildId} className={b.status === "revoked" ? cell.muted : undefined}>
+                <td className={cell.nowrap}>
+                  <StatusTag status="neutral">{KIND_LABEL[b.kind]}</StatusTag>
+                </td>
+                <td className={cell.nowrap}>
+                  <Mono>{b.version}</Mono>
+                </td>
+                <td>
+                  <HashCell sha256={b.sha256} />
+                </td>
+                <td>
+                  <Mono tone="dim">{b.gameBuild ?? "—"}</Mono>
+                </td>
+                <td>
+                  <StatusTag status={STATUS_TAG[b.status]}>{b.status}</StatusTag>
+                </td>
+                <td className={cell.nowrap}>
+                  <Mono tone="dim">{formatDateTime(b.releasedAtUtc)}</Mono>
+                </td>
+                <td className={cell.actions}>
+                  <span className={styles.actions}>
+                    {b.status !== "active" ? (
+                      <ArmButton
+                        label="Re-activate"
+                        confirmLabel="Confirm?"
+                        disabled={busy}
+                        onConfirm={() => onStatus(b.buildId, "active")}
+                      />
+                    ) : null}
+                    {b.status !== "revoked" ? (
+                      <ArmButton
+                        label={b.kind === "client" ? "Revoke (kill)" : "Revoke"}
+                        confirmLabel="Confirm revoke?"
+                        disabled={busy}
+                        onConfirm={() => onStatus(b.buildId, "revoked")}
+                      />
+                    ) : null}
+                  </span>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {shown.map((b) => (
-                <tr key={b.buildId} className={b.status === "revoked" ? "is-muted" : ""}>
-                  <td>
-                    <span className="adm-chip adm-chip-dim">{KIND_LABEL[b.kind]}</span>
-                  </td>
-                  <td className="adm-mono">{b.version}</td>
-                  <td className="adm-mono adm-faint" title={b.sha256}>
-                    {b.sha256.slice(0, 16)}…
-                  </td>
-                  <td className="adm-mono adm-dim">{b.gameBuild ?? "—"}</td>
-                  <td>
-                    <span className={`adm-chip ${STATUS_CHIP[b.status]}`}>{b.status}</span>
-                  </td>
-                  <td className="adm-mono adm-faint">{formatDateTime(b.releasedAtUtc)}</td>
-                  <td className="adm-actions-cell">
-                    <div className="adm-action-row">
-                      {b.status !== "active" ? (
-                        <ArmButton
-                          label="Re-activate"
-                          confirmLabel="Confirm?"
-                          disabled={busy}
-                          onConfirm={() => onStatus(b.buildId, "active")}
-                        />
-                      ) : null}
-                      {b.status !== "revoked" ? (
-                        <ArmButton
-                          label={b.kind === "client" ? "Revoke (kill)" : "Revoke"}
-                          confirmLabel="Confirm revoke?"
-                          disabled={busy}
-                          onConfirm={() => onStatus(b.buildId, "revoked")}
-                        />
-                      ) : null}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </AdminTable>
       )}
-      <p className="adm-footnote">
-        This is the anti-crack allowlist consulted at connect-ticket time (clients) and heartbeat (servers).
-        <strong> Revoking a client build is the fleet kill switch</strong>: those clients stop getting connect
-        tickets on their next join and are told to update. Revoking a server build stops it getting run leases.
-        Re-activate to undo.
-      </p>
-    </section>
+    </AdminPanel>
   );
 }

@@ -1,0 +1,29 @@
+.actions {
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+  display: inline-flex;
+}
+.dialogBody {
+  flex-direction: column;
+  gap: 1.1rem;
+  display: flex;
+}
+.target {
+  background: var(--body);
+  border: 1px solid var(--line);
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1.1rem;
+  display: flex;
+}
+.targetIcon {
+  color: var(--tone);
+  flex: none;
+  font-size: 1.5rem;
+  display: inline-flex;
+}
+.explain {
+  color: var(--text-dim);
+  line-height: 1.6;
+}

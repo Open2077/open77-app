@@ -1,0 +1,293 @@
+.section {
+  scroll-margin-top: calc(var(--header-height) + 1.5rem);
+  font-size: var(--doc-text, 1rem);
+}
+.section + .section {
+  margin-top: 3.6rem;
+}
+
+/* Mirrors the h2 of rendered guides (Prose + DocProse). */
+.heading {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  color: var(--text-primary);
+  text-wrap: balance;
+  background: linear-gradient(90deg, var(--tone) 0 2.4rem, var(--line) 2.4rem) top left / 100% 1px no-repeat;
+  margin-bottom: 1.1rem;
+  padding-top: 1.1rem;
+  font-size: 1.5em;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.98;
+}
+.section:first-child .heading {
+  background: none;
+  padding-top: 0;
+}
+.heading:before {
+  content: "//";
+  color: var(--tone);
+  letter-spacing: -0.12em;
+  margin-right: 0.35em;
+}
+.anchor {
+  color: var(--tone);
+  opacity: 0;
+  margin-left: 0.4em;
+  font-size: 0.7em;
+  transition: opacity var(--transition-link);
+}
+.heading:hover .anchor {
+  opacity: 1;
+}
+
+.text {
+  color: oklch(from var(--text-primary) l c h / 86%);
+  max-width: 35em;
+  line-height: 1.7;
+}
+.text + .text,
+.text + .facts,
+.facts + .text {
+  margin-top: 1.1em;
+}
+.text strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.text a:not(.link) {
+  color: var(--tone);
+  text-underline-offset: 0.22em;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+.text a:not(.link):hover {
+  color: var(--text-primary);
+}
+.text code,
+.stepBody code,
+.facts code {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  padding: 0.1em 0.4em;
+  font-size: 0.86em;
+}
+
+.subheading {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 400;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--tone);
+  margin: 2.4rem 0 1rem;
+  font-size: 0.7rem;
+}
+
+.link {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--tone);
+  align-items: center;
+  gap: 0.6em;
+  font-size: 0.66rem;
+  line-height: 1.4;
+  transition: color var(--transition-link);
+  display: inline-flex;
+}
+.link svg {
+  flex: none;
+  font-size: 1.25em;
+  transition: transform var(--transition-link);
+}
+.link:hover {
+  color: var(--text-primary);
+}
+.link:hover svg {
+  transform: translateX(3px);
+}
+.text .link,
+.section > .link {
+  margin-top: 1.2rem;
+}
+
+/* Steps ------------------------------------------------------------------- */
+
+.steps {
+  counter-reset: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+  margin-top: 1.8rem;
+  display: grid;
+}
+.steps3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.step {
+  border: 1px solid var(--line);
+  background: var(--surface-1);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.5rem 1.6rem 1.6rem;
+  transition: border-color var(--transition-link);
+  display: flex;
+  position: relative;
+}
+.step:before {
+  content: "";
+  border: solid var(--line-strong);
+  border-width: 1px 0 0 1px;
+  pointer-events: none;
+  width: 2.2rem;
+  height: 2.2rem;
+  transition: border-color var(--transition-link);
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  transform: skewX(var(--skew));
+}
+.step:hover {
+  border-color: var(--line-strong);
+}
+.step:hover:before {
+  border-color: var(--tone);
+}
+.stepNum {
+  font-family: var(--font-heading);
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--tone);
+  font-size: 2.6rem;
+  font-style: italic;
+  line-height: 0.9;
+}
+.stepNum svg {
+  color: var(--tone);
+  -webkit-text-stroke: 0;
+  font-size: 1.6rem;
+}
+.stepTitle {
+  color: var(--text-primary);
+  font-size: 1.06em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.stepBody {
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+.step .link {
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+/* Facts ------------------------------------------------------------------- */
+
+.facts {
+  border-top: 1px solid var(--line);
+  margin-top: 1.6rem;
+}
+.fact {
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+  gap: 0.5rem 2rem;
+  padding: 1.1rem 0;
+  display: grid;
+}
+.fact dt {
+  color: var(--text-primary);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.fact dt code {
+  font-weight: 400;
+}
+.fact dt a {
+  text-underline-offset: 0.25em;
+  text-decoration: underline;
+  text-decoration-color: var(--tone);
+  text-decoration-thickness: 1px;
+  transition: color var(--transition-link);
+}
+.fact dt a:hover {
+  color: var(--tone);
+}
+.fact dd {
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* Features ---------------------------------------------------------------- */
+
+.features {
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  margin-top: 1.8rem;
+  display: grid;
+}
+.feature {
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.6rem 1.5rem 1.7rem;
+  transition: background-color var(--transition-link);
+  display: flex;
+}
+.feature:hover {
+  background: var(--surface-1);
+}
+.featureIcon {
+  color: var(--tone);
+  margin-bottom: 0.4rem;
+  font-size: 1.6rem;
+}
+.featureTitle {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+}
+.feature p {
+  color: var(--text-dim);
+  font-size: 0.94em;
+  line-height: 1.55;
+}
+
+.snippet {
+  margin-top: 1.6rem;
+}
+.snippet + .snippet {
+  margin-top: 1.2rem;
+}
+.note {
+  margin-top: 1.6rem;
+}
+
+@media screen and (max-width: 700px) {
+  .steps,
+  .steps3 {
+    grid-template-columns: 1fr;
+  }
+  .fact {
+    grid-template-columns: 1fr;
+  }
+  .heading {
+    font-size: 1.5rem;
+  }
+}
+@media screen and (min-width: 701px) and (max-width: 1250px) {
+  .steps3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

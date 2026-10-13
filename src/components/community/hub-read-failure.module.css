@@ -1,0 +1,56 @@
+.failure {
+  --tone: var(--blue);
+  border: 1px solid var(--line);
+  background: var(--surface-1);
+  isolation: isolate;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 1.25rem 1.75rem;
+  padding: 2.2rem 2.4rem;
+  display: grid;
+  position: relative;
+  overflow: hidden;
+}
+.failure:before {
+  content: "";
+  border: 1px solid var(--tone);
+  border-width: 1px 0 0 1px;
+  pointer-events: none;
+  width: 56px;
+  height: 56px;
+  position: absolute;
+  top: -1px;
+  left: -1px;
+}
+.failure[data-retry="true"] {
+  --tone: var(--yellow);
+}
+.code {
+  font-family: var(--font-heading);
+  letter-spacing: -0.08em;
+  color: transparent;
+  -webkit-text-stroke: 1px oklch(from var(--tone) l c h / 55%);
+  font-size: calc(2vw + 40px);
+  font-style: italic;
+  line-height: 0.8;
+}
+.copy {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  display: flex;
+}
+.text {
+  color: var(--text-dim);
+  max-width: 36rem;
+  line-height: 1.55;
+}
+.action {
+  margin-top: 0.4rem;
+}
+@media screen and (max-width: 700px) {
+  .failure {
+    grid-template-columns: 1fr;
+    padding: 1.6rem 1.25rem;
+  }
+}

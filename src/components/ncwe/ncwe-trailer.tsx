@@ -1,117 +1,54 @@
 "use client";
 
 import Image from "next/image";
-import { type ReactNode, useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useRef, useState } from "react";
 
-import { PlayIcon } from "@/components/icons";
-import styles from "./ncwe-landing.module.css";
+import { Button } from "@/components/ui/button";
+import { Dialog, type DialogHandle } from "@/components/ui/dialog";
+import { Icon } from "@/components/ui/icon";
+import { play } from "@/components/ui/icons";
+
+import styles from "./ncwe-trailer.module.css";
 
 const PLAYER = "https://www.youtube-nocookie.com";
-
-const subscribe = () => () => {};
-const noFilm = () => false;
-/** Whether this browser should get the moving background at all (read after hydration only). */
-function wantsFilm(): boolean {
-  const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const saver = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
-  return !calm && !saver && window.innerWidth >= 760;
-}
 
 function embed(id: string, parameters: Record<string, string>): string {
   return `${PLAYER}/embed/${id}?${new URLSearchParams(parameters).toString()}`;
 }
 
 /**
- * The hero's moving background: the trailer, muted and looping, behind the
- * poster until it actually plays.
- *
- * The poster is what is rendered on the server and what stays when the video
- * cannot or should not play: reduced motion, data saver, a narrow screen, a
- * player error. The player tells its state over `postMessage` (the protocol of
- * YouTube's own iframe API, spoken directly so no third-party script is
- * loaded); the frame is only shown once it reports that it is playing.
+ * The trailer with sound, in a dialog, opened by a button: the hero's
+ * "Watch the trailer", or the poster lower on the page. The player only exists
+ * while the dialog is open, so closing it stops the sound.
  */
-export function NcweHeroBackdrop({ videoId, poster }: { videoId: string; poster: string }) {
-  const frame = useRef<HTMLIFrameElement>(null);
-  const wanted = useSyncExternalStore(subscribe, wantsFilm, noFilm);
-  const [playing, setPlaying] = useState(false);
-  const [paused, setPaused] = useState(false);
-  const origin = wanted ? window.location.origin : "";
-
-  useEffect(() => {
-    if (!wanted) return;
-    let failed = false;
-    const onMessage = (event: MessageEvent) => {
-      if (event.origin !== PLAYER || event.source !== frame.current?.contentWindow || typeof event.data !== "string") return;
-      let message: { event?: string; info?: { playerState?: number } | number | null };
-      try { message = JSON.parse(event.data); } catch { return; }
-      if (message.event === "onError") { failed = true; setPlaying(false); return; }
-      const state = typeof message.info === "object" && message.info !== null ? message.info.playerState : message.event === "onStateChange" ? message.info : undefined;
-      if (state === 1 && !failed) setPlaying(true);
-    };
-    window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
-  }, [wanted]);
-
-  const say = useCallback((payload: object) => {
-    frame.current?.contentWindow?.postMessage(JSON.stringify(payload), PLAYER);
-  }, []);
-
-  const toggle = () => {
-    say({ event: "command", func: paused ? "playVideo" : "pauseVideo", args: [] });
-    setPaused(!paused);
-  };
-
-  return (
-    <div className={styles.backdrop} aria-hidden={!playing || undefined}>
-      <Image className={styles.poster} src={poster} alt="" fill loading="eager" fetchPriority="high" sizes="100vw" />
-      {wanted && origin ? (
-        <iframe
-          ref={frame}
-          className={styles.film}
-          data-playing={playing}
-          src={embed(videoId, {
-            autoplay: "1", mute: "1", controls: "0", loop: "1", playlist: videoId, playsinline: "1", rel: "0",
-            modestbranding: "1", disablekb: "1", fs: "0", iv_load_policy: "3", enablejsapi: "1", origin,
-          })}
-          title="NCWE trailer, playing silently in the background"
-          allow="autoplay; encrypted-media"
-          referrerPolicy="strict-origin-when-cross-origin"
-          tabIndex={-1}
-          onLoad={() => say({ event: "listening", id: "ncwe-hero", channel: "widget" })}
-        />
-      ) : null}
-      <div className={styles.shade} />
-      {playing ? (
-        <button type="button" className={styles.pause} onClick={toggle} aria-pressed={paused}>
-          {paused ? "Play background video" : "Pause background video"}
-        </button>
-      ) : null}
-    </div>
-  );
-}
-
-/**
- * Opens the trailer with sound, in a dialog over the page. The player is only
- * created while the dialog is open, so closing it stops the sound.
- */
-export function NcweTrailerButton({ videoId, title, className, children }: { videoId: string; title: string; className?: string; children: ReactNode }) {
-  const dialog = useRef<HTMLDialogElement>(null);
+function Trailer({ videoId, title, length, poster }: { videoId: string; title: string; length: string; poster?: string }) {
+  const dialog = useRef<DialogHandle>(null);
   const [open, setOpen] = useState(false);
-
-  const show = () => { setOpen(true); dialog.current?.showModal(); };
-  const close = () => dialog.current?.close();
-
+  const show = () => {
+    setOpen(true);
+    dialog.current?.open();
+  };
   return (
     <>
-      <button type="button" className={className} onClick={show}>{children}</button>
-      <dialog
-        ref={dialog}
-        className={styles.theater}
-        aria-label={title}
-        onClose={() => setOpen(false)}
-        onClick={(event) => { if (event.target === dialog.current) close(); }}
-      >
+      {poster ? (
+        <button type="button" className={styles.reel} onClick={show}>
+          <Image src={poster} alt="" fill sizes="(max-width: 1100px) 100vw, 1100px" quality={75} />
+          <span className={styles.reelPlay} aria-hidden="true">
+            <Icon glyph={play} />
+          </span>
+          <span className={styles.reelLabel}>
+            <span className={styles.reelTitle}>Watch the trailer</span>
+            <span className={styles.reelLength}>{length}</span>
+          </span>
+        </button>
+      ) : (
+        <span className={styles.trigger}>
+          <Button color="blue" border lines="none" icon={play} iconPosition="left" onClick={show} aria-label={`Watch the trailer (${length})`}>
+            Watch the trailer
+          </Button>
+        </span>
+      )}
+      <Dialog ref={dialog} title={title} eyebrow={`Trailer · ${length}`} size="lg" onClose={() => setOpen(false)}>
         <div className={styles.screen}>
           {open ? (
             <iframe
@@ -123,19 +60,17 @@ export function NcweTrailerButton({ videoId, title, className, children }: { vid
             />
           ) : null}
         </div>
-        <button type="button" className={styles.theaterClose} onClick={close}>Close</button>
-      </dialog>
+      </Dialog>
     </>
   );
 }
 
-/** The trailer's poster as a large play button (the "watch it" band lower on the page). */
+/** "Watch the trailer": the secondary action of the hero. */
+export function NcweTrailerButton({ videoId, title, length }: { videoId: string; title: string; length: string }) {
+  return <Trailer videoId={videoId} title={title} length={length} />;
+}
+
+/** The trailer's poster as a large play button (the "see it move" band lower on the page). */
 export function NcweTrailerPoster({ videoId, title, poster, length }: { videoId: string; title: string; poster: string; length: string }) {
-  return (
-    <NcweTrailerButton videoId={videoId} title={title} className={styles.reel}>
-      <Image src={poster} alt="" fill sizes="(max-width: 1100px) 100vw, 1100px" />
-      <span className={styles.reelPlay} aria-hidden="true"><PlayIcon size={30} /></span>
-      <span className={styles.reelLabel}><b>Watch the trailer</b><i>{length}</i></span>
-    </NcweTrailerButton>
-  );
+  return <Trailer videoId={videoId} title={title} length={length} poster={poster} />;
 }

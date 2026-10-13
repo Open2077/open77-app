@@ -1,0 +1,23 @@
+.reveal {
+  color: var(--text-faint);
+  justify-content: center;
+  align-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  margin-right: -0.5rem;
+  font-size: 1.2rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+}
+.reveal:hover,
+.reveal[aria-pressed="true"] {
+  color: var(--tone);
+}
+.reveal:focus-visible {
+  outline: var(--focus);
+  outline-offset: 0;
+}
+.reveal:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

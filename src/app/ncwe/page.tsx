@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 
 import { NcweLanding } from "@/components/ncwe/ncwe-landing";
-import styles from "@/components/ncwe/ncwe-landing.module.css";
-import { SiteFooter } from "@/components/site-footer";
+import { Page } from "@/components/ui/page";
 import { NCWE_TRAILER } from "@/lib/ncwe-release";
 import { pageMetadata } from "@/lib/seo";
 
@@ -15,8 +14,9 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default function NcwePage() {
-  return <>
-    <NcweLanding />
-    <div className={styles.footer}><SiteFooter tone="dark" fineprint="NCWE is in open beta and free software (GPL-3.0). It is an independent community project, unaffiliated with CD PROJEKT RED; Cyberpunk 2077 is a trademark of CD PROJEKT S.A. No game data is included." /></div>
-  </>;
+  return (
+    <Page tone="blue">
+      <NcweLanding />
+    </Page>
+  );
 }

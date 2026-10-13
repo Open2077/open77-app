@@ -1,0 +1,52 @@
+.moderation {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  min-width: 0;
+  display: flex;
+}
+.inspection {
+  --tone: var(--red);
+  border: 1px solid oklch(from var(--red) l c h / 35%);
+  background: oklch(from var(--red) l c h / 5%);
+  flex-direction: column;
+  align-self: stretch;
+  gap: 0.9rem;
+  padding: 1rem 1.2rem;
+  display: flex;
+}
+.meta {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--red);
+  font-size: 0.62rem;
+}
+.body {
+  font-family: var(--font-mono);
+  font-variation-settings: "wght" 300;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--text-primary);
+  border: 1px solid var(--line);
+  background: var(--surface-1);
+  max-height: 18rem;
+  padding: 0.8rem 1rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  overflow: auto;
+}
+.form {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  display: flex;
+}
+.form > :first-child {
+  align-self: stretch;
+}
+.error {
+  color: var(--red);
+  font-size: 0.86rem;
+}

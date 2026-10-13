@@ -1,0 +1,67 @@
+:where(.block) {
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--tone);
+  background: var(--surface-1);
+  min-width: 0;
+  margin: 0;
+}
+.bar {
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+  gap: 1rem;
+  padding: 0.55rem 0.6rem 0.55rem 1.2rem;
+  display: flex;
+}
+.title {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.12em;
+  color: var(--tone);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.68rem;
+  overflow: hidden;
+}
+.lang {
+  font-family: var(--font-nippo);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  font-size: 0.6rem;
+}
+:where(.copy) {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  align-items: center;
+  gap: 0.5em;
+  margin-left: auto;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.6rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+}
+.copy:hover {
+  color: var(--tone);
+}
+.copy svg {
+  font-size: 1.2em;
+}
+.body,
+.body :global(pre) {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  font-weight: 300;
+  line-height: 1.65;
+  overflow-x: auto;
+  background: none !important;
+}
+.body {
+  padding: 1.1rem 1.3rem;
+}
+.body :global(pre) {
+  margin: 0;
+  padding: 0;
+}

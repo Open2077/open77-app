@@ -1,0 +1,344 @@
+.hero {
+  --spacing: calc(80px + 80 * (100vw - 320px) / 1080);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  overflow: hidden;
+}
+@media screen and (min-width: 1086px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html:not([data-scroll="vertical"]) .hero {
+    position: sticky;
+    top: 0;
+  }
+}
+@media screen and (max-width: 1084px) {
+  .hero {
+    justify-content: flex-end;
+  }
+}
+.wrapper {
+  width: calc(18.5185vw + 640.741px);
+  max-width: var(--container-max);
+  direction: column;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  position: relative;
+}
+@media screen and (min-width: 1086px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  html:not([data-scroll="vertical"]) .wrapper {
+    min-height: 100vh;
+    margin: auto;
+  }
+}
+.content {
+  width: 100%;
+  padding-top: calc(var(--header-height) / 2);
+}
+@media screen and (max-width: 1084px) {
+  .content {
+    padding-top: calc(var(--header-height) + var(--margin-1));
+    padding-bottom: calc(5.55556vw + 142.222px);
+  }
+}
+@media screen and (max-width: 1084px) and (max-width: 1084px) {
+  .content {
+    padding: calc(1.85185vw + 94.0741px) 0 3em;
+  }
+}
+@media screen and (min-width: 1086px) and (hover: none),
+  screen and (min-width: 1086px) and (pointer: coarse),
+  screen and (min-width: 1086px) and (prefers-reduced-motion: reduce) {
+  .content {
+    padding-top: calc(var(--header-height) + var(--margin-1));
+    padding-bottom: calc(5.55556vw + 142.222px);
+  }
+}
+@media screen and (min-width: 1086px) and (hover: none) and (max-width: 1084px),
+  screen and (min-width: 1086px) and (pointer: coarse) and (max-width: 1084px),
+  screen and (min-width: 1086px) and (prefers-reduced-motion: reduce) and (max-width: 1084px) {
+  .content {
+    padding: calc(1.85185vw + 94.0741px) 0 3em;
+  }
+}
+@media screen and (min-width: 1086px) {
+  html[data-scroll="vertical"] .content {
+    padding-top: calc(var(--header-height) + var(--margin-1));
+    padding-bottom: calc(5.55556vw + 142.222px);
+  }
+}
+@media screen and (min-width: 1086px) and (max-width: 1084px) {
+  html[data-scroll="vertical"] .content {
+    padding: calc(1.85185vw + 94.0741px) 0 3em;
+  }
+}
+.logo {
+  z-index: 10;
+  isolation: isolate;
+  will-change: transform;
+  width: 90%;
+  margin-inline: auto;
+  position: relative;
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo {
+    will-change: auto;
+  }
+}
+@media (pointer: coarse) and (hover: none) {
+  .logo {
+    will-change: auto;
+  }
+}
+.logo {
+  pointer-events: none;
+}
+.marquee {
+  z-index: 1;
+  font-size: calc(7.40741vw + 62.963px);
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  width: 100vw;
+  margin-bottom: -0.2em;
+  margin-left: calc(50% - 50vw);
+  line-height: 0.9;
+  position: relative;
+}
+@media screen and (min-width: 787px) {
+  .marquee {
+    margin-bottom: -0.4em;
+  }
+}
+.text {
+  text-align: center;
+  z-index: 10;
+  margin-inline: auto;
+  flex-direction: column;
+  gap: 1.5em;
+  width: 60%;
+  margin-top: 3em;
+  display: flex;
+  position: relative;
+}
+@media screen and (max-width: 1084px) {
+  .text {
+    width: 100%;
+    margin-top: 2em;
+  }
+  .text .intro,
+  .text .alpha {
+    font-size: calc(0.555556vw + 14.2222px);
+    line-height: 1.33;
+  }
+}
+.text h1 {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  font-size: calc(0.37037vw + 16.8148px);
+  font-style: italic;
+  line-height: 1;
+}
+.intro {
+  font-size: calc(0.37037vw + 13.8148px);
+}
+.alpha {
+  color: var(--blue);
+  font-size: calc(0.37037vw + 10.8148px);
+  line-height: 1;
+}
+.bg {
+  isolation: isolate;
+  will-change: transform;
+  position: absolute;
+  inset: -32px -40px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg {
+    will-change: auto;
+  }
+}
+@media (pointer: coarse) and (hover: none) {
+  .bg {
+    will-change: auto;
+  }
+}
+@media screen and (max-width: 1084px) and (min-width: 1086px) {
+  .bg {
+    top: calc(-15% - 32px);
+    bottom: -32px;
+  }
+}
+@media screen and (min-width: 1086px) and (hover: none) and (min-width: 1086px),
+  screen and (min-width: 1086px) and (pointer: coarse) and (min-width: 1086px),
+  screen and (min-width: 1086px) and (prefers-reduced-motion: reduce) and (min-width: 1086px) {
+  .bg {
+    top: calc(-15% - 32px);
+    bottom: -32px;
+  }
+}
+@media screen and (min-width: 1086px) and (min-width: 1086px) {
+  html[data-scroll="vertical"] .bg {
+    top: calc(-15% - 32px);
+    bottom: -32px;
+  }
+}
+.bgWrapper {
+  z-index: -5;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.bgWrapper:before {
+  content: "";
+  background: linear-gradient(to bottom, oklch(from var(--body) l c h/0%) 0%, var(--body) 100%);
+  z-index: 1;
+  position: absolute;
+  inset: 30% 0 0;
+}
+.bgScroll {
+  isolation: isolate;
+  will-change: transform;
+  position: absolute;
+  inset: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bgScroll {
+    will-change: auto;
+  }
+}
+@media (pointer: coarse) and (hover: none) {
+  .bgScroll {
+    will-change: auto;
+  }
+}
+.bg video {
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+.shift {
+  z-index: 0;
+  position: absolute;
+  inset: 0;
+}
+.render {
+  z-index: 6;
+  isolation: isolate;
+  will-change: transform;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .render {
+    will-change: auto;
+  }
+}
+@media (pointer: coarse) and (hover: none) {
+  .render {
+    will-change: auto;
+  }
+}
+@media screen and (max-width: 1084px) {
+  .render {
+    bottom: 15vh;
+  }
+}
+@media screen and (min-width: 1086px) and (hover: none),
+  screen and (min-width: 1086px) and (pointer: coarse),
+  screen and (min-width: 1086px) and (prefers-reduced-motion: reduce) {
+  .render {
+    bottom: 15vh;
+  }
+}
+@media screen and (min-width: 1086px) {
+  html[data-scroll="vertical"] .render {
+    bottom: 15vh;
+  }
+}
+@media screen and (max-width: 786px) {
+  .render {
+    z-index: -1;
+    bottom: 25vh;
+  }
+}
+.buttons {
+  --btn-padding-y: 2.5em;
+  --btn-padding-x: 1.33em;
+  pointer-events: none;
+  z-index: 10;
+  justify-content: space-between;
+  width: 100%;
+  height: 3.5em;
+  display: flex;
+  position: absolute;
+  bottom: 5vh;
+}
+@media screen and (max-width: 1084px) {
+  .buttons {
+    top: 95vh;
+    transform: translateY(-100%);
+  }
+}
+@media screen and (min-width: 1086px) and (hover: none),
+  screen and (min-width: 1086px) and (pointer: coarse),
+  screen and (min-width: 1086px) and (prefers-reduced-motion: reduce) {
+  .buttons {
+    top: 95vh;
+    transform: translateY(-100%);
+  }
+}
+@media screen and (min-width: 1086px) {
+  html[data-scroll="vertical"] .buttons {
+    top: 95vh;
+    transform: translateY(-100%);
+  }
+}
+@media screen and (max-width: 1084px) {
+  .buttons {
+    z-index: 100;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+    height: auto;
+    padding-bottom: 2em;
+    position: relative;
+    top: 0;
+    transform: translateY(0);
+  }
+  .buttons .buttonLeft {
+    align-self: flex-start;
+  }
+  .buttons .buttonRight {
+    align-self: flex-end;
+  }
+}
+.button {
+  pointer-events: auto;
+  position: relative;
+}
+.buttonLeft {
+  --btn-padding-left: 3.5em;
+  left: -0.5em;
+}
+.buttonRight {
+  --btn-padding-right: 3.5em;
+  right: -0.5em;
+}
+.cache {
+  z-index: 15;
+  background: radial-gradient(circle, oklch(from var(--body) l c h/50%) 0%, var(--body) 100%);
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+}

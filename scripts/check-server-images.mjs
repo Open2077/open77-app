@@ -155,15 +155,15 @@ try {
   session.on('Fetch.requestPaused',p=>{if(hold)pending.push(p.requestId);else void session.send('Fetch.continueRequest',{requestId:p.requestId});});
   await session.send('Fetch.enable',{patterns:[{urlPattern:'*/_next/*',resourceType:'Script',requestStage:'Request'}]});
   await session.send('Page.navigate',{url:origin+'/servers/'+encodeURIComponent(serverId)});
-  for(let i=0;i<100;i++){await delay(100);if(await session.evaluate(`return document.querySelectorAll('.sv-cover img').length===2&&[...document.querySelectorAll('.sv-cover img')].every(i=>i.complete&&i.naturalWidth>0);`))break;}
-  check('server images decode before hydration',await session.evaluate(`return document.querySelectorAll('.sv-cover img').length===2&&[...document.querySelectorAll('.sv-cover img')].every(i=>i.complete&&i.naturalWidth>0);`));
+  for(let i=0;i<100;i++){await delay(100);if(await session.evaluate(`return document.querySelectorAll('[data-server-profile] [data-server-image] img').length===2&&[...document.querySelectorAll('[data-server-profile] [data-server-image] img')].every(i=>i.complete&&i.naturalWidth>0);`))break;}
+  check('server images decode before hydration',await session.evaluate(`return document.querySelectorAll('[data-server-profile] [data-server-image] img').length===2&&[...document.querySelectorAll('[data-server-profile] [data-server-image] img')].every(i=>i.complete&&i.naturalWidth>0);`));
   hold=false;await Promise.all(pending.map(requestId=>session.send('Fetch.continueRequest',{requestId})));
   await delay(2500);
-  const images=await session.evaluate(`return [...document.querySelectorAll('.sv-cover img')].map(i=>({src:i.src,complete:i.complete,width:i.naturalWidth,height:i.naturalHeight,opacity:getComputedStyle(i).opacity,loaded:i.closest('.svimg').classList.contains('is-loaded')}));`);
+  const images=await session.evaluate(`return [...document.querySelectorAll('[data-server-profile] [data-server-image] img')].map(i=>({src:i.src,complete:i.complete,width:i.naturalWidth,height:i.naturalHeight,opacity:getComputedStyle(i).opacity,loaded:i.closest('[data-server-image]').hasAttribute('data-loaded')}));`);
   console.log(images);
   check('decoded icon and banner become visible after hydration',images.length===2&&images.every(i=>i.loaded&&i.opacity==='1'));
   await session.send('Page.reload');await delay(2500);
-  check('warm reload also shows both images',await session.evaluate(`return document.querySelectorAll('.sv-cover img').length===2&&[...document.querySelectorAll('.sv-cover img')].every(i=>i.complete&&i.naturalWidth>0&&getComputedStyle(i).opacity==='1');`));
+  check('warm reload also shows both images',await session.evaluate(`return document.querySelectorAll('[data-server-profile] [data-server-image] img').length===2&&[...document.querySelectorAll('[data-server-profile] [data-server-image] img')].every(i=>i.complete&&i.naturalWidth>0&&getComputedStyle(i).opacity==='1');`));
   check('no hydration exceptions',errors.length===0);if(errors.length)console.log(errors);
   const {data}=await session.send('Page.captureScreenshot',{format:'png'});await fs.mkdir('.shots',{recursive:true});await fs.writeFile('.shots/server-images-hydrated.png',Buffer.from(data,'base64'));
   session.socket.close();

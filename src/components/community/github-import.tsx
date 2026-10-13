@@ -1,22 +1,37 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Notice } from "@/components/ui/feedback";
+import { Checkbox, Field, Input } from "@/components/ui/field";
+import { github as githubGlyph, search01 } from "@/components/ui/icons";
 import * as github from "@/lib/community/github-api";
 import type { StoredSession } from "@/lib/account/session";
+import { Actions, ArrowLink, Disclosure, Fine, Pending, formatDateTime } from "@/components/account/kit";
+import { Digest, FieldGrid, Meta, Stack, Subhead, Text } from "./creator-parts";
 import { GitHubConnectionControl } from "./github-connection";
+
+import styles from "./github-import.module.css";
 
 const message = (error: unknown) => error instanceof Error ? error.message : "GitHub could not complete this request.";
 const size = (bytes: number) => `${(bytes / 1024 / 1024).toFixed(2)} MiB`;
 const eligible = (asset: github.GitHubAsset) => asset.name.toLowerCase().endsWith(".zip") && asset.sizeBytes > 0 && asset.sizeBytes <= 100 * 1024 * 1024 && !!asset.sha256;
 
 function Provenance({ selection, verifiedAt }: { selection: github.GitHubSelection; verifiedAt?: string | null }) {
-  return <div className="hub-notice">
-    <p><a href={selection.sourceUrl} target="_blank" rel="noopener noreferrer">{selection.repository.fullName} · {selection.release.tag} ↗</a></p>
-    <p><strong>{selection.asset.name}</strong> · {size(selection.asset.sizeBytes)} · Asset {selection.asset.assetId}</p>
-    <p className="hub-release-digest">SHA-256 <code>{selection.asset.sha256}</code></p>
-    {selection.release.commitSha && <p className="hub-release-digest">Commit <code>{selection.release.commitSha}</code></p>}
-    <p>{verifiedAt ? `Repository control was verified on ${new Date(verifiedAt).toLocaleString()}.` : "A source link does not establish repository control or permission to redistribute."}</p>
-  </div>;
+  return (
+    <div className={styles.provenance}>
+      <ArrowLink href={selection.sourceUrl} external>
+        {selection.repository.fullName} · {selection.release.tag}
+      </ArrowLink>
+      <Text>
+        <strong>{selection.asset.name}</strong> · {size(selection.asset.sizeBytes)} · Asset {selection.asset.assetId}
+      </Text>
+      <Digest label="SHA-256">{selection.asset.sha256}</Digest>
+      {selection.release.commitSha ? <Digest label="Commit">{selection.release.commitSha}</Digest> : null}
+      <Fine>{verifiedAt ? `Repository control was verified on ${new Date(verifiedAt).toLocaleString()}.` : "A source link does not establish repository control or permission to redistribute."}</Fine>
+    </div>
+  );
 }
 
 export function GitHubImportStatus({ token, id, checkedAt }: { token: string; id: string; checkedAt: number }) {
@@ -29,21 +44,37 @@ export function GitHubImportStatus({ token, id, checkedAt }: { token: string; id
       .catch(error => { if (!controller.signal.aborted) setError(message(error)); });
     return () => controller.abort();
   }, [token, id, checkedAt]);
-  return <div>
-    {error && <p className="hub-notice" role="alert">Import status unavailable: {error} Use Refresh status to retry.</p>}
-    {value && <><p role="status">GitHub import: {value.state.replaceAll("_", " ")}{value.state === "accepted" ? " · Technical validation passed; publication still requires review." : ""}</p>
-      {value.errorCode && <p className="hub-notice">Import result: <code>{value.errorCode}</code>. {["rejected", "dead"].includes(value.state) ? "Create a new ZIP submission after checking this result." : "The same selected asset is queued for another attempt."}</p>}
-      {value.state === "expired" && <p>The import reservation expired. Start a new upload from the release above.</p>}
-      <details><summary>Imported source and integrity</summary><Provenance selection={value.selection} verifiedAt={value.controlVerifiedAtUtc} />
-        {value.fetchedAtUtc && <p>Fetched <time dateTime={value.fetchedAtUtc}>{new Date(value.fetchedAtUtc).toLocaleString()}</time></p>}</details></>}
-  </div>;
+  return (
+    <Stack tight>
+      {error ? <Notice kind="danger">Import status unavailable: {error} Use Refresh status to retry.</Notice> : null}
+      {value ? (
+        <>
+          <Meta>
+            <span role="status">GitHub import: {value.state.replaceAll("_", " ")}{value.state === "accepted" ? " · Technical validation passed; publication still requires review." : ""}</span>
+          </Meta>
+          {value.errorCode ? (
+            <Notice kind={["rejected", "dead"].includes(value.state) ? "danger" : "warning"}>
+              Import result: <code>{value.errorCode}</code>. {["rejected", "dead"].includes(value.state) ? "Create a new ZIP submission after checking this result." : "The same selected asset is queued for another attempt."}
+            </Notice>
+          ) : null}
+          {value.state === "expired" ? <Fine>The import reservation expired. Start a new upload from the release above.</Fine> : null}
+          <Disclosure summary="Imported source and integrity">
+            <Provenance selection={value.selection} verifiedAt={value.controlVerifiedAtUtc} />
+            {value.fetchedAtUtc ? <Fine>Fetched <time dateTime={value.fetchedAtUtc}>{formatDateTime(value.fetchedAtUtc)}</time></Fine> : null}
+          </Disclosure>
+        </>
+      ) : null}
+    </Stack>
+  );
 }
 
 export function GitHubImportPicker(props: { session: StoredSession; projectId: string; releaseId: string; sourceUrl?: string | null; changed: () => void }) {
   const [open, setOpen] = useState(false);
-  return <details onToggle={event => { if (event.currentTarget.open) setOpen(true); }}><summary>Import a ZIP from a GitHub release</summary>
-    {open && <Picker {...props} />}
-  </details>;
+  return (
+    <Disclosure tone="framed" summary="Import a ZIP from a GitHub release" onToggle={event => { if (event.currentTarget.open) setOpen(true); }}>
+      {open ? <Picker {...props} /> : null}
+    </Disclosure>
+  );
 }
 
 function Picker({ session, projectId, releaseId, sourceUrl, changed }: { session: StoredSession; projectId: string; releaseId: string; sourceUrl?: string | null; changed: () => void }) {
@@ -120,34 +151,100 @@ function Picker({ session, projectId, releaseId, sourceUrl, changed }: { session
     void run(async signal => { const result = await github.submit(token, projectId, releaseId, requestId.current!, selection, signal);
       if (!signal.aborted) { setSubmitted(result); changed(); } });
   }
-  if (submitted) return <p role="status">GitHub import queued. Follow its progress in your upload history. Validation and review are still required.</p>;
+  if (submitted) return <Notice kind="success">GitHub import queued. Follow its progress in your upload history. Validation and review are still required.</Notice>;
   const locked = busy || attempted;
-  return <div className="hub-form">
-    <p>Choose an uploaded ZIP asset from a public release. Source archives and repository build scripts are not imported.</p>
-    {available === false && <p className="hub-notice">GitHub imports are currently paused. You can upload a ZIP directly.</p>}
-    {available === null && !error && <p role="status">Checking import availability…</p>}
-    {error && <p className="hub-notice" role="alert">{error}{attempted && " Your submission may already exist. Retry the same submission or refresh upload history before choosing another file."}</p>}
-    {available === null && error && <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => void run(async signal => setAvailable((await github.capabilities(signal)).features?.githubImports === true))}>Retry availability check</button>}
-    {available && <><form onSubmit={loadRepository} className="hub-form">
-      <div className="hub-form-row"><label>GitHub owner<input required maxLength={39} value={owner} disabled={locked} onChange={event => setOwner(event.target.value)} /></label>
-        <label>Repository<input required maxLength={100} value={repo} disabled={locked} onChange={event => setRepo(event.target.value)} /></label></div>
-      <button className="btn btn-ghost" disabled={locked}>Find public releases</button></form>
-      {repository && <><p>Browsing <strong>{repository.fullName}</strong></p><GitHubConnectionControl key={`${session.token}:${repository.repositoryId}`} session={session} projectId={projectId} repository={repository} /></>}
-      {releases && <div><h4>Choose a release</h4>{releases.items.length === 0 && <p>No public releases on this page. Upload a ZIP directly if the repository has no release assets.</p>}
-        <div className="hub-actions">{releases.items.map(item => <button type="button" className="btn btn-ghost" key={item.releaseId} disabled={locked}
-          aria-pressed={release?.releaseId === item.releaseId} onClick={() => assetPage(item, 1)}>{item.tag}{item.prerelease ? " · prerelease" : ""}</button>)}</div>
-        <div className="hub-actions"><button type="button" className="btn btn-ghost" disabled={locked} onClick={() => releasePage(1)}>First release page</button>
-          {releases.nextPage && <button type="button" className="btn btn-ghost" disabled={locked} onClick={() => releasePage(releases.nextPage!)}>More releases</button>}</div></div>}
-      {assets && release && <div><h4>ZIP assets for {release.tag}</h4>{assets.items.length === 0 && <p>No uploaded assets on this page.</p>}
-        <ul>{assets.items.map(asset => <li key={asset.assetId}><button type="button" className="btn btn-ghost" disabled={locked || !eligible(asset)} onClick={() => preview(asset)}>{asset.name} · {size(asset.sizeBytes)}</button>
-          {!eligible(asset) && <small> Requires a ZIP up to 100 MiB with a GitHub SHA-256 digest. Older assets can be uploaded directly.</small>}</li>)}</ul>
-        <div className="hub-actions"><button type="button" className="btn btn-ghost" disabled={locked} onClick={() => assetPage(release, 1)}>First asset page</button>
-          {assets.nextPage && <button type="button" className="btn btn-ghost" disabled={locked} onClick={() => assetPage(release, assets.nextPage!)}>More assets</button>}</div></div>}
-      {selection && <><h4>Confirm this source</h4><Provenance selection={selection} />
-        <label className="hub-rights"><input type="checkbox" checked={rights} disabled={locked} onChange={event => setRights(event.target.checked)} />I have permission to redistribute this asset and all its included files under this release’s license.</label>
-        <button type="button" className="btn btn-primary" disabled={busy || !rights} onClick={submit}>{busy ? "Submitting…" : attempted ? "Retry the same submission" : "Import ZIP for validation"}</button>
-        {attempted && !busy && <button type="button" className="btn btn-ghost" onClick={() => { changed(); }}>Refresh upload history</button>}</>}
-      {busy && <p role="status">Contacting GitHub…</p>}
-    </>}
-  </div>;
+  return (
+    <Stack>
+      <Text>Choose an uploaded ZIP asset from a public release. Source archives and repository build scripts are not imported.</Text>
+      {available === false ? <Notice kind="info">GitHub imports are currently paused. You can upload a ZIP directly.</Notice> : null}
+      {available === null && !error ? <Pending label="Checking import availability" /> : null}
+      {error ? <Notice kind="danger">{error}{attempted && " Your submission may already exist. Retry the same submission or refresh upload history before choosing another file."}</Notice> : null}
+      {available === null && error ? (
+        <div>
+          <Button lines="none" color="neutral" border size="sm" disabled={busy} onClick={() => void run(async signal => setAvailable((await github.capabilities(signal)).features?.githubImports === true))}>
+            Retry availability check
+          </Button>
+        </div>
+      ) : null}
+      {available ? (
+        <>
+          <form onSubmit={loadRepository} className={styles.repo}>
+            <FieldGrid>
+              <Field label="GitHub owner">
+                <Input icon={githubGlyph} required maxLength={39} value={owner} disabled={locked} onChange={event => setOwner(event.target.value)} />
+              </Field>
+              <Field label="Repository">
+                <Input required maxLength={100} value={repo} disabled={locked} onChange={event => setRepo(event.target.value)} />
+              </Field>
+            </FieldGrid>
+            <div>
+              <Button type="submit" lines="none" color="neutral" border size="sm" icon={search01} iconPosition="left" disabled={locked}>
+                Find public releases
+              </Button>
+            </div>
+          </form>
+          {repository ? (
+            <>
+              <Text>Browsing <strong>{repository.fullName}</strong></Text>
+              <GitHubConnectionControl key={`${session.token}:${repository.repositoryId}`} session={session} projectId={projectId} repository={repository} />
+            </>
+          ) : null}
+          {releases ? (
+            <div className={styles.step}>
+              <Subhead as="h5">Choose a release</Subhead>
+              {releases.items.length === 0 ? <Fine>No public releases on this page. Upload a ZIP directly if the repository has no release assets.</Fine> : null}
+              <Actions className={styles.choices}>
+                {releases.items.map(item => (
+                  <Button key={item.releaseId} lines="none" border size="sm" color={release?.releaseId === item.releaseId ? "yellow" : "neutral"} disabled={locked}
+                    aria-pressed={release?.releaseId === item.releaseId} onClick={() => assetPage(item, 1)}>
+                    {`${item.tag}${item.prerelease ? " · prerelease" : ""}`}
+                  </Button>
+                ))}
+              </Actions>
+              <Actions>
+                <Button lines="none" color="neutral" size="sm" disabled={locked} onClick={() => releasePage(1)}>First release page</Button>
+                {releases.nextPage ? <Button lines="none" color="neutral" size="sm" disabled={locked} onClick={() => releasePage(releases.nextPage!)}>More releases</Button> : null}
+              </Actions>
+            </div>
+          ) : null}
+          {assets && release ? (
+            <div className={styles.step}>
+              <Subhead as="h5">ZIP assets for {release.tag}</Subhead>
+              {assets.items.length === 0 ? <Fine>No uploaded assets on this page.</Fine> : null}
+              <ul className={styles.assets}>
+                {assets.items.map(asset => (
+                  <li key={asset.assetId}>
+                    <Button lines="none" color="neutral" border size="sm" disabled={locked || !eligible(asset)} onClick={() => preview(asset)}>
+                      {`${asset.name} · ${size(asset.sizeBytes)}`}
+                    </Button>
+                    {!eligible(asset) ? <small> Requires a ZIP up to 100 MiB with a GitHub SHA-256 digest. Older assets can be uploaded directly.</small> : null}
+                  </li>
+                ))}
+              </ul>
+              <Actions>
+                <Button lines="none" color="neutral" size="sm" disabled={locked} onClick={() => assetPage(release, 1)}>First asset page</Button>
+                {assets.nextPage ? <Button lines="none" color="neutral" size="sm" disabled={locked} onClick={() => assetPage(release, assets.nextPage!)}>More assets</Button> : null}
+              </Actions>
+            </div>
+          ) : null}
+          {selection ? (
+            <div className={styles.step}>
+              <Subhead as="h5">Confirm this source</Subhead>
+              <Provenance selection={selection} />
+              <Checkbox checked={rights} disabled={locked} onChange={event => setRights(event.target.checked)}>
+                I have permission to redistribute this asset and all its included files under this release’s license.
+              </Checkbox>
+              <Actions>
+                <Button key={busy ? "busy" : attempted ? "retry" : "import"} lines="none" size="sm" busy={busy} disabled={!rights} onClick={submit}>
+                  {busy ? "Submitting…" : attempted ? "Retry the same submission" : "Import ZIP for validation"}
+                </Button>
+                {attempted && !busy ? <Button lines="none" color="neutral" border size="sm" onClick={() => { changed(); }}>Refresh upload history</Button> : null}
+              </Actions>
+            </div>
+          ) : null}
+          {busy ? <Pending label="Contacting GitHub" /> : null}
+        </>
+      ) : null}
+    </Stack>
+  );
 }

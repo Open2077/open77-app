@@ -1,13 +1,22 @@
 "use client";
-import Link from "next/link";
-import { DiscordIcon, GlobeIcon, PlayIcon, StarIcon } from "@/components/icons";
+
+import NextLink from "next/link";
+
 import { FlaggedCountry } from "@/components/servers/country-flag";
 import { ServerImage } from "@/components/servers/server-image";
 import { BrandTile, modeArt } from "@/components/servers/server-placeholder";
+import { Button } from "@/components/ui/button";
+import { Tag } from "@/components/ui/chip";
+import { DefinitionList } from "@/components/ui/data";
+import { Meter } from "@/components/ui/feedback";
+import { Icon } from "@/components/ui/icon";
+import { arrowRight01, cancel01, discord, globe02, play, star } from "@/components/ui/icons";
 import { languageDisplayName } from "@/lib/locale";
 import { occupancyPercent, popClass, type GameServer } from "@/lib/servers";
 
-/** Bare host for a community URL, so a long link renders as a tidy chip. */
+import styles from "./server-inspector.module.css";
+
+/** Bare host for a community URL, so a long link renders as a tidy label. */
 function displayHost(url: string): string {
   try {
     return new URL(url).host.replace(/^www\./, "");
@@ -25,9 +34,10 @@ function addedLabel(days: number): string {
 }
 
 /**
- * The world currently under inspection, beside the list — the launcher's
- * detail pane, so a player can compare servers without leaving the directory.
- * The full page at `/servers/<id>` still carries the roster and endpoint.
+ * The world currently under inspection, beside the list, so a player can
+ * compare servers without leaving the directory. The full profile at
+ * `/servers/<id>` carries the roster and the endpoint. It only exists while a
+ * server is selected: an idle list keeps the whole width.
  */
 export function ServerInspector({
   server,
@@ -39,7 +49,7 @@ export function ServerInspector({
   onConnect,
   onClose,
 }: {
-  server: GameServer | null;
+  server: GameServer;
   preview?: boolean;
   onOpen?: () => void;
   /** Same country as the player. */
@@ -49,121 +59,116 @@ export function ServerInspector({
   onConnect: () => void;
   onClose: () => void;
 }) {
-  if (!server) {
-    return (
-      <aside className="directory-detail is-idle" aria-label="Selected server">
-        <div className="directory-detail-empty">
-          <span className="directory-detail-reticle" aria-hidden="true" />
-          <strong>Select a world</strong>
-          <small>Choose a server to inspect its profile.</small>
-        </div>
-      </aside>
-    );
-  }
   const website = server.links?.website;
-  const discord = server.links?.discord;
+  const discordUrl = server.links?.discord;
   const full = server.max > 0 && server.players >= server.max;
   return (
-    <aside className="directory-detail" aria-label={`Selected server: ${server.name}`}>
-      <div
-        className="directory-detail-cover"
-        style={{ backgroundImage: `url(${modeArt(server.mode)})` }}
-      >
-        <ServerImage src={server.banner || null} kind="banner" alt="" />
-        <button
-          className="directory-detail-close"
-          onClick={onClose}
-          aria-label="Close server details"
-        >
-          ×
+    <aside className={styles.inspector} aria-label={`Selected server: ${server.name}`} data-inspector>
+      {/* Who it is, then what to do: name, Connect and the full profile fit the
+          first screen of the pane; the details follow underneath. */}
+      <div className={styles.cover} style={{ backgroundImage: `url(${modeArt(server.mode)})` }}>
+        <ServerImage src={server.banner || null} kind="banner" alt="" className={styles.banner} />
+        <span className={styles.coverShade} aria-hidden="true" />
+        <button type="button" className={styles.close} onClick={onClose} aria-label="Close server details">
+          <Icon glyph={cancel01} />
         </button>
-        <span className="directory-detail-mode">{server.mode}</span>
-      </div>
-      <div className="directory-detail-body">
-        <div className="directory-detail-head">
-          <ServerImage
-            src={server.icon}
-            kind="icon"
-            className="directory-detail-icon"
-            fallback={<BrandTile />}
-          />
-          <div>
-            <span className="directory-kicker">{"// Server"}</span>
-            <h2 className="directory-detail-name">{server.name}</h2>
+        <div className={styles.head}>
+          <ServerImage src={server.icon} kind="icon" className={styles.icon} fallback={<BrandTile />} />
+          <div className={styles.title}>
+            <Tag variant="solid" className={styles.mode}>
+              {server.mode}
+            </Tag>
+            <h2 className={styles.name} data-inspector-name>
+              {server.name}
+            </h2>
           </div>
         </div>
-        <div className="directory-detail-actions">
-        <button className="btn btn-primary directory-detail-connect" onClick={onConnect}>
-          <PlayIcon size={14} />
-          Connect
-        </button>
-        <button
-          className={`fav-btn directory-detail-fav${isFavorite ? " is-fav" : ""}`}
-          aria-pressed={isFavorite}
-          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-          onClick={onToggleFavorite}
-        >
-          <StarIcon size={16} filled={isFavorite} />
-        </button>
-        {!preview && <Link className="directory-detail-more" href={`/servers/${server.id}`} onNavigate={onOpen ? (event) => { event.preventDefault(); onOpen(); } : undefined}>
-          View details ↗
-        </Link>}
+      </div>
+
+      <div className={styles.body}>
+        <div className={styles.actions}>
+          <Button lines="none" size="sm" icon={play} iconPosition="left" onClick={onConnect} className={styles.connect}>
+            Connect
+          </Button>
+          <button
+            type="button"
+            className={styles.fav}
+            aria-pressed={isFavorite}
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            onClick={onToggleFavorite}
+          >
+            <Icon glyph={star} />
+          </button>
         </div>
-        <p className="directory-detail-desc">
-          {server.desc || "This server has not published a description yet."}
-        </p>
-        <div className="directory-detail-capacity">
-          <span className={`directory-detail-capacity-value ${popClass(server)}`}>
+        {!preview ? (
+          <NextLink
+            className={styles.more}
+            data-inspector-more
+            href={`/servers/${server.id}`}
+            onNavigate={
+              onOpen
+                ? (event) => {
+                    event.preventDefault();
+                    onOpen();
+                  }
+                : undefined
+            }
+          >
+            <span>Full profile</span>
+            <small>Players and address</small>
+            <Icon glyph={arrowRight01} />
+          </NextLink>
+        ) : null}
+
+        <div className={`${styles.capacity} ${styles[popClass(server)] ?? ""}`}>
+          <span className={styles.capacityValue}>
             <b>{server.players}</b> / {server.max}
           </span>
-          <span className="directory-detail-capacity-label">
-            {full ? "Full right now" : "Players online"}
-          </span>
-          <span className="players-bar" aria-hidden="true">
-            <span style={{ width: `${occupancyPercent(server)}%` }} />
-          </span>
+          <span className={styles.capacityLabel}>{full ? "Full right now" : "Players online"}</span>
+          <Meter value={occupancyPercent(server)} label={`${server.players} of ${server.max} players`} className={styles.meter} />
         </div>
-        <dl className="directory-detail-facts">
-          <div>
-            <dt>Country</dt>
-            <dd>
-              <FlaggedCountry code={server.country} className="directory-detail-country" />
-              {nearYou ? <span className="directory-detail-near">Near you</span> : null}
-            </dd>
-          </div>
-          <div>
-            <dt>Region</dt>
-            <dd>{server.region}</dd>
-          </div>
-          <div>
-            <dt>Language</dt>
-            <dd>{languageDisplayName(server.lang.toLowerCase())}</dd>
-          </div>
-          <div>
-            <dt>Listed</dt>
-            <dd>{addedLabel(server.addedDaysAgo)}</dd>
-          </div>
-        </dl>
+
+        <DefinitionList
+          className={styles.facts}
+          items={[
+            {
+              label: "Country",
+              value: (
+                <span className={styles.country}>
+                  <FlaggedCountry code={server.country} />
+                  {nearYou ? <Tag>Near you</Tag> : null}
+                </span>
+              ),
+            },
+            { label: "Language", value: languageDisplayName(server.lang.toLowerCase()) },
+            { label: "Region", value: server.region },
+            { label: "Listed", value: addedLabel(server.addedDaysAgo) },
+          ]}
+        />
+
+        <p className={styles.desc}>{server.desc || "This server has not published a description yet."}</p>
+
         {server.tags.length > 0 ? (
-          <div className="directory-detail-tags">
+          <div className={styles.tags}>
             {server.tags.map((tag) => (
-              <span className="tag" key={tag}>
+              <Tag key={tag} tone="neutral">
                 {tag}
-              </span>
+              </Tag>
             ))}
           </div>
         ) : null}
-        {website || discord ? (
-          <div className="directory-detail-links">
+
+        {website || discordUrl ? (
+          <div className={styles.links}>
             {website ? (
               <a href={website} target="_blank" rel="noreferrer noopener">
-                <GlobeIcon size={13} />
+                <Icon glyph={globe02} />
                 {displayHost(website)}
               </a>
             ) : null}
-            {discord ? (
-              <a href={discord} target="_blank" rel="noreferrer noopener">
-                <DiscordIcon size={13} />
+            {discordUrl ? (
+              <a href={discordUrl} target="_blank" rel="noreferrer noopener">
+                <Icon glyph={discord} />
                 Discord
               </a>
             ) : null}

@@ -1,0 +1,20 @@
+.lifecycle {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  display: flex;
+}
+.lifecycle > * {
+  max-width: 100%;
+}
+.current {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.6rem;
+  display: flex;
+}

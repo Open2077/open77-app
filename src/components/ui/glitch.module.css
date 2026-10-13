@@ -1,0 +1,17 @@
+.glitch {
+  white-space: nowrap;
+  display: inline-block;
+  position: relative;
+}
+.glitch:before {
+  content: attr(data-glitchess);
+  /* The visible label is this copy; the real text sits in the span below. Silence the copy for screen readers. */
+  content: attr(data-glitchess) / "";
+  white-space: nowrap;
+  position: absolute;
+  inset: 0;
+}
+.glitch span {
+  white-space: nowrap;
+  color: #0000 !important;
+}

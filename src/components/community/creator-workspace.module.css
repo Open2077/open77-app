@@ -1,0 +1,370 @@
+/* Dashboard -------------------------------------------------------------- */
+
+.dashboard {
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+  display: flex;
+}
+
+/* Editor ----------------------------------------------------------------- */
+
+.editor {
+  flex-direction: column;
+  gap: 1.4rem;
+  min-width: 0;
+  display: flex;
+}
+.editor [hidden] {
+  display: none !important;
+}
+
+.resume {
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 34rem;
+  display: flex;
+}
+.switch {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.8rem;
+  padding-top: 1rem;
+  display: flex;
+}
+.switchActions {
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  display: flex;
+}
+
+/* Status strip: what this draft is and whether it is saved. */
+.status {
+  border-block: 1px solid var(--line);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem 2rem;
+  padding: 0.9rem 0;
+  display: flex;
+}
+.statusFacts {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+  display: flex;
+}
+.statusNote {
+  color: var(--text-faint);
+  font-size: 0.86rem;
+}
+.saveState {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  font-size: 0.62rem;
+}
+.saveState.unsaved {
+  color: var(--tone);
+}
+
+.conflict {
+  flex-direction: column;
+  gap: 1rem;
+  display: flex;
+}
+.mergeField {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.9rem;
+  padding-top: 1rem;
+  display: flex;
+}
+
+/* Stepper: skewed segments, the current one lit in the tone. */
+.stepsNav {
+  scrollbar-width: none;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.stepsNav::-webkit-scrollbar {
+  display: none;
+}
+.steps {
+  counter-reset: step;
+  grid-template-columns: repeat(5, minmax(max-content, 1fr));
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  display: grid;
+}
+.step {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  text-align: left;
+  white-space: nowrap;
+  isolation: isolate;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  height: 3.1rem;
+  padding: 0 1rem;
+  font-size: 0.6rem;
+  transition: color var(--transition-link);
+  display: flex;
+  position: relative;
+}
+.step:before {
+  content: "";
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.step:hover {
+  color: var(--text-primary);
+}
+.step:hover:before {
+  border-color: var(--line-strong);
+}
+.step[aria-current="step"] {
+  color: var(--body);
+}
+.step[aria-current="step"]:before {
+  background: var(--tone);
+  border-color: var(--tone);
+}
+.stepIndex {
+  font-family: var(--font-mono);
+  font-variation-settings: normal;
+  letter-spacing: 0;
+  opacity: 0.75;
+  font-size: 0.72rem;
+}
+.stepLabel {
+  position: relative;
+  top: 0.05em;
+}
+.stepNote {
+  opacity: 0.7;
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+/* Main column and project side column. */
+.layout {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 19rem);
+  align-items: start;
+  gap: 2rem 2.4rem;
+  display: grid;
+}
+.main {
+  flex-direction: column;
+  gap: 1.4rem;
+  min-width: 0;
+  display: flex;
+}
+.side {
+  flex-direction: column;
+  gap: 1.6rem;
+  min-width: 0;
+  display: flex;
+  position: sticky;
+  top: calc(var(--header-height) + 1.25rem);
+}
+/* The side column needs room beside a comfortable form; below that it
+   becomes a band of project facts under the editor. */
+@media screen and (max-width: 1680px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .side {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 1.6rem 2.4rem;
+    display: grid;
+    position: static;
+  }
+}
+@media screen and (max-width: 860px) {
+  .side {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.sideBlock {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding-top: 1.1rem;
+  display: flex;
+  position: relative;
+}
+.sideBlock > * {
+  align-self: stretch;
+}
+.sideBlock > a {
+  align-self: flex-start;
+}
+.sideBlock:before {
+  content: "";
+  background: linear-gradient(90deg, var(--tone) 0 3rem, var(--line) 3rem 100%);
+  height: 1px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.address {
+  font-family: var(--font-mono);
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+  font-weight: 300;
+}
+
+.stage {
+  flex-direction: column;
+  gap: 1.8rem;
+  display: flex;
+}
+.stageHead {
+  flex-direction: column;
+  gap: 0.7rem;
+  display: flex;
+}
+.stageTitle {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.07em;
+  font-size: calc(0.4vw + 18px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.98;
+}
+.stageTitle:focus-visible {
+  outline-offset: 6px;
+}
+.form {
+  flex-direction: column;
+  gap: 1.5rem;
+  display: flex;
+}
+.fieldset {
+  border: 0;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+.fieldset:disabled {
+  opacity: 0.6;
+}
+.fields {
+  flex-direction: column;
+  gap: 1.35rem;
+  display: flex;
+}
+.slug {
+  color: var(--tone);
+  font-weight: 500;
+}
+.creator {
+  color: var(--text-dim);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  font-size: 0.9rem;
+  display: flex;
+}
+.creator strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+.saveBar {
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.4rem;
+  padding-top: 1.3rem;
+  display: flex;
+}
+.saveHint {
+  color: var(--text-faint);
+  font-size: 0.86rem;
+}
+.media {
+  flex-direction: column;
+  gap: calc(32px + 16 * (100vw - 320px) / 1080);
+  display: flex;
+}
+
+.checks {
+  flex-direction: column;
+  gap: 1rem;
+  display: flex;
+}
+.checkList {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  display: flex;
+}
+.checkList li {
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.8rem 0.25rem;
+  display: flex;
+}
+.checkList li:before {
+  content: "";
+  border: 1px solid currentColor;
+  flex: none;
+  width: 0.8rem;
+  height: 0.8rem;
+  transform: skewX(var(--skew));
+}
+.done {
+  color: var(--text-primary);
+}
+.done:before {
+  background: var(--blue);
+  color: var(--blue);
+}
+.todo {
+  color: var(--text-dim);
+}
+.todo:before {
+  color: var(--yellow);
+}
+
+.submit {
+  border: 1px solid oklch(from var(--tone) l c h / 40%);
+  background: oklch(from var(--tone) l c h / 4%);
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 1.3rem 1.4rem;
+  display: flex;
+}
+
+.continue {
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  display: flex;
+}
+@media screen and (max-width: 520px) {
+  .continue {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .continue > span:empty {
+    display: none;
+  }
+}

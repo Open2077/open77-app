@@ -1,0 +1,26 @@
+.members {
+  flex-direction: column;
+  gap: calc(36px + 20 * (100vw - 320px) / 1080);
+  min-width: 0;
+  display: flex;
+}
+.toolbar {
+  gap: 0.9rem 1.8rem;
+}
+.you {
+  color: var(--text-faint);
+  font-weight: 400;
+}
+.invite {
+  grid-template-columns: minmax(0, 24rem) max-content;
+  justify-content: start;
+  align-items: end;
+  gap: 1rem 1.4rem;
+  display: grid;
+}
+@media screen and (max-width: 700px) {
+  .invite {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+}

@@ -1,11 +1,11 @@
-import { InlineMarkdown } from "@/components/docs/inline-markdown";
+import { Tag } from "@/components/ui/chip";
+import { CodeBlock } from "@/components/ui/code-block";
+import { Table } from "@/components/ui/data";
 import { apiSetLabel, type ApiEntry } from "@/lib/api-reference";
 import { highlightCode } from "@/lib/docs";
+import { InlineMarkdown } from "./inline-markdown";
 
-const API_SET_CLASS: Record<string, string> = {
-  network: "dx-tag dx-tag-network",
-  game: "dx-tag dx-tag-game",
-};
+import styles from "./api-entry.module.css";
 
 /**
  * One function in the reference.
@@ -18,63 +18,78 @@ const API_SET_CLASS: Record<string, string> = {
  */
 export async function ApiEntryCard({ entry }: { entry: ApiEntry }) {
   const { label, hint } = apiSetLabel(entry.api_set);
-  const exampleHtml = entry.example ? await highlightCode(entry.example, "lua") : null;
+  const [signatureHtml, exampleHtml] = await Promise.all([
+    highlightCode(entry.signature, "lua"),
+    entry.example ? highlightCode(entry.example, "lua") : Promise.resolve(null),
+  ]);
 
   return (
-    <article className="dx-fn" id={entry.anchor}>
-      <div className="dx-fn-head">
-        <h3 className="dx-fn-name" id={`${entry.anchor}-title`}>
+    <article className={styles.entry} id={entry.anchor} data-api-entry>
+      <header className={styles.head}>
+        <h3 className={styles.name} id={`${entry.anchor}-title`}>
           <a href={`#${entry.anchor}`}>{entry.name}</a>
         </h3>
-        <span className={API_SET_CLASS[entry.api_set] ?? "dx-tag"} title={hint}>
-          {label}
-        </span>
-        {entry.inferred ? (
-          <span className="dx-tag dx-tag-inferred" title="Signature inferred from the handler body">
-            INFERRED
+        <span className={styles.tags}>
+          <span title={hint}>
+            <Tag tone="neutral">{label}</Tag>
           </span>
-        ) : null}
-      </div>
+          {entry.inferred ? (
+            <span title="Signature inferred from the handler body">
+              <Tag tone="yellow">Inferred</Tag>
+            </span>
+          ) : null}
+        </span>
+      </header>
 
-      <p className="dx-fn-sig">
-        <code>{entry.signature}</code>
-      </p>
+      <CodeBlock className={styles.signature} code={entry.signature} html={signatureHtml} title="Signature" language="lua" />
 
       {entry.summary ? (
-        <p className="dx-fn-summary">
+        <p className={styles.summary}>
           <InlineMarkdown text={entry.summary} />
         </p>
       ) : null}
       {entry.description ? (
-        <p className="dx-fn-desc">
+        <p className={styles.description}>
           <InlineMarkdown text={entry.description} />
         </p>
       ) : null}
 
       {entry.params.length > 0 ? (
-        <div className="dx-fn-block">
-          <p className="dx-fn-block-title">Parameters</p>
-          <ul className="dx-params">
-            {entry.params.map((param) => (
-              <li className="dx-param" key={param.name}>
-                <span className="dx-param-name">{param.name}</span>
-                <span className="dx-param-type">{param.type}</span>
-                <span className={param.optional ? "dx-param-opt" : "dx-param-req"}>
-                  {param.optional ? "optional" : "required"}
-                </span>
-                {param.default ? (
-                  <span className="dx-param-type">default {param.default}</span>
-                ) : null}
-              </li>
-            ))}
-          </ul>
+        <div className={styles.block}>
+          <p className={styles.blockTitle}>
+            Parameters <span>{entry.params.length}</span>
+          </p>
+          <Table caption={`Parameters of ${entry.qualified}`} dense className={styles.params}>
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Type</th>
+                <th scope="col">Use</th>
+                <th scope="col">Default</th>
+              </tr>
+            </thead>
+            <tbody>
+              {entry.params.map((param) => (
+                <tr key={param.name}>
+                  <td>
+                    <code className={styles.paramName}>{param.name}</code>
+                  </td>
+                  <td>
+                    <code className={styles.paramType}>{param.type}</code>
+                  </td>
+                  <td className={param.optional ? styles.optional : styles.required}>{param.optional ? "optional" : "required"}</td>
+                  <td>{param.default ? <code className={styles.paramType}>{param.default}</code> : <span className={styles.none}>—</span>}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         </div>
       ) : null}
 
       {entry.returns.length > 0 ? (
-        <div className="dx-fn-block">
-          <p className="dx-fn-block-title">Returns</p>
-          <ul className="dx-returns">
+        <div className={styles.block}>
+          <p className={styles.blockTitle}>Returns</p>
+          <ul className={styles.returns}>
             {entry.returns.map((value) => (
               <li key={value}>
                 <InlineMarkdown text={value} />
@@ -84,15 +99,20 @@ export async function ApiEntryCard({ entry }: { entry: ApiEntry }) {
         </div>
       ) : null}
 
-      {exampleHtml ? (
-        <div className="dx-fn-block">
-          <p className="dx-fn-block-title">Example</p>
-          <div className="dx-prose" dangerouslySetInnerHTML={{ __html: exampleHtml }} />
+      {exampleHtml && entry.example ? (
+        <div className={styles.block}>
+          <p className={styles.blockTitle}>Example</p>
+          <CodeBlock code={entry.example} html={exampleHtml} title="example.lua" language="lua" />
         </div>
       ) : null}
 
-      <p className="dx-fn-source">
-        {entry.usageGuideHref ? <><a href={entry.usageGuideHref}>{entry.usageGuideLabel ?? "Usage guide"}</a>{" · "}</> : null}
+      <p className={styles.source}>
+        {entry.usageGuideHref ? (
+          <>
+            <a href={entry.usageGuideHref}>{entry.usageGuideLabel ?? "Usage guide"}</a>
+            {" · "}
+          </>
+        ) : null}
         {entry.guideHref ? <a href={entry.guideHref}>Documented in {entry.source}</a> : <>Registered in {entry.source} as {entry.handler}</>}
         {entry.source_line ? ` (line ${entry.source_line})` : ""}.
       </p>

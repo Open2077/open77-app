@@ -1,0 +1,237 @@
+:where(.field) {
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  display: flex;
+}
+.label {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.66rem;
+  display: flex;
+}
+.optional {
+  color: var(--text-faint);
+}
+.hint {
+  color: var(--text-faint);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+.error {
+  color: var(--red);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+/* Text input and select share a slanted frame. */
+:where(.control) {
+  --frame: var(--line);
+  isolation: isolate;
+  align-items: center;
+  gap: 0.7rem;
+  height: 2.9rem;
+  padding: 0 1.1rem;
+  display: flex;
+  position: relative;
+}
+.slanted:before {
+  content: "";
+  background: var(--surface-1);
+  border: 1px solid var(--frame);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.control:hover {
+  --frame: var(--line-strong);
+}
+.control:focus-within {
+  --frame: var(--tone);
+}
+.control:focus-within:before {
+  background: var(--surface-2);
+}
+.invalid .control {
+  --frame: var(--red);
+}
+:where(.lg) {
+  height: 3.4rem;
+  font-size: 1.05rem;
+}
+.input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+}
+.input:focus-visible {
+  outline: none;
+}
+.leading {
+  color: var(--text-faint);
+  flex: none;
+  font-size: 1.1em;
+}
+.control:focus-within .leading {
+  color: var(--tone);
+}
+.trailing {
+  color: var(--text-faint);
+  flex: none;
+  align-items: center;
+  gap: 0.4rem;
+  display: flex;
+}
+
+:where(.textarea) {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  width: 100%;
+  min-height: 7rem;
+  padding: 0.9rem 1rem;
+  line-height: 1.5;
+  transition: border-color var(--transition-link);
+  resize: vertical !important;
+}
+.textarea:hover {
+  border-color: var(--line-strong);
+}
+.textarea:focus-visible {
+  border-color: var(--tone);
+  outline: none;
+}
+.invalid .textarea {
+  border-color: var(--red);
+}
+
+:where(.selectWrap) {
+  padding: 0;
+}
+:where(.compact) {
+  height: 2.35rem;
+  font-size: 0.9rem;
+}
+.select {
+  appearance: none;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding: 0 2.6rem 0 1.1rem;
+}
+.select:focus-visible {
+  outline: none;
+}
+.select option {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+.chevron {
+  pointer-events: none;
+  color: var(--text-faint);
+  position: absolute;
+  right: 1rem;
+}
+
+/* Checkbox and switch. */
+:where(.check) {
+  cursor: pointer;
+  align-items: center;
+  gap: 0.8rem;
+  line-height: 1.35;
+  display: inline-flex;
+  position: relative;
+}
+.checkInput {
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  position: absolute;
+}
+.box {
+  pointer-events: none;
+  border: 1px solid var(--line-strong);
+  flex: none;
+  width: 1.05rem;
+  height: 1.05rem;
+  transform: skewX(var(--skew));
+  transition:
+    background-color var(--transition-link),
+    border-color var(--transition-link);
+  position: relative;
+}
+.box:after {
+  content: "";
+  border: solid var(--body);
+  border-width: 0 2px 2px 0;
+  opacity: 0;
+  width: 0.3rem;
+  height: 0.55rem;
+  position: absolute;
+  top: 0.12rem;
+  left: 0.32rem;
+  transform: skewX(var(--skew-reverse)) rotate(45deg);
+}
+.checkInput:checked + .box {
+  background: var(--tone);
+  border-color: var(--tone);
+}
+.checkInput:checked + .box:after {
+  opacity: 1;
+}
+.check:hover .box,
+.check:hover .track {
+  border-color: var(--tone);
+}
+.checkInput:focus-visible + .box,
+.checkInput:focus-visible + .track {
+  outline: var(--focus);
+  outline-offset: 3px;
+}
+.checkInput:disabled ~ * {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.track {
+  pointer-events: none;
+  border: 1px solid var(--line-strong);
+  flex: none;
+  width: 2.4rem;
+  height: 1.2rem;
+  transform: skewX(var(--skew));
+  transition:
+    background-color var(--transition-link),
+    border-color var(--transition-link);
+  position: relative;
+}
+.track:after {
+  content: "";
+  background: var(--text-dim);
+  width: 0.9rem;
+  height: calc(100% - 4px);
+  transition:
+    transform 0.25s var(--cubic),
+    background-color var(--transition-link);
+  position: absolute;
+  top: 2px;
+  left: 2px;
+}
+.checkInput:checked + .track {
+  border-color: var(--tone);
+  background: oklch(from var(--tone) l c h / 18%);
+}
+.checkInput:checked + .track:after {
+  background: var(--tone);
+  transform: translateX(1.2rem);
+}
+.checkLabel {
+  color: var(--text-primary);
+}

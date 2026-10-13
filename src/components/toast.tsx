@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import styles from "./toast.module.css";
+
 const VISIBLE_MS = 2600;
 const FADE_MS = 250;
 
@@ -39,8 +41,7 @@ export function useToast() {
 
   const node = (
     <div
-      className={`toast${visible ? " is-visible" : ""}`}
-      id="toast"
+      className={`${styles.toast}${visible ? ` ${styles.visible}` : ""}`}
       role="status"
       aria-live="polite"
       hidden={message === null}

@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 
 import { AgentNote } from "@/components/docs/agent-note";
 import { ApiEntryCard } from "@/components/docs/api-entry";
-import { DocToc } from "@/components/docs/doc-toc";
 import { DocsShell } from "@/components/docs/docs-shell";
 import { JsonLd } from "@/components/json-ld";
 import { getApiIndex, getApiNamespace } from "@/lib/api-reference";
@@ -70,7 +69,7 @@ export default async function ApiNamespacePage({
   const toc: TocEntry[] = namespace.entries.map((entry) => ({
     id: entry.anchor,
     text: entry.name,
-    depth: 3,
+    depth: 2,
   }));
 
   return (
@@ -81,20 +80,22 @@ export default async function ApiNamespacePage({
           { label: "API reference", href: "/docs/api" },
           { label: `${namespace.runtime} · ${namespace.label}` },
         ]}
+        eyebrow={`${namespace.runtime} runtime · Lua API`}
         title={namespace.label}
+        titleMax={18}
+        titleVerbatim
         lede={group?.blurb}
         meta={
           <>
-            <span className={`dx-runtime-chip dx-runtime-${namespace.runtime}`}>
-              {namespace.runtime} runtime
-            </span>
+            <span>{namespace.runtime} runtime</span>
             <span>
               {namespace.entries.length} function{namespace.entries.length === 1 ? "" : "s"}
             </span>
+            <a href={`/docs/api?side=${namespace.runtime}&namespace=${encodeURIComponent(namespace.name)}`}>Open in explorer</a>
             <a href={namespace.markdownHref}>Markdown</a>
           </>
         }
-        toc={<DocToc entries={toc} />}
+        toc={toc}
       >
         <div>
           {namespace.entries.map((entry) => (

@@ -22,7 +22,6 @@ import sharp from "sharp";
 const ROOT = process.cwd();
 const SRC = path.join(ROOT, "brand-src", "open77.png");
 const BRAND = path.join(ROOT, "public", "brand");
-const PUBLIC = path.join(ROOT, "public");
 
 /** Content bbox measured from opaque pixels in the source lockup. */
 const CONTENT = { left: 51, top: 199, width: 2071, height: 314 };
@@ -523,9 +522,8 @@ async function main() {
   await writePng(path.join(BRAND, "favicon", "apple-touch-icon.png"), apple);
   await writeFile(path.join(BRAND, "favicon", "favicon.ico"), ico);
   await writeFile(path.join(BRAND, "favicon", "favicon.svg"), faviconSvg);
-  await writeFile(path.join(PUBLIC, "favicon.ico"), ico);
-  await writeFile(path.join(PUBLIC, "assets", "favicon.svg"), faviconSvg);
-  await writePng(path.join(PUBLIC, "apple-touch-icon.png"), apple);
+  // The site's own icons (public/favicon.*, apple-touch-icon.png, thumbnail.png)
+  // come from the nuixw design and are not generated here.
 
   await writePng(path.join(BRAND, "social", "avatar-200.png"), avatar200);
   await writePng(path.join(BRAND, "social", "avatar-512.png"), avatar512);

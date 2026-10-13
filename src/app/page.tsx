@@ -1,199 +1,37 @@
-import { Saira } from "next/font/google";
-import Image from "next/image";
-import Link from "next/link";
-
-import { HomeHeroStage } from "@/components/home-hero-stage";
+import { Background } from "@/components/home/background";
+import { Closing } from "@/components/home/closing";
+import { Creators } from "@/components/home/creators";
+import { Developers } from "@/components/home/developers";
+import { Hero } from "@/components/home/hero";
+import { HomeShell } from "@/components/home/home-shell";
+import { HorizontalScroll } from "@/components/home/horizontal-scroll";
+import { Players } from "@/components/home/players";
+import { Progress } from "@/components/home/progress";
+import { Section } from "@/components/home/section";
 import { JsonLd } from "@/components/json-ld";
-import { ArrowRightIcon, CodeIcon, DiscordIcon, GlobeIcon, PeopleIcon, PlugIcon, ServerRackIcon, ShieldIcon } from "@/components/icons";
-import { SiteFooter } from "@/components/site-footer";
-import { highlightCode } from "@/lib/docs";
-import { PLAYER_REQUIREMENT_SHORT } from "@/lib/requirements";
-import { HOME_CLIENT_LUA, HOME_SERVER_LUA, SCRIPT_DOC_LINKS, SCRIPT_PILLARS, SCRIPT_SAMPLE_NOTE } from "@/lib/scripting";
 import { breadcrumbNode, jsonLdGraph, pageMetadata, softwareApplicationNode } from "@/lib/seo";
 import { site } from "@/lib/site";
-import hero from "./home-hero.module.css";
-import styles from "./home.module.css";
 
 export const metadata = pageMetadata({ description: site.description, path: "/" });
 
-/** Saira's variable width axis gives the hero its expanded, heavy display cut. */
-const heroDisplay = Saira({ subsets: ["latin"], axes: ["wdth"], style: ["normal", "italic"], variable: "--font-hero", display: "swap" });
-
-const MARQUEE_WORDS = ["MULTIPLAYER FOR", "//", "MULTIPLAYER FOR", "//"];
-
-/** The four load-bearing facts about the platform, stated without adjectives. */
-const HERO_FACTS = [
-  { key: "Model", value: "Community-run dedicated servers", icon: ServerRackIcon },
-  { key: "Requires", value: PLAYER_REQUIREMENT_SHORT, icon: ShieldIcon },
-  { key: "Game modes", value: "Whatever creators build", icon: PeopleIcon },
-  { key: "Stage", value: "Alpha · Build your server", icon: CodeIcon },
-];
-
-const DESTINATIONS = [
-  { href: "/servers", title: "Play Cyberpunk together.", label: "FOR PLAYERS", body: "Community servers turn Night City into multiplayer worlds, each with its own rules and its own experience.", image: "/assets/home/play-v2.webp", icon: PeopleIcon, number: "01" },
-  { href: "/create", title: "Create your own server.", label: "FOR SERVER CREATORS", body: "A dedicated server you operate, with your rules, your mods, and gameplay you design.", image: "/assets/home/servers-v2.webp", icon: ServerRackIcon, number: "02" },
-  { href: "/workshop", title: "Share what you build.", label: "WORKSHOP", body: "Scripts, gamemodes, maps and interfaces made by the community, free to download and ready for your world.", image: "/assets/home/worlds-v2.webp", icon: GlobeIcon, number: "03" },
-  { href: "/docs", title: "Script your own Night City.", label: "FOR DEVELOPERS", body: "Lua 5.4, real game APIs and web interfaces. The complete documentation and the Lua API reference.", image: "/assets/home/build-v2.webp", icon: CodeIcon, number: "04" },
-];
-
-const WORLDS = [
-  { title: "Live another life.", tag: "ROLEPLAY", href: "/servers?mode=Roleplay", image: "/assets/exp-roleplay.jpg", body: "Strict roleplay cities with their own economies, factions, jobs and staff." },
-  { title: "Own the streets.", tag: "RACING", href: "/servers?mode=Racing", image: "/assets/exp-racing.jpg", body: "Racing leagues, late-night meets and a city full of open roads." },
-  { title: "Rewrite the rules.", tag: "CUSTOM WORLDS", href: "/servers", image: "/assets/exp-combat.jpg", body: "PvP, survival, freeroam, or a game mode nobody has seen yet." },
-];
-
-const CREATE_POINTS = [
-  { title: "Your own dedicated server", body: "A persistent world you operate, on your hardware or a rented machine." },
-  { title: "Custom gameplay", body: "Build anything from a strict roleplay city to a racing league to a game mode nobody has seen yet." },
-  { title: "Your rules, your community", body: "Whitelists, moderation, staff, identity. Your server page is your front door." },
-];
-
-const PILLAR_ICONS = { "LUA 5.4": CodeIcon, "REAL GAME APIS": PlugIcon, "WEB INTERFACES": GlobeIcon } as const;
-
-function Snippet({ filename, badge, html }: { filename: string; badge: string; html: string }) {
+/**
+ * Home page: the hero, the three audience columns, then the players, server
+ * creators and developers scenes on one horizontal track.
+ */
+export default function HomePage() {
   return (
-    <div className={styles.codePanel}>
-      <div className={styles.codeHead}><span><i /><i /><i /></span><span>{filename}</span><b>{badge}</b></div>
-      <div className={styles.code} dangerouslySetInnerHTML={{ __html: html }} />
-    </div>
-  );
-}
-
-export default async function HomePage() {
-  const [clientHtml, serverHtml] = await Promise.all([
-    highlightCode(HOME_CLIENT_LUA, "lua"),
-    highlightCode(HOME_SERVER_LUA, "lua"),
-  ]);
-
-  return (
-    <>
-      <main id="main" className={styles.home}>
-        <div className={styles.opening}>
-          <HomeHeroStage className={`${hero.stage} ${heroDisplay.variable}`} labelledBy="home-title">
-            <div className={hero.city} aria-hidden="true">
-              <Image src="/assets/home/hero/city-v1.webp" alt="" fill preload sizes="100vw" />
-            </div>
-            <div className={hero.marquee} aria-hidden="true">
-              <div className={hero.marqueeTrack}>
-                {[0, 1].map((half) => <span key={half}>{MARQUEE_WORDS.map((word, index) => <b key={index}>{word}</b>)}</span>)}
-              </div>
-            </div>
-            <div className={`${hero.merc} ${hero.mercLeft}`} aria-hidden="true">
-              <Image src="/assets/home/hero/merc-left-v1.webp" alt="" fill preload sizes="(max-width: 760px) 70vw, 42vw" />
-            </div>
-            <div className={`${hero.merc} ${hero.mercRight}`} aria-hidden="true">
-              <Image src="/assets/home/hero/merc-right-v1.webp" alt="" fill preload sizes="(max-width: 760px) 70vw, 42vw" />
-            </div>
-            <div className={hero.shade} aria-hidden="true" />
-
-            <div className={hero.copy}>
-              <h1 id="home-title" className={hero.title}>
-                <span className={hero.srOnly}>Multiplayer for </span>
-                <span className={hero.game} data-text="Cyberpunk">Cyberpunk</span>
-                <span className={hero.year}><i>2</i><i>0</i><i>7</i><i>7</i></span>
-              </h1>
-              <p className={hero.intro}>Play <strong>Cyberpunk&nbsp;2077 online</strong> on community servers, or create your own server and your own multiplayer experience.</p>
-              <Link className={hero.alpha} href="/docs/alpha-access"><span aria-hidden="true" />Everyone with Alpha access can download the server and start building now.<ArrowRightIcon size={12} /></Link>
-            </div>
-
-            <Link className={`${hero.cta} ${hero.ctaPrimary}`} href="/download"><span>Download launcher</span><i aria-hidden="true" /></Link>
-            <Link className={`${hero.cta} ${hero.ctaSecondary}`} href="/create"><i aria-hidden="true" /><span>Build your server</span></Link>
-            <a className={hero.scroll} href="#discover"><span>SCROLL TO DISCOVER</span><i aria-hidden="true" /></a>
-          </HomeHeroStage>
-
-          <div className={styles.gateway}>
-            <ul className={styles.facts} aria-label="Platform facts">
-              {HERO_FACTS.map(({ key, value, icon: Icon }) => (
-                <li key={key}><Icon size={28} /><div><span>{key.toUpperCase()}</span><strong>{value}</strong></div></li>
-              ))}
-            </ul>
-            <div className={styles.destinations} id="discover">
-              {DESTINATIONS.map(({ icon: Icon, ...card }) => (
-                <Link className={styles.destination} key={card.href} href={card.href}>
-                  <Image src={card.image} alt="" fill sizes="(max-width: 600px) 100vw, (max-width: 1100px) 50vw, 25vw" />
-                  <div className={styles.cardTop}><Icon size={28} /><span>{card.number} /</span></div>
-                  <div className={styles.cardCopy}><span className={styles.cardLabel}>{card.label}</span><h2>{card.title}</h2><p>{card.body}</p></div>
-                  <span className={styles.cardArrow}><ArrowRightIcon size={17} /></span>
-                </Link>
-              ))}
-            </div>
-            <div className={styles.signature}><span /><p>THE CITY WAS BUILT FOR ONE. OPEN IT TO EVERYONE.</p><span /></div>
-          </div>
-        </div>
-
-        <section className={styles.worlds} id="play" aria-labelledby="worlds-title">
-          <div className={styles.sectionHeading}>
-            <div><p className={styles.eyebrow}><span aria-hidden="true">{"//"}</span> FOR PLAYERS</p><h2 id="worlds-title">Play Cyberpunk<br /><em>together.</em></h2></div>
-            <div><p>Community servers turn Night City into multiplayer worlds, each with its own rules and its own experience. OPEN//77 is the layer that makes them possible.</p><Link href="/servers" className={styles.textLink}>Preview the server browser<ArrowRightIcon size={18} /></Link></div>
-          </div>
-          <div className={styles.worldGrid}>
-            {WORLDS.map((world) => <Link className={styles.worldCard} key={world.tag} href={world.href}>
-              <Image src={world.image} alt="" fill sizes="(max-width: 760px) 100vw, 33vw" />
-              <span className={styles.worldTag}>{world.tag}</span>
-              <div><h3>{world.title}</h3><p>{world.body}</p><span className={styles.worldArrow}><ArrowRightIcon size={21} /></span></div>
-            </Link>)}
-          </div>
-          <p className={styles.worldNote}>One client takes you to every community server. Resources download automatically when you join a world.</p>
-        </section>
-
-        <section className={styles.creator} id="lua" aria-labelledby="creator-title">
-          <div className={styles.creatorCopy}>
-            <p className={styles.eyebrow}><span aria-hidden="true">{"//"}</span> FOR DEVELOPERS</p>
-            <h2 id="creator-title">Script your own<br /><em>Night City.</em></h2>
-            <p>Gameplay on an OPEN//77 server is not configured. It is scripted. A resource is a small Lua&nbsp;5.4 package your server loads, hot-reloads and streams to every player who joins. This is the entire <code>/ride</code> command, for real.</p>
-            <ul className={styles.pillars}>
-              {SCRIPT_PILLARS.map((pillar) => {
-                const Icon = PILLAR_ICONS[pillar.tag];
-                return (
-                  <li key={pillar.tag}>
-                    <Icon size={20} />
-                    <div>
-                      <span className={styles.cardLabel}>{pillar.tag}</span>
-                      <strong>{pillar.title}</strong>
-                      <p>{pillar.body} <Link href={pillar.href}>{pillar.link}</Link></p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-            <div className={styles.actions}>
-              <Link className={styles.primary} href="/docs">Read the docs<ArrowRightIcon size={18} /></Link>
-              {SCRIPT_DOC_LINKS.filter((link) => link.href !== "/docs").map((link) => (
-                <Link key={link.href} className={styles.textLink} href={link.href}>{link.label}<ArrowRightIcon size={16} /></Link>
-              ))}
-            </div>
-          </div>
-          <div className={styles.codeStack}>
-            <Snippet filename="resources/ride/server/main.lua" badge="SERVER RUNTIME" html={serverHtml} />
-            <Snippet filename="resources/ride/client/main.lua" badge="CLIENT RUNTIME" html={clientHtml} />
-            <p className={styles.codeFoot}><span aria-hidden="true" />{SCRIPT_SAMPLE_NOTE}</p>
-          </div>
-        </section>
-
-        <section className={styles.alpha} id="create" aria-labelledby="create-title">
-          <div className={styles.alphaGlow} aria-hidden="true" />
-          <div>
-            <p className={styles.eyebrow}><span aria-hidden="true">{"//"}</span> FOR SERVER CREATORS</p>
-            <h2 id="create-title">Create your<br /><em>own server.</em></h2>
-            <p>Run a dedicated server that stays online for your community, with your rules, your mods, and gameplay you design. Everyone with Alpha access can download it and start building now. No separate developer application.</p>
-            <ul className={styles.points}>
-              {CREATE_POINTS.map((point) => (
-                <li key={point.title}><strong>{point.title}</strong><p>{point.body}</p></li>
-              ))}
-            </ul>
-            <div className={styles.actions}><Link className={styles.primary} href="/host">Download server<ArrowRightIcon size={18} /></Link><Link className={styles.secondary} href="/docs/host-a-server">Hosting guide<ArrowRightIcon size={18} /></Link></div>
-          </div>
-          <aside className={styles.join}>
-            <DiscordIcon size={36} />
-            <h3>Need Alpha access?</h3>
-            <p>Use <code>/alpha apply</code> with the bot in any channel on our official Discord. It is also where Alpha members follow the changelog and report reproducible issues to the team.</p>
-            {site.links.discord && <a href={site.links.discord} target="_blank" rel="noreferrer noopener" className={styles.textLink}>Join our Discord<ArrowRightIcon size={18} /></a>}
-            <small>Alpha software: expect bugs, crashes and API changes while the platform grows.</small>
-          </aside>
-        </section>
-      </main>
-      <div className={styles.footer}><SiteFooter tone="dark" /></div>
+    <HomeShell>
+      <Background>
+        <Hero />
+        <Section />
+        <HorizontalScroll footer={<Progress />}>
+          <Players />
+          <Creators />
+          <Developers />
+        </HorizontalScroll>
+        <Closing />
+      </Background>
       <JsonLd data={jsonLdGraph(softwareApplicationNode(), breadcrumbNode([{ name: "Home", path: "/" }]))} />
-    </>
+    </HomeShell>
   );
 }

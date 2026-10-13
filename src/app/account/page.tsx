@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AccountGate } from "@/components/account/account-gate";
+import { AccountShell } from "@/components/account/account-shell";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -15,5 +16,13 @@ export const metadata: Metadata = {
 };
 
 export default function AccountPage() {
-  return <AccountGate />;
+  return (
+    <AccountShell
+      eyebrow="Platform account"
+      title={["Your", "account"]}
+      lead="One account for the whole platform: the server browser, your game identities, your Workshop creations, and the license keys your servers run on."
+    >
+      <AccountGate />
+    </AccountShell>
+  );
 }

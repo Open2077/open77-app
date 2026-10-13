@@ -1,18 +1,27 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Notice } from "@/components/ui/feedback";
+import { Checkbox, Field, Input, Textarea } from "@/components/ui/field";
+import { refresh as refreshGlyph, upload02 } from "@/components/ui/icons";
 import type { StoredSession } from "@/lib/account/session";
 import * as api from "@/lib/community/client-api";
 import { transferUpload } from "@/lib/community/upload";
 import type { CommunityPage, CommunityProject, CommunityRelease, CommunityUploadItem } from "@/lib/community/types";
 import { validationHelp } from "@/lib/community/validation-help";
-import { useReleaseEditor } from "./use-release-editor";
-import { ReleaseFiles } from "./release-files";
-import { GitHubImportPicker, GitHubImportStatus } from "./github-import";
 import { MasterApiError } from "@/lib/account/api";
 import type { FieldErrors } from "@/lib/account/field-errors";
 import { CreateAttempt } from "@/lib/community/create-attempt";
-import { ValidationIssues } from "./validation-issues";
+import { Actions, ArrowLink, Block, Disclosure, Fine, FileInput, Pager, Pending, Progress, StateTag } from "@/components/account/kit";
+import { Card, Digest, FieldGrid, Meta, MonoBlock, Name, Stack, Subhead, Text } from "./creator-parts";
+import { GitHubImportPicker, GitHubImportStatus } from "./github-import";
+import { ReleaseFiles } from "./release-files";
+import { useReleaseEditor } from "./use-release-editor";
+import { ValidationIssues, fieldIssue } from "./validation-issues";
+
+import styles from "./creator-releases.module.css";
 
 const errorText = (error: unknown) => error instanceof Error ? error.message : "The request failed. Please try again.";
 /** An upload still able to complete for this release: reserved, in flight or queued, and not yet expired. */
@@ -71,15 +80,28 @@ function PackageTransfer({ token, projectId, releaseId, existing, checkedAt, cha
     }
   }
   if (!busy && existing && (!["pending", "uploaded"].includes(existing.upload.state) || Date.parse(existing.upload.expiresAtUtc) <= checkedAt)) return null;
-  return <form className="hub-form hub-upload-form" onSubmit={submit}>
-    {existing?.upload.state !== "uploaded" && <label>{existing ? "Select your ZIP again to restart" : "Release ZIP"}<input type="file" accept=".zip,application/zip" disabled={busy}
-      onChange={event => { setFile(event.target.files?.[0] ?? null); setError(""); }} /><small>Protocol ceiling: 100 MiB. Your publishing limits may be lower. Include open77.lua and the declared resource files.</small></label>}
-    <div className="hub-actions"><button className="btn btn-primary" disabled={busy || (!file && existing?.upload.state !== "uploaded")}>
-      {existing?.upload.state === "uploaded" ? "Submit stored file for validation" : existing ? "Restart upload" : "Upload ZIP"}</button>
-      {busy && <button type="button" className="btn btn-ghost" onClick={() => controller.current?.abort()}>Stop transfer</button>}</div>
-    {busy && <progress aria-label="ZIP upload progress" max={100} value={progress} />}
-    {status && <p role="status">{status}</p>}{error && <p className="hub-notice" role="alert">{error}</p>}
-  </form>;
+  return (
+    <form className={styles.transfer} onSubmit={submit}>
+      {existing?.upload.state !== "uploaded" ? (
+        <Field label={existing ? "Select your ZIP again to restart" : "Release ZIP"} hint="Protocol ceiling: 100 MiB. Your publishing limits may be lower. Include open77.lua and the declared resource files.">
+          <FileInput accept=".zip,application/zip" disabled={busy} onChange={event => { setFile(event.target.files?.[0] ?? null); setError(""); }} />
+        </Field>
+      ) : null}
+      <Actions>
+        <Button key={existing?.upload.state ?? "new"} type="submit" lines="none" size="sm" icon={upload02} iconPosition="left" disabled={busy || (!file && existing?.upload.state !== "uploaded")}>
+          {existing?.upload.state === "uploaded" ? "Submit stored file for validation" : existing ? "Restart upload" : "Upload ZIP"}
+        </Button>
+        {busy ? (
+          <Button lines="none" color="neutral" border size="sm" onClick={() => controller.current?.abort()}>
+            Stop transfer
+          </Button>
+        ) : null}
+      </Actions>
+      {busy ? <Progress value={progress} label="ZIP upload progress" /> : null}
+      {status ? <Text role="status">{status}</Text> : null}
+      {error ? <Notice kind="danger">{error}</Notice> : null}
+    </form>
+  );
 }
 
 export function CreatorReleases({ session, project, readOnly = false, onUnsavedChange }: { session: StoredSession; project: CommunityProject; readOnly?: boolean; onUnsavedChange?: (dirty: boolean) => void }) {
@@ -144,65 +166,197 @@ export function CreatorReleases({ session, project, readOnly = false, onUnsavedC
     } catch (error) { if (error instanceof MasterApiError) { createAttempt.current.rejected(error.status); setPendingCreate(createAttempt.current.pending); setFieldErrors(error.fieldErrors); } setCreateError(errorText(error)); }
     finally { setCreating(false); }
   }
-  return <section id="hub-releases" className="hub-section" aria-label="Manage releases">
-    <div className="hub-section-head"><div><p className="hub-kicker">PACKAGE PUBLISHING</p><h2>Releases and uploads</h2></div>
-      <button type="button" className="btn btn-ghost" onClick={reload}>Refresh status</button></div>
-    {error && <p className="hub-notice" role="alert">{error}</p>}
-    {createError && <p className="hub-notice" role="alert">{createError} <a href="/account" target="_blank" rel="noopener noreferrer">Sign in again in another tab</a> with the same account if your session expired. Your details remain here.</p>}
-    {createStatus && <p role="status">{createStatus}</p>}
-    <ValidationIssues errors={fieldErrors} />
-    {pendingCreate && !creating && <p className="hub-notice">The version may already have been created. Retry the same request to recover it before editing these details. Keep this tab open until it finishes.</p>}
-    {pollPaused && <p className="hub-notice">Automatic status checks have paused. Use Refresh status to check again.</p>}
-    <details className="hub-release" hidden={readOnly}><summary>Create a version</summary>
-      <p className="hub-notice">Release versions and their details cannot be reused or edited after creation. Check these details before continuing. Your ZIP is validated and reviewed before publication.</p>
-      <p role="status">{!draft.loaded ? "Loading your private release draft…" : draft.busy ? "Saving release details…" : draft.dirty ? "Unsaved release details" : "Release details saved"} · This unfinished form is private to your account.</p>
-      {draft.error && <p className="hub-notice" role="alert">{draft.error} Your text is retained; autosave is paused. <button type="button" className="btn btn-ghost" disabled={draft.busy || draft.conflict} onClick={() => { if (draft.loaded) void draft.save(); else draft.retryLoad(); }}>Retry</button></p>}
-      {draft.conflict && <div className="hub-notice"><p>Another tab changed your release draft. Compare before resuming.</p><button type="button" className="btn btn-ghost" disabled={draft.busy} onClick={draft.compare}>Compare saved details</button>
-        {draft.remote && <><div className="hub-form-row"><div><h3>Your details</h3><pre className="hub-merge-text">{JSON.stringify(draft.content, null, 2)}</pre></div><div><h3>Saved details</h3><pre className="hub-merge-text">{JSON.stringify(draft.remote.content, null, 2)}</pre></div></div>
-          <button type="button" className="btn btn-ghost" onClick={() => draft.recover("remote")}>Discard mine and use saved details</button><button type="button" className="btn btn-primary" onClick={() => draft.recover("local")}>Replace saved details with mine</button></>}
-      </div>}
-      <form className="hub-form" onSubmit={create}>
-        <fieldset className="hub-editor-fields" disabled={!draft.loaded || draft.conflict || creating || pendingCreate}>
-        <label>Version<input required maxLength={100} placeholder="1.0.0 or 1.0.0-beta.1" value={version} onChange={event => draft.change("version", event.target.value)} /></label>
-        <label>Changelog<textarea required maxLength={50000} value={changelog} onChange={event => draft.change("changelog", event.target.value)} /></label>
-        <label>Installation and configuration<textarea required maxLength={50000} value={installation} onChange={event => draft.change("installation", event.target.value)} /></label>
-        <label>License and attribution<textarea required maxLength={10000} value={license} onChange={event => draft.change("license", event.target.value)} /></label>
-        <label>Tested Open77 builds, one per line<textarea maxLength={10000} value={testedBuilds} onChange={event => draft.change("testedBuilds", event.target.value)} /></label>
-        <label>Required resources, one per line<textarea maxLength={10000} value={requiredResources} onChange={event => draft.change("requiredResources", event.target.value)} /></label>
-        </fieldset>
-        <label className="hub-rights"><input type="checkbox" checked={rights} disabled={creating || pendingCreate || !draft.loaded} onChange={event => setRightsContent(event.target.checked ? draft.content : null)} />I have permission to share this creation, its images and all included files under the stated license.</label>
-        <button type="button" className="btn btn-ghost" disabled={!draft.loaded || draft.busy || draft.conflict || creating} onClick={() => { void draft.save(); }}>Save release draft</button>
-        <button className="btn btn-primary" disabled={creating || (!pendingCreate && (!draft.loaded || draft.busy || draft.conflict || !rights))}>{creating ? "Creating…" : pendingCreate ? "Recover created version" : "Create immutable version"}</button>
-      </form></details>
-    {!releases && !error && <p role="status">Loading releases…</p>}
-    <div className="hub-releases">{releases?.items.map(release => <article className="hub-release" key={release.releaseId}>
-      <div className="hub-release-heading"><h3>Version {release.version}</h3><span className="hub-release-state">{release.state.replaceAll("_", " ")}</span></div>
-      {release.state === "uploading" && <div hidden={readOnly}><PackageTransfer token={session.token} projectId={project.projectId} releaseId={release.releaseId} checkedAt={checkedAt} changed={reload}
-        existing={uploads?.items.find(activeUploadFor(release.releaseId, checkedAt))} />
-        {!uploads?.items.some(activeUploadFor(release.releaseId, checkedAt)) &&
-          <GitHubImportPicker key={`${session.token}:${release.releaseId}`} session={session} projectId={project.projectId} releaseId={release.releaseId} sourceUrl={project.content.sourceUrl} changed={reload} />}</div>}
-      {readOnly && <><p className="hub-merge-text">{release.metadata.changelog}</p><p>Tested builds: {release.metadata.testedBuilds.join(", ") || "None declared"}</p><p>Required resources: {release.metadata.requiredResources.join(", ") || "None declared"}</p><p className="hub-merge-text">License: {release.metadata.license}</p><p className="hub-merge-text">Installation: {release.metadata.installation}</p></>}
-      {release.sha256 && <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p>}
-      {release.resources.length > 0 && <ReleaseFiles key={`${session.accountId}:${release.releaseId}`} releaseId={release.releaseId} token={session.token} />}
-      {release.resources.length > 0 && <details><summary>Inspected resources and requirements</summary>{release.resources.map(resource => <div className="hub-release" key={resource.name}><h4>{resource.name}</h4><p>Root: <code>{resource.relativeRoot || "."}</code> · Manifest version: {resource.manifest.version}</p><p>Open77: {resource.manifest.open77Version}</p><p>Dependencies: {resource.manifest.dependencies.join(", ") || "None declared"}</p><p>Permissions: {resource.manifest.permissions.join(", ") || "None declared"}</p><p>Preloads: {resource.manifest.preloadMods.join(", ") || "None declared"}</p></div>)}</details>}
-    </article>)}</div>
-    <nav className="hub-actions" aria-label="Your release pages">
-      {releaseCursor && <button className="btn btn-ghost" onClick={() => setReleaseCursor(undefined)}>Newest releases</button>}
-      {releases?.nextCursor && <button className="btn btn-ghost" onClick={() => setReleaseCursor(releases.nextCursor ?? undefined)}>Older releases</button>}</nav>
-    <div hidden={readOnly}><div className="hub-section-head"><h2>Your upload history</h2></div>
-    <p className="hub-notice">Interrupted transfers restart from the beginning. Pending reservations expire after 30 minutes; stored files can be submitted for validation without uploading again.</p>
-    {uploads?.items.length === 0 && <p>No uploads yet.</p>}
-    <div className="hub-releases">{uploads?.items.map(item => <article className="hub-release" key={item.upload.uploadId}>
-      <div className="hub-release-heading"><h3>{item.originalName}</h3><span className="hub-release-state">{item.upload.state}</span></div>
-      {item.importId && <GitHubImportStatus key={`${session.token}:${item.importId}`} token={session.token} id={item.importId} checkedAt={checkedAt} />}
-      {item.upload.inspectionCode && <p className="hub-notice" role="alert">Validation result: <code>{item.upload.inspectionCode}</code>. {validationHelp(item.upload.inspectionCode)} <a href="/docs/server-resources" target="_blank" rel="noopener noreferrer">Resource documentation ↗</a></p>}
-      {item.upload.state === "accepted" && <p>Technical validation passed. Publication still requires moderation approval.</p>}
-      {["pending", "uploaded"].includes(item.upload.state) && Date.parse(item.upload.expiresAtUtc) <= checkedAt && <p>This reservation expired. Select a ZIP from the release above to start a new reservation.</p>}
-      {item.upload.releaseId && <PackageTransfer token={session.token} projectId={project.projectId}
-        releaseId={item.upload.releaseId} existing={item} checkedAt={checkedAt} changed={reload} />}
-    </article>)}</div>
-    <nav className="hub-actions" aria-label="Your upload pages">
-      {uploadCursor && <button className="btn btn-ghost" onClick={() => setUploadCursor(undefined)}>Newest uploads</button>}
-      {uploads?.nextCursor && <button className="btn btn-ghost" onClick={() => setUploadCursor(uploads.nextCursor ?? undefined)}>Older uploads</button>}</nav></div>
-  </section>;
+  return (
+    <section id="hub-releases" className={styles.releases} aria-label="Manage releases">
+      <Block
+        eyebrow="Package publishing"
+        title="Releases and uploads"
+        headingLevel={3}
+        actions={
+          <Button lines="none" color="neutral" border size="sm" icon={refreshGlyph} iconPosition="left" onClick={reload}>
+            Refresh status
+          </Button>
+        }
+      >
+        <Stack>
+          {error ? <Notice kind="danger">{error}</Notice> : null}
+          {createError ? (
+            <Notice kind="danger">
+              {createError} <a href="/account" target="_blank" rel="noopener noreferrer">Sign in again in another tab</a> with the same account if your session expired. Your details remain here.
+            </Notice>
+          ) : null}
+          {createStatus ? <Notice kind="success">{createStatus}</Notice> : null}
+          <ValidationIssues errors={fieldErrors} />
+          {pendingCreate && !creating ? <Notice kind="warning">The version may already have been created. Retry the same request to recover it before editing these details. Keep this tab open until it finishes.</Notice> : null}
+          {pollPaused ? <Notice kind="info">Automatic status checks have paused. Use Refresh status to check again.</Notice> : null}
+
+          <Disclosure tone="framed" summary="Create a version" hidden={readOnly}>
+            <Notice kind="info">Release versions and their details cannot be reused or edited after creation. Check these details before continuing. Your ZIP is validated and reviewed before publication.</Notice>
+            <Meta>
+              <span role="status">{!draft.loaded ? "Loading your private release draft…" : draft.busy ? "Saving release details…" : draft.dirty ? "Unsaved release details" : "Release details saved"}</span>
+              <span>This unfinished form is private to your account.</span>
+            </Meta>
+            {draft.error ? (
+              <Notice
+                kind="danger"
+                action={
+                  <Button lines="none" color="red" border size="sm" disabled={draft.busy || draft.conflict} onClick={() => { if (draft.loaded) void draft.save(); else draft.retryLoad(); }}>
+                    Retry
+                  </Button>
+                }
+              >
+                {draft.error} Your text is retained; autosave is paused.
+              </Notice>
+            ) : null}
+            {draft.conflict ? (
+              <Notice kind="warning" title="Another tab changed your release draft. Compare before resuming.">
+                <Stack tight>
+                  <div>
+                    <Button lines="none" color="neutral" border size="sm" disabled={draft.busy} onClick={draft.compare}>
+                      Compare saved details
+                    </Button>
+                  </div>
+                  {draft.remote ? (
+                    <>
+                      <FieldGrid>
+                        <MonoBlock label={<Subhead as="h4">Your details</Subhead>}>{JSON.stringify(draft.content, null, 2)}</MonoBlock>
+                        <MonoBlock label={<Subhead as="h4">Saved details</Subhead>}>{JSON.stringify(draft.remote.content, null, 2)}</MonoBlock>
+                      </FieldGrid>
+                      <Actions>
+                        <Button lines="none" color="neutral" border size="sm" onClick={() => draft.recover("remote")}>Discard mine and use saved details</Button>
+                        <Button lines="none" size="sm" onClick={() => draft.recover("local")}>Replace saved details with mine</Button>
+                      </Actions>
+                    </>
+                  ) : null}
+                </Stack>
+              </Notice>
+            ) : null}
+            <form className={styles.form} onSubmit={create}>
+              <fieldset className={styles.fields} disabled={!draft.loaded || draft.conflict || creating || pendingCreate}>
+                <Field label="Version" error={fieldIssue(fieldErrors, "version")}>
+                  <Input required maxLength={100} placeholder="1.0.0 or 1.0.0-beta.1" value={version} onChange={event => draft.change("version", event.target.value)} />
+                </Field>
+                <Field label="Changelog" error={fieldIssue(fieldErrors, "changelog")}>
+                  <Textarea required maxLength={50000} value={changelog} onChange={event => draft.change("changelog", event.target.value)} />
+                </Field>
+                <Field label="Installation and configuration" error={fieldIssue(fieldErrors, "installation")}>
+                  <Textarea required maxLength={50000} value={installation} onChange={event => draft.change("installation", event.target.value)} />
+                </Field>
+                <Field label="License and attribution" error={fieldIssue(fieldErrors, "license")}>
+                  <Textarea required maxLength={10000} value={license} onChange={event => draft.change("license", event.target.value)} />
+                </Field>
+                <FieldGrid>
+                  <Field label="Tested Open77 builds, one per line" error={fieldIssue(fieldErrors, "testedBuilds")}>
+                    <Textarea maxLength={10000} rows={4} value={testedBuilds} onChange={event => draft.change("testedBuilds", event.target.value)} />
+                  </Field>
+                  <Field label="Required resources, one per line" error={fieldIssue(fieldErrors, "requiredResources")}>
+                    <Textarea maxLength={10000} rows={4} value={requiredResources} onChange={event => draft.change("requiredResources", event.target.value)} />
+                  </Field>
+                </FieldGrid>
+              </fieldset>
+              <Checkbox checked={rights} disabled={creating || pendingCreate || !draft.loaded} onChange={event => setRightsContent(event.target.checked ? draft.content : null)}>
+                I have permission to share this creation, its images and all included files under the stated license.
+              </Checkbox>
+              <Actions>
+                <Button lines="none" color="neutral" border size="sm" disabled={!draft.loaded || draft.busy || draft.conflict || creating} onClick={() => { void draft.save(); }}>
+                  Save release draft
+                </Button>
+                <Button key={creating ? "creating" : pendingCreate ? "recover" : "create"} type="submit" lines="none" size="sm" busy={creating} disabled={!pendingCreate && (!draft.loaded || draft.busy || draft.conflict || !rights)}>
+                  {creating ? "Creating…" : pendingCreate ? "Recover created version" : "Create immutable version"}
+                </Button>
+              </Actions>
+            </form>
+          </Disclosure>
+
+          {!releases && !error ? <Pending label="Loading releases" /> : null}
+          {releases?.items.length ? (
+            <div className={styles.list}>
+              {releases.items.map(release => (
+                <Card key={release.releaseId} className={styles.release}>
+                  <div className={styles.releaseHead}>
+                    <Subhead as="h4">Version {release.version}</Subhead>
+                    <StateTag state={release.state} />
+                  </div>
+                  {release.state === "uploading" ? (
+                    <div hidden={readOnly} className={styles.uploadArea}>
+                      <PackageTransfer token={session.token} projectId={project.projectId} releaseId={release.releaseId} checkedAt={checkedAt} changed={reload}
+                        existing={uploads?.items.find(activeUploadFor(release.releaseId, checkedAt))} />
+                      {!uploads?.items.some(activeUploadFor(release.releaseId, checkedAt)) ? (
+                        <GitHubImportPicker key={`${session.token}:${release.releaseId}`} session={session} projectId={project.projectId} releaseId={release.releaseId} sourceUrl={project.content.sourceUrl} changed={reload} />
+                      ) : null}
+                    </div>
+                  ) : null}
+                  {readOnly ? (
+                    <Stack tight>
+                      <MonoBlock label="Changelog">{release.metadata.changelog}</MonoBlock>
+                      <Text>Tested builds: {release.metadata.testedBuilds.join(", ") || "None declared"}</Text>
+                      <Text>Required resources: {release.metadata.requiredResources.join(", ") || "None declared"}</Text>
+                      <MonoBlock label="License">{release.metadata.license}</MonoBlock>
+                      <MonoBlock label="Installation">{release.metadata.installation}</MonoBlock>
+                    </Stack>
+                  ) : null}
+                  {release.sha256 ? <Digest label="SHA-256">{release.sha256}</Digest> : null}
+                  {release.resources.length > 0 ? <ReleaseFiles key={`${session.accountId}:${release.releaseId}`} releaseId={release.releaseId} token={session.token} /> : null}
+                  {release.resources.length > 0 ? (
+                    <Disclosure summary="Inspected resources and requirements">
+                      {release.resources.map(resource => (
+                        <div className={styles.resource} key={resource.name}>
+                          <Name as="h5">{resource.name}</Name>
+                          <Text>Root: <code>{resource.relativeRoot || "."}</code> · Manifest version: {resource.manifest.version}</Text>
+                          <Text>Open77: {resource.manifest.open77Version}</Text>
+                          <Text>Dependencies: {resource.manifest.dependencies.join(", ") || "None declared"}</Text>
+                          <Text>Permissions: {resource.manifest.permissions.join(", ") || "None declared"}</Text>
+                          <Text>Preloads: {resource.manifest.preloadMods.join(", ") || "None declared"}</Text>
+                        </div>
+                      ))}
+                    </Disclosure>
+                  ) : null}
+                </Card>
+              ))}
+            </div>
+          ) : null}
+          <Pager label="Your release pages">
+            {releaseCursor ? <Button lines="none" color="neutral" border size="sm" onClick={() => setReleaseCursor(undefined)}>Newest releases</Button> : null}
+            {releases?.nextCursor ? <Button lines="none" color="neutral" border size="sm" onClick={() => setReleaseCursor(releases.nextCursor ?? undefined)}>Older releases</Button> : null}
+          </Pager>
+        </Stack>
+      </Block>
+
+      <div hidden={readOnly}>
+        <Block eyebrow="Transfers" title="Your upload history" headingLevel={3} lead="Interrupted transfers restart from the beginning. Pending reservations expire after 30 minutes; stored files can be submitted for validation without uploading again.">
+          <Stack>
+            {uploads?.items.length === 0 ? <Fine>No uploads yet.</Fine> : null}
+            {uploads?.items.length ? (
+              <div className={styles.list}>
+                {uploads.items.map(item => (
+                  <Card key={item.upload.uploadId} className={styles.release}>
+                    <div className={styles.releaseHead}>
+                      <Name>{item.originalName}</Name>
+                      <StateTag state={item.upload.state} />
+                    </div>
+                    {item.importId ? <GitHubImportStatus key={`${session.token}:${item.importId}`} token={session.token} id={item.importId} checkedAt={checkedAt} /> : null}
+                    {item.upload.inspectionCode ? (
+                      <Notice kind="danger" title={<>Validation result: <code>{item.upload.inspectionCode}</code></>}>
+                        {validationHelp(item.upload.inspectionCode)}{" "}
+                        <ArrowLink href="/docs/server-resources" external>Resource documentation</ArrowLink>
+                      </Notice>
+                    ) : null}
+                    {item.upload.state === "accepted" ? <Text>Technical validation passed. Publication still requires moderation approval.</Text> : null}
+                    {["pending", "uploaded"].includes(item.upload.state) && Date.parse(item.upload.expiresAtUtc) <= checkedAt ? <Fine>This reservation expired. Select a ZIP from the release above to start a new reservation.</Fine> : null}
+                    {item.upload.releaseId ? (
+                      <PackageTransfer token={session.token} projectId={project.projectId} releaseId={item.upload.releaseId} existing={item} checkedAt={checkedAt} changed={reload} />
+                    ) : null}
+                  </Card>
+                ))}
+              </div>
+            ) : null}
+            <Pager label="Your upload pages">
+              {uploadCursor ? <Button lines="none" color="neutral" border size="sm" onClick={() => setUploadCursor(undefined)}>Newest uploads</Button> : null}
+              {uploads?.nextCursor ? <Button lines="none" color="neutral" border size="sm" onClick={() => setUploadCursor(uploads.nextCursor ?? undefined)}>Older uploads</Button> : null}
+            </Pager>
+          </Stack>
+        </Block>
+      </div>
+    </section>
+  );
 }

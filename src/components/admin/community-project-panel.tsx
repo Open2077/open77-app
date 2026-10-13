@@ -1,16 +1,23 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useState } from "react";
+
+import { ActivityHistory } from "@/components/community/activity-history";
+import { DownloadButton } from "@/components/community/download-button";
+import { PrivateMediaPreview } from "@/components/community/private-media-preview";
+import { ReleaseFiles } from "@/components/community/release-files";
+import { Button } from "@/components/admin/admin-button";
+import { Notice } from "@/components/ui/feedback";
+import { arrowLeft01, arrowRight01, packageBox, store01 } from "@/components/ui/icons";
 import { useSession } from "@/lib/account/session";
 import * as api from "@/lib/community/client-api";
-import { useAdminData } from "./use-admin-data";
-import { ProjectModerationControls, ReleaseRevocationControls } from "./community-moderation-controls";
-import { PrivateMediaPreview } from "@/components/community/private-media-preview";
-import { DownloadButton } from "@/components/community/download-button";
-import { ActivityHistory } from "@/components/community/activity-history";
-import { ReleaseFiles } from "@/components/community/release-files";
+import { AdminPanel, Disclosure, EmptyBlock, LoadingBlock, Preformatted, StatusTag, SubHeading } from "./admin-kit";
 import { CommunityEditorialControls, CommunityRankingControls } from "./community-editorial-controls";
+import { ProjectModerationControls, ReleaseRevocationControls } from "./community-moderation-controls";
+import { HashCell } from "./hash-cell";
+import { useAdminData } from "./use-admin-data";
+
+import styles from "./community-panels.module.css";
 
 export function CommunityProjectPanel({ id }: { id: string }) {
   const { session } = useSession();
@@ -22,26 +29,86 @@ export function CommunityProjectPanel({ id }: { id: string }) {
   }, [id, cursor]);
   const result = useAdminData(load);
   if (!session) return null;
-  if (result.error) return <p className="hub-notice" role="alert">{result.error}<button className="btn btn-ghost" onClick={result.reload}>Retry</button></p>;
-  if (!result.data) return <p role="status">Loading project…</p>;
+  const back = (
+    <Button href="/admin/resources" size="sm" color="neutral" border lines="none" icon={arrowLeft01} iconPosition="left">
+      Review queue
+    </Button>
+  );
+  if (result.error) {
+    return (
+      <AdminPanel title="Project moderation" icon={store01} actions={back}>
+        <Notice kind="danger" action={<Button size="sm" color="red" border lines="none" onClick={result.reload}>Retry</Button>}>
+          {result.error}
+        </Notice>
+      </AdminPanel>
+    );
+  }
+  if (!result.data) {
+    return (
+      <AdminPanel title="Project moderation" icon={store01} actions={back}>
+        <LoadingBlock label="Loading project…" rows={3} />
+      </AdminPanel>
+    );
+  }
   const { project, releases } = result.data;
-  return <div className="hub-review-panel"><Link href="/admin/resources">← Review queue</Link><h2>{project.content.title}</h2>
-    <p>Current draft revision {project.revision} · {project.revisionStatus} · {project.state}</p>
-    <p>{project.content.summary}</p><pre className="hub-review-text">{project.content.description}</pre>
-    <div className="hub-media-editor">{project.content.media?.map(image => <PrivateMediaPreview key={image.mediaId} token={session.token} mediaId={image.mediaId} alt={image.altText} />)}</div>
-    <ProjectModerationControls token={session.token} projectId={id} updated={result.reload} />
-    <CommunityEditorialControls key={`editorial-${id}-${session.token}`} token={session.token} projectId={id} updated={result.reload} />
-    <CommunityRankingControls key={`ranking-${session.token}`} token={session.token} />
-    <ActivityHistory token={session.token} kind="project" id={id} title="Project audit history" />
-    <h3>Release history</h3><div className="hub-releases">{releases.items.map(release => <article className="hub-release" key={`${release.releaseId}-${release.revision}`}>
-      <h4>Version {release.version} · {release.state}</h4><pre className="hub-review-text">{release.metadata.changelog}</pre>
-      {release.sha256 && <p className="hub-release-digest">SHA-256 <code>{release.sha256}</code></p>}
-      {release.inspection != null && <><DownloadButton releaseId={release.releaseId} version={release.version} review={{ token: session.token, revision: release.revision }} />
-        <ReleaseFiles key={`${session.accountId}:${release.releaseId}`} releaseId={release.releaseId} token={session.token} />
-        <details><summary>Inspection snapshot</summary><pre className="hub-review-text">{JSON.stringify(release.inspection, null, 2)}</pre></details></>}
-      <ReleaseRevocationControls token={session.token} release={release} updated={result.reload} />
-    </article>)}</div>
-    <nav className="hub-actions" aria-label="Project release pages">{cursor && <button className="btn btn-ghost" onClick={() => setCursor(undefined)}>Newest releases</button>}
-      {releases.nextCursor && <button className="btn btn-ghost" onClick={() => setCursor(releases.nextCursor ?? undefined)}>Older releases</button>}</nav>
-  </div>;
+  return (
+    <>
+      <AdminPanel
+        title={project.content.title}
+        icon={store01}
+        brackets
+        meta={`revision ${project.revision}`}
+        actions={back}
+      >
+        <div className={styles.tags}>
+          <StatusTag status={project.state === "published" ? "ok" : project.state === "suspended" ? "danger" : "neutral"}>{project.state}</StatusTag>
+          <StatusTag status="neutral">{project.revisionStatus}</StatusTag>
+        </div>
+        <p className={styles.summary}>{project.content.summary}</p>
+        <Preformatted>{project.content.description}</Preformatted>
+        <div className={styles.media}>
+          {project.content.media?.map(image => <PrivateMediaPreview key={image.mediaId} token={session.token} mediaId={image.mediaId} alt={image.altText} />)}
+        </div>
+        <section className={styles.section} aria-label="Moderation">
+          <SubHeading>Moderation</SubHeading>
+          <ProjectModerationControls token={session.token} projectId={id} updated={result.reload} />
+          <CommunityEditorialControls key={`editorial-${id}-${session.token}`} token={session.token} projectId={id} updated={result.reload} />
+          <CommunityRankingControls key={`ranking-${session.token}`} token={session.token} />
+        </section>
+        <ActivityHistory token={session.token} kind="project" id={id} title="Project audit history" />
+      </AdminPanel>
+
+      <AdminPanel title="Release history" icon={packageBox} level={2}>
+        {releases.items.length === 0 ? <EmptyBlock icon={packageBox}>This project has no release yet.</EmptyBlock> : null}
+        <div className={styles.cards}>
+          {releases.items.map(release => (
+            <article className={styles.card} key={`${release.releaseId}-${release.revision}`}>
+              <div className={styles.cardHead}>
+                <h3 className={styles.cardTitle}>Version {release.version}</h3>
+                <StatusTag status={release.state === "published" ? "ok" : release.state === "revoked" ? "danger" : "neutral"}>{release.state}</StatusTag>
+              </div>
+              <Preformatted>{release.metadata.changelog}</Preformatted>
+              {release.sha256 ? <p className={styles.digest}><span>SHA-256</span> <HashCell sha256={release.sha256} /></p> : null}
+              {release.inspection != null ? (
+                <>
+                  <div>
+                    <DownloadButton releaseId={release.releaseId} version={release.version} review={{ token: session.token, revision: release.revision }} color="red" />
+                  </div>
+                  <ReleaseFiles key={`${session.accountId}:${release.releaseId}`} releaseId={release.releaseId} token={session.token} />
+                  <Disclosure summary="Inspection snapshot">
+                    <Preformatted>{JSON.stringify(release.inspection, null, 2)}</Preformatted>
+                  </Disclosure>
+                </>
+              ) : null}
+              <ReleaseRevocationControls token={session.token} release={release} updated={result.reload} />
+            </article>
+          ))}
+        </div>
+        <nav className={styles.queueNav} aria-label="Project release pages">
+          {cursor ? <Button size="sm" color="neutral" border lines="none" onClick={() => setCursor(undefined)}>Newest releases</Button> : null}
+          {releases.nextCursor ? <Button size="sm" color="neutral" border lines="none" icon={arrowRight01} onClick={() => setCursor(releases.nextCursor ?? undefined)}>Older releases</Button> : null}
+        </nav>
+      </AdminPanel>
+    </>
+  );
 }

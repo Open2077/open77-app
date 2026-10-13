@@ -2,14 +2,19 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
+import { DemoDataNotice } from "@/components/servers/demo-data-notice";
 import { ServerBrowser } from "@/components/servers/server-browser";
 import { ServerDetail } from "@/components/servers/server-detail";
-import { ArrowLeftIcon } from "@/components/icons";
-import profileStyles from "@/app/servers/[id]/server-profile.module.css";
-import { DemoDataNotice } from "@/components/servers/demo-data-notice";
+import { Button } from "@/components/ui/button";
+import { cx } from "@/components/ui/cx";
+import { EmptyState, Loader } from "@/components/ui/feedback";
+import { Icon } from "@/components/ui/icon";
+import { refresh as refreshGlyph } from "@/components/ui/icons";
 import { MasterApiError } from "@/lib/account/api";
-import { fetchServers, type GameServer, type CatalogServer } from "@/lib/servers";
+import { fetchServers, type CatalogServer, type GameServer } from "@/lib/servers";
 import { DEMO_SERVERS } from "@/lib/servers-demo";
+
+import styles from "./live-server-browser.module.css";
 
 /** How often the directory re-reads the master while the tab is visible. */
 const REFRESH_MS = 30_000;
@@ -46,32 +51,48 @@ const PREVIEW_SERVERS: GameServer[] = DEMO_SERVERS.slice(0, 1).map((server) => (
 type BrowserProps = { initialId?: string; initialSnapshot?: { server: CatalogServer; capturedAt: number } };
 
 export function LiveServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
-  const preview = useSyncExternalStore(subscribeDirectoryUrl, () =>
-    ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname) &&
-    new URLSearchParams(window.location.search).get("preview") === "1",
-  () => false);
+  const preview = useSyncExternalStore(
+    subscribeDirectoryUrl,
+    () =>
+      ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname) &&
+      new URLSearchParams(window.location.search).get("preview") === "1",
+    () => false,
+  );
 
   return preview ? (
-    <div className="directory-list-view">
-      <h1 className="sr-only">Server browser</h1>
-    <ServerBrowser servers={PREVIEW_SERVERS} preview status={
-      // A full navigation unmounts the local preview and resets its filter state.
-      // eslint-disable-next-line @next/next/no-html-link-for-pages
-      <div className="directory-preview-notice"><DemoDataNotice /><a href="/servers">Live directory ↗</a></div>
-    } />
-    </div>
-  ) : <MasterServerBrowser initialId={initialId} initialSnapshot={initialSnapshot} />;
+    <ServerBrowser
+      servers={PREVIEW_SERVERS}
+      preview
+      status={
+        <div className={styles.preview}>
+          <DemoDataNotice />
+          {/* A full navigation unmounts the local preview and resets its filter state. */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+          <a href="/servers">Live directory ↗</a>
+        </div>
+      }
+    />
+  ) : (
+    <MasterServerBrowser initialId={initialId} initialSnapshot={initialSnapshot} />
+  );
 }
 
 function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
-  const detailId = useSyncExternalStore(subscribeDirectoryUrl, () =>
-    window.location.pathname.match(/^\/servers\/([^/]+)\/?$/)?.[1] ?? null,
-  () => initialId ?? null);
-  const backRef = useRef<HTMLButtonElement>(null);
+  const detailId = useSyncExternalStore(
+    subscribeDirectoryUrl,
+    () => window.location.pathname.match(/^\/servers\/([^/]+)\/?$/)?.[1] ?? null,
+    () => initialId ?? null,
+  );
   const lastOpened = useRef<string | null>(null);
+  const listScroll = useRef(0);
   const openServer = (id: string) => {
     lastOpened.current = id;
-    window.history.pushState({ open77DirectoryFrom: window.location.pathname + window.location.search }, "", `/servers/${encodeURIComponent(id)}${window.location.search}`);
+    listScroll.current = window.scrollY;
+    window.history.pushState(
+      { open77DirectoryFrom: window.location.pathname + window.location.search },
+      "",
+      `/servers/${encodeURIComponent(id)}${window.location.search}`,
+    );
     window.dispatchEvent(new Event("open77-directory-url"));
   };
   const backToList = () => {
@@ -81,12 +102,20 @@ function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
       window.dispatchEvent(new Event("open77-directory-url"));
     }
   };
+  // The profile replaces the list in place: start it at the top, and give the
+  // list its scroll position and focus back on the way out.
   useEffect(() => {
-    if (detailId) backRef.current?.focus({ preventScroll: true });
-    else if (lastOpened.current) {
-      document.querySelector<HTMLElement>(`[data-server-id="${CSS.escape(lastOpened.current)}"] .sb-row-link`)?.focus({ preventScroll: true });
+    if (detailId) {
+      window.scrollTo({ top: 0 });
+      return;
     }
+    if (!lastOpened.current) return;
+    window.scrollTo({ top: listScroll.current });
+    document
+      .querySelector<HTMLElement>(`[data-server-id="${CSS.escape(lastOpened.current)}"] a`)
+      ?.focus({ preventScroll: true });
   }, [detailId]);
+
   const [servers, setServers] = useState<GameServer[]>([]);
   const [updated, setUpdated] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -103,11 +132,7 @@ function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
       setUpdated(new Date());
       setError(null);
     } catch (err: unknown) {
-      setError(
-        err instanceof MasterApiError
-          ? err.message
-          : "The server directory could not be reached.",
-      );
+      setError(err instanceof MasterApiError ? err.message : "The server directory could not be reached.");
     } finally {
       inFlight.current = false;
       setBusy(false);
@@ -137,75 +162,69 @@ function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
   // Before the first successful read there is nothing to list: say why.
   const emptyState =
     updated === null ? (
-      <div className="sb-offline" role="status" aria-busy={busy}>
-        <span className="directory-kicker">
-          {error ? "DIRECTORY UNREACHABLE" : "OPEN//77 DIRECTORY"}
-        </span>
-        <h2>{error ? "Unable to load servers" : "Reading the live directory…"}</h2>
-        <p>{error ?? "Community worlds appear here as soon as the master answers."}</p>
-        {error ? (
-          <button
-            className="btn btn-primary btn-small"
-            type="button"
-            disabled={busy}
-            onClick={() => void refresh()}
-          >
-            Try again
-          </button>
-        ) : (
-          <div className="directory-loading" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </div>
-        )}
-      </div>
+      error ? (
+        <EmptyState
+          eyebrow="Directory unreachable"
+          title="Unable to load servers"
+          action={
+            <Button lines="none" size="sm" border busy={busy} onClick={() => void refresh()}>
+              Try again
+            </Button>
+          }
+        >
+          {error}
+        </EmptyState>
+      ) : (
+        <div className={styles.loading} role="status" aria-busy="true">
+          <Loader label="DIRECTORY" />
+          <p>Reading the live directory. Community worlds appear here as soon as the master answers.</p>
+          <ul className={styles.skeleton} aria-hidden="true">
+            {Array.from({ length: 6 }, (_, index) => (
+              <li key={index} style={{ animationDelay: `${index * 0.12}s` }} />
+            ))}
+          </ul>
+        </div>
+      )
     ) : undefined;
 
   return (
-    <div className="directory-session">
-      <div className="directory-list-view" hidden={detailId !== null}>
-        <h1 className="sr-only">Server browser</h1>
+    <>
+      <div hidden={detailId !== null} data-list-view>
         <ServerBrowser
           servers={servers}
           isActive={detailId === null}
           onOpenServer={openServer}
           emptyState={emptyState}
           status={
-            <div className="directory-freshness" data-state={state}>
+            <div className={cx(styles.freshness, styles[state])}>
+              <span className={styles.dot} aria-hidden="true" />
               <span role="status">{readout}</span>
               <button
-                className="sb-tool"
                 type="button"
+                className={styles.refresh}
                 disabled={busy}
                 title="Refresh the directory"
                 onClick={() => void refresh()}
               >
-                <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
-                  <path
-                    d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                  />
-            </svg>
-            <span>{busy ? "Refreshing…" : "Refresh"}</span>
-          </button>
-        </div>
-      }
-    />
+                <Icon glyph={refreshGlyph} />
+                <span className="sr-only">{busy ? "Refreshing…" : "Refresh"}</span>
+              </button>
+            </div>
+          }
+        />
       </div>
-      {detailId && <section className="directory-profile-view" aria-label="Server details">
-        <div className="directory-profile-toolbar">
-          <button type="button" ref={backRef} onClick={backToList}><ArrowLeftIcon size={16} /> Back to server list</button>
-          <span>SERVER DETAILS</span>
-        </div>
-        <div className={`directory-profile-scroll ${profileStyles.profile} ${profileStyles.embedded}`}>
-          <div className="section-inner">
-            <ServerDetail key={detailId} id={detailId} initialServer={servers.find(server => server.id === detailId)?.catalog ?? (initialSnapshot?.server.id === detailId ? initialSnapshot.server : undefined)} initialNow={initialSnapshot?.server.id === detailId ? initialSnapshot.capturedAt : undefined} />
-          </div>
-        </div>
-      </section>}
-    </div>
+      {detailId ? (
+        <ServerDetail
+          key={detailId}
+          id={detailId}
+          onBack={backToList}
+          initialServer={
+            servers.find((server) => server.id === detailId)?.catalog ??
+            (initialSnapshot?.server.id === detailId ? initialSnapshot.server : undefined)
+          }
+          initialNow={initialSnapshot?.server.id === detailId ? initialSnapshot.capturedAt : undefined}
+        />
+      ) : null}
+    </>
   );
 }

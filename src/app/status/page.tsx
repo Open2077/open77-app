@@ -1,5 +1,5 @@
-import { SiteFooter } from "@/components/site-footer";
 import { StatusDashboard } from "@/components/status/status-dashboard";
+import { Page } from "@/components/ui/page";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -9,8 +9,9 @@ export const metadata = pageMetadata({
 });
 
 export default function StatusPage() {
-  return <>
-    <StatusDashboard />
-    <SiteFooter fineprint="Status reflects automated checks from the stated monitoring location, not a guarantee of availability from every network." />
-  </>;
+  return (
+    <Page tone="yellow">
+      <StatusDashboard />
+    </Page>
+  );
 }

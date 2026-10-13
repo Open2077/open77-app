@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { CheckIcon, CopyIcon } from "@/components/icons";
+import { copy01, tick02 } from "@/components/ui/icons";
+import { IconAction } from "./admin-kit";
+
+import styles from "./hash-cell.module.css";
 
 /** Head and tail of a digest — enough to recognise, short enough for a cell. */
 function truncate(hash: string): string {
@@ -49,18 +52,17 @@ export function HashCell({ sha256 }: { sha256: string }) {
   }
 
   return (
-    <span className="adm-hash">
-      <code className="adm-mono adm-dim" title={sha256}>
+    <span className={styles.hash}>
+      <code className={styles.code} title={sha256}>
         {truncate(sha256)}
       </code>
-      <button
-        className={`ac-iconbtn${copied ? " is-copied" : ""}`}
-        type="button"
+      <IconAction
+        glyph={copied ? tick02 : copy01}
+        active={copied}
         onClick={copy}
-        aria-label={copied ? "SHA-256 copied to clipboard" : `Copy the full SHA-256 ${sha256}`}
-      >
-        {copied ? <CheckIcon size={12} /> : <CopyIcon size={12} />}
-      </button>
+        label={copied ? "SHA-256 copied to clipboard" : `Copy the full SHA-256 ${sha256}`}
+        title={copied ? "Copied" : "Copy the full SHA-256"}
+      />
     </span>
   );
 }

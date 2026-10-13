@@ -1,0 +1,9 @@
+/* Every public Workshop page: the strip, then the page. Heroes slide back under
+   the header and the strip (see the hero module), so the art starts at the top. */
+.shell {
+  --hub-bar-height: 3.4rem;
+}
+.body {
+  isolation: isolate;
+  position: relative;
+}

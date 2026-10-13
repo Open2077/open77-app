@@ -1,13 +1,17 @@
 "use client";
 
-import Link from "next/link";
 import { type FormEvent, useState } from "react";
 
-import { ArrowRightIcon, CheckIcon, InfoIcon } from "@/components/icons";
-import { AuthField } from "@/components/account/auth-fields";
-import { AuthIcon } from "@/components/account/auth-icon";
+import { Button } from "@/components/ui/button";
+import { Notice } from "@/components/ui/feedback";
+import { arrowLeft01, arrowRight01, mail01, sent } from "@/components/ui/icons";
 import * as master from "@/lib/account/api";
 import { isOffline, MasterApiError } from "@/lib/account/api";
+import { AuthCard, CardText } from "./auth-card";
+import { AuthField } from "./auth-fields";
+import { padlock } from "./kit";
+
+import styles from "./auth-forms.module.css";
 
 /**
  * Requests a password-reset e-mail. The confirmation is deliberately identical
@@ -19,7 +23,7 @@ import { isOffline, MasterApiError } from "@/lib/account/api";
 export function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [sent_, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(event: FormEvent) {
@@ -31,10 +35,7 @@ export function ForgotPasswordForm() {
       await master.forgotPassword({ email });
       setSent(true);
     } catch (err) {
-      if (
-        err instanceof MasterApiError &&
-        (isOffline(err) || err.code === "rate_limited")
-      ) {
+      if (err instanceof MasterApiError && (isOffline(err) || err.code === "rate_limited")) {
         setError(err.message);
       } else {
         // Any other answer must look exactly like success.
@@ -45,52 +46,57 @@ export function ForgotPasswordForm() {
     }
   }
 
-  if (sent) {
+  if (sent_) {
     return (
-      <div className="auth-panel ac-card">
-        <span className="auth-state-icon"><AuthIcon name="mail" size={24} /></span>
-        <div className="auth-panel-heading"><h2>Check your inbox.</h2></div>
-        <div className="ac-success" role="status">
-          <CheckIcon size={17} />
-          <span>
-            If an account exists for <strong>{email}</strong>, we&apos;ve sent a reset link. Check
-            your inbox. The link expires after a short while.
-          </span>
-        </div>
-        <div className="ac-form-actions" style={{ marginTop: 16 }}>
-          <Link className="btn btn-ghost" href="/account">
+      <AuthCard
+        glyph={sent}
+        tone="blue"
+        eyebrow="Link requested"
+        title="Check your inbox"
+        actions={
+          <Button lines="none" border color="neutral" icon={arrowLeft01} iconPosition="left" href="/account">
             Back to sign-in
-          </Link>
-        </div>
-      </div>
+          </Button>
+        }
+      >
+        <Notice kind="success">
+          If an account exists for <strong>{email}</strong>, we&apos;ve sent a reset link. Check your inbox. The link expires after a short
+          while.
+        </Notice>
+      </AuthCard>
     );
   }
 
   return (
-    <div className="auth-panel ac-card">
-      <span className="auth-state-icon"><AuthIcon name="lock" size={24} /></span>
-      <h2 className="ac-card-title">Reset your password</h2>
-      <p className="ac-lead" style={{ margin: "10px 0 18px" }}>
-        Enter the e-mail address on your account and we&apos;ll send you a link to choose a new
-        password.
-      </p>
-      {error ? (
-        <p className="ac-error" role="alert" style={{ marginBottom: 14 }}>
-          <InfoIcon />
-          {error}
-        </p>
-      ) : null}
-      <form className="ac-form" onSubmit={onSubmit} aria-busy={busy}>
-        <AuthField label="E-mail" type="email" name="email" value={email} onChange={event => setEmail(event.target.value)} placeholder="you@example.net" autoComplete="email" autoCapitalize="none" spellCheck={false} disabled={busy} required />
-        <div className="ac-form-actions">
-          <button className="btn btn-primary" type="submit" disabled={busy}>
-            {busy ? <><span className="auth-spinner" aria-hidden="true" />Sending…</> : <>Send reset link <ArrowRightIcon /></>}
-          </button>
-          <Link className="btn btn-ghost" href="/account">
+    <AuthCard glyph={padlock} eyebrow="Password reset" title="Reset your password">
+      <CardText>Enter the e-mail address on your account and we&apos;ll send you a link to choose a new password.</CardText>
+      {error ? <Notice kind="danger">{error}</Notice> : null}
+      <form className={styles.form} onSubmit={onSubmit} aria-busy={busy}>
+        <AuthField
+          label="E-mail"
+          type="email"
+          name="email"
+          icon={mail01}
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="you@example.net"
+          autoComplete="email"
+          autoCapitalize="none"
+          spellCheck={false}
+          disabled={busy}
+          required
+        />
+        <div className={styles.actions}>
+          <Button key={busy ? "Sending…" : "Send reset link"} type="submit" icon={arrowRight01} busy={busy}>
+            {busy ? "Sending…" : "Send reset link"}
+          </Button>
+        </div>
+        <div className={styles.secondary}>
+          <Button lines="none" border color="neutral" size="sm" icon={arrowLeft01} iconPosition="left" href="/account">
             Back to sign-in
-          </Link>
+          </Button>
         </div>
       </form>
-    </div>
+    </AuthCard>
   );
 }

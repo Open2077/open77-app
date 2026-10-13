@@ -110,6 +110,8 @@ const CHECKS = [
   // Assets that moved into public/.
   { path: "/assets/favicon.svg", expect: 200 },
   { path: "/brand/social/og-card-1200x630.png", expect: 200 },
+  { path: "/favicon.svg", expect: 200 },
+  { path: "/thumbnail.png", expect: 200 },
 
   { path: "/does-not-exist", expect: 404 },
 ];

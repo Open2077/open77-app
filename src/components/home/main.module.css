@@ -1,0 +1,20 @@
+@media screen and (max-width: 1084px) {
+  .main {
+    width: 100vw;
+    overflow: hidden;
+  }
+}
+@media screen and (min-width: 1086px) and (hover: none),
+  screen and (min-width: 1086px) and (pointer: coarse),
+  screen and (min-width: 1086px) and (prefers-reduced-motion: reduce) {
+  .main {
+    width: 100vw;
+    overflow: hidden;
+  }
+}
+@media screen and (min-width: 1086px) {
+  html[data-scroll="vertical"] .main {
+    width: 100vw;
+    overflow: hidden;
+  }
+}

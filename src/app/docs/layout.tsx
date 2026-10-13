@@ -1,28 +1,27 @@
 import type { ReactNode } from "react";
 
-import Link from "next/link";
-import { DocsHeader } from "@/components/docs/docs-header";
-import { DocsTheme } from "@/components/docs/docs-theme";
-import { getDocsSearchIndex } from "@/lib/docs";
+import { DocsFrame } from "@/components/docs/docs-frame";
+import type { SearchEntry } from "@/components/docs/docs-search";
 import { getApiIndex, stripInlineMarkdown } from "@/lib/api-reference";
-import { site } from "@/lib/site";
+import { getDocsSearchIndex } from "@/lib/docs";
 
 export default async function DocsLayout({ children }: { children: ReactNode }) {
   const [guides, api] = await Promise.all([getDocsSearchIndex(), getApiIndex()]);
-  const search = [
-    ...guides.map((guide) => ({ title: guide.nav, description: guide.description, category: guide.section, href: guide.href })),
-    ...api.entries.map((entry) => ({ title: entry.qualified, description: stripInlineMarkdown(entry.summary), category: `${entry.runtime} API`, href: `/docs/api#${entry.runtime}/${entry.namespaceSlug}/${entry.anchor}` })),
+  const search: SearchEntry[] = [
+    ...guides.map((guide) => ({
+      title: guide.nav,
+      description: guide.description,
+      category: guide.section,
+      href: guide.href,
+      kind: "guide" as const,
+    })),
+    ...api.entries.map((entry) => ({
+      title: entry.qualified,
+      description: stripInlineMarkdown(entry.summary),
+      category: `${entry.runtime} API`,
+      href: `/docs/api#${entry.runtime}/${entry.namespaceSlug}/${entry.anchor}`,
+      kind: "api" as const,
+    })),
   ];
-  return (
-    <DocsTheme>
-      <DocsHeader entries={search} />
-      <main id="main" className="dx">
-        {children}
-      </main>
-      <footer className="docs-footer">
-        <span>OPEN//77 documentation <span aria-hidden="true">·</span> Built for creators.</span>
-        <div><Link href="/">Back to website ↗</Link><a href="/docs.md">Markdown</a><Link href="/docs/alpha-access">{site.stageLabel}</Link></div>
-      </footer>
-    </DocsTheme>
-  );
+  return <DocsFrame entries={search}>{children}</DocsFrame>;
 }

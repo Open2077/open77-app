@@ -1,0 +1,116 @@
+:where(.panel) {
+  --panel-line: var(--line);
+  --panel-fill: var(--surface-1);
+  color: inherit;
+  text-align: left;
+  min-width: 0;
+  display: block;
+  position: relative;
+}
+:where(.pad-none) {
+  --panel-pad: 0px;
+}
+:where(.pad-sm) {
+  --panel-pad: 0.9rem 1.1rem;
+}
+:where(.pad-md) {
+  --panel-pad: 1.4rem 1.6rem;
+}
+:where(.pad-lg) {
+  --panel-pad: 2.2rem 2.4rem;
+}
+@media screen and (max-width: 700px) {
+  :where(.pad-lg) {
+    --panel-pad: 1.6rem 1.25rem;
+  }
+  :where(.pad-md) {
+    --panel-pad: 1.2rem 1.1rem;
+  }
+}
+
+:where(.outline) {
+  --panel-line: oklch(from var(--tone) l c h / 70%);
+  --panel-fill: oklch(from var(--body) l c h / 0.5);
+}
+:where(.ghost) {
+  --panel-fill: transparent;
+}
+
+/* Frame: a hairline rectangle. */
+:where(.frame) {
+  background: var(--panel-fill);
+  border: 1px solid var(--panel-line);
+  padding: var(--panel-pad);
+}
+
+/* Slant: a parallelogram drawn behind straight content. */
+:where(.slant) {
+  padding: var(--panel-pad);
+  isolation: isolate;
+}
+.slant:before {
+  content: "";
+  background: var(--panel-fill);
+  border: 1px solid var(--panel-line);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.slant.pad-md,
+.slant.pad-lg {
+  padding-inline: calc(var(--panel-pad-x, 1.6rem) + 0.75rem);
+}
+
+/* Skewed corner brackets in the tone. */
+.frame.brackets:before,
+.frame.brackets:after,
+.slant.brackets:after {
+  content: "";
+  border: 1px solid var(--tone);
+  pointer-events: none;
+  width: clamp(28px, 18%, 64px);
+  aspect-ratio: 1;
+  position: absolute;
+  transform: skewX(var(--skew));
+}
+.frame.brackets:before {
+  border-width: 1px 0 0 1px;
+  top: -5px;
+  left: -5px;
+}
+.frame.brackets:after {
+  border-width: 0 1px 1px 0;
+  bottom: -5px;
+  right: -5px;
+}
+/* On a slant panel the bracket rides the side, as on the home cards. */
+.slant.brackets:after {
+  aspect-ratio: auto;
+  border-width: 0 1px;
+  width: auto;
+  inset: 25% -9px;
+}
+
+:where(.interactive) {
+  cursor: pointer;
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.frame.interactive:hover,
+.frame.interactive:focus-visible {
+  --panel-line: oklch(from var(--tone) l c h / 80%);
+  --panel-fill: var(--surface-2);
+}
+.slant.interactive:hover:before,
+.slant.interactive:focus-visible:before {
+  border-color: var(--tone);
+  background-color: var(--surface-2);
+}
+.interactive:focus-visible {
+  outline-offset: 4px;
+}

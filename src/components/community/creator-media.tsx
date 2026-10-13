@@ -1,10 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Notice } from "@/components/ui/feedback";
+import { Field, Input } from "@/components/ui/field";
+import { arrowLeft01, arrowRight01, refresh as refreshGlyph, upload02 } from "@/components/ui/icons";
+import { Eyebrow } from "@/components/ui/typography";
 import * as api from "@/lib/community/client-api";
 import { transferUpload } from "@/lib/community/upload";
 import type { CommunityContent, CommunityPage, CommunityUploadItem } from "@/lib/community/types";
+import { Actions, Block, FileInput, Pager, Pending, Progress, StateTag } from "@/components/account/kit";
+import { Card, CardGrid, Meta, Name, Stack, Subhead, Text } from "./creator-parts";
 import { PrivateMediaPreview } from "./private-media-preview";
+
+import styles from "./creator-media.module.css";
 
 type References = NonNullable<CommunityContent["media"]>;
 export function CreatorMedia({ token, projectId, media, onChange }: {
@@ -81,41 +91,132 @@ export function CreatorMedia({ token, projectId, media, onChange }: {
     if (!current || !target) return;
     const next = [...media]; next[index] = target; next[index + direction] = current; onChange(next);
   }
-  return <section className="hub-section" aria-label={avatar ? "Manage avatar" : "Manage screenshots"}>
-    <div className="hub-section-head"><div><p className="hub-kicker">{avatar ? "YOUR CREATOR IDENTITY" : "SHOW YOUR CREATION"}</p><h2>{avatar ? "Profile avatar" : "Cover and screenshots"}</h2></div>
-      <button type="button" className="btn btn-ghost" onClick={reload}>Refresh images</button></div>
-    <p className="hub-notice">{avatar ? "Upload an image, select it after processing, then save your public profile to make it visible. Use an image you have permission to share." : "The first image is your cover. Add up to eight more screenshots, describe each image, and save your draft. New images become public after review."}</p>
-    {error && <p className="hub-notice" role="alert">{error}</p>}{historyError && <p className="hub-notice" role="alert">{historyError}</p>}{notice && <p className="hub-notice" role="status">{notice}</p>}
-    <div className="hub-media-editor">{media.map((reference, index) => <article className="hub-release" key={reference.mediaId}>
-      <p className="hub-kicker">{avatar ? "SELECTED AVATAR" : index === 0 ? "COVER" : `SCREENSHOT ${index}`}</p>
-      <PrivateMediaPreview token={token} mediaId={reference.mediaId} alt={reference.altText} />
-      {!avatar && <div className="hub-form"><label>Image description<input required maxLength={500} value={reference.altText} onChange={event => onChange(media.map((item, i) => i === index ? { ...item, altText: event.target.value } : item))} /></label>
-        <label>Caption<input maxLength={1000} value={reference.caption ?? ""} onChange={event => onChange(media.map((item, i) => i === index ? { ...item, caption: event.target.value } : item))} /></label></div>}
-      <div className="hub-actions">{!avatar && <><button type="button" className="btn btn-ghost" disabled={index === 0} onClick={() => move(index, -1)}>Move earlier</button>
-        <button type="button" className="btn btn-ghost" disabled={index === media.length - 1} onClick={() => move(index, 1)}>Move later</button></>}
-        <button type="button" className="btn btn-ghost" onClick={() => onChange(media.filter((_, i) => i !== index))}>{avatar ? "Remove avatar selection" : "Remove from draft"}</button></div>
-    </article>)}</div>
-    <form className="hub-form hub-upload-form" onSubmit={upload}>
-      {restart && <p>Recovering {restart.originalName}</p>}
-      {restart?.upload.state !== "uploaded" && <label>{avatar ? "Upload an avatar" : "Upload a screenshot"}<input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={event => setFile(event.target.files?.[0] ?? null)} /></label>}
-      <div className="hub-actions"><button className="btn btn-primary" disabled={busy || (!file && restart?.upload.state !== "uploaded")}>{restart?.upload.state === "uploaded" ? "Process stored image" : restart ? "Restart image upload" : "Upload image"}</button>
-        {busy && <button type="button" className="btn btn-ghost" onClick={() => operation.current?.abort()}>Stop transfer</button>}
-        {restart && !busy && <button type="button" className="btn btn-ghost" onClick={() => { setRestart(null); setFile(null); }}>Choose a new upload</button>}</div>
-      {busy && <progress max={100} value={progress} aria-label="Image upload progress" />}
-    </form>
-    <h3 className="hub-library-title">Your uploaded images</h3>
-    {!history && !historyError && <p role="status">Loading your image library…</p>}
-    {history && !history.items.some(item => item.upload.kind === "image") && <p className="hub-notice">{cursor ? "No images on this upload-history page. Browse another page or return to the newest uploads." : "No images on this page yet. Upload a JPEG, PNG or WebP above to start your gallery."}</p>}
-    <div className="hub-media-editor">{history?.items.filter(item => item.upload.kind === "image").map(item => <article className="hub-release" key={item.upload.uploadId}>
-      <h4>{item.originalName}</h4><p>{item.upload.state}{item.upload.inspectionCode ? ` · ${item.upload.inspectionCode.replaceAll("_", " ")}` : ""}</p>
-      {item.upload.state === "accepted" && item.upload.mediaId && <button type="button" className="btn btn-ghost" disabled={(!avatar && media.length >= 9) || media.some(reference => reference.mediaId === item.upload.mediaId)}
-        onClick={() => onChange(avatar ? [{ mediaId: item.upload.mediaId!, altText: "Creator avatar" }] : [...media, { mediaId: item.upload.mediaId!, altText: "", caption: "" }])}>{avatar ? "Select avatar" : "Attach to draft"}</button>}
-      {["pending", "uploaded"].includes(item.upload.state) && <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => {
-        if (Date.parse(item.upload.expiresAtUtc) <= Date.now()) { setError("This reservation expired. Start a new image upload."); return; }
-        setRestart(item); setFile(null); setError(""); setNotice("Use the upload form above to recover this image.");
-      }}>Recover upload</button>}
-    </article>)}</div>
-    <nav className="hub-actions" aria-label="Image upload pages">{cursor && <button type="button" className="btn btn-ghost" onClick={() => setCursor(undefined)}>Newest uploads</button>}
-      {history?.nextCursor && <button type="button" className="btn btn-ghost" onClick={() => setCursor(history.nextCursor ?? undefined)}>Older uploads</button>}</nav>
-  </section>;
+  const images = history?.items.filter(item => item.upload.kind === "image") ?? [];
+  return (
+    <Block
+      eyebrow={avatar ? "Your creator identity" : "Show your creation"}
+      title={avatar ? "Profile avatar" : "Cover and screenshots"}
+      headingLevel={avatar ? 2 : 3}
+      lead={avatar ? "Upload an image, select it after processing, then save your public profile to make it visible. Use an image you have permission to share." : "The first image is your cover. Add up to eight more screenshots, describe each image, and save your draft. New images become public after review."}
+      actions={
+        <Button lines="none" color="neutral" border size="sm" icon={refreshGlyph} iconPosition="left" onClick={reload}>
+          Refresh images
+        </Button>
+      }
+    >
+      <Stack>
+        {error ? <Notice kind="danger">{error}</Notice> : null}
+        {historyError ? <Notice kind="danger">{historyError}</Notice> : null}
+        {notice ? <Notice kind="info">{notice}</Notice> : null}
+
+        {media.length ? (
+          <CardGrid className={avatar ? styles.avatarGrid : undefined}>
+            {media.map((reference, index) => (
+              <Card key={reference.mediaId} selected={index === 0}>
+                <Eyebrow muted={index !== 0}>{avatar ? "Selected avatar" : index === 0 ? "Cover" : `Screenshot ${index}`}</Eyebrow>
+                <PrivateMediaPreview token={token} mediaId={reference.mediaId} alt={reference.altText} />
+                {!avatar ? (
+                  <>
+                    <Field label="Image description">
+                      <Input required maxLength={500} value={reference.altText} onChange={event => onChange(media.map((item, i) => i === index ? { ...item, altText: event.target.value } : item))} />
+                    </Field>
+                    <Field label="Caption" optional>
+                      <Input maxLength={1000} value={reference.caption ?? ""} onChange={event => onChange(media.map((item, i) => i === index ? { ...item, caption: event.target.value } : item))} />
+                    </Field>
+                  </>
+                ) : null}
+                <Actions className={styles.cardActions}>
+                  {!avatar ? (
+                    <>
+                      <Button lines="none" color="neutral" border size="sm" iconOnly icon={arrowLeft01} aria-label="Move earlier" title="Move earlier" disabled={index === 0} onClick={() => move(index, -1)} />
+                      <Button lines="none" color="neutral" border size="sm" iconOnly icon={arrowRight01} aria-label="Move later" title="Move later" disabled={index === media.length - 1} onClick={() => move(index, 1)} />
+                    </>
+                  ) : null}
+                  <Button lines="none" color="neutral" border size="sm" onClick={() => onChange(media.filter((_, i) => i !== index))}>
+                    {avatar ? "Remove avatar selection" : "Remove from draft"}
+                  </Button>
+                </Actions>
+              </Card>
+            ))}
+          </CardGrid>
+        ) : null}
+
+        <form className={styles.upload} onSubmit={upload}>
+          {restart ? <Text role="status">Recovering {restart.originalName}</Text> : null}
+          {restart?.upload.state !== "uploaded" ? (
+            <Field label={avatar ? "Upload an avatar" : "Upload a screenshot"} hint="JPEG, PNG or WebP · up to 10 MiB">
+              <FileInput accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={event => setFile(event.target.files?.[0] ?? null)} />
+            </Field>
+          ) : null}
+          <Actions>
+            <Button key={restart ? `restart-${restart.upload.state}` : "upload"} type="submit" lines="none" size="sm" icon={upload02} iconPosition="left" busy={busy} disabled={!file && restart?.upload.state !== "uploaded"}>
+              {restart?.upload.state === "uploaded" ? "Process stored image" : restart ? "Restart image upload" : "Upload image"}
+            </Button>
+            {busy ? (
+              <Button lines="none" color="neutral" border size="sm" onClick={() => operation.current?.abort()}>
+                Stop transfer
+              </Button>
+            ) : null}
+            {restart && !busy ? (
+              <Button lines="none" color="neutral" border size="sm" onClick={() => { setRestart(null); setFile(null); }}>
+                Choose a new upload
+              </Button>
+            ) : null}
+          </Actions>
+          {busy ? <Progress value={progress} label="Image upload progress" /> : null}
+        </form>
+
+        <div className={styles.library}>
+          <Subhead as={avatar ? "h3" : "h4"}>Your uploaded images</Subhead>
+          {!history && !historyError ? <Pending label="Loading your image library" /> : null}
+          {history && !images.length ? (
+            <Notice kind="info">{cursor ? "No images on this upload-history page. Browse another page or return to the newest uploads." : "No images on this page yet. Upload a JPEG, PNG or WebP above to start your gallery."}</Notice>
+          ) : null}
+          {images.length ? (
+            <CardGrid>
+              {images.map(item => (
+                <Card key={item.upload.uploadId} selected={media.some(reference => reference.mediaId === item.upload.mediaId)}>
+                  <Name as={avatar ? "h4" : "h5"}>{item.originalName}</Name>
+                  <Meta>
+                    <StateTag state={item.upload.state} />
+                    {item.upload.inspectionCode ? <span>{item.upload.inspectionCode.replaceAll("_", " ")}</span> : null}
+                  </Meta>
+                  {item.upload.state === "accepted" && item.upload.mediaId ? (
+                    <div>
+                      <Button lines="none" border size="sm" disabled={(!avatar && media.length >= 9) || media.some(reference => reference.mediaId === item.upload.mediaId)}
+                        onClick={() => onChange(avatar ? [{ mediaId: item.upload.mediaId!, altText: "Creator avatar" }] : [...media, { mediaId: item.upload.mediaId!, altText: "", caption: "" }])}>
+                        {avatar ? "Select avatar" : "Attach to draft"}
+                      </Button>
+                    </div>
+                  ) : null}
+                  {["pending", "uploaded"].includes(item.upload.state) ? (
+                    <div>
+                      <Button lines="none" color="neutral" border size="sm" disabled={busy} onClick={() => {
+                        if (Date.parse(item.upload.expiresAtUtc) <= Date.now()) { setError("This reservation expired. Start a new image upload."); return; }
+                        setRestart(item); setFile(null); setError(""); setNotice("Use the upload form above to recover this image.");
+                      }}>
+                        Recover upload
+                      </Button>
+                    </div>
+                  ) : null}
+                </Card>
+              ))}
+            </CardGrid>
+          ) : null}
+          <Pager label="Image upload pages">
+            {cursor ? (
+              <Button lines="none" color="neutral" border size="sm" onClick={() => setCursor(undefined)}>
+                Newest uploads
+              </Button>
+            ) : null}
+            {history?.nextCursor ? (
+              <Button lines="none" color="neutral" border size="sm" onClick={() => setCursor(history.nextCursor ?? undefined)}>
+                Older uploads
+              </Button>
+            ) : null}
+          </Pager>
+        </div>
+      </Stack>
+    </Block>
+  );
 }

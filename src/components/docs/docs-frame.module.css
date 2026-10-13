@@ -1,0 +1,10 @@
+/* Full-bleed key art may run past the column edges; clip it at the viewport
+   without creating a scroll container (sticky sidebars keep working).
+   The docs are read, not skimmed: every docs page shares two reading sizes,
+   running text (about 16px on a wide screen) and the small text of the
+   navigation and outlines (about 14px). */
+.frame {
+  --doc-text: calc(0.06vw + 15px);
+  --doc-small: calc(0.06vw + 13px);
+  overflow-x: clip;
+}

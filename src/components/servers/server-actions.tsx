@@ -1,15 +1,17 @@
 "use client";
 
 import { useFavorites } from "@/components/favorites";
-import { PlayIcon, StarIcon } from "@/components/icons";
 import { useToast } from "@/components/toast";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { play, star } from "@/components/ui/icons";
 import { joinServer } from "@/lib/servers";
 
+import styles from "./server-actions.module.css";
+
 /**
- * The favourite and connect controls on a server page.
- *
- * Isolated into its own client component so the rest of the server page — cover,
- * stats, rules, player list — stays a server component and ships no JavaScript.
+ * The favourite and connect controls on a server profile, isolated in a client
+ * component so the rest of the profile renders without them.
  */
 export function ServerActions({ id }: { id: string }) {
   const { isFavorite, toggle } = useFavorites();
@@ -18,26 +20,28 @@ export function ServerActions({ id }: { id: string }) {
 
   return (
     <>
-      <div className="sv-cover-actions">
-        <button
-          className={`fav-btn sv-fav${favorited ? " is-fav" : ""}`}
-          type="button"
-          aria-pressed={favorited}
-          aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
-          onClick={() => toggle(id)}
-        >
-          <StarIcon filled={favorited} />
-        </button>
-        <button
-          className="btn btn-primary"
-          type="button"
+      <div className={styles.actions}>
+        <Button
+          lines="left"
+          size="lg"
+          icon={play}
+          iconPosition="left"
           onClick={() => {
             showToast("Opening the OPEN//77 launcher…");
             joinServer(id);
           }}
         >
-          <PlayIcon />
           Connect
+        </Button>
+        <button
+          type="button"
+          className={styles.fav}
+          aria-pressed={favorited}
+          aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
+          onClick={() => toggle(id)}
+        >
+          <Icon glyph={star} />
+          <span>{favorited ? "Favorite" : "Add to favorites"}</span>
         </button>
       </div>
       {toastNode}

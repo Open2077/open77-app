@@ -1,10 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Notice } from "@/components/ui/feedback";
+import { Field } from "@/components/ui/field";
+import { refresh as refreshGlyph, upload02 } from "@/components/ui/icons";
+import { Eyebrow } from "@/components/ui/typography";
 import * as api from "@/lib/community/client-api";
 import { transferUpload } from "@/lib/community/upload";
 import type { CommunityPage, CommunityUploadItem } from "@/lib/community/types";
+import { Actions, Block, FileInput, Progress, StateTag } from "@/components/account/kit";
+import { Card, CardGrid, Meta, Name, Stack } from "./creator-parts";
 import { PrivateMediaPreview } from "./private-media-preview";
+
+import styles from "./creator-clip.module.css";
 
 const CLIP_BYTES = 8 * 1024 * 1024;
 
@@ -61,25 +71,74 @@ export function CreatorClip({ token, projectId, clipMediaId, onChange }: {
     } finally { operation.current = null; setBusy(false); setRefresh(value => value + 1); }
   }
   const clips = history?.items.filter(item => item.upload.kind === "clip") ?? [];
-  return <section className="hub-section" aria-label="Hover clip">
-    <div className="hub-section-head"><div><p className="hub-kicker">MOTION PREVIEW</p><h2>Hover clip</h2></div>
-      <button type="button" className="btn btn-ghost btn-small" onClick={() => setRefresh(value => value + 1)}>Refresh clips</button></div>
-    <p className="hub-notice">One short clip, up to 8 seconds and 8 MiB (WebM, MP4 or GIF), plays muted when someone hovers your creation in the library. Sound, subtitles and metadata are dropped during processing. Keep a cover image too: it is the poster everywhere else.</p>
-    {disabled && <p className="hub-notice" role="alert">Hover clips are not enabled on this workshop yet.</p>}
-    {error && <p className="hub-notice" role="alert">{error}</p>}{notice && <p className="hub-notice" role="status">{notice}</p>}
-    {clipMediaId && <article className="hub-release"><p className="hub-kicker">SELECTED CLIP</p>
-      <PrivateMediaPreview token={token} mediaId={clipMediaId} alt="Hover clip" variant="clip" />
-      <div className="hub-actions"><button type="button" className="btn btn-ghost btn-small" onClick={() => onChange(null)}>Remove clip from draft</button></div></article>}
-    {!disabled && <form className="hub-form hub-upload-form" onSubmit={upload}>
-      <label>Upload a clip<input type="file" accept="video/webm,video/mp4,image/gif,.webm,.mp4,.gif" disabled={busy} onChange={event => setFile(event.target.files?.[0] ?? null)} /></label>
-      <div className="hub-actions"><button className="btn btn-primary btn-small" disabled={busy || !file}>Upload clip</button>
-        {busy && <button type="button" className="btn btn-ghost btn-small" onClick={() => operation.current?.abort()}>Stop transfer</button>}</div>
-      {busy && <progress max={100} value={progress} aria-label="Clip upload progress" />}
-    </form>}
-    {clips.length > 0 && <div className="hub-media-editor">{clips.map(item => <article className="hub-release" key={item.upload.uploadId}>
-      <h4>{item.originalName}</h4><p>{item.upload.state}{item.upload.inspectionCode ? ` · ${item.upload.inspectionCode.replaceAll("_", " ")}` : ""}</p>
-      {item.upload.state === "accepted" && item.upload.mediaId && <button type="button" className="btn btn-ghost btn-small" disabled={clipMediaId === item.upload.mediaId} onClick={() => onChange(item.upload.mediaId!)}>
-        {clipMediaId === item.upload.mediaId ? "Selected" : "Use as hover clip"}</button>}
-    </article>)}</div>}
-  </section>;
+  return (
+    <Block
+      eyebrow="Motion preview"
+      title="Hover clip"
+      headingLevel={3}
+      lead="One short clip, up to 8 seconds and 8 MiB (WebM, MP4 or GIF), plays muted when someone hovers your creation in the library. Sound, subtitles and metadata are dropped during processing. Keep a cover image too: it is the poster everywhere else."
+      actions={
+        <Button lines="none" color="neutral" border size="sm" icon={refreshGlyph} iconPosition="left" onClick={() => setRefresh(value => value + 1)}>
+          Refresh clips
+        </Button>
+      }
+    >
+      <Stack>
+        {disabled ? <Notice kind="warning">Hover clips are not enabled on this workshop yet.</Notice> : null}
+        {error ? <Notice kind="danger">{error}</Notice> : null}
+        {notice ? <Notice kind="info">{notice}</Notice> : null}
+        <div className={styles.layout}>
+          {clipMediaId ? (
+            <Card selected className={styles.selected}>
+              <Eyebrow>Selected clip</Eyebrow>
+              <PrivateMediaPreview token={token} mediaId={clipMediaId} alt="Hover clip" variant="clip" />
+              <div>
+                <Button lines="none" color="neutral" border size="sm" onClick={() => onChange(null)}>
+                  Remove clip from draft
+                </Button>
+              </div>
+            </Card>
+          ) : null}
+          {!disabled ? (
+            <form className={styles.upload} onSubmit={upload}>
+              <Field label="Upload a clip" hint="WebM, MP4 or GIF · up to 8 MiB · up to 8 seconds">
+                <FileInput accept="video/webm,video/mp4,image/gif,.webm,.mp4,.gif" disabled={busy} onChange={event => setFile(event.target.files?.[0] ?? null)} />
+              </Field>
+              <Actions>
+                <Button type="submit" lines="none" size="sm" icon={upload02} iconPosition="left" disabled={busy || !file} busy={busy}>
+                  Upload clip
+                </Button>
+                {busy ? (
+                  <Button lines="none" color="neutral" border size="sm" onClick={() => operation.current?.abort()}>
+                    Stop transfer
+                  </Button>
+                ) : null}
+              </Actions>
+              {busy ? <Progress value={progress} label="Clip upload progress" /> : null}
+            </form>
+          ) : null}
+        </div>
+        {clips.length > 0 ? (
+          <CardGrid>
+            {clips.map(item => (
+              <Card key={item.upload.uploadId} selected={clipMediaId === item.upload.mediaId}>
+                <Name>{item.originalName}</Name>
+                <Meta>
+                  <StateTag state={item.upload.state} />
+                  {item.upload.inspectionCode ? <span>{item.upload.inspectionCode.replaceAll("_", " ")}</span> : null}
+                </Meta>
+                {item.upload.state === "accepted" && item.upload.mediaId ? (
+                  <div>
+                    <Button key={clipMediaId === item.upload.mediaId ? "selected" : "pick"} lines="none" color={clipMediaId === item.upload.mediaId ? "neutral" : "yellow"} border size="sm" disabled={clipMediaId === item.upload.mediaId} onClick={() => onChange(item.upload.mediaId!)}>
+                      {clipMediaId === item.upload.mediaId ? "Selected" : "Use as hover clip"}
+                    </Button>
+                  </div>
+                ) : null}
+              </Card>
+            ))}
+          </CardGrid>
+        ) : null}
+      </Stack>
+    </Block>
+  );
 }

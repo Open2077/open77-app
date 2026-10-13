@@ -17,7 +17,7 @@ assert.equal(canDownloadServer({ role: "user", alphaAccess: "true" }), false, "m
 
 // A working gate is not enough: approved users must be able to find it without
 // entering the staff-only admin workspace or submitting another application.
-for (const file of ["src/app/create/page.tsx", "src/components/developer-alpha.tsx", "src/components/account/account-overview.tsx"]) {
+for (const file of ["src/app/create/page.tsx", "src/components/account/account-overview.tsx"]) {
   const component = await readFile(file, "utf8");
   assert.match(component, /href="\/host">\s*Download server/, `${file}: direct download entry point`);
 }

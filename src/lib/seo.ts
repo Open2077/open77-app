@@ -51,7 +51,7 @@ export function pageMetadata(input: PageMetadataInput): Metadata {
       title,
       description: input.description,
       url: canonical,
-      images: [{ url: image, width: 1200, height: 630, alt: `${site.name}: ${input.title ?? site.tagline}` }],
+      images: [{ url: image, ...site.ogImageSize, alt: `${site.name}: ${input.title ?? site.tagline}` }],
       ...(input.publishedTime ? { publishedTime: input.publishedTime } : {}),
       ...(input.modifiedTime ? { modifiedTime: input.modifiedTime } : {}),
     },
@@ -105,6 +105,7 @@ export function organizationNode(): JsonLdNode {
       site.links.x,
       site.links.tiktok,
       site.links.twitch,
+      site.links.youtube,
     ].filter((url): url is string => url !== null),
   };
 }

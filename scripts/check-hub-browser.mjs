@@ -90,17 +90,17 @@ export async function run(options) {
       await visit(options.origin + route);
       evidence.browserExecuted = true;
       assert(await cdp.evaluate(`const doc=new DOMParser().parseFromString(${JSON.stringify(html)},'text/html');return doc.querySelector('h1')?.textContent.trim()===${JSON.stringify(options.title)};`), `${width}: SSR exact project title`);
-      await until(() => cdp.evaluate("return document.body.innerText.includes('to vote, save or follow releases.') && !document.body.innerText.includes('Loading community actions');"), "guest action hydration");
+      await until(() => cdp.evaluate("return document.body.innerText.includes('to upvote, save or follow releases.') && !document.querySelector('[data-project-actions][aria-busy]');"), "guest action hydration");
       assert(await cdp.evaluate(`return document.querySelector('h1')?.textContent.trim()===${JSON.stringify(options.title)} && document.querySelector('link[rel=canonical]')?.href===${JSON.stringify(canonical)} && document.title.includes(${JSON.stringify(options.title)});`), `${width}: hydrated title and canonical`);
       assert(await cdp.evaluate("return document.documentElement.scrollWidth<=innerWidth+1;"), `${width}: no horizontal overflow`);
-      assert(await cdp.evaluate("return !localStorage.getItem('open77.session') && [...document.querySelectorAll('a')].some(a=>a.textContent==='Sign in with a verified account'&&new URL(a.href).pathname==='/account') && ![...document.querySelectorAll('button')].some(b=>/^(Upvote|Save|Follow releases)$/.test(b.textContent.trim()));"), `${width}: guest interaction gate`);
-      const gallery = await cdp.evaluate("return document.querySelectorAll('.hub-media-gallery a[aria-haspopup=dialog]').length;");
+      assert(await cdp.evaluate("return !localStorage.getItem('open77.session') && [...document.querySelectorAll('a')].some(a=>a.textContent==='Sign in with a verified account'&&new URL(a.href).pathname==='/account') && [...document.querySelectorAll('[data-project-actions] button')].every(b=>b.disabled);"), `${width}: guest interaction gate`);
+      const gallery = await cdp.evaluate("return document.querySelectorAll('[data-media-gallery] a[aria-haspopup=dialog]').length;");
       if (options.requireGallery) assert(gallery >= 2, `${width}: two real gallery images required for navigation`);
       if (gallery) {
-        assert(await cdp.evaluate("return [...document.querySelectorAll('.hub-media-gallery img')].every(i=>i.alt.trim().length>=3 && !/^(image|screenshot|photo)(\\s*\\d+)?$/i.test(i.alt.trim()));"), `${width}: meaningful gallery alt text`);
-        await cdp.evaluate("const a=document.querySelector('.hub-media-gallery a');a.scrollIntoView();a.focus();return true;");
+        assert(await cdp.evaluate("return [...document.querySelectorAll('[data-media-gallery] img')].every(i=>i.alt.trim().length>=3 && !/^(image|screenshot|photo)(\\s*\\d+)?$/i.test(i.alt.trim()));"), `${width}: meaningful gallery alt text`);
+        await cdp.evaluate("const a=document.querySelector('[data-media-gallery] a');a.scrollIntoView();a.focus();return true;");
         await cdp.key("Enter");
-        await until(() => cdp.evaluate("return !!document.querySelector('dialog[open]') && document.activeElement?.textContent==='Close screenshot';"), "keyboard opens gallery and focuses close");
+        await until(() => cdp.evaluate("return !!document.querySelector('dialog[open]') && document.activeElement?.getAttribute('aria-label')==='Close screenshot';"), "keyboard opens gallery and focuses close");
         await until(() => cdp.evaluate("const i=document.querySelector('dialog[open] img');return !!i&&i.complete&&i.naturalWidth>0;"), "real full gallery image");
         await cdp.key("Tab", "Tab", 8);
         assert(await cdp.evaluate("return !!document.activeElement.closest('dialog[open]');"), `${width}: modal reverse-tab stays inside`);
@@ -111,7 +111,7 @@ export async function run(options) {
           await until(() => cdp.evaluate("return document.querySelector('dialog[open] h2')?.textContent.startsWith('Screenshot 1 of');"), "previous screenshot keyboard");
         }
         await screenshot(`gallery-${width}`); await cdp.key("Escape");
-        await until(() => cdp.evaluate("return !document.querySelector('dialog[open]') && document.activeElement===document.querySelector('.hub-media-gallery a');"), "Escape restores trigger focus");
+        await until(() => cdp.evaluate("return !document.querySelector('dialog[open]') && document.activeElement===document.querySelector('[data-media-gallery] a');"), "Escape restores trigger focus");
       }
       await cdp.evaluate("scrollTo(0,0);return true;"); await screenshot(`project-${width}`);
       await visit(options.origin + route + "/discussion");

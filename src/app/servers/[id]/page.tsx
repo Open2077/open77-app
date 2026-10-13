@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/json-ld";
 import { LiveServerBrowser } from "@/components/servers/live-server-browser";
+import { Page } from "@/components/ui/page";
 import { getPublicServer, getPublicServerSnapshot, listPublicServers } from "@/lib/server-catalog";
 import { serverProfileSummary } from "@/lib/server-profile-seo";
 import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
@@ -45,9 +46,9 @@ export default async function ServerPage({ params }: { params: Promise<{ id: str
   const summary = server ? serverProfileSummary(server) : null;
   return (
     <>
-      <main id="main" className="sb-page">
+      <Page tone="yellow">
         <LiveServerBrowser initialId={id} initialSnapshot={snapshot} />
-      </main>
+      </Page>
       <JsonLd data={jsonLdGraph(
         breadcrumbNode([
           { name: "Home", path: "/" },

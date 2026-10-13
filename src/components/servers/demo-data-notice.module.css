@@ -1,0 +1,33 @@
+.notice {
+  flex-direction: column;
+  gap: 0.6rem;
+  display: flex;
+}
+.line {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--tone);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.62rem;
+  display: flex;
+}
+.dim {
+  color: var(--text-dim);
+}
+.more {
+  color: var(--text-primary);
+  text-underline-offset: 0.3em;
+  text-decoration: underline;
+}
+.note {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+.note a {
+  color: var(--tone);
+}

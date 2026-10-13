@@ -1,13 +1,14 @@
 import Link from "next/link";
 
 import { ArchitectureDiagram } from "@/components/architecture-diagram";
-import { SlashMark } from "@/components/brand";
 import { AgentNote } from "@/components/docs/agent-note";
 import { DocPager } from "@/components/docs/doc-pager";
-import { DocToc } from "@/components/docs/doc-toc";
+import { DocSection, DocSubheading, DocText, Facts, FeatureGrid, Snippet, Steps } from "@/components/docs/docs-blocks";
 import { DocsShell } from "@/components/docs/docs-shell";
-import { CheckIcon, CrossIcon } from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
+import { Tag } from "@/components/ui/chip";
+import { Icon } from "@/components/ui/icon";
+import { cancelCircle, checkmarkCircle02, database01, serverStack02, userGroup } from "@/components/ui/icons";
 import { getDocsNeighbours, highlightCode, type TocEntry } from "@/lib/docs";
 import {
   DEDICATED_INTRO,
@@ -39,6 +40,8 @@ import {
   techArticleNode,
 } from "@/lib/seo";
 
+import styles from "./platform.module.css";
+
 export const metadata = pageMetadata({
   title: PLATFORM_TITLE,
   description: PLATFORM_DESCRIPTION,
@@ -57,23 +60,8 @@ const TOC: TocEntry[] = [
   { id: "faq", text: "FAQ", depth: 2 },
 ];
 
-function Snippet({ filename, badge, html }: { filename: string; badge: string; html: string }) {
-  return (
-    <div className="code-window docs-code">
-      <div className="code-titlebar">
-        <span className="client-dots" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </span>
-        <span className="code-filename">{filename}</span>
-        <span className="client-badge">{badge}</span>
-      </div>
-      {/* Highlighted by Shiki at build time from the same theme the guides use. */}
-      <div className="dx-snippet" dangerouslySetInnerHTML={{ __html: html }} />
-    </div>
-  );
-}
+/** One glyph per dedicated-server point, in the order of `SERVER_POINTS`. */
+const SERVER_GLYPHS = [database01, serverStack02, userGroup];
 
 export default async function PlatformPage() {
   const [manifestHtml, serverHtml, neighbours] = await Promise.all([
@@ -86,180 +74,118 @@ export default async function PlatformPage() {
     <>
       <DocsShell
         breadcrumbs={[{ label: "Docs", href: "/docs" }, { label: "How the platform works" }]}
+        eyebrow="Start here"
         title="How OPEN//77 works."
         lede={PLATFORM_LEDE}
-        toc={<DocToc entries={TOC} />}
+        meta={<a href="/docs/platform.md">Markdown</a>}
+        toc={TOC}
       >
-        <section className="docs-section" id="overview">
-          <h2 className="docs-title">
-            <SlashMark /> Overview
-          </h2>
-          <p className="docs-p">{PLATFORM_OVERVIEW}</p>
-          <div className="distinction-grid">
-            <div className="distinction-card is-not">
-              <p className="distinction-label">OPEN//77 is not</p>
-              <ul className="distinction-list">
+        <DocSection id="overview" title="Overview" intro={PLATFORM_OVERVIEW}>
+          <div className={styles.distinction}>
+            <div className={styles.isNot}>
+              <p className={styles.distinctionLabel}>OPEN//77 is not</p>
+              <ul>
                 {IS_NOT.map((item) => (
                   <li key={item}>
-                    <CrossIcon className="li-icon" size={16} />
+                    <Icon glyph={cancelCircle} />
                     {item}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="distinction-card is-yes">
-              <p className="distinction-label">OPEN//77 is</p>
-              <ul className="distinction-list">
+            <div className={styles.is}>
+              <p className={styles.distinctionLabel}>OPEN//77 is</p>
+              <ul>
                 {IS.map((item) => (
                   <li key={item}>
-                    <CheckIcon className="li-icon" size={16} />
+                    <Icon glyph={checkmarkCircle02} />
                     {item}
                   </li>
                 ))}
               </ul>
             </div>
           </div>
-        </section>
+        </DocSection>
 
-        <section className="docs-section" id="how-it-works">
-          <h2 className="docs-title">
-            <SlashMark /> How it works (for players)
-          </h2>
-          <ol className="steps steps-2 docs-steps">
-            {PLAYER_STEPS.map((step, index) => (
-              <li className="step" key={step.title}>
-                <span className="step-num">{String(index + 1).padStart(2, "0")}</span>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
+        <DocSection id="how-it-works" title="How it works (for players)">
+          <Steps items={PLAYER_STEPS.map((step) => ({ title: step.title, body: step.body }))} />
+        </DocSection>
 
-        <section className="docs-section" id="requirements">
-          <h2 className="docs-title">
-            <SlashMark /> Requirements
-          </h2>
-          <p className="docs-p">{REQUIREMENTS_INTRO}</p>
-          <h3 className="docs-subtitle">To play</h3>
-          <ul className="dedicated-points">
-            {PLAYER_REQUIREMENTS.map((item) => (
-              <li key={item.label}>
-                <h3>{item.label}</h3>
-                <p>{item.body}</p>
-              </li>
-            ))}
-          </ul>
-          <h3 className="docs-subtitle">To host a server</h3>
-          <p className="docs-p">{REQUIREMENTS_SERVER_INTRO}</p>
-          <ul className="dedicated-points">
-            {SERVER_REQUIREMENTS.map((item) => (
-              <li key={item.label}>
-                <h3>{item.label}</h3>
-                <p>{item.body}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <DocSection id="requirements" title="Requirements" intro={REQUIREMENTS_INTRO}>
+          <DocSubheading>To play</DocSubheading>
+          <Facts items={PLAYER_REQUIREMENTS.map((item) => ({ label: item.label, body: item.body }))} />
+          <DocSubheading>To host a server</DocSubheading>
+          <DocText>{REQUIREMENTS_SERVER_INTRO}</DocText>
+          <Facts items={SERVER_REQUIREMENTS.map((item) => ({ label: item.label, body: item.body }))} />
+        </DocSection>
 
-        <section className="docs-section" id="dedicated-servers">
-          <h2 className="docs-title">
-            <SlashMark /> Dedicated servers
-          </h2>
-          <p className="docs-p">{DEDICATED_INTRO}</p>
-          <ul className="dedicated-points">
-            {SERVER_POINTS.map((point) => (
-              <li key={point.title}>
-                <h3>{point.title}</h3>
-                <p>{point.body}</p>
-              </li>
-            ))}
-          </ul>
-          <div
-            className="dedicated-diagram docs-diagram"
+        <DocSection id="dedicated-servers" title="Dedicated servers" intro={DEDICATED_INTRO}>
+          <FeatureGrid
+            items={SERVER_POINTS.map((point, index) => ({ glyph: SERVER_GLYPHS[index], title: point.title, body: point.body }))}
+          />
+          <figure
+            className={styles.diagram}
             aria-label="Diagram: players connect to a community-run dedicated server which owns the world state"
           >
-            <div className="diagram">
-              <ArchitectureDiagram />
-            </div>
-          </div>
-        </section>
+            <ArchitectureDiagram />
+            <figcaption>{"// Connection model"}</figcaption>
+          </figure>
+        </DocSection>
 
-        <section className="docs-section" id="resources">
-          <h2 className="docs-title">
-            <SlashMark /> Resources &amp; scripting
-          </h2>
-          <p className="docs-p">
+        <DocSection id="resources" title="Resources & scripting">
+          <DocText>
             {RESOURCES_INTRO_PARTS.lead}
             <Link href={RESOURCES_INTRO_PARTS.linkHref}>{RESOURCES_INTRO_PARTS.linkLabel}</Link>
             {RESOURCES_INTRO_PARTS.tail}
-          </p>
-          <ul className="creators-list">
-            {SCRIPTABLE.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href}>
-                  <strong>{item.label}</strong>
-                </Link>{" "}
-                {item.body}
-              </li>
-            ))}
-          </ul>
-
-          <Snippet filename="resources/hello/open77.lua" badge="MANIFEST" html={manifestHtml} />
-          <Snippet
-            filename="resources/hello/server/main.lua"
-            badge="SERVER&nbsp;RUNTIME"
-            html={serverHtml}
+          </DocText>
+          <Facts
+            items={SCRIPTABLE.map((item) => ({
+              label: <Link href={item.href}>{item.label}</Link>,
+              body: item.body,
+            }))}
           />
 
-          <p className="creators-note">
-            That is the real API, not a sketch: every registered function is listed in the{" "}
-            <Link href="/docs/api">Lua API reference</Link>, separated by runtime so a client
-            projection is never mistaken for server authority. The surface will still change while
-            the project is in Alpha. Read the{" "}
-            <Link href="/docs/alpha-access">access guide and limitations</Link>.
-          </p>
-        </section>
+          <Snippet filename="resources/hello/open77.lua" badge="Manifest" code={MANIFEST_SAMPLE} html={manifestHtml} />
+          <Snippet filename="resources/hello/server/main.lua" badge="Server runtime" code={SERVER_SAMPLE} html={serverHtml} />
 
-        <section className="docs-section" id="roadmap">
-          <h2 className="docs-title">
-            <SlashMark /> Roadmap
-          </h2>
-          <p className="docs-p">{ROADMAP_INTRO}</p>
-          <ol className="roadmap">
+          <DocText className={styles.outro}>
+            That is the real API, not a sketch: every registered function is listed in the{" "}
+            <Link href="/docs/api">Lua API reference</Link>, separated by runtime so a client projection is never mistaken
+            for server authority. The surface will still change while the project is in Alpha. Read the{" "}
+            <Link href="/docs/alpha-access">access guide and limitations</Link>.
+          </DocText>
+        </DocSection>
+
+        <DocSection id="roadmap" title="Roadmap" intro={ROADMAP_INTRO}>
+          <ol className={styles.roadmap}>
             {ROADMAP.map((item, index) => (
-              <li className={`roadmap-item${index === 0 ? " is-now" : ""}`} key={item.stage}>
-                <div className="roadmap-marker" aria-hidden="true" />
-                <div className="roadmap-body">
-                  <p className="roadmap-stage">
-                    {item.stage}
-                    {item.chip ? <span className="roadmap-chip">{item.chip}</span> : null}
-                  </p>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </div>
+              <li className={index === 0 ? `${styles.stage} ${styles.now}` : styles.stage} key={item.stage}>
+                <span className={styles.marker} aria-hidden="true" />
+                <p className={styles.stageLabel}>
+                  {item.stage}
+                  {item.chip ? <Tag variant="solid">{item.chip}</Tag> : null}
+                </p>
+                <h3>{item.title}</h3>
+                <p className={styles.stageBody}>{item.body}</p>
               </li>
             ))}
           </ol>
-        </section>
+        </DocSection>
 
-        <section className="docs-section" id="faq">
-          <h2 className="docs-title">
-            <SlashMark /> FAQ
-          </h2>
-          <div className="faq-list">
+        <DocSection id="faq" title="FAQ">
+          <div className={styles.faq}>
             {FAQ.map((entry) => (
-              <details className="faq-item" key={entry.question}>
+              <details key={entry.question}>
                 <summary>{entry.question}</summary>
                 <p>{entry.answer}</p>
               </details>
             ))}
           </div>
-          <p className="docs-p">
-            Still curious about running a world of your own?{" "}
-            <Link href="/create">Create a Server</Link> covers what hosting will involve.
-          </p>
-        </section>
+          <DocText className={styles.outro}>
+            Still curious about running a world of your own? <Link href="/create">Create a Server</Link> covers what
+            hosting will involve.
+          </DocText>
+        </DocSection>
 
         <AgentNote markdownHref="/docs/platform.md" />
         <DocPager {...neighbours} />

@@ -1,0 +1,135 @@
+:where(.notice) {
+  background: oklch(from var(--notice) l c h / 6%);
+  border: 1px solid oklch(from var(--notice) l c h / 35%);
+  align-items: flex-start;
+  gap: 0.9rem;
+  padding: 1rem 1.2rem 1rem 1.4rem;
+  display: flex;
+  position: relative;
+}
+.notice:before {
+  content: "";
+  background: var(--notice);
+  width: 3px;
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  left: -1px;
+}
+.noticeIcon {
+  color: var(--notice);
+  flex: none;
+  margin-top: 0.1rem;
+  font-size: 1.2rem;
+}
+.noticeBody {
+  flex-direction: column;
+  flex: 1;
+  gap: 0.35rem;
+  min-width: 0;
+  display: flex;
+}
+.noticeTitle {
+  font-weight: 600;
+  line-height: 1.35;
+}
+.noticeText {
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.noticeText a {
+  color: var(--notice);
+  text-underline-offset: 0.2em;
+  text-decoration: underline;
+}
+.noticeAction {
+  flex: none;
+  align-self: center;
+}
+@media screen and (max-width: 700px) {
+  :where(.notice) {
+    flex-wrap: wrap;
+  }
+  .noticeAction {
+    width: 100%;
+  }
+}
+
+:where(.empty) {
+  border: 1px dashed var(--line);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 2.5rem 2rem;
+  display: flex;
+}
+.emptyText {
+  color: var(--text-dim);
+  max-width: 36rem;
+  line-height: 1.55;
+}
+.emptyAction {
+  margin-top: 0.5rem;
+}
+
+:where(.loader) {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tone);
+  font-size: 0.7rem;
+}
+.loader span {
+  animation: 1s infinite pulse;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+:where(.stat) {
+  flex-direction: column;
+  gap: 0.45rem;
+  display: flex;
+}
+.statValue {
+  font-family: var(--font-heading);
+  letter-spacing: -0.06em;
+  color: var(--tone);
+  font-size: calc(1.6vw + 20px);
+  font-style: italic;
+  line-height: 0.9;
+}
+.statLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  font-size: 0.64rem;
+}
+.statDetail {
+  color: var(--text-faint);
+  font-size: 0.82rem;
+}
+
+:where(.meter) {
+  --meter: var(--tone);
+  background: oklch(from var(--text-primary) l c h / 8%);
+  width: 100%;
+  height: 4px;
+  display: block;
+  position: relative;
+  overflow: hidden;
+  transform: skewX(var(--skew));
+}
+.meter:after {
+  content: "";
+  background: var(--meter);
+  width: var(--fill);
+  transition: width 0.4s var(--cubic);
+  position: absolute;
+  inset: 0 auto 0 0;
+}

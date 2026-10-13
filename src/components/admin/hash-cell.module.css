@@ -1,0 +1,14 @@
+.hash {
+  vertical-align: middle;
+  align-items: center;
+  gap: 0.6rem;
+  display: inline-flex;
+}
+.code {
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  font-size: 0.8rem;
+  font-weight: 300;
+}

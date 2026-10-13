@@ -1,7 +1,23 @@
-import Link from "next/link";
-import { HubPageHead, HubShell } from "@/components/community/hub-shell";
+import { AccountShell } from "@/components/account/account-shell";
+import { Button } from "@/components/ui/button";
 import { SavedProjects } from "@/components/community/saved-projects";
+
 export const metadata = { title: "Release subscriptions", robots: { index: false, follow: false } };
+
 export default function SubscriptionsPage() {
-  return <HubShell><HubPageHead kicker="YOUR COLLECTION" title="Release subscriptions" actions={<Link className="btn btn-ghost btn-small" href="/account/saved">Saved creations</Link>}><p>Creations you follow. New releases land in your inbox.</p></HubPageHead><SavedProjects kind="subscription" /></HubShell>;
+  return (
+    <AccountShell
+      eyebrow="Your collection"
+      title={["Release", "subscriptions"]}
+      lead="Creations you follow. New releases land in your inbox."
+      guestLead="Sign in to see the creations you follow. Their new releases land in your inbox."
+      actions={
+        <Button lines="none" border color="neutral" size="sm" href="/account/saved">
+          Saved creations
+        </Button>
+      }
+    >
+      <SavedProjects kind="subscription" />
+    </AccountShell>
+  );
 }

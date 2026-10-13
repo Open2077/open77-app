@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 
 import { isCountryCode, languageDisplayName, regionCode, regionDisplayName } from "@/lib/locale";
 
+import styles from "./country-flag.module.css";
+
 /**
  * Country flags for the server browser.
  *
@@ -374,7 +376,7 @@ export function CountryFlag({ code, width = 18 }: { code?: string | null; width?
   const known = isCountryCode(code) ? FLAGS[code] : undefined;
   return (
     <svg
-      className={`flag${known ? "" : " flag-none"}`}
+      className={known ? styles.flag : `${styles.flag} ${styles.none}`}
       viewBox="0 0 60 40"
       width={width}
       height={Math.round((width * 2) / 3)}
@@ -400,7 +402,7 @@ export function FlaggedCountry({
   width?: number;
 }) {
   return (
-    <span className={className}>
+    <span className={className ? `${styles.country} ${className}` : styles.country}>
       <CountryFlag code={code} width={width} />
       <span>{countryLabel(code)}</span>
     </span>
@@ -426,15 +428,15 @@ export function ServerLocale({
   const shortCode = regionCode(country);
   return (
     <span
-      className={className}
+      className={className ? `${styles.locale} ${className}` : styles.locale}
       title={`${countryLabel(country)} · ${languageDisplayName(lang.toLowerCase())}`}
     >
       <CountryFlag code={country} width={16} />
-      <span className="flag-code">{shortCode ?? "—"}</span>
-      <span className="flag-sep" aria-hidden="true">
+      <span className={styles.code}>{shortCode ?? "—"}</span>
+      <span className={styles.sep} aria-hidden="true">
         ·
       </span>
-      <span className="flag-lang">{lang}</span>
+      <span className={styles.lang}>{lang}</span>
     </span>
   );
 }

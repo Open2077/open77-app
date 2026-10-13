@@ -1,0 +1,274 @@
+/* Workshop discovery: a store front in the home page's language. */
+
+/* The hero in the first screen of a short window: the lead in one or two lines,
+   the search and the two ways in on one row, the first creations at its foot. */
+.hero {
+  --hero-lead: 46em;
+}
+.find {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.4rem;
+  width: 100%;
+  margin-top: 0.3rem;
+  display: flex;
+}
+.search {
+  flex: 1 1 22rem;
+  max-width: 36rem;
+}
+.search :global(input) {
+  font-size: 1rem;
+}
+
+/* Three promises of the library, under the hero. */
+.facts {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-inline: auto;
+  display: grid;
+}
+.fact {
+  border-left: 1px solid var(--line);
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: 0.35rem 1rem;
+  padding: 1.6rem 1.8rem 1.7rem;
+  display: grid;
+}
+.fact:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+.factIndex {
+  font-family: var(--font-heading);
+  letter-spacing: -0.06em;
+  color: var(--tone);
+  grid-row: span 2;
+  font-size: 1.8rem;
+  font-style: italic;
+  line-height: 0.9;
+}
+.factTitle {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.7rem;
+}
+.factText {
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+/* Categories: five short slanted tiles. */
+.categories {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1.6rem 2.2rem;
+  padding-inline: 1.4rem;
+  display: grid;
+}
+.category {
+  isolation: isolate;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 11.5rem;
+  padding: 1.4rem 1.2rem 1.3rem 1.6rem;
+  display: flex;
+  position: relative;
+}
+.category:before {
+  content: "";
+  background: oklch(from var(--body) l c h / 0.6);
+  border: 1px solid var(--line);
+  z-index: -1;
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+.category:after {
+  content: "";
+  border: 1px solid var(--tone);
+  opacity: 0;
+  border-width: 0 1px;
+  transition: opacity var(--transition-link);
+  position: absolute;
+  inset: 28% -7px;
+  transform: skewX(var(--skew));
+}
+.category:hover:before,
+.category:focus-visible:before {
+  border-color: var(--tone);
+  background-color: oklch(from var(--tone) l c h / 8%);
+}
+.category:hover:after,
+.category:focus-visible:after {
+  opacity: 1;
+}
+.category:focus-visible {
+  outline: none;
+}
+.categoryTop {
+  color: var(--tone);
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+}
+.categoryIndex {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  font-size: 0.62rem;
+}
+.categoryName {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  font-size: calc(0.25vw + 15px);
+  font-style: italic;
+  line-height: 1;
+}
+.categoryText {
+  color: var(--text-dim);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+.categoryGo {
+  color: var(--tone);
+  margin-top: auto;
+  transition: transform var(--transition-link);
+}
+.category:hover .categoryGo {
+  transform: translateX(0.35rem);
+}
+
+.spotlight {
+  padding-inline: calc(2rem + 1vw);
+  display: grid;
+}
+
+/* For creators and server owners, set like the home "create" scene. */
+.closing {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: 3rem;
+  display: grid;
+}
+.paths {
+  flex-direction: column;
+  gap: calc(1.6vw + 22px);
+  display: flex;
+}
+.path {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.7rem;
+  display: flex;
+}
+.pathLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-size: 0.66rem;
+}
+.pathTitle {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  color: var(--tone);
+  font-size: calc(1.1vw + 20px);
+  font-style: italic;
+  line-height: 0.95;
+}
+.pathText {
+  text-wrap: balance;
+  color: var(--text-dim);
+  max-width: 30rem;
+  line-height: 1.45;
+}
+.pathLink {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tone);
+  align-items: center;
+  gap: 0.6em;
+  margin-top: 0.2rem;
+  font-size: 0.7rem;
+  display: inline-flex;
+}
+.rack {
+  -webkit-mask: linear-gradient(to left, transparent 0%, var(--body) 18%);
+  mask: linear-gradient(to left, transparent 0%, var(--body) 18%);
+  position: relative;
+}
+.rack img {
+  width: 100%;
+  height: auto;
+}
+
+@media screen and (max-width: 1250px) {
+  .categories {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media screen and (max-width: 1084px) {
+  .facts {
+    grid-template-columns: 1fr;
+  }
+  .fact,
+  .fact:first-child {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding: 1.3rem 0;
+  }
+  .fact:first-child {
+    border-top: 0;
+  }
+  .closing {
+    grid-template-columns: 1fr;
+  }
+  .rack {
+    max-width: 640px;
+  }
+}
+@media screen and (max-width: 760px) {
+  .categories {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+  }
+  /* A compact row per category: icon, name, arrow. */
+  .category {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    min-height: 0;
+    padding: 1rem 1.2rem 1rem 1.4rem;
+  }
+  .categoryTop {
+    flex: none;
+  }
+  .categoryIndex,
+  .categoryText {
+    display: none;
+  }
+  .categoryName {
+    flex: 1;
+  }
+  .categoryGo {
+    margin-top: 0;
+  }
+  .spotlight {
+    padding-inline: 1.5rem;
+  }
+}

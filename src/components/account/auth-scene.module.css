@@ -1,0 +1,60 @@
+.footnote {
+  flex-direction: column;
+  gap: 0.9rem;
+  display: flex;
+}
+.notes {
+  border-top: 1px solid var(--line);
+  text-align: left;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-top: 1rem;
+  display: flex;
+}
+.notes li {
+  color: var(--text-dim);
+  align-items: flex-start;
+  gap: 0.7rem;
+  line-height: 1.45;
+  display: flex;
+}
+.notes svg {
+  color: var(--tone);
+  flex: none;
+  margin-top: 0.1em;
+  font-size: 1.1rem;
+}
+.alpha {
+  color: var(--text-dim);
+}
+.alphaLink {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--tone);
+  white-space: nowrap;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.62rem;
+  display: inline-flex;
+}
+.alphaLink:hover {
+  color: var(--text-primary);
+}
+.alphaLink svg {
+  font-size: 1.3em;
+}
+.master {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  font-size: 0.58rem;
+}
+.loading {
+  background: oklch(from var(--surface-1) l c h / 0.85);
+  border: 1px solid var(--line);
+  padding: 2.4rem 2rem;
+}

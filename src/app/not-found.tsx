@@ -1,8 +1,14 @@
-import Link from "next/link";
+import NextLink from "next/link";
 
-import { Eyebrow } from "@/components/brand";
-import { SiteFooter } from "@/components/site-footer";
+import { ProductHero } from "@/components/downloads/product-hero";
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { arrowRight01 } from "@/components/ui/icons";
+import { Page } from "@/components/ui/page";
+import { Eyebrow } from "@/components/ui/typography";
 import { mainNav } from "@/lib/site";
+
+import styles from "./not-found.module.css";
 
 export const metadata = {
   title: "Page not found · OPEN//77",
@@ -12,35 +18,42 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <>
-      <main id="main" className="page-hero page-hero-plain">
-        <div className="section-inner">
-          <Eyebrow>404</Eyebrow>
-          <h1 className="page-title">Signal lost.</h1>
-          <p className="section-lead">
-            This page does not exist. It may have moved during the site rebuild, or it may never have
-            existed. The project is in Alpha and things do move.
-          </p>
-          <p className="hero-actions">
-            <Link className="btn btn-primary" href="/">
-              Back to the home page
-            </Link>
-            <Link className="btn btn-ghost" href="/docs">
-              Documentation
-            </Link>
-          </p>
-          <nav className="docs-sidebar" aria-label="Main sections">
-            <p className="footer-col-title">Or try</p>
-            {mainNav.map((item) => (
-              <Link href={item.href} key={item.href}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+    <Page tone="yellow">
+      <ProductHero
+        titleId="not-found-title"
+        titleSize="lg"
+        eyebrow="Error 404 · Page not found"
+        title={["Signal", "lost."]}
+        accent={[1]}
+        lead="This page does not exist. It may have moved during the site rebuild, or it may never have existed. The project is in Alpha and things do move."
+        art={{ src: "/assets/home/night-city-wallpaper-v3.webp", position: "50% 40%" }}
+        figure={{ src: "/home/img/hero-v-left.webp", width: 1092, height: 1251 }}
+        watermark="404"
+      >
+        <div className={styles.actions}>
+          <Button lines="left" href="/">
+            Back to the home page
+          </Button>
+          <Button border lines="none" href="/docs">
+            Documentation
+          </Button>
         </div>
-      </main>
-
-      <SiteFooter />
-    </>
+        <nav className={styles.more} aria-label="Main sections">
+          <Eyebrow muted as="h2" className={styles.moreTitle}>
+            Or try
+          </Eyebrow>
+          <ul className={styles.links}>
+            {mainNav.map((item) => (
+              <li key={item.href}>
+                <NextLink href={item.href} className={styles.link}>
+                  <span>{item.label}</span>
+                  <Icon glyph={arrowRight01} />
+                </NextLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </ProductHero>
+    </Page>
   );
 }

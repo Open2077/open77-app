@@ -1,0 +1,180 @@
+.hero {
+  min-height: 0;
+}
+.title {
+  max-width: 100%;
+}
+/* Creation names are user text: let a long word break instead of overflowing. */
+.title [data-glitch] {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+
+.kicker {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.9rem;
+  display: flex;
+}
+
+.byline {
+  color: var(--text-dim);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  font-size: 0.95rem;
+  display: flex;
+}
+.creator {
+  color: var(--text-primary);
+  align-items: center;
+  gap: 0.7rem;
+  display: inline-flex;
+}
+.creator a {
+  transition: color var(--transition-link);
+}
+.creator a:hover {
+  color: var(--tone);
+}
+.sep {
+  color: var(--tone);
+  font-family: var(--font-nippo);
+  letter-spacing: -0.05em;
+}
+.tags {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  display: flex;
+}
+.tag {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-dim);
+  isolation: isolate;
+  align-items: center;
+  height: 1.6rem;
+  padding: 0 0.8em;
+  font-size: 0.6rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+  position: relative;
+}
+.tag:before {
+  content: "";
+  border: 1px solid var(--line-strong);
+  z-index: -1;
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+.tag:hover {
+  color: var(--text-primary);
+}
+.tag:hover:before {
+  border-color: var(--tone);
+  background: oklch(from var(--tone) l c h / 10%);
+}
+
+.stats {
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1.2rem;
+  display: inline-flex;
+}
+.stat b {
+  font-family: var(--font-heading);
+  letter-spacing: -0.04em;
+  color: var(--tone);
+  margin-right: 0.15em;
+  font-size: 1.05rem;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* The action panel beside the title. */
+.panel {
+  flex-direction: column;
+  gap: 1.1rem;
+  width: 23rem;
+  max-width: 100%;
+  display: flex;
+}
+.release {
+  align-items: baseline;
+  gap: 1rem;
+  display: flex;
+}
+.version {
+  font-family: var(--font-heading);
+  letter-spacing: -0.06em;
+  color: var(--tone);
+  font-size: calc(1vw + 22px);
+  font-style: italic;
+  line-height: 0.9;
+}
+.size {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-size: 0.64rem;
+}
+.note {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.jumps {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  gap: 0.7rem;
+  padding-top: 1rem;
+  display: flex;
+}
+.jump {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  align-items: center;
+  gap: 0.7em;
+  font-size: 0.64rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+}
+.jump svg {
+  color: var(--tone);
+}
+.jump:hover {
+  color: var(--text-primary);
+}
+
+.tabs {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  margin-inline: auto;
+}
+
+@media screen and (max-width: 1084px) {
+  .panel {
+    width: 100%;
+  }
+}
+/* On a phone the counters take their own line: no separator left hanging. */
+@media screen and (max-width: 700px) {
+  .statsSep {
+    display: none;
+  }
+  .stats {
+    width: 100%;
+  }
+}

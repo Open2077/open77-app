@@ -2,16 +2,19 @@
 
 import { useState } from "react";
 
-import { CheckIcon, CopyIcon } from "@/components/icons";
+import { cx } from "@/components/ui/cx";
+import { Icon } from "@/components/ui/icon";
+import { copy01, tick02 } from "@/components/ui/icons";
 import { useClipboardSupported } from "@/lib/use-clipboard-supported";
+
+import styles from "./copy-line.module.css";
 
 /**
  * A full-width, monospace value with a copy button beside it.
  *
- * Distinct from `CopyHash`, which abbreviates: here the whole value is meant to
- * be read and compared by eye — a 64-hex digest, or the command that produces
- * one — so it wraps rather than truncates, and stays selectable when the
- * clipboard API is unavailable.
+ * The whole value is meant to be read and compared by eye (a 64-hex digest,
+ * or the command that produces one), so it wraps rather than truncates, and
+ * stays selectable when the clipboard API is unavailable.
  */
 export function CopyLine({
   value,
@@ -29,12 +32,14 @@ export function CopyLine({
   const canCopy = useClipboardSupported();
 
   return (
-    <div className="copy-line">
-      <code className="copy-line-value">{display ?? value}</code>
+    <div className={styles.line} data-copy-line>
+      <code className={styles.value} data-copy-value>
+        {display ?? value}
+      </code>
       {canCopy ? (
         <button
           type="button"
-          className="copy-line-btn"
+          className={cx(styles.button, copied && styles.copied)}
           aria-label={label}
           title={label}
           onClick={() => {
@@ -49,10 +54,13 @@ export function CopyLine({
               });
           }}
         >
-          {copied ? <CheckIcon size={14} /> : <CopyIcon size={14} />}
-          <span>{copied ? "Copied" : "Copy"}</span>
+          <Icon glyph={copied ? tick02 : copy01} />
+          <span aria-hidden="true">{copied ? "Copied" : "Copy"}</span>
         </button>
       ) : null}
+      <span className="sr-only" aria-live="polite">
+        {copied ? "Copied to the clipboard" : ""}
+      </span>
     </div>
   );
 }

@@ -22,14 +22,14 @@ const settings = { configured: true, enabled: true, destination: 'discord.com / 
   async function assertStickyNavigation() {
     await page.evaluate(() => window.scrollTo({ top: 500, behavior: 'instant' }));
     await page.waitForFunction(() => {
-      const header = document.querySelector('.site-header').getBoundingClientRect();
-      const sidebar = document.querySelector('.adm-sidebar').getBoundingClientRect();
+      const header = document.querySelector('body > header').getBoundingClientRect();
+      const sidebar = document.querySelector('[data-admin-sidebar]').getBoundingClientRect();
       return scrollY > 0 && Math.abs(header.top) < 1 && Math.abs(sidebar.top - header.bottom) < 1;
     }, null, { timeout: 3000 });
     const documentScroll = await page.evaluate(() => scrollY);
-    await page.locator('.adm-sidebar-body').evaluate(el => { el.scrollTop = el.scrollHeight; });
+    await page.locator('[data-admin-sidebar-body]').evaluate(el => { el.scrollTop = el.scrollHeight; });
     assert.equal(await page.evaluate(() => scrollY), documentScroll, 'Sidebar scrolling must not move the document');
-    await page.locator('.adm-sidebar-body').evaluate(el => { el.scrollTop = 0; });
+    await page.locator('[data-admin-sidebar-body]').evaluate(el => { el.scrollTop = 0; });
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   }
   const failures = []; const calls = []; let corrupt = false; let delay = 0; let denied = false; let role = 'admin'; let sends = 0;
@@ -69,11 +69,11 @@ const settings = { configured: true, enabled: true, destination: 'discord.com / 
   await page.goto(base + '/admin/incidents?incidentId=' + id);
   await page.getByRole('button', { name: /^Inspect incident/ }).click();
   await page.getByText('Player description', { exact: true }).waitFor();
-  assert.equal(await page.locator('.adm-report-description img').count(), 0);
+  assert.equal(await page.locator('[data-admin-report-description] img').count(), 0);
   assert.equal(await page.evaluate(() => window.evidenceExecuted), undefined);
   await page.getByLabel('Evidence file', { exact: true }).selectOption('launcher.log');
   await page.getByRole('region', { name: 'launcher.log contents' }).count();
-  await page.waitForFunction(() => document.querySelector('.adm-evidence-text')?.getAttribute('aria-label') === 'launcher.log contents');
+  await page.waitForFunction(() => document.querySelector('[data-admin-evidence]')?.getAttribute('aria-label') === 'launcher.log contents');
   const download = page.waitForEvent('download'); await page.getByRole('button', { name: 'Download ZIP', exact: true }).click();
   assert.equal((await download).suggestedFilename(), `open77-incident-${id}.zip`);
   corrupt = true; await page.getByRole('button', { name: 'Download ZIP', exact: true }).click();
@@ -88,13 +88,13 @@ const settings = { configured: true, enabled: true, destination: 'discord.com / 
   await page.getByText(/Discord settings saved/).waitFor(); assert.equal(await page.getByLabel(/Replace webhook URL/).inputValue(), '');
   await page.getByRole('button', { name: 'Older', exact: true }).click();
   await page.getByText('99999999…', { exact: true }).count();
-  await page.waitForFunction(() => document.querySelector('.adm-incident-list')?.textContent.includes('99999999'));
+  await page.waitForFunction(() => document.querySelector('[data-admin-panel="incidents"]')?.textContent.includes('99999999'));
   await page.getByRole('button', { name: 'Newer', exact: true }).click();
   await page.getByRole('button', { name: 'Refresh', exact: true }).waitFor({ state: 'visible' });
   delay = 500; await page.getByRole('button', { name: 'Refresh', exact: true }).click();
-  await page.locator('.adm-progress').waitFor({ state: 'visible' });
-  assert.ok(await page.locator('.adm-progress').isVisible());
-  await page.waitForFunction(() => !document.querySelector('.adm-progress')); delay = 0;
+  await page.locator('[data-admin-progress]').waitFor({ state: 'visible' });
+  assert.ok(await page.locator('[data-admin-progress]').isVisible());
+  await page.waitForFunction(() => !document.querySelector('[data-admin-progress]')); delay = 0;
   for (const viewport of [{ width: 1024, height: 800 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);
     await assertStickyNavigation();
@@ -109,14 +109,14 @@ const settings = { configured: true, enabled: true, destination: 'discord.com / 
   await page.setViewportSize({ width: 1440, height: 1000 });
   for (const route of ['servers','users','licenses','bans','audit','alpha-access','mods','mods/requests','releases']) {
     await page.goto(`${base}/admin/${route}`);
-    await page.waitForFunction(() => !document.querySelector('.adm-progress') && !!document.querySelector('.adm-page-content'));
+    await page.waitForFunction(() => !document.querySelector('[data-admin-progress]') && !!document.querySelector('[data-admin-content]'));
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), route + ' viewport overflow');
   }
   await page.goto(base + '/admin/incidents'); denied = true;
   await page.getByRole('button', { name: 'Refresh', exact: true }).click();
   await page.getByRole('alert').filter({ hasText: 'Receiver temporarily unavailable' }).waitFor(); denied = false;
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  assert.equal(await page.locator('.adm-page-content').evaluate(el => getComputedStyle(el).animationName), 'none');
+  assert.equal(await page.locator('[data-admin-content]').evaluate(el => getComputedStyle(el).animationName), 'none');
   // Front-end gate never requests private reports for a regular account or signed-out browser.
   role = 'user'; await context.addInitScript(value => localStorage.setItem('open77.session', JSON.stringify({ ...value, role: 'user' })), session);
   calls.length = 0; await page.goto(base + '/admin/incidents'); await page.getByText('Administrator account required', { exact: true }).waitFor();

@@ -1,0 +1,35 @@
+.wrap {
+  container-type: inline-size;
+  align-self: stretch;
+  min-width: 0;
+}
+/* Sixteen Druk capitals fill about 12.7em (measured on "NETWORK VEHICLES"):
+   7.2cqi keeps the longest piece inside the column at any width, glitch layers
+   included, capped for wide screens well under the status page's title. */
+.wrap .title {
+  font-size: min(2.6rem, 7.2cqi);
+  line-height: 0.9;
+}
+/* A sentence-long title ("World queries: raycast, ground height, …") a size
+   down, so it stays a few lines tall and the guide still starts in view. */
+.wrap .long {
+  font-size: min(2rem, 6cqi);
+}
+/* The words run on together and only break where the column runs out, so a
+   guide title is one line whenever it fits. */
+.wrap .line {
+  overflow-wrap: anywhere;
+  display: inline-block;
+}
+.wrap .line[data-glitch] {
+  width: fit-content;
+  max-width: 100%;
+}
+.wrap .accent {
+  color: var(--tone);
+}
+.wrap .verbatim,
+.wrap .verbatim [data-glitch]:before,
+.wrap .verbatim [data-glitch]:after {
+  text-transform: none;
+}

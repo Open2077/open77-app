@@ -1,0 +1,200 @@
+/* A ranked row of creations at the foot of the Workshop hero, in the language
+   of the product pages' spec strip: hairlines, a tone segment, a dark wash. */
+.strip {
+  background: oklch(from var(--body) l c h / 0.72);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  grid-template-columns: minmax(10rem, 0.6fr) repeat(var(--count), minmax(0, 1fr));
+  display: grid;
+  position: relative;
+}
+.strip:before {
+  content: "";
+  background: var(--tone);
+  width: 18%;
+  height: 1px;
+  position: absolute;
+  top: -1px;
+  left: 0;
+}
+
+.head {
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 1rem 1.4rem 1rem 0;
+  display: flex;
+}
+.title {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--tone);
+  font-size: 0.66rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.all {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.6rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+}
+.all svg {
+  color: var(--tone);
+  font-size: 1.3em;
+  transition: transform var(--transition-link);
+}
+.all:hover {
+  color: var(--text-primary);
+}
+.all:hover svg {
+  transform: translateX(3px);
+}
+
+.items {
+  grid-column: 2 / -1;
+  grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+  display: grid;
+}
+.items li {
+  border-left: 1px solid var(--line);
+  min-width: 0;
+  display: grid;
+}
+.item {
+  isolation: isolate;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  padding: 1rem 1.4rem;
+  display: flex;
+  position: relative;
+}
+.item:before {
+  content: "";
+  background: oklch(from var(--tone) l c h / 7%);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity var(--transition-link);
+  position: absolute;
+  inset: 0;
+}
+.item:hover:before,
+.item:focus-visible:before {
+  opacity: 1;
+}
+.rank {
+  font-family: var(--font-heading);
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--tone);
+  flex: none;
+  font-size: 2.1rem;
+  font-style: italic;
+  line-height: 0.8;
+}
+.body {
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+  display: flex;
+}
+.category {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--tone);
+  align-items: center;
+  gap: 0.55em;
+  font-size: 0.56rem;
+  display: flex;
+}
+.name {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: calc(0.2vw + 14px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.1;
+  transition: color var(--transition-link);
+  overflow: hidden;
+}
+.item:hover .name {
+  color: var(--tone);
+}
+.meta {
+  color: var(--text-dim);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  align-items: center;
+  gap: 0.9rem;
+  font-size: 0.8rem;
+  display: flex;
+  overflow: hidden;
+}
+.votes {
+  color: var(--text-primary);
+  align-items: center;
+  gap: 0.25rem;
+  display: inline-flex;
+}
+.votes svg {
+  color: var(--tone);
+}
+
+/* Stacked: the label on its own line, two creations per row, then one. */
+@media screen and (max-width: 1084px) {
+  .strip {
+    grid-template-columns: 1fr;
+  }
+  .head {
+    border-bottom: 1px solid var(--line);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0.25rem;
+  }
+  .items {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .items li:nth-child(odd) {
+    border-left: 0;
+  }
+  .items li:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+  .item {
+    padding-inline: 0.25rem 1rem;
+  }
+  .items li:nth-child(even) .item {
+    padding-left: 1rem;
+  }
+}
+@media screen and (max-width: 560px) {
+  .items {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .items li {
+    border-left: 0;
+  }
+  .items li + li {
+    border-top: 1px solid var(--line);
+  }
+  .items li:nth-child(even) .item {
+    padding-left: 0.25rem;
+  }
+}

@@ -1,0 +1,78 @@
+.line {
+  background: oklch(from var(--body) l c h / 0.6);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--tone);
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.55rem 0.55rem 0.55rem 0.9rem;
+  display: flex;
+}
+.value {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  -webkit-user-select: all;
+  user-select: all;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.78rem;
+  font-weight: 300;
+  line-height: 1.55;
+}
+.button {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  isolation: isolate;
+  flex: none;
+  align-items: center;
+  gap: 0.55em;
+  height: 2.1rem;
+  padding: 0 1em;
+  font-size: 0.6rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+  position: relative;
+}
+.button:before {
+  content: "";
+  border: 1px solid var(--line-strong);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.button svg {
+  font-size: 1.35em;
+}
+.button:hover,
+.copied {
+  color: var(--tone);
+}
+.button:hover:before,
+.copied:before {
+  border-color: var(--tone);
+  background-color: oklch(from var(--tone) l c h / 10%);
+}
+.button:focus-visible {
+  outline: none;
+}
+.button:focus-visible:before {
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+@media screen and (max-width: 440px) {
+  .button span {
+    display: none;
+  }
+  .button {
+    padding: 0 0.8em;
+  }
+}

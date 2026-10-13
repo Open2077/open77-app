@@ -24,7 +24,7 @@ async function checkCurrentCopy(directory) {
 }
 await checkCurrentCopy("src");
 await checkCurrentCopy("content");
-for (const file of ["src/components/developer-alpha.tsx", "src/components/host/host-gate.tsx"]) {
+for (const file of ["src/components/host/host-gate.tsx"]) {
   const text = await read(file);
   assert.ok(text.includes("/alpha apply") && text.includes("any"), `${file}: Discord access instructions`);
   assert.ok(text.includes("No separate developer application"), `${file}: no second access gate`);

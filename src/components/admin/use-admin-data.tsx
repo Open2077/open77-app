@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 
-import { InfoIcon } from "@/components/icons";
+import { Notice } from "@/components/ui/feedback";
 import { MasterApiError } from "@/lib/account/api";
 import { useSession } from "@/lib/account/session";
 import { useAdminActivity } from "./admin-activity";
@@ -67,12 +67,12 @@ export function useAdminData<T>(load: (token: string) => Promise<T>) {
   return { token, data, setData, error, setError, loading, reload };
 }
 
-export function ErrorStrip({ message }: { message: string | null }) {
+/** A failed request, with the master's own words. Renders nothing without a message. */
+export function ErrorStrip({ message, action }: { message: string | null; action?: ReactNode }) {
   if (!message) return null;
   return (
-    <p className="ac-error" role="alert" style={{ marginBottom: 12 }}>
-      <InfoIcon />
+    <Notice kind="danger" action={action}>
       {message}
-    </p>
+    </Notice>
   );
 }

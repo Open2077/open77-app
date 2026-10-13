@@ -1,16 +1,34 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Notice } from "@/components/ui/feedback";
+import { Field, Textarea } from "@/components/ui/field";
+import { refresh as refreshGlyph } from "@/components/ui/icons";
 import { appealStatus, submitAppeal } from "@/lib/community/client-api";
 import type { CommunityAppeal } from "@/lib/community/types";
 import { useSession } from "@/lib/account/session";
+import { Actions, Disclosure, Fine, Pending } from "@/components/account/kit";
+import { MonoBlock, Stack, Subhead, Text } from "./creator-parts";
 import { useCommunityDraft } from "./use-community-draft";
+
+import styles from "./appeal-form.module.css";
 
 export function AppealForm({ token, decisionId }: { token: string; decisionId: string }) {
   const [open, setOpen] = useState(false);
   const [visited, setVisited] = useState(false);
-  return <details className="hub-report-form" open={open} onToggle={event => { setOpen(event.currentTarget.open); if (event.currentTarget.open) setVisited(true); }}><summary>Appeal this decision / check your appeal</summary>
-    {visited && <AppealDetails token={token} decisionId={decisionId} />}</details>;
+  return (
+    <Disclosure
+      tone="framed"
+      className={styles.appeal}
+      summary="Appeal this decision / check your appeal"
+      open={open}
+      onToggle={event => { setOpen(event.currentTarget.open); if (event.currentTarget.open) setVisited(true); }}
+    >
+      {visited ? <AppealDetails token={token} decisionId={decisionId} /> : null}
+    </Disclosure>
+  );
 }
 
 function AppealDetails({ token, decisionId }: { token: string; decisionId: string }) {
@@ -35,16 +53,69 @@ function AppealDetails({ token, decisionId }: { token: string; decisionId: strin
     catch (error) { setError(error instanceof Error ? error.message : "Your appeal could not be submitted."); }
     finally { setBusy(false); }
   }
-  return <div>{error && <p className="hub-notice" role="alert">{error}</p>}
-    {!loaded && !error && <p role="status">Loading appeal status…</p>}
-    {appeal ? <div role="status"><h4>{appeal.state === "open" ? "Appeal awaiting review" : "Appeal reviewed"}</h4>
-      <p>Reference: {appeal.appealId}</p><p className="hub-activity-reason">{appeal.reason}</p>
-      {appeal.response && <><h4>Moderator response</h4><p className="hub-activity-reason">{appeal.response}</p></>}
-      {memory.draft && <details><summary>An unsent local draft is also retained</summary><p>An appeal already exists for this decision. Review or copy your local text before discarding it.</p><textarea aria-label="Retained appeal draft" readOnly value={reason} /><button type="button" className="btn btn-ghost" onClick={() => { if (window.confirm("Discard your unsent appeal draft?")) memory.discard(); }}>Discard draft</button></details>}</div>
-      : loaded && <form className="hub-form" onSubmit={submit}><p>Explain why this decision should be reconsidered, including relevant evidence or source links. You can submit one appeal for this decision. Moderators will respond in your Workshop inbox; submitting an appeal does not change the content’s current status.</p>
-        <label>Your explanation<textarea required maxLength={5000} value={reason} onChange={event => { if (!memory.save({ text: event.target.value })) setError("This tab holds 64 unsent drafts. Submit or explicitly discard another draft first; existing drafts have been kept."); }} readOnly={busy || session?.token !== token} /></label>
-        {memory.draft && <p role="status">Draft kept in this tab for your account across Workshop pages. Reloading or closing the tab loses it. <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => { if (window.confirm("Discard your unsent appeal?")) memory.discard(); }}>Discard draft</button></p>}
-        <button className="btn btn-primary" disabled={busy || !reason.trim()}>{busy ? "Submitting…" : "Submit appeal"}</button></form>}
-    <button className="btn btn-ghost" disabled={busy} onClick={() => setRefresh(value => value + 1)}>Refresh appeal status</button>
-  </div>;
+  return (
+    <Stack>
+      {error ? <Notice kind="danger">{error}</Notice> : null}
+      {!loaded && !error ? <Pending label="Loading appeal status" /> : null}
+      {appeal ? (
+        <div role="status" className={styles.status}>
+          <Subhead as="h4">{appeal.state === "open" ? "Appeal awaiting review" : "Appeal reviewed"}</Subhead>
+          <Fine>Reference: {appeal.appealId}</Fine>
+          <MonoBlock label="Your appeal">{appeal.reason}</MonoBlock>
+          {appeal.response ? (
+            <>
+              <Subhead as="h4">Moderator response</Subhead>
+              <MonoBlock label="Response">{appeal.response}</MonoBlock>
+            </>
+          ) : null}
+          {memory.draft ? (
+            <Disclosure summary="An unsent local draft is also retained">
+              <Text>An appeal already exists for this decision. Review or copy your local text before discarding it.</Text>
+              <Field label="Retained appeal draft">
+                <Textarea readOnly value={reason} />
+              </Field>
+              <div>
+                <Button lines="none" color="red" border size="sm" onClick={() => { if (window.confirm("Discard your unsent appeal draft?")) memory.discard(); }}>
+                  Discard draft
+                </Button>
+              </div>
+            </Disclosure>
+          ) : null}
+        </div>
+      ) : loaded ? (
+        <form className={styles.form} onSubmit={submit}>
+          <Text>
+            Explain why this decision should be reconsidered, including relevant evidence or source links. You can submit one appeal for this decision. Moderators will respond in your Workshop inbox; submitting an appeal does not change the content’s current status.
+          </Text>
+          <Field label="Your explanation">
+            <Textarea
+              required
+              maxLength={5000}
+              value={reason}
+              onChange={event => { if (!memory.save({ text: event.target.value })) setError("This tab holds 64 unsent drafts. Submit or explicitly discard another draft first; existing drafts have been kept."); }}
+              readOnly={busy || session?.token !== token}
+            />
+          </Field>
+          {memory.draft ? (
+            <p role="status" className={styles.draft}>
+              Draft kept in this tab for your account across Workshop pages. Reloading or closing the tab loses it.{" "}
+              <Button lines="none" color="neutral" border size="sm" disabled={busy} onClick={() => { if (window.confirm("Discard your unsent appeal?")) memory.discard(); }}>
+                Discard draft
+              </Button>
+            </p>
+          ) : null}
+          <div>
+            <Button key={busy ? "busy" : "idle"} type="submit" lines="none" size="sm" busy={busy} disabled={!reason.trim()}>
+              {busy ? "Submitting…" : "Submit appeal"}
+            </Button>
+          </div>
+        </form>
+      ) : null}
+      <Actions>
+        <Button lines="none" color="neutral" border size="sm" icon={refreshGlyph} iconPosition="left" disabled={busy} onClick={() => setRefresh(value => value + 1)}>
+          Refresh appeal status
+        </Button>
+      </Actions>
+    </Stack>
+  );
 }

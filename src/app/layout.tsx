@@ -1,40 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Chakra_Petch, IBM_Plex_Mono, Rajdhani, Saira } from "next/font/google";
 
+import "@/styles/system.css";
 import { JsonLd } from "@/components/json-ld";
-import { MotionEffects } from "@/components/motion-effects";
-import { SiteHeader } from "@/components/site-header";
+import { Footer } from "@/components/site/footer";
+import { Header } from "@/components/site/header";
+import { fontVariables } from "@/lib/fonts";
 import { jsonLdGraph, organizationNode, websiteNode } from "@/lib/seo";
 import { IS_PRODUCTION_DEPLOY, SITE_URL, absoluteUrl, site } from "@/lib/site";
-import "@/styles/globals.css";
 
-const rajdhani = Rajdhani({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-rajdhani",
-  display: "swap",
-});
-
-const saira = Saira({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-saira",
-  display: "swap",
-});
-
-const chakra = Chakra_Petch({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  variable: "--font-chakra",
-  display: "swap",
-});
-
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-plex-mono",
-  display: "swap",
-});
+import noiseStyles from "@/components/site/noise.module.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -56,8 +30,8 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/assets/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "256x256" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
   },
@@ -68,7 +42,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: `${site.name} · Cyberpunk 2077 Multiplayer`,
     description: site.description,
-    images: [{ url: site.ogImage, width: 1200, height: 630, alt: `${site.name}: ${site.tagline}` }],
+    images: [{ url: site.ogImage, ...site.ogImageSize, alt: `${site.name}: ${site.tagline}` }],
   },
   twitter: { card: "summary_large_image", images: [site.ogImage] },
   robots: IS_PRODUCTION_DEPLOY ? { index: true, follow: true } : { index: false, follow: false },
@@ -79,20 +53,22 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: site.themeColor,
+  // Pages rewrite this with their tone as the visitor moves through the site.
+  themeColor: "#FCEE0A",
   colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang={site.lang} data-scroll-behavior="smooth" className={`${rajdhani.variable} ${saira.variable} ${chakra.variable} ${plexMono.variable}`}>
-      <body>
+    <html lang={site.lang} dir="ltr" suppressHydrationWarning>
+      <body className={fontVariables}>
         <a className="skip-link" href="#main">
           Skip to content
         </a>
-        <SiteHeader />
+        <Header />
         {children}
-        <MotionEffects />
+        <Footer />
+        <div className={noiseStyles.noise} aria-hidden="true" />
         <JsonLd data={jsonLdGraph(organizationNode(), websiteNode())} />
       </body>
     </html>

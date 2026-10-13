@@ -1,65 +1,33 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { currentState, dayState, isStale, LABELS, overallState, parseSnapshot, percent, statistics } from "@/lib/status/model";
-import type { Day, Service, ServiceState, StatusSnapshot } from "@/lib/status/model";
+
+import { Button } from "@/components/ui/button";
+import { Tag } from "@/components/ui/chip";
+import { EmptyState, Loader, Notice, Stat } from "@/components/ui/feedback";
+import { DefinitionList } from "@/components/ui/data";
+import { Field, Select } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
+import { arrowUpRight01, refresh as refreshGlyph, sourceCode } from "@/components/ui/icons";
+import { PageHero } from "@/components/ui/page";
+import { Panel } from "@/components/ui/panel";
+import { Prose } from "@/components/ui/prose";
+import { Tabs } from "@/components/ui/tabs";
+import { Display, Eyebrow } from "@/components/ui/typography";
+import { currentState, isStale, LABELS, overallState, parseSnapshot, percent, statistics } from "@/lib/status/model";
+import type { ServiceState, StatusSnapshot } from "@/lib/status/model";
+import { DayBars, duration, LatencyChart, StateTag, Swatch, utc, utcDay, utcTime } from "./status-parts";
+
 import styles from "./status.module.css";
 
-const utc = (date: string) => new Date(date).toLocaleString("en-GB", { timeZone: "UTC", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) + " UTC";
 const TITLES: Record<ServiceState, string> = {
-  operational: "All systems operational", degraded: "Some services are responding slowly", outage: "A service disruption was detected", unknown: "Awaiting fresh monitoring data",
+  operational: "All systems operational",
+  degraded: "Some services are responding slowly",
+  outage: "A service disruption was detected",
+  unknown: "Awaiting fresh monitoring data",
 };
-
-function Badge({ state }: { state: ServiceState }) {
-  return <span className={styles.badge} data-state={state}><span className={styles.dot} />{LABELS[state]}</span>;
-}
-
-function DayBars({ history, days }: { history: Day[]; days: number }) {
-  const [selected, setSelected] = useState<Day | null>(null);
-  return <div>
-    <div className={styles.bars} style={{ gridTemplateColumns: `repeat(${days}, minmax(0, 1fr))` }} role="group" aria-label={`${days}-day availability, select a day for details`}>
-      {history.slice(-days).map((day) => {
-        const label = `${day.date}: ${day.checked ? percent(day.available / day.checked * 100) + " available" : "no data"}, ${day.checked} of ${day.expected} checks, ${day.failed} failed, ${day.slow} slow`;
-        return <button key={day.date} type="button" data-state={dayState(day)} data-partial={day.checked > 0 && day.checked < day.expected}
-          aria-label={label} title={label} aria-pressed={selected?.date === day.date}
-          onClick={() => setSelected(selected?.date === day.date ? null : day)} />;
-      })}
-    </div>
-    <div className={styles.barCaption}><span>{history.at(-days)?.date}</span><span>Today · UTC</span></div>
-    {selected && <p className={styles.dayDetail} role="status">{selected.date} · {selected.checked ? percent(selected.available / selected.checked * 100) + " available" : "No observations"} · {selected.checked}/{selected.expected} checks · {selected.failed} failed · {selected.slow} slow</p>}
-  </div>;
-}
-
-function LatencyChart({ service }: { service: Service | undefined }) {
-  const points = service?.latency ?? [];
-  const measured = points.filter((point) => point.ms !== null);
-  const max = Math.max(100, ...measured.map((point) => point.ms ?? 0));
-  const average = measured.length ? Math.round(measured.reduce((sum, point) => sum + (point.ms ?? 0), 0) / measured.length) : null;
-  let path = "";
-  let connected = false;
-  points.forEach((point, index) => {
-    if (point.ms === null) { connected = false; return; }
-    path += `${connected ? "L" : "M"}${(index / Math.max(points.length - 1, 1) * 800).toFixed(1)},${(170 - point.ms / max * 145).toFixed(1)} `;
-    connected = true;
-  });
-  return <>
-    <div className={styles.chartSummary}><strong>{average === null ? "—" : `${average} ms`}</strong><span>average check time · last 24 hours</span></div>
-    <div className={styles.chart}>
-      <span className={styles.chartMax}>{max} ms</span>
-      <svg viewBox="0 0 800 190" role="img" aria-label={`${service?.name ?? "Service"} response time over 24 hours. ${measured.length} measured five-minute buckets. Gaps mean no successful checks.`} preserveAspectRatio="none">
-        {[25, 72, 120, 170].map((y) => <line key={y} x1="0" y1={y} x2="800" y2={y} className={styles.gridLine} />)}
-        <path d={path} className={styles.trace} />
-        {measured.length < 3 && points.map((point, index) => point.ms === null ? null : <circle key={point.at} cx={index / 287 * 800} cy={170 - point.ms / max * 145} r="3" className={styles.chartPoint} />)}
-      </svg>
-      {!measured.length && <span className={styles.chartEmpty}>No response-time samples yet</span>}
-    </div>
-    <div className={styles.barCaption}><span>24 hours ago</span><span>Now</span></div>
-    <details className={styles.samples}><summary>View response-time data</summary>
-      <div className={styles.tableScroll}><table><caption>Five-minute average check times · UTC · latest first</caption><thead><tr><th scope="col">Time</th><th scope="col">Response time</th></tr></thead>
-        <tbody>{[...points].reverse().map((point) => <tr key={point.at}><td>{utc(point.at)}</td><td>{point.ms === null ? "No successful sample" : `${point.ms} ms`}</td></tr>)}</tbody></table></div>
-    </details>
-  </>;
-}
+const SUPPORT_URL = "https://discord.open2077.net";
+const PERIODS = [7, 30, 90] as const;
 
 export function StatusDashboard() {
   const [snapshot, setSnapshot] = useState<StatusSnapshot | null>(null);
@@ -81,20 +49,38 @@ export function StatusDashboard() {
       if (!data) throw new Error("No monitoring data");
       setSnapshot(data);
       setError(false);
-    } catch { if (!controller.signal.aborted) setError(true); }
-    finally {
+    } catch {
+      if (!controller.signal.aborted) setError(true);
+    } finally {
       if (active.current === controller) active.current = null;
-      if (!controller.signal.aborted) { setNow(Date.now()); setLoading(false); }
+      if (!controller.signal.aborted) {
+        setNow(Date.now());
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
     const initial = setTimeout(() => void refresh(), 0);
-    const poll = setInterval(() => { if (!document.hidden) void refresh(); }, 60000);
+    const poll = setInterval(() => {
+      if (!document.hidden) void refresh();
+    }, 60000);
     const clock = setInterval(() => setNow(Date.now()), 10000);
-    const visible = () => { if (!document.hidden) { setNow(Date.now()); void refresh(); } };
+    const visible = () => {
+      if (!document.hidden) {
+        setNow(Date.now());
+        void refresh();
+      }
+    };
     document.addEventListener("visibilitychange", visible);
-    return () => { clearTimeout(initial); clearInterval(poll); clearInterval(clock); document.removeEventListener("visibilitychange", visible); active.current?.abort(); active.current = null; };
+    return () => {
+      clearTimeout(initial);
+      clearInterval(poll);
+      clearInterval(clock);
+      document.removeEventListener("visibilitychange", visible);
+      active.current?.abort();
+      active.current = null;
+    };
   }, [refresh]);
 
   const stale = !!snapshot && isStale(snapshot, now);
@@ -103,59 +89,338 @@ export function StatusDashboard() {
   const total = statistics(snapshot?.services.flatMap((service) => service.history.slice(-days)) ?? [], days * (snapshot?.services.length ?? 1));
   const openIncidents = snapshot?.incidents.filter((incident) => !incident.resolvedAt) ?? [];
   const maintenance = snapshot?.maintenance.filter((item) => Date.parse(item.endsAt) > now) ?? [];
+  const connecting = loading && !snapshot;
+  const operational = states.filter((value) => value === "operational").length;
+  const serviceName = (id: string) => snapshot?.services.find((service) => service.id === id)?.name ?? id;
 
-  return <main id="main" className={styles.page}>
-    <header className={styles.hero}>
-      <div><p className={styles.eyebrow}>{"// OPEN NETWORK · SERVICE STATUS"}</p><h1>The network.<br /><em>At a glance.</em></h1><p className={styles.intro}>Live service health, measured availability and a transparent record of interruptions.</p></div>
-      <div className={styles.heroActions}><a href="/api/status" target="_blank" rel="noreferrer">Status JSON ↗</a><button onClick={() => void refresh()} disabled={loading} className={styles.refresh}><span className={loading ? styles.spinner : undefined} aria-hidden="true">↻</span>{loading ? "Checking…" : "Refresh status"}</button></div>
-    </header>
+  return (
+    <>
+      <PageHero
+        size="compact"
+        watermark="Uptime"
+        eyebrow="// Open network · service status"
+        title={["The network.", "At a glance."]}
+        accent={[1]}
+        lead="Live service health, measured availability and a transparent record of every interruption, straight from the monitor."
+        actions={
+          <>
+            <Button lines="left" icon={refreshGlyph} iconPosition="left" busy={loading} onClick={() => void refresh()}>
+              Refresh status
+            </Button>
+            <a className={styles.feedLink} href="/api/status" target="_blank" rel="noreferrer">
+              <Icon glyph={sourceCode} />
+              Status JSON
+              <Icon glyph={arrowUpRight01} />
+            </a>
+          </>
+        }
+        aside={
+          <Panel brackets className={styles.signal} data-state={connecting ? "unknown" : state} aria-label="Current network status">
+            <div className={styles.signalHead}>
+              <span className={styles.signalLamp} aria-hidden="true" />
+              <span>{"// NETWORK.SIGNAL"}</span>
+              <span className={styles.signalLive}>{stale || !snapshot ? "No live signal" : "Monitor connected"}</span>
+            </div>
+            <div role="status" className={styles.signalCopy}>
+              <p className={styles.signalTitle}>{connecting ? "Connecting to the monitor…" : TITLES[state]}</p>
+              <p className={styles.signalMeta}>
+                {snapshot
+                  ? `Last measured ${utc(snapshot.generatedAt)} · checks every 60 seconds`
+                  : "No service is marked healthy until a real check is received."}
+              </p>
+            </div>
+            <ol className={styles.pips} aria-label="Services">
+              {(snapshot?.services ?? Array.from({ length: 7 }, (_, index) => ({ id: `pending-${index}`, name: "Pending" }))).map((service, index) => {
+                const value = states[index] ?? "unknown";
+                return (
+                  <li key={service.id} className={styles.pip} data-state={value} title={`${service.name}: ${LABELS[value]}`}>
+                    <span className="sr-only">{`${service.name}: ${LABELS[value]}`}</span>
+                  </li>
+                );
+              })}
+            </ol>
+          </Panel>
+        }
+      />
 
-    <section className={styles.signal} data-state={state} aria-label="Current network status">
-      <div className={styles.signalIcon} aria-hidden="true">{state === "operational" ? "✓" : state === "unknown" ? "·" : "!"}</div>
-      <div className={styles.signalCopy} role="status"><h2>{loading && !snapshot ? "Connecting to the monitor…" : TITLES[state]}</h2><p>{snapshot ? `Last measured ${utc(snapshot.generatedAt)} · checks every 60 seconds` : "No service is marked healthy until a real check is received."}</p></div>
-      <span className={styles.liveLabel}>{stale || !snapshot ? "NO LIVE SIGNAL" : "MONITOR CONNECTED"}</span>
-    </section>
-    {(error || stale) && <div className={styles.warning} role="alert"><strong>{stale ? "Monitoring data is out of date." : "The monitoring feed could not be refreshed."}</strong> {snapshot ? "The last recorded history remains below. Old checks are not treated as current health." : "This does not establish whether services are up or down. Please retry shortly."}</div>}
-    <noscript><p className={styles.warning}>JavaScript is required for live updates. The <a href="/api/status">public JSON feed</a> is available without JavaScript.</p></noscript>
+      <div className={styles.board}>
+        {error || stale ? (
+          <Notice
+            kind={stale ? "warning" : "danger"}
+            className={styles.alert}
+            title={stale ? "Monitoring data is out of date." : "The monitoring feed could not be refreshed."}
+          >
+            {snapshot
+              ? "The last recorded history remains below. Old checks are not treated as current health."
+              : "This does not establish whether services are up or down. Please retry shortly."}
+          </Notice>
+        ) : null}
+        <noscript>
+          <p className={styles.noscript}>
+            JavaScript is required for live updates. The <a href="/api/status">public JSON feed</a> is available without JavaScript.
+          </p>
+        </noscript>
 
-    <div className={styles.metrics}>
-      <div><span>Services operational</span><strong>{snapshot ? `${states.filter((value) => value === "operational").length} / ${states.length}` : "—"}</strong></div>
-      <div><span>{days}-day observed availability</span><strong>{percent(total.availability)}</strong></div>
-      <div><span>Monitoring coverage</span><strong>{percent(snapshot ? total.coverage : null)}</strong></div>
-      <div><span>Open detected incidents</span><strong>{snapshot ? openIncidents.length : "—"}</strong></div>
-    </div>
+        <div className={styles.metrics}>
+          <Stat value={snapshot ? `${operational}/${states.length}` : "—"} label="Services operational" detail={snapshot ? "Right now" : "Waiting for a check"} />
+          <Stat value={percent(total.availability)} label={`${days}-day availability`} detail="Successful ÷ completed checks" />
+          <Stat value={percent(snapshot ? total.coverage : null)} label="Monitoring coverage" detail="Observed minute slots" />
+          <Stat value={snapshot ? String(openIncidents.length) : "—"} label="Open incidents" detail={snapshot ? `${snapshot.incidents.length} recorded in 90 days` : "History unavailable"} />
+        </div>
 
-    <section className={styles.services} aria-labelledby="services-title">
-      <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>01 / AVAILABILITY</p><h2 id="services-title">Platform services</h2></div><div className={styles.segmented} role="group" aria-label="Availability period">{[7, 30, 90].map((value) => <button key={value} aria-pressed={value === days} onClick={() => setDays(value)}>{value} days</button>)}</div></div>
-      <div className={styles.legend}>{(["operational", "degraded", "outage", "unknown"] as const).map((value) => <Badge key={value} state={value} />)}<span>Striped = partial coverage</span></div>
-      {!snapshot && <div className={styles.empty}>{loading ? "Loading measured service health…" : "Waiting for monitoring data. Availability history will appear here once collection is active."}</div>}
-      {snapshot?.services.map((service) => {
-        const stats = statistics(service.history, days);
-        return <article key={service.id} className={styles.service}>
-          <div className={styles.serviceHeading}><div><h3>{service.name}</h3><p>{service.description}</p></div><Badge state={currentState(service, snapshot, now)} /></div>
-          <DayBars key={`${service.id}-${days}`} history={service.history} days={days} />
-          <div className={styles.serviceStats}><span><b>{percent(stats.availability)}</b> available · {percent(stats.coverage)} coverage</span><span>{currentState(service, snapshot, now) === "unknown" ? "Awaiting a fresh check" : service.detail}{service.latencyMs !== null ? ` · ${service.latencyMs} ms last recorded` : ""}</span></div>
-        </article>;
-      })}
-    </section>
+        <section className={styles.section} aria-labelledby="services-title">
+          <header className={styles.head}>
+            <div className={styles.headCopy}>
+              <Eyebrow index={1}>Availability</Eyebrow>
+              <Display size="md" id="services-title">
+                Platform services
+              </Display>
+            </div>
+            <Tabs
+              label="Availability period"
+              className={styles.periods}
+              items={PERIODS.map((value) => ({ value: String(value), label: `${value} days` }))}
+              value={String(days)}
+              onChange={(value) => setDays(Number(value))}
+            />
+          </header>
+          <ul className={styles.legend} aria-label="Legend">
+            {(["operational", "degraded", "outage", "unknown"] as const).map((value) => (
+              <li key={value}>
+                <Swatch state={value} />
+                {LABELS[value]}
+              </li>
+            ))}
+            <li>
+              <Swatch state="operational" partial />
+              Striped = partial coverage
+            </li>
+          </ul>
 
-    <div className={styles.lowerGrid}>
-      <section className={styles.panel} aria-labelledby="latency-title"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>02 / RESPONSE TIME</p><h2 id="latency-title">Every millisecond counts.</h2></div></div>
-        <label className={styles.selectLabel}>Service<select value={selectedService} onChange={(event) => setSelectedService(event.target.value)} disabled={!snapshot}>{snapshot ? snapshot.services.map((service) => <option key={service.id} value={service.id}>{service.name}</option>) : <option value="master">Master API</option>}</select></label>
-        <LatencyChart service={snapshot?.services.find((service) => service.id === selectedService)} />
-        <p className={styles.note}>End-to-end check duration, not in-game ping. CDN checks include release metadata and 4 KiB partial downloads. Missing samples are never joined across gaps.</p>
-      </section>
-      <section className={styles.panel} aria-labelledby="maintenance-title"><p className={styles.eyebrow}>03 / MAINTENANCE</p><h2 id="maintenance-title">Heads up.</h2>
-        {!maintenance.length ? <div className={styles.calm}><span aria-hidden="true">◎</span><h3>{snapshot ? "No scheduled maintenance" : "Schedule unavailable"}</h3><p>{snapshot ? "No active or upcoming maintenance in the latest feed." : "Waiting for a monitoring snapshot."}</p></div> : maintenance.map((item) => <article className={styles.maintenance} key={item.id}><span className={styles.eyebrow}>{Date.parse(item.startsAt) <= now ? "IN PROGRESS" : "SCHEDULED"}</span><h3>{item.title}</h3><p>{item.message}</p><small>{utc(item.startsAt)} — {utc(item.endsAt)}</small><p>{item.services.map((id) => snapshot?.services.find((service) => service.id === id)?.name ?? id).join(" · ")}</p></article>)}
-      </section>
-    </div>
+          {snapshot ? (
+            <div className={styles.services}>
+              {snapshot.services.map((service, index) => {
+                const stats = statistics(service.history, days);
+                const current = states[index] ?? "unknown";
+                return (
+                  <article key={service.id} className={styles.service} data-state={current}>
+                    <div className={styles.serviceIdentity}>
+                      <span className={styles.serviceIndex}>{String(index + 1).padStart(2, "0")}</span>
+                      <div>
+                        <h3 className={styles.serviceName}>{service.name}</h3>
+                        <p className={styles.serviceDescription}>{service.description}</p>
+                      </div>
+                    </div>
+                    <DayBars key={`${service.id}-${days}`} history={service.history} days={days} name={service.name} />
+                    <div className={styles.serviceStatus}>
+                      <StateTag state={current} />
+                      <p className={styles.uptime}>
+                        <strong>{percent(stats.availability)}</strong>
+                        <span>{days}-day uptime</span>
+                      </p>
+                    </div>
+                    <p className={styles.serviceFoot}>
+                      <span>{percent(stats.coverage)} coverage</span>
+                      <span>{current === "unknown" ? "Awaiting a fresh check" : service.detail}</span>
+                      {service.latencyMs !== null ? <span>{service.latencyMs} ms last recorded</span> : null}
+                    </p>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className={styles.pending}>
+              {loading ? (
+                <Loader label="STATUS.FEED" />
+              ) : (
+                <p className={styles.pendingText}>
+                  Waiting for monitoring data. Availability history will appear here once collection is active.
+                </p>
+              )}
+              <div className={styles.skeleton} aria-hidden="true">
+                {Array.from({ length: 7 }, (_, index) => (
+                  <div key={index} className={styles.skeletonRow}>
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
 
-    <section className={styles.panel} aria-labelledby="incidents-title"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>04 / INCIDENT HISTORY</p><h2 id="incidents-title">The record, not the guesswork.</h2></div><span className={styles.note}>Last 90 days · newest first</span></div>
-      {!snapshot?.incidents.length ? <div className={styles.empty}>{snapshot ? "No confirmed incidents recorded in the observed period." : "Incident history is unavailable until the monitor responds."}</div> : <ol className={styles.incidents}>{snapshot.incidents.map((incident) => <li key={incident.id}><span className={styles.incidentDot} data-state={incident.resolvedAt ? "operational" : "outage"} /><div><h3>{snapshot.services.find((service) => service.id === incident.service)?.name} <span>{incident.resolvedAt ? "Recovered" : "Recovery not confirmed"}</span></h3><p>{incident.detail}</p><p className={styles.note}>First detected {utc(incident.startedAt)}{incident.resolvedAt ? ` · Recovery confirmed ${utc(incident.resolvedAt)}` : " · Awaiting two successful checks"}</p></div></li>)}</ol>}
-      <p className={styles.note}>Incidents open after two consecutive failed checks and close after two successful checks. Single failures still appear in availability. Detection is not a root-cause diagnosis.</p>
-    </section>
+        <div className={styles.lower}>
+          <Panel as="section" className={styles.panel} aria-labelledby="latency-title" padding="lg">
+            <header className={styles.panelHead}>
+              <div className={styles.headCopy}>
+                <Eyebrow index={2}>Response time</Eyebrow>
+                <Display size="sm" as="h2" id="latency-title">
+                  Every millisecond counts.
+                </Display>
+              </div>
+              <Field label="Service" className={styles.serviceSelect}>
+                <Select compact value={selectedService} onChange={(event) => setSelectedService(event.target.value)} disabled={!snapshot}>
+                  {snapshot ? (
+                    snapshot.services.map((service) => (
+                      <option key={service.id} value={service.id}>
+                        {service.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="master">Master API</option>
+                  )}
+                </Select>
+              </Field>
+            </header>
+            <LatencyChart service={snapshot?.services.find((service) => service.id === selectedService)} />
+            <p className={styles.note}>
+              End-to-end check duration, not in-game ping. CDN checks include release metadata and 4 KiB partial downloads. Missing samples are never joined across gaps.
+            </p>
+          </Panel>
 
-    <details className={styles.method}><summary>How we measure availability</summary><div><p>Measurements come from {snapshot?.region ?? "the configured operator probe"}. A check runs every minute. This is a single monitoring vantage point, not a global service-level guarantee. Community game servers and end-to-end sign-in are not covered.</p><p>Availability = successful checks ÷ completed checks. Slow but successful responses remain available. Coverage = completed checks ÷ scheduled minute slots in the selected UTC calendar days. Unobserved periods, including before monitoring began, are unknown — never counted as uptime. Maintenance does not erase failed checks.</p><p>Daily bars show the worst observed result; stripes indicate incomplete coverage. The response graph averages successful checks in five-minute buckets. Data older than three minutes becomes unknown, even if the last result was healthy.</p><p>{snapshot?.startedAt ? `Collection started ${utc(snapshot.startedAt)}. ` : "Collection start is not yet known. "}History is retained for 90 days. A monitor or network outage may prevent observations; incident timestamps do not prove uninterrupted downtime between checks.</p></div></details>
-    <div className={styles.bottom}><span>OPEN//77 · PUBLIC TELEMETRY</span><a href="https://discord.open2077.net" target="_blank" rel="noreferrer">Something not listed here? Contact support ↗</a></div>
-  </main>;
+          <Panel as="section" className={styles.panel} aria-labelledby="maintenance-title" padding="lg">
+            <header className={styles.panelHead}>
+              <div className={styles.headCopy}>
+                <Eyebrow index={3}>Maintenance</Eyebrow>
+                <Display size="sm" as="h2" id="maintenance-title">
+                  Heads up.
+                </Display>
+              </div>
+            </header>
+            {!maintenance.length ? (
+              <div className={styles.calm}>
+                <span className={styles.calmMark} aria-hidden="true" />
+                <p className={styles.calmTitle}>{snapshot ? "No scheduled maintenance" : "Schedule unavailable"}</p>
+                <p className={styles.calmText}>
+                  {snapshot ? "No active or upcoming maintenance in the latest feed." : "Waiting for a monitoring snapshot."}
+                </p>
+              </div>
+            ) : (
+              <ul className={styles.maintenance}>
+                {maintenance.map((item) => {
+                  const running = Date.parse(item.startsAt) <= now;
+                  return (
+                    <li key={item.id} className={styles.maintenanceItem}>
+                      <Tag tone={running ? "yellow" : "blue"} variant={running ? "solid" : "outline"}>
+                        {running ? "In progress" : "Scheduled"}
+                      </Tag>
+                      <h3 className={styles.maintenanceTitle}>{item.title}</h3>
+                      <p className={styles.maintenanceMessage}>{item.message}</p>
+                      <p className={styles.maintenanceWindow}>
+                        {utc(item.startsAt)} → {utc(item.endsAt)}
+                      </p>
+                      <p className={styles.maintenanceServices}>{item.services.map(serviceName).join(" · ")}</p>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+            <div className={styles.probe}>
+              <Eyebrow muted as="h3">
+                {"// Monitor"}
+              </Eyebrow>
+              <DefinitionList
+                items={[
+                  { label: "Probe", value: snapshot?.region ?? "—" },
+                  { label: "Check interval", value: snapshot ? `${snapshot.intervalSeconds} s` : "—" },
+                  { label: "Unknown after", value: snapshot ? `${snapshot.staleAfterSeconds} s without data` : "—" },
+                  { label: "Collecting since", value: snapshot?.startedAt ? utc(snapshot.startedAt) : "—" },
+                  { label: "Retention", value: "90 days" },
+                ]}
+              />
+            </div>
+          </Panel>
+        </div>
+
+        <section className={styles.section} aria-labelledby="incidents-title">
+          <header className={styles.head}>
+            <div className={styles.headCopy}>
+              <Eyebrow index={4}>Incident history</Eyebrow>
+              <Display size="md" id="incidents-title">
+                The record, not the guesswork.
+              </Display>
+            </div>
+            <p className={styles.headNote}>Last 90 days · newest first</p>
+          </header>
+          {!snapshot?.incidents.length ? (
+            <EmptyState
+              eyebrow={snapshot ? "// INCIDENTS.LOG clear" : "// INCIDENTS.LOG offline"}
+              title={snapshot ? "Nothing to report" : "History unavailable"}
+              className={styles.empty}
+            >
+              {snapshot ? "No confirmed incidents recorded in the observed period." : "Incident history is unavailable until the monitor responds."}
+            </EmptyState>
+          ) : (
+            <ol className={styles.incidents}>
+              {snapshot.incidents.map((incident) => (
+                <li key={incident.id} className={styles.incident} data-state={incident.resolvedAt ? "operational" : "outage"}>
+                  <span className={styles.node} aria-hidden="true" />
+                  <time className={styles.incidentWhen} dateTime={incident.startedAt}>
+                    <span>{utcDay(incident.startedAt)}</span>
+                    <span>{utcTime(incident.startedAt)} UTC</span>
+                  </time>
+                  <div className={styles.incidentBody}>
+                    <h3 className={styles.incidentTitle}>
+                      {serviceName(incident.service)}
+                      <StateTag state={incident.resolvedAt ? "operational" : "outage"} label={incident.resolvedAt ? "Recovered" : "Recovery not confirmed"} />
+                    </h3>
+                    <p className={styles.incidentDetail}>
+                      <span className={styles.prompt} aria-hidden="true">{">"}</span>
+                      {incident.detail}
+                    </p>
+                    <p className={styles.incidentMeta}>
+                      First detected {utc(incident.startedAt)}
+                      {incident.resolvedAt
+                        ? ` · Recovery confirmed ${utc(incident.resolvedAt)} · ${duration(incident.startedAt, incident.resolvedAt)} observed`
+                        : " · Awaiting two successful checks"}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+          <p className={styles.note}>
+            Incidents open after two consecutive failed checks and close after two successful checks. Single failures still appear in availability. Detection is not a root-cause diagnosis.
+          </p>
+        </section>
+
+        <details className={styles.method}>
+          <summary>
+            <span className={styles.methodLabel}>How we measure availability</span>
+            <span className={styles.methodToggle} aria-hidden="true" />
+          </summary>
+          <Prose size="sm" className={styles.methodBody}>
+            <p>
+              Measurements come from {snapshot?.region ?? "the configured operator probe"}. A check runs every minute. This is a single monitoring vantage point, not a global service-level guarantee. Community game servers and end-to-end sign-in are not covered.
+            </p>
+            <p>
+              Availability = successful checks ÷ completed checks. Slow but successful responses remain available. Coverage = completed checks ÷ scheduled minute slots in the selected UTC calendar days. Unobserved periods, including before monitoring began, are unknown — never counted as uptime. Maintenance does not erase failed checks.
+            </p>
+            <p>
+              Daily bars show the worst observed result; stripes indicate incomplete coverage. The response graph averages successful checks in five-minute buckets. Data older than three minutes becomes unknown, even if the last result was healthy.
+            </p>
+            <p>
+              {snapshot?.startedAt ? `Collection started ${utc(snapshot.startedAt)}. ` : "Collection start is not yet known. "}
+              History is retained for 90 days. A monitor or network outage may prevent observations; incident timestamps do not prove uninterrupted downtime between checks.
+            </p>
+          </Prose>
+        </details>
+
+        <footer className={styles.bottom}>
+          <p>
+            {"// OPEN//77 · PUBLIC TELEMETRY · "}
+            {snapshot?.region ?? "probe pending"}
+          </p>
+          <p className={styles.fineprint}>
+            Status reflects automated checks from the stated monitoring location, not a guarantee of availability from every network.
+          </p>
+          <a className={styles.feedLink} href={SUPPORT_URL} target="_blank" rel="noreferrer">
+            Something not listed here? Contact support
+            <Icon glyph={arrowUpRight01} />
+          </a>
+        </footer>
+      </div>
+    </>
+  );
 }

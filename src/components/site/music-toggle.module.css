@@ -1,0 +1,45 @@
+/* The equaliser glyph: four bars, low and still while the music is off,
+   dancing at different speeds while it plays. */
+.music svg path {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  transition: transform 0.4s var(--ease-out-expo);
+  transform: scaleY(0.3);
+}
+.playing svg path {
+  animation: bar 1.1s ease-in-out infinite alternate;
+  transform: none;
+}
+.playing svg path:nth-child(2) {
+  animation-duration: 0.8s;
+  animation-delay: -0.3s;
+}
+.playing svg path:nth-child(3) {
+  animation-duration: 1.3s;
+  animation-delay: -0.6s;
+}
+.playing svg path:nth-child(4) {
+  animation-duration: 0.95s;
+  animation-delay: -0.15s;
+}
+@keyframes bar {
+  from {
+    transform: scaleY(0.25);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .playing svg path {
+    animation: none;
+  }
+}
+
+/* Phones: the left group would run into the centred logo; music is a desktop
+   comfort, and the header stays clear. */
+@media screen and (max-width: 600px) {
+  .music {
+    display: none;
+  }
+}

@@ -1,0 +1,284 @@
+:where(.btn) {
+  color: var(--body);
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  padding: var(--btn-padding-top, var(--btn-padding-x, 1.25em))
+    var(--btn-padding-right, var(--btn-padding-y, 2em))
+    var(--btn-padding-bottom, var(--btn-padding-x, 1.25em))
+    var(--btn-padding-left, var(--btn-padding-y, 2em));
+  white-space: nowrap;
+  z-index: 10;
+  -webkit-user-select: none;
+  user-select: none;
+  justify-content: center;
+  align-items: center;
+  font-style: italic;
+  line-height: 1;
+  display: inline-flex;
+  position: relative;
+}
+.btn.red {
+  --color: var(--red);
+}
+.btn.yellow {
+  --color: var(--yellow);
+}
+.btn.blue {
+  --color: var(--blue);
+}
+.btn.iconOnly {
+  --btn-size: 3em;
+  aspect-ratio: 1;
+  width: var(--btn-size);
+  height: var(--btn-size);
+  padding: 0;
+}
+.btn svg {
+  fill: currentColor;
+  z-index: 5;
+  width: calc(var(--btn-size) * 0.55);
+}
+.btn:before {
+  content: "";
+  background-color: var(--color);
+  transform: skewX(var(--skew));
+  position: absolute;
+  inset: 0;
+}
+.btn.border {
+  color: var(--color);
+}
+.btn.border:before {
+  border: 1px solid var(--color);
+  background: 0 0;
+}
+.text {
+  z-index: 10;
+  position: relative;
+  top: 0.05em;
+}
+@property --btn-line-1 {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@keyframes btn-line-1 {
+  to {
+    --btn-line-1: 1;
+  }
+}
+@property --btn-line-2 {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@keyframes btn-line-2 {
+  to {
+    --btn-line-2: 1;
+  }
+}
+@property --btn-line-3 {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@keyframes btn-line-3 {
+  to {
+    --btn-line-3: 1;
+  }
+}
+@property --btn-line-4 {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@keyframes btn-line-4 {
+  to {
+    --btn-line-4: 1;
+  }
+}
+@property --btn-line-5 {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@keyframes btn-line-5 {
+  to {
+    --btn-line-5: 1;
+  }
+}
+.lines {
+  --duration: 3s;
+  --btn-lines-width: 4.5em;
+  --btn-lines-overlap: 1em;
+  pointer-events: none;
+  animation:
+    btn-line-1 var(--duration) ease-out calc(var(--duration) * 0) infinite,
+    btn-line-2 var(--duration) ease-out calc(var(--duration) * 0.2) infinite,
+    btn-line-3 var(--duration) ease-out calc(var(--duration) * 0.4) infinite,
+    btn-line-4 var(--duration) ease-out calc(var(--duration) * 0.6) infinite,
+    btn-line-5 var(--duration) ease-out calc(var(--duration) * 0.8) infinite;
+  position: absolute;
+  inset: 0;
+}
+.lines:before,
+.lines:after {
+  content: none;
+  width: var(--btn-lines-width);
+  height: 100%;
+  transform: skewX(var(--skew));
+  pointer-events: none;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+}
+.lines[data-lines="left"]:before,
+.lines[data-lines="both"]:before {
+  content: "";
+  left: calc(var(--btn-lines-overlap) - var(--btn-lines-width));
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent calc((1 - var(--btn-line-1)) * (100% - 1em)),
+      var(--color) calc((1 - var(--btn-line-1)) * (100% - 1em)),
+      var(--color) calc((1 - var(--btn-line-1)) * 100%),
+      transparent calc((1 - var(--btn-line-1)) * 100%)
+    ),
+    linear-gradient(
+      90deg,
+      transparent calc((1 - var(--btn-line-2)) * (100% - 1em)),
+      var(--color) calc((1 - var(--btn-line-2)) * (100% - 1em)),
+      var(--color) calc((1 - var(--btn-line-2)) * 100%),
+      transparent calc((1 - var(--btn-line-2)) * 100%)
+    ),
+    linear-gradient(
+      90deg,
+      transparent calc((1 - var(--btn-line-3)) * (100% - 1em)),
+      var(--color) calc((1 - var(--btn-line-3)) * (100% - 1em)),
+      var(--color) calc((1 - var(--btn-line-3)) * 100%),
+      transparent calc((1 - var(--btn-line-3)) * 100%)
+    ),
+    linear-gradient(
+      90deg,
+      transparent calc((1 - var(--btn-line-4)) * (100% - 1em)),
+      var(--color) calc((1 - var(--btn-line-4)) * (100% - 1em)),
+      var(--color) calc((1 - var(--btn-line-4)) * 100%),
+      transparent calc((1 - var(--btn-line-4)) * 100%)
+    ),
+    linear-gradient(
+      90deg,
+      transparent calc((1 - var(--btn-line-5)) * (100% - 1em)),
+      var(--color) calc((1 - var(--btn-line-5)) * (100% - 1em)),
+      var(--color) calc((1 - var(--btn-line-5)) * 100%),
+      transparent calc((1 - var(--btn-line-5)) * 100%)
+    );
+}
+.lines[data-lines="right"]:after,
+.lines[data-lines="both"]:after {
+  content: "";
+  left: calc(100% - var(--btn-lines-overlap));
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent calc(var(--btn-line-1) * 100%),
+      var(--color) calc(var(--btn-line-1) * 100%),
+      var(--color) calc(var(--btn-line-1) * 100% + (1 - var(--btn-line-1)) * 1em),
+      transparent calc(var(--btn-line-1) * 100% + (1 - var(--btn-line-1)) * 1em)
+    ),
+    linear-gradient(
+      90deg,
+      transparent calc(var(--btn-line-2) * 100%),
+      var(--color) calc(var(--btn-line-2) * 100%),
+      var(--color) calc(var(--btn-line-2) * 100% + (1 - var(--btn-line-2)) * 1em),
+      transparent calc(var(--btn-line-2) * 100% + (1 - var(--btn-line-2)) * 1em)
+    ),
+    linear-gradient(
+      90deg,
+      transparent calc(var(--btn-line-3) * 100%),
+      var(--color) calc(var(--btn-line-3) * 100%),
+      var(--color) calc(var(--btn-line-3) * 100% + (1 - var(--btn-line-3)) * 1em),
+      transparent calc(var(--btn-line-3) * 100% + (1 - var(--btn-line-3)) * 1em)
+    ),
+    linear-gradient(
+      90deg,
+      transparent calc(var(--btn-line-4) * 100%),
+      var(--color) calc(var(--btn-line-4) * 100%),
+      var(--color) calc(var(--btn-line-4) * 100% + (1 - var(--btn-line-4)) * 1em),
+      transparent calc(var(--btn-line-4) * 100% + (1 - var(--btn-line-4)) * 1em)
+    ),
+    linear-gradient(
+      90deg,
+      transparent calc(var(--btn-line-5) * 100%),
+      var(--color) calc(var(--btn-line-5) * 100%),
+      var(--color) calc(var(--btn-line-5) * 100% + (1 - var(--btn-line-5)) * 1em),
+      transparent calc(var(--btn-line-5) * 100% + (1 - var(--btn-line-5)) * 1em)
+    );
+}
+
+/* Additions for the rest of the site; the rules above are the reference set. */
+
+.btn.neutral {
+  --color: oklch(from var(--text-primary) l c h / 8%);
+  color: var(--text-primary);
+}
+.btn.neutral.border {
+  --color: var(--line-strong);
+}
+.btn.border:not(:disabled):hover:before {
+  background-color: oklch(from var(--color) l c h / 12%);
+}
+.btn.neutral:not(.border):not(:disabled):hover:before {
+  background-color: oklch(from var(--text-primary) l c h / 14%);
+}
+.btn:focus-visible {
+  outline: none;
+}
+.btn:focus-visible:before {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 3px;
+}
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn.busy {
+  cursor: progress;
+}
+.btn.busy .content {
+  animation: busy 1s infinite;
+}
+@keyframes busy {
+  50% {
+    opacity: 0.35;
+  }
+}
+:where(.sm) {
+  --btn-padding-x: 1em;
+  --btn-padding-y: 1.5em;
+  font-size: 0.8em;
+}
+.sm.iconOnly {
+  --btn-size: 2.6em;
+}
+:where(.lg) {
+  font-size: 1.2em;
+}
+:where(.full) {
+  width: 100%;
+}
+.content {
+  align-items: center;
+  gap: 0.7em;
+  display: inline-flex;
+}
+.content svg {
+  width: 1.25em;
+  height: 1.25em;
+  flex: none;
+}
+/* Follows the page tone (yellow, blue or red by section). */
+.btn.tone {
+  --color: var(--tone);
+}

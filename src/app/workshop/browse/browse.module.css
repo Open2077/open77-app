@@ -1,0 +1,20 @@
+/* The lead sits beside the title, not under it: the library starts higher. */
+.lead {
+  color: var(--text-dim);
+  text-wrap: balance;
+  width: min(18rem, 20vw);
+  font-size: calc(0.3vw + 15px);
+  line-height: 1.5;
+}
+.library {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-top: 1.8rem;
+}
+@media screen and (max-width: 1084px) {
+  .lead {
+    width: auto;
+    max-width: 38em;
+  }
+}

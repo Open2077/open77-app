@@ -1,0 +1,608 @@
+/*
+ * Global rules of the design system: resets, colour and spacing tokens,
+ * selection colours, the data-glitch title effect and Lenis. Loaded by the
+ * root layout, first.
+ *
+ * Production CSS chunking does not keep import order across shared chunks, so
+ * nothing here relies on it: element resets live in the lowest cascade layer,
+ * and the ui primitives write their root classes as :where(), so a class
+ * passed through `className` always overrides them (see components/ui/DESIGN.md).
+ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis [data-lenis-prevent],
+.lenis [data-lenis-prevent-wheel],
+.lenis [data-lenis-prevent-touch],
+.lenis [data-lenis-prevent-vertical],
+.lenis [data-lenis-prevent-horizontal] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+.lenis.lenis-autoToggle {
+  transition-behavior: allow-discrete;
+  transition-property: overflow;
+  transition-duration: 1ms;
+}
+:root {
+  box-sizing: border-box;
+}
+html {
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  tab-size: 4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizespeed;
+  -webkit-tap-highlight-color: #0000;
+  height: 100%;
+  line-height: 1.5;
+  font-synthesis: none !important;
+}
+body {
+  scroll-behavior: auto;
+  overscroll-behavior-x: none;
+  text-rendering: optimizelegibility;
+  min-height: 100vh;
+}
+/*
+ * Element resets in the lowest layer: any class beats them, including the
+ * zero-specificity :where() roots of the ui primitives, whatever the order in
+ * which production chunks load the stylesheets.
+ */
+@layer op77-reset {
+  *,
+  :before,
+  :after {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+  }
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    -webkit-user-select: none;
+    user-select: none;
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+  ul,
+  ol {
+    list-style: none;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+    background: 0 0;
+    border: none;
+    outline: none;
+  }
+  button {
+    cursor: pointer;
+  }
+  textarea {
+    resize: none;
+    width: 100%;
+  }
+  input[type="number"] {
+    appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="search"] {
+    appearance: textfield;
+  }
+  input[type="search"]::-webkit-search-decoration {
+    display: none;
+  }
+  input[type="search"]::-webkit-search-cancel-button {
+    display: none;
+  }
+  input[type="search"]::-webkit-search-results-button {
+    display: none;
+  }
+  input[type="search"]::-webkit-search-results-decoration {
+    display: none;
+  }
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  small {
+    font-size: 0.95em;
+  }
+  address {
+    font: inherit;
+  }
+  svg {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  img {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  kbd {
+    font-family: var(--font-nippo);
+    font-variation-settings: "wght" 300;
+    color: var(--color, currentColor);
+    justify-content: center;
+    align-items: center;
+    padding: 0.15em 0.4em;
+    font-size: 0.8em;
+    font-weight: 300;
+    display: inline-flex;
+    position: relative;
+  }
+  kbd:before {
+    content: "";
+    transform: skewX(var(--skew));
+    border: 1px solid var(--color, currentColor);
+    position: absolute;
+    inset: 0;
+  }
+}
+a:focus-visible {
+  outline-offset: 2px;
+  outline: 2px solid;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  :before,
+  :after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+:root {
+  --body: #050c16;
+  --body-0: oklch(from var(--body) l c h / 0);
+  --text-primary: #fff;
+  --text-secondary: #4b6385;
+  --yellow: #fcee0a;
+  --blue: #08dfec;
+  --red: #ff005f;
+  --primary: var(--yellow);
+  --active-color: var(--primary);
+}
+@supports (color: lab(0% 0 0)) {
+  :root {
+    --body: lab(3.12332% -0.445344 -6.13711);
+    --text-primary: lab(100% 0 0);
+    --text-secondary: lab(41.1049% -1.98522 -22.0694);
+    --yellow: lab(92.9971% -9.15468 89.3522);
+    --blue: lab(80.761% -42.536 -19.8153);
+    --red: lab(55.0136% 82.4329 24.9211);
+  }
+}
+:root[data-active-tone="yellow"] {
+  --active-color: var(--yellow);
+}
+:root[data-active-tone="blue"] {
+  --active-color: var(--blue);
+}
+:root[data-active-tone="red"] {
+  --active-color: var(--red);
+}
+:root {
+  --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-in-quart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  --ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+  --ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  --ease-in-circ: cubic-bezier(0.6, 0.04, 0.98, 0.335);
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-out-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
+  --ease-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+  --ease-in-out-expo: cubic-bezier(1, 0, 0, 1);
+  --ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  --gleasing: cubic-bezier(0.4, 0, 0, 1);
+  --cubic: cubic-bezier(0.305, 0.045, 0.355, 1);
+  --fit-ratio: 0.9;
+  --skew: -12deg;
+  --skew-reverse: 12deg;
+  --header-height: calc(80px + 32 * (100vw - 320px) / 1080);
+  --header-logo: calc(150px + 50 * (100vw - 320px) / 1080);
+  --transition-scale: 0.1s;
+  --transition-link: 0.25s var(--cubic);
+  --transition-header: 0.6s var(--cubic);
+  --size-0: 0;
+  --size-px: 1px;
+  --size-0-5: 0.125rem;
+  --size-1: 0.25rem;
+  --size-1-5: 0.375rem;
+  --size-2: 0.5rem;
+  --size-2-5: 0.625rem;
+  --size-3: 0.75rem;
+  --size-3-5: 0.875rem;
+  --size-4: 1rem;
+  --size-5: 1.25rem;
+  --size-6: 1.5rem;
+  --size-7: 1.75rem;
+  --size-8: 2rem;
+  --size-9: 2.25rem;
+  --size-10: 2.5rem;
+  --size-11: 2.75rem;
+  --size-12: 3rem;
+  --size-14: 3.5rem;
+  --size-16: 4rem;
+  --size-20: 5rem;
+  --size-24: 6rem;
+  --size-28: 7rem;
+  --size-32: 8rem;
+  --size-36: 9rem;
+  --size-40: 10rem;
+  --size-44: 11rem;
+  --size-48: 12rem;
+  --size-52: 13rem;
+  --size-56: 14rem;
+  --size-60: 15rem;
+  --size-64: 16rem;
+  --size-72: 18rem;
+  --size-80: 20rem;
+  --size-96: 24rem;
+  --container-width: calc(700px + 500 * (100vw - 320px) / 1080);
+  --container-max: 85vw;
+  --container-padding: calc((100vw - var(--container-max)) / 2);
+  --container-middle: calc(var(--container-width) / 1.75);
+  --margin-1: calc(70px + 32 * (100vw - 320px) / 1080);
+  /* The header's current height. A tool page (the server list) marks itself
+     [data-compact-header] and the header slims to --header-compact while it is
+     on screen, so the list gets the room; pages and sticky bars position
+     themselves on --header-live. CSS-only, so it holds from the first paint. */
+  --header-compact: 64px;
+  --header-live: var(--header-height);
+}
+html:has([data-compact-header]) {
+  --header-live: var(--header-compact);
+}
+@media screen and (max-width: 1250px) {
+  :root {
+    --header-logo: calc(180px + 60 * (100vw - 320px) / 1080);
+  }
+}
+@media screen and (max-width: 700px) {
+  :root {
+    --container-max: 88vw;
+  }
+}
+html {
+  --selection-bg: var(--yellow);
+  --selection-color: var(--body);
+  background-color: var(--body);
+  color: var(--text-primary);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) var(--body);
+  font-size: calc(0.147059vw + 14.5294px);
+  line-height: 1.15;
+  overflow-x: clip;
+}
+/* The home page scrolls through Lenis and hides the bar; it marks <html data-scroll>. */
+html[data-scroll] {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+html[data-scroll]::-webkit-scrollbar {
+  display: none;
+}
+html ::selection {
+  background-color: oklch(from var(--selection-bg) l c h/.85);
+  color: oklch(from var(--selection-color) l c h);
+  -webkit-text-fill-color: oklch(from var(--selection-color) l c h);
+}
+html ::selection {
+  background-color: oklch(from var(--selection-bg) l c h/.85);
+  color: oklch(from var(--selection-color) l c h);
+  -webkit-text-fill-color: oklch(from var(--selection-color) l c h);
+}
+[data-selection="red"] {
+  --selection-bg: var(--red);
+}
+[data-selection="yellow"] {
+  --selection-bg: var(--yellow);
+}
+[data-selection="blue"] {
+  --selection-bg: var(--blue);
+}
+[data-selection="red-reverse"] {
+  --selection-color: var(--red);
+  --selection-bg: var(--body);
+}
+[data-selection="yellow-reverse"] {
+  --selection-color: var(--yellow);
+  --selection-bg: var(--body);
+}
+[data-selection="blue-reverse"] {
+  --selection-color: var(--blue);
+  --selection-bg: var(--body);
+}
+body {
+  font-variation-settings: "wght" 400;
+  font-weight: 400;
+  font-family: var(--font-main);
+  font-feature-settings: "salt" on;
+}
+[data-color="yellow"] {
+  --color: var(--yellow);
+}
+[data-color="blue"] {
+  --color: var(--blue);
+}
+[data-color="red"] {
+  --color: var(--red);
+}
+[data-glitch] {
+  white-space: nowrap;
+  display: inline-block;
+  position: relative;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-glitch]:before,
+  [data-glitch]:after {
+    content: attr(data-glitch);
+    /* Decorative copies: an empty alternative keeps screen readers from reading the title twice. */
+    content: attr(data-glitch) / "";
+    color: inherit;
+    text-transform: uppercase;
+    width: 100%;
+    height: 100%;
+    font-size: inherit;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+  }
+  [data-glitch]:before {
+    text-shadow: -2px 0 var(--color-1, var(--red));
+    animation-name: glitch-animation-1;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate-reverse;
+    animation-delay: 0s;
+    left: 3px;
+  }
+  [data-glitch]:after {
+    text-shadow: -2px 0 var(--color-2, var(--blue));
+    animation-name: glitch-animation-2;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate-reverse;
+    animation-delay: 0s;
+    left: -3px;
+  }
+  @keyframes glitch-animation-1 {
+    0% {
+      clip: rect(91px, 3000px, 134px, 30px);
+    }
+    5% {
+      clip: rect(16px, 3000px, 43px, 30px);
+    }
+    10% {
+      clip: rect(16px, 3000px, 145px, 30px);
+    }
+    15% {
+      clip: rect(23px, 3000px, 59px, 30px);
+    }
+    20% {
+      clip: rect(148px, 3000px, 114px, 30px);
+    }
+    25% {
+      clip: rect(109px, 3000px, 50px, 30px);
+    }
+    30% {
+      clip: rect(53px, 3000px, 142px, 30px);
+    }
+    35% {
+      clip: rect(141px, 3000px, 114px, 30px);
+    }
+    40% {
+      clip: rect(39px, 3000px, 65px, 30px);
+    }
+    45% {
+      clip: rect(91px, 3000px, 132px, 30px);
+    }
+    50% {
+      clip: rect(146px, 3000px, 136px, 30px);
+    }
+    55% {
+      clip: rect(92px, 3000px, 6px, 30px);
+    }
+    60% {
+      clip: rect(37px, 3000px, 100px, 30px);
+    }
+    65% {
+      clip: rect(53px, 3000px, 96px, 30px);
+    }
+    70% {
+      clip: rect(84px, 3000px, 83px, 30px);
+    }
+    75% {
+      clip: rect(116px, 3000px, 15px, 30px);
+    }
+    80% {
+      clip: rect(59px, 3000px, 100px, 30px);
+    }
+    85% {
+      clip: rect(101px, 3000px, 19px, 30px);
+    }
+    90% {
+      clip: rect(86px, 3000px, 113px, 30px);
+    }
+    95% {
+      clip: rect(22px, 3000px, 100px, 30px);
+    }
+    to {
+      clip: rect(59px, 3000px, 122px, 30px);
+    }
+  }
+  @keyframes glitch-animation-2 {
+    0% {
+      clip: rect(105px, 3000px, 102px, 30px);
+    }
+    5% {
+      clip: rect(127px, 3000px, 86px, 30px);
+    }
+    10% {
+      clip: rect(41px, 3000px, 148px, 30px);
+    }
+    15% {
+      clip: rect(104px, 3000px, 33px, 30px);
+    }
+    20% {
+      clip: rect(64px, 3000px, 69px, 30px);
+    }
+    25% {
+      clip: rect(142px, 3000px, 2px, 30px);
+    }
+    30% {
+      clip: rect(21px, 3000px, 133px, 30px);
+    }
+    35% {
+      clip: rect(141px, 3000px, 19px, 30px);
+    }
+    40% {
+      clip: rect(133px, 3000px, 136px, 30px);
+    }
+    45% {
+      clip: rect(150px, 3000px, 80px, 30px);
+    }
+    50% {
+      clip: rect(139px, 3000px, 13px, 30px);
+    }
+    55% {
+      clip: rect(115px, 3000px, 87px, 30px);
+    }
+    60% {
+      clip: rect(94px, 3000px, 124px, 30px);
+    }
+    65% {
+      clip: rect(81px, 3000px, 120px, 30px);
+    }
+    70% {
+      clip: rect(83px, 3000px, 150px, 30px);
+    }
+    75% {
+      clip: rect(113px, 3000px, 20px, 30px);
+    }
+    80% {
+      clip: rect(35px, 3000px, 45px, 30px);
+    }
+    85% {
+      clip: rect(5px, 3000px, 79px, 30px);
+    }
+    90% {
+      clip: rect(64px, 3000px, 86px, 30px);
+    }
+    95% {
+      clip: rect(18px, 3000px, 36px, 30px);
+    }
+    to {
+      clip: rect(59px, 3000px, 119px, 30px);
+    }
+  }
+}
+
+/*
+ * Site-wide additions: the tokens and utilities the content and app pages need
+ * beyond the home page. Components style themselves; only cross-cutting rules
+ * live here.
+ */
+:root {
+  /* Raised surfaces over the page background, for panels, rows and fields. */
+  --surface-1: color-mix(in oklab, var(--body), #fff 3%);
+  --surface-2: color-mix(in oklab, var(--body), #fff 6%);
+  --surface-3: color-mix(in oklab, var(--body), #fff 10%);
+  /* Hairlines. */
+  --line: oklch(from var(--text-secondary) l c h / 32%);
+  --line-strong: oklch(from var(--text-secondary) l c h / 60%);
+  /* Body copy that is secondary but must stay readable (the reference's
+     --text-secondary is a decorative tone, too dim for running text). */
+  --text-dim: oklch(from var(--text-primary) l c h / 64%);
+  --text-faint: oklch(from var(--text-primary) l c h / 42%);
+  /* The colour of the current page; pages set it through <Page tone>. */
+  --tone: var(--active-color);
+  --page-gutter: max(calc((100vw - var(--container-max)) / 2), 20px);
+  --focus: 2px solid var(--text-primary);
+}
+
+/* No background on <body>: <html> carries it, and the home scene art sits at a
+   negative z-index that a body background would paint over. */
+body {
+  min-height: 100dvh;
+}
+
+:focus-visible {
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+
+details::details-content {
+  box-sizing: inherit;
+}
+
+::placeholder {
+  color: var(--text-faint);
+  opacity: 1;
+}
+
+.skip-link {
+  z-index: 1000;
+  font-family: var(--font-nippo);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--body);
+  background: var(--yellow);
+  padding: 0.75em 1.25em;
+  font-size: 11px;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
+}
+
+.sr-only {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  overflow: hidden;
+}

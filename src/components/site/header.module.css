@@ -1,0 +1,344 @@
+.header {
+  --selection-bg: var(--active-color);
+  width: 100%;
+  height: var(--header-height);
+  z-index: 300;
+  pointer-events: none;
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+.header a,
+.header button {
+  pointer-events: auto;
+}
+.header:before {
+  content: "";
+  background: linear-gradient(to top, oklch(from var(--body) l c h/0%) 0%, var(--body) 100%);
+  z-index: -1;
+  background-color: oklch(from var(--body) l c h/.62);
+  position: absolute;
+  inset: 0 0 -50%;
+}
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  @media (prefers-reduced-motion: no-preference) {
+    .header:before {
+      background-color: oklch(from var(--body) l c h/.62);
+      -webkit-backdrop-filter: blur(32px);
+      backdrop-filter: blur(32px);
+    }
+  }
+}
+.header:before {
+  -webkit-mask: linear-gradient(#000 0%, #0000 100%);
+  mask: linear-gradient(#000 0%, #0000 100%);
+}
+.logo {
+  width: var(--header-logo);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.logo svg {
+  width: 100%;
+}
+@media screen and (max-width: 1250px) {
+  .logo {
+    width: var(--header-logo);
+  }
+}
+.nav {
+  --gap: calc(12px + 12 * (100vw - 500px) / 1080);
+  gap: calc(var(--header-logo) + var(--gap) * 4);
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-inline: auto;
+  font-size: 11px;
+  font-weight: 300;
+  display: flex;
+}
+@media screen and (max-width: 1250px) {
+  .nav {
+    display: none;
+  }
+}
+.list {
+  align-items: center;
+  gap: calc(var(--gap) * 2);
+  display: flex;
+}
+@media screen and (max-width: 1400px) {
+  .list {
+    gap: var(--gap);
+  }
+}
+.list a {
+  transition:
+    text-shadow var(--transition-link),
+    color var(--transition-link);
+  text-shadow: 0 0 0 oklch(from var(--active-color) l c h/0%);
+}
+.list a:hover {
+  color: var(--active-color);
+  text-shadow: 0 0 1.5em oklch(from var(--active-color) l c h/50%);
+}
+.buttons {
+  --bg: oklch(from var(--text-primary) l c h / 10%);
+  --space: 1em;
+  padding: var(--padding);
+  right: var(--space);
+  align-items: center;
+  display: flex;
+  position: absolute;
+}
+@media screen and (max-width: 500px) {
+  .buttons {
+    --space: 0.5em;
+  }
+}
+.buttons.buttonsLeft {
+  left: var(--space);
+  right: auto;
+}
+.buttons.buttonsLeft:before {
+  inset: 0 0 0 -2em;
+}
+.buttons:before {
+  content: "";
+  border: 1px solid var(--bg);
+  background-color: oklch(from var(--body) l c h/.62);
+  position: absolute;
+  inset: 0 -2em 0 0;
+  transform: skew(-10deg);
+}
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  @media (prefers-reduced-motion: no-preference) {
+    .buttons:before {
+      background-color: oklch(from var(--body) l c h/.62);
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+    }
+  }
+}
+.buttons:before {
+  background-color: #ffffff03;
+}
+.buttons .button {
+  --color: oklch(from var(--text-primary) l c h / 5%);
+  transition: color var(--transition-link);
+  color: var(--active-color);
+}
+@media screen and (min-width: 1251px) {
+  .buttons .buttonNav {
+    display: none;
+  }
+}
+.buttons .button:hover {
+  color: var(--body);
+}
+.buttons .button:hover:before {
+  background-color: var(--active-color);
+}
+.buttons .button:before {
+  transition: background-color var(--transition-link);
+  border: 0;
+}
+
+/* Additions for the rest of the site; the rules above are the reference set. */
+
+.list a[aria-current="page"] {
+  color: var(--active-color);
+}
+.menuToggle {
+  display: contents;
+}
+.menuOpen:before {
+  opacity: 0;
+}
+
+/* Menu overlay, below the bar so the toggle stays reachable. */
+.menu {
+  z-index: 290;
+  padding: calc(var(--header-height) + 2vh) var(--page-gutter) 6vh;
+  background: oklch(from var(--body) l c h / 0.94);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  flex-direction: column;
+  display: flex;
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  animation: menu-in 0.35s var(--ease-out-expo);
+}
+.menu[hidden] {
+  display: none;
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-1.5rem);
+  }
+}
+.menuNav {
+  flex-direction: column;
+  gap: 2.5rem;
+  min-height: 100%;
+  display: flex;
+}
+.menuList {
+  counter-reset: menu;
+  flex-direction: column;
+  gap: 0.15em;
+  display: flex;
+}
+.menuList a {
+  align-items: baseline;
+  gap: 1rem;
+  width: max-content;
+  max-width: 100%;
+  display: flex;
+}
+.menuIndex {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.2em;
+  color: var(--active-color);
+  font-size: 0.7rem;
+}
+.menuLabel {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  font-style: italic;
+  font-size: clamp(2rem, 7.5vw, 4.25rem);
+  line-height: 0.95;
+  transition: color var(--transition-link);
+}
+.menuList a:hover .menuLabel,
+.menuList a[aria-current="page"] .menuLabel {
+  color: var(--active-color);
+}
+.menuMore {
+  border-top: 1px solid var(--line);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 0 2rem;
+  padding-top: 1.5rem;
+  display: grid;
+}
+.menuMore a,
+.menuMore button {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--line);
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 0;
+  font-size: 0.72rem;
+  transition: color var(--transition-link);
+  display: flex;
+}
+.menuMore a:hover,
+.menuMore button:hover,
+.menuMore a[aria-current="page"] {
+  color: var(--active-color);
+}
+.menuCta {
+  margin-top: auto;
+}
+
+/* Quick navigation. */
+.searchField {
+  border: 1px solid var(--line);
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1rem;
+  display: flex;
+  position: relative;
+}
+.searchField:focus-within {
+  border-color: var(--active-color);
+}
+.searchField svg {
+  color: var(--text-faint);
+  font-size: 1.15rem;
+}
+.searchField input {
+  width: 100%;
+  height: 3.25rem;
+  font-size: 1.05rem;
+}
+/* The field frame turns to the tone on focus; the input itself needs no ring. */
+.searchField input:focus-visible {
+  outline: none;
+}
+.searchResults {
+  flex-direction: column;
+  margin-top: 1rem;
+  display: flex;
+}
+.searchResults a {
+  border-bottom: 1px solid var(--line);
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 0.25rem;
+  transition:
+    color var(--transition-link),
+    background-color var(--transition-link);
+  display: flex;
+}
+.searchResults a:hover,
+.searchResults a:focus-visible {
+  background: var(--surface-2);
+  color: var(--active-color);
+}
+.searchResults span {
+  flex-direction: column;
+  gap: 0.25rem;
+  display: flex;
+}
+.searchResults strong {
+  font-weight: 600;
+}
+.searchResults small {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+.searchEmpty {
+  color: var(--text-dim);
+  padding: 1.5rem 0.25rem;
+}
+.searchHint {
+  color: var(--text-faint);
+  margin-top: 1.25rem;
+  font-size: 0.8rem;
+}
+
+/* A tool page (the server list) carries [data-compact-header]: the header
+   slims down (--header-live) and its sticky bar continues it as one solid block. */
+.header {
+  height: var(--header-live);
+  transition: height 0.35s var(--ease-out-expo);
+}
+.logo {
+  transition: transform 0.35s var(--ease-out-expo);
+}
+:global(html:has([data-compact-header])) .logo {
+  transform: translate(-50%, -50%) scale(0.78);
+}
+:global(html:has([data-compact-header])) .header:before {
+  -webkit-mask: none;
+  mask: none;
+  background-color: oklch(from var(--body) l c h / 0.6);
+  inset: 0;
+}

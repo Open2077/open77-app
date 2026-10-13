@@ -1,0 +1,98 @@
+.pager {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.6rem;
+  margin-top: 4.5rem;
+  padding-inline: 0.6rem;
+  display: grid;
+}
+.link {
+  isolation: isolate;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-height: 7rem;
+  padding: 1.4rem 1.9rem;
+  display: flex;
+  position: relative;
+}
+.link:before {
+  content: "";
+  border: 1px solid var(--line);
+  background: var(--surface-1);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+/* The side bracket of the home page cards, on hover. */
+.link:after {
+  content: "";
+  border: solid var(--tone);
+  border-width: 0 1px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  inset: 25% -9px;
+  transform: skewX(var(--skew));
+  transition: opacity var(--transition-link);
+}
+.link:hover:before,
+.link:focus-visible:before {
+  border-color: oklch(from var(--tone) l c h / 80%);
+  background: var(--surface-2);
+}
+.link:hover:after,
+.link:focus-visible:after {
+  opacity: 1;
+}
+.link:focus-visible {
+  outline: none;
+}
+.dir {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--tone);
+  align-items: center;
+  gap: 0.7em;
+  font-size: 0.62rem;
+  display: flex;
+}
+.dir svg {
+  font-size: 1.3em;
+  transition: transform var(--transition-link);
+}
+.link:hover .dir svg {
+  transform: translateX(-3px);
+}
+.next:hover .dir svg {
+  transform: translateX(3px);
+}
+.label {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  color: var(--text-primary);
+  text-wrap: balance;
+  font-size: calc(0.3vw + 15px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+}
+.next {
+  text-align: right;
+  align-items: flex-end;
+}
+
+@media screen and (max-width: 700px) {
+  .pager {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .pager > span:empty {
+    display: none;
+  }
+}

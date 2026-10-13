@@ -1,18 +1,9 @@
-import Link from "next/link";
-
-import { SlashMark } from "@/components/brand";
 import { AgentNote } from "@/components/docs/agent-note";
 import { DocPager } from "@/components/docs/doc-pager";
-import { DocToc } from "@/components/docs/doc-toc";
+import { DocLink, DocNote, DocSection, DocText, Facts, Snippet, Steps } from "@/components/docs/docs-blocks";
 import { DocsShell } from "@/components/docs/docs-shell";
-import {
-  ArrowRightIcon,
-  InfoIcon,
-  LinuxIcon,
-  ShieldIcon,
-  WindowsIcon,
-} from "@/components/icons";
 import { JsonLd } from "@/components/json-ld";
+import { terminal } from "@/components/ui/icons";
 import { getDocsNeighbours, highlightCode, type TocEntry } from "@/lib/docs";
 import {
   APPEARS_INTRO,
@@ -64,22 +55,9 @@ const TOC: TocEntry[] = [
   { id: "next", text: "Next: run it live with Warden", depth: 2 },
 ];
 
-function Snippet({ filename, badge, html }: { filename: string; badge: string; html: string }) {
-  return (
-    <div className="code-window docs-code">
-      <div className="code-titlebar">
-        <span className="client-dots" aria-hidden="true">
-          <i />
-          <i />
-          <i />
-        </span>
-        <span className="code-filename">{filename}</span>
-        <span className="client-badge">{badge}</span>
-      </div>
-      <div className="dx-snippet" dangerouslySetInnerHTML={{ __html: html }} />
-    </div>
-  );
-}
+/** Four panes: the Windows mark in the stroke style of the icon set. */
+const WINDOWS_GLYPH =
+  '<path fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="1.5" d="M3 5.6 10.5 4.5v7H3zm9.5-1.4L21 3v8.5h-8.5zM3 13h7.5v6.5L3 18.4zm9.5 0H21v8l-8.5-1.2z"/>';
 
 export default async function HostAServerPage() {
   const [configHtml, envHtml, runHtml, neighbours] = await Promise.all([
@@ -92,175 +70,92 @@ export default async function HostAServerPage() {
   return (
     <>
       <DocsShell
+        tone="blue"
         breadcrumbs={[{ label: "Docs", href: "/docs" }, { label: "Host your own server" }]}
+        eyebrow="Hosting & administration"
         title="Host your own server."
         lede={HOSTING_LEDE}
-        toc={<DocToc entries={TOC} />}
+        meta={
+          <>
+            <span>Windows &amp; Linux</span>
+            <span>6 steps</span>
+            <a href="/docs/host-a-server.md">Markdown</a>
+          </>
+        }
+        toc={TOC}
       >
-        <section className="docs-section" id="overview">
-          <h2 className="docs-title">
-            <SlashMark /> Overview
-          </h2>
-          <p className="docs-p">{HOSTING_OVERVIEW}</p>
-        </section>
+        <DocSection id="overview" title="Overview" intro={HOSTING_OVERVIEW} />
 
-        <section className="docs-section" id="steps">
-          <h2 className="docs-title">
-            <SlashMark /> From download to open doors
-          </h2>
-          <ol className="steps steps-2">
-            {HOSTING_STEPS.map((step) => (
-              <li className="step" key={step.num}>
-                <span className="step-num">{step.num}</span>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-                <Link className="doc-inline-link" href={step.href}>
-                  {step.linkText}
-                  <ArrowRightIcon size={14} />
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </section>
+        <DocSection id="steps" title="From download to open doors">
+          <Steps
+            items={HOSTING_STEPS.map((step) => ({
+              num: step.num,
+              title: step.title,
+              body: step.body,
+              link: { href: step.href, label: step.linkText },
+            }))}
+          />
+        </DocSection>
 
-        <section className="docs-section" id="what-you-need">
-          <h2 className="docs-title">
-            <SlashMark /> What the host needs
-          </h2>
-          <p className="docs-p">{NEED_INTRO}</p>
-          {NEED_POINTS.map((point) => (
-            <p className="docs-p" key={point.label}>
-              <strong>{point.label}.</strong> {point.body}
-            </p>
-          ))}
-        </section>
+        <DocSection id="what-you-need" title="What the host needs" intro={NEED_INTRO}>
+          <Facts items={NEED_POINTS.map((point) => ({ label: point.label, body: point.body }))} />
+        </DocSection>
 
-        <section className="docs-section" id="get-the-build">
-          <h2 className="docs-title">
-            <SlashMark /> Get the build
-          </h2>
-          <p className="docs-p">{BUILD_INTRO}</p>
-          <ol className="steps steps-2">
-            {BUILD_ROWS.map((row) => {
-              const OsIcon = row.os.startsWith("Windows") ? WindowsIcon : LinuxIcon;
-              return (
-                <li className="step" key={row.os}>
-                  <span className="step-num" aria-hidden="true">
-                    <OsIcon size={20} />
-                  </span>
-                  <h3>{row.os}</h3>
-                  <p>
-                    Archive: {row.archive}
-                    <br />
-                    Run: <code>{row.run}</code>
-                  </p>
-                </li>
-              );
-            })}
-          </ol>
-          <p className="docs-p">
-            <Link className="doc-inline-link" href="/host">
-              Open the download page
-              <ArrowRightIcon size={14} />
-            </Link>
-          </p>
-          <p className="status-note" role="note">
-            <ShieldIcon />
-            <span>
-              <strong>Official builds only.</strong> {BUILD_NOTE}
-            </span>
-          </p>
-        </section>
+        <DocSection id="get-the-build" title="Get the build" intro={BUILD_INTRO}>
+          <Steps
+            items={BUILD_ROWS.map((row) => ({
+              glyph: row.os.startsWith("Windows") ? WINDOWS_GLYPH : terminal,
+              title: row.os,
+              body: (
+                <>
+                  Archive: {row.archive}
+                  <br />
+                  Run: <code>{row.run}</code>
+                </>
+              ),
+            }))}
+          />
+          <DocText>
+            <DocLink href="/host">Open the download page</DocLink>
+          </DocText>
+          <DocNote title="Official builds only.">{BUILD_NOTE}</DocNote>
+        </DocSection>
 
-        <section className="docs-section" id="first-run">
-          <h2 className="docs-title">
-            <SlashMark /> First-run setup
-          </h2>
-          <p className="docs-p">{FIRSTRUN_INTRO}</p>
-          <p className="docs-p">{FIRSTRUN_BODY}</p>
-          <p className="status-note" role="note">
-            <InfoIcon />
-            <span>{FIRSTRUN_NOTE}</span>
-          </p>
-        </section>
+        <DocSection id="first-run" title="First-run setup" intro={FIRSTRUN_INTRO}>
+          <DocText>{FIRSTRUN_BODY}</DocText>
+          <DocNote>{FIRSTRUN_NOTE}</DocNote>
+        </DocSection>
 
-        <section className="docs-section" id="configure">
-          <h2 className="docs-title">
-            <SlashMark /> Configure server.jsonc
-          </h2>
-          <p className="docs-p">{CONFIG_INTRO}</p>
-          <Snippet filename="server.jsonc" badge="SERVER CONFIG" html={configHtml} />
-          {CONFIG_FIELDS.map((field) => (
-            <p className="docs-p" key={field.label}>
-              <strong>
-                <code>{field.label}</code>.
-              </strong>{" "}
-              {field.body}
-            </p>
-          ))}
-        </section>
+        <DocSection id="configure" title="Configure server.jsonc" intro={CONFIG_INTRO}>
+          <Snippet filename="server.jsonc" badge="Server config" code={CONFIG_SAMPLE} html={configHtml} />
+          <Facts items={CONFIG_FIELDS.map((field) => ({ label: <code>{field.label}</code>, body: field.body }))} />
+        </DocSection>
 
-        <section className="docs-section" id="set-the-key">
-          <h2 className="docs-title">
-            <SlashMark /> Set the license key
-          </h2>
-          <p className="docs-p">{ENV_INTRO}</p>
-          <Snippet filename="shell" badge="ENVIRONMENT" html={envHtml} />
-          <p className="docs-p">
+        <DocSection id="set-the-key" title="Set the license key" intro={ENV_INTRO}>
+          <Snippet filename="shell" badge="Environment" code={ENV_SAMPLE} html={envHtml} />
+          <DocText>
             Need a key, or want the full detail on how the master authorises your server?{" "}
-            <Link className="doc-inline-link" href="/docs/server-licensing">
-              Read about server licensing
-              <ArrowRightIcon size={14} />
-            </Link>
-          </p>
-        </section>
+            <DocLink href="/docs/server-licensing">Read about server licensing</DocLink>
+          </DocText>
+        </DocSection>
 
-        <section className="docs-section" id="run">
-          <h2 className="docs-title">
-            <SlashMark /> Run it
-          </h2>
-          <p className="docs-p">{RUN_INTRO}</p>
-          <Snippet filename="shell" badge="LAUNCH" html={runHtml} />
-          <p className="docs-p">
-            <Link className="doc-inline-link" href={STARTUP_DOC.href}>
-              {STARTUP_DOC.label}
-              <ArrowRightIcon size={14} />
-            </Link>
-          </p>
-        </section>
+        <DocSection id="run" title="Run it" intro={RUN_INTRO}>
+          <Snippet filename="shell" badge="Launch" code={RUN_SAMPLE} html={runHtml} />
+          <DocText>
+            <DocLink href={STARTUP_DOC.href}>{STARTUP_DOC.label}</DocLink>
+          </DocText>
+        </DocSection>
 
-        <section className="docs-section" id="appears">
-          <h2 className="docs-title">
-            <SlashMark /> It appears automatically
-          </h2>
-          <p className="docs-p">{APPEARS_INTRO}</p>
-          <ol className="steps steps-2">
-            {APPEARS_STEPS.map((step, index) => (
-              <li className="step" key={step.title}>
-                <span className="step-num">{String(index + 1).padStart(2, "0")}</span>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-              </li>
-            ))}
-          </ol>
-          <p className="status-note" role="note">
-            <InfoIcon />
-            <span>{APPEARS_NOTE}</span>
-          </p>
-        </section>
+        <DocSection id="appears" title="It appears automatically" intro={APPEARS_INTRO}>
+          <Steps items={APPEARS_STEPS.map((step) => ({ title: step.title, body: step.body }))} columns={3} />
+          <DocNote>{APPEARS_NOTE}</DocNote>
+        </DocSection>
 
-        <section className="docs-section" id="next">
-          <h2 className="docs-title">
-            <SlashMark /> Next: run it live with Warden
-          </h2>
-          <p className="docs-p">{NEXT_INTRO}</p>
-          <p className="docs-p">
-            <Link className="doc-inline-link" href="/docs/warden">
-              Meet Warden, your server control room
-              <ArrowRightIcon size={14} />
-            </Link>
-          </p>
-        </section>
+        <DocSection id="next" title="Next: run it live with Warden" intro={NEXT_INTRO}>
+          <DocText>
+            <DocLink href="/docs/warden">Meet Warden, your server control room</DocLink>
+          </DocText>
+        </DocSection>
 
         <AgentNote markdownHref="/docs/host-a-server.md" />
         <DocPager {...neighbours} />

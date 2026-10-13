@@ -1,20 +1,17 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-import { CheckIcon, InfoIcon } from "@/components/icons";
-import { AuthLoading } from "@/components/account/auth-scene";
-import { AuthIcon } from "@/components/account/auth-icon";
+import { Button } from "@/components/ui/button";
+import { Notice } from "@/components/ui/feedback";
+import { alert02, arrowLeft01, arrowRight01, checkmarkBadge01, mail01, sent } from "@/components/ui/icons";
 import * as master from "@/lib/account/api";
 import { MasterApiError } from "@/lib/account/api";
+import { AuthCard, CardText } from "./auth-card";
+import { AuthLoading } from "./auth-scene";
 
-type Phase =
-  | { kind: "verifying" }
-  | { kind: "verified" }
-  | { kind: "bad-link" }
-  | { kind: "failed"; message: string };
+type Phase = { kind: "verifying" } | { kind: "verified" } | { kind: "bad-link" } | { kind: "failed"; message: string };
 
 type Resend = "idle" | "sending" | "sent" | "failed";
 
@@ -28,9 +25,7 @@ export function EmailVerifier() {
   const email = params.get("email") ?? "";
   const token = params.get("token") ?? "";
 
-  const [phase, setPhase] = useState<Phase>(
-    email && token ? { kind: "verifying" } : { kind: "bad-link" },
-  );
+  const [phase, setPhase] = useState<Phase>(email && token ? { kind: "verifying" } : { kind: "bad-link" });
   const [resend, setResend] = useState<Resend>("idle");
 
   // React 18+ mounts effects twice in development; the token is single-use,
@@ -46,10 +41,7 @@ export function EmailVerifier() {
       .catch((err: unknown) => {
         setPhase({
           kind: "failed",
-          message:
-            err instanceof MasterApiError && err.code !== "unknown"
-              ? err.message
-              : "This verification link is invalid or has expired.",
+          message: err instanceof MasterApiError && err.code !== "unknown" ? err.message : "This verification link is invalid or has expired.",
         });
       });
   }, [email, token]);
@@ -64,93 +56,74 @@ export function EmailVerifier() {
     }
   }
 
-  if (phase.kind === "verifying") {
-    return <AuthLoading>Verifying your e-mail…</AuthLoading>;
-  }
+  if (phase.kind === "verifying") return <AuthLoading>Verifying your e-mail</AuthLoading>;
 
   if (phase.kind === "verified") {
     return (
-      <div className="auth-panel ac-card">
-        <span className="auth-state-icon"><AuthIcon name="shield" size={24} /></span>
-        <div className="auth-panel-heading"><h2>Address confirmed.</h2></div>
-        <div className="ac-success" role="status">
-          <CheckIcon size={17} />
-          <span>
-            <strong>E-mail verified.</strong> Your address is confirmed. You can now sign in and
-            create server license keys.
-          </span>
-        </div>
-        <div className="ac-form-actions" style={{ marginTop: 16 }}>
-          <Link className="btn btn-primary" href="/account">
+      <AuthCard
+        glyph={checkmarkBadge01}
+        tone="blue"
+        eyebrow="E-mail verification"
+        title="Address confirmed"
+        actions={
+          <Button icon={arrowRight01} href="/account">
             Sign in
-          </Link>
-        </div>
-      </div>
+          </Button>
+        }
+      >
+        <Notice kind="success" title="E-mail verified.">
+          Your address is confirmed. You can now sign in and create server license keys.
+        </Notice>
+      </AuthCard>
     );
   }
 
   if (phase.kind === "bad-link") {
     return (
-      <div className="auth-panel ac-card">
-        <span className="auth-state-icon"><AuthIcon name="mail" size={24} /></span>
-        <div className="auth-panel-heading"><h2>Check your link.</h2></div>
-        <p className="ac-error" role="alert">
-          <InfoIcon />
-          <span>
-            This verification link is incomplete. Open the link from your e-mail again, or copy it
-            in full into the address bar.
-          </span>
-        </p>
-        <p className="ac-hint" style={{ marginTop: 12 }}>
-          You can also verify from your{" "}
-          <Link href="/account" style={{ color: "var(--accent)" }}>
-            account page
-          </Link>{" "}
-          after signing in.
-        </p>
-      </div>
+      <AuthCard
+        glyph={mail01}
+        tone="red"
+        eyebrow="E-mail verification"
+        title="Check your link"
+        footer={
+          <>
+            You can also verify from your <a href="/account">account page</a> after signing in.
+          </>
+        }
+      >
+        <Notice kind="danger">
+          This verification link is incomplete. Open the link from your e-mail again, or copy it in full into the address bar.
+        </Notice>
+      </AuthCard>
     );
   }
 
   return (
-    <div className="auth-panel ac-card">
-      <span className="auth-state-icon"><AuthIcon name="mail" size={24} /></span>
-      <div className="auth-panel-heading"><h2>Verification failed.</h2></div>
-      <p className="ac-error" role="alert">
-        <InfoIcon />
-        <span>{phase.message}</span>
-      </p>
-      {resend === "sent" ? (
-        <p className="ac-success" role="status" style={{ marginTop: 12 }}>
-          <CheckIcon size={15} />
-          <span>
-            A fresh verification e-mail is on its way to <strong>{email}</strong>. The newest link
-            replaces this one.
-          </span>
-        </p>
-      ) : (
-        <>
-          {resend === "failed" ? (
-            <p className="ac-notice" style={{ marginTop: 12 }}>
-              <InfoIcon />
-              <span>The e-mail could not be requested. Wait a minute and try again.</span>
-            </p>
-          ) : null}
-          <div className="ac-form-actions" style={{ marginTop: 16 }}>
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={onResend}
-              disabled={resend === "sending"}
-            >
+    <AuthCard
+      glyph={alert02}
+      tone="red"
+      eyebrow="E-mail verification"
+      title="Verification failed"
+      actions={
+        resend === "sent" ? null : (
+          <>
+            <Button key={resend === "sending" ? "Sending…" : "Resend verification e-mail"} icon={sent} busy={resend === "sending"} onClick={onResend}>
               {resend === "sending" ? "Sending…" : "Resend verification e-mail"}
-            </button>
-            <Link className="btn btn-ghost" href="/account">
+            </Button>
+            <Button lines="none" border color="neutral" size="sm" icon={arrowLeft01} iconPosition="left" href="/account">
               Back to sign-in
-            </Link>
-          </div>
-        </>
-      )}
-    </div>
+            </Button>
+          </>
+        )
+      }
+    >
+      <Notice kind="danger">{phase.message}</Notice>
+      {resend === "sent" ? (
+        <Notice kind="success" title="A fresh verification e-mail is on its way.">
+          It goes to <strong>{email}</strong>. The newest link replaces this one.
+        </Notice>
+      ) : null}
+      {resend === "failed" ? <CardText>The e-mail could not be requested. Wait a minute and try again.</CardText> : null}
+    </AuthCard>
   );
 }

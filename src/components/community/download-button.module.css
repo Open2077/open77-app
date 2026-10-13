@@ -1,0 +1,93 @@
+.action {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  min-width: 0;
+  display: flex;
+}
+.full {
+  align-items: stretch;
+}
+.full > a,
+.full > button {
+  width: 100%;
+}
+
+/* The prepared link: the button's slanted fill, as a real link to the file. */
+.ready {
+  --color: var(--blue);
+  color: var(--body);
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  white-space: nowrap;
+  isolation: isolate;
+  justify-content: center;
+  align-items: center;
+  gap: 0.7em;
+  padding: 1.25em 2em;
+  font-style: italic;
+  line-height: 1;
+  display: inline-flex;
+  position: relative;
+}
+.ready:before {
+  content: "";
+  background-color: var(--color);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  animation: ready 1.6s var(--cubic) infinite;
+}
+.ready svg {
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
+}
+.ready:focus-visible {
+  outline: none;
+}
+.ready:focus-visible:before {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 3px;
+}
+.compact {
+  padding: 1em 1.5em;
+  font-size: 0.8rem;
+}
+.yellow {
+  --color: var(--yellow);
+}
+.red {
+  --color: var(--red);
+}
+@keyframes ready {
+  50% {
+    background-color: oklch(from var(--color) calc(l + 0.08) c h);
+  }
+}
+
+.status {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tone);
+  font-size: 0.62rem;
+}
+/* Kept in the tree (a live region), folded away while it has nothing to say. */
+.status:empty {
+  margin-top: -0.6rem;
+}
+.error {
+  color: var(--red);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+/* Speed lines would run off a full-width button on a phone. */
+@media screen and (max-width: 700px) {
+  .full [data-lines] {
+    display: none;
+  }
+}

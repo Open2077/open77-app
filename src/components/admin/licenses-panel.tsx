@@ -2,10 +2,24 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+import {
+  AdminPanel,
+  AdminTable,
+  Count,
+  EmptyBlock,
+  LoadingBlock,
+  Mono,
+  Primary,
+  SearchBox,
+  StatusTag,
+  Sub,
+  SuccessStrip,
+  cell,
+} from "@/components/admin/admin-kit";
 import { ArmButton } from "@/components/admin/arm-button";
-import { formatDateTime } from "@/components/admin/format";
+import { formatDateTime, shortId } from "@/components/admin/format";
 import { ErrorStrip, useAdminData } from "@/components/admin/use-admin-data";
-import { CheckIcon, KeyIcon, SearchIcon } from "@/components/icons";
+import { key01 } from "@/components/ui/icons";
 import { MasterApiError } from "@/lib/account/api";
 import * as admin from "@/lib/account/admin-api";
 
@@ -48,84 +62,79 @@ export function LicensesPanel() {
   }
 
   return (
-    <section className="adm-panel">
-      <div className="adm-panel-head">
-        <h2 className="adm-panel-title">
-          <KeyIcon size={16} />
-          Licenses
-        </h2>
-        <div className="adm-search">
-          <SearchIcon size={13} />
-          <input
-            value={input}
-            onChange={(event) => setInput(event.target.value)}
-            placeholder="Search label or owner e-mail…"
-            aria-label="Search licenses"
-            spellCheck={false}
-          />
-        </div>
-      </div>
+    <AdminPanel
+      title="Licenses"
+      icon={key01}
+      brackets
+      meta={data ? <Count>{data.length} shown</Count> : undefined}
+      actions={<SearchBox value={input} onChange={setInput} placeholder="Search label or owner e-mail…" label="Search licenses" />}
+      footnote={
+        <>
+          Revocation cascades: every server credential enrolled on the license loses bearer
+          authentication immediately and drops off the platform on its next request.
+        </>
+      }
+    >
       <ErrorStrip message={error} />
-      {lastRevoke ? (
-        <p className="ac-success" style={{ marginBottom: 12 }}>
-          <CheckIcon size={14} />
-          <span>
-            Revoked “{lastRevoke.label}”: {lastRevoke.serversRevoked}{" "}
-            {lastRevoke.serversRevoked === 1 ? "server" : "servers"} lost platform access.
-          </span>
-        </p>
-      ) : null}
-      {loading && !data ? <p className="ac-loading">Loading licenses…</p> : null}
-      {data && data.length === 0 ? (
-        <p className="adm-empty">No license matches “{query}”.</p>
-      ) : null}
+      <SuccessStrip
+        message={
+          lastRevoke
+            ? `Revoked “${lastRevoke.label}”: ${lastRevoke.serversRevoked} ${lastRevoke.serversRevoked === 1 ? "server" : "servers"} lost platform access.`
+            : null
+        }
+      />
+      {loading && !data ? <LoadingBlock label="Loading licenses" /> : null}
+      {data && data.length === 0 ? <EmptyBlock icon={key01}>No license matches “{query}”.</EmptyBlock> : null}
       {data && data.length > 0 ? (
-        <div className="adm-tablewrap">
-          <table className="adm-table">
-            <thead>
-              <tr>
-                <th>Label</th>
-                <th>Key</th>
-                <th>Owner</th>
-                <th>Created</th>
-                <th>Status</th>
-                <th className="adm-actions-cell">Actions</th>
+        <AdminTable caption="Server licenses" minWidth="56rem">
+          <thead>
+            <tr>
+              <th>Label</th>
+              <th>Key</th>
+              <th>Owner</th>
+              <th>Created</th>
+              <th>Status</th>
+              <th className={cell.actions}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((license) => (
+              <tr key={license.licenseId} className={license.revokedAtUtc ? cell.muted : undefined}>
+                <td className={cell.wrap}>
+                  <Primary>{license.label}</Primary>
+                  <Sub title={license.licenseId}>{shortId(license.licenseId)}</Sub>
+                </td>
+                <td className={cell.nowrap}>
+                  <Mono tone="dim">op77_live_····{license.keyHint}</Mono>
+                </td>
+                <td>
+                  <Mono tone="dim">{license.ownerEmail}</Mono>
+                </td>
+                <td className={cell.nowrap}>
+                  <Mono tone="dim">{formatDateTime(license.createdAtUtc)}</Mono>
+                </td>
+                <td>
+                  {license.revokedAtUtc ? (
+                    <StatusTag status="neutral" title={`Revoked ${formatDateTime(license.revokedAtUtc)}`}>revoked</StatusTag>
+                  ) : (
+                    <StatusTag status="ok">active</StatusTag>
+                  )}
+                </td>
+                <td className={cell.actions}>
+                  {license.revokedAtUtc ? null : (
+                    <ArmButton
+                      label="Revoke"
+                      confirmLabel="Confirm: servers lose access now?"
+                      disabled={busy}
+                      onConfirm={() => revoke(license.licenseId, license.label)}
+                    />
+                  )}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {data.map((license) => (
-                <tr key={license.licenseId} className={license.revokedAtUtc ? "is-muted" : ""}>
-                  <td>{license.label}</td>
-                  <td className="adm-mono adm-dim">op77_live_····{license.keyHint}</td>
-                  <td className="adm-mono adm-dim">{license.ownerEmail}</td>
-                  <td className="adm-mono adm-faint">{formatDateTime(license.createdAtUtc)}</td>
-                  <td>
-                    {license.revokedAtUtc ? (
-                      <span className="adm-chip adm-chip-dim">revoked</span>
-                    ) : (
-                      <span className="adm-chip adm-chip-ok">active</span>
-                    )}
-                  </td>
-                  <td className="adm-actions-cell">
-                    {license.revokedAtUtc ? null : (
-                      <ArmButton
-                        label="Revoke"
-                        confirmLabel="Confirm: servers lose access now?"
-                        disabled={busy}
-                        onConfirm={() => revoke(license.licenseId, license.label)}
-                      />
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </AdminTable>
       ) : null}
-      <p className="adm-footnote">
-        Revocation cascades: every server credential enrolled on the license loses bearer
-        authentication immediately and drops off the platform on its next request.
-      </p>
-    </section>
+    </AdminPanel>
   );
 }

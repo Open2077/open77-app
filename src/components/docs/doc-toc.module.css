@@ -1,0 +1,109 @@
+.list {
+  border-left: 1px solid var(--line);
+}
+.list a {
+  color: var(--text-dim);
+  padding: 0.26rem 0 0.26rem 1rem;
+  font-size: var(--doc-small, 0.84rem);
+  line-height: 1.35;
+  transition: color var(--transition-link);
+  display: block;
+  position: relative;
+}
+.list a:hover,
+.list a:focus-visible {
+  color: var(--text-primary);
+}
+.list a:hover:before {
+  content: "";
+  background: var(--tone);
+  width: 2px;
+  position: absolute;
+  top: 0.35rem;
+  bottom: 0.35rem;
+  left: -1.5px;
+  transform: skewX(var(--skew));
+}
+.sub a {
+  color: var(--text-faint);
+  padding-left: 1.9rem;
+  font-size: calc(var(--doc-small, 0.84rem) * 0.94);
+}
+
+.aside {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+  max-height: calc(100dvh - var(--header-height) - 2rem);
+  padding: 2rem 0 2rem;
+  overflow-y: auto;
+  position: sticky;
+  top: var(--header-height);
+}
+.title,
+.top {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.6rem;
+}
+.title {
+  color: var(--tone);
+  margin-bottom: 1rem;
+}
+.top {
+  color: var(--text-faint);
+  margin-top: 1.6rem;
+  transition: color var(--transition-link);
+  display: inline-block;
+}
+.top:before {
+  content: "↑ ";
+}
+.top:hover {
+  color: var(--tone);
+}
+
+.inline {
+  border: 1px solid var(--line);
+  background: var(--surface-1);
+}
+.inline summary {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-primary);
+  cursor: pointer;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  font-size: 0.62rem;
+  list-style: none;
+  display: flex;
+}
+.inline summary::-webkit-details-marker {
+  display: none;
+}
+.inline summary:after {
+  content: "+";
+  font-family: var(--font-mono);
+  color: var(--tone);
+  font-size: 1rem;
+  line-height: 1;
+}
+.inline[open] summary:after {
+  content: "−";
+}
+.inline summary span:first-child:before {
+  content: "// ";
+  color: var(--tone);
+}
+.count {
+  color: var(--text-faint);
+  margin-left: auto;
+}
+.inline .list {
+  margin: 0 1.2rem 1.2rem;
+}

@@ -1,0 +1,83 @@
+:where(.eyebrow) {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--tone);
+  align-items: baseline;
+  gap: 1em;
+  font-size: 0.72rem;
+  font-weight: 300;
+  line-height: 1.4;
+  display: flex;
+}
+:where(.muted) {
+  color: var(--text-faint);
+}
+.index {
+  color: var(--text-faint);
+}
+
+:where(.display) {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  color: var(--text-primary);
+  text-wrap: balance;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.92;
+}
+/* The lines of a title run on together and only break where the width runs
+   out: "Dev blog" is one line, not a two-storey block over the content. */
+.display .line {
+  display: inline-block;
+}
+.display .accent {
+  color: var(--tone);
+}
+/* The glitch layers take the line colour of their parent. */
+.display [data-glitch] {
+  --color-1: var(--red);
+  --color-2: var(--blue);
+}
+/* Page titles name the page; they never fill the first screen. The status page
+   title (lg) is the reference size, and the largest title only goes a touch
+   above it. */
+.display.xl {
+  font-size: calc(3.2vw + 24px);
+  line-height: 0.9;
+}
+.display.lg {
+  font-size: calc(3vw + 22px);
+}
+.display.md {
+  font-size: calc(1.48vw + 19px);
+}
+.display.sm {
+  letter-spacing: -0.07em;
+  font-size: calc(0.4vw + 18px);
+  line-height: 0.98;
+}
+.display.xs {
+  letter-spacing: -0.06em;
+  font-size: calc(0.2vw + 14px);
+  line-height: 1;
+}
+
+:where(.lead) {
+  color: var(--text-dim);
+  text-wrap: balance;
+  max-width: 38em;
+  font-size: calc(0.3vw + 15px);
+  line-height: 1.5;
+}
+.lead strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+/* Long display lines wrap on narrow screens instead of being clipped; the glitch
+   layers wrap with them since they share the line's box. */
+.display .line[data-glitch] {
+  white-space: normal;
+}

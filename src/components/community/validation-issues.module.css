@@ -1,0 +1,24 @@
+.list {
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+  display: flex;
+}
+.list li {
+  padding-left: 1rem;
+  position: relative;
+}
+.list li:before {
+  content: "";
+  background: var(--red);
+  width: 0.35rem;
+  height: 0.35rem;
+  position: absolute;
+  top: 0.55em;
+  left: 0;
+  transform: skewX(var(--skew));
+}
+.list strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}

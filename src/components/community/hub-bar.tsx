@@ -2,8 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SlashMark } from "@/components/brand";
+
+import { Button } from "@/components/ui/button";
+import { add01 } from "@/components/ui/icons";
 import { useSession } from "@/lib/account/session";
+
+import styles from "./hub-bar.module.css";
 
 type Tab = { href: string; label: string; match: (path: string) => boolean };
 
@@ -27,10 +31,33 @@ export function HubBar() {
   const pathname = usePathname();
   const { session, ready } = useSession();
   const tabs = ready && session ? [...publicTabs, ...accountTabs] : publicTabs;
-  return <div className="hub-bar"><div className="hub-bar-inner">
-    <Link className="hub-bar-brand" href="/workshop"><SlashMark />WORKSHOP</Link>
-    <nav className="hub-bar-tabs" aria-label="Workshop">{tabs.map(tab =>
-      <Link key={tab.href} href={tab.href} {...(tab.match(pathname) ? { "aria-current": "page" as const } : {})}>{tab.label}</Link>)}</nav>
-    <Link className="btn btn-primary btn-small hub-bar-cta" href="/account/creations/new">Share a creation</Link>
-  </div></div>;
+  return (
+    <div className={styles.bar} data-hub-bar>
+      <div className={styles.inner}>
+        <Link className={styles.brand} href="/workshop">
+          <span className={styles.mark} aria-hidden="true">
+            {"//"}
+          </span>
+          Workshop
+        </Link>
+        <nav className={styles.tabs} aria-label="Workshop">
+          <ul className={styles.list}>
+            {tabs.map(tab => (
+              <li key={tab.href}>
+                <Link className={styles.tab} href={tab.href} {...(tab.match(pathname) ? { "aria-current": "page" as const } : {})}>
+                  {tab.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div className={styles.cta}>
+          <Button className={styles.ctaWide} size="sm" color="blue" lines="none" icon={add01} iconPosition="left" href="/account/creations/new">
+            Share a creation
+          </Button>
+          <Button className={styles.ctaIcon} size="sm" color="blue" lines="none" icon={add01} iconOnly href="/account/creations/new" aria-label="Share a creation" />
+        </div>
+      </div>
+    </div>
+  );
 }

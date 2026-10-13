@@ -1,0 +1,37 @@
+:where(.marquee) {
+  white-space: nowrap;
+  -webkit-user-select: none;
+  user-select: none;
+  line-height: 1.2;
+  display: flex;
+  overflow: hidden;
+}
+.marquee.right {
+  justify-content: flex-end;
+  align-items: stretch;
+}
+.marquee.left {
+  justify-content: flex-start;
+  align-items: stretch;
+}
+.marquee.up {
+  align-items: flex-start;
+}
+.marquee.up .content {
+  flex-direction: column;
+}
+.marquee.down {
+  align-items: flex-end;
+}
+.marquee.down .content {
+  flex-direction: column-reverse;
+}
+.content {
+  flex: none;
+  align-items: center;
+  width: max-content;
+  display: flex;
+}
+.content:after {
+  content: " ";
+}

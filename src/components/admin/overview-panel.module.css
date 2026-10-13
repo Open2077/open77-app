@@ -1,0 +1,139 @@
+/* Five platform numbers on one hairline strip. */
+.metrics {
+  background: var(--line);
+  border: 1px solid var(--line);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  display: grid;
+  position: relative;
+}
+.metrics:before {
+  content: "";
+  border: 1px solid var(--tone);
+  pointer-events: none;
+  border-width: 1px 0 0 1px;
+  width: 44px;
+  height: 44px;
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  transform: skewX(var(--skew));
+}
+.metric {
+  background: var(--body);
+  padding: 1.35rem 1.4rem 1.25rem;
+}
+@media screen and (max-width: 1250px) {
+  .metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .metric:last-child {
+    grid-column: span 2;
+  }
+}
+@media screen and (max-width: 700px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .metric:last-child {
+    grid-column: span 2;
+  }
+}
+
+/* Frequent operations. */
+.quick {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2rem 2rem;
+  padding-inline: 0.8rem;
+  display: grid;
+}
+.quickCard {
+  align-items: center;
+  gap: 1.1rem;
+  display: flex;
+}
+.quickIcon {
+  color: var(--tone);
+  flex: none;
+  font-size: 1.75rem;
+}
+.quickCopy {
+  flex-direction: column;
+  flex: 1;
+  gap: 0.4rem;
+  min-width: 0;
+  display: flex;
+}
+.quickCopy strong {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  font-size: 0.98rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.05;
+}
+.quickCopy span {
+  color: var(--text-dim);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+.quickArrow {
+  color: var(--text-dim);
+  flex: none;
+  transition:
+    color var(--transition-link),
+    transform var(--transition-link);
+}
+.quickCard:hover .quickArrow,
+.quickCard:focus-visible .quickArrow {
+  color: var(--tone);
+  transform: translateX(3px);
+}
+@media screen and (max-width: 1083px) {
+  .quick {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Worlds and reports side by side. */
+.split {
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 1.6rem;
+  display: grid;
+}
+@media screen and (max-width: 1250px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.players {
+  min-width: 8.5rem;
+}
+.players > span:first-child {
+  margin-bottom: 0.5rem;
+  display: block;
+}
+.incident {
+  font-family: var(--font-mono);
+  color: var(--tone);
+  text-underline-offset: 0.25em;
+  text-decoration: underline;
+  text-decoration-color: oklch(from var(--tone) l c h / 45%);
+  font-size: 0.84rem;
+  font-weight: 300;
+}
+.incident:hover {
+  color: var(--text-primary);
+}
+.kind {
+  margin-top: 0.45rem;
+  display: block;
+}
+.action {
+  color: var(--text-primary);
+}
+.subject {
+  overflow-wrap: anywhere;
+}

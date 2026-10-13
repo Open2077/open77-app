@@ -1,18 +1,39 @@
 "use client";
 
-import Link from "next/link";
 import { type FormEvent, useCallback, useState } from "react";
 
-import { formatDateTime, hostOf, safeHttpUrl, shortId } from "@/components/admin/format";
+import {
+  AdminPanel,
+  AdminTable,
+  Count,
+  EmptyBlock,
+  Filters,
+  FormActions,
+  FormGrid,
+  FormPanel,
+  LoadingBlock,
+  Primary,
+  Stack,
+  StatusTag,
+  Sub,
+  SuccessStrip,
+  Toolbar,
+  cell,
+} from "@/components/admin/admin-kit";
+import { formatDateTime, shortId } from "@/components/admin/format";
 import { HashCell } from "@/components/admin/hash-cell";
 import {
   ContentClassChip,
   RedistributionTag,
   REDISTRIBUTION_NOTE,
   REDISTRIBUTION_OPTIONS,
+  SourceCell,
 } from "@/components/admin/mod-badges";
 import { ErrorStrip, useAdminData } from "@/components/admin/use-admin-data";
-import { CheckIcon, InfoIcon, ShieldIcon } from "@/components/icons";
+import { Button } from "@/components/admin/admin-button";
+import { Chip } from "@/components/ui/chip";
+import { Field, Input, Select } from "@/components/ui/field";
+import { hourglass, puzzle, refresh, tick02 } from "@/components/ui/icons";
 import { MasterApiError } from "@/lib/account/api";
 import * as mods from "@/lib/account/mods-api";
 import type {
@@ -20,6 +41,8 @@ import type {
   ModReviewRequest,
   ModReviewStatus,
 } from "@/lib/account/mods-api";
+
+import styles from "./mod-requests-panel.module.css";
 
 type QueueFilter = ModReviewStatus | "all";
 
@@ -30,10 +53,10 @@ const FILTERS: { value: QueueFilter; label: string }[] = [
   { value: "all", label: "Everything" },
 ];
 
-const STATUS_CHIP: Record<ModReviewStatus, string> = {
-  pending: "adm-chip-ok",
-  approved: "adm-chip-dim",
-  declined: "adm-chip-warn",
+const STATUS_TAG: Record<ModReviewStatus, "warn" | "ok" | "danger"> = {
+  pending: "warn",
+  approved: "ok",
+  declined: "danger",
 };
 
 function formatBytes(bytes: number | null): string {
@@ -153,55 +176,54 @@ export function ModRequestsPanel() {
   const waiting = data?.filter((row) => row.status === "pending").length ?? 0;
 
   return (
-    <section className="adm-panel">
-      <div className="adm-panel-head">
-        <h2 className="adm-panel-title">
-          <ShieldIcon size={17} />
-          Mod review queue
-        </h2>
-        <div className="adm-panel-head" style={{ margin: 0 }}>
-          <Link className="ac-iconbtn" href="/admin/mods">
+    <AdminPanel
+      title="Mod review queue"
+      icon={hourglass}
+      brackets
+      actions={
+        <>
+          <Button href="/admin/mods" size="sm" color="neutral" border lines="none" icon={puzzle} iconPosition="left">
             Whitelist
-          </Link>
-          <button className="ac-iconbtn" type="button" onClick={reload} disabled={loading}>
+          </Button>
+          <Button size="sm" color="neutral" border lines="none" icon={refresh} iconPosition="left" onClick={reload} disabled={loading}>
             Refresh
-          </button>
-        </div>
-      </div>
-
+          </Button>
+        </>
+      }
+      footnote={
+        <>
+          Owners host their own bytes; a request asks only for our verdict on them. Approving writes a
+          whitelist entry and lifts the capability cap for that one hash. Check the source page and
+          the licence before you do, because approval is what lets executable content run.
+        </>
+      }
+    >
       <ErrorStrip message={error} />
-      {notice ? (
-        <p className="ac-success" role="status" style={{ marginBottom: 12 }}>
-          <CheckIcon size={14} />
-          <span>{notice}</span>
-        </p>
-      ) : null}
+      <SuccessStrip message={notice} />
 
-      <div className="adm-toolbar">
-        <div className="adm-filters" role="group" aria-label="Filter by decision">
+      <Toolbar>
+        <Filters label="Filter by decision">
           {FILTERS.map((option) => (
-            <button
+            <Chip
               key={option.value}
-              className={`ac-iconbtn${filter === option.value ? " is-copied" : ""}`}
-              type="button"
-              aria-pressed={filter === option.value}
+              pressed={filter === option.value}
               onClick={() => {
                 setFilter(option.value);
                 close();
               }}
             >
               {option.label}
-            </button>
+            </Chip>
           ))}
-        </div>
+        </Filters>
         {data ? (
-          <span className="adm-count">
+          <Count>
             {filter === "pending"
               ? `${waiting} waiting`
               : `${data.length} ${data.length === 1 ? "request" : "requests"}`}
-          </span>
+          </Count>
         ) : null}
-      </div>
+      </Toolbar>
 
       {decision ? (
         <DecisionForm
@@ -218,55 +240,45 @@ export function ModRequestsPanel() {
         />
       ) : null}
 
-      {loading && !data ? <p className="ac-loading">Loading the queue…</p> : null}
+      {loading && !data ? <LoadingBlock label="Loading the queue" /> : null}
       {data && data.length === 0 ? (
-        <p className="adm-empty">
+        <EmptyBlock icon={hourglass}>
           {filter === "pending"
             ? "Nothing is waiting on us. Every submitted hash has a decision."
             : filter === "all"
               ? "No server owner has asked for a review yet."
               : `No ${filter} request.`}
-        </p>
+        </EmptyBlock>
       ) : null}
 
       {data && data.length > 0 ? (
-        <div className="adm-tablewrap">
-          <table className="adm-table">
-            <thead>
-              <tr>
-                <th scope="col">SHA-256</th>
-                <th scope="col">Mod</th>
-                <th scope="col">Source</th>
-                <th scope="col">Contents</th>
-                <th scope="col">Asked by</th>
-                <th scope="col">Submitted</th>
-                <th scope="col">Decision</th>
-                <th scope="col" className="adm-actions-cell">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row) => (
-                <RequestRow
-                  key={row.requestId}
-                  row={row}
-                  busy={busy}
-                  active={decision?.request.requestId === row.requestId}
-                  onDecide={(kind) => open(row, kind)}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AdminTable caption="Mod review requests" minWidth="64rem">
+          <thead>
+            <tr>
+              <th scope="col">SHA-256</th>
+              <th scope="col">Mod / source</th>
+              <th scope="col">Contents</th>
+              <th scope="col">Asked by / submitted</th>
+              <th scope="col">Decision</th>
+              <th scope="col" className={cell.actions}>
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((row) => (
+              <RequestRow
+                key={row.requestId}
+                row={row}
+                busy={busy}
+                active={decision?.request.requestId === row.requestId}
+                onDecide={(kind) => open(row, kind)}
+              />
+            ))}
+          </tbody>
+        </AdminTable>
       ) : null}
-
-      <p className="adm-footnote">
-        Owners host their own bytes; a request asks only for our verdict on them. Approving writes a
-        whitelist entry and lifts the capability cap for that one hash. Check the source page and
-        the licence before you do, because approval is what lets executable content run.
-      </p>
-    </section>
+    </AdminPanel>
   );
 }
 
@@ -281,81 +293,56 @@ function RequestRow({
   active: boolean;
   onDecide: (kind: "approve" | "decline") => void;
 }) {
-  const source = safeHttpUrl(row.sourceUrl);
   const asker = row.requestedByEmail ?? (row.requestedByAccountId ? shortId(row.requestedByAccountId) : null);
 
   return (
-    <tr className={row.status === "pending" ? (active ? "is-active" : "") : "is-muted"}>
-      <td>
+    <tr className={row.status === "pending" ? (active ? cell.active : undefined) : cell.muted}>
+      <td className={cell.nowrap}>
         <HashCell sha256={row.sha256} />
       </td>
-      <td>
-        <div>{row.displayName}</div>
-        <div className="adm-mono adm-faint">
+      <td className={styles.mod}>
+        <Primary>{row.displayName}</Primary>
+        <Sub>
           {row.author ?? "author unknown"}
           {row.sizeBytes !== null || row.fileCount !== null
             ? ` · ${formatBytes(row.sizeBytes)}${row.fileCount !== null ? ` · ${row.fileCount} files` : ""}`
             : ""}
-        </div>
-      </td>
-      <td className="adm-source">
-        {source ? (
-          <a href={source} target="_blank" rel="noreferrer noopener" title={source}>
-            {hostOf(source)}
-          </a>
-        ) : row.sourceUrl ? (
-          <span className="adm-mono adm-faint" title="Not an http(s) link, so it is not rendered as one">
-            {row.sourceUrl}
-          </span>
-        ) : (
-          <span className="adm-faint">—</span>
-        )}
+        </Sub>
+        <span className={styles.source}>
+          <SourceCell url={row.sourceUrl} />
+        </span>
       </td>
       <td>
         <ContentClassChip value={row.contentClass} />
       </td>
-      <td>
-        <div className="adm-stack">
-          <span>{row.serverName ?? "delisted server"}</span>
-          <span className="adm-stack-note">{shortId(row.serverId)}</span>
-          {asker ? <span className="adm-stack-note">{asker}</span> : null}
-        </div>
+      <td className={styles.asker}>
+        <Primary>{row.serverName ?? "delisted server"}</Primary>
+        <Sub title={row.serverId}>{shortId(row.serverId)}</Sub>
+        {asker ? <Sub>{asker}</Sub> : null}
+        <Sub>{formatDateTime(row.requestedAtUtc)}</Sub>
       </td>
-      <td className="adm-mono adm-faint">{formatDateTime(row.requestedAtUtc)}</td>
-      <td>
-        <div className="adm-stack">
-          <span className={`adm-chip ${STATUS_CHIP[row.status]}`}>{row.status}</span>
+      <td className={styles.decision}>
+        <Stack>
+          <StatusTag status={STATUS_TAG[row.status]}>{row.status}</StatusTag>
           {row.decidedAtUtc ? (
-            <span className="adm-stack-note">
+            <Sub>
               {formatDateTime(row.decidedAtUtc)}
               {row.decidedByEmail ? ` · ${row.decidedByEmail}` : ""}
-            </span>
+            </Sub>
           ) : null}
-          {row.declineReason ? (
-            <span className="adm-stack-note">{row.declineReason}</span>
-          ) : null}
-        </div>
+          {row.declineReason ? <Sub plain>{row.declineReason}</Sub> : null}
+        </Stack>
       </td>
-      <td className="adm-actions-cell">
+      <td className={cell.actions}>
         {row.status === "pending" ? (
-          <div className="adm-action-row">
-            <button
-              className="ac-iconbtn"
-              type="button"
-              disabled={busy}
-              onClick={() => onDecide("approve")}
-            >
+          <span className={styles.actions}>
+            <Button size="sm" color="neutral" border lines="none" icon={tick02} iconPosition="left" disabled={busy} onClick={() => onDecide("approve")}>
               Approve
-            </button>
-            <button
-              className="ac-iconbtn is-danger"
-              type="button"
-              disabled={busy}
-              onClick={() => onDecide("decline")}
-            >
+            </Button>
+            <Button size="sm" color="red" border lines="none" disabled={busy} onClick={() => onDecide("decline")}>
               Decline
-            </button>
-          </div>
+            </Button>
+          </span>
         ) : null}
       </td>
     </tr>
@@ -389,92 +376,76 @@ function DecisionForm({
 
   if (kind === "decline") {
     return (
-      <form className="adm-form" onSubmit={onSubmit}>
-        <p className="ac-notice adm-form-span" style={{ margin: 0 }}>
-          <InfoIcon />
-          <span>
-            Declining <strong>{request.displayName}</strong> leaves the hash unknown. The server may
-            keep hosting it; players still get inert content only, and executable content stays
-            refused.
-          </span>
+      <FormPanel title={`Decline ${request.displayName}`} onSubmit={onSubmit} danger>
+        <p className={styles.explain}>
+          Declining <strong>{request.displayName}</strong> leaves the hash unknown. The server may
+          keep hosting it; players still get inert content only, and executable content stays
+          refused.
         </p>
-        <label className="ac-label adm-form-span">
-          Reason the owner will see
-          <input
-            className="ac-input"
+        <Field label="Reason the owner will see" hint="Written for them: say what would make this reviewable.">
+          <Input
             value={reason}
             onChange={(event) => onReason(event.target.value)}
-            placeholder="Written for them: say what would make this reviewable"
             maxLength={512}
             required
           />
-        </label>
-        <div className="ac-form-actions adm-form-span" style={{ margin: 0 }}>
-          <button
-            className="btn btn-small btn-primary"
-            type="submit"
-            disabled={busy || reason.trim().length === 0}
-          >
+        </Field>
+        <FormActions>
+          <Button type="submit" size="sm" color="red" lines="none" busy={busy} disabled={reason.trim().length === 0}>
             {busy ? "Working…" : "Decline the request"}
-          </button>
-          <button className="btn btn-small btn-ghost" type="button" onClick={onCancel}>
+          </Button>
+          <Button size="sm" color="neutral" border lines="none" onClick={onCancel}>
             Cancel
-          </button>
-        </div>
-      </form>
+          </Button>
+        </FormActions>
+      </FormPanel>
     );
   }
 
   return (
-    <form className="adm-form" onSubmit={onSubmit}>
-      <p className="ac-notice adm-form-span" style={{ margin: 0 }}>
-        <InfoIcon />
-        <span>
-          Approving <strong>{request.displayName}</strong> records{" "}
-          <strong>safety: verified</strong> for that one hash. You are saying you read these exact
-          bytes.{" "}
-          {request.contentClass === "executable"
-            ? "The importer found executable content in this package, so approval is what lets it run at all."
-            : "The importer found inert content only."}{" "}
-          The licence is a separate answer, below.
-        </span>
+    <FormPanel title={`Approve ${request.displayName}`} onSubmit={onSubmit}>
+      <p className={styles.explain}>
+        Approving <strong>{request.displayName}</strong> records <strong>safety: verified</strong> for that one hash.
+        You are saying you read these exact bytes.{" "}
+        {request.contentClass === "executable"
+          ? "The importer found executable content in this package, so approval is what lets it run at all."
+          : "The importer found inert content only."}{" "}
+        The licence is a separate answer, below.
       </p>
-      <label className="ac-label">
-        Redistribution: the licence
-        <select
-          className="adm-select"
-          value={redistribution}
-          onChange={(event) => onRedistribution(event.target.value as ModRedistribution)}
-          aria-describedby="decision-redistribution-hint"
+      <FormGrid>
+        <Field
+          label="Redistribution: the licence"
+          hint={
+            <span className={styles.redistHint}>
+              <RedistributionTag value={redistribution} /> {REDISTRIBUTION_NOTE[redistribution]}
+            </span>
+          }
         >
-          {REDISTRIBUTION_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <span className="ac-hint" id="decision-redistribution-hint">
-          <RedistributionTag value={redistribution} /> {REDISTRIBUTION_NOTE[redistribution]}
-        </span>
-      </label>
-      <label className="ac-label">
-        Reviewer note
-        <input
-          className="ac-input"
-          value={note}
-          onChange={(event) => onNote(event.target.value)}
-          placeholder="What you checked, and where the licence answer came from"
-          maxLength={512}
-        />
-      </label>
-      <div className="ac-form-actions adm-form-span" style={{ margin: 0 }}>
-        <button className="btn btn-small btn-primary" type="submit" disabled={busy}>
+          <Select value={redistribution} onChange={(event) => onRedistribution(event.target.value as ModRedistribution)}>
+            {REDISTRIBUTION_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+        </Field>
+        <Field label="Reviewer note" optional>
+          <Input
+            value={note}
+            onChange={(event) => onNote(event.target.value)}
+            placeholder="What you checked, and where the licence answer came from"
+            maxLength={512}
+          />
+        </Field>
+      </FormGrid>
+      <FormActions>
+        <Button type="submit" size="sm" color="red" lines="none" icon={tick02} iconPosition="left" busy={busy}>
           {busy ? "Working…" : "Approve and write the attestation"}
-        </button>
-        <button className="btn btn-small btn-ghost" type="button" onClick={onCancel}>
+        </Button>
+        <Button size="sm" color="neutral" border lines="none" onClick={onCancel}>
           Cancel
-        </button>
-      </div>
-    </form>
+        </Button>
+      </FormActions>
+    </FormPanel>
   );
 }

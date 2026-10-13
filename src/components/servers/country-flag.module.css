@@ -1,0 +1,33 @@
+.flag {
+  flex: none;
+  display: block;
+}
+.flag:not(.none) {
+  outline: 1px solid oklch(from var(--text-primary) l c h / 12%);
+  outline-offset: -1px;
+}
+.none {
+  color: var(--text-faint);
+}
+.country {
+  align-items: center;
+  gap: 0.55em;
+  display: inline-flex;
+}
+.locale {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+  white-space: nowrap;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.68rem;
+  display: inline-flex;
+}
+.code {
+  color: var(--text-primary);
+}
+.sep {
+  color: var(--text-faint);
+}

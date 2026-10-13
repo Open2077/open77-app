@@ -2,6 +2,15 @@
 import Link from "next/link";
 import { Activity, useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+
+import { Button } from "@/components/ui/button";
+import { Tag } from "@/components/ui/chip";
+import { cx } from "@/components/ui/cx";
+import { Avatar } from "@/components/ui/data";
+import { Loader, Notice } from "@/components/ui/feedback";
+import { Checkbox, Field, Textarea } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
+import { arrowDown01, arrowUp01, bubbleChat, checkmarkCircle02, delete02, edit02, notification03, pin, refresh as refreshGlyph } from "@/components/ui/icons";
 import { useSession } from "@/lib/account/session";
 import * as api from "@/lib/community/client-api";
 import type { CommunityComment, CommunityPage, CommunityProject } from "@/lib/community/types";
@@ -9,6 +18,8 @@ import { ReportForm } from "./report-form";
 import { CommentModeration } from "./comment-moderation";
 import { useCommunityDraft } from "./use-community-draft";
 import { communityDrafts } from "@/lib/community/drafts";
+
+import styles from "./discussion.module.css";
 
 export function Discussion({ project, page, focusThread = false }: { project: CommunityProject; page: CommunityPage<CommunityComment>; focusThread?: boolean }) {
   const router = useRouter(); const refresh = () => router.refresh();
@@ -23,10 +34,16 @@ export function Discussion({ project, page, focusThread = false }: { project: Co
     return () => controller.abort();
   }, [session?.token, session?.emailVerified, project.projectId, page]);
   const canManage = !!session?.emailVerified && permission?.token === session.token && permission.projectId === project.projectId && permission.allowed;
-  return <section aria-label="Community discussion">{project.state === "published" ? <CommentComposer projectId={project.projectId} parentId={null} updated={refresh} /> : <p className="hub-notice">This archived creation is closed to new comments.</p>}
-    {page.items.length === 0 && <p className="hub-notice">Start the conversation. Ask a question or share how you’re using this creation.</p>}
-    {page.items.map(comment => <CommentEntry key={comment.commentId} comment={comment} project={project} updated={refresh} initiallyExpanded={focusThread} canManage={canManage} />)}
-  </section>;
+  return (
+    <section className={styles.discussion} aria-label="Community discussion" data-discussion>
+      {project.state === "published" ? <CommentComposer projectId={project.projectId} parentId={null} updated={refresh} /> : <Notice kind="info">This archived creation is closed to new comments.</Notice>}
+      {page.items.length === 0 ? <p className={styles.empty}>Start the conversation. Ask a question or share how you’re using this creation.</p> : (
+        <div className={styles.threads}>
+          {page.items.map(comment => <CommentEntry key={comment.commentId} comment={comment} project={project} updated={refresh} initiallyExpanded={focusThread} canManage={canManage} />)}
+        </div>
+      )}
+    </section>
+  );
 }
 
 function CommentComposer({ projectId, parentId, existing, updated }: { projectId: string; parentId: string | null; existing?: CommunityComment; updated: () => void }) {
@@ -54,13 +71,27 @@ function CommentComposer({ projectId, parentId, existing, updated }: { projectId
     } catch (error) { setError(error instanceof Error ? error.message : "Your comment could not be posted. Your text is still here."); }
     finally { setBusy(false); }
   }
-  return <form className="hub-form hub-comment-form" onSubmit={submit}><label>{existing ? "Edit your comment" : parentId ? "Your reply" : "Join the discussion"}
-    <textarea required maxLength={5000} rows={4} value={body} readOnly={busy || !canWrite} onChange={event => change(event.target.value)} /></label>
-    {!existing && <label className="hub-review-confirm"><input type="checkbox" checked={notify} onChange={event => change(body, event.target.checked)} disabled={busy || !session?.emailVerified} />Notify me about replies to this thread</label>}
-    {!session?.emailVerified && <p><Link href="/account" target="_blank">Sign in with a verified account</Link> to write a comment. Saved drafts are available only to the account that wrote them.</p>}
-    {memory.draft && <p role="status">Draft kept in this tab for your account across Workshop pages. Reloading or closing the tab loses it.{existing && ` This edit uses revision ${revision}.`} <button type="button" className="btn btn-ghost" disabled={busy} onClick={() => { if (window.confirm("Discard this unsent draft?")) memory.discard(); }}>Discard draft</button></p>}
-    {error && <p className="hub-notice" role="alert">{error}</p>}<div><button className="btn btn-primary" disabled={busy || !canWrite || !body.trim()}>{busy ? "Saving…" : existing ? "Save edit" : parentId ? "Post reply" : "Post comment"}</button></div>
-  </form>;
+  return (
+    <form className={cx(styles.composer, (existing || parentId) && styles.nested)} onSubmit={submit} data-comment-form>
+      <Field label={existing ? "Edit your comment" : parentId ? "Your reply" : "Join the discussion"}>
+        <Textarea required maxLength={5000} rows={4} value={body} readOnly={busy || !canWrite} placeholder={canWrite ? "Ask a question, share a setup, report what works…" : undefined} onChange={event => change(event.target.value)} />
+      </Field>
+      {!existing ? <Checkbox checked={notify} onChange={event => change(body, event.target.checked)} disabled={busy || !session?.emailVerified}>Notify me about replies to this thread</Checkbox> : null}
+      {!session?.emailVerified ? <p className={styles.hint}><Link href="/account" target="_blank">Sign in with a verified account</Link> to write a comment. Saved drafts are available only to the account that wrote them.</p> : null}
+      {memory.draft ? (
+        <p role="status" className={styles.draft}>
+          <span>Draft kept in this tab for your account across Workshop pages. Reloading or closing the tab loses it.{existing && ` This edit uses revision ${revision}.`}</span>
+          <button type="button" className={styles.act} disabled={busy} onClick={() => { if (window.confirm("Discard this unsent draft?")) memory.discard(); }}><Icon glyph={delete02} />Discard draft</button>
+        </p>
+      ) : null}
+      {error ? <Notice kind="danger">{error}</Notice> : null}
+      <div className={styles.submit}>
+        <Button color="blue" lines="none" size={parentId || existing ? "sm" : "md"} type="submit" busy={busy} disabled={!canWrite || !body.trim()}>
+          {existing ? "Save edit" : parentId ? "Post reply" : "Post comment"}
+        </Button>
+      </div>
+    </form>
+  );
 }
 
 function CommentEntry({ comment, project, updated, initiallyExpanded = false, canManage = false }: { comment: CommunityComment; project: CommunityProject; updated: () => void; initiallyExpanded?: boolean; canManage?: boolean }) {
@@ -68,20 +99,55 @@ function CommentEntry({ comment, project, updated, initiallyExpanded = false, ca
   const [expanded, setExpanded] = useState(initiallyExpanded); const [busy, setBusy] = useState(false); const [error, setError] = useState("");
   async function act(action: () => Promise<void>) { setBusy(true); setError(""); try { await action(); updated(); } catch (error) { setError(error instanceof Error ? error.message : "Action failed. Refresh before trying again."); } finally { setBusy(false); } }
   const own = session?.accountId === comment.authorAccountId;
-  return <article id={`comment-${comment.commentId}`} className="hub-comment"><header><strong>{comment.authorHandle ? <Link href={`/workshop/creators/${comment.authorHandle}`}>@{comment.authorHandle}</Link> : comment.state === "deleted" ? "Deleted commenter" : "Community member"}</strong>
-    <p className="hub-release-meta"><time dateTime={comment.createdAtUtc}>{new Date(comment.createdAtUtc).toLocaleString()}</time>{comment.updatedAtUtc !== comment.createdAtUtc ? " · edited" : ""}{comment.pinned ? " · pinned by creator" : ""}{comment.resolved ? " · marked resolved" : ""}</p></header>
-    {editing ? <CommentComposer projectId={project.projectId} parentId={comment.parentId} existing={editing} updated={() => { setEditing(null); updated(); }} /> : <p className="hub-activity-reason">{comment.body ?? (comment.state === "deleted" ? "This comment was deleted. Existing replies remain below." : "This comment is hidden.")}</p>}
-    {error && <p className="hub-notice" role="alert">{error}</p>}
-    <div className="hub-actions">{own && comment.state === "visible" && project.state === "published" && <button className="btn btn-ghost" disabled={busy} onClick={() => { if (!editing || window.confirm("Discard your unsaved comment edit?")) { if (editing && session) communityDrafts.remove(session.accountId, `comment-edit:${comment.commentId}`); setEditing(editing ? null : comment); } }}>{editing ? "Cancel edit" : "Edit / resume draft"}</button>}
-      {own && comment.state !== "deleted" && <button className="btn btn-ghost" disabled={busy} onClick={() => setDeleting(value => !value)}>Delete</button>}
-      {!comment.parentId && <button className="btn btn-ghost" aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? "Collapse replies" : "View replies / reply"}</button>}
-      {!comment.parentId && comment.state === "visible" && session?.emailVerified && canManage && <><button className="btn btn-ghost" disabled={busy} onClick={() => void act(() => api.markComment(session.token, comment.commentId, comment.revision, !comment.pinned, comment.resolved))}>{comment.pinned ? "Unpin" : "Pin"}</button>
-        <button className="btn btn-ghost" disabled={busy} onClick={() => void act(() => api.markComment(session.token, comment.commentId, comment.revision, comment.pinned, !comment.resolved))}>{comment.resolved ? "Reopen" : "Mark resolved"}</button></>}</div>
-    {deleting && session && <div className="hub-notice"><p>Delete your comment? Its text will be removed and existing replies will remain.</p><button className="btn btn-primary" disabled={busy} onClick={() => void act(() => api.deleteComment(session.token, comment.commentId, comment.revision))}>Confirm deletion</button><button className="btn btn-ghost" onClick={() => setDeleting(false)}>Keep comment</button></div>}
-    {comment.state === "visible" && <ReportForm targetType="comment" targetId={comment.commentId} />}
-    {session?.role === "admin" && <CommentModeration token={session.token} id={comment.commentId} updated={updated} />}
-    {!comment.parentId && <Activity mode={expanded ? "visible" : "hidden"}><Replies root={comment} project={project} /></Activity>}
-  </article>;
+  const name = comment.authorHandle ? `@${comment.authorHandle}` : comment.state === "deleted" ? "Deleted commenter" : "Community member";
+  return (
+    <article id={`comment-${comment.commentId}`} className={styles.comment} data-comment data-state={comment.state} data-pinned={comment.pinned || undefined}>
+      <header className={styles.head}>
+        <Avatar name={comment.authorHandle ?? "?"} size={34} />
+        <div className={styles.who}>
+          <strong className={styles.author}>{comment.authorHandle ? <Link href={`/workshop/creators/${comment.authorHandle}`}>{name}</Link> : name}</strong>
+          <p className={styles.meta}>
+            <time dateTime={comment.createdAtUtc}>{new Date(comment.createdAtUtc).toLocaleString()}</time>
+            {comment.updatedAtUtc !== comment.createdAtUtc ? <span>· edited</span> : null}
+            {comment.pinned ? <Tag variant="solid">Pinned by creator</Tag> : null}
+            {comment.resolved ? <Tag>Marked resolved</Tag> : null}
+          </p>
+        </div>
+      </header>
+      {editing ? <CommentComposer projectId={project.projectId} parentId={comment.parentId} existing={editing} updated={() => { setEditing(null); updated(); }} /> : (
+        <p className={styles.body} data-muted={comment.body ? undefined : true}>{comment.body ?? (comment.state === "deleted" ? "This comment was deleted. Existing replies remain below." : "This comment is hidden.")}</p>
+      )}
+      {error ? <Notice kind="danger">{error}</Notice> : null}
+      <div className={styles.actions}>
+        {own && comment.state === "visible" && project.state === "published" ? (
+          <button type="button" className={styles.act} disabled={busy} onClick={() => { if (!editing || window.confirm("Discard your unsaved comment edit?")) { if (editing && session) communityDrafts.remove(session.accountId, `comment-edit:${comment.commentId}`); setEditing(editing ? null : comment); } }}>
+            <Icon glyph={edit02} />{editing ? "Cancel edit" : "Edit / resume draft"}
+          </button>
+        ) : null}
+        {own && comment.state !== "deleted" ? <button type="button" className={styles.act} disabled={busy} aria-expanded={deleting} onClick={() => setDeleting(value => !value)}><Icon glyph={delete02} />Delete</button> : null}
+        {!comment.parentId ? (
+          <button type="button" className={styles.act} aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>
+            <Icon glyph={expanded ? arrowUp01 : bubbleChat} />{expanded ? "Collapse replies" : "View replies / reply"}
+          </button>
+        ) : null}
+        {!comment.parentId && comment.state === "visible" && session?.emailVerified && canManage ? <>
+          <button type="button" className={styles.act} disabled={busy} aria-pressed={comment.pinned} onClick={() => void act(() => api.markComment(session.token, comment.commentId, comment.revision, !comment.pinned, comment.resolved))}><Icon glyph={pin} />{comment.pinned ? "Unpin" : "Pin"}</button>
+          <button type="button" className={styles.act} disabled={busy} aria-pressed={comment.resolved} onClick={() => void act(() => api.markComment(session.token, comment.commentId, comment.revision, comment.pinned, !comment.resolved))}><Icon glyph={checkmarkCircle02} />{comment.resolved ? "Reopen" : "Mark resolved"}</button>
+        </> : null}
+      </div>
+      {deleting && session ? (
+        <Notice kind="warning" title="Delete your comment?" action={
+          <span className={styles.confirm}>
+            <Button color="red" lines="none" size="sm" busy={busy} onClick={() => void act(() => api.deleteComment(session.token, comment.commentId, comment.revision))}>Confirm deletion</Button>
+            <Button color="neutral" border lines="none" size="sm" onClick={() => setDeleting(false)}>Keep comment</Button>
+          </span>
+        }>Its text will be removed and existing replies will remain.</Notice>
+      ) : null}
+      {comment.state === "visible" ? <ReportForm targetType="comment" targetId={comment.commentId} /> : null}
+      {session?.role === "admin" ? <CommentModeration token={session.token} id={comment.commentId} updated={updated} /> : null}
+      {!comment.parentId ? <Activity mode={expanded ? "visible" : "hidden"}><Replies root={comment} project={project} /></Activity> : null}
+    </article>
+  );
 }
 
 function Replies({ root, project }: { root: CommunityComment; project: CommunityProject }) {
@@ -96,10 +162,24 @@ function Replies({ root, project }: { root: CommunityComment; project: Community
   }, [project.projectId, root.commentId, cursor, refresh, session?.token, session?.emailVerified, session?.accountId]);
   const reload = () => setRefresh(value => value + 1);
   async function toggleSubscription() { if (!session || subscribed === null) return; setBusy(true); try { await api.setThreadSubscription(session.token, root.commentId, !subscribed); setSubscription({ accountId: session.accountId, value: !subscribed }); } catch (error) { setError(error instanceof Error ? error.message : "Subscription failed."); } finally { setBusy(false); } }
-  return <section className="hub-replies" aria-label="Thread replies">{session?.emailVerified && subscribed !== null && <button className="btn btn-ghost" disabled={busy || (!subscribed && root.state !== "visible")} aria-pressed={subscribed} onClick={() => void toggleSubscription()}>{subscribed ? "Stop reply notifications" : "Follow replies"}</button>}
-    {error && <p role="alert">{error}</p>}{!page && !error && <p role="status">Loading replies…</p>}
-    {page?.items.map(comment => <CommentEntry key={comment.commentId} comment={comment} project={project} updated={reload} />)}
-    <nav className="hub-actions" aria-label="Reply pages"><button className="btn btn-ghost" onClick={reload}>Refresh replies</button>{cursor && <button className="btn btn-ghost" onClick={() => { setPage(null); setCursor(undefined); }}>Newest replies</button>}{page?.nextCursor && <button className="btn btn-ghost" onClick={() => { setPage(null); setCursor(page.nextCursor ?? undefined); }}>Older replies</button>}</nav>
-    {root.state === "visible" && project.state === "published" && <CommentComposer projectId={project.projectId} parentId={root.commentId} updated={() => { setCursor(undefined); reload(); }} />}
-  </section>;
+  return (
+    <section className={styles.replies} aria-label="Thread replies">
+      {session?.emailVerified && subscribed !== null ? (
+        <div>
+          <button type="button" className={styles.act} disabled={busy || (!subscribed && root.state !== "visible")} aria-pressed={subscribed} onClick={() => void toggleSubscription()}>
+            <Icon glyph={notification03} />{subscribed ? "Stop reply notifications" : "Follow replies"}
+          </button>
+        </div>
+      ) : null}
+      {error ? <p role="alert" className={styles.error}>{error}</p> : null}
+      {!page && !error ? <Loader label="Replies" /> : null}
+      {page?.items.map(comment => <CommentEntry key={comment.commentId} comment={comment} project={project} updated={reload} />)}
+      <nav className={styles.replyNav} aria-label="Reply pages">
+        <button type="button" className={styles.act} onClick={reload}><Icon glyph={refreshGlyph} />Refresh replies</button>
+        {cursor ? <button type="button" className={styles.act} onClick={() => { setPage(null); setCursor(undefined); }}><Icon glyph={arrowUp01} />Newest replies</button> : null}
+        {page?.nextCursor ? <button type="button" className={styles.act} onClick={() => { setPage(null); setCursor(page.nextCursor ?? undefined); }}><Icon glyph={arrowDown01} />Older replies</button> : null}
+      </nav>
+      {root.state === "visible" && project.state === "published" ? <CommentComposer projectId={project.projectId} parentId={root.commentId} updated={() => { setCursor(undefined); reload(); }} /> : null}
+    </section>
+  );
 }

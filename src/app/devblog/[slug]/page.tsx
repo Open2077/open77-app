@@ -1,20 +1,25 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ArrowLeftIcon, ArrowRightIcon, DiscordIcon } from "@/components/icons";
+import { BlogCover } from "@/components/devblog/blog-cover";
+import { rss } from "@/components/devblog/glyphs";
+import { PostToc } from "@/components/devblog/post-toc";
 import { PostTools } from "@/components/devblog/post-tools";
 import { JsonLd } from "@/components/json-ld";
-import { SiteFooter } from "@/components/site-footer";
-import {
-  blogHref,
-  blogMarkdownHref,
-  formatBlogDate,
-  getBlogPost,
-  getBlogPosts,
-} from "@/lib/devblog";
+import { Button } from "@/components/ui/button";
+import { Chip } from "@/components/ui/chip";
+import { Icon } from "@/components/ui/icon";
+import { arrowLeft02, arrowRight02, arrowUpRight01, discord, sourceCode } from "@/components/ui/icons";
+import { Page } from "@/components/ui/page";
+import { Panel } from "@/components/ui/panel";
+import { Prose } from "@/components/ui/prose";
+import { Display, Eyebrow, Lead } from "@/components/ui/typography";
+import { blogHref, blogMarkdownHref, formatBlogDate, getBlogPost, getBlogPosts } from "@/lib/devblog";
+import { postTopics } from "@/lib/devblog-presentation";
 import { blogPostingNode, breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
-import { postTopics } from "@/lib/devblog-presentation";
+
+import styles from "@/components/devblog/post.module.css";
 
 /** Only committed posts exist; anything else is a static 404. */
 export const dynamicParams = false;
@@ -53,88 +58,150 @@ export default async function DevblogPostPage({ params }: { params: Promise<{ sl
   const index = posts.findIndex((entry) => entry.slug === slug);
   const newer = index > 0 ? posts[index - 1] : null;
   const older = index >= 0 && index < posts.length - 1 ? posts[index + 1] : null;
+  const issue = index >= 0 ? posts.length - index : undefined;
+  const topics = postTopics(post);
 
   return (
     <>
-      <main id="main" className="blog-surface blog-article-surface">
-        <article className="blog-post">
-          <div className="blog-article-hero">
-            <header className="blog-post-head">
-              <Link href="/devblog" className="blog-back"><ArrowLeftIcon />Back to devblog</Link>
-              <p className="blog-kicker"><span aria-hidden="true">{"//"}</span> UNDER THE HOOD</p>
-              <h1>{post.title}</h1>
-              <p className="blog-post-description">{post.description}</p>
-              <div className="blog-meta blog-post-meta">
-                <time dateTime={post.date}>
-                  {formatBlogDate(post.date)}
-                </time>
-                <span>{post.readingMinutes} min read</span>
-                <span>OPEN//77 team</span>
-                <span className="blog-topics">{postTopics(post).map(topic => <Link href={`/devblog?topic=${topic.id}`} key={topic.id}>{topic.label}</Link>)}</span>
-              </div>
-            </header>
-          </div>
-          <div className="blog-article-layout">
-            <div className="blog-article-body">
-              {post.headings.length > 0 && <details className="blog-mobile-toc"><summary>In this article</summary><nav aria-label="In this article (mobile)"><ol>{post.headings.map(heading => <li key={heading.id}><a href={`#${heading.id}`}>{heading.title}</a></li>)}</ol></nav></details>}
-              <div className="dx-prose blog-prose" dangerouslySetInnerHTML={{ __html: post.html }} />
-
-            <aside className="blog-cta">
-              <div>
-                <p className="blog-kicker">FOLLOW THE BUILD</p>
-                <h2>A post like this lands every working day.</h2>
-                <p>The short versions hit Discord first. It is also where you share Alpha feedback and reproducible issues with the team.</p>
-              </div>
-              <div className="blog-cta-actions">
-                {site.links.discord ? (
-                  <a
-                    className="blog-button blog-button-discord"
-                    href={site.links.discord}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                  >
-                    <DiscordIcon size={16} />
-                    Join our Discord
-                  </a>
-                ) : null}
-                <a className="blog-button" href="/devblog/rss.xml">
-                  RSS feed
-                </a>
-              </div>
-            </aside>
-
-            <nav className="blog-pager" aria-label="More posts">
-              {older ? (
-                <Link className="blog-pager-link" href={blogHref(older.slug)} rel="prev">
-                  <span className="blog-pager-label"><ArrowLeftIcon /> Older post</span>
-                  {older.title}
+      <Page tone="red">
+        <article className={styles.article} data-devblog="article">
+          <header className={styles.head}>
+            <div className={styles.headCopy}>
+              <p className={styles.crumbs}>
+                <Link href="/devblog" className={styles.back} data-devblog="back">
+                  <Icon glyph={arrowLeft02} />
+                  Devblog
                 </Link>
-              ) : (
-                <span />
-              )}
-              {newer ? (
-                <Link
-                  className="blog-pager-link blog-pager-next"
-                  href={blogHref(newer.slug)}
-                  rel="next"
-                >
-                  <span className="blog-pager-label">Newer post <ArrowRightIcon /></span>
-                  {newer.title}
-                </Link>
-              ) : (
-                <span />
-              )}
-            </nav>
+                <span className={styles.separator} aria-hidden="true">
+                  {"//"}
+                </span>
+                <span>{issue !== undefined ? `No.${String(issue).padStart(3, "0")}` : "Post"}</span>
+              </p>
+              {/* An article title names the post; the post itself starts in the first screen. */}
+              <Display as="h1" size={post.title.length > 18 ? "md" : "lg"} className={styles.title}>
+                {post.title}
+              </Display>
+              <Lead className={styles.lead}>{post.description}</Lead>
+              <div className={styles.facts}>
+                <div className={styles.meta}>
+                  <time dateTime={post.date}>{formatBlogDate(post.date)}</time>
+                  <span>{post.readingMinutes} min read</span>
+                  <span>OPEN//77 team</span>
+                </div>
+                <ul className={styles.topics} aria-label="Topics">
+                  {topics.map((topic) => (
+                    <li key={topic.id}>
+                      <Chip size="sm" href={`/devblog?topic=${topic.id}`}>
+                        {topic.label}
+                      </Chip>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <aside className="blog-article-tools" aria-label="Article tools">
-              {post.headings.length > 0 && <nav className="blog-side-panel blog-toc" aria-label="In this article"><h2 className="blog-kicker"><span aria-hidden="true">{"//"}</span> IN THIS ARTICLE</h2><ol>{post.headings.map(heading => <li key={heading.id}><a href={`#${heading.id}`}>{heading.title}</a></li>)}</ol></nav>}
-              <div className="blog-side-panel blog-share"><p className="blog-kicker">SHARE</p><PostTools key={slug} /><a className="blog-text-link" href={blogMarkdownHref(slug)}>Read as Markdown <ArrowRightIcon /></a><Link className="blog-text-link" href="/docs">Explore the documentation <ArrowRightIcon /></Link></div>
+            <BlogCover post={post} issue={issue} variant="article" className={styles.cover} />
+          </header>
+
+          <div className={styles.layout}>
+            <div className={styles.body}>
+              {post.headings.length > 0 ? (
+                <details className={styles.mobileToc} data-devblog="mobile-toc">
+                  <summary>
+                    <span>In this article</span>
+                    <span className={styles.toggle} aria-hidden="true" />
+                  </summary>
+                  <nav aria-label="In this article (mobile)">
+                    <ol>
+                      {post.headings.map((heading) => (
+                        <li key={heading.id}>
+                          <a href={`#${heading.id}`}>{heading.title}</a>
+                        </li>
+                      ))}
+                    </ol>
+                  </nav>
+                </details>
+              ) : null}
+
+              <div data-devblog="prose">
+                <Prose html={post.html} className={styles.prose} />
+              </div>
+
+              <p className={styles.signoff} aria-hidden="true">
+                {"// END.OF.TRANSMISSION"}
+              </p>
+
+              <Panel as="aside" brackets padding="lg" className={styles.cta} aria-label="Follow the build">
+                <div className={styles.ctaCopy}>
+                  <Eyebrow>{"// Follow the build"}</Eyebrow>
+                  <Display size="sm" as="h2">
+                    A post like this lands every working day.
+                  </Display>
+                  <p>The short versions hit Discord first. It is also where you share Alpha feedback and reproducible issues with the team.</p>
+                </div>
+                <div className={styles.ctaActions}>
+                  {site.links.discord ? (
+                    <Button color="red" lines="left" icon={discord} iconPosition="left" href={site.links.discord}>
+                      Join our Discord
+                    </Button>
+                  ) : null}
+                  <Button color="red" border lines="none" icon={rss} iconPosition="left" href="/devblog/rss.xml">
+                    RSS feed
+                  </Button>
+                </div>
+              </Panel>
+
+              <nav className={styles.pager} aria-label="More posts">
+                {older ? (
+                  <Link className={styles.pagerLink} href={blogHref(older.slug)} rel="prev">
+                    <span className={styles.pagerLabel}>
+                      <Icon glyph={arrowLeft02} /> Older post
+                    </span>
+                    <span className={styles.pagerTitle}>{older.title}</span>
+                    <span className={styles.pagerDate}>{formatBlogDate(older.date)}</span>
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                {newer ? (
+                  <Link className={styles.pagerLink} data-next href={blogHref(newer.slug)} rel="next">
+                    <span className={styles.pagerLabel}>
+                      Newer post <Icon glyph={arrowRight02} />
+                    </span>
+                    <span className={styles.pagerTitle}>{newer.title}</span>
+                    <span className={styles.pagerDate}>{formatBlogDate(newer.date)}</span>
+                  </Link>
+                ) : (
+                  <span />
+                )}
+              </nav>
+            </div>
+
+            <aside className={styles.tools} aria-label="Article tools">
+              <div className={styles.toolsInner}>
+                {post.headings.length > 0 ? <PostToc headings={post.headings} /> : null}
+                <div className={styles.share}>
+                  <h2 className={styles.toolsLabel}>
+                    <span aria-hidden="true">{"// "}</span>Share &amp; formats
+                  </h2>
+                  <PostTools key={slug} />
+                  <a className={styles.toolLink} href={blogMarkdownHref(slug)}>
+                    <Icon glyph={sourceCode} />
+                    Read as Markdown
+                  </a>
+                  <a className={styles.toolLink} href="/devblog/rss.xml">
+                    <Icon glyph={rss} />
+                    Subscribe via RSS
+                  </a>
+                  <Link className={styles.toolLink} href="/docs">
+                    <Icon glyph={arrowUpRight01} />
+                    Explore the documentation
+                  </Link>
+                </div>
+              </div>
             </aside>
           </div>
         </article>
-      </main>
-
-      <SiteFooter tone="dark" />
+      </Page>
 
       <JsonLd
         data={jsonLdGraph(

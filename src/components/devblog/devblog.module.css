@@ -1,0 +1,64 @@
+/* The index header names the page and gets out of the way: the topic filters
+   and the latest post start in the first screen. */
+.hero {
+  padding-bottom: 2.6vh;
+}
+
+/* Right of the title: two small facts over the two ways to follow the feed. */
+.side {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1.2rem;
+  display: flex;
+}
+.actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.8rem 1rem;
+  display: flex;
+}
+@media screen and (max-width: 1084px) {
+  .side {
+    align-items: flex-start;
+  }
+  .actions {
+    justify-content: flex-start;
+  }
+}
+
+/* A readout rather than headline numbers. */
+.facts {
+  align-items: flex-end;
+  display: flex;
+}
+.fact {
+  flex-direction: column-reverse;
+  gap: 0.5rem;
+  display: flex;
+}
+.fact + .fact {
+  border-left: 1px solid var(--line);
+  margin-left: 1.6rem;
+  padding-left: 1.6rem;
+}
+.fact dt {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  white-space: nowrap;
+  font-size: 0.6rem;
+}
+.fact dd {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  color: var(--tone);
+  white-space: nowrap;
+  font-size: calc(0.4vw + 16px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.9;
+}

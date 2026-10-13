@@ -1,0 +1,220 @@
+/* Is / is not -------------------------------------------------------------- */
+
+.distinction {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+  margin-top: 1.8rem;
+  display: grid;
+}
+.distinction ul {
+  flex-direction: column;
+  gap: 0.85rem;
+  display: flex;
+}
+.distinction li {
+  align-items: flex-start;
+  gap: 0.75rem;
+  line-height: 1.45;
+  display: flex;
+}
+.distinction li svg {
+  flex: none;
+  margin-top: 0.12em;
+  font-size: 1.15rem;
+}
+.isNot,
+.is {
+  padding: 1.5rem 1.6rem 1.7rem;
+  position: relative;
+}
+.isNot {
+  color: var(--text-dim);
+  border: 1px dashed var(--line);
+}
+.isNot li svg {
+  color: var(--text-faint);
+}
+.is {
+  background: oklch(from var(--tone) l c h / 6%);
+  border: 1px solid oklch(from var(--tone) l c h / 45%);
+}
+.is li svg {
+  color: var(--tone);
+}
+.is:before,
+.is:after {
+  content: "";
+  border: 1px solid var(--tone);
+  pointer-events: none;
+  width: 2.4rem;
+  height: 2.4rem;
+  position: absolute;
+  transform: skewX(var(--skew));
+}
+.is:before {
+  border-width: 1px 0 0 1px;
+  top: -5px;
+  left: -5px;
+}
+.is:after {
+  border-width: 0 1px 1px 0;
+  bottom: -5px;
+  right: -5px;
+}
+.distinctionLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  margin-bottom: 1.2rem;
+  font-size: 0.64rem;
+}
+.is .distinctionLabel {
+  color: var(--tone);
+}
+
+/* Diagram ------------------------------------------------------------------ */
+
+.diagram {
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 100% 2.5rem,
+    var(--surface-1);
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.6rem;
+  padding: 2rem 1.5rem 1.4rem;
+  display: flex;
+  position: relative;
+}
+.diagram svg {
+  width: min(100%, 26rem);
+}
+.diagram figcaption {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--tone);
+  align-self: flex-start;
+  font-size: 0.6rem;
+}
+
+.outro {
+  margin-top: 1.6rem;
+}
+
+/* Roadmap ------------------------------------------------------------------ */
+
+.roadmap {
+  border-left: 1px solid var(--line);
+  flex-direction: column;
+  gap: 2.2rem;
+  margin: 2rem 0 0 0.6rem;
+  padding: 0.4rem 0 0.4rem 2.2rem;
+  display: flex;
+}
+.stage {
+  position: relative;
+}
+.marker {
+  border: 1px solid var(--line-strong);
+  background: var(--body);
+  width: 0.85rem;
+  height: 0.85rem;
+  position: absolute;
+  top: 0.15rem;
+  left: calc(-2.2rem - 0.45rem);
+  transform: skewX(var(--skew));
+}
+.now .marker {
+  background: var(--tone);
+  border-color: var(--tone);
+}
+.stageLabel {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--text-faint);
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.7rem;
+  font-size: 0.64rem;
+  display: flex;
+}
+.now .stageLabel {
+  color: var(--tone);
+}
+.stage h3 {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  color: var(--text-primary);
+  margin-bottom: 0.6rem;
+  font-size: 1.12em;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+}
+.stageBody {
+  color: var(--text-dim);
+  max-width: 35em;
+  line-height: 1.6;
+}
+
+/* FAQ ---------------------------------------------------------------------- */
+
+.faq {
+  border-top: 1px solid var(--line);
+  margin-top: 1.6rem;
+}
+.faq details {
+  border-bottom: 1px solid var(--line);
+}
+.faq summary {
+  color: var(--text-primary);
+  cursor: pointer;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem 0.2rem;
+  font-size: 1.02em;
+  font-weight: 500;
+  line-height: 1.4;
+  list-style: none;
+  transition: color var(--transition-link);
+  display: flex;
+}
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+.faq summary:after {
+  content: "+";
+  font-family: var(--font-mono);
+  color: var(--tone);
+  flex: none;
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1;
+}
+.faq details[open] summary:after {
+  content: "−";
+}
+.faq summary:hover {
+  color: var(--tone);
+}
+.faq details p {
+  color: var(--text-dim);
+  max-width: 35em;
+  padding: 0 0.2rem 1.4rem;
+  line-height: 1.7;
+}
+
+@media screen and (max-width: 700px) {
+  .distinction {
+    grid-template-columns: 1fr;
+  }
+}

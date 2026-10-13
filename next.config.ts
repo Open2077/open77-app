@@ -30,11 +30,16 @@ const nextConfig: NextConfig = {
   // nothing here.
   poweredByHeader: false,
 
+
   images: {
     // AVIF first, WebP as the fallback: the hero and section art are large
     // photographic JPEGs, which is exactly where AVIF's advantage shows up, and
     // Largest Contentful Paint on those images is a ranking input.
     formats: ["image/avif", "image/webp"],
+    // 75 is the Next 16 default. The home page character and scene art asks for
+    // 100: the WebGL glitch samples the rendered image, and compression
+    // artefacts show up as noise once the shader splits the channels.
+    qualities: [75, 100],
   },
 
   /**

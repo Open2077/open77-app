@@ -156,9 +156,9 @@ try {
   await visit('/download');
   await session.evaluate("document.querySelector('a[href=\"#requirements\"]').click();");
   await delay(900);
-  check('requirements anchor clears the sticky navigation',await session.evaluate("const r=document.getElementById('requirements').getBoundingClientRect();const bar=document.querySelector('.liquid-bar').getBoundingClientRect();return location.hash==='#requirements' && r.top>=bar.bottom && r.top<innerHeight;"));
+  check('requirements anchor clears the sticky navigation',await session.evaluate("const r=document.getElementById('requirements').getBoundingClientRect();const bar=document.querySelector('body > header').getBoundingClientRect();return location.hash==='#requirements' && r.top>=bar.bottom && r.top<innerHeight;"));
   const restoredY=await session.evaluate("return scrollY;");
-  await session.evaluate("document.querySelector('.liquid-nav a[href=\"/create\"]').click();");
+  await session.evaluate("document.querySelector('header nav[aria-label=Main] a[href=\"/create\"]').click();");
   await ready('/create');
   check('cross-page link from an anchor resets scroll',await session.evaluate("return scrollY===0 && !location.hash;"));
   await session.evaluate("history.back();");await ready('/download');await delay(700);
@@ -172,11 +172,11 @@ try {
   // The copy button only exists once the panel has hydrated and clipboard support is known.
   for(let i=0;i<40&&!(await session.evaluate("return !!document.querySelector('#get button[aria-label]');"));i++)await delay(250);
   await session.evaluate("document.querySelector('#get summary').click();");
-  check('file details expand with full SHA-256',await session.evaluate("return document.querySelector('#get details').open && /^[a-f0-9]{64}$/i.test(document.querySelector('#get .copy-line-value').textContent);"));
+  check('file details expand with full SHA-256',await session.evaluate("return document.querySelector('#get details').open && /^[a-f0-9]{64}$/i.test(document.querySelector('#get [data-copy-value]').textContent);"));
   await session.send('Browser.grantPermissions',{origin,permissions:['clipboardReadWrite','clipboardSanitizedWrite']},false);
   await session.evaluate("document.querySelector('#get button[aria-label=\"Copy launcher SHA-256\"]').click();");
   await delay(100);
-  check('checksum copies the full digest',await session.evaluate("return await navigator.clipboard.readText()===document.querySelector('#get .copy-line-value').textContent;"));
+  check('checksum copies the full digest',await session.evaluate("return await navigator.clipboard.readText()===document.querySelector('#get [data-copy-value]').textContent;"));
   await session.evaluate("document.querySelector('#get summary').click();");
   check('file details collapse',await session.evaluate("return !document.querySelector('#get details').open;"));
   // Cancel the browser default after React's click handler: never download an EXE in a UI test.
@@ -211,7 +211,7 @@ try {
     };`});
   for(const width of [1680,420,320]){
     await resize(width);await visit('/host');await delay(1000);
-    check('Alpha downloads '+width+'px fit',await session.evaluate("return document.documentElement.scrollWidth<=innerWidth && document.querySelectorAll('a[href*=\"/server/\"][href^=\"https://cdn.\"]').length===2 && !document.querySelector('.host-locked');"));
+    check('Alpha downloads '+width+'px fit',await session.evaluate("return document.documentElement.scrollWidth<=innerWidth && document.querySelectorAll('a[href*=\"/server/\"][href^=\"https://cdn.\"]').length===2 && !document.querySelector('[data-host-locked]');"));
     await session.evaluate("document.querySelectorAll('main details').forEach(e=>e.open=true);");
     check('expanded archive details '+width+'px fit',await session.evaluate("return document.documentElement.scrollWidth<=innerWidth;"));
     await session.evaluate("document.querySelectorAll('main details').forEach(e=>e.open=false);document.getElementById('download').scrollIntoView({behavior:'instant'});");

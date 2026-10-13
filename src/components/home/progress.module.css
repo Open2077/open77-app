@@ -1,0 +1,101 @@
+.progress {
+  --height: 6px;
+  --active-height: calc(16px + 4 * (100vw - 320px) / 1080);
+  z-index: 40;
+  pointer-events: none;
+  width: 102%;
+  height: 8px;
+  transition: transform 0.45s var(--cubic);
+  align-items: flex-end;
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: -1%;
+  transform: translateY(100%);
+}
+@media screen and (max-width: 1084px) {
+  .progress {
+    display: none;
+  }
+}
+@media screen and (min-width: 1086px) and (hover: none),
+  screen and (min-width: 1086px) and (pointer: coarse),
+  screen and (min-width: 1086px) and (prefers-reduced-motion: reduce) {
+  .progress {
+    display: none;
+  }
+}
+@media screen and (min-width: 1086px) {
+  html[data-scroll="vertical"] .progress {
+    display: none;
+  }
+}
+.progress.in {
+  transform: translateY(0);
+}
+.progress:not(.in) .item {
+  height: 100%;
+}
+.progress:not(.in) .item span {
+  opacity: 0;
+}
+.item {
+  --scale: 0;
+  border: 1px solid var(--color);
+  height: 100%;
+  transform: skewX(var(--skew));
+  pointer-events: none;
+  transition: height 0.35s var(--cubic);
+  background-color: var(--body);
+  border-bottom: 0;
+  flex: 1;
+  padding: 0;
+  position: relative;
+}
+.item:hover {
+  height: calc(var(--active-height) * 0.75);
+}
+.in .item {
+  pointer-events: auto;
+}
+.item.active {
+  height: var(--active-height);
+}
+.item.active span {
+  opacity: 1;
+  transform: translateY(-150%) skewX(var(--skew-reverse));
+}
+.item span {
+  font-size: 0.65em;
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--color);
+  transform: translateY(-100%) skewX(var(--skew-reverse));
+  opacity: 0;
+  transition:
+    opacity 0.35s var(--cubic),
+    transform 0.35s var(--cubic);
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+  font-weight: 300;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.item:first-child {
+  left: 1px;
+}
+.item:last-child span {
+  left: 0;
+  right: auto;
+}
+.bar {
+  transform: scaleX(var(--scale));
+  transform-origin: 0;
+  background-color: var(--color);
+  position: absolute;
+  inset: -1px;
+}

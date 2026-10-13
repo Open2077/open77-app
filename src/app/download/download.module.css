@@ -1,0 +1,231 @@
+/* Hero: the release card ---------------------------------------------------- */
+
+/* The download button is in the first screen of a 715px-tall window: a lead in
+   two lines on wide screens, and a release card that is one line and a button. */
+.hero {
+  /* Never so wide that the title runs into the render on a laptop screen. */
+  --hero-copy: min(58rem, 50vw);
+  --hero-lead: min(46em, 46vw);
+}
+/* Stacked, the copy takes the full width again. */
+@media screen and (max-width: 1084px) {
+  .hero {
+    --hero-copy: 100%;
+    --hero-lead: 38em;
+  }
+}
+.get {
+  scroll-margin-top: calc(var(--header-height) + 1rem);
+  width: min(100%, 36rem);
+  margin-top: 0.3rem;
+}
+.release {
+  background: oklch(from var(--body) l c h / 0.72);
+  border: 1px solid var(--line);
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.15rem 1.5rem 0.3rem;
+  display: flex;
+  position: relative;
+}
+/* Skewed tone brackets, as on every main panel of the design. */
+.release:before,
+.release:after {
+  content: "";
+  border: 1px solid var(--tone);
+  pointer-events: none;
+  width: 3.4rem;
+  height: 3.4rem;
+  position: absolute;
+  transform: skewX(var(--skew));
+}
+.release:before {
+  border-width: 1px 0 0 1px;
+  top: -5px;
+  left: -5px;
+}
+.release:after {
+  border-width: 0 1px 1px 0;
+  bottom: -5px;
+  right: -5px;
+}
+.releaseHead {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  display: flex;
+}
+.releaseDate {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  margin-left: auto;
+  font-size: 0.6rem;
+}
+.releaseVersion {
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+  font-size: 1.05rem;
+  font-weight: 300;
+  line-height: 1.2;
+}
+.releaseDetails {
+  margin-top: 0;
+}
+
+.heroLinks {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 2rem;
+  display: flex;
+}
+
+/* Access and channels ------------------------------------------------------- */
+
+.channels {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.5rem 4rem;
+  padding-inline: 1rem;
+  display: grid;
+}
+.inlineLink {
+  color: var(--tone);
+  text-underline-offset: 0.2em;
+  text-decoration: underline;
+}
+.status {
+  border-top: 1px solid var(--line);
+  margin-top: 3rem;
+  padding-top: 1.4rem;
+}
+@media screen and (max-width: 1084px) {
+  .channels {
+    grid-template-columns: 1fr;
+    padding-inline: 0.5rem;
+  }
+}
+
+/* What it does --------------------------------------------------------------- */
+
+.jobs {
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: 4rem;
+  display: grid;
+}
+.jobsIntro {
+  flex-direction: column;
+  gap: 1.2rem;
+  display: flex;
+  position: sticky;
+  top: calc(var(--header-height) + 1rem);
+}
+.jobsFigure {
+  width: min(100%, 26rem);
+  margin-top: 1rem;
+  -webkit-mask: linear-gradient(#000 70%, #0000 98%);
+  mask: linear-gradient(#000 70%, #0000 98%);
+}
+.jobsFigure img {
+  pointer-events: none;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.jobList {
+  counter-reset: none;
+  flex-direction: column;
+  display: flex;
+}
+.job {
+  border-top: 1px solid var(--line);
+  grid-template-columns: 2.4rem 2.6rem minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+  padding: 1.9rem 0;
+  display: grid;
+  position: relative;
+}
+.job:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.job:before {
+  content: "";
+  background: var(--tone);
+  width: 0;
+  height: 1px;
+  transition: width 0.5s var(--ease-out-expo);
+  position: absolute;
+  top: -1px;
+  left: 0;
+}
+.job:hover:before {
+  width: 100%;
+}
+.jobIndex {
+  font-family: var(--font-nippo);
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  padding-top: 0.35rem;
+  font-size: 0.62rem;
+}
+.jobIcon {
+  color: var(--tone);
+  font-size: 1.9rem;
+}
+.jobTitle {
+  color: var(--tone);
+}
+.jobBody {
+  color: var(--text-dim);
+  max-width: 36rem;
+  margin-top: 0.7rem;
+  line-height: 1.6;
+}
+@media screen and (max-width: 1084px) {
+  .jobs {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .jobsIntro {
+    position: relative;
+    top: 0;
+  }
+  .jobsFigure {
+    display: none;
+  }
+}
+@media screen and (max-width: 560px) {
+  .job {
+    grid-template-columns: 2.2rem minmax(0, 1fr);
+  }
+  .jobIndex {
+    display: none;
+  }
+}
+
+/* Requirements ---------------------------------------------------------------- */
+
+.requirements {
+  scroll-margin-top: calc(var(--header-height) + 1rem);
+}
+.requirementsGrid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 3rem 4rem;
+  display: grid;
+}
+.faqLabel {
+  margin-bottom: 0.9rem;
+}
+.alphaNotice {
+  margin-top: 3rem;
+}
+@media screen and (max-width: 1084px) {
+  .requirementsGrid {
+    grid-template-columns: 1fr;
+  }
+}

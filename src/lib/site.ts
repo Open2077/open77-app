@@ -6,8 +6,6 @@
  * to render a disabled state instead of a dead anchor.
  */
 
-import brandAssets from "./brand-assets.json";
-
 /**
  * Canonical origin. Always the production origin, even on preview deployments,
  * so canonical URLs and structured data never point at a throwaway host.
@@ -52,11 +50,13 @@ export const site = {
     "always require your own legal copy of Cyberpunk 2077. The platform does not accept piracy, and " +
     "pirated or cracked copies are neither supported nor welcome.",
   /**
-   * The ?v= content hash moves the URL whenever the card is regenerated:
-   * Discord, Telegram and the CDN all cache link previews per URL and would
-   * otherwise keep showing the old image forever.
+   * The link preview, from the nuixw design (public/thumbnail.png, 1280×720).
+   * The ?v= is the first 8 hex digits of the file's SHA-256: Discord, Telegram
+   * and the CDN cache previews per URL, so a new image needs a new value or
+   * nobody ever refetches it.
    */
-  ogImage: `/brand/social/og-card-1200x630.png?v=${brandAssets.ogCard}`,
+  ogImage: "/thumbnail.png?v=c83bdb9c",
+  ogImageSize: { width: 1280, height: 720 },
   links: {
     /**
      * The platform repository is not public yet, so this is `null` rather than
@@ -71,6 +71,7 @@ export const site = {
     x: "https://x.com/open2077" as string | null,
     tiktok: "https://www.tiktok.com/@open2077_network" as string | null,
     twitch: "https://www.twitch.tv/open2077",
+    youtube: "https://www.youtube.com/@Open2077-cp",
     devlog: "/devblog" as string | null,
   },
 } as const;
@@ -124,6 +125,7 @@ export const footerNav = [
       { href: "/host", label: "Download the server" },
       { href: "/docs/platform#dedicated-servers", label: "Dedicated servers" },
       { href: "/docs/server-resources", label: "Resources & scripting" },
+      { href: "/ncwe", label: "Map Editor" },
     ],
   },
   {
@@ -145,6 +147,7 @@ export const footerNav = [
       { href: "https://x.com/open2077", label: "X / Twitter" },
       { href: "https://www.tiktok.com/@open2077_network", label: "TikTok" },
       { href: site.links.twitch, label: "Twitch" },
+      { href: site.links.youtube, label: "YouTube" },
     ],
   },
 ] as const;

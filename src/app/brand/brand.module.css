@@ -1,0 +1,309 @@
+/* Hero ------------------------------------------------------------------------ */
+
+/* A compact hero (status-size title): the title in one line on a wide screen,
+   the lead in two, and the files starting right under it. */
+.hero p {
+  max-width: 44em;
+}
+.first {
+  padding-top: calc(var(--margin-1) * 0.5);
+}
+
+.heroMark {
+  width: min(28vw, 380px);
+  padding: 2.4rem 2.2rem;
+  border: 1px solid var(--line);
+  background: oklch(from var(--body) l c h / 0.6);
+  position: relative;
+}
+.heroMark:before,
+.heroMark:after {
+  content: "";
+  border: 1px solid var(--tone);
+  pointer-events: none;
+  width: 3.4rem;
+  height: 3.4rem;
+  position: absolute;
+  transform: skewX(var(--skew));
+}
+.heroMark:before {
+  border-width: 1px 0 0 1px;
+  top: -5px;
+  left: -5px;
+}
+.heroMark:after {
+  border-width: 0 1px 1px 0;
+  bottom: -5px;
+  right: -5px;
+}
+.heroMark img {
+  width: 100%;
+  height: auto;
+}
+@media screen and (max-width: 1084px) {
+  .heroMark {
+    width: 100%;
+    max-width: 560px;
+    padding: 1.6rem;
+  }
+}
+
+/* Tiles ------------------------------------------------------------------------- */
+
+.grid {
+  gap: 2rem;
+  display: grid;
+}
+.logoGrid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.logoGrid > :nth-child(1),
+.logoGrid > :nth-child(2) {
+  grid-column: span 3;
+}
+.logoGrid > :nth-child(n + 3) {
+  grid-column: span 2;
+}
+.profileGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.bannerGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media screen and (max-width: 1084px) {
+  .logoGrid,
+  .profileGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .logoGrid > :nth-child(n) {
+    grid-column: span 1;
+  }
+  .logoGrid > :nth-child(1),
+  .logoGrid > :nth-child(2) {
+    grid-column: span 2;
+  }
+}
+@media screen and (max-width: 700px) {
+  .logoGrid,
+  .profileGrid,
+  .bannerGrid {
+    grid-template-columns: 1fr;
+  }
+  .logoGrid > :nth-child(n) {
+    grid-column: auto;
+  }
+}
+
+.cell {
+  min-width: 0;
+}
+.tile {
+  border: 1px solid var(--line);
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+  transition: border-color var(--transition-link);
+  display: flex;
+  position: relative;
+}
+.tile:before {
+  content: "";
+  border: 1px solid var(--tone);
+  border-width: 1px 0 0 1px;
+  opacity: 0;
+  pointer-events: none;
+  width: 2.6rem;
+  height: 2.6rem;
+  transition: opacity var(--transition-link);
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  transform: skewX(var(--skew));
+}
+.tile:hover,
+.tile:focus-within {
+  border-color: var(--line-strong);
+}
+.tile:hover:before,
+.tile:focus-within:before {
+  opacity: 1;
+}
+
+.preview {
+  aspect-ratio: 16 / 9;
+  border-bottom: 1px solid var(--line);
+  justify-content: center;
+  align-items: center;
+  padding: 1.6rem;
+  display: flex;
+  overflow: hidden;
+}
+.dark {
+  background: var(--surface-1);
+}
+.light {
+  background: var(--text-primary);
+}
+.preview img {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+.mark img {
+  width: 62%;
+}
+.icon img {
+  width: auto;
+  height: 72%;
+}
+.favicon img {
+  image-rendering: pixelated;
+  width: auto;
+  height: 34%;
+}
+.tall img {
+  width: auto;
+  height: 100%;
+}
+.bannerGrid .preview {
+  padding: 0;
+}
+.bannerGrid .tall {
+  padding: 1rem 0;
+}
+
+.caption {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem 1.2rem;
+  padding: 1rem 1.1rem 1.1rem;
+  display: flex;
+}
+.captionText {
+  flex-direction: column;
+  gap: 0.35rem;
+  font-weight: 500;
+  line-height: 1.3;
+  display: flex;
+}
+.note {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+  font-size: 0.58rem;
+  font-weight: 300;
+}
+.files {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  display: flex;
+}
+.file {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--tone);
+  white-space: nowrap;
+  isolation: isolate;
+  align-items: center;
+  gap: 0.5em;
+  height: 1.9rem;
+  padding: 0 0.85em;
+  font-size: 0.58rem;
+  transition: color var(--transition-link);
+  display: inline-flex;
+  position: relative;
+}
+.file:before {
+  content: "";
+  border: 1px solid oklch(from var(--tone) l c h / 55%);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.file:hover {
+  color: var(--body);
+}
+.file:hover:before {
+  background: var(--tone);
+  border-color: var(--tone);
+}
+.file svg {
+  font-size: 1.3em;
+}
+.file:focus-visible {
+  outline: none;
+}
+.file:focus-visible:before {
+  outline: var(--focus);
+  outline-offset: 2px;
+}
+
+/* Palette ---------------------------------------------------------------------- */
+
+.palette {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1.5rem;
+  display: grid;
+}
+.swatch {
+  flex-direction: column;
+  gap: 0.7rem;
+  min-width: 0;
+  display: flex;
+}
+.chip {
+  background: var(--swatch);
+  border: 1px solid var(--line);
+  aspect-ratio: 4 / 3;
+  width: calc(100% - 0.8rem);
+  margin-left: 0.4rem;
+  transform: skewX(var(--skew));
+}
+.swatchName {
+  font-weight: 500;
+}
+.swatchCopy {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+  margin-left: 0;
+  padding-left: 0;
+  font-size: 0.78rem;
+}
+@media screen and (max-width: 1084px) {
+  .palette {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media screen and (max-width: 560px) {
+  .palette {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* The two lockups are wide: a flatter tile shows them at a readable size. */
+.logoGrid > :nth-child(-n + 2) .preview {
+  aspect-ratio: 2.2 / 1;
+}
+.logoGrid > :nth-child(n + 3) .preview {
+  aspect-ratio: 4 / 3;
+}
+
+/* The title's RGB-split lines never wrap; on a phone "OPEN//77" needs a smaller size to fit. */
+@media screen and (max-width: 700px) {
+  .hero h1[class] {
+    font-size: calc(8.4vw + 12px);
+  }
+  .hero h1 [data-glitch] {
+    white-space: normal;
+  }
+}

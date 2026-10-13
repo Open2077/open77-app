@@ -1,5 +1,6 @@
 import { JsonLd } from "@/components/json-ld";
 import { LiveServerBrowser } from "@/components/servers/live-server-browser";
+import { Page } from "@/components/ui/page";
 import { breadcrumbNode, collectionPageNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
@@ -12,9 +13,9 @@ export const metadata = pageMetadata({
 export default function ServersPage() {
   return (
     <>
-      <main id="main" className="sb-page">
+      <Page tone="yellow">
         <LiveServerBrowser />
-      </main>
+      </Page>
 
       {/*
         Deliberately no ItemList of the listings: the directory is live and

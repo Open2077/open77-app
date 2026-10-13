@@ -1,0 +1,193 @@
+.shell {
+  --side: 17.2rem;
+  --outline: 13rem;
+  isolation: isolate;
+  grid-template-columns: var(--side) minmax(0, 54rem) var(--outline);
+  justify-content: space-between;
+  column-gap: clamp(2rem, 3vw, 4rem);
+  margin-inline: var(--page-gutter);
+  display: grid;
+  position: relative;
+}
+.noToc {
+  grid-template-columns: var(--side) minmax(0, 58rem);
+  justify-content: start;
+  column-gap: clamp(2.5rem, 5vw, 6rem);
+}
+
+/* Key art fading into the page behind the title block. */
+.art {
+  z-index: -1;
+  opacity: 0.42;
+  pointer-events: none;
+  height: clamp(26rem, 60vh, 40rem);
+  position: absolute;
+  top: calc(var(--header-height) * -1);
+  left: calc(var(--page-gutter) * -1);
+  right: calc(var(--page-gutter) * -1);
+  -webkit-mask: radial-gradient(ellipse 56% 85% at 44% 0%, black 25%, transparent 100%);
+  mask: radial-gradient(ellipse 56% 85% at 44% 0%, black 25%, transparent 100%);
+}
+.art img {
+  object-fit: cover;
+  object-position: center 35%;
+}
+.art:after {
+  content: "";
+  background: linear-gradient(to top, var(--body) 0%, oklch(from var(--body) l c h / 0.3) 60%);
+  position: absolute;
+  inset: 0;
+}
+
+.side {
+  min-width: 0;
+}
+
+.main {
+  min-width: 0;
+  padding-bottom: 2rem;
+}
+
+.head {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.1rem;
+  padding: 1.7rem 0 1.9rem;
+  display: flex;
+  position: relative;
+}
+.head:after {
+  content: "";
+  background: linear-gradient(90deg, var(--tone) 0 4.5rem, var(--line) 4.5rem 100%);
+  height: 1px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.kicker {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  align-self: stretch;
+  gap: 0.6rem 2rem;
+  margin-bottom: 0.3rem;
+  display: flex;
+}
+.crumbs {
+  min-width: 0;
+}
+.eyebrow {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--tone);
+  align-items: center;
+  gap: 0.9em;
+  font-size: 0.66rem;
+  display: flex;
+}
+.eyebrow:before {
+  content: "//";
+  letter-spacing: -0.05em;
+}
+.lede {
+  max-width: 40em;
+  font-size: calc(0.1vw + 15.4px);
+  line-height: 1.55;
+}
+
+/* Reading facts and related links. */
+.meta {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.4rem;
+  margin-top: 0.3rem;
+  font-size: 0.6rem;
+  display: flex;
+}
+.meta > span:not(:has(a)) + span:not(:has(a)):before {
+  content: "//";
+  color: var(--tone);
+  letter-spacing: -0.05em;
+  margin-right: 1.4rem;
+}
+.meta a {
+  color: var(--text-dim);
+  isolation: isolate;
+  white-space: nowrap;
+  align-items: center;
+  height: 1.9rem;
+  padding: 0 0.95em;
+  transition: color var(--transition-link);
+  display: inline-flex;
+  position: relative;
+}
+.meta a:before {
+  content: "";
+  border: 1px solid var(--line);
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+}
+.meta a:hover {
+  color: var(--text-primary);
+}
+.meta a:hover:before {
+  border-color: var(--tone);
+  background: oklch(from var(--tone) l c h / 10%);
+}
+
+.body {
+  padding-top: 2.1rem;
+}
+
+.outline {
+  min-width: 0;
+}
+
+/* The outline folds under the title when the third column does not fit. */
+.main > details {
+  margin-top: 1.8rem;
+  display: none;
+}
+
+@media screen and (max-width: 1360px) {
+  .shell {
+    grid-template-columns: var(--side) minmax(0, 54rem);
+    justify-content: start;
+    column-gap: clamp(2.5rem, 4vw, 4rem);
+  }
+  .outline {
+    display: none;
+  }
+  .main > details {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 1084px) {
+  .shell,
+  .noToc {
+    grid-template-columns: minmax(0, 1fr);
+    width: var(--container-width);
+    max-width: var(--container-max);
+    margin-inline: auto;
+  }
+  .side {
+    padding-top: 1.6rem;
+  }
+  .head {
+    padding-top: 1.6rem;
+  }
+}

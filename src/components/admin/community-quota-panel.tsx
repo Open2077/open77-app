@@ -1,9 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useState, type FormEvent } from "react";
+
+import { Button } from "@/components/admin/admin-button";
+import { Notice } from "@/components/ui/feedback";
+import { Field, Input, Textarea } from "@/components/ui/field";
+import { arrowLeft01, layers01 } from "@/components/ui/icons";
 import { useSession } from "@/lib/account/session";
 import { accountQuotas, saveAccountQuotas, quotaFields, type AccountQuota, type QuotaOverrides, type Quotas } from "@/lib/community/quotas";
+import { AdminPanel, Footnote, FormActions, FormPanel, Mono, SuccessStrip } from "./admin-kit";
+
+import styles from "./community-panels.module.css";
 
 export function CommunityQuotaPanel() {
   const { session } = useSession();
@@ -38,14 +45,71 @@ function Editor({ token, ownId }: { token: string; ownId: string }) {
     } catch (error) { setError(error instanceof Error ? error.message : "The change could not be saved. Reload before retrying an uncertain result."); }
     finally { setBusy(false); }
   }
-  return <section className="hub-review-panel"><Link href="/admin/resources">Back to Workshop review →</Link><h1>Creator publishing allowances</h1>
-    <p>Review the account quotas before changing them. Blank overrides use global defaults. Package and inspection safety limits remain unchanged.</p>
-    {error && <p className="hub-notice" role="alert">{error}</p>}{status && <p role="status">{status}</p>}
-    <form className="hub-form" onSubmit={load}><label>Creator account ID<input required pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" value={id} onChange={event => setId(event.target.value)} disabled={busy} /></label>
-      <button className="btn btn-ghost" disabled={busy}>{busy ? "Working…" : current ? "Load account / discard form changes" : "Load account limits"}</button></form>
-    {current && <form className="hub-form" onSubmit={save}><h2>Account {current.accountId}</h2><p>Review revision {current.revision}. Editing the lookup above does not change this selected account until you load it.</p>
-      {quotaFields.map(({ key, label, maximum }) => <label key={key}>{label}<input type="number" min={1} max={maximum} step={1} placeholder="Global default" value={fields[key]} disabled={busy || current.accountId === ownId} onChange={event => setFields(value => ({ ...value, [key]: event.target.value }))} /><small>Current effective allowance: {current.effective[key].toLocaleString()}. Maximum: {maximum.toLocaleString()}.</small></label>)}
-      {current.accountId === ownId ? <p className="hub-notice">Another administrator must review changes to your own quota.</p> : <><label>Reason for this change<textarea required maxLength={5000} value={reason} onChange={event => setReason(event.target.value)} disabled={busy} /></label><button className="btn btn-primary" disabled={busy || !reason.trim()}>Save reviewed allowances</button></>}
-    </form>}
-  </section>;
+  return (
+    <AdminPanel
+      title="Creator publishing allowances"
+      icon={layers01}
+      brackets
+      actions={
+        <Button href="/admin/resources" size="sm" color="neutral" border lines="none" icon={arrowLeft01} iconPosition="left">
+          Back to Workshop review
+        </Button>
+      }
+    >
+      <Footnote>Review the account quotas before changing them. Blank overrides use global defaults. Package and inspection safety limits remain unchanged.</Footnote>
+      {error ? <Notice kind="danger">{error}</Notice> : null}
+      <SuccessStrip message={status} />
+      <form className={styles.lookup} onSubmit={load}>
+        <Field label="Creator account ID" className={styles.lookupField}>
+          <Input
+            required
+            pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+            value={id}
+            onChange={event => setId(event.target.value)}
+            disabled={busy}
+            className={styles.mono}
+          />
+        </Field>
+        <Button type="submit" size="sm" color="neutral" border lines="none" busy={busy}>
+          {busy ? "Working…" : current ? "Load account / discard form changes" : "Load account limits"}
+        </Button>
+      </form>
+      {current ? (
+        <FormPanel title={<>Account <Mono>{current.accountId}</Mono></>} onSubmit={save}>
+          <p className={styles.cardMeta}>Review revision {current.revision}. Editing the lookup above does not change this selected account until you load it.</p>
+          <div className={styles.quotaGrid}>
+            {quotaFields.map(({ key, label, maximum }) => (
+              <Field key={key} label={label} hint={`Current effective allowance: ${current.effective[key].toLocaleString()}. Maximum: ${maximum.toLocaleString()}.`}>
+                <Input
+                  type="number"
+                  min={1}
+                  max={maximum}
+                  step={1}
+                  placeholder="Global default"
+                  value={fields[key]}
+                  disabled={busy || current.accountId === ownId}
+                  onChange={event => setFields(value => ({ ...value, [key]: event.target.value }))}
+                  className={styles.quotaInput}
+                />
+              </Field>
+            ))}
+          </div>
+          {current.accountId === ownId ? (
+            <Notice kind="warning">Another administrator must review changes to your own quota.</Notice>
+          ) : (
+            <>
+              <Field label="Reason for this change">
+                <Textarea required maxLength={5000} rows={3} value={reason} onChange={event => setReason(event.target.value)} disabled={busy} />
+              </Field>
+              <FormActions>
+                <Button type="submit" size="sm" color="red" lines="none" disabled={busy || !reason.trim()}>
+                  Save reviewed allowances
+                </Button>
+              </FormActions>
+            </>
+          )}
+        </FormPanel>
+      ) : null}
+    </AdminPanel>
+  );
 }

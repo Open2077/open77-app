@@ -1,0 +1,344 @@
+.page {
+  padding-bottom: calc(var(--margin-1) * 1.25);
+}
+
+.frame {
+  --nav-width: calc(190px + 30 * (100vw - 320px) / 1080);
+  --column-gap: calc(28px + 52 * (100vw - 320px) / 1080);
+  width: var(--container-width);
+  max-width: var(--container-max);
+  isolation: isolate;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "intro"
+    "content";
+  margin-inline: auto;
+  display: grid;
+  position: relative;
+}
+.wide {
+  width: auto;
+  max-width: none;
+  margin-inline: var(--page-gutter);
+}
+
+/* Backdrop: the key art slides under the fixed header and bleeds to the
+   viewport edges, then fades into the page. ------------------------------ */
+
+.backdrop {
+  z-index: -1;
+  pointer-events: none;
+  grid-area: intro;
+  justify-self: stretch;
+  align-self: stretch;
+  margin: calc(var(--header-height) * -1) calc(50% - 50vw) 0;
+  position: relative;
+  overflow: hidden;
+}
+.art {
+  position: absolute;
+  inset: 0;
+}
+.artImage {
+  object-fit: cover;
+}
+.art:after {
+  content: "";
+  background:
+    linear-gradient(to top, var(--body) 0%, oklch(from var(--body) l c h / 0.62) 42%, oklch(from var(--body) l c h / 0.82) 100%),
+    linear-gradient(90deg, oklch(from var(--body) l c h / 0.9) 0%, oklch(from var(--body) l c h / 0.2) 75%);
+  position: absolute;
+  inset: 0;
+}
+.watermark {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  white-space: nowrap;
+  color: #0000;
+  -webkit-text-stroke: 1px oklch(from var(--text-secondary) l c h / 45%);
+  -webkit-user-select: none;
+  user-select: none;
+  z-index: 1;
+  font-size: clamp(7rem, 21vw, 24rem);
+  font-style: italic;
+  line-height: 0.8;
+  position: absolute;
+  bottom: -0.16em;
+  left: calc(var(--page-gutter) - 0.08em);
+}
+
+/* Intro ------------------------------------------------------------------ */
+
+.intro {
+  grid-area: intro;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem 3rem;
+  min-width: 0;
+  display: flex;
+  position: relative;
+}
+.copy {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.1rem;
+  min-width: 0;
+  display: flex;
+}
+.title {
+  max-width: 100%;
+}
+/* Long single words ("subscriptions") must fit a phone: cap the size by the viewport. */
+.intro .title.title {
+  font-size: min(calc(3vw + 22px), 7.2vw);
+}
+.lead {
+  max-width: 36em;
+}
+.introActions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1.4rem;
+  margin-top: 0.4rem;
+  display: flex;
+}
+.aside {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.content {
+  flex-direction: column;
+  grid-area: content;
+  gap: calc(40px + 24 * (100vw - 320px) / 1080);
+  min-width: 0;
+  display: flex;
+}
+
+/* Member: band, then navigation beside the content. ------------------------ */
+
+.member,
+.pending {
+  grid-template-columns: var(--nav-width) minmax(0, 1fr);
+  grid-template-areas:
+    "intro intro"
+    "nav content";
+  column-gap: var(--column-gap);
+}
+.pending {
+  grid-template-areas:
+    "intro intro"
+    "content content";
+}
+.member .intro,
+.pending .intro {
+  margin-bottom: calc(28px + 12 * (100vw - 320px) / 1080);
+  padding: calc(1.25rem + 3vh) 0 1.75rem;
+}
+.member .intro:after,
+.pending .intro:after {
+  content: "";
+  background: linear-gradient(90deg, var(--tone) 0 18%, var(--line) 18% 100%);
+  height: 1px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.member .backdrop,
+.pending .backdrop {
+  margin-bottom: calc(28px + 12 * (100vw - 320px) / 1080);
+}
+.nav {
+  grid-area: nav;
+  align-self: start;
+  position: sticky;
+  top: calc(var(--header-height) + 1.25rem);
+}
+
+@media screen and (max-width: 1084px) {
+  .member,
+  .pending {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "intro"
+      "nav"
+      "content";
+  }
+  .pending {
+    grid-template-areas:
+      "intro"
+      "content";
+  }
+  .member .intro,
+  .pending .intro {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 0;
+  }
+  .member .backdrop,
+  .pending .backdrop {
+    margin-bottom: 0;
+  }
+  .nav {
+    margin: 0 calc(50% - 50vw) calc(28px + 20 * (100vw - 320px) / 1080);
+    position: static;
+  }
+}
+
+/* Guest: entering Night City. -------------------------------------------
+   Wide screens set the title and the flow's notes beside the stage, so the
+   form is in the first screen even in a short window, and the characters
+   frame the pair. Below 1085px: one centred column, characters faded behind. */
+
+.guest {
+  --stage: min(100%, 31rem);
+  --intro: calc(24vw + 12rem);
+  --pair-gap: calc(2.5rem + 2vw);
+  --pair: calc(var(--intro) + var(--pair-gap) + 31rem);
+  /* Room left on each side of the pair, where the characters stand. */
+  --side: calc(50vw - var(--pair) / 2 - 1rem);
+  --pad-top: 1.25rem;
+  min-height: calc(100dvh - var(--header-height));
+  grid-template-columns: minmax(0, var(--intro)) var(--stage);
+  grid-template-rows: 1fr auto auto 1fr;
+  grid-template-areas:
+    ". content"
+    "intro content"
+    "foot content"
+    ". content";
+  justify-content: center;
+  column-gap: var(--pair-gap);
+  padding: var(--pad-top) 0 1.5rem;
+}
+.guest .backdrop {
+  grid-area: 1 / 1 / -1 / -1;
+  margin-top: calc(var(--header-height) * -1 - var(--pad-top));
+  margin-bottom: calc(var(--margin-1) * -1.25);
+}
+.guest .art {
+  bottom: auto;
+  height: max(100dvh, 46rem);
+}
+.guest .art:after {
+  background:
+    linear-gradient(to top, var(--body) 0%, oklch(from var(--body) l c h / 0.35) 38%, oklch(from var(--body) l c h / 0.7) 100%),
+    radial-gradient(ellipse 42% 60% at 50% 55%, oklch(from var(--body) l c h / 0.72) 0%, oklch(from var(--body) l c h / 0) 100%);
+}
+.guest .intro {
+  flex-direction: column;
+  align-items: stretch;
+  align-self: end;
+}
+.guest .copy {
+  container-type: inline-size;
+  gap: 1rem;
+}
+/* The title's longest word always fits its column ("notifications"). */
+.guest .intro .title.title {
+  font-size: min(calc(3vw + 22px), 7.2vw, calc(100cqi / var(--longest, 9) / 0.92));
+}
+.guest .content {
+  align-self: center;
+  gap: 1.25rem;
+}
+.guest .footnote {
+  grid-area: foot;
+  align-self: start;
+  margin-top: 1.75rem;
+}
+.guest .watermark {
+  -webkit-text-stroke-color: oklch(from var(--text-secondary) l c h / 32%);
+  bottom: 0.02em;
+}
+
+.character {
+  aspect-ratio: var(--ratio);
+  z-index: 2;
+  /* As wide as the room beside the pair allows, a third of it past the edge. */
+  height: min(92%, 62rem, calc(var(--side) * 1.45 * var(--inverse, 1)));
+  max-height: 100%;
+  -webkit-mask: linear-gradient(#000 78%, #0000 100%);
+  mask: linear-gradient(#000 78%, #0000 100%);
+  position: absolute;
+  bottom: 0;
+}
+.character img {
+  pointer-events: none;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.left {
+  right: calc(50% + var(--pair) / 2 + 1rem);
+}
+.right {
+  left: calc(50% + var(--pair) / 2 + 1rem);
+}
+
+.footnote {
+  color: var(--text-faint);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+/* Too little room beside the pair: the key art carries the scene alone. */
+@media screen and (min-width: 1085px) and (max-width: 1759px) {
+  .character {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1084px) {
+  .guest {
+    --stage: min(100%, 34rem);
+    --pad-top: calc(2rem + 3vh);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    grid-template-areas:
+      "intro"
+      "content"
+      "foot";
+    justify-items: center;
+    align-content: start;
+    row-gap: 2rem;
+  }
+  .guest .intro,
+  .guest .content,
+  .guest .footnote {
+    width: var(--stage);
+    align-self: auto;
+  }
+  .guest .intro,
+  .guest .footnote {
+    text-align: center;
+  }
+  .guest .copy {
+    align-items: center;
+  }
+  .guest .footnote {
+    margin-top: -0.75rem;
+  }
+  .guest .art {
+    height: 78dvh;
+  }
+  .character {
+    opacity: 0.38;
+    height: 70%;
+    bottom: 22%;
+  }
+  .left {
+    left: -18%;
+    right: auto;
+  }
+  .right {
+    left: auto;
+    right: -22%;
+  }
+}
+@media screen and (max-width: 700px) {
+  .character {
+    display: none;
+  }
+}

@@ -2,11 +2,15 @@
 
 import { useCallback, useState } from "react";
 
+import { AdminPanel, AdminTable, Count, EmptyBlock, LoadingBlock, Mono, cell } from "@/components/admin/admin-kit";
 import { formatDateTime, shortId } from "@/components/admin/format";
 import { ErrorStrip, useAdminData } from "@/components/admin/use-admin-data";
-import { CodeIcon } from "@/components/icons";
+import { Button } from "@/components/admin/admin-button";
+import { activity01, arrowDown01 } from "@/components/ui/icons";
 import { MasterApiError } from "@/lib/account/api";
 import * as admin from "@/lib/account/admin-api";
+
+import styles from "./audit-panel.module.css";
 
 const PAGE_SIZE = 30;
 
@@ -39,56 +43,63 @@ export function AuditPanel() {
   }
 
   return (
-    <section className="adm-panel">
-      <div className="adm-panel-head">
-        <h2 className="adm-panel-title">
-          <CodeIcon size={15} />
-          Audit log
-        </h2>
-        {data ? <span className="adm-count">{data.length} loaded</span> : null}
-      </div>
+    <AdminPanel
+      title="Audit log"
+      icon={activity01}
+      brackets
+      meta={data ? <Count>{data.length} loaded</Count> : undefined}
+      footnote="Newest first; older entries load 30 at a time."
+    >
       <ErrorStrip message={error} />
-      {loading && !data ? <p className="ac-loading">Loading audit log…</p> : null}
-      {data && data.length === 0 ? <p className="adm-empty">The audit log is empty.</p> : null}
+      {loading && !data ? <LoadingBlock label="Loading audit log" rows={6} /> : null}
+      {data && data.length === 0 ? <EmptyBlock icon={activity01}>The audit log is empty.</EmptyBlock> : null}
       {data && data.length > 0 ? (
-        <>
-          <div className="adm-tablewrap">
-            <table className="adm-table">
-              <thead>
-                <tr>
-                  <th className="adm-num">#</th>
-                  <th>Time</th>
-                  <th>Action</th>
-                  <th>Subject</th>
-                  <th>Actor</th>
-                  <th>Details</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((entry) => (
-                  <tr key={entry.id}>
-                    <td className="adm-num adm-mono adm-faint">{entry.id}</td>
-                    <td className="adm-mono adm-faint">{formatDateTime(entry.atUtc)}</td>
-                    <td className="adm-mono">{entry.action}</td>
-                    <td className="adm-mono adm-dim">{entry.subject ?? "—"}</td>
-                    <td className="adm-mono adm-faint">
-                      {entry.actorAccountId ? shortId(entry.actorAccountId) : "system"}
-                    </td>
-                    <td className="adm-mono adm-faint">{entry.detailsJson ?? ""}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {!exhausted ? (
-            <div className="adm-more">
-              <button className="ac-iconbtn" type="button" onClick={loadOlder} disabled={busy}>
-                {busy ? "Loading…" : "Load older"}
-              </button>
-            </div>
-          ) : null}
-        </>
+        <AdminTable caption="Audit log, newest first" minWidth="64rem">
+          <thead>
+            <tr>
+              <th className={cell.num}>#</th>
+              <th>Time</th>
+              <th>Action</th>
+              <th>Subject</th>
+              <th>Actor</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((entry) => (
+              <tr key={entry.id}>
+                <td className={cell.num}>
+                  <Mono tone="dim">{entry.id}</Mono>
+                </td>
+                <td className={cell.nowrap}>
+                  <Mono tone="dim">{formatDateTime(entry.atUtc)}</Mono>
+                </td>
+                <td className={cell.nowrap}>
+                  <Mono className={styles.action}>{entry.action}</Mono>
+                </td>
+                <td className={styles.subject}>
+                  <Mono tone="dim">{entry.subject ?? "—"}</Mono>
+                </td>
+                <td className={cell.nowrap}>
+                  <Mono tone="dim" title={entry.actorAccountId ?? undefined}>
+                    {entry.actorAccountId ? shortId(entry.actorAccountId) : "system"}
+                  </Mono>
+                </td>
+                <td className={styles.details}>
+                  {entry.detailsJson ? <code title={entry.detailsJson}>{entry.detailsJson}</code> : null}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </AdminTable>
       ) : null}
-    </section>
+      {data && data.length > 0 && !exhausted ? (
+        <div className={styles.more}>
+          <Button size="sm" color="neutral" border lines="none" icon={arrowDown01} iconPosition="left" busy={busy} onClick={loadOlder}>
+            {busy ? "Loading…" : "Load older"}
+          </Button>
+        </div>
+      ) : null}
+    </AdminPanel>
   );
 }

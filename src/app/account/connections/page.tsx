@@ -1,8 +1,25 @@
-import Link from "next/link";
-import { HubPageHead, HubShell } from "@/components/community/hub-shell";
+import { AccountShell } from "@/components/account/account-shell";
+import { ConnectionsTabs } from "@/components/account/connections-tabs";
+import { Button } from "@/components/ui/button";
 import { WardenConnections } from "@/components/community/warden-connections";
 
 export const metadata = { title: "Warden connections", robots: { index: false, follow: false } };
+
 export default function ConnectionsPage() {
-  return <HubShell><HubPageHead kicker="CREATOR CONNECTIONS" title="Connected Wardens" actions={<Link className="btn btn-ghost btn-small" href="/account/profile">Creator profile</Link>}><p>Server consoles allowed to publish drafts to your creator account.</p></HubPageHead><WardenConnections /></HubShell>;
+  return (
+    <AccountShell
+      eyebrow="Creator connections"
+      title={["Connected", "Wardens"]}
+      lead="Server consoles allowed to publish drafts to your creator account."
+      guestLead="Sign in to review and revoke the server consoles allowed to publish drafts to your creator account."
+      actions={
+        <Button lines="none" border color="neutral" size="sm" href="/account/profile">
+          Creator profile
+        </Button>
+      }
+    >
+      <ConnectionsTabs />
+      <WardenConnections />
+    </AccountShell>
+  );
 }

@@ -1,0 +1,229 @@
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+}
+
+/* Filters ---------------------------------------------------------------- */
+
+.filters {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13.5rem), 1fr));
+  align-items: end;
+  gap: 1.1rem 1.3rem;
+  display: grid;
+}
+.fingerprint {
+  grid-column: span 2;
+}
+.filterActions {
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+}
+@media screen and (max-width: 700px) {
+  .fingerprint {
+    grid-column: auto;
+  }
+  .filterActions {
+    justify-content: flex-start;
+  }
+}
+
+/* Inbox and evidence, side by side once a report is selected ------------- */
+
+.grid {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 1.6rem;
+  display: grid;
+}
+@media screen and (min-width: 1360px) {
+  .grid[data-selection] {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  }
+  .grid[data-selection] .details {
+    max-height: calc(100dvh - var(--header-height) - 5.5rem);
+    position: sticky;
+    top: calc(var(--header-height) + 4.6rem);
+    overflow-y: auto;
+  }
+}
+.incidentId {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+  font-size: 0.9rem;
+  font-weight: 300;
+}
+.evidence,
+.description {
+  flex-direction: column;
+  gap: 0.6rem;
+  display: flex;
+}
+.description p {
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--body);
+  border-left: 2px solid var(--yellow);
+  padding: 0.75rem 1rem;
+  line-height: 1.6;
+}
+.gaps {
+  padding-left: 1.1rem;
+  list-style: square;
+}
+.hashRow {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  display: flex;
+}
+.hashRow > span:first-child {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  width: 5.5rem;
+  font-size: 0.58rem;
+}
+.selector {
+  max-width: 30rem;
+}
+
+/* Resolution ------------------------------------------------------------- */
+
+.resolution {
+  background: var(--body);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--tone);
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem 1.1rem 1.1rem;
+  display: flex;
+}
+.resolutionHead {
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  display: flex;
+}
+.resolutionMeta {
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+.notes {
+  flex-direction: column;
+  gap: 0.75rem;
+  display: flex;
+}
+.notes:empty {
+  display: none;
+}
+.notes dt {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  margin-bottom: 0.3rem;
+  font-size: 0.58rem;
+}
+.notes dd {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+}
+.resolutionForm fieldset {
+  border: 0;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+  display: flex;
+}
+.resolutionForm legend {
+  color: var(--text-dim);
+  margin-bottom: 0.4rem;
+  font-size: 0.86rem;
+}
+
+/* Discord integration ---------------------------------------------------- */
+
+.webhook {
+  min-width: 0;
+}
+.webhookSummary {
+  cursor: pointer;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding: 0.95rem 1.25rem;
+  list-style: none;
+  display: flex;
+}
+.webhookSummary::-webkit-details-marker {
+  display: none;
+}
+.webhookIcon {
+  color: var(--tone);
+  flex: none;
+  font-size: 1.25rem;
+}
+.webhookTitle {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+  flex: 1;
+  font-size: calc(0.25vw + 14px);
+  font-style: italic;
+  font-weight: 500;
+}
+.webhookHint {
+  font-family: var(--font-main);
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  font-style: normal;
+  font-weight: 400;
+}
+.webhookChevron {
+  color: var(--text-dim);
+  transition: transform var(--transition-link);
+}
+.webhook[open] .webhookChevron {
+  transform: rotate(180deg);
+}
+.webhookBody {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem 1.2rem;
+  display: flex;
+}
+.webhookForm {
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem 1.2rem;
+  display: flex;
+}
+.webhookField {
+  flex: 1 1 22rem;
+  max-width: 40rem;
+}
+.webhookFoot {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem 1.5rem;
+  display: flex;
+}
+.delivery {
+  color: var(--text-dim);
+  font-size: 0.86rem;
+}
+.delivery strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}

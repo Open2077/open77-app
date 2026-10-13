@@ -1,5 +1,8 @@
 // Local, deterministic UI acceptance. API fixtures stay inside this isolated
 // browser; no account, proposal, vote or comment is written to any real Master.
+// Text checks are case-insensitive: the design sets titles and labels in
+// uppercase through CSS, and innerText reflects text-transform. Reads are
+// null-safe: a poll can land while the document is still being replaced.
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { access, mkdir, mkdtemp, writeFile } from "node:fs/promises";
@@ -114,7 +117,9 @@ try {
         const [code, body] = fixture(event.params.request);
         void send("Fetch.fulfillRequest", { requestId: event.params.requestId, responseCode: code,
           responseHeaders: [{ name: "Content-Type", value: "application/json" }, { name: "Cache-Control", value: "no-store" }, { name: "Access-Control-Allow-Origin", value: origin }, { name: "Access-Control-Allow-Headers", value: "Authorization, Content-Type" }, { name: "Access-Control-Allow-Methods", value: "GET,POST,PUT,PATCH,OPTIONS" }],
-          ...(body ? { body: Buffer.from(JSON.stringify(body)).toString("base64") } : {}) }).catch(e => errors.push(e.message));
+          ...(body ? { body: Buffer.from(JSON.stringify(body)).toString("base64") } : {}) })
+          // The page aborts superseded reads; fulfilling one it already dropped is not a page error.
+          .catch(e => { if (!/Invalid InterceptionId/.test(e.message)) errors.push(e.message); });
       } catch (e) { errors.push(e.message); }
     } else if (event.method === "Runtime.exceptionThrown") errors.push(JSON.stringify(event.params.exceptionDetails));
   });
@@ -124,7 +129,7 @@ try {
   await send("Fetch.enable", { patterns: [{ urlPattern: "*/api/v1/*", requestStage: "Request" }] });
   await send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
 
-  await navigate("/dev-tracker"); await waitFor("document.body.innerText.includes('Shared taxi destinations')");
+  await navigate("/dev-tracker"); await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('shared taxi destinations')");
   assert.equal(await evaluate("document.querySelector('[aria-label=Upvote]').disabled"), true);
   await screenshot("desktop");
   await signIn(); await waitFor("document.querySelector('[aria-label=Upvote]')?.disabled === false");
@@ -135,47 +140,47 @@ try {
   assert.equal(first.myVote, -1);
   await fill('[aria-label="Search ideas"]', "taxi"); await click("Search"); await waitFor("document.querySelectorAll('main article').length === 1");
 
-  await navigate(`/dev-tracker/${first.id}`); await waitFor("document.body.innerText.includes('Join the discussion')");
+  await navigate(`/dev-tracker/${first.id}`); await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('join the discussion')");
   await fill("main textarea", "A practical suggestion for taxi drivers."); await click("Post comment");
-  await waitFor("document.body.innerText.includes('A practical suggestion for taxi drivers.')");
+  await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('a practical suggestion for taxi drivers.')");
   await fill("main textarea", "A practical suggestion for taxi drivers."); await click("Post comment");
   await waitFor("document.querySelectorAll('article[id^=comment]').length === 2");
   assert.notEqual(commentRequests[0], commentRequests[1], "A confirmed comment kept the previous idempotency key");
   await click("Reply"); await fill("main textarea", "Adding a reply to that suggestion."); await click("Post reply");
-  await waitFor("document.body.innerText.includes('Adding a reply to that suggestion.')");
+  await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('adding a reply to that suggestion.')");
   assert.equal(comments[2].parentId, comments[0].id);
-  await signIn("admin"); await waitFor("document.body.innerText.includes('Staff controls')");
+  await signIn("admin"); await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('staff controls')");
   await click("Staff controls · validation, progress & moderation");
   await fill("details select", "approved"); await fill("details textarea", "Approved after community discussion."); await click("Publish staff update");
-  await waitFor("document.body.innerText.includes('Approved after community discussion.')");
+  await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('approved after community discussion.')");
   await click("Staff controls · validation, progress & moderation");
   await fill("details select", "in_progress"); await fill("details textarea", "Implementation has started on this feature."); await click("Publish staff update");
-  await waitFor("document.body.innerText.includes('Implementation has started on this feature.')");
+  await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('implementation has started on this feature.')");
   await screenshot("discussion");
 
   await navigate("/dev-tracker/roadmap"); await waitFor("document.querySelectorAll('main article').length === 6"); await screenshot("board");
   await send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true });
   assert.ok(await evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), "Mobile roadmap overflows the page"); await screenshot("mobile-board");
-  await navigate("/dev-tracker"); await waitFor("document.body.innerText.includes('Shared taxi destinations')");
+  await navigate("/dev-tracker"); await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('shared taxi destinations')");
   assert.ok(await evaluate("document.documentElement.scrollWidth <= innerWidth + 1"), "Mobile directory overflows"); await screenshot("mobile");
 
-  await navigate("/dev-tracker/new"); await waitFor("document.body.innerText.includes('2 / 3 ideas available')");
+  await navigate("/dev-tracker/new"); await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('2 / 3 ideas available')");
   await fill('main input[minlength="8"]', "Better community feedback filters"); await fill("main textarea", 'Let players filter proposals by the systems and gameplay features they care about.\n\n<img src=x onerror="window.__trackerXss=true">');
-  failPost = true; await click("Publish idea"); await waitFor("document.body.innerText.includes('tomorrow at 12:00 UTC')");
+  failPost = true; await click("Publish idea"); await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('tomorrow at 12:00 utc')");
   assert.ok((await evaluate("document.querySelector('main textarea').value")).includes("Let players"));
-  failPost = false; await click("Publish idea"); await waitFor("document.body.innerText.includes('Proposed by') && document.body.innerText.includes('Better community feedback filters')");
+  failPost = false; await click("Publish idea"); await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('proposed by') && (document.body?.innerText ?? '').toLowerCase().includes('better community feedback filters')");
   assert.equal(createdRequests.length, 2); assert.equal(createdRequests[0], createdRequests[1], "Retry changed idempotency key");
   assert.equal(await evaluate("document.querySelectorAll('main img').length"), 0, "Proposal interpreted as HTML");
   assert.equal(await evaluate("window.__trackerXss === true"), false);
   assert.equal(await evaluate("document.querySelector('[aria-label=Upvote]').disabled"), true, "Author can vote for their own idea");
 
   await send("Emulation.setDeviceMetricsOverride", { width: 1440, height: 1000, deviceScaleFactor: 1, mobile: false });
-  await navigate("/admin/dev-tracker"); await waitFor("document.body.innerText.includes('Review & moderate') && document.body.innerText.includes('Better community feedback filters')");
-  assert.ok(await evaluate("document.querySelector('.adm-sync').textContent.includes('Updated')"));
-  await evaluate("document.querySelector('.adm-workspace-tools button:last-child').click()");
-  await waitFor("document.body.innerText.includes('Better community feedback filters')"); await screenshot("admin");
-  failRead = true; await navigate("/dev-tracker"); await waitFor("document.body.innerText.includes('temporarily unavailable')");
-  failRead = false; await click("Retry / refresh"); await waitFor("document.body.innerText.includes('Shared taxi destinations')");
+  await navigate("/admin/dev-tracker"); await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('review & moderate') && (document.body?.innerText ?? '').toLowerCase().includes('better community feedback filters')");
+  assert.ok(await evaluate("document.querySelector('[data-admin-sync]').textContent.includes('Updated')"));
+  await evaluate("document.querySelector('[data-admin-refresh]').click()");
+  await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('better community feedback filters')"); await screenshot("admin");
+  failRead = true; await navigate("/dev-tracker"); await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('temporarily unavailable')");
+  failRead = false; await click("Retry / refresh"); await waitFor("(document.body?.innerText ?? '').toLowerCase().includes('shared taxi destinations')");
   assert.deepEqual(errors, [], "Uncaught browser errors");
   console.log("Dev Tracker browser acceptance passed: guest/account permissions, votes, search, comments/replies, approval/progress, board, mobile, quota errors, idempotent retry, admin and recovery.");
 } finally {

@@ -1,0 +1,121 @@
+/* --cover-stroke is left to the parent (a card sets it on hover). */
+.cover {
+  --cover-pad: 1.1rem;
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  isolation: isolate;
+  container-type: inline-size;
+  width: 100%;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+.card {
+  aspect-ratio: 2.15;
+}
+.featured {
+  --cover-pad: 1.5rem;
+  height: 100%;
+  min-height: 17rem;
+}
+.article {
+  --cover-pad: 1.4rem;
+  --cover-stroke: oklch(from var(--tone) l c h / 75%);
+  aspect-ratio: 1.3;
+}
+
+/* The baseline the signature stands on. */
+.grid {
+  background: var(--line);
+  height: 1px;
+  position: absolute;
+  bottom: calc(var(--cover-pad) - 1px);
+  left: 42%;
+  right: var(--cover-pad);
+}
+
+.top,
+.topic {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  z-index: 2;
+  font-size: 0.56rem;
+  position: absolute;
+  top: var(--cover-pad);
+}
+.top {
+  color: var(--text-dim);
+  gap: 1.1em;
+  display: flex;
+  left: var(--cover-pad);
+}
+.issue {
+  color: var(--text-faint);
+}
+.topic {
+  color: var(--tone);
+  right: var(--cover-pad);
+}
+
+.numeral {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  color: #0000;
+  -webkit-text-stroke: 1px var(--cover-stroke, var(--line-strong));
+  white-space: nowrap;
+  pointer-events: none;
+  font-size: 46cqw;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 0.8;
+  transition: -webkit-text-stroke-color var(--transition-link);
+  position: absolute;
+  bottom: -0.1em;
+  left: -0.05em;
+}
+.featured .numeral {
+  color: var(--tone);
+  -webkit-text-stroke: 0;
+  font-size: var(--cover-numeral, 50cqw);
+  bottom: 0.16em;
+  left: calc(var(--cover-pad) - 0.06em);
+}
+.article .numeral {
+  font-size: 56cqw;
+}
+
+.signal {
+  align-items: flex-end;
+  gap: 3px;
+  width: 44%;
+  height: 34%;
+  display: flex;
+  position: absolute;
+  bottom: var(--cover-pad);
+  right: var(--cover-pad);
+}
+.signal span {
+  background: var(--tone);
+  opacity: calc(0.18 + var(--h) * 0.62);
+  transform-origin: bottom;
+  flex: 1;
+  height: calc(var(--h) * 100%);
+  transform: skewX(var(--skew));
+}
+/* Featured: the signature runs as a waveform under the labels. */
+.featured .signal {
+  width: auto;
+  height: 22%;
+  top: calc(var(--cover-pad) + 1.9rem);
+  bottom: auto;
+  left: var(--cover-pad);
+}
+.featured .grid {
+  bottom: auto;
+  top: calc(var(--cover-pad) + 1.9rem + 22%);
+  left: var(--cover-pad);
+}

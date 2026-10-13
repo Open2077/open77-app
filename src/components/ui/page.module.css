@@ -1,0 +1,146 @@
+:where(.page) {
+  padding-top: var(--header-live);
+  padding-bottom: var(--margin-1);
+  min-height: 70vh;
+  position: relative;
+}
+
+/* Hero ------------------------------------------------------------------ */
+
+/* The hero is as tall as its copy: the page's own content starts in the first
+   screen, never a scroll below a title. */
+:where(.hero) {
+  margin-top: calc(var(--header-height) * -1);
+  padding: calc(var(--header-height) + 4vh) 0 4.5vh;
+  isolation: isolate;
+  flex-direction: column;
+  justify-content: flex-end;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+:where(.full) {
+  padding-top: calc(var(--header-height) + 6vh);
+  padding-bottom: 6vh;
+}
+:where(.compact) {
+  padding-top: calc(var(--header-height) + 3vh);
+  padding-bottom: 3.5vh;
+}
+.hero:after {
+  content: "";
+  background: linear-gradient(90deg, var(--tone) 0 18%, var(--line) 18% 100%);
+  height: 1px;
+  position: absolute;
+  bottom: 0;
+  left: var(--page-gutter);
+  right: var(--page-gutter);
+}
+
+.art {
+  z-index: -2;
+  position: absolute;
+  inset: 0;
+}
+.art img {
+  object-fit: cover;
+}
+.art:after {
+  content: "";
+  background:
+    linear-gradient(to top, var(--body) 0%, oklch(from var(--body) l c h / 0.55) 45%, oklch(from var(--body) l c h / 0.75) 100%),
+    linear-gradient(90deg, oklch(from var(--body) l c h / 0.85) 0%, oklch(from var(--body) l c h / 0) 70%);
+  position: absolute;
+  inset: 0;
+}
+
+.watermark {
+  z-index: -1;
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: -0.08em;
+  white-space: nowrap;
+  color: #0000;
+  -webkit-text-stroke: 1px var(--line);
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  font-size: clamp(8rem, 24vw, 26rem);
+  font-style: italic;
+  line-height: 0.8;
+  position: absolute;
+  bottom: -0.12em;
+  left: -0.06em;
+}
+
+.inner {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 3rem;
+  margin-inline: auto;
+  display: flex;
+}
+.copy {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.4rem;
+  min-width: 0;
+  display: flex;
+}
+.lead {
+  max-width: 36em;
+}
+.actions {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.6rem;
+  margin-top: 0.6rem;
+  display: flex;
+}
+.aside {
+  flex: none;
+}
+@media screen and (max-width: 1084px) {
+  .inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Section --------------------------------------------------------------- */
+
+:where(.section) {
+  width: var(--container-width);
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-top: var(--margin-1);
+}
+:where(.wide) {
+  width: auto;
+  max-width: none;
+  margin-inline: var(--page-gutter);
+}
+:where(.narrow) {
+  width: min(var(--container-width), 820px);
+}
+.sectionHead {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem 3rem;
+  margin-bottom: 2.25rem;
+  display: flex;
+}
+.sectionCopy {
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 48rem;
+  display: flex;
+}
+.sectionActions {
+  flex-wrap: wrap;
+  gap: 1rem;
+  display: flex;
+}

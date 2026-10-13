@@ -1,0 +1,25 @@
+.share {
+  flex-direction: column;
+  gap: 1rem;
+  display: flex;
+}
+.share input {
+  font-family: var(--font-mono);
+  font-variation-settings: "wght" 300;
+  font-size: 0.8rem;
+}
+.actions {
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  padding-left: 0.3rem;
+  display: flex;
+}
+.status {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tone);
+  font-size: 0.62rem;
+  line-height: 1.5;
+}

@@ -1,0 +1,104 @@
+.actions {
+  flex-direction: column;
+  gap: 1rem;
+  display: flex;
+}
+.row {
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 0.7rem;
+  padding-inline: 0.3rem;
+  display: grid;
+}
+.action {
+  color: var(--text-primary);
+  isolation: isolate;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 4.4rem;
+  padding: 0.6rem 0.4rem;
+  transition: color var(--transition-link);
+  display: flex;
+  position: relative;
+}
+.action:before {
+  content: "";
+  border: 1px solid var(--line-strong);
+  z-index: -1;
+  transition:
+    border-color var(--transition-link),
+    background-color var(--transition-link);
+  position: absolute;
+  inset: 0;
+  transform: skewX(var(--skew));
+}
+.action svg {
+  color: var(--tone);
+  font-size: 1.15rem;
+}
+.action:hover:not(:disabled):before {
+  border-color: var(--tone);
+  background: oklch(from var(--tone) l c h / 10%);
+}
+.action[aria-pressed="true"] {
+  color: var(--body);
+}
+.action[aria-pressed="true"] svg {
+  color: var(--body);
+}
+.action[aria-pressed="true"]:before {
+  background: var(--tone);
+  border-color: var(--tone);
+}
+.action:disabled {
+  cursor: not-allowed;
+}
+.action:disabled:not([aria-pressed="true"]) {
+  color: var(--text-dim);
+}
+.action:focus-visible {
+  outline: none;
+}
+.action:focus-visible:before {
+  outline: var(--focus);
+  outline-offset: 3px;
+}
+.top {
+  align-items: center;
+  gap: 0.5rem;
+  display: flex;
+}
+.count {
+  font-family: var(--font-heading);
+  letter-spacing: -0.05em;
+  font-size: 1.25rem;
+  font-style: italic;
+  line-height: 1;
+}
+.label {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 350;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.58rem;
+}
+.note {
+  color: var(--text-dim);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.note a {
+  color: var(--tone);
+  text-underline-offset: 0.2em;
+  text-decoration: underline;
+}
+.retry {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tone);
+  margin-left: 0.4em;
+  font-size: 0.66rem;
+}

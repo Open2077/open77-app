@@ -3,23 +3,22 @@ import type { ThemeRegistration } from "shiki";
 /**
  * Syntax theme for documentation code blocks.
  *
- * The colours are lifted from the hand-written `.code-body` palette in the
- * design system (`07-content.css`) so a highlighted Lua block in the docs and
- * the API design preview on the platform page read as the same surface. Only
- * these six hues exist in the palette; anything unscoped falls back to body
- * text rather than introducing a seventh colour.
+ * The palette of the home page code panels: keywords in red, strings in
+ * yellow, numbers and literals in blue, everything else in body text with
+ * functions brighter than variables. Comments sit back in the muted slate of
+ * the design. The id stays `open-signal` so the docs pipeline is untouched.
  */
 export const openSignalSyntaxTheme: ThemeRegistration = {
   name: "open-signal",
   type: "dark",
   colors: {
-    "editor.background": "#0d1624",
-    "editor.foreground": "#f2f6f8",
+    "editor.background": "#050c16",
+    "editor.foreground": "#e3e8ef",
   },
   tokenColors: [
     {
       scope: ["comment", "punctuation.definition.comment", "string.comment"],
-      settings: { foreground: "#8d99a8b8", fontStyle: "italic" },
+      settings: { foreground: "#6b82a3", fontStyle: "italic" },
     },
     {
       scope: [
@@ -32,7 +31,7 @@ export const openSignalSyntaxTheme: ThemeRegistration = {
         "storage.modifier",
         "entity.name.tag",
       ],
-      settings: { foreground: "#22d8e2" },
+      settings: { foreground: "#ff005f" },
     },
     {
       scope: [
@@ -43,7 +42,7 @@ export const openSignalSyntaxTheme: ThemeRegistration = {
         "constant.other.symbol",
         "meta.jsx.children",
       ],
-      settings: { foreground: "#ffd9a0" },
+      settings: { foreground: "#fcee0a" },
     },
     {
       scope: [
@@ -54,7 +53,7 @@ export const openSignalSyntaxTheme: ThemeRegistration = {
         "constant.language.null",
         "support.constant",
       ],
-      settings: { foreground: "#ffc27d" },
+      settings: { foreground: "#08dfec" },
     },
     {
       scope: [
@@ -66,7 +65,7 @@ export const openSignalSyntaxTheme: ThemeRegistration = {
         "entity.name.type",
         "support.class",
       ],
-      settings: { foreground: "#9db8ff" },
+      settings: { foreground: "#ffffff" },
     },
     {
       scope: [
@@ -77,15 +76,15 @@ export const openSignalSyntaxTheme: ThemeRegistration = {
         "meta.object-literal.key",
         "support.type.property-name",
       ],
-      settings: { foreground: "#c9a7ff" },
+      settings: { foreground: "#c4cfdd" },
     },
     {
       scope: ["punctuation", "meta.brace", "keyword.operator"],
-      settings: { foreground: "#f2f6f8" },
+      settings: { foreground: "#8fa0b8" },
     },
     {
       scope: ["invalid", "invalid.illegal"],
-      settings: { foreground: "#ff5964" },
+      settings: { foreground: "#ff005f" },
     },
   ],
 };

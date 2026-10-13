@@ -1,0 +1,15 @@
+.hit {
+  z-index: 1;
+  align-items: center;
+  display: inline-flex;
+  position: relative;
+}
+.target {
+  display: block;
+}
+.live {
+  pointer-events: none;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
+  will-change: transform;
+}

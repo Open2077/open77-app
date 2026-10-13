@@ -1,0 +1,68 @@
+.list {
+  flex-direction: column;
+  gap: 1.2rem;
+  display: flex;
+}
+.scopes {
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  display: flex;
+}
+.scopes code {
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  border: 1px solid var(--line);
+  background: var(--body);
+  padding: 0.15rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 300;
+}
+
+.approval {
+  flex-direction: column;
+  gap: 1.2rem;
+  display: flex;
+}
+.codeForm {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  display: flex;
+}
+.codeForm > :first-child {
+  align-self: stretch;
+}
+.code input {
+  font-family: var(--font-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.preview {
+  border-top: 1px solid var(--line);
+  flex-direction: column;
+  gap: 1.2rem;
+  padding-top: 1.3rem;
+  display: flex;
+}
+.previewHead {
+  border: 1px solid oklch(from var(--tone) l c h / 45%);
+  background: oklch(from var(--tone) l c h / 5%);
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.2rem;
+  display: flex;
+}
+.previewKicker {
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--tone);
+  font-size: 0.6rem;
+}
+.previewTitle {
+  overflow-wrap: anywhere;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
