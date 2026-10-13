@@ -4,9 +4,9 @@ date: "2026-10-13"
 description: "How the OPEN//77 multiplayer launcher keeps your Nexus Mods setup separate: nothing deleted, Vortex and MO2 friendly, a one-click switch back to your own modded game."
 tags: ["cyberpunk-2077-mods", "nexus-mods", "cyberpunk-2077-multiplayer-mod", "launcher", "mod-support"]
 ---
-If you mod Cyberpunk 2077, you have probably spent hours on your load order: a Nexus Mods collection, a Vortex or Mod Organizer 2 profile, ArchiveXL and TweakXL archives, redscript fixes, Cyber Engine Tweaks scripts. Installing a multiplayer mod on top of that is a fair thing to worry about. A recent thread on r/LowSodiumCyberpunk summed up the answer in its title: [OPEN//77's launcher keeps your Nexus mods separate](https://www.reddit.com/r/LowSodiumCyberpunk/comments/1x536c4/open77s_launcher_keeps_your_nexus_mods_separate/).
+If you mod Cyberpunk 2077, you have probably spent hours on your load order: a Nexus Mods collection, a Vortex or Mod Organizer 2 profile, ArchiveXL and TweakXL archives, redscript fixes, Cyber Engine Tweaks scripts. Installing a multiplayer mod on top of that is a fair thing to worry about.
 
-This post explains exactly how, so you can try Cyberpunk 2077 multiplayer without putting your single-player setup at risk.
+The short answer: the OPEN//77 launcher keeps your Nexus mods separate. This post explains exactly how, so you can try Cyberpunk 2077 multiplayer without putting your single-player setup at risk.
 
 ## The short version
 
