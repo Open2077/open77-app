@@ -282,11 +282,12 @@
       "target": "content/docs/cyberware.md",
       "slug": "cyberware",
       "title": "Cyberware",
-      "bytes": 15251,
-      "sha256": "72d338e991657b502d4ebf833415e2a24ec1aa9c16159d6658ff1dc8505343d0",
+      "bytes": 15718,
+      "sha256": "d81585dc8aa71ea33025b445c8ee6c700ba3e7c172fa99e3da5b33c641d77496",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "3cca32beb48f07bf401139ea0d4436920b72c5971df4ea02c9d26cff883b93c1"
+        "upstreamSnapshotSha256": "3cca32beb48f07bf401139ea0d4436920b72c5971df4ea02c9d26cff883b93c1",
+        "w3PrereqsAmendment": "open77_cyberware_lab: acting on another player or the whole server needs the console or command.cyberlab.others; operator_required refusal; refresh for acl.read (open77_cyberware_lab 44160a86, merged with w3/prereqs)."
       }
     },
     {
@@ -539,13 +540,14 @@
       "target": "content/docs/world-interaction.md",
       "slug": "world-interaction",
       "title": "Jobs and world interaction",
-      "bytes": 10830,
-      "sha256": "584c47797c44a019078bec132defda9b062105f274b0c8157bbb35a5ec303ff3",
+      "bytes": 11429,
+      "sha256": "eb9bf6ffa94b5404afbecb681d1b4064206df06e83a974256bb7eaef22226852",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "90050d5538375c9f43ab8085b42145d3fc88329e461e291b62e06fea5f037f81",
         "amendment": "See worldInteractionDocumentation.",
-        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions."
+        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions.",
+        "rpJobsAmendment": "Links the site-authored roleplay jobs pages (rp-jobs and the seven job pages) from the activity table, the example-jobs paragraph and the next-steps list."
       }
     },
     {
@@ -553,13 +555,14 @@
       "target": "content/docs/actions.md",
       "slug": "actions",
       "title": "Actions and carrying",
-      "bytes": 31966,
-      "sha256": "7108e5b8ccbdb6d3d2e3a62a9b4277a181d19d3781186a3801d87769c2213b5d",
+      "bytes": 36618,
+      "sha256": "5c48a6a8e65f36b447db014586d719d68386137ab5f15d74da2ea29eb1b1c106",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "fa498e3294c2c0da2c9cf12d0ea2b2024df6b6d193f9cba891c5b70546c78677",
         "amendment": "See worldInteractionDocumentation.",
-        "builderGuideReview": "Added a builder overview and separate Lua tutorial; updated reference links."
+        "builderGuideReview": "Added a builder overview and separate Lua tutorial; updated reference links.",
+        "w3JobsAmendment": "Scoped merge from the platform wiki and open77_actions source (feat/wave3-jobs): target promptAt, hideFor and keepCrowdOff with promptHeight and lookAt explained; carry kind promptHeight; spot_taken (0.45 m, after eligibility and the validate hook, deferred to the claim on the same target, skipped for a body placed at another target); action messages and the current fallback sentences; sprint claim; stacked identical items show one card."
       }
     },
     {
@@ -567,8 +570,8 @@
       "target": "content/docs/transactions.md",
       "slug": "transactions",
       "title": "Items, payments and storage",
-      "bytes": 25200,
-      "sha256": "e57fcfe3efb4699027e41ff50f95f972b298d26bd789d0ba76b95469bf1a4bcf",
+      "bytes": 26597,
+      "sha256": "8d818a9d64b064610f01b95bc6d15c5d756c6dfbba9e4e4141060a620c8dcf0d",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "d6d7d4982c4ca41255e46838c60a4e0566620154234301efa012afbca32e3180",
@@ -580,7 +583,8 @@
           }
         ],
         "amendment": "See worldInteractionDocumentation.",
-        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions."
+        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions.",
+        "w3JobsAmendment": "writers2 to writers4 continue the writers list (open77_transactions c70a4b57); a text tunable holds at most 256 characters (ResourceTunables.MaximumTextLength), so long mint rules are spread over mintN slots; a continued example and a link to rp-jobs."
       }
     },
     {
@@ -588,13 +592,14 @@
       "target": "content/docs/furniture.md",
       "slug": "furniture",
       "title": "Furniture: sitting and leaning",
-      "bytes": 12144,
-      "sha256": "8bd44a70d9e34bd5c22370d5ee91c50dc12dd63bc1c6163b536d1ab3989f847b",
+      "bytes": 12384,
+      "sha256": "40057a1d64b0310d526c3ff73ecad2b448e8bcd890b100d0ad3b0d480382fa76",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "149f00cb1091a189abd9a5762c949969c94f4375bfb6ab9e2cc01f728ed06311",
         "amendment": "See worldInteractionDocumentation.",
-        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions."
+        "builderGuideReview": "Reader-first overview, separate Lua tutorial, integration boundaries and reference introductions.",
+        "w3PrereqsAmendment": "Beds of the measured double-bed family get the 'Lie down on the bed' prompt and /sit takes them; the open77_seating_postures convar (open77_seating 66bf8f25, merged with w3/prereqs)."
       }
     },
     {
@@ -1476,8 +1481,8 @@
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
       "entries": 1739,
-      "bytes": 2514883,
-      "sha256": "eebe6fda968d536453f874cfa5b725343b9a77eb8157202562c14d5f7ece9616",
+      "bytes": 2515353,
+      "sha256": "205cb623e32e1340cd79d7b586f0f2f5619496f017b55a1b1a2f3edf5880d672",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6"
@@ -1489,7 +1494,8 @@
         "blipSvgContract": "Native SVG icons and per-blip RGB/RGBA; experimental matching client adapter required. Reviewed against uncommitted open77-base implementation; upstream sync provenance preserved.",
         "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved.",
         "predictionSync": "Vendored from open77-base 36772b3b88404ffa9467bb2d06fcf1abd47568d9 through scripts/doc-api-editorial.json. Preserved site entries: the eight drive-by cards (not on that revision), the four SVG blip cards, named CreateVehicle/ResetVehiclePaint/SetVehicleTransform parameters, and the permission-free Open77.markers.shapes. Open77.prediction.setPolicy/stats carry reviewed signatures and examples from ResourceHost.cpp.",
-        "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
+        "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved.",
+        "w3InputActions": "Open77.input.setActionBlocked lists Melee, Jump, Sprint and WeaponWheel, and Open77.movement.setWalkMode tells how to hold a player to the pace (block Sprint); both from open77-base feat/wave3-jobs a56f501e (wiki/data/api.json). Other site wording preserved."
       }
     },
     {

@@ -771,6 +771,78 @@
       ]
     },
     {
+      "id": "rp-jobs",
+      "title": "Roleplay jobs",
+      "group": "Game systems",
+      "description": "Ready-made Night City jobs for roleplay servers: how each one plays, and how to set it up on your server.",
+      "pages": [
+        {
+          "slug": "rp-jobs",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Overview",
+          "title": "Roleplay jobs",
+          "description": "Seven ready-made Night City jobs for a roleplay server: what each one plays like, how they connect, the setup steps they share, the settings to run them all on one server and the platform features they rely on."
+        },
+        {
+          "slug": "rp-job-ripperdoc",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Ripperdoc",
+          "title": "Ripperdoc: Viktor's clinic",
+          "description": "Run a ripperdoc at Viktor's clinic: quotes the patient accepts on an offer card, the operating chair, real cyberware installed and paid once, what happens on a cancel or a restart, chrome from the Kabuki dealer, server setup, configuration and console commands."
+        },
+        {
+          "slug": "rp-job-chooh2",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "CHOOH2 chain",
+          "title": "CHOOH2: from the corn rows to the fuel depot",
+          "description": "Run the CHOOH2 fuel chain: harvest Biotechnica corn into crates, truck them to the Petrochem refinery in the North Sunrise Oil Field, ferment canisters, sell them at the depot or refuel a car, with server setup, configuration and console commands."
+        },
+        {
+          "slug": "rp-job-techie",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Techie",
+          "title": "Techie: the Kabuki west workshop",
+          "description": "Run a techie workshop in Kabuki: buy salvage from a dealer or a scrapper, strip it and assemble weapon mods and cyberware components at two benches sharing a tray, sell to Wilson, Dr. Osei or players with consent, every stage paid and created once, server setup, mint rules, configuration and console commands."
+        },
+        {
+          "slug": "rp-job-netrunner",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Netrunner",
+          "title": "Netrunner: breach contracts from the Afterlife",
+          "description": "Run netrunner contracts from the Afterlife's back room: fixers post breach contracts on a board, a netrunner breaches a real terminal against the clock, a failure is traced by NCPD, the data shard is paid once on delivery with the fixer's cut, plus quickhacks, server setup, configuration and console commands."
+        },
+        {
+          "slug": "rp-job-fixer",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Fixer board",
+          "title": "Fixer: the contract board",
+          "description": "Run the fixers' contract board at the Afterlife, Wakako's and Regina's corner: deliveries, retrievals, job orders and cyberpsycho bounties with escrowed rewards, reputation tiers, payouts and refunds made once, what survives a restart, server setup, configuration and console commands."
+        },
+        {
+          "slug": "rp-job-trauma-team",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Trauma Team",
+          "title": "Trauma Team: plans, calls and evacuations",
+          "description": "Run Trauma Team International: Silver, Gold and Platinum plans sold at kiosks, downed players held where they fell and a call raised with their plan's priority, medics who fly the AV out, stabilise and evacuate to Vik's clinic, every charge paid once, what survives a disconnect or a restart, server setup, configuration and console commands."
+        },
+        {
+          "slug": "rp-job-nomad",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Nomad smuggler",
+          "title": "Nomad smuggler: Aldecaldos runs",
+          "description": "Run Aldecaldos smuggling runs: take a run at the camp's board, carry crates into a truck bed, get past the NCPD checkpoints and hand the crates to a fence or a player, paid once with the camp's cut, plus officer searches, what survives a restart, server setup, configuration and console commands."
+        }
+      ]
+    },
+    {
       "id": "interfaces",
       "title": "WebUI, HUD & input",
       "group": "Game systems",

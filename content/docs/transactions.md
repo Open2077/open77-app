@@ -337,6 +337,7 @@ Operators set both in the coordinator's tunables, from the Warden panel or the c
 | Tunable | Default | Meaning |
 |---|---|---|
 | `writers` | `*` | which resources may change which accounts; `*` lets every resource write (live) |
+| `writers2` … `writers4` | empty | more entries for the `writers` list, when it does not fit in one value; ignored while `writers` is `*` (live) |
 | `mint1` … `mint6` | empty | who may create what out of `sys:` accounts, and how much an hour (live) |
 | `store` | `sql` | the production store; a disposable store exists for unlisted development servers (restart) |
 | `serverTag` | `srv` | 1 to 11 of `a-z 0-9 _ -`, a letter first; unique per server sharing a database (restart) |
@@ -346,12 +347,18 @@ Operators set both in the coordinator's tunables, from the Warden panel or the c
 
 - **Writers**: `*`, or a comma-separated list. `name` may write every namespace, `name:ns+ns` only
   those, `name:ns/part` one part (`rp_cargo:veh/cargo` writes `veh:<plate>:cargo`, not the trunk).
-  A resource left out answers `namespace_denied`.
+  A resource left out answers `namespace_denied`. `writers2`, `writers3` and `writers4` continue
+  the list with the same syntax: the coordinator joins the four values into one list.
 - **Mint rules**: `<resource> <sys:account or sys:*> <item, * or money> <capPerHour>`, several
   separated by `;`; `*` is any item, never money. **Nothing mints by default**: `mint_denied` until a
   rule allows it, then `mint_cap_exceeded` once the hour's cap is used. Burning into `sys:` needs no
   rule. Caps count over a sliding hour and survive a restart. A malformed entry is ignored and
   logged (`writers: ignored entry '…'`, `mint rules: ignored entry '…'`).
+- **256 characters per value.** A text tunable holds at most 256 characters. A longer value is
+  refused as a whole (`error: mint4: exceeds 256 characters` on the console) and the previous value
+  stays. A server running several jobs outgrows one value: continue the writers in `writers2` to
+  `writers4`, and spread the mint rules over `mint1` to `mint6`, each under 256 characters. A rule
+  on `*` (any item) with one cap for the whole account is shorter than one rule per item.
 
 The repair job, then a server running the RP pack's scrapyard (size the caps to your population):
 
@@ -363,6 +370,18 @@ tunable.set open77_transactions mint2 my_repairs sys:repairs fuse 200
 tunable.set open77_transactions writers rp_salvage:world+char, rp_cargo:veh/cargo, rp_economy:cash+bank+soc, rp_inventory, open77_containers:world
 tunable.set open77_transactions mint1 rp_salvage sys:salvage * 2000; rp_inventory sys:* * 2000; rp_economy sys:* money 2000000
 ```
+
+Adding the CHOOH2 chain and the techie to that server: the writers continue in `writers2`, and each
+job's mint rules get a slot of their own next to the shared `mint1`:
+
+```text
+tunable.set open77_transactions writers2 rp_chooh2:world+stash+char, rp_techie:stash/tray+char+cash
+tunable.set open77_transactions mint2 rp_chooh2 sys:chooh2.fields * 2000; rp_chooh2 sys:chooh2.refinery chooh2_canister 400
+tunable.set open77_transactions mint3 rp_techie sys:techie.workshop * 960; rp_techie sys:techie.dealer * 540
+```
+
+The [roleplay jobs](rp-jobs.md#run-every-job-on-one-server) page lists the values for a server
+running all of them.
 
 `open77_containers` creates the `world:` account of every container itself, and the coordinator sees
 it as the writer of every move it forwards. With a `writers` list, give it `world` plus each
