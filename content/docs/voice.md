@@ -9,6 +9,8 @@ scope is only a request.
 
 ## Enable the reference resource
 
+To configure these preferences inside your own onboarding or server interface, use the [Guided voice setup API](guided-voice-setup.md). It provides device selection, a live meter, local microphone playback, keyboard/mouse push-to-talk bindings and optional completion tracking through the pause menu's settings owner.
+
 [`open77_voice`](https://github.com/Open2077/open77-resources/tree/main/system/open77_voice) is an auto-start reference package. Its manifest requests `voice.manage` on the
 server and `voice.client`, `input.actions`, and `ui.nameplates` on the client. The default PTT key is
 `N`. The pause menu has a dedicated **VOICE** tab for:

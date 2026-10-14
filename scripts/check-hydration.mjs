@@ -351,13 +351,13 @@ try {
     await visit("/docs");
     check("home directory matches sidebar themes", await session.evaluate(`
       return document.querySelectorAll('[data-docs-directory]').length === 4 &&
-        document.querySelectorAll('[data-docs-directory] h4').length === 21;
+        document.querySelectorAll('[data-docs-directory] h4').length === 22;
     `));
     await visit("/docs/platform");
-    check("sidebar has four collections, 21 topics and one API shortcut", await session.evaluate(`
+    check("sidebar has four collections, 22 topics and one API shortcut", await session.evaluate(`
       const nav = document.querySelector('[data-docs-nav]');
       return nav.querySelectorAll('[data-docs-collection]').length === 4 &&
-        nav.querySelectorAll('[data-docs-topic]').length === 21 &&
+        nav.querySelectorAll('[data-docs-topic]').length === 22 &&
         nav.querySelectorAll('a[href="/docs/api"]').length === 1 &&
         nav.querySelectorAll('[data-docs-topic][aria-expanded="true"]').length === 1;
     `));
@@ -400,7 +400,7 @@ try {
     check("filter has an explicit empty state", await session.evaluate(`return !!document.querySelector('[data-docs-empty]');`));
     await session.evaluate(`document.querySelector('[aria-label="Clear topic filter"]').click(); await new Promise(r => setTimeout(r, 100));`);
     check("clearing filter restores topics and input focus", await session.evaluate(`
-      return document.querySelectorAll('[data-docs-topic]').length === 21 &&
+      return document.querySelectorAll('[data-docs-topic]').length === 22 &&
         document.activeElement.getAttribute('aria-label') === 'Filter documentation topics';
     `));
     reportConsole("desktop topic navigation");

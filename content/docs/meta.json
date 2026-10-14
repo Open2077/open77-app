@@ -393,6 +393,12 @@
           "description": "How synchronized role-play animations work: install the service, build your first Lua action, use the /anim menu, manage sequences and cancellation, and understand client/server authority and temporary third person."
         },
         {
+          "slug": "custom-locomotion",
+          "kind": "guide",
+          "nav": "Custom locomotion",
+          "description": "Export custom walk and run graphs, assign styles from server Lua, and tune smooth transitions and stride timing on male and female player bodies."
+        },
+        {
           "slug": "rp-animation-catalogue",
           "kind": "guide",
           "nav": "Animation catalogue",
@@ -990,6 +996,14 @@
           "kind": "guide",
           "nav": "Voice lipsync",
           "description": "Enable voice-driven mouths on male/female player heads, locally and on replicated players, with resource-owned Lua controls and diagnostics."
+        },
+        {
+          "slug": "guided-voice-setup",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Guided voice setup",
+          "title": "Guided voice setup API",
+          "description": "Build optional microphone onboarding with device selection, a live meter, local playback, keyboard and mouse push-to-talk bindings, and shared pause-menu preferences."
         }
       ]
     },

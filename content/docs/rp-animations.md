@@ -1,5 +1,7 @@
 # Role-play animations
 
+For authored walk/run graphs, stride synchronization and server-assigned movement styles, see [Custom locomotion](custom-locomotion.md).
+
 Play server-authoritative RP actions for inventory use, jobs and social gestures.
 Use upper-body profiles such as `smoke_walk`, `drink_walk` and `wave` while moving,
 or full-body workspots such as `smoke`, `phone` and `dance` for stationary actions.

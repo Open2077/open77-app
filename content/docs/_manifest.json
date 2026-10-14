@@ -3,7 +3,7 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 105,
+  "guides": 106,
   "apiEntries": 1739,
   "files": [
     {
@@ -1017,11 +1017,16 @@
       "target": "content/docs/rp-animations.md",
       "slug": "rp-animations",
       "title": "Role-play animations",
-      "bytes": 40747,
-      "sha256": "8e562a4c3776ee8a9497b81e509f9092fed1f539e15c54e91e6eb41674f01836",
+      "bytes": 40885,
+      "sha256": "1a68454ad0c51859b4b9fb669387872e901e6f2f8a17a569f39c141a638ac47b",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "b5c104b760c0540f4725de2a5f1fb1c7f5c7cb6dd4397495943490d9ca8d167a"
+        "upstreamSnapshotSha256": "b5c104b760c0540f4725de2a5f1fb1c7f5c7cb6dd4397495943490d9ca8d167a",
+        "locomotionVoiceSetupAmendment": {
+          "sourceRevision": "b5931d0e14eb434df9c306e2bca6725ce49647c9",
+          "clientVersion": "2.31.21+op77.141",
+          "review": "Link the custom locomotion and guided voice setup guides from their related system documentation."
+        }
       },
       "siteAmendment": {
         "previous": "Walking RP actions, native item ownership, job sequences and public discovery downloads; contract reference open77-base 75f0e59cfa26606e83d9257ec1c7c07c6929c977",
@@ -1333,11 +1338,16 @@
       "target": "content/docs/voice.md",
       "slug": "voice",
       "title": "Integrated voice chat",
-      "bytes": 15208,
-      "sha256": "a11e9ec474d1ff4278c3eef1996aa1ff621add86e754d6267431c1727572940f",
+      "bytes": 15527,
+      "sha256": "ac64af3d650fd840b36ab2926fc578243348ea77fab0c15498cdfa5a85914e35",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "55226fd769b2cce01f9a32c02b88b53eb77e1eff4ced607562311149f90451a0"
+        "upstreamSnapshotSha256": "55226fd769b2cce01f9a32c02b88b53eb77e1eff4ced607562311149f90451a0",
+        "locomotionVoiceSetupAmendment": {
+          "sourceRevision": "b5931d0e14eb434df9c306e2bca6725ce49647c9",
+          "clientVersion": "2.31.21+op77.141",
+          "review": "Link the custom locomotion and guided voice setup guides from their related system documentation."
+        }
       }
     },
     {
@@ -2046,6 +2056,22 @@
       "sha256": "42878b7ca500eb41ad7f937dde1ced583612a8f59c279d04be18066ee09747ce",
       "sourceRevision": "116abc12c473c48767ce0a45ba0c9b1af4b22505",
       "sourceSyncedAt": "2026-10-09T10:22:49.946Z"
+    },
+    {
+      "source": "wiki/custom-locomotion.md",
+      "target": "content/docs/custom-locomotion.md",
+      "slug": "custom-locomotion",
+      "title": "Custom locomotion",
+      "bytes": 12104,
+      "sha256": "bb58871b14bd39246397fed6d04f585849b096c7ed18ee357ff9f95b8f547154",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "55f7cc9469239264000d29b4f5c57e8272f059c0be940f9447530d54e40c1da9",
+        "sourceRevision": "b5931d0e14eb434df9c306e2bca6725ce49647c9",
+        "sourceWorkingTreeDirty": false,
+        "clientVersion": "2.31.21+op77.141",
+        "review": "Public guide checked against the released locomotion runtime and Studio resource exporter; replaces development-only wording in the source wiki."
+      }
     }
   ],
   "partialSync": {
