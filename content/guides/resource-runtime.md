@@ -52,10 +52,10 @@ a `.lua` script.
 | `server_script` / `server_scripts` | Lua executed only by the dedicated server. |
 | `dependency` / `dependencies` | Required resources, with optional version constraints. |
 | `permission` / `permissions` | Capabilities requested by the resource. |
-| `file` / `files` | Generic files distributed to the client. |
+| `file` / `files` | Generic files distributed to the client; available to WebUI through the [shared asset protocol](webui-assets.md). |
 | `ui_page` / `web_ui_page` | Default WebUI entry: a declared local file or an HTTP(S) URL. See [remote pages](#remote-pages-external-content-and-hot-reload) for supported entry types. |
 | `web_ui_auto_create` | Whether to create that page at resource start. |
-| `web_file` / `web_files` | Files served to this resource's WebUI origin. |
+| `web_file` / `web_files` | Files served to this resource's WebUI origin and through `open77://RESOURCE/PATH` on clients with shared asset support. |
 | `pause_menu_logo` | Optional server logo beside OPEN//77 in the Escape menu: an HTTP(S) image URL or a declared local asset. Requires `pause_menu.customize`; see [Pause menu customization](pause-menu.md). |
 
 Singular and plural forms are accepted everywhere. Globs support `*`, `?`
@@ -540,6 +540,21 @@ Open77.ready();
 Bundled WebUI uses an isolated virtual HTTPS origin; remote WebUI uses the
 configured HTTP(S) origin. Lua/JavaScript payloads use a bounded JSON codec.
 
+### Shared assets between resources
+
+Use `open77://RESOURCE/PATH` to load a file declared in another running resource's
+`files` or `web_files` list. A library can contain only assets, with no scripts or
+WebUI of its own. Add a dependency in consumers to establish startup order.
+
+```html
+<img src="open77://item_assets/html/img/items/water.png" alt="Water">
+```
+
+This requires a client with shared asset protocol support. The URL reads the
+downloaded file directly; no Lua event or base64 transfer is needed. See
+[Shared WebUI assets](webui-assets.md) for complete manifests, stylesheets,
+modules, fonts, data, lifecycle behavior and troubleshooting.
+
 ### WebUI tabs in the native map
 
 On clients with map-tab support, `Open77.map.addTab({id, label, url})` creates a resource-local page inside the native map's content area. Use `page` instead of `url` to register an existing owned, hidden and unfocused page. Register after resource preparation with `map.control`. The screen manages focus, visibility and bounds: bound pages cannot use `show`, `hide` or `setFocus` directly.
@@ -630,8 +645,10 @@ This removes **Open77's external-content block**, not the remote site's rules:
   cross-origin top-level navigation can display a site, but loses Lua access
   until returning to the configured origin. Same-origin redirects and reloads
   preserve it. Use `postMessage` with an exact origin check for trusted embeds.
-- Local assets still require `web_files`; another resource's virtual origin,
-  `file:` URLs, OS protocol execution, plugins and desktop popups stay blocked.
+- Files served through the page's own virtual origin require `web_files`.
+  To read another resource's declared `files` or `web_files`, use the
+  [shared asset protocol](webui-assets.md). Another resource's private virtual
+  origin, `file:` URLs, OS protocol execution, plugins and desktop popups stay blocked.
   Layer permissions, message quotas and resource teardown remain enforced.
 - Remote content is downloaded by **each player's browser**, not included in
   the signed resource archive. HTTPS is recommended in production. Remote

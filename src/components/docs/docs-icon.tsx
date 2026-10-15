@@ -17,6 +17,7 @@ const paths: Record<string, string> = {
   "world-interaction": "M4 9h16v11H4V9m-1-5h18v5H3V4m7 9h4",
   "rp-jobs": "M4 4h16v16H4V4m4 5a2 2 0 1 0 4 0 2 2 0 0 0-4 0m-2 7a4 4 0 0 1 8 0m2-7h3m-3 3h3",
   interfaces: "M3 3h18v18H3V3m0 5h18M9 8v13",
+  input: "M2 6h20v12H2V6m4 4h1m3 0h1m3 0h1m3 0h1M6 14h1m3 0h8",
   cameras: "M4 6h4l2-3h4l2 3h4v14H4V6m4 7a4 4 0 1 0 8 0 4 4 0 0 0-8 0",
   audio: "M3 9h4l5-5v16l-5-5H3V9m13-2a7 7 0 0 1 0 10m3-13a11 11 0 0 1 0 16",
   assets: "m3 7 9-5 9 5v11l-9 4-9-4V7m0 0 9 5 9-5m-9 5v10M8 4l9 5",

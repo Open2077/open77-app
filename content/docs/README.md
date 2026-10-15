@@ -123,6 +123,7 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 | [Cordon](cordon.md) | The 64-player battle royale: the closing block cordon, squads and revive at the body, ground loot, bots as contestants, the tunables and what is measured versus designed. |
 | [The UI kit](ui-kit.md) | Progress bars, text hints, alerts, input forms, context menus, keyboard menus and radials: the promise shape, the cancellation contract, the focus release matrix, the styling tokens a resource may override, the server twins -- and asking whether any menu, Open77's or the game's, is on screen. |
 | [Notifications](notifications.md) | Reusable WebUI toasts, client/server exports, queues, positions, progress, and ownership. |
+| [Shared WebUI assets](webui-assets.md) | Share images, CSS, modules, fonts and data between resources through `open77://`, with manifests, examples, lifecycle behavior and troubleshooting. |
 | [Elevators](elevators.md) | Implemented server-authoritative native lifts, bucket/chunk streaming, late join, ACL commands, and Lua APIs. |
 | [Networked doors](doors.md) | Dynamic discovery, automatic and elevator landing doors, server authority, access rules, and Lua exports. |
 | [Blips](blips.md) | Vanilla map markers, entity attachment, sprites, and the range gate. |

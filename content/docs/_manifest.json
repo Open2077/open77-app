@@ -3,7 +3,7 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 106,
+  "guides": 107,
   "apiEntries": 1739,
   "files": [
     {
@@ -26,8 +26,8 @@
       "target": "content/docs/README.md",
       "slug": "index",
       "title": "Open77 resource documentation",
-      "bytes": 20942,
-      "sha256": "dc4b144d2b327ab980570e1c7fe14f2531770fc912d23a72e6bd96b1eadc540b",
+      "bytes": 21135,
+      "sha256": "469282427c340394789fe3b6631ad105f0db46521e4e3cb9576014445a3c34f2",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "810d219b7f95e33bedb17bb6f0efc96ae920ecf58308bbcf8b6e0b22e50bb0e7",
@@ -51,7 +51,8 @@
         },
         "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts.",
         "worldInteractionAmendment": "Four index rows; see worldInteractionDocumentation.",
-        "builderGuideReview": "Added a builder overview and separate Lua tutorial; updated reference links."
+        "builderGuideReview": "Added a builder overview and separate Lua tutorial; updated reference links.",
+        "sharedAssetsAmendment": "Added the shared WebUI assets guide to the resource documentation index."
       }
     },
     {
@@ -2071,6 +2072,21 @@
         "sourceWorkingTreeDirty": false,
         "clientVersion": "2.31.21+op77.141",
         "review": "Public guide checked against the released locomotion runtime and Studio resource exporter; replaces development-only wording in the source wiki."
+      }
+    },
+    {
+      "source": "wiki/webui-assets.md",
+      "target": "content/docs/webui-assets.md",
+      "slug": "webui-assets",
+      "title": "Shared WebUI assets with open77://",
+      "bytes": 15038,
+      "sha256": "5193dc0769dfe91ca9ff388d9fce06a66924f8cfa72861986590be7e0034c8da",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "f5897d753989942ed6a049f9a657e7421d4d06e03213e370d7abe7868fcf7565",
+        "sourceRevision": "6a071fdc5f55526cc8fc8d02411fb896ea4c76aa",
+        "sourceWorkingTreeDirty": true,
+        "sharedAssetsAmendment": "Expanded from the implemented resource asset contract with complete provider and consumer examples, compatibility requirements, origin checks, caching, limits and troubleshooting."
       }
     }
   ],

@@ -850,9 +850,9 @@
     },
     {
       "id": "interfaces",
-      "title": "WebUI, HUD & input",
+      "title": "WebUI & HUD",
       "group": "Game systems",
-      "description": "Build menus and notifications, manage the HUD and handle keyboard input.",
+      "description": "Build menus and notifications, share resource assets and manage the HUD.",
       "pages": [
         {
           "slug": "pause-menu",
@@ -874,10 +874,11 @@
           "description": "`open77_uikit`: progress bars, text hints, alerts, input forms, context and keyboard menus and a radial wheel drawn from one page — with the focus rule that outranks the whole feature list."
         },
         {
-          "slug": "webui-input",
+          "slug": "webui-assets",
           "kind": "guide",
-          "nav": "WebUI keyboard input",
-          "description": "Capture Escape and navigation keys in a WebUI while keeping movement and mouse look active. Supported keys, permissions, errors and focus cleanup."
+          "nav": "Shared WebUI assets",
+          "title": "Shared WebUI assets with open77://",
+          "description": "Share images, CSS, JavaScript, fonts and data between resource interfaces with open77://. Provider and consumer manifests, URL rules, caching, limits and troubleshooting."
         },
         {
           "slug": "notifications",
@@ -890,6 +891,20 @@
           "kind": "guide",
           "nav": "HUD visibility",
           "description": "Show and hide native HUD components, or mask the HUD, watermark and nonfocused resource interfaces with cinematic letterbox bars. Resource-owned claims, cleanup and native notifications."
+        }
+      ]
+    },
+    {
+      "id": "input",
+      "title": "Input & controls",
+      "group": "Game systems",
+      "description": "Capture WebUI keys, register bindings, manage player input and use the clipboard.",
+      "pages": [
+        {
+          "slug": "webui-input",
+          "kind": "guide",
+          "nav": "WebUI keyboard input",
+          "description": "Capture Escape and navigation keys in a WebUI while keeping movement and mouse look active. Supported keys, permissions, errors and focus cleanup."
         },
         {
           "slug": "keybindings",
