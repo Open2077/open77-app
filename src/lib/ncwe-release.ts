@@ -4,11 +4,11 @@
  * (NCWE repository, `scripts/release.ps1` and `scripts/publish-release.ps1`).
  */
 export const NCWE_RELEASE = {
-  version: "0.1.0-beta.11",
-  date: "2026-10-13",
-  url: "https://cdn.open77.dev/ncwe/studio/0.1.0-beta.11/NCWE-Studio-0.1.0-beta.11-win-x64.zip",
-  sha256: "a729e81ca975915ef4c8cbdb1aca72c4dee015be0e61f1a5da671bce60120793",
-  bytes: 217_560_510,
+  version: "0.1.0-beta.12",
+  date: "2026-10-19",
+  url: "https://cdn.open77.dev/ncwe/studio/0.1.0-beta.12/NCWE-Studio-0.1.0-beta.12-win-x64.zip",
+  sha256: "c2a4d0511958516aaeb0cef111d9cc6048c25c7e8a5ad586b3a718da5acc34e4",
+  bytes: 218_335_213,
   game: "2.31",
 } as const;
 
