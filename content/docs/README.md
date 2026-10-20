@@ -62,6 +62,9 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 
 | Guide | Subject |
 |---|---|
+| [Custom clothing](custom-clothing.md) | Register and package clothing, browse equipment, and preserve saved outfits through resource reloads. |
+| [Custom locomotion](custom-locomotion.md) | Register movement packages, assign styles, play one-shot clips and tune animation transitions. |
+| [RTTI calls and hooks](rtti.md#accessing-gameinstance-and-game-systems) | Call game functions, access GameInstance and systems, and manage native references. |
 | [Hacking and counterplay](hacking.md) | Short Circuit, Self-ICE, active/ally purge, server authority, public definitions and an optional lab. |
 | [Ground Slam / Quake](ground-slam.md) | Native grounded/airborne slam, server-owned impact validation and permission-controlled session grants. |
 | [Ability activation leases](ability-activation-leases.md) | Why abilities no longer wait for the server at the moment a key is pressed, what a far-away player will notice, and what an owner will see in the log. |

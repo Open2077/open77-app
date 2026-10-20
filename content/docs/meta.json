@@ -344,9 +344,9 @@
     },
     {
       "id": "characters",
-      "title": "NPCs & player models",
+      "title": "Characters & appearance",
       "group": "Game systems",
-      "description": "Spawn and control NPCs, change player models and browse the catalogues.",
+      "description": "Spawn NPCs, change player models and register custom clothing.",
       "pages": [
         {
           "slug": "npcs",
@@ -377,6 +377,12 @@
           "kind": "guide",
           "nav": "Player model catalogue",
           "description": "Search all 6,582 Character records for player morphs, with downloadable IDs and the admin menu workflow."
+        },
+        {
+          "slug": "custom-clothing",
+          "kind": "guide",
+          "nav": "Custom clothing",
+          "description": "Register custom clothing on client and server, package native assets, browse and equip records, and preserve outfits through saves and resource reloads."
         }
       ]
     },
@@ -396,7 +402,7 @@
           "slug": "custom-locomotion",
           "kind": "guide",
           "nav": "Custom locomotion",
-          "description": "Export custom walk and run graphs, assign styles from server Lua, and tune smooth transitions and stride timing on male and female player bodies."
+          "description": "Register animation packages, assign movement styles, play and cancel one-shot clips, and tune smooth transitions and stride timing."
         },
         {
           "slug": "rp-animation-catalogue",
@@ -1087,7 +1093,7 @@
           "kind": "guide",
           "nav": "RTTI calls & hooks",
           "title": "RTTI calls and hooks",
-          "description": "Call reflected native and scripted game functions from client Lua, manage object references, and install synchronous hooks with explicit permissions and coverage limits."
+          "description": "Call native and scripted game functions from Lua, obtain GameInstance and game systems, install hooks and manage reference lifetimes."
         },
         {
           "slug": "rtti-testing",

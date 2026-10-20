@@ -3,7 +3,7 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 107,
+  "guides": 108,
   "apiEntries": 1739,
   "files": [
     {
@@ -26,8 +26,8 @@
       "target": "content/docs/README.md",
       "slug": "index",
       "title": "Open77 resource documentation",
-      "bytes": 21135,
-      "sha256": "469282427c340394789fe3b6631ad105f0db46521e4e3cb9576014445a3c34f2",
+      "bytes": 21586,
+      "sha256": "6654e081564a635a87b9fd99e602b9b28946fa172992fd30e0b3a9a4dfe7e1af",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "810d219b7f95e33bedb17bb6f0efc96ae920ecf58308bbcf8b6e0b22e50bb0e7",
@@ -52,7 +52,15 @@
         "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts.",
         "worldInteractionAmendment": "Four index rows; see worldInteractionDocumentation.",
         "builderGuideReview": "Added a builder overview and separate Lua tutorial; updated reference links.",
-        "sharedAssetsAmendment": "Added the shared WebUI assets guide to the resource documentation index."
+        "sharedAssetsAmendment": "Added the shared WebUI assets guide to the resource documentation index.",
+        "stable145Amendment": {
+          "sourceRevision": "1f829eca0285943717b53414dd76645e482ca2b7",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.145",
+          "serverVersion": "2.31.21+op77.145",
+          "sourceGuideSha256": "50440aefbda1230e645bb27644daf3cd7c30a29fb004514f86bb6c2501f222fe",
+          "review": "Website guide reviewed against Stable 145 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        }
       }
     },
     {
@@ -2053,25 +2061,44 @@
       "target": "content/docs/rtti.md",
       "slug": "rtti",
       "title": "RTTI calls and hooks",
-      "bytes": 9738,
-      "sha256": "42878b7ca500eb41ad7f937dde1ced583612a8f59c279d04be18066ee09747ce",
+      "bytes": 13853,
+      "sha256": "34ba34f2b524cd1e3fb6056274c78e2377f26312b9baf325413922d98b214afd",
       "sourceRevision": "116abc12c473c48767ce0a45ba0c9b1af4b22505",
-      "sourceSyncedAt": "2026-10-09T10:22:49.946Z"
+      "sourceSyncedAt": "2026-10-09T10:22:49.946Z",
+      "siteEditorial": {
+        "owner": "website",
+        "stable145Amendment": {
+          "sourceRevision": "1f829eca0285943717b53414dd76645e482ca2b7",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.145",
+          "serverVersion": "2.31.21+op77.145",
+          "sourceGuideSha256": "cd0a370382f297dddf4199e85676cde3683fd27a15db89dd1e33fc519f784017",
+          "review": "Website guide reviewed against Stable 145 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        }
+      }
     },
     {
       "source": "wiki/custom-locomotion.md",
       "target": "content/docs/custom-locomotion.md",
       "slug": "custom-locomotion",
       "title": "Custom locomotion",
-      "bytes": 12104,
-      "sha256": "bb58871b14bd39246397fed6d04f585849b096c7ed18ee357ff9f95b8f547154",
+      "bytes": 16243,
+      "sha256": "7a6babfa3b8d49cd50179e495a86dd72a73d22e8bac0c524bf7e2575da3da339",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "55f7cc9469239264000d29b4f5c57e8272f059c0be940f9447530d54e40c1da9",
         "sourceRevision": "b5931d0e14eb434df9c306e2bca6725ce49647c9",
         "sourceWorkingTreeDirty": false,
         "clientVersion": "2.31.21+op77.141",
-        "review": "Public guide checked against the released locomotion runtime and Studio resource exporter; replaces development-only wording in the source wiki."
+        "review": "Public guide checked against the released locomotion runtime and Studio resource exporter; replaces development-only wording in the source wiki.",
+        "stable145Amendment": {
+          "sourceRevision": "1f829eca0285943717b53414dd76645e482ca2b7",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.145",
+          "serverVersion": "2.31.21+op77.145",
+          "sourceGuideSha256": "1126d5b81d2f97707325d712d0a1efe77f5d247e5dec3a60cf8046ff1feac416",
+          "review": "Website guide reviewed against Stable 145 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        }
       }
     },
     {
@@ -2087,6 +2114,25 @@
         "sourceRevision": "6a071fdc5f55526cc8fc8d02411fb896ea4c76aa",
         "sourceWorkingTreeDirty": true,
         "sharedAssetsAmendment": "Expanded from the implemented resource asset contract with complete provider and consumer examples, compatibility requirements, origin checks, caching, limits and troubleshooting."
+      }
+    },
+    {
+      "source": "wiki/custom-clothing.md",
+      "target": "content/docs/custom-clothing.md",
+      "slug": "custom-clothing",
+      "title": "Custom clothing",
+      "bytes": 11223,
+      "sha256": "c9ab8edca63be2c3a5c56dc8f61489db8b49ffe3c71a674c1b07601ad850f7fb",
+      "siteEditorial": {
+        "owner": "website",
+        "stable145Amendment": {
+          "sourceRevision": "1f829eca0285943717b53414dd76645e482ca2b7",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.145",
+          "serverVersion": "2.31.21+op77.145",
+          "sourceGuideSha256": "986073f6ef50da26f86d01997287936b905661495e1238dbfd90f19e7befc615",
+          "review": "Website guide reviewed against Stable 145 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        }
       }
     }
   ],

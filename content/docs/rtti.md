@@ -9,8 +9,10 @@ types on the way in and back on the way out.
 
 ## Requirements
 
-Use a client build that exposes `Open77.rtti`; these functions run in the client
-resource runtime. Feature detection is available with `type(Open77.rtti) == "table"`.
+Use client **2.31.21+op77.145 or later** for the GameInstance support described here.
+These functions run in the client resource runtime. Detect the namespace with
+`type(Open77.rtti) == "table"` and the context helper with
+`type(Open77.rtti.gameInstance) == "function"`.
 
 Permission: `rtti.native`. This is a privileged client API: a permitted resource
 can invoke engine behavior directly. The dedicated server has no REDengine backend.
@@ -31,10 +33,11 @@ permissions { "rtti.native" }
 | Function | Result |
 | --- | --- |
 | `Open77.rtti.resolve(class, fn)` | `{ name, static, returnType, params = { {name, type}... } }`, or `nil, reason` |
+| `Open77.rtti.gameInstance()` | an opaque reference to the current `GameInstance`, or `nil, reason` |
 | `Open77.rtti.call(class, fn, instance, ...)` | the return value (`nil` for void), or `nil, reason` |
 | `Open77.rtti.hook(class, fn, handler)` | a hook id, or `nil, reason` |
 | `Open77.rtti.unhook(id)` | `true` if this resource removed the hook |
-| `Open77.rtti.release(ref)` | `true`; drops a pinned object reference |
+| `Open77.rtti.release(ref)` | `true`; releases an object or GameInstance reference |
 
 `class` is `nil` (or `""`) for a global function, looked up by its decorated
 name. `fn` is the function name; when a class has overloads, pass the decorated
@@ -69,9 +72,76 @@ end)
 
 For globals, use the full name exposed by RTTI. Scripted globals may include the
 class and parameter suffix, such as `MathHelper::EulerNumber;`. Class methods
-accept a full decorated name or an unambiguous short name. Resolving metadata
+accept a full decorated name or an unambiguous short name. Classes accept native
+RTTI names and REDscript aliases (for example `ScriptGameInstance` / `GameInstance`). Resolving metadata
 succeeds even for signatures the bridge cannot marshal; it does not guarantee
 that a call or hook can be installed.
+
+## Accessing GameInstance and game systems
+
+`gameInstance()` provides the native context needed by game-system getters.
+Feature-detect this addition with `type(Open77.rtti.gameInstance) == "function"`.
+It returns opaque userdata, not a Lua table, numeric address or `IScriptable`
+object. Pass it as a **function argument**; the method-instance position remains
+`nil` for static getters.
+
+```lua
+AddEventHandler("example:autodrive:inspect", function()
+    local r = Open77.rtti
+    local game, reason = r.gameInstance()
+    if not game then print(reason) return end
+
+    local container, containerError = r.call(
+        "GameInstance", "GetScriptableSystemsContainer", nil, game)
+    r.release(game)
+    if not container then print(containerError or "container_unavailable") return end
+
+    local system, systemError = r.call(
+        "ScriptableSystemsContainer", "Get", container, "AutoDriveSystem")
+    r.release(container)
+    if not system then print(systemError or "system_unavailable") return end
+
+    local enabled, callError = r.call(
+        "NativeAutodriveSystem", "GetAutodriveEnabled", system)
+    r.release(system)
+    if callError then print(callError) else print("Autodrive enabled:", enabled) end
+end)
+```
+
+Functions returning `GameInstance` (native name `ScriptGameInstance`) also return
+opaque refs. For example, `GameObject.GetGame()` can round-trip into the same
+static getters. The bridge retains the value wrapper, not ownership of the game
+or world. Its native instance must still match the engine's current instance
+when used; otherwise the call returns `game_instance_expired`. Acquire a fresh
+reference after a session/world transition instead of caching it indefinitely.
+
+Explicit `release`, resource stop/reload cleanup and temporary hook-reference
+lifetimes are identical to other RTTI refs. A GameInstance ref cannot be used as
+an object handle or method instance, and arbitrary numbers/tables cannot forge
+one. Other structs remain unsupported. Getting a system does not itself enable
+Autodrive, restore the vanilla G shortcut or bypass its gameplay prerequisites.
+To access the local player, acquire a new context and use the global getter's
+full RTTI name:
+
+```lua
+AddEventHandler("example:rtti:player", function()
+    local r = Open77.rtti
+    local game, reason = r.gameInstance()
+    if not game then print(reason) return end
+
+    local player, playerError = r.call(nil, "GetPlayer;GameInstance", nil, game)
+    r.release(game)
+    if not player then print(playerError or "player_unavailable") return end
+
+    -- Use the player ref with compatible GameObject/PlayerPuppet methods here.
+    r.release(player)
+end)
+```
+
+There is no `Open77.rtti.system(name)` helper. Resolve the relevant static getter
+and pass the context explicitly, or retrieve a scripted system through the
+container as above. A resolved signature does not guarantee that the system is
+currently available in the game session.
 
 ## Hooks
 
@@ -126,8 +196,9 @@ Callbacks are synchronous, cannot yield, and use the resource's Lua execution qu
 | `CName`, `String`, `CString` | string |
 | `TweakDBID`, `EntityID` / `entEntityID` | integer (the 64-bit pattern) |
 | strong handles to `IScriptable`-derived objects | ref (userdata), or `nil` for null |
+| `GameInstance` / `ScriptGameInstance` | opaque ref (userdata), or `nil` for a null return |
 
-Structs, arrays, `Pointer`, `WeakHandle` and `script_ref` types are not converted. A call
+Other structs, arrays, `Pointer`, `WeakHandle` and `script_ref` types are not converted. A call
 that needs one returns `nil, "unsupported_type:<name>"`.
 Embedded NUL bytes in text are rejected. New CName strings are registered in the
 engine's name pool. Resolution can describe unsupported signatures, but calls
@@ -135,14 +206,16 @@ and hook installation reject them before invoking the engine.
 
 ## Refs
 
-A ref is a pinned game object: the bridge holds a reference to it, so the object
-stays valid while the ref exists.
+A ref represents either a pinned game object or a retained GameInstance value.
+Object refs hold a strong reference to the object. GameInstance refs retain the
+context wrapper and check its current native instance when used; they do not
+keep a world alive.
 
 - Refs delivered to a hook (`ctx.instance`, object arguments and results from
   `ctx.callOriginal`) last only as
   long as that hook dispatch. Using one after the dispatch returns fails with
   `ref_released`. Do not keep them in your own state.
-- A ref returned by `call` stays pinned until you `release` it or the owning
+- A ref returned by `call` or `gameInstance` is retained until you `release` it or the owning
   resource stops/reloads. Garbage collection alone does not release it.
   Releasing an expired ref is harmless. Method instances and handle arguments
   are checked against the function's declared class.
@@ -168,6 +241,10 @@ untrusted input. `unhook` returns `false` for an unknown hook or one owned by
 another resource. Common reason codes:
 
 - `permission_denied:rtti.native`
+- `game_instance_unavailable` — the engine context or its RTTI type is not available yet
+- `game_instance_expired` — the stored native context no longer matches the current instance
+- `expected_game_instance` — a GameInstance argument was not an opaque ref
+- `unsupported_layout:ScriptGameInstance` — the engine layout does not match the supported SDK wrapper
 - `function_not_found`
 - `argument_count:<n>`
 - `integer_out_of_range:<type>`
@@ -209,6 +286,9 @@ rtti.state
 The resource logs `[rtti-test] PASS`, `FAIL` and a final `DONE` line in that
 client's game log. Deliberate hook errors exercise fallback behavior; use the
 final failure count and lifetime counters to assess the run.
+The `game` stage (included in `all`) requires a fully loaded world and exercises
+GameInstance arguments, return values, hooks and system access. Use `native` or
+`scripted` separately for probes that do not require world entry.
 
 In a multiplayer test session, resource mutations go through the server's
 ACL-authorized debug laboratory. Replace the player ID with the target player's

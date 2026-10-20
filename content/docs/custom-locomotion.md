@@ -2,11 +2,11 @@
 
 Build walking and running styles from authored animations, then assign them to players with server Lua. Open77 blends the selected graph on remote player bodies and the local third-person body, including male and female puppets.
 
-Use client and server **2.31.21+op77.141 or later** for the API and transition behavior described here. You also need a locomotion resource exported by **Gta2CPPuppet Studio**. Animation packages are supplied by the resource author; choosing a style ID does not download a built-in animation bank.
+Use matching client and server **2.31.21+op77.145 or later** for all APIs on this page, including one-shot clip playback. You need an Open77 locomotion package containing its graph and compiled native assets. Animation packages are supplied by the resource author; choosing a style ID does not download a built-in animation bank.
 
 ## Build and install a package
 
-1. In Studio, import GTA clips or GLB animations authored on the exported Cyberpunk rig.
+1. Prepare animations for the supported male and female Cyberpunk player rigs using your animation authoring and export tools.
 2. Create states, transition conditions and blends. Use a one-dimensional blend for speed or a two-dimensional blend for movement direction.
 3. Preview the graph on both Cyberpunk puppets. Check idle, starting, stopping, turning, walking and running; tune stride timing as described below.
 4. Choose **Export Open77** and copy the entire exported resource into the server's resource directory.
@@ -26,6 +26,20 @@ open77_locomotion_my_walk/
 ```
 
 The generated manifest declares the shared registration script, graph files, `preload_mod` archive and `locomotion.register` permission. Keep the metadata, graph and archive together as one export. Re-export after editing animations or the graph so their revision and native bindings remain consistent.
+
+For a package exported with the resource name above, the manifest takes this form:
+
+```lua
+resource 'open77_locomotion_my_walk'
+version '1.0.0'
+shared_script 'register.lua'
+files { 'package.json', 'graph.locomotion.json' }
+permission 'locomotion.register'
+preload_mod 'dist/my-walk.zip' -- Use the archive path from your export.
+reload_policy 'reconnect'
+```
+
+The package metadata uses schema `open77.locomotion-package/1`, a style `id`, a 64-character lowercase hexadecimal `revision`, the graph path, `channelPrefix = "open77Locomotion"` and `sampleSlots = 8`. Its clip list binds IDs to compiled selectors, animation names and durations in seconds. Four native variants cover male/female bodies in native/mirror modes. Keep these generated bindings intact: editing a JSON name alone cannot create a playable animation.
 
 **Adding or changing the native archive requires a game restart for clients already running.** Restarting the Lua resource alone cannot mount the new native assets. See [Mods and custom assets](mods.md) for preload distribution and [Server resources](server-resources.md) for configuration.
 
@@ -73,6 +87,8 @@ The player must be authenticated, ready and alive when calling `set`. Validate t
 | `Open77.locomotion.set(playerId, styleId, options?)` | Server | `locomotion.control` | `true, revision` | `false, reason` |
 | `Open77.locomotion.get(playerId)` | Server | `locomotion.read` | Assignment table, or `nil` when none is assigned | `nil, reason` |
 | `Open77.locomotion.reset(playerId)` | Server | `locomotion.control` | `true`, including when no assignment exists | `false, reason` |
+| `Open77.locomotion.playClip(playerId, clipId, options?)` | Server | `locomotion.control` | `true, handle` | `false, reason` |
+| `Open77.locomotion.stopClip(playerId, handle?, blendOutMs?)` | Server | `locomotion.control` | `true, revision` (`0` for a no-op) | `false, reason` |
 
 ### Registration
 
@@ -115,6 +131,44 @@ end)
 
 `style` is `nil` on reset. Reasons are `set`, `reset`, `expired`, `died`, `disconnected`, `resource_stopped` and `package_stopped`.
 
+## Play a one-shot clip
+
+The resource that owns the player's selected style can play a clip declared in that package. Use the **clip ID from `package.json`**, not a depot path or an arbitrary animation name. The player must be ready, alive and outside a vehicle.
+
+```lua
+-- Server: this same resource already called locomotion.set for the player.
+local function playGreeting(playerId)
+    local ok, handleOrReason = Open77.locomotion.playClip(playerId, 'wave', {
+        speed = 1.0,
+        blendInMs = 80,
+        blendOutMs = 120,
+    })
+    if not ok then return nil, handleOrReason end
+    return handleOrReason
+end
+
+-- Retain the returned handle only if this action may need cancellation.
+local function cancelGreeting(playerId, handle)
+    return Open77.locomotion.stopClip(playerId, handle, 120)
+end
+```
+
+The example requires a package containing a clip named `wave`; it is not a built-in clip. Let it finish naturally, or pass its handle to `stopClip` when the action is cancelled.
+
+| `playClip` option | Range | Default |
+| --- | --- | --- |
+| `speed` | Finite number `0.25..4`, quantized to `0.001` | `1.0` |
+| `blendInMs` | Integer `0..2000` milliseconds | `80` |
+| `blendOutMs` | Integer `0..2000` milliseconds | `120` |
+
+`stopClip` uses a default blend-out of 120 ms. Omitting its handle stops the current clip; passing a handle from older playback returns `stale_clip_handle`, protecting a newer action from an old cancellation.
+
+Playback is one-shot and uses the package's compiled graph. It does not apply native root motion or game animation events. The selected locomotion style remains assigned afterward, and replacing a clip does not respawn the presentation body. The authored graph determines the affected body region: a full-body graph also animates the legs during the action.
+
+Observers joining or changing buckets receive elapsed playback time. Expired clips do not restart during synchronization, and duplicate or older commands cannot rewind the action. Native pose ownership, stale movement observations, death and vehicles suppress playback. Resource stop, package removal and disconnect release the selection and its action.
+
+`get` reports the selected style, not clip progress or completion. Use the package's authored duration and your action's cancellation lifecycle; there is no clip-completion callback in this API.
+
 ## Graph inputs and native animation
 
 The runtime supplies these parameters when they exist in the authored graph:
@@ -141,7 +195,7 @@ Give ordinary movement transitions a positive duration to use an eased crossfade
 
 Speed and direction are damped for animation blending. State conditions still receive observed speed immediately, so starting and stopping need not wait for the blend filter. Returning from native animation fades the custom layer in over 0.20 seconds; an actual jump releases it immediately.
 
-For looping clips, select the clip in Studio and set:
+For looping clips, set these values in the authored graph:
 
 | Field | Range | Default | Purpose |
 | --- | --- | --- | --- |
@@ -161,7 +215,7 @@ Tune transition durations for your clips and movement speeds. The runtime does n
 | Points per blend | 32 |
 | Clip samples per state / during a crossfade | 4 / 8 |
 
-An interrupted transition waits if the outgoing mixture plus the new state would exceed eight samples. The 2D blend uses the four nearest points with normalized inverse-square distance weights; its interpolation differs from Unity's blend trees.
+An interrupted transition waits if the outgoing mixture plus the new state would exceed eight samples. The 2D blend uses the four nearest points with normalized inverse-square distance weights.
 
 ## Errors and troubleshooting
 
@@ -175,16 +229,21 @@ An interrupted transition waits if the outgoing mixture plus the new state would
 | `invalid_argument`, `invalid_options`, `invalid_duration` | Check argument types, option names and duration bounds. |
 | `invalid_package`, `invalid_package_json`, `invalid_graph_json` | Re-export and deploy the complete package; inspect the runtime log for the rejected asset. |
 | `locomotion_package_limit` | Reduce registered packages; the server catalog allows 256 registrations. |
+| `locomotion_not_selected` | Assign a package before playing or stopping one of its clips. |
+| `clip_unavailable` | Use a clip ID declared in the selected package's matching revision. |
+| `invalid_clip_options` | Check the clip ID, finite speed and blend ranges; invalid Lua types can also return `invalid_argument`. |
+| `stale_clip_handle` | The requested playback has been replaced; do not cancel the newer action with an old handle. |
+| `immutable_package_conflict` | Re-export changed content with a new revision and deploy all matching files. |
 | Assignment exists but native locomotion remains | Check the client's registration result, installed archive and current pose owner; test outside vehicles, combat and other native interruptions. |
 
 Keep the returned reason in logs; these are common failures, not an exhaustive list.
 
 ## Verify your animation in game
 
-Check both male and female bodies, the local third-person view and a second client's view. Exercise idle-to-walk, walk-to-run, turns, stops, rapid transition reversals, jump/land, vehicles and workspots. Verify reset, resource stop and late join with the package installed.
+Check both male and female bodies, the local third-person view and a second client's view. Exercise idle-to-walk, walk-to-run, turns, stops, rapid transition reversals, jump/land, vehicles and workspots. Verify reset, resource stop and late join with the package installed. For one-shot clips, also check natural completion, cancellation, replacement and joining halfway through playback.
 
 The [debug runtime](debug-runtime.md) self-view report exposes `customStyle`, `customState`, `customWeight`, `customTime`, `customSamples`, `customFrom`, `customMix` and `customBlend` (clip index, time and weight). Remote movement reports expose the corresponding evaluator state. These values help explain blending; inspect the rendered body as well.
 
-Studio checks rigs, cooked graph/entity roundtrips and packed resources during export. Its receipt leaves `runtimeValidated=false` because an offline export cannot validate rendering in the running game.
+The export process checks rigs, cooked graph/entity roundtrips and packed resources. An export receipt with `runtimeValidated=false` means rendering still needs to be checked in the running game.
 
 For gestures, held items and stationary actions alongside movement, see [Role-play animations](rp-animations.md).
