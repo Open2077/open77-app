@@ -2,7 +2,7 @@
 
 Build walking and running styles from authored animations, then assign them to players with server Lua. Open77 blends the selected graph on remote player bodies and the local third-person body, including male and female puppets.
 
-Use matching client and server **2.31.21+op77.145 or later** for all APIs on this page, including one-shot clip playback. You need an Open77 locomotion package containing its graph and compiled native assets. Animation packages are supplied by the resource author; choosing a style ID does not download a built-in animation bank.
+Use matching client and server **2.31.21+op77.145 or later** for the base APIs, including one-shot clip playback. The increased collection capacity requires **Stable 147 or later** (protocol **1.48** in Stable 147). You need an Open77 locomotion package containing its graph and compiled native assets. Animation packages are supplied by the resource author; choosing a style ID does not download a built-in animation bank.
 
 ## Build and install a package
 
@@ -42,6 +42,84 @@ reload_policy 'reconnect'
 The package metadata uses schema `open77.locomotion-package/1`, a style `id`, a 64-character lowercase hexadecimal `revision`, the graph path, `channelPrefix = "open77Locomotion"` and `sampleSlots = 8`. Its clip list binds IDs to compiled selectors, animation names and durations in seconds. Four native variants cover male/female bodies in native/mirror modes. Keep these generated bindings intact: editing a JSON name alone cannot create a playable animation.
 
 **Adding or changing the native archive requires a game restart for clients already running.** Restarting the Lua resource alone cannot mount the new native assets. See [Mods and custom assets](mods.md) for preload distribution and [Server resources](server-resources.md) for configuration.
+
+## Collections and menu selection
+
+**Collections with large libraries require matching Stable 147 or later clients and servers.**
+
+
+NCWE can group existing version 1 exports into one collection resource and one
+preload ZIP. A collection retains every style's original ID, graph, native archive
+and transitions. It groups delivery and registration while preserving the existing graph format.
+Old standalone resources, `register`, `set` and `playClip` continue to work.
+
+If your NCWE Studio version provides collection export, use its `animation_studio` MCP tool with `action="package"`, `op="bundle"`,
+`id`, `name`, `packages` (saved package IDs/names or absolute exported resource
+folders), and `path` (output directory). Repeat with another collection ID to
+split a library into two deliveries. The generated folder contains:
+
+```text
+open77_locomotion_collection_walks_a/
+  open77.lua
+  catalogue.lua
+  register.lua
+  collection.json
+  styles/relaxed/package.json
+  styles/relaxed/graph.locomotion.json
+  styles/alert/package.json
+  styles/alert/graph.locomotion.json
+  dist/walks_a.zip
+```
+
+The two shared scripts register each nested package on client and server and
+expose `exports['open77_locomotion_collection_walks_a']:catalogue()`. It returns
+`{id, name, styles}`; each style contains `id`, `name`, `kind`, `package`, and
+`clips = {{id, name}, ...}`. The same catalogue is available in `collection.json`.
+
+Stop the original resources for these IDs before loading the collection, including
+any generated example controllers. Keep the original exports as backups. Configure
+the collection in `resources.load` and enable `requiredMods.enabled`; clients must
+restart after the launcher installs its archives. An existing export destination
+is refused, so use a new delivery folder to prepare an update.
+
+The menu/controller manifest declares its dependencies and permissions:
+
+```lua
+dependency 'open77_locomotion_collection_walks_a'
+permissions { 'locomotion.control', 'locomotion.read' }
+```
+
+Example server command selecting a complete movement style:
+
+```lua
+RegisterCommand('walkstyle', function(playerId, args)
+    -- Call cross-resource exports after startup, not at the top level.
+    local catalogue = exports['open77_locomotion_collection_walks_a']:catalogue()
+    for _, entry in ipairs(catalogue.styles) do
+        if entry.kind == 'style' and entry.id == args[1] then
+            local ok, reason = Open77.locomotion.set(playerId, entry.id)
+            if not ok then print('Style selection refused: ' .. tostring(reason)) end
+            return
+        end
+    end
+end, false)
+```
+
+Build the menu from these entries and validate its submitted selection on the
+server. `set` selects the whole style; its movement states transition automatically.
+For `kind="clips"`, call `set` for that entry and then `playClip` for a declared
+clip. `playClip` alone is not a way to select a walking style. One controller
+resource should own all menu selections; another resource cannot override them.
+
+Stable 147 and later allow up to **1,024 registered packages**, with the
+limit shared by all resources and reload generations. Previously the client limit
+was 64 and the server limit 256. Leave room for overlapping generations during
+reload. Bundling does not remove each graph's existing clip/state/sample limits.
+
+Changing package IDs retains the existing presentation-body switch behavior.
+Collections preserve smooth transitions inside each style; they do not add
+crossfades between separate graphs. Native files are copied unchanged and their hashes are checked. Check each selected
+style on both body families and from a second player's view before using it on your server.
 
 ## Assign a style
 

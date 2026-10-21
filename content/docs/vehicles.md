@@ -104,13 +104,14 @@ These methods require `world.vehicles`.
 
 ### All server engine, light and siren methods
 
-Every method in this table requires `world.vehicles`. Each writes **one named bit** of the durable
-flags and leaves the rest alone; see [engine, lights and siren](#engine-lights-and-siren) for why
+Every method in this table requires `world.vehicles`. Each updates its named control and any associated ignition policy while preserving unrelated flags; see [engine, lights and siren](#engine-lights-and-siren) for why
 that matters and for the ten-second intent window that makes a setter stick.
 
 | Method | Signature | Return / behavior |
 |---|---|---|
 | `Open77.vehicles.setEngine` | `(id, on)` | `true`, or `false, reason`. |
+| `Open77.vehicles.setEngineHold` | `(id, hold)` | Keep an empty engine running; enabling also starts it. `true`, or `false, reason`. |
+| `Open77.vehicles.isEngineHeld` | `(id)` | Canonical hold boolean, or `nil, reason`. |
 | `Open77.vehicles.startEngine` | `(id)` | Alias for `setEngine(id, true)`. |
 | `Open77.vehicles.stopEngine` | `(id)` | Alias for `setEngine(id, false)`. |
 | `Open77.vehicles.isEngineOn` | `(id)` | Canonical boolean, or `nil, reason`. |
@@ -129,6 +130,8 @@ that matters and for the ten-second intent window that makes a setter stick.
 | `Open77.vehicles.getHealth` | `(id)` | Canonical normalized health, or `nil, reason`. |
 | `Open77.vehicles.setEngineHealth` | `(id, health)` | The same one pool under its FiveM name. |
 | `Open77.vehicles.getEngineHealth` | `(id)` | The same one pool under its FiveM name. |
+
+`setLights(id, "off" | "on" | "high")` controls the driver's copy and nearby observers. The Stable 147 client fixes older builds that accepted the command without changing the driver's lights, including late-join initialization. It does not start the engine. A successful setter acknowledges server state; clients apply it asynchronously.
 
 ### All server transform, motion and policy methods
 
@@ -622,6 +625,7 @@ Available flags:
 | `Open77.vehicles.flags.invulnerable` | `16` | `Open77.vehicles.flags.immortal` | `32` |
 | `Open77.vehicles.flags.lightsOn` | `64` | `Open77.vehicles.flags.highBeams` | `128` |
 | `Open77.vehicles.flags.sirenOn` | `256` | `Open77.vehicles.flags.paintApplied` | `512` |
+| `Open77.vehicles.flags.engineHold` | `4096` | | |
 
 Combine flags with Lua 5.4 bitwise operators (`|`, `&`, `~`). Never replace the complete mask when
 you only intend to toggle one bit without first reading the current canonical value.
@@ -1320,7 +1324,7 @@ The client snapshot deliberately differs from the server snapshot:
 | World | `position` (a plain `{ x, y, z }`, which is what an Open77 vector3 is) |
 | Transform | `orientation = { x, y, z, w }`, `heading`, `yaw` |
 | Durable state | `health`, `flags`, `locked`, `doors`, `windows`, `tires`, `brokenGlass`, `brokenLights`, `detachedParts` |
-| Control state | `engineOn`, `lights` (`"off"`/`"on"`/`"high"`), `sirenOn`, `undriveable`, `drivable`, `frozen` |
+| Control state | `engineHold`, `engineOn`, `lights` (`"off"`/`"on"`/`"high"`), `sirenOn`, `undriveable`, `drivable`, `frozen` |
 | Body and damage | `bodyDamage[1..30]`, `damage = { body, glass, lights, tires, detachedParts }` |
 | Drivetrain | `speed` (m/s), `speedKph`, `rpm`, `rpmMax`, `throttle`, `brake`, `gear`, `burnout` |
 | Wheels/suspension | `steering`, `wheelRotation`, `suspensionLongitudinal`, `suspensionTransversal`, `onGround`, `reversing` |
@@ -1438,11 +1442,41 @@ and late join. A player connecting after a collision or explosion receives the s
 dents, broken glass/lights, tyres, destroyed state, and native explosion event instead of a
 pristine local projection.
 
-When the driver exits, disconnects, dies, loses the lease, or is revoked, the server clears
-`engineOn`, `lightsOn`, `highBeams`, and `sirenOn` before publishing the new authority epoch.
-This prevents parked vehicles from retaining engine audio or headlights on one client.
+On an authority revoke or park, an unheld vehicle receives explicit electrical OFF. With `engineHold` enabled, the vehicle retains its electrical state across the handoff. A driver exit can retain coast/contact authority and is not always a revoke.
 
 ### Engine, lights and siren
+
+#### Keep an empty vehicle running
+
+
+On the server, with `world.vehicles` permission:
+
+```lua
+Open77.vehicles.setEngineHold(vehicleId, true)
+-- The driver can leave; every client keeps the engine running.
+
+local held = Open77.vehicles.isEngineHeld(vehicleId)
+Open77.vehicles.setEngineHold(vehicleId, false) -- release the hold, keep current ignition
+Open77.vehicles.setEngine(vehicleId, false)    -- stop now; also cancels any hold
+```
+
+This is durable server state, including late joins, stream-in, parking and
+simulation-owner changes. Clients suppress the automatic shutdown itself;
+scripts do not need a timer that repeatedly restarts the engine or its sound.
+The default is `false`. Destruction, zero health and `setDrivable(id, false)`
+cancel the hold. Repair does not re-enable it. Clearing the hold alone does not
+force an immediate stop: use `setEngine(id, false)` for that.
+
+`getProperties` / `setProperties` include `engineHold`, and the raw bit is
+`Open77.vehicles.flags.engineHold` (`4096`). The named setter accepts a boolean;
+missing vehicles return `false, "vehicle_not_found"` (the getter returns `nil`).
+Requires **Stable 147 or later**, with matching client and server protocol **1.48** in Stable 147; older clients reject the
+new vehicle state flag.
+
+Unlocking a streamed vehicle also refreshes entry choices for players already
+beside it, including per-player locks. Moving out of range is unnecessary;
+occupied seats and other normal entry restrictions still apply.
+
 
 These four bits have always existed in `flags` and have always been applied by every client. What
 did not exist was a way to write one of them. A keys resource that wanted to cut an engine had to
@@ -1451,9 +1485,9 @@ read-modify-write on state shared by every resource holding `world.vehicles`. Tw
 it in the same tick each overwrite the other's bit, because each learned the flags before the
 other wrote them.
 
-`setEngine`, `setDrivable`, `setLights`, `setHighBeams` and `setSiren` write one named bit and
-leave every other flag exactly as it was. **`flags` and `update` are unchanged** and keep working
-as they always did; these are another way into the same canonical field, not a replacement.
+Use the named setters to update a control while preserving unrelated flags. Related safety
+rules still apply: stopping the engine or making a vehicle undriveable clears `engineHold`,
+and enabling the hold starts ignition. Existing `flags` and `update` calls remain supported.
 
 #### The intent window, and why a setter without one is unreliable
 
@@ -1471,6 +1505,10 @@ for the bits it names. It is a window, not a lock:
 - a bit the owner can never report (the siren) is held until the window expires, then dropped, so
   the ledger can never get permanently stuck;
 - the ten-second window allows for stream-in and the first owner report.
+
+#### Rebindable siren key
+
+The bundled `open77_vehicle_siren` resource adds a **F6** driver action using `RegisterKeyMapping`, with synchronized state and server-side driver checks. Players can rebind it to a keyboard or mouse button. See [Vehicle sirens](vehicle-sirens.md) for installation, configuration and Lua examples.
 
 #### What the siren can and cannot do
 

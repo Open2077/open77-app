@@ -6,6 +6,8 @@ Use matching client/server **2.31.21+op77.145 or later** and the complete **`ope
 
 Registration supplies metadata. Your mod must also create the actual TweakDB item and provide compatible assets for each declared body family.
 
+For character-selection mannequins and networked NPCs wearing registered items, see [Character previews and player appearances](character-previews.md#custom-clothing).
+
 ## Quick start: register a clothing pack
 
 This example defines two item identities using installed game visuals. Replace the item definitions and assets with your own clothing when building a pack.

@@ -116,7 +116,9 @@ The authoritative vehicle flags are:
 | `destroyed` | `4` | `exploded` | `8` |
 | `invulnerable` | `16` | `immortal` | `32` |
 | `lightsOn` | `64` | `highBeams` | `128` |
-| `sirenOn` | `256` |  |  |
+| `sirenOn` | `256` | `paintApplied` | `512` |
+| `undriveable` | `1024` | `frozen` | `2048` |
+| `engineHold` | `4096` | | |
 
 Motion dynamics add `onGround = 1`, `reversing = 2`, and `hornActive = 4`. See
 [Vehicles](vehicles.md) for the authoritative API, damage arrays, glass/light masks, authority, and

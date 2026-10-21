@@ -355,6 +355,12 @@
           "description": "Spawn Character records directly; manage streaming, authority, tasks, health and replicated behavior."
         },
         {
+          "slug": "character-previews",
+          "kind": "guide",
+          "nav": "Character previews",
+          "description": "Create local selection mannequins and networked NPCs with saved player faces, skin and clothing."
+        },
+        {
           "slug": "npc-behavior",
           "kind": "guide",
           "nav": "NPC AI & voice control",
@@ -541,6 +547,12 @@
           "kind": "guide",
           "nav": "Vehicles",
           "description": "Network vehicle identity, streaming, authority leases, seats and proxy replication, doors and glass, damage profiles, and the full asymmetric server and client Lua API."
+        },
+        {
+          "slug": "vehicle-sirens",
+          "kind": "guide",
+          "nav": "Sirens & key binding",
+          "description": "Install synchronized driver siren controls, configure the default key and integrate a client menu."
         },
         {
           "slug": "vehicle-seat-switching",

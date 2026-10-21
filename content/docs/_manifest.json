@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 108,
-  "apiEntries": 1739,
+  "guides": 110,
+  "apiEntries": 1753,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -26,8 +26,8 @@
       "target": "content/docs/README.md",
       "slug": "index",
       "title": "Open77 resource documentation",
-      "bytes": 21586,
-      "sha256": "6654e081564a635a87b9fd99e602b9b28946fa172992fd30e0b3a9a4dfe7e1af",
+      "bytes": 21880,
+      "sha256": "26538554b55b74b9e9cd4fbab1d7a088a755ade37a46b4c276dd39e0c97ba985",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "810d219b7f95e33bedb17bb6f0efc96ae920ecf58308bbcf8b6e0b22e50bb0e7",
@@ -60,6 +60,13 @@
           "serverVersion": "2.31.21+op77.145",
           "sourceGuideSha256": "50440aefbda1230e645bb27644daf3cd7c30a29fb004514f86bb6c2501f222fe",
           "review": "Website guide reviewed against Stable 145 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        },
+        "stable147Amendment": {
+          "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.147",
+          "serverVersion": "2.31.21+op77.147",
+          "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
         }
       }
     },
@@ -190,11 +197,18 @@
       "target": "content/docs/chat.md",
       "slug": "chat",
       "title": "Chat, slash commands, and completion",
-      "bytes": 6458,
-      "sha256": "23939a12d4e08692c7d62d4582ff06515cee6f342db8c5dc6bfdb027e65b7b4c",
+      "bytes": 6873,
+      "sha256": "de8f30361766241d65d83ddf616a2d1841108ab981e2aef6dd284fa20bdd1652",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "7505a6e7e18a3ec18766ade43361453fc1b00cbf1eef783db65485ff20ad79b0"
+        "upstreamSnapshotSha256": "7505a6e7e18a3ec18766ade43361453fc1b00cbf1eef783db65485ff20ad79b0",
+        "stable147Amendment": {
+          "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.147",
+          "serverVersion": "2.31.21+op77.147",
+          "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        }
       }
     },
     {
@@ -328,11 +342,18 @@
       "target": "content/docs/data-reference.md",
       "slug": "data-reference",
       "title": "Game data reference",
-      "bytes": 9851,
-      "sha256": "2d510ac7c988d84c9e5dea9822bab26394af047a9e7087b3e2a51a9dba4d164c",
+      "bytes": 9947,
+      "sha256": "026a1b971bded708f979c9d15fb11662c8a5466a65d7b72d0b9464ae838ad4d2",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "2da5030cd67ded5b2169ddd93b3eab33d0e69eea77db8c3f487566399b3f3641"
+        "upstreamSnapshotSha256": "2da5030cd67ded5b2169ddd93b3eab33d0e69eea77db8c3f487566399b3f3641",
+        "stable147Amendment": {
+          "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.147",
+          "serverVersion": "2.31.21+op77.147",
+          "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        }
       }
     },
     {
@@ -753,8 +774,8 @@
       "target": "content/docs/npcs.md",
       "slug": "npcs",
       "title": "Server-owned NPCs",
-      "bytes": 46437,
-      "sha256": "5e3fdc900c1247b1df7001d1e45c795e8ebff5d4e0eede0b4d89ce1861deeb9d",
+      "bytes": 47079,
+      "sha256": "ca289427e39828da6f9054f34d8afbd0cc274a1f69e745104267bf328fc18549",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "86fc7f6b93c095495ee619f115b25139cc339e179cd0e8affac49448f2ac9f52",
@@ -763,6 +784,13 @@
           "sourceRevision": "36772b3b88404ffa9467bb2d06fcf1abd47568d9",
           "sourceWorkingTreeDirty": false,
           "scope": "Open77.npcs.presence and the moveTo end reasons path_blocked, nearest_reachable and report_jump"
+        },
+        "stable147Amendment": {
+          "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.147",
+          "serverVersion": "2.31.21+op77.147",
+          "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
         }
       }
     },
@@ -1108,8 +1136,8 @@
       "target": "content/docs/server-api.md",
       "slug": "server-api",
       "title": "Complete server Lua API",
-      "bytes": 207271,
-      "sha256": "449b0059706bd57fe8000a94e404cd862030ef46133625d00c8f82d902e48930",
+      "bytes": 207619,
+      "sha256": "ef2090cdbebe199ac0c5276754b0ad83f17c80e7f0feee7c1d82f24a510355d9",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "e7367a5197ea2774f591e48e7f6a7a8645f6611f194e74b0c6b1e6b0841d2ca2",
@@ -1130,6 +1158,13 @@
             "server:Open77.players.setDriveByEnabled"
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries"
+        },
+        "stable147Amendment": {
+          "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.147",
+          "serverVersion": "2.31.21+op77.147",
+          "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
         }
       },
       "siteAmendment": {
@@ -1304,8 +1339,8 @@
       "target": "content/docs/vehicles.md",
       "slug": "vehicles",
       "title": "Network vehicles",
-      "bytes": 117256,
-      "sha256": "e48fe26191c31a9e6927170558b538398fd5969d27f11b45de3d41c8b7ce4ea4",
+      "bytes": 119691,
+      "sha256": "217993070b5e5ccc7f8899d5cce912be28c101dba23bedd61a5a7dc98657bd62",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "57aac056238de1dbaa30823cf9f387f7e8576bd68d15b80ac247460a8dec8aae",
@@ -1327,7 +1362,14 @@
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries"
         },
-        "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts."
+        "loadingSeatAmendment": "See loadingSeatDocumentation for the reviewed working-tree contracts.",
+        "stable147Amendment": {
+          "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.147",
+          "serverVersion": "2.31.21+op77.147",
+          "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        }
       }
     },
     {
@@ -1499,9 +1541,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1739,
-      "bytes": 2515353,
-      "sha256": "205cb623e32e1340cd79d7b586f0f2f5619496f017b55a1b1a2f3edf5880d672",
+      "entries": 1753,
+      "bytes": 2533493,
+      "sha256": "2888699f6b45426f20edd4822f9f0eaa264e22ae1c50ba147783874004c3e099",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6"
@@ -1527,9 +1569,9 @@
     {
       "source": "wiki/data/permissions.json",
       "target": "content/api/permissions.json",
-      "entries": 172,
-      "bytes": 154008,
-      "sha256": "6e3e9b4df8fb50565a5c4697f8f597faba2a12253afccf61dfddd3c3c0193f72",
+      "entries": 175,
+      "bytes": 155953,
+      "sha256": "6dd5d877ebc499f2cc8b42270c48ca6fd9de786ee6bc676cf9b2a1d7a945e286",
       "siteAmendment": {
         "0": "V",
         "1": "e",
@@ -1703,9 +1745,9 @@
     {
       "source": "wiki/data/events.json",
       "target": "content/api/events.json",
-      "entries": 542,
-      "bytes": 383729,
-      "sha256": "06a9e19a60b6f8f1cde359280203d9a18d04d5a2568dfb8b17a722d3408f20d6",
+      "entries": 543,
+      "bytes": 384220,
+      "sha256": "9362a15f981ef1d91d989f5a3ccbae3a9355d975b9ad071889081569797afd8b",
       "siteAmendment": {
         "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
       }
@@ -1713,9 +1755,9 @@
     {
       "source": "wiki/data/releases.json",
       "target": "content\\api/releases.json",
-      "entries": 82,
-      "bytes": 6975,
-      "sha256": "4bc36a1e8591c6c21eb2a4f1de09153f4d894512ce5a6baeaa28f82ec00221a9"
+      "entries": 83,
+      "bytes": 7065,
+      "sha256": "df7796a5c122529c50ec2e07d311c85f681e16fc2260c80acd206077277c4fd1"
     },
     {
       "source": "wiki/data/catalogues/animations.json",
@@ -1813,11 +1855,18 @@
       "source": "wiki/webui-input.md",
       "slug": "webui-input",
       "title": "WebUI selective keyboard capture",
-      "bytes": 4016,
-      "sha256": "2f8d16d97c91f17cf351deb8efd3629fd3a9e2492c41f6bb158577d350387e82",
+      "bytes": 4606,
+      "sha256": "7e055846117fee8efd0d6b366b46a695dd490fd43c4f245d61af08b953283754",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "29da483896e1fccfc990f48b063c80fb695a8a63ef1a806f30881e6cb17fea27"
+        "upstreamSnapshotSha256": "29da483896e1fccfc990f48b063c80fb695a8a63ef1a806f30881e6cb17fea27",
+        "stable147Amendment": {
+          "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.147",
+          "serverVersion": "2.31.21+op77.147",
+          "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        }
       }
     },
     {
@@ -2082,8 +2131,8 @@
       "target": "content/docs/custom-locomotion.md",
       "slug": "custom-locomotion",
       "title": "Custom locomotion",
-      "bytes": 16243,
-      "sha256": "7a6babfa3b8d49cd50179e495a86dd72a73d22e8bac0c524bf7e2575da3da339",
+      "bytes": 20022,
+      "sha256": "adb96ea94fa289a079c9bdd45f6c75f5aa16e222a76e5a7907387b2fbb7fa678",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "55f7cc9469239264000d29b4f5c57e8272f059c0be940f9447530d54e40c1da9",
@@ -2098,6 +2147,13 @@
           "serverVersion": "2.31.21+op77.145",
           "sourceGuideSha256": "1126d5b81d2f97707325d712d0a1efe77f5d247e5dec3a60cf8046ff1feac416",
           "review": "Website guide reviewed against Stable 145 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        },
+        "stable147Amendment": {
+          "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.147",
+          "serverVersion": "2.31.21+op77.147",
+          "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
         }
       }
     },
@@ -2121,8 +2177,8 @@
       "target": "content/docs/custom-clothing.md",
       "slug": "custom-clothing",
       "title": "Custom clothing",
-      "bytes": 11223,
-      "sha256": "c9ab8edca63be2c3a5c56dc8f61489db8b49ffe3c71a674c1b07601ad850f7fb",
+      "bytes": 11392,
+      "sha256": "3812479bb7e9a70a91ce52f764d732f2419cc0b10e26d02680c9099ea919c6cb",
       "siteEditorial": {
         "owner": "website",
         "stable145Amendment": {
@@ -2132,6 +2188,49 @@
           "serverVersion": "2.31.21+op77.145",
           "sourceGuideSha256": "986073f6ef50da26f86d01997287936b905661495e1238dbfd90f19e7befc615",
           "review": "Website guide reviewed against Stable 145 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        },
+        "stable147Amendment": {
+          "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.147",
+          "serverVersion": "2.31.21+op77.147",
+          "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        }
+      }
+    },
+    {
+      "source": "wiki/character-previews.md",
+      "target": "content/docs/character-previews.md",
+      "slug": "character-previews",
+      "title": "Character previews and NPCs with player appearances",
+      "bytes": 8720,
+      "sha256": "4a40e0d3e6ed924abb138e284818c1faa8d0adf5107f3f0b9429c6ae3aea92cf",
+      "siteEditorial": {
+        "owner": "website",
+        "stable147Amendment": {
+          "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.147",
+          "serverVersion": "2.31.21+op77.147",
+          "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        }
+      }
+    },
+    {
+      "source": "resources/system/open77_vehicle_siren/README.md",
+      "target": "content/docs/vehicle-sirens.md",
+      "slug": "vehicle-sirens",
+      "title": "Vehicle sirens and key binding",
+      "bytes": 3744,
+      "sha256": "e5d3f486704a31bdab08757732bd504b04d3a1d278a254aee5f577bb6b0c799b",
+      "siteEditorial": {
+        "owner": "website",
+        "stable147Amendment": {
+          "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.31.21+op77.147",
+          "serverVersion": "2.31.21+op77.147",
+          "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
         }
       }
     }
@@ -2427,6 +2526,36 @@
       "server:CreateNpc",
       "server:Open77.npcs.create",
       "server:Open77.npcs.tasks.workspot"
+    ]
+  },
+  "stable147Documentation": {
+    "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
+    "sourceWorkingTreeDirty": false,
+    "mode": "Manual contract review against released C++/Lua/C# bindings; preserve unrelated site entries.",
+    "addedApiRouteIds": [
+      "server:Open77.vehicles.setEngineHold",
+      "server:Open77.vehicles.isEngineHeld",
+      "client:Open77.puppets.createLocal",
+      "client:Open77.puppets.getLocal",
+      "client:Open77.puppets.removeLocal",
+      "server:Open77.npcs.setBody",
+      "server:Open77.npcs.getBody",
+      "client:Open77.locomotion.register",
+      "server:Open77.locomotion.register",
+      "server:Open77.locomotion.set",
+      "server:Open77.locomotion.get",
+      "server:Open77.locomotion.reset",
+      "server:Open77.locomotion.playClip",
+      "server:Open77.locomotion.stopClip"
+    ],
+    "amendedApiRouteIds": [
+      "server:Open77.npcs.create",
+      "server:Open77.npcs.setLoadout",
+      "server:Open77.npcs.update",
+      "server:Open77.vehicles.getProperties",
+      "server:Open77.vehicles.setEngine",
+      "server:Open77.vehicles.setLights",
+      "server:Open77.vehicles.setProperties"
     ]
   }
 }

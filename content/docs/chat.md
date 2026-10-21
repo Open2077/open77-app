@@ -4,6 +4,8 @@
 
 Source: [`open77_chat`](https://github.com/Open2077/open77-resources/tree/main/system/open77_chat).
 
+Stable **147 or later** supports typing layout-specific letters directly with AltGr in chat and other WebUI text fields. For example, with a Polish keyboard layout selected in Windows, AltGr+A, AltGr+E and AltGr+C produce **ą, ę and ć**. Uppercase and dead-key accents follow the active layout; copy/paste remains available. Update the client through the launcher if text renders correctly but cannot be typed.
+
 Quick usage:
 
 ```text

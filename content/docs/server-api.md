@@ -1952,13 +1952,13 @@ surfaces, the package exports, exact snapshot fields, bit indexes, and examples.
 
 ### Engine, lights and siren
 
-These write **one named bit** of the durable flags and leave the rest alone. `flags` and `update`
-are unchanged and keep working exactly as they did; these are another way into the same canonical
-field, not a replacement for it.
+These setters update a named control while preserving unrelated flags. Ignition changes also enforce engine-hold policy. Prefer the named setters to replacing the complete `flags` bitfield.
 
 | Function | Signature | Purpose |
 |---|---|---|
 | `Open77.vehicles.setEngine` | `(id, on)` | Start or stop the engine. |
+| `Open77.vehicles.setEngineHold` | `(id, hold)` | Keep an empty engine running; enabling starts ignition. Requires Stable 147 or later. |
+| `Open77.vehicles.isEngineHeld` | `(id)` | Canonical hold boolean, or `nil, reason`. |
 | `Open77.vehicles.startEngine` / `stopEngine` | `(id)` | Aliases that read as actions. |
 | `Open77.vehicles.isEngineOn` | `(id)` | Canonical engine boolean, or `nil, reason`. |
 | `Open77.vehicles.setDrivable` | `(id, drivable)` | Take the car out of service, or put it back. |
@@ -1982,10 +1982,7 @@ report can clear it.
 
 **The siren's light bar and sound cannot be separated**: the only native this build exposes is
 `vehicleBaseObject.ToggleSiren(Bool)`, with no channel argument. **Indicators and the interior
-light are not supported by this API**. An authority release or revoke switches
-every electrical bit off by platform design, so re-assert on `onVehicleAuthorityChanged` if a
-parked car must stay lit. Full reasoning and the worked examples are in the
-[vehicle guide](vehicles.md#engine-lights-and-siren).
+light are not supported by this API**. Use `setEngineHold(id, true)` to keep an empty car running across parking, stream-in and owner changes. Clearing the hold alone preserves current ignition; `setEngine(id, false)` stops it and cancels the hold. Destruction, zero health and undriveable state also cancel it. No repeating engine-start timer is needed. See [Vehicles](vehicles.md#engine-lights-and-siren) and the [rebindable siren resource](vehicle-sirens.md).
 
 Per-vehicle gameplay data a server invents -- fuel, keys, a plate, an owner -- does not belong in
 these flags. Put it in a [state bag](state-bags.md) on the vehicle instead.

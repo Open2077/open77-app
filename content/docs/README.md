@@ -62,6 +62,8 @@ New client utilities: [screen picking](screen-picking.md) and the reusable
 
 | Guide | Subject |
 |---|---|
+| [Character previews](character-previews.md) | Local selection mannequins and networked NPCs with saved player bodies, facial shapes and clothing. |
+| [Vehicle sirens](vehicle-sirens.md) | Install the synchronized siren resource, configure its default key and use its checked client export. |
 | [Custom clothing](custom-clothing.md) | Register and package clothing, browse equipment, and preserve saved outfits through resource reloads. |
 | [Custom locomotion](custom-locomotion.md) | Register movement packages, assign styles, play one-shot clips and tune animation transitions. |
 | [RTTI calls and hooks](rtti.md#accessing-gameinstance-and-game-systems) | Call game functions, access GameInstance and systems, and manage native references. |

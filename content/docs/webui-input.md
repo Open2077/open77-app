@@ -31,6 +31,12 @@ document.addEventListener("keydown", (event) => {
 Open77.ready();
 ```
 
+## Text entry and keyboard layouts
+
+On **Stable 147 or later**, WebUI text inputs accept AltGr characters and dead-key accents from the active Windows keyboard layout, including **ą, ę and ć**. Give the visible page keyboard focus with `page:setFocus(true, ...)` and use normal browser text inputs. Keep shortcut handlers from cancelling text-entry events indiscriminately; standard Ctrl+A and clipboard shortcuts remain available.
+
+Use [key mappings](keybindings.md) for gameplay actions and the consumed-key API below for navigation keys. Neither API is a replacement for text input.
+
 ## Contract
 
 `page:setConsumedKeys(keys)` returns `true`, or `false, reason`. It atomically

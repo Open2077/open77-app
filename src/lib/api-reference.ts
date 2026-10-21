@@ -180,6 +180,7 @@ const INPUT_BLOCKING = new Set([
  * link to a page that does not mention it is worse than no link.
  */
 const NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGuideLabel: string }> = {
+  "Open77.locomotion": { usageGuideHref: "/docs/custom-locomotion", usageGuideLabel: "Custom locomotion & collections guide" },
   "Open77.rtti": { usageGuideHref: "/docs/rtti", usageGuideLabel: "RTTI calls & hooks guide" },
   "Open77.consumables": { usageGuideHref: "/docs/consumables-api", usageGuideLabel: "Grenades & healing items guide" },
   "Open77.blips": { usageGuideHref: "/docs/custom-blip-icons", usageGuideLabel: "Custom SVG blips & colors" },
@@ -214,6 +215,20 @@ const RUNTIME_NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGu
 };
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if ((runtime === "client" && raw.namespace === "Open77.puppets" &&
+       ["createLocal", "getLocal", "removeLocal"].includes(raw.name)) ||
+      (runtime === "server" && raw.namespace === "Open77.npcs" &&
+       ["setBody", "getBody"].includes(raw.name))) {
+    return { usageGuideHref: "/docs/character-previews", usageGuideLabel: "Character previews & player-shaped NPCs" };
+  }
+  if (runtime === "server" && raw.namespace === "Open77.vehicles") {
+    if (["setEngineHold", "isEngineHeld"].includes(raw.name)) {
+      return { usageGuideHref: "/docs/vehicles#keep-an-empty-vehicle-running", usageGuideLabel: "Keep an empty vehicle running" };
+    }
+    if (["setSiren", "isSirenOn"].includes(raw.name)) {
+      return { usageGuideHref: "/docs/vehicle-sirens", usageGuideLabel: "Vehicle sirens & key binding" };
+    }
+  }
   if (raw.namespace === "Open77.vehicles" && [
     "switchPlayerSeat", "getPlayerSeatSwitch", "cancelPlayerSeatSwitch",
     "setPlayerAutoSeatSwitchEnabled", "isPlayerAutoSeatSwitchEnabled",

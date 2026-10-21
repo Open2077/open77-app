@@ -9,6 +9,12 @@ virtual template. Browse the [NPC record catalogue](npc-catalogue.md) for IDs, a
 and compatibility warnings. See [AI, combat and voice control](npc-behavior.md) to make a
 hostile NPC passive, disable its perception or silence combat/search voice lines.
 
+## NPCs with a saved player appearance
+
+With **Stable 147 or later**, pass `body` and `equipment` to `Open77.npcs.create` to use a saved male or female player appearance, including facial morphs and custom clothing. Update it with `Open77.npcs.setBody`; read it with `Open77.npcs.getBody`. These server calls require `world.npcs`. The body family selects the compatible player template.
+
+For a character-selection menu, client `Open77.puppets.createLocal` creates a mannequin visible only to that client. See [Character previews and player appearances](character-previews.md) for capture, clothing, complete examples, readiness and cleanup.
+
 ## Manifest permissions
 
 Server mutation requires `world.npcs`. Client inspection requires `npcs.read`.
