@@ -6,6 +6,8 @@ The launcher checks the game build, required files and account identity before s
 
 **Stable 148 (`2.50.0+op77.148`) supports Cyberpunk 2077 2.5.** Update the game, launcher and multiplayer client together. Server owners must also deploy the matching server and resources, with `simulation.expectedGameBuild` set to `25000`.
 
+**Launcher 149 (`2.50.0+op77.149`) restores the official directory and updates** for older settings left on Local development. Download it from [the download page](/download), close the previous launcher and open the new file. On its first run, it switches those legacy settings to **Open//77 Alpha**, selects **Stable** and enables update checks. The multiplayer client and server remain on Stable 148.
+
 > **Play and build with Alpha access.** The launcher, multiplayer updates and live
 > server directory are available now. Everyone with Alpha access can also download
 > the server without a separate developer application. Need access? Use `/alpha apply`
@@ -38,7 +40,7 @@ lives under `%LOCALAPPDATA%\Open77` and inside your Cyberpunk 2077 folder.
 
 For public servers and official updates, select **Open//77 Alpha** as the directory source in Settings, keep the **Stable** channel selected and enable update checks. Changing the directory source restarts the launcher.
 
-**Local development** connects to `127.0.0.1:8090` and deliberately skips client and launcher updates. It shows the local master's directory, not the official server list. A launcher already running version 148 will not offer the same launcher version again; client updates are checked separately.
+**Local development** connects to `127.0.0.1:8090` and deliberately skips client and launcher updates. It shows the local master's directory, not the official server list. If an older launcher is stuck in this mode, download launcher 149 manually: it cannot discover that update through the local master. Recovery runs once; later deliberate directory choices and explicit development endpoint overrides are preserved. A launcher does not offer its own version again; client updates are checked separately.
 
 Servers still configured for Cyberpunk 2.31 cannot accept the 2.5 client. Their operators must update the server before players can join.
 
