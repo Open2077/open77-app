@@ -16,14 +16,14 @@
  * shares none of this, because it never touches the game.
  *
  * Not on this list, because they are not install requirements:
- * - storefronts. A legitimate 2.31 copy is what the platform asks for. The
+ * - storefronts. A legitimate 2.5 copy is what the platform asks for. The
  *   debug launcher searches common Steam and GOG folders; it does not name
  *   Epic, and none of those paths are a supported-store guarantee.
  * - the 2.31 / Phantom Liberty research catalogues. Those are extraction
  *   versions for wiki datasets, not a second player-facing requirement.
  */
 
-export const GAME_BUILD = "2.31";
+export const GAME_BUILD = "2.5";
 export const GAME_EXPANSION = "Phantom Liberty DLC";
 
 /** The one-line version, for the hero and for structured data. */

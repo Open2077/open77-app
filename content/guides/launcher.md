@@ -4,6 +4,8 @@ Use the Windows launcher to locate Cyberpunk 2077, verify compatibility, sign in
 
 The launcher checks the game build, required files and account identity before starting a multiplayer session.
 
+**Stable 148 (`2.50.0+op77.148`) supports Cyberpunk 2077 2.5.** Update the game, launcher and multiplayer client together. Server owners must also deploy the matching server and resources, with `simulation.expectedGameBuild` set to `25000`.
+
 > **Play and build with Alpha access.** The launcher, multiplayer updates and live
 > server directory are available now. Everyone with Alpha access can also download
 > the server without a separate developer application. Need access? Use `/alpha apply`
@@ -27,10 +29,18 @@ error to its log.
 ## Installing it
 
 The launcher is published as a **single file**, `Open77Launcher.exe` — roughly
-50 MB, with the .NET runtime, the web view assemblies and its own interface
+63 MB, with the .NET runtime, the web view assemblies and its own interface
 assets bundled inside. There is no installer, no setup wizard and no
 uninstaller: you put the exe somewhere and run it. Everything it later creates
 lives under `%LOCALAPPDATA%\Open77` and inside your Cyberpunk 2077 folder.
+
+### Returning from local development
+
+For public servers and official updates, select **Open//77 Alpha** as the directory source in Settings, keep the **Stable** channel selected and enable update checks. Changing the directory source restarts the launcher.
+
+**Local development** connects to `127.0.0.1:8090` and deliberately skips client and launcher updates. It shows the local master's directory, not the official server list. A launcher already running version 148 will not offer the same launcher version again; client updates are checked separately.
+
+Servers still configured for Cyberpunk 2.31 cannot accept the 2.5 client. Their operators must update the server before players can join.
 
 ### Windows security warnings
 
