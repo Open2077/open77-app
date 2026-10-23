@@ -30,7 +30,7 @@ import {
 import { Section } from "@/components/ui/page";
 import { Panel } from "@/components/ui/panel";
 import { Display, Eyebrow } from "@/components/ui/typography";
-import { megabytes, NCWE_RELEASE, NCWE_TRAILER } from "@/lib/ncwe-release";
+import { megabytes, NCWE_ARCHIVEXL, NCWE_RELEASE, NCWE_TRAILER } from "@/lib/ncwe-release";
 import { site } from "@/lib/site";
 import { NcweTrailerButton, NcweTrailerPoster } from "./ncwe-trailer";
 
@@ -119,7 +119,17 @@ const QUESTIONS = [
   },
   {
     q: "Which game version?",
-    a: `Cyberpunk 2077 ${NCWE_RELEASE.game}, on Windows 10 or 11 with a DirectX 11 graphics card. To play what you export, the game needs ArchiveXL and RED4ext.`,
+    a: (
+      <>
+        Cyberpunk 2077 {NCWE_RELEASE.game}, on Windows 10 or 11 with a DirectX 11 graphics card. To play what you export,
+        the game needs ArchiveXL and RED4ext. ArchiveXL has no official 2.5 release yet: install{" "}
+        <a href={NCWE_ARCHIVEXL.url}>our 2.5 build of ArchiveXL</a> ({NCWE_ARCHIVEXL.version}, source on{" "}
+        <a href={NCWE_ARCHIVEXL.source} target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+        ).
+      </>
+    ),
   },
   {
     q: "Will it change my game files?",
