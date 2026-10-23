@@ -1,6 +1,6 @@
 # Weapon Lua API
 
-Manage the local player's three `EquipmentArea.Weapon` slots with the asynchronous client API. Use [`open77_weapons`](https://github.com/Open2077/open77-resources/tree/main/system/open77_weapons) for authenticated server-to-owner requests and exact TweakDB IDs such as `Items.Preset_Lexington_Default`.
+Manage the local player's six weapon slots (three right/left pairs on Cyberpunk 2077 2.5) with the asynchronous client API. Use [`open77_weapons`](https://github.com/Open2077/open77-resources/tree/main/system/open77_weapons) for authenticated server-to-owner requests and exact TweakDB IDs such as `Items.Preset_Lexington_Default`.
 
 For reload speed, recoil, advanced native statistics and impact blasts,
 see [Weapon customization](weapon-customization.md) and the English
@@ -8,7 +8,7 @@ see [Weapon customization](weapon-customization.md) and the English
 Tuning requires a compatible development client and uses separate, resource-owned
 `setTuning`, `clearTuning` and `tuning` calls.
 
-The three-slot surface intentionally rejects heavy weapons (`WeaponHeavy`) and
+The standard weapon slots reject heavy weapons (`WeaponHeavy`) and
 arm cyberware (`ArmsCW`): those equipment areas have different REDengine
 lifecycles. Grenades are not weapon slots either — they are `QuickSlot`
 gadgets thrown from a hotkey — and have their own calls, [below](#gadgets-grenades-in-the-quick-slots).
@@ -24,6 +24,14 @@ count is not the number of throws. The consumables guide covers asynchronous
 completion, actual-use events and server-authoritative healing.
 
 
+## Dual wielding
+
+Stable **2.50.0+op77.152** for Cyberpunk 2077 **2.5** adds secondary slots 4–6,
+paired with primary slots 1–3. Use matching client/server builds and the updated
+bundled `open77_weapons` resource. See [Dual wielding](dual-wielding.md) for the
+permission flag, ordered equipment examples, shared reserve accounting,
+per-hand HUD state and current reload limitations.
+
 ## Client permissions and methods
 
 Declare `player.weapons.read` for `slots`, `snapshot`, and `all`. Declare
@@ -31,7 +39,8 @@ Declare `player.weapons.read` for `slots`, `snapshot`, and `all`. Declare
 
 | Method | Purpose |
 |---|---|
-| `Open77.weapons.slots()` | Return `{ 1, 2, 3 }`. |
+| `Open77.weapons.slots()` | Return `{ 1, 2, 3, 4, 5, 6 }` on Stable 152 or later. |
+| `Open77.weapons.setDualWieldAllowed(enabled)` | Enable or disable native dual wield for this player incarnation. |
 | `Open77.weapons.assign(record, slot, options?)` | Put a template in one exact slot. |
 | `Open77.weapons.setActive(slot)` | Select and draw an assigned slot. |
 | `Open77.weapons.setActive(record, options?)` | Reuse or equip a template, then draw it. |
@@ -48,9 +57,9 @@ Declare `player.weapons.read` for `slots`, `snapshot`, and `all`. Declare
 | `Open77.weapons.gadgets()` | List the quick slots. |
 
 The bundled `open77_weapons` resource adds one more as an export:
-`exports.open77_weapons:clear()` empties all three slots at once. It is three
-native removals aggregated into one answer rather than three the caller has to
-correlate, and a slot that was already empty is not a failure.
+`exports.open77_weapons:clear()` empties all six slots as one request, removing
+secondary slots before primary slots so native promotion cannot leave a weapon
+equipped. An already-empty slot is not a failure.
 
 `assign` options are `active` (default `false`) and `addToInventory` (default
 `true`). Template-form `setActive` accepts `slot` as a placement fallback and
@@ -61,6 +70,9 @@ one count is required; an omitted count is preserved. `reserve` is the spare
 HUD count, while `magazine` is the loaded count and may not exceed the live
 weapon capacity. `activate = true` selects and draws the requested slot when
 needed; otherwise a non-instantiated weapon returns `weapon_not_drawn`.
+For a pair sharing an ammo record, the reserve is shared and the total includes
+both magazines. Editing one magazine preserves the other. Wait for completion
+before reading or issuing a dependent change.
 
 ```lua
 local requestId, reason = Open77.weapons.assign(
@@ -96,10 +108,13 @@ A snapshot emits one state row per slot before its completion:
 ```lua
 AddEventHandler("open77:weapons:state", function(
   requestId, slot, record, tweakDbId, active, drawn, locked,
-  ammoRecord, ammoTweakDbId, ammoTotal, ammoReserve, magazine, capacity)
+  ammoRecord, ammoTweakDbId, ammoTotal, ammoReserve, magazine, capacity, reloading)
   print(slot, record, active, drawn, locked)
 end)
 ```
+
+`reloading == "true"` reports that hand's observed reload state. Collect all
+rows by request ID and update your HUD only after successful completion.
 
 An empty `tweakDbId` means an empty slot. `record` is restored for templates
 previously validated through this API; it may remain empty for an item equipped

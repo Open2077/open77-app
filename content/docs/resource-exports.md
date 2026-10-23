@@ -200,7 +200,8 @@ their puppets through `Open77.puppets.setWardrobe` — happens on events, not on
 
 | Export | Signature | Result |
 |---|---|---|
-| `slots` | `slots()` | `{ 1, 2, 3 }`. |
+| `slots` | `slots()` | `{ 1, 2, 3, 4, 5, 6 }` on Stable 152 or later. |
+| `setDualWieldAllowed` | `setDualWieldAllowed(enabled)` | Queue the native dual-wield policy; see [Dual wielding](dual-wielding.md). |
 | `assign` | `assign(record, slot, options?)` | Native asynchronous request ID. |
 | `setActive` / `activate` | `setActive(slot)` or `setActive(record, options?)` | Native asynchronous request ID. |
 | `remove` / `unequip` | `remove(slot)` | Native asynchronous request ID. |

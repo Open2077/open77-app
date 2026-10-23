@@ -215,6 +215,13 @@ const RUNTIME_NAMESPACE_GUIDES: Record<string, { usageGuideHref: string; usageGu
 };
 
 function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
+  if (raw.namespace === "Open77.weapons" && raw.name === "setDualWieldAllowed") {
+    return { usageGuideHref: "/docs/dual-wielding", usageGuideLabel: "Dual wielding guide" };
+  }
+  if (runtime === "client" && raw.namespace === "Open77.cyberware" &&
+      ["customizationCatalog", "getCustomization", "setCustomization", "resetCustomization"].includes(raw.name)) {
+    return { usageGuideHref: "/docs/cyberware-customization", usageGuideLabel: "Cyberware styles & colors" };
+  }
   if ((runtime === "client" && raw.namespace === "Open77.puppets" &&
        ["createLocal", "getLocal", "removeLocal"].includes(raw.name)) ||
       (runtime === "server" && raw.namespace === "Open77.npcs" &&

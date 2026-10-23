@@ -259,5 +259,83 @@
     "qualified": "Open77.vehicles.isEngineHeld",
     "sourceDescriptionSha256": "b2bf96f3ff1674980aa7b2ab1245807141ff4341ab98ec92ecc5614dce4129c6",
     "description": "Returns the server-owned hold, default false, rather than native ignition readiness. Requires world.vehicles and Stable 147 or later. An unknown vehicle returns nil, vehicle_not_found."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.weapons.activate",
+    "sourceDescriptionSha256": "3f27455dbc7dc570d3037d41a4fd9e383ae56c7c13148958e6251e6c36bde429",
+    "description": "Requires `player.weapons.edit`; see `setActive` for template placement and asynchronous completion semantics. Secondary slots 4–6 require a compatible enabled dual-wield pair on Stable 152 or later; await completion between policy, assignments and activation."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.weapons.all",
+    "sourceDescriptionSha256": "db8466b9ed1de315912d7622ae679bd7b51d47e06e1c0a43f5f76989023d22f7",
+    "description": "Requires `player.weapons.read`; results arrive asynchronously as slot-state events followed by completion. Client state rows append reloading after capacity. The booleans are strings; collect rows by request ID and publish only after successful completion. See [Dual wielding](dual-wielding.md#ammunition-and-hud)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.weapons.assign",
+    "sourceDescriptionSha256": "38d87fc4df687c7fabe577cb4c668b0cf0ea41a63e363e6a175d5c9870fdac22",
+    "description": "Requires `player.weapons.edit`. `slot` is 1..6. Options are `active` (default false) and `addToInventory` (default true). The return value only confirms that the validated request was queued; listen for `open77:weapons:completed` for the state verified by REDscript. Secondary slots 4–6 require a compatible enabled dual-wield pair on Stable 152 or later; await completion between policy, assignments and activation."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.weapons.setActive",
+    "sourceDescriptionSha256": "7c1018f6803ca6ae72e8660aa04f7976f2d031299a5368a592d29bb92d0088ec",
+    "description": "Requires `player.weapons.edit`. A numeric target must already contain a weapon. A template target reuses an assigned instance or equips it first; options accept fallback `slot` 1..6 and `addToInventory` (default true). Completion is asynchronous through `open77:weapons:completed`. Secondary slots 4–6 require a compatible enabled dual-wield pair on Stable 152 or later; await completion between policy, assignments and activation."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.weapons.setAmmo",
+    "sourceDescriptionSha256": "40f53ccf1e8463de49bab2a7732c5529331159496440c3838be639a00cbe02d1",
+    "description": "Requires `player.weapons.edit`. `amounts` accepts integer `reserve` and `magazine` counts plus optional `activate`. At least one count is required; omitted counts are preserved. The operation verifies the shared ammo total, spare reserve, magazine, and live capacity asynchronously through `open77:weapons:completed`. When both hands share an ammo record, reserve is shared and the total includes both loaded magazines. Editing one magazine preserves the other; await completion before a dependent change. Native dual reloads with too little shared reserve can still allocate rounds inconsistently."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.weapons.slots",
+    "sourceDescriptionSha256": "156443310db6ea2940aa893fc69ebe781b746bc01994de96ace382d3e98da410",
+    "description": "Requires `player.weapons.read`. Slot numbers are one-based and deliberately exclude QuickSlot grenades, WeaponHeavy items, and ArmsCW cyberware. Since Stable 152 on game 2.5, slots 1–3 are primary and 4–6 are their respective secondary partners. See [Dual wielding](dual-wielding.md)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.weapons.snapshot",
+    "sourceDescriptionSha256": "447095b5aa5a36fe885e558ebc83787303052d16e3eb21608d4e1d857cd29d0d",
+    "description": "Requires `player.weapons.read`. Emits one `open77:weapons:state` event per available slot and then `open77:weapons:completed`. TweakDB IDs remain opaque hexadecimal strings and are the presence authority; `record` may be empty for items equipped outside this API because shipping builds do not retain every reverse TweakDB name. Client state rows append reloading after capacity. The booleans are strings; collect rows by request ID and publish only after successful completion. See [Dual wielding](dual-wielding.md#ammunition-and-hud)."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.weapons.activate",
+    "sourceDescriptionSha256": "31bc07b3e502e30f6abd54663898018c7c2fce7d3f2a54807e2b7c13748c7133",
+    "description": "Asynchronous. The same function under a second name; it accepts both the slot and the record form. Secondary slots 4–6 require a compatible enabled dual-wield pair on Stable 152 or later; await completion between policy, assignments and activation."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.weapons.assign",
+    "sourceDescriptionSha256": "564fff2fa814ac9df6be6440d8fb1e549a8f489086758b46bc49bd36c2675664",
+    "description": "Asynchronous. The calling resource declares `network.events` and depends on `open77_weapons >=0.1.0`; the request is relayed to the official `open77_weapons` client package. `slot` is an integer 1 to 6 and `record` is at most 160 characters. Listen for `open77:weapons:completed` with `playerId, requestId, operation, accepted, reason, result`; replies are matched to the authenticated target and the calling resource, and an unanswered request completes with `request_timeout` after ten seconds. See [Weapon Lua API](weapons-api.md). Secondary slots 4–6 require a compatible enabled dual-wield pair on Stable 152 or later; await completion between policy, assignments and activation."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.weapons.clear",
+    "sourceDescriptionSha256": "304ff0121fa61a86ecf1cb83d042e54948d3c6eec20759f6a734c45e453794f3",
+    "description": "Asynchronous. Removes all six weapon slots through one owner relay request, secondary slots before primary slots to avoid native promotion leaving a weapon equipped. Already-empty slots are successful. The completion result carries cleared and a slots array of {slot, accepted, reason}; inspect each result for a partial failure. Requires network.events and the open77_weapons resource bundled with Stable 152 or later. See [Dual wielding](dual-wielding.md)."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.weapons.remove",
+    "sourceDescriptionSha256": "b9108da569511bd0c880d8cdefbb821e19c280f039f82d488d624f6bcf1f4dd5",
+    "description": "Asynchronous, same relay and completion contract as `assign`. `slot` is an integer 1 to 6."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.weapons.setActive",
+    "sourceDescriptionSha256": "a3f87a54f3f5607b99915725674423eb04bab69b1a60a3f3601ec4535f580ef5",
+    "description": "Asynchronous, same relay and completion contract as `assign`. Two forms: a slot number 1 to 6, which takes no options, or a record string with optional options. Passing options with a slot is refused, because the two forms mean different things. Secondary slots 4–6 require a compatible enabled dual-wield pair on Stable 152 or later; await completion between policy, assignments and activation."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.weapons.setAmmo",
+    "sourceDescriptionSha256": "90e956fd553ee64654edd0b0c08d00d787b05e920ee9de5aaf5512c975efca25",
+    "description": "Asynchronous, same relay and completion contract as `assign`. `amounts` takes `reserve` and `magazine` -- at least one is required, each a non-negative integer up to 1,000,000 -- plus an optional boolean `activate`. When both hands share an ammo record, reserve is shared and the total includes both loaded magazines. Editing one magazine preserves the other; await completion before a dependent change. Native dual reloads with too little shared reserve can still allocate rounds inconsistently."
   }
 ]

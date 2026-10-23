@@ -2,6 +2,10 @@
 
 Define and install persistent cyberware through the server-owned implant framework. Supported slots include Gorilla Arms (`arms`), double jump (`legs`) and the [hacking](hacking.md) implants (`operating_system`, `self_ice`, `purge`). Session abilities are documented separately: [Dash](dash.md), [Ground Slam](ground-slam.md) and [Overdrive](reflex-overdrive.md).
 
+Cosmetic models and palette/RGB colors use separate local client APIs; see
+[Cyberware styles and colors](cyberware-customization.md). That guide covers
+saved selections, cleanup and the current limits on remote-player colors.
+
 ## Minimal example
 
 A self-service resource that installs double-jump legs on the player who runs

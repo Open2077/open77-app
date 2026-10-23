@@ -463,6 +463,14 @@
           "description": "Weapon templates, slots, holstering and server assignments."
         },
         {
+          "slug": "dual-wielding",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Dual wielding",
+          "title": "Dual wielding",
+          "description": "Equip paired weapons with client and server Lua APIs, manage six loadout slots, read per-hand ammunition and reload state, and build a two-weapon HUD."
+        },
+        {
           "slug": "consumables-api",
           "kind": "guide",
           "nav": "Grenades & healing",
@@ -495,6 +503,14 @@
           "kind": "guide",
           "nav": "Cyberware overview",
           "description": "Build multiplayer cyberware with server-owned implants, configurable grades, persistent installation, native presentation and permission-controlled Lua APIs."
+        },
+        {
+          "slug": "cyberware-customization",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Styles & colors",
+          "title": "Cyberware styles and colors",
+          "description": "Discover native cyberarm styles and palettes, apply two RGB colors, save and restore local customization, and understand ownership and multiplayer limits."
         },
         {
           "slug": "gorilla-arms",

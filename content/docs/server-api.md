@@ -1130,6 +1130,7 @@ The calling resource declares `network.events` and depends on
 
 | Function | Signature | Result |
 |---|---|---|
+| `Open77.weapons.setDualWieldAllowed` | `(playerId, enabled)` | Request ID, or `nil, reason`; see [Dual wielding](dual-wielding.md). |
 | `Open77.weapons.assign` | `(playerId, record, slot, options?)` | Request ID, or `nil, reason`. |
 | `Open77.weapons.setActive` / `activate` | `(playerId, slot)` or `(playerId, record, options?)` | Request ID, or `nil, reason`. |
 | `Open77.weapons.remove` / `unequip` | `(playerId, slot)` | Request ID, or `nil, reason`. |
@@ -1145,7 +1146,7 @@ errors, and inventory-authority rules.
 
 ### Reading what a player is carrying
 
-`Open77.weapons.get(playerId)` (permission `player.weapons.read`) answers the three slots, the
+`Open77.weapons.get(playerId)` (permission `player.weapons.read`) answers the six slots, the
 active slot, whether the weapon is drawn and the magazine. Its low-level alias is
 `GetPlayerWeapons`.
 
@@ -1158,8 +1159,8 @@ a `snapshot`, and a player nobody has heard from fails `weapons_unreported`, whi
 answer from carrying nothing. A clear `WeaponValid` bit means "not reported", never "unarmed".
 
 Host event `onPlayerWeaponChanged(playerId, slot, record, drawn)` fires on a change.
-`Open77.weapons.clear(playerId)` empties all three slots as one relay operation rather than three
-removals; an already-empty slot is not a failure. Full schemas are in
+`Open77.weapons.clear(playerId)` empties all six slots as one relay operation, removing
+secondary slots first. An already-empty slot is not a failure. Full schemas are in
 [Weapon Lua API](weapons-api.md).
 
 ## Record catalogues
