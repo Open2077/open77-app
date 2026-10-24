@@ -27,3 +27,46 @@
   color: var(--text-dim);
   line-height: 1.6;
 }
+.toolbar {
+  align-items: flex-start;
+}
+.filterGroups {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.4rem;
+  display: flex;
+}
+.bulkBar {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  box-shadow: inset 2px 0 0 var(--tone);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding: 0.7rem 1rem;
+  display: flex;
+}
+.bulkCount {
+  display: inline-flex;
+}
+.selectCell {
+  width: 2.75rem;
+}
+/* The row and page checkboxes keep their label for screen readers only. */
+.check > :last-child {
+  clip-path: inset(50%);
+  white-space: nowrap;
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  overflow: hidden;
+}
+.bulkList {
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+}

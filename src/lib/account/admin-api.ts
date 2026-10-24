@@ -187,10 +187,44 @@ export function setServerDirectory(token: string, serverId: string, labels: Serv
   });
 }
 
-export function users(token: string, query: string, limit = 50): Promise<AdminUser[]> {
-  const params = new URLSearchParams({ limit: String(limit) });
-  if (query) params.set("query", query);
+export type AdminUserPage = { page: number; pageSize: number; total: number; items: AdminUser[] };
+
+export type AdminUserFilters = {
+  query?: string;
+  emailVerified?: boolean;
+  status?: "active" | "suspended";
+  role?: "admin" | "user";
+};
+
+/** A page of accounts, newest first, with the total matching every filter. */
+export function usersPage(token: string, filters: AdminUserFilters, page: number, pageSize: number): Promise<AdminUserPage> {
+  const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
+  if (filters.query) params.set("query", filters.query);
+  if (filters.emailVerified !== undefined) params.set("emailVerified", String(filters.emailVerified));
+  if (filters.status) params.set("status", filters.status);
+  if (filters.role) params.set("role", filters.role);
   return masterCall(`/api/v1/admin/users?${params}`, { token });
+}
+
+/** The master accepts at most this many accounts per bulk verification. */
+export const BULK_VERIFY_LIMIT = 100;
+
+export type BulkVerifyOutcome = "verified" | "already_verified" | "email_changed" | "not_found" | "invalid_email";
+
+export type BulkVerifyResponse = {
+  verified: number;
+  alreadyVerified: number;
+  failed: number;
+  results: { accountId: string; outcome: BulkVerifyOutcome; user: AdminUser | null }[];
+};
+
+/**
+ * Manual verification of several accounts in one request. Each one goes through
+ * the same locked, audited check as {@link verifyUserEmail}: an address that
+ * changed since the panel showed it is reported, never verified.
+ */
+export function verifyUserEmails(token: string, accounts: { accountId: string; email: string }[]): Promise<BulkVerifyResponse> {
+  return masterCall("/api/v1/admin/users/verify-email", { method: "POST", token, body: { accounts } });
 }
 
 export function suspendUser(token: string, accountId: string): Promise<void> {
