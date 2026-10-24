@@ -36,6 +36,25 @@ Query `Open77.input.blockableActions()` for available actions instead of hard-co
 | `FastTravel` | the player's own fast travel, with the map still usable | `flow` | measured |
 | `Attack` | firing a ranged weapon | `condition` | **inferred — verify it** |
 | `WeaponWheel` | the radial weapon wheel; the bundled context menu holds this one for its lifetime | `condition` | proven |
+| `NextWeapon` | wheel/number selection and holstering; the held weapon can still fire | `condition` | measured |
+| `Reload` | native reload entry | `condition` | measured |
+| `SwitchItem` | native item switching | `condition` | measured |
+| `Grenade` | native grenade use | `condition` | measured |
+| `Consumable` | native consumable use | `condition` | measured |
+| `RadialWheels` | native radial menus | `condition` | measured |
+| `VehicleInsideWheel` | the in-vehicle radial menu | `condition` | measured |
+| `PocketRadioWheel` | the pocket-radio radial menu | `condition` | measured |
+| `VehicleWheel` | vehicle-selection radial menu | `condition` | inferred |
+| `Jump` | jump entry; native restrictions also affect climbing/vaulting | `restriction` | inferred |
+| `Sprint` | sprint entry and continuing sprint | `restriction` | inferred |
+| `Melee` | melee attacks and firearm quick melee; blocking/parrying remain available | `condition` | inferred |
+
+The selection, reload, item and radial-menu controls above require Stable 156 or later.
+`NextWeapon` does not prevent `Open77.weapons.setActive` from selecting a weapon in Lua.
+Blocking a wheel that is already open cancels its native modal state, including
+radio blur and input capture. Releasing `VehicleWheel` does not enable vehicle
+summoning: `CallVehicle` remains enforced for the session.
+
 
 `blockableActions()` includes a `confidence` field. Treat `inferred` actions as experimental.
 Do not rely on `Attack` input blocking alone to enforce a safe zone; validate combat rules on the server.
@@ -52,27 +71,15 @@ blocked; `setActionBlocked` refuses with `action_already_enforced`.
 | `CallVehicle` | every summon phase and both `QuickSlotsManager` entry points |
 | `Journal` | the quest log is refused on both hub scenarios |
 
-### Not blockable on 2.31
+### Unavailable actions
 
-`Jump` · `Sprint` · `Crouch` · `Dodge` · `Slide` · `Aim` · `Reload` · `Melee` ·
-`NextWeapon` · `Interact` · `EnterVehicle` · `ExitVehicle` ·
-`Consumable` · `Grenade` · `Inventory` · `Phone` · `Radio`
+`Crouch` · `Dodge` · `Slide` · `Aim` · `Interact` · `EnterVehicle` ·
+`ExitVehicle` · `Inventory` · `Phone` · `Radio`
 
-Three reasons cover almost all of them, and each is written up with its evidence in
-[`docs/research/input-action-blocking.md`](../docs/research/input-action-blocking.md):
-
-- **polled, not dispatched** — no action hook ever sees them (`Jump`, `Crouch`, `Aim`,
-  `Reload`, `Melee`);
-- **the only engine record is unusable** — the finer locomotion restrictions
-  (`Tier2Locomotion` and its variants, which also carry the inhaler and grenade tags) are
-  stripped every frame by Open77's own safe-area reconciliation, which is what lets players
-  run in a lobby. A claim there would be removed on the next frame, forever;
-- **the name is documented but never verified** — the per-page fullscreen names behind
-  `Inventory` were never checked against this build, and a wrong name is a silent no-op.
-  Use `Hub`.
-
-Use `Movement` or `blockAll` where you wanted `Jump` or `Sprint`, and `Hub` where you
-wanted `Inventory`.
+These names return `action_not_blockable`. Use `Movement` for a broader movement
+restriction, `Hub` for inventory pages, or `blockAll` for the control stream.
+The separate [player controls](player-utilities.md#resource-owned-controls)
+include native restrictions such as `allowAim` and `allowCrouch`.
 
 ## API
 
@@ -168,27 +175,3 @@ end
 now claims `Map` for the same owner, so the two APIs cannot disagree about who holds the
 map. It still names the *engine* action rather than a vocabulary entry, and it still
 answers `unsupported_native_action` for anything else.
-
-## Human verification
-
-This row cannot be proven without someone at the keyboard: every check is a key pressed
-and an effect seen. Two minutes, from a resource holding `input.actions` and
-`input.blockAll`:
-
-| # | Do this | Must happen | Must still work |
-|---|---|---|---|
-| 1 | `setActionBlocked("Movement", true)`, then push the movement stick / press W | V does not move | camera still looks around |
-| 2 | `setActionBlocked("Movement", false)`, press W | V walks again | — |
-| 3 | `setActionBlocked("Map", true)`, press the map key | no fullscreen map | the pause menu still opens on Escape |
-| 4 | `setActionBlocked("Hub", true)`, press the inventory key | no inventory, no crafting, no perks | the pause menu still opens; settings and disconnect still reachable |
-| 5 | Open the map, aim at a fast-travel point with `setActionBlocked("FastTravel", true)` | the confirm does nothing | the map still opens and still pans |
-| 6 | `setActionBlocked("Attack", true)`, fire a pistol — **this is the unproven one** | no shot, no ammunition spent | melee still swings (it is not blockable) |
-| 7 | `blockAll()`, then try to move, shoot, interact, enter a vehicle | nothing responds | **open chat and type — it must work**; **hold the voice key and speak — it must transmit** |
-| 8 | `blockAll(false)` | everything responds again | — |
-| 9 | Stop the resource while it still holds `blockAll` | the player is free within one frame | — |
-
-Step 7's two "must still work" checks are the point of the whole design: a player who
-cannot act must still be able to say so.
-
-Step 9 is the one that matters most. If it ever fails, a player is stranded, and the fix is
-in the release path, not in the block.

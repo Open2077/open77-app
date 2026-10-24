@@ -17,6 +17,38 @@ resource fails to run: **there is no client `RegisterCommand`** — commands are
 chat sends `/x` to the server — and `RegisterKeyMapping` takes a **callback**, not a FiveM-style
 `("keyboard", "F6")` pair. Its real contract is in [Key bindings](keybindings.md).
 
+## Burning status
+
+Available on Stable 156 or later for Cyberpunk 2077 2.5.
+
+`Open77.world.isBurning(target?)` reads the native **Burning status effect** on a
+streamed entity. Requires `world.query` on the client. Omit the target (or pass
+`0`) for your own player. Other forms match the entity transform APIs:
+
+```lua
+local burning, reason = Open77.world.isBurning({ playerId = otherPlayerId })
+if burning == nil then
+    print("Cannot inspect player: " .. tostring(reason))
+elseif burning then
+    print("Player has an active burning effect")
+end
+
+-- Also accepts { npcId = id }, { vehicleId = id }, { propId = "123" },
+-- a receiver-local entity integer, or { engineEntity = "0x...", radius = 50 }.
+```
+
+`false` means the resolved entity has no native Burning status. `nil, reason`
+means it could not be queried, for example because it is not streamed, no longer
+exists, or the native backend is unavailable. Preserve engine IDs as strings to
+avoid losing their 64-bit precision. A canonical ID on a decorated query record
+takes priority over `engineEntity`; an unavailable player never falls through
+to a different target.
+
+This observes the client's current native status. It does not infer burning
+from low health, proximity to a fire, a wreck's destruction visuals, or a
+cosmetic flame VFX. It does not add status-effect replication or server damage
+authority. Use `Open77.effects.fires()` to inspect fires owned by your resource.
+
 ## Rays
 
 For moving entity bounds/head transforms, see
@@ -59,8 +91,8 @@ The trace looks at the `Static` and `Dynamic` collision groups and keeps the nea
 
 ### What the ray hit
 
-A plain hit carries geometry only. The engine's trace result publishes position, normal and
-material and nothing else that is documented, and Open77 reads nothing it cannot prove.
+A plain hit carries geometry only. On Stable 156 or later, `entities = true`
+resolves the actual native physics owner of the hit proxy.
 
 Pass `{ entities = true }` and the result gains an `entity` table when the ray stopped on an object
 rather than on the world:
@@ -90,11 +122,29 @@ Three things to know before you build on it:
   been, so adding the option to one call site does not affect another.
 - **Most rays have no entity, and that is correct.** A wall, a road or a railing is world geometry
   and is not an object. `hit.entity == nil` on a hit is the ordinary outcome, not a failure.
-- **The attribution is a search, not a property of the trace.** Open77 finds the object standing at
-  the hit point using the same search `Open77.world.nearest` runs, which is centred on the local
-  player -- so a hit more than 250 m away is reported as geometry with no entity, and the first
-  call of a session can answer `nil, "part_layout_not_proven"` for the reason given under
-  [Objects around the player](#objects-around-the-player).
+- **Entity attribution uses the hit proxy's native owner.** Open77 does not select
+  a nearby object as a substitute. If native owner lookup is unavailable, the
+  query returns `nil, "ray_entity_lookup_unavailable"`.
+
+### Choosing collision groups
+
+On Stable 156 or later, both `raycast` and `aimRay` accept `groups`: one to sixteen
+non-empty, case-sensitive native collision group names. Names are checked against
+the engine registry, without aliases; duplicates are ignored. The nearest hit
+across the selected groups wins.
+
+```lua
+local hit, reason = Open77.camera.aimRay(100, {
+    groups = { "Vehicle", "Static", "Terrain" },
+    entities = true,
+})
+if not hit then print(reason) end
+```
+
+`Terrain` is separate from `Static`. `groups` replaces the `static` and `dynamic`
+flags; combining them returns `collision_groups_conflict`. A malformed list gives
+`invalid_collision_groups`; an unknown name gives `invalid_collision_group`.
+The `ignore` option is not supported and returns `ray_ignore_unavailable`.
 
 ## Where you are
 
@@ -147,9 +197,10 @@ is a real answer rather than a plausible one.
 
 For exact cursor-based selection, `Open77.camera.screenRaycast` in [screen picking](screen-picking.md)
 is the other half of the answer: it resolves the native physics owner of the proxy the ray stopped on
-rather than the nearest streamed object, and reports its network identity when it has one. Use it when
-"which entity" has to be exact, as for a context menu; use `{ entities = true }` when a nearest-object
-attribution within a tolerance is what the scenario means, as for a shot fired down a corridor.
+rather than the nearest streamed object, and reports its network identity when it has one.
+On Stable 156 or later, `raycast` and `aimRay` with `{ entities = true }` also use
+native hit ownership. Use `screenRaycast` for a screen coordinate and `aimRay`
+for the camera direction.
 Do not use `world.nearest` as proof of what a ray hit: that query is centred on the player, and
 proximity is not collision ownership.
 

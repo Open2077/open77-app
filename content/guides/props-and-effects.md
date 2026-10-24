@@ -211,10 +211,12 @@ that a path resolves, never that the object is the right size, sits on its
 origin, or means anything outside the interior it was authored for. Expect to
 try several.
 
-A raw **`.ent` path is refused**, with `template_backend_disabled`. That is
-not squeamishness: spawning a cooked prop template through this route takes
-the whole game process down, so the path is closed rather than left as a way
-to crash every player on the server at once.
+On **Stable 156 or later**, raw `.mesh` and `.ent` paths use the regular
+create/attach/remove API. Meshes load asynchronously through a generic host;
+entity templates retain their authored graph and appearance. Use `kind = "prop"`
+for raw templates and mount their assets and dependencies on every client.
+Visual scale does not rescale collision. Arbitrary gameplay templates and physics
+families remain experimental. See [raw model limits](props.md#model-and-collision-limits).
 
 **`Open77.props.catalog()` returns an empty table on the dedicated server.**
 The alias list lives on the client, next to the host entities it resolves,
@@ -788,7 +790,7 @@ unavailable subsystem are told apart without wrapping every line in `pcall`.
 | `invalid_model` | The model string is empty or malformed. |
 | `unknown_alias` | Not in the catalogue, and not a depot path. |
 | `invalid_argument` | A field is the wrong type, or out of its documented range. |
-| `template_backend_disabled` | A raw `.ent` path. See [Models](#models). |
+| `template_backend_disabled` | A raw `.ent` path on an older client; update to Stable 156 or later. See [Models](#models). |
 | `record_provisioning_failed` | The engine record for the object could not be minted. |
 | `entity_spawn_failed` | The record resolved and the engine still produced no entity. |
 | `world_unavailable` | The projecting client has no world loaded, or is mid-transition. |

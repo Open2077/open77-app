@@ -209,3 +209,14 @@ When using ArchiveXL dynamic appearances, configure the corresponding `DynamicAp
 Create your own uniquely named item records. Do not replace shared empty/template records such as `Items.GenericInnerChestClothing`, `Items.InnerChestClothingBase`, `Items.TShirt` or `Items.EmptySlotsTShirt` to bypass registration.
 
 Before distributing a pack, check each supported body family, local and remote appearance, save/reconnect, wardrobe overlays and provider stop/restart.
+
+## Clothing and native inventory weight
+
+Trying on clothes can leave native inventory items after unequipping. Stable 156
+adds a movement policy for servers that manage weight in their own inventory:
+update **`open77_equipment` to 0.2.1** to suppress vanilla overweight penalties
+by default, or call client `Open77.players.allowEncumbrance(false)` with
+`players.controls`. This leaves inventory contents and weight values intact;
+it is not automatic garment deletion or a carry-capacity change. See
+[native weight penalties](player-utilities.md#native-weight-penalties) for
+configuration and resource ownership.

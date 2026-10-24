@@ -9,13 +9,23 @@ transform that streams and can be removed", so they share `Open77.props` and are
 
 ## Model and collision limits
 
-- Use a curated alias or raw `.mesh` depot path. Each curated mesh uses a generated host; `prop.catalog` shows the models available to the running client.
-- Create, move, remove and carry state is replicated. Late joiners receive a snapshot; out-of-range props are not projected.
-- Lights update color and enabled state without respawning. Persistent effects resume after stream-in and stop when removed.
-- Collision depends on the mesh. Of 184 generated hosts, 116 contain collision; the remaining hosts are visual only. Check `prop.catalog` or `docs/generated/prop-hosts.json` per alias. Objects such as `barrier.hesco`, `container.shipping`, `street.hydrant` and `industrial.forklift` may not block movement.
-- Detached physical hosts reject `collision = false`: their visible component also provides collision. Attached props use visual hosts without physics and can intersect scenery.
-- Raw `.ent` templates are disabled by default with `template_backend_disabled` because some decorative entity roots can crash the client.
-- An alias without a resolvable mesh falls back to a marker cylinder. Inspect the client catalogue after changing model data.
+Stable 156 on Cyberpunk 2077 2.5 supports raw `.mesh` and `.ent` depot paths in
+`model`, as well as existing aliases and registered resource models. No alias
+whitelist or separate Codeware installation is required. Every observing client
+must have the asset and its dependencies in mounted archives.
+
+- Raw meshes load asynchronously through a generic prop host. Client `rendered`
+  remains false until loading and refresh finish; a missing path gives `invalid_model`.
+- Raw entity templates retain their authored component graph and appearance.
+  Their `kind` must be `"prop"`. Decorative static entities are supported;
+  arbitrary gameplay templates and physics component families remain experimental.
+- `scale` changes mesh visuals, not authored collision dimensions.
+- Attached props use non-blocking projection. Use `collision = false` for raw
+  decorations that must remain non-solid after detachment.
+- Existing aliases and registered models retain their authored host routing.
+  Catalogue collision varies by model; inspect `prop.catalog` and the asset.
+- Props, lights and effects retain their existing streaming, bucket, ownership
+  and cleanup rules. A raw path does not create a continuously simulated network body.
 
 ## Manifest permissions
 
@@ -83,14 +93,14 @@ local id, reason = Open77.props.create({
 
 | Field | Type | Default | Meaning |
 |---|---|---|---|
-| `model` | string | required | A curated alias, or a raw depot `.mesh` path. At most 256 bytes. An alias draws the model it names through its authored host entity; a raw `.ent` path is refused with `template_backend_disabled` (§Status). See [Models](#models-aliases-and-raw-depot-paths). |
+| `model` | string | required | Curated alias, registered resource model, or raw `.mesh` / `.ent` depot path; at most 256 bytes. Raw paths require Stable 156. |
 | `position` | `{ x, y, z }` | required | World position in metres. Non-finite values, or any axis past ±1,000,000, give `invalid_position`. |
 | `yaw` | number | `0` | Heading in degrees. Pitch and roll are not exposed. |
-| `scale` | `{ x, y, z }` | `{1,1,1}` | Each axis 0.01–100. Non-unit scale is honoured by the mesh back-end only; see [Models](#models-aliases-and-raw-depot-paths). |
+| `scale` | `{ x, y, z }` | `{1,1,1}` | Each axis 0.01–100; visual scale does not rescale authored collision. |
 | `appearance` | string | `""` | Template appearance name, at most 128 bytes. Empty means the template's default. |
 | `bucket` | integer | `0` | Routing bucket. A player only ever sees props in their own bucket. |
-| `physics` | string | `"static"` | `static`, `kinematic`, `dynamic` or `none`. No effect: the spawned object has no `entPhysicalMeshComponent`. See [model limits](#model-and-collision-limits). |
-| `collision` | boolean | `true` | Detached hosts retain their authored collision; disabling a solid host's collision is unsupported (§Status). Attached hosts are always visual-only and non-blocking. |
+| `physics` | string | `"static"` | `static`, `kinematic`, `dynamic` or `none`; does not create a replicated physics simulation. Behavior depends on the authored components. |
+| `collision` | boolean | `true` | Depends on the asset. Raw decorations support non-solid projection with `false`; attached props are non-blocking. |
 | `visible` | boolean | `true` | `false` keeps the registry entry and hides the object. |
 | `kind` | string | `"prop"` | `prop`, `light` or `effect`. See [Lights](#lights) and [Effects in this registry](#effects-in-this-registry). |
 | `light` | table | — | Accepted only when `kind == "light"`; supplying it for any other kind is rejected. See [Lights](#lights). |
@@ -189,17 +199,31 @@ correctly collided, or meaningful outside the quest or interior it was authored 
 presence proves discoverability, nothing else. An alias that is not in the catalogue fails with
 `unknown_alias`; a path the engine will not resolve fails with `invalid_model`.
 
-The path also picks the back-end, which is why `scale` behaves differently between the two:
+On Stable 156 or later:
 
-| Model string | Back-end | Consequence |
-|---|---|---|
-| `…\name.ent`, or an alias resolving to one | Runtime TweakDB record pointing at the cooked template | You get the object the artist authored — materials, appearances, collision. Scale is the template's. |
-| `…\name.mesh`, or an alias resolving to one | An Open77-owned host entity with the mesh written onto its `entMeshComponent` | Needs no record, so it escapes the per-session record ceiling, and it accepts a non-unit `scale`. Collision and material fidelity are then Open77's to supply. |
+| Model | Loading path | Result |
+| --- | --- | --- |
+| Raw `.mesh` | Generic host and asynchronous mesh loading | Requested geometry, appearance and visual scale. |
+| Raw `.ent` | Detached native entity spawner | Authored graph and appearance; visual scale does not rescale collision. |
+| Alias or registered resource model | Existing authored host | Preserves existing geometry and collision behavior. |
+| Trusted template such as `race.checkpoint` | Existing runtime TweakDB record | Preserves established component initialization. |
 
-Template records are provisioned lazily, memoised for the session, and **do not survive a game
-restart** — a known property of runtime TweakDB records. They are re-provisioned on the next
-session automatically. A failure to mint one returns `record_provisioning_failed`; a record that
-mints but produces no entity returns `entity_spawn_failed`.
+For example, on the server with `world.props`:
+
+```lua
+-- Replace this with a real depot path from your mounted archive.
+local id, reason = Open77.props.create({
+    model = [[my_resource\props\sign.mesh]],
+    position = { x = -1440, y = 130, z = 18 },
+    collision = false,
+})
+assert(id, reason)
+```
+
+Use a `.ent` path in the same field to spawn an entity template. Server acceptance
+does not prove client rendering: check the client projection's `rendered` and
+`failed` fields, and handle stream-out. Use [prop attachments](attachments.md) to
+bind the resulting prop to a player or vehicle.
 
 ## Lights
 

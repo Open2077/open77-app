@@ -177,6 +177,8 @@ record lookup and asynchronous spawning can still fail; use `onNpcReady` and `on
 | `Open77.npcs.all` | optional `bucket` | array of owned NPC snapshots |
 | `Open77.npcs.templates` | none | array of optional legacy alias snapshots (not an exhaustive catalogue) |
 | `Open77.npcs.update` | `npcId, fields` | boolean |
+| `Open77.npcs.setArmor` | `npcId, points` | boolean; sets canonical armor |
+| `Open77.npcs.getArmor` | `npcId` | armor points or nil if unavailable/unowned |
 | `Open77.npcs.setTransform` | `npcId, transform` | boolean |
 | `Open77.npcs.setBucket` | `npcId, bucket` | boolean |
 | `Open77.npcs.setAppearance` | `npcId, appearance` | boolean |
@@ -838,10 +840,38 @@ Snapshots expose `streamed` and `locallyAuthoritative`. The local entity handle 
 not cache it across stream-out, reconnect or resource reload.
 
 Client snapshots contain `id`, `revision`, `entity`, `template`, `record`, `appearance`, `flags`, `bucket`,
-`aiMode`, `damagePolicy`, `health`, `maxHealth`, `currentTaskId`, `taskRevision`,
+`aiMode`, `damagePolicy`, `health`, `maxHealth`, `armor`, `currentTaskId`, `taskRevision`,
 `authorityPlayerId`, `authorityEpoch`, `streamed` and `locallyAuthoritative`. Without `npcs.read`,
 `all()` returns an empty array, `get()`/`entity()`/`currentTask()` return `nil`, and
 `isStreamedIn()` returns `false`.
+
+## Armor
+
+Available on Stable 156 or later.
+
+On the server, `create({ armor = points, ... })`, `update(id, { armor = points })`
+and `setArmor(id, points)` set armor independently of health. Omitted armor starts
+at `0` on creation and is preserved by updates. Values must be finite numbers
+between `0` and `100000`; invalid values are rejected without changing the NPC.
+Mutation requires `world.npcs` and ownership of that NPC by the calling resource.
+
+Canonical damage consumes armor first. For example, a 40-point hit against
+20 armor and 100 health leaves 0 armor and 80 health. Invulnerable NPCs consume
+neither armor nor health. The existing damage event's amount remains the health
+damage, so an entirely absorbed hit reports zero health damage.
+
+```lua
+assert(Open77.npcs.setArmor(npcId, 50))
+print(Open77.npcs.getArmor(npcId)) -- server: 50
+-- Client, with npcs.read:
+local npc = Open77.npcs.get(npcId)
+if npc then print(npc.armor, npc.health) end
+```
+
+The reliable create/state packets include armor, including initial streaming and
+late joins. This extension requires matching protocol **1.50** client and server
+builds. It uses the server's armor accounting; it does not install a second native
+damage-resistance modifier that would reduce the same hit twice.
 
 ## Current limitations
 

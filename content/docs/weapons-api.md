@@ -34,7 +34,7 @@ per-hand HUD state and current reload limitations.
 
 ## Client permissions and methods
 
-Declare `player.weapons.read` for `slots`, `snapshot`, and `all`. Declare
+Declare `player.weapons.read` for `slots`, `snapshot`, `all`, and `shotCounters`. Declare
 `player.weapons.edit` for mutation.
 
 | Method | Purpose |
@@ -49,6 +49,7 @@ Declare `player.weapons.read` for `slots`, `snapshot`, and `all`. Declare
 | `Open77.weapons.holster()` | Holster without changing the loadout. |
 | `Open77.weapons.setAmmo(slot, amounts)` | Set exact spare rounds and/or magazine rounds. |
 | `Open77.weapons.snapshot()` / `all()` | Request every slot's verified state. |
+| `Open77.weapons.shotCounters()` | Read cumulative discharges for the current local character. |
 | `Open77.weapons.setComponent(slot, part, options?)` | Install a scope, muzzle or mod on the weapon in a slot. |
 | `Open77.weapons.removeComponent(slot, attachmentSlot)` | Empty one attachment slot of that weapon. |
 | `Open77.weapons.components(slot)` | List that weapon's attachment slots, taken or empty. |
@@ -61,6 +62,39 @@ The bundled `open77_weapons` resource adds one more as an export:
 secondary slots before primary slots so native promotion cannot leave a weapon
 equipped. An already-empty slot is not a failure.
 
+### Counting shots between polls
+
+Requires Stable 156 or later on Cyberpunk 2077 2.5. The inactive-slot ammo behavior below also requires this version.
+
+`Open77.weapons.shotCounters()` requires `player.weapons.read` and returns
+`{ generation, right, left, total }`, or `nil, reason` when the local character
+is unavailable. Counts advance for real native discharges, independently of the
+Lua polling interval. Reloads and administrative ammo edits do not add shots.
+They count discharges, not ammunition cost: a free shot still counts once.
+
+```lua
+local previous
+CreateThread(function()
+    while true do
+        local current = Open77.weapons.shotCounters()
+        if current and previous and current.generation == previous.generation then
+            local rightShots = current.right - previous.right
+            local leftShots = current.left - previous.left
+            print("Shots since last poll:", rightShots, leftShots)
+        end
+        previous = current
+        Wait(250)
+    end
+end)
+```
+
+Holstering and changing weapons preserve the counters. A new character
+incarnation resets them and changes `generation`; always compare that field
+before subtracting. These are local observations, not server-authorized ammo or
+damage. There is no implicit server broadcast.
+
+### Assigning weapons and ammunition
+
 `assign` options are `active` (default `false`) and `addToInventory` (default
 `true`). Template-form `setActive` accepts `slot` as a placement fallback and
 `addToInventory`; if the template is already assigned, its existing slot wins.
@@ -69,10 +103,30 @@ equipped. An already-empty slot is not a failure.
 one count is required; an omitted count is preserved. `reserve` is the spare
 HUD count, while `magazine` is the loaded count and may not exceed the live
 weapon capacity. `activate = true` selects and draws the requested slot when
-needed; otherwise a non-instantiated weapon returns `weapon_not_drawn`.
-For a pair sharing an ammo record, the reserve is shared and the total includes
-both magazines. Editing one magazine preserves the other. Wait for completion
-before reading or issuing a dependent change.
+needed. Without it, holstered and inactive weapons are updated without drawing
+them or changing the held weapon, including an assigned weapon never drawn.
+When both drawn weapons share an ammo record, `reserve` is shared spare ammo:
+the inventory total includes that reserve plus both loaded magazines. Changing
+one magazine preserves the other. Ammo requests execute in order per player;
+wait for their completion events before relying on the resulting counts.
+
+For an inactive slot, `reserve` is calculated as the inventory total minus
+that slot's magazine and the magazines currently drawn in the other hands.
+Other inactive magazines are native saved counts, not separate ammo pools.
+Drawing a different weapon can therefore change its displayed reserve while
+the shared inventory total stays the same.
+
+```lua
+-- Update slot 2 while keeping the current weapon in hand.
+Open77.weapons.setAmmo(2, { magazine = 5, reserve = 90 })
+-- Change only its magazine, preserving its calculated spare reserve.
+Open77.weapons.setAmmo(2, { magazine = 9 })
+```
+
+The request fails if its slot changes before execution, the native inventory is
+unavailable, or the magazine exceeds capacity. A disconnect or character
+replacement invalidates outstanding native jobs. Native reads/writes are
+asynchronous; a successful request ID is still only queue acceptance.
 
 ```lua
 local requestId, reason = Open77.weapons.assign(
@@ -121,8 +175,10 @@ previously validated through this API; it may remain empty for an item equipped
 by another pipeline because shipping REDengine builds do not always retain the
 reverse TweakDB name table. Use `equipped`/`tweakDbId` as the presence test.
 Ammo fields report the shared total, spare reserve, loaded magazine and live
-capacity. An inactive slot can still report its ammo type and total, but its
-reserve/magazine/capacity are unavailable (`-1`) until the weapon object exists.
+capacity, including inactive or holstered ranged weapons which have never been
+drawn. A snapshot completes after all native reads and slot rows. Empty slots
+and non-ammo weapons retain unavailable ammo fields (`-1`). An unreadable native
+ammo cache fails completion with `ammo_cache_unavailable`.
 
 ## Server-targeted API
 

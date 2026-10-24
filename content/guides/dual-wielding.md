@@ -115,9 +115,11 @@ To disable dual wield, call `setDualWieldAllowed(false)` on the client or `setDu
 
 ## Ammunition and HUD
 
+For per-hand discharge counts independent of HUD polling, use client `Open77.weapons.shotCounters()` with `player.weapons.read`. Compare `generation` before subtracting `right` or `left`; reloads and ammo edits do not count as shots. See [shot counters](weapons-api.md#counting-shots-between-polls).
+
 Each drawn weapon has its own magazine, capacity and reload observation. If the weapons use the same ammunition record, they share one reserve. `ammoTotal` includes that reserve plus **both** loaded magazines: with 120 total rounds, 18 loaded on the right and 7 on the left, the shared reserve is 95.
 
-`Open77.weapons.setAmmo(slot, { reserve = 120, magazine = 18 })` sets the shared spare count and that slot's magazine. Omitted counts are preserved, as is the other hand's magazine. The magazine cannot exceed its live capacity. Add `activate = true` to draw a slot when needed; otherwise a missing live weapon object returns `weapon_not_drawn`. Wait for completion before reading or issuing a dependent change.
+`Open77.weapons.setAmmo(slot, { reserve = 120, magazine = 18 })` sets the shared spare count and that slot's magazine. Omitted counts are preserved, as is the other hand's magazine. The magazine cannot exceed its live capacity. On Stable 156 or later, inactive and holstered slots can be read and updated without drawing them, including weapons never drawn. Add `activate = true` only when you want to draw the selected slot. Wait for completion before reading or issuing a dependent change.
 
 Collect a complete snapshot before replacing the HUD. The client emits one row per slot **before** the snapshot's completion:
 

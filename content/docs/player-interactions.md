@@ -298,3 +298,89 @@ The coordinator permits at most 256 interactions globally and 64 per resource.
 Player replies are rate-limited and bound to the authenticated connection.
 Resource reload cancels its outstanding reservations. Snapshot repair does not
 replay completed gameplay callbacks or restore transactions after server restart.
+
+## Persistent player attachments (experimental)
+
+Stable 156 introduces server `Open77.players.attach`, `detach`, `getAttachment`
+and `listAttachments`. These bind a player to another player or a vehicle without
+the duration limit of `playerInteractions.request`. They require matching
+protocol **1.50** builds and the bundled `open77_player_interactions` resource.
+
+Use this experimental API for alive-player root or exported-slot following.
+Arbitrary skeleton bones, corpse transport and custom animation-bank poses are
+not supported as reliable gameplay workflows. In particular, the client refuses
+custom-bank pose projection. The full lifecycle matrix is not validated.
+
+```lua
+-- Server resource manifest
+permissions { "players.attachments.control", "players.attachments.read" }
+```
+
+```lua
+-- Server: call after your own permission, consent and distance checks.
+local state, reason = Open77.players.attach(playerId, {
+    parentType = "vehicle",
+    parentId = vehicleId,
+    bone = "", -- parent root; use an exported slot name when available
+    offset = { x = 0, y = -2, z = 0.5 },
+    rotation = { x = 0, y = 0, z = 0 },
+}, 0) -- expect no existing binding
+if not state then print(reason) end
+
+AddEventHandler("onPlayerAttachmentChanged", function(current)
+    -- Server event delivered to the owning resource.
+    print(current.playerId, current.phase, current.reason, current.revision)
+end)
+
+local function release(playerId)
+    local current = Open77.players.getAttachment(playerId)
+    if current then
+        return Open77.players.detach(playerId, current.revision)
+    end
+end
+```
+
+| Server method | Result |
+| --- | --- |
+| `Open77.players.attach(playerId, options, expectedRevision?)` | Pending state, or `nil, reason`. Requires `players.attachments.control`. |
+| `Open77.players.detach(playerId, expectedRevision?)` | `true`, or `nil, reason`. Only the owning resource can mutate a binding. |
+| `Open77.players.getAttachment(playerId)` | Current state or nil; requires `players.attachments.read`. May read another resource's binding. |
+| `Open77.players.listAttachments()` | Bindings owned by the calling resource; requires `players.attachments.read`. |
+
+`parentType` is `player` or `vehicle`; `parentId` is a canonical ID, accepted as
+an integer or decimal string. `bone` defaults to the root (empty string), up to
+192 UTF-8 bytes. Discover exported slots through the [entity transform API](world-queries.md#slots-not-bones).
+Offsets are metres in the parent frame, with each axis within ±1000. Rotations
+are degrees with each axis within ±360. All components must be finite numbers.
+Omit `pose` in current integrations: although the server accepts
+`{ animset, clip, blendMs = 250 }`, the client cannot reliably project this path.
+Unknown option keys are rejected. The encoded options limit is 4096 bytes.
+
+One binding exists per player. The child must be ready and outside a vehicle;
+parent and child must share a bucket. Cycles and conflicts with interactions,
+forced movement or animations are refused. This API does not implement an
+invitation or proximity policy: enforce those rules in your server resource.
+
+States include `id`, `epoch`, `revision`, `playerId`, `incarnation`, `bucket`,
+`parentType`, `parentId`, `parentIncarnation`, `bone`, `offset`, `rotation`,
+`pose`, `phase` and `reason`. Preserve IDs as strings. Acceptance returns
+`phase = "pending"`; client preparation moves it to `active` or releases it
+after a 15-second preparation timeout. `detached` is a terminal event, not a
+live binding. Once active there is no duration cap. Acceptance alone does not
+prove that every observer has rendered the attachment.
+
+The optional `expectedRevision` protects against stale writes; use `0` for no
+binding and a current revision for updates/detach. Errors include `stale_revision`,
+`owned_by_another_resource`, `wrong_bucket`, `parent_unavailable`,
+`player_not_ready`, `player_in_vehicle`, `player_reserved`, `attachment_cycle`,
+`attachment_limit` and `attachment_parent_limit`.
+
+Limits are 256 bindings globally, 64 per resource and 32 per parent. Resource
+stop, disconnect, bucket changes, parent removal, vehicle entry and a changed
+player incarnation release the binding. Death alone is not a request to revive
+or respawn; corpse presentation remains unsupported. Bindings are runtime state,
+not durable persistence across a server restart. The reserved
+`open77:playerAttachments:` network events are internal transport.
+
+Client resources also receive `onPlayerAttachmentChanged(state)` as bindings
+are synchronized. Treat it as presentation state; it grants no server authority.

@@ -79,6 +79,7 @@ server-side anti-cheat enforcement.
 | `AllowDodge` / `allowDodge` | `false` blocks ground/air dodge entry | 128 |
 | `AllowWeapons` / `allowWeapons` | `false` applies the native no-weapons restriction | 256 |
 | `AllowInteraction` / `allowInteraction` | `false` blocks native world interactions | 512 |
+| `AllowEncumbrance` / `allowEncumbrance` | `false` suppresses native overweight warnings and movement penalties | 1024 |
 
 Only actual Lua booleans are accepted: the string `'false'` is rejected.
 `allow=true` releases **this resource's** block; it cannot override another resource
@@ -98,6 +99,28 @@ The host releases blocks on resource stop, session teardown, death and player-bo
 replacement. The native query has a two-second watchdog so abandoned runtime state
 does not leave a player locked indefinitely. These controls do not freeze a vehicle,
 stop a moving platform, cancel server teleports, or cancel projectiles already fired.
+
+## Native weight penalties
+
+On Stable 156 or later, `Open77.players.allowEncumbrance(false)` (global alias
+`AllowEncumbrance(false)`) suppresses vanilla encumbrance and removes an existing
+overweight effect. It requires client permission `players.controls`.
+
+```lua
+assert(Open77.players.allowEncumbrance(false))
+-- Release only this resource's suppression:
+assert(Open77.players.allowEncumbrance(true))
+```
+
+Inventory items, measured weight and carry-capacity stats stay unchanged. Your
+server inventory still owns its weight rules. This does not delete clothes when
+they are unequipped. `resetControls()` and resource stop also release the claim;
+another resource's suppression can remain effective.
+
+Update the bundled **`open77_equipment` package to 0.2.1** to enable suppression
+by default. In that package's configuration, set
+`Open77EquipmentConfig.nativeEncumbrance = true` to release its claim and restore
+normal weight evaluation when no other resource suppresses it.
 
 ## Compatibility limits
 

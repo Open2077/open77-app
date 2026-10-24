@@ -314,7 +314,7 @@
           "slug": "player-utilities",
           "kind": "guide",
           "nav": "Player checks & controls",
-          "description": "Query native player states and apply resource-owned movement, aim and firing restrictions. Includes IsPlayer checks, FreezePosition, FreezeRotation, Allow controls, permissions and replication limits."
+          "description": "Read player state and apply resource-owned control restrictions, including native encumbrance suppression and equipment package configuration."
         },
         {
           "slug": "local-puppet-visibility",
@@ -420,7 +420,7 @@
           "slug": "player-interactions",
           "kind": "guide",
           "nav": "Player interactions",
-          "description": "Coordinate giving, healing, carrying and escorting: server reservations, player consent, shared animation timing, Lua examples and safe cancellation. Requires matching client/server builds and the player-interactions system resource."
+          "description": "Coordinate giving, healing, carrying and escorting, plus experimental persistent player attachments. Covers server ownership, consent, lifecycle, revision checks and limits."
         },
         {
           "slug": "attachments",
@@ -722,7 +722,7 @@
           "slug": "world-queries",
           "kind": "guide",
           "nav": "World queries",
-          "description": "Raycasts, ground height, aim rays and nearby object queries."
+          "description": "Query native rays, collision groups, Burning status, nearby entities, ground height and entity transforms."
         },
         {
           "slug": "zones",
@@ -944,7 +944,7 @@
           "slug": "keybindings",
           "kind": "guide",
           "nav": "Key bindings",
-          "description": "Register rebindable actions and handle press and hold callbacks."
+          "description": "Register and rebind keyboard, mouse, wheel and gamepad actions, optionally consume native input, and read devices directly."
         },
         {
           "slug": "input-blocking",

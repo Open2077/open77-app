@@ -14,7 +14,7 @@ assert.equal(pages.filter((page) => page.slug === "custom-blip-icons").length, 1
 assert.ok(nav.sections.find((section) => section.id === "map").pages.some((page) =>
   page.slug === "custom-blip-icons" && page.source === "authored"));
 assert.ok(blips.includes("custom-blip-icons.md"));
-for (const token of ["Experimental", "Client only", "2.31", "ui.vanilla.map", "client_script",
+for (const token of ["Experimental", "Client only", "2.5", "Stable 156", "ui.vanilla.map", "client_script",
   "icons/fuel.svg", 'viewBox="0 0 64 64"', "type(Open77.blips.setColor)", "setIcon(id, false)",
   "setColor(id, false)", "#RRGGBBAA", "setRange", "routable", "256 KiB", "1,024", "16,384",
   "native_unavailable", "blip_visual_budget_exceeded", "svg_geometry_outside_viewport"])

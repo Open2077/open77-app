@@ -5,9 +5,11 @@ Register a named action, default key and Lua callback with `RegisterKeyMapping`.
 Developers coming from FiveM will recognize the call. Open77 has no client command bus, so the
 mapping runs a Lua callback the resource supplies directly, rather than a registered command string.
 
-A binding is observe-only: pressing its key fires the action but never hides the key from the game,
-and it is suppressed whenever a page owns the keyboard (chat open, the pause menu open, a rebind in
-progress), so typing never triggers an action.
+A binding observes input by default. On Stable 156 or later, the table form accepts
+`consume = true`: its callback runs while the bound control is withheld from the
+game. Mappings are suppressed while chat, pause or rebinding owns the keyboard.
+Unregistering, resource stop, rebinding and focus changes release consumption;
+one resource cannot release another resource's claim.
 
 ## Permission
 
@@ -53,6 +55,7 @@ Open77.input.registerKeyMapping({
     name = "Hold to sprint",
     key = "SHIFT",           -- `defaultKey` is accepted as an alias
     hold = true,
+    consume = true,          -- optional; defaults to false
     onPressed  = function() startSprint() end,
     onReleased = function() stopSprint() end,
 })
@@ -62,18 +65,23 @@ In the positional form, passing a fifth argument (the release callback) implies 
 
 ## Key names
 
-Keys use the same vocabulary as `Open77.input.isDown`, normalized to upper case:
+Mappings accept keyboard keys and the following device controls, normalized to upper case:
 
 - a single alphanumeric — `A`–`Z`, `0`–`9`
 - The French AZERTY number row: `&`, `é`, `"`, `'`, `(`, `-`, `è`, `_`, `ç`, `à`, `)`, `=`.
   Common punctuation is accepted too: `+ [] {} ; : , . / \\` and `` ` ~ ! ? @ # $ % ^ * < > | ù ² ``.
 - `F1`–`F12`
+- `MOUSE1`–`MOUSE5`: left, right, middle and the two side buttons.
+- `MOUSEWHEELUP` / `MOUSEWHEELDOWN` (`MWHEELUP` / `MWHEELDOWN` aliases).
+- Gamepad buttons such as `padA`, `padLB`, `padRightThumb`, plus `padLeftTrigger` / `padRightTrigger`.
 - `SPACE`, `ENTER`/`RETURN`, `TAB`, `SHIFT`, `CTRL`/`CONTROL`, `ALT`, `CAPSLOCK`, `BACKSPACE`,
   `INSERT`, `DELETE`, `HOME`, `END`, `PAGEUP`, `PAGEDOWN`, and the four arrow keys `UP`, `DOWN`,
   `LEFT`, `RIGHT`.
 
-The pause page's capture, the Lua layer, and the native dispatch all agree on this set, so a key
-chosen in the rebinding UI maps to exactly what a resource registered.
+Wheel bindings produce one press per notch; in hold mode each press is followed by
+a release. Each mapping receives its own pulses. Triggers use a 0.5 threshold;
+stick and mouse motion axes remain direct reads. Gamepad mapping support is
+experimental; physical controller behavior still needs validation.
 
 Letters are normalized to uppercase; accented characters and punctuation are preserved.
 These are **logical keys on the player's current Windows layout**, not US physical labels:
@@ -81,11 +89,15 @@ on French AZERTY, `é` and `2` refer to the same top-row key. No Shift chord is 
 The menu displays the captured character, including when CEF provides no `event.code`.
 Use UTF-8 Lua files, for example `RegisterKeyMapping("slot2", "Second slot", "é", callback)`.
 
-**Only keyboard keys can be bound.** A mapping's key is persisted, listed in the pause menu and
-polled by the engine's own dispatcher, and that dispatcher reads keys. Mouse buttons and gamepad
-controls are readable — see the next section — but they are not bindable, and the vocabulary was
-deliberately left alone so that a key saved in `keybinds.json` can never name a control nothing
-polls.
+Keyboard keys and all five mouse buttons can be captured in **Pause → Settings →
+Key bindings**. Click a binding, then press the desired key or mouse button;
+Escape cancels. **Settings → Voice → Push-to-talk key** also accepts mouse buttons.
+Wheel and gamepad mappings can be declared in Lua or changed through
+`Open77.input.rebind`; the pause page does not capture them interactively.
+
+A consuming mapping requires native input support. Registration returns
+`input_consumption_unavailable` or `gamepad_consumption_unavailable` when that
+backend is absent, rather than silently registering an observing binding.
 
 ## Reading a device directly
 
@@ -221,7 +233,7 @@ choices are retained for the next session. There are no demo bindings in the shi
 
 | Call | Effect |
 |---|---|
-| `Open77.input.mappings()` | Array of every registered mapping: `{ resource, id, name, key, defaultKey, hold, rebound }`. |
+| `Open77.input.mappings()` | Array of every registered mapping: `{ resource, id, name, key, defaultKey, hold, consume, rebound }`. |
 | `Open77.input.rebind(resource, id, key)` | Set and persist a new key for any mapping. Returns `true, key` or `false, reason`. |
 | `Open77.input.reset(resource, id)` | Restore a mapping to its default key and drop the saved override. Returns `true, defaultKey`. |
 | `Open77.input.keyFor(id)` | Effective key of one of this resource's own mappings, or `nil`. |
@@ -244,12 +256,13 @@ end)
 | `name` | Human label shown in the KEY BINDINGS tab. Defaults to `id`; capped at 96 characters. |
 | `key` | Default key from the vocabulary above. `defaultKey` is an accepted alias. |
 | `hold` | When true, `onReleased` fires on key-up in addition to `onPressed` on key-down. |
+| `consume` | Optional boolean, default false. Suppresses the bound native input while keeping this mapping's callbacks. |
 | `onPressed` | Called on the key-down edge with the mapping `id`. |
 | `onReleased` | Called on the key-up edge (hold mode only) with the mapping `id`. |
 
 A resource may register up to 64 mappings. Bindings never fire while another WebUI owns keyboard
-focus, and pressing a mapped key does not stop the game from also seeing it — choose keys that do
-not clash with an in-world action, or let players rebind.
+focus. Observing mappings also reach the game; set `consume = true` when the resource
+should intercept that control. Players can still rebind the action.
 
 ## Persistence
 

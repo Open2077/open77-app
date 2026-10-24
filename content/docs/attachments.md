@@ -170,3 +170,11 @@ Common server refusals: `not_found`, `owned_by_another_resource`, `stale_revisio
 The bundled `prop.pickup`/`prop.drop` commands now use this binding mechanism.
 Their opt-in persistence still saves a dropped prop once at its server position;
 it does not persist a live player attachment across a restart.
+
+## Raw mesh and entity props
+
+Stable 156 supports attaching props created from raw `.mesh` and `.ent` depot
+paths through this same API. No alias is required. All clients need the mounted
+assets and dependencies; projection remains asynchronous. Attached props are
+non-blocking. For a decoration that must stay non-solid after detach, create it
+with `collision = false`. See [model limits](props.md#model-and-collision-limits).

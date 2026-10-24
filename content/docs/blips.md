@@ -30,7 +30,7 @@ assert(Open77.blips.remove(blip))
 
 ## Custom SVG icons and colors
 
-**Client only · Experimental.** SVG rendering and per-blip colors require Cyberpunk 2077 2.31 and an OPEN//77 client with the native SVG adapter. See [Custom SVG blips](custom-blip-icons.md) for a complete resource, supported SVG features, limits and troubleshooting.
+**Client only · Experimental.** On Cyberpunk 2077 2.5, use Stable 156 or later for the corrected native SVG map adapter. SVG rendering and per-blip colors require client support. See [Custom SVG blips](custom-blip-icons.md) for a complete resource, supported SVG features, limits and troubleshooting.
 
 Declare the icon in your resource's manifest:
 

@@ -210,7 +210,7 @@
     "runtime": "server",
     "qualified": "Open77.npcs.create",
     "sourceDescriptionSha256": "8eb914ed4c0e73c6f91d33e5ec10083f3e4373041846eb6fd69891f5545081fb",
-    "description": "Requires `world.npcs`. Build one from `record = \"Character.*\"` directly -- no catalogue entry is needed -- or from the legacy `template` alias. Definition fields are `record`, `template`, `position`, `yaw`, `bucket`, `appearance`, `loadout`, `behavior`, `aiMode`, `damagePolicy`, `health`, `maxHealth`, `streamingRadius`, `streamingHysteresis`, `despawnWhenUnobserved`, `persistent` and `authorityPolicy`. `aiMode` and `damagePolicy` are **integers** from the constant tables `Open77.npcs.ai` (`tasks = 0`, `frozen = 1`, `native = 2`) and `Open77.npcs.damage` (`mortal = 0`, `immortal = 1`, `invulnerable = 2`; default `immortal`); a string such as `\"invulnerable\"` raises a Lua argument error (`number expected, got string`) in `CreateNpc`. `authorityPolicy` is `\"nearest\"` (default) or `\"balanced\"` (the client simulating the fewest NPCs, with a tenure-gated rebalance); anything else returns `nil, \"npc_authority_policy_invalid\"`. `behavior.observerReplay = true` makes clients that do not simulate the NPC replay the simulator's motion on the shared server clock. The id comes back at once, but engine readiness is asynchronous: a freshly created NPC is not yet a body in the world. See [NPCs](npcs.md). Stable 147 also accepts body and equipment from a saved player look; body.family selects the matching Open77 player template. Do not combine it with a legacy template or an unrelated record. See [Character previews](character-previews.md)."
+    "description": "Requires `world.npcs`. Build one from `record = \"Character.*\"` directly -- no catalogue entry is needed -- or from the legacy `template` alias. Definition fields are `record`, `template`, `position`, `yaw`, `bucket`, `appearance`, `loadout`, `behavior`, `aiMode`, `damagePolicy`, `health`, `maxHealth`, `streamingRadius`, `streamingHysteresis`, `despawnWhenUnobserved`, `persistent` and `authorityPolicy`. `aiMode` and `damagePolicy` are **integers** from the constant tables `Open77.npcs.ai` (`tasks = 0`, `frozen = 1`, `native = 2`) and `Open77.npcs.damage` (`mortal = 0`, `immortal = 1`, `invulnerable = 2`; default `immortal`); a string such as `\"invulnerable\"` raises a Lua argument error (`number expected, got string`) in `CreateNpc`. `authorityPolicy` is `\"nearest\"` (default) or `\"balanced\"` (the client simulating the fewest NPCs, with a tenure-gated rebalance); anything else returns `nil, \"npc_authority_policy_invalid\"`. `behavior.observerReplay = true` makes clients that do not simulate the NPC replay the simulator's motion on the shared server clock. The id comes back at once, but engine readiness is asynchronous: a freshly created NPC is not yet a body in the world. See [NPCs](npcs.md). Stable 147 also accepts body and equipment from a saved player look; body.family selects the matching Open77 player template. Do not combine it with a legacy template or an unrelated record. See [Character previews](character-previews.md). Stable 156 snapshots include armor. Server create accepts armor (default 0), update preserves it when omitted; finite 0..100000 points absorb canonical damage before health. Matching protocol 1.50 is required. See [NPC armor](/docs/npcs#armor)."
   },
   {
     "runtime": "server",
@@ -222,7 +222,7 @@
     "runtime": "server",
     "qualified": "Open77.npcs.update",
     "sourceDescriptionSha256": "2d51a137247ae34140b8d8d3bd7a01a6263f5e35909b3a4950f3a3feee39d30e",
-    "description": "Requires `world.npcs`. Sparse: appearance, loadout, behavior, AI mode, damage policy, health and ragdoll can all be patched in one call, and everything omitted is left alone. The convenience setters below are thin wrappers over this. Stable 147 supports player body snapshots in the NPC loadout. update(id, {body=...}) replaces the body while retaining other loadout data. Weapon-only loadout changes preserve the body and equipment. The complete loadout remains limited to 8 KiB. See [Character previews](character-previews.md#networked-npc)."
+    "description": "Requires `world.npcs`. Sparse: appearance, loadout, behavior, AI mode, damage policy, health and ragdoll can all be patched in one call, and everything omitted is left alone. The convenience setters below are thin wrappers over this. Stable 147 supports player body snapshots in the NPC loadout. update(id, {body=...}) replaces the body while retaining other loadout data. Weapon-only loadout changes preserve the body and equipment. The complete loadout remains limited to 8 KiB. See [Character previews](character-previews.md#networked-npc). Stable 156 snapshots include armor. Server create accepts armor (default 0), update preserves it when omitted; finite 0..100000 points absorb canonical damage before health. Matching protocol 1.50 is required. See [NPC armor](/docs/npcs#armor)."
   },
   {
     "runtime": "server",
@@ -270,7 +270,7 @@
     "runtime": "client",
     "qualified": "Open77.weapons.all",
     "sourceDescriptionSha256": "db8466b9ed1de315912d7622ae679bd7b51d47e06e1c0a43f5f76989023d22f7",
-    "description": "Requires `player.weapons.read`; results arrive asynchronously as slot-state events followed by completion. Client state rows append reloading after capacity. The booleans are strings; collect rows by request ID and publish only after successful completion. See [Dual wielding](dual-wielding.md#ammunition-and-hud)."
+    "description": "Requires `player.weapons.read`; results arrive asynchronously as slot-state events followed by completion. Client state rows append reloading after capacity. The booleans are strings; collect rows by request ID and publish only after successful completion. See [Dual wielding](dual-wielding.md#ammunition-and-hud). Stable 156 reads reserve, magazine and capacity for inactive/holstered ranged slots, including never-drawn weapons. Completion follows all native reads; unreadable ranged caches fail with `ammo_cache_unavailable`. Empty/non-ammo slots retain unavailable fields (-1)."
   },
   {
     "runtime": "client",
@@ -288,7 +288,7 @@
     "runtime": "client",
     "qualified": "Open77.weapons.setAmmo",
     "sourceDescriptionSha256": "40f53ccf1e8463de49bab2a7732c5529331159496440c3838be639a00cbe02d1",
-    "description": "Requires `player.weapons.edit`. `amounts` accepts integer `reserve` and `magazine` counts plus optional `activate`. At least one count is required; omitted counts are preserved. The operation verifies the shared ammo total, spare reserve, magazine, and live capacity asynchronously through `open77:weapons:completed`. When both hands share an ammo record, reserve is shared and the total includes both loaded magazines. Editing one magazine preserves the other; await completion before a dependent change. Native dual reloads with too little shared reserve can still allocate rounds inconsistently."
+    "description": "Requires `player.weapons.edit`. `amounts` accepts integer `reserve` and `magazine` counts plus optional `activate`. At least one count is required; omitted counts are preserved. The operation verifies the shared ammo total, spare reserve, magazine, and live capacity asynchronously through `open77:weapons:completed`. When both hands share an ammo record, reserve is shared and the total includes both loaded magazines. Editing one magazine preserves the other; await completion before a dependent change. Native dual reloads with too little shared reserve can still allocate rounds inconsistently. On Stable 156 or later, inactive/holstered slots, including never-drawn assigned weapons, can be read and updated without drawing or changing selection. `activate = true` explicitly selects/draws. For an inactive slot, reserve is inventory total minus that slot's magazine and currently drawn other-hand magazines; other inactive magazines are saved counts, not separate pools. Native jobs are ordered and asynchronous; await completion. Slot changes, invalid capacity, disconnect or body replacement invalidate the job. See [weapon ammunition](/docs/weapons-api)."
   },
   {
     "runtime": "client",
@@ -300,7 +300,7 @@
     "runtime": "client",
     "qualified": "Open77.weapons.snapshot",
     "sourceDescriptionSha256": "447095b5aa5a36fe885e558ebc83787303052d16e3eb21608d4e1d857cd29d0d",
-    "description": "Requires `player.weapons.read`. Emits one `open77:weapons:state` event per available slot and then `open77:weapons:completed`. TweakDB IDs remain opaque hexadecimal strings and are the presence authority; `record` may be empty for items equipped outside this API because shipping builds do not retain every reverse TweakDB name. Client state rows append reloading after capacity. The booleans are strings; collect rows by request ID and publish only after successful completion. See [Dual wielding](dual-wielding.md#ammunition-and-hud)."
+    "description": "Requires `player.weapons.read`. Emits one `open77:weapons:state` event per available slot and then `open77:weapons:completed`. TweakDB IDs remain opaque hexadecimal strings and are the presence authority; `record` may be empty for items equipped outside this API because shipping builds do not retain every reverse TweakDB name. Client state rows append reloading after capacity. The booleans are strings; collect rows by request ID and publish only after successful completion. See [Dual wielding](dual-wielding.md#ammunition-and-hud). Stable 156 reads reserve, magazine and capacity for inactive/holstered ranged slots, including never-drawn weapons. Completion follows all native reads; unreadable ranged caches fail with `ammo_cache_unavailable`. Empty/non-ammo slots retain unavailable fields (-1)."
   },
   {
     "runtime": "server",
@@ -336,6 +336,100 @@
     "runtime": "server",
     "qualified": "Open77.weapons.setAmmo",
     "sourceDescriptionSha256": "90e956fd553ee64654edd0b0c08d00d787b05e920ee9de5aaf5512c975efca25",
-    "description": "Asynchronous, same relay and completion contract as `assign`. `amounts` takes `reserve` and `magazine` -- at least one is required, each a non-negative integer up to 1,000,000 -- plus an optional boolean `activate`. When both hands share an ammo record, reserve is shared and the total includes both loaded magazines. Editing one magazine preserves the other; await completion before a dependent change. Native dual reloads with too little shared reserve can still allocate rounds inconsistently."
+    "description": "Asynchronous, same relay and completion contract as `assign`. `amounts` takes `reserve` and `magazine` -- at least one is required, each a non-negative integer up to 1,000,000 -- plus an optional boolean `activate`. When both hands share an ammo record, reserve is shared and the total includes both loaded magazines. Editing one magazine preserves the other; await completion before a dependent change. Native dual reloads with too little shared reserve can still allocate rounds inconsistently. On Stable 156 or later, inactive/holstered slots, including never-drawn assigned weapons, can be read and updated without drawing or changing selection. `activate = true` explicitly selects/draws. For an inactive slot, reserve is inventory total minus that slot's magazine and currently drawn other-hand magazines; other inactive magazines are saved counts, not separate pools. Native jobs are ordered and asynchronous; await completion. Slot changes, invalid capacity, disconnect or body replacement invalidate the job. See [weapon ammunition](/docs/weapons-api)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "RegisterKeyMapping",
+    "sourceDescriptionSha256": "a25a015115493e408dfcc41220340e04647a969f90c75c2130881e1ca27da53a",
+    "description": "Requires `input.actions`. Accepts `{ id, name, key (or defaultKey), hold?, consume?, onPressed, onReleased? }` or `(id, name, key, onPressed [, onReleased])`. Returns `true, effectiveKey` or `false, reason`. The callback receives the mapping ID; hold mode adds releases. Defaults to observing input; Stable 156 adds `consume = true` to suppress the bound native input while invoking Lua. Keyboard, MOUSE1..5, MOUSEWHEELUP/DOWN and gamepad buttons/triggers are supported; wheel holds emit press/release pulses and triggers use a 0.5 threshold. Gamepad behavior remains experimental. Pause and voice capture support keyboard and mouse buttons; use Lua/rebind for wheel/gamepad controls. Mappings pause while a WebUI owns input. Re-registering preserves saved rebinds; unregister/stop/rebind/focus changes release consumption. See [key mappings](/docs/keybindings)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.input.registerKeyMapping",
+    "sourceDescriptionSha256": "836eff4a47e798ef7eb04c869e5c2f21072c501ccda6e37358424566d22a26b5",
+    "description": "Requires `input.actions`. Accepts `{ id, name, key (or defaultKey), hold?, consume?, onPressed, onReleased? }` or `(id, name, key, onPressed [, onReleased])`. Returns `true, effectiveKey` or `false, reason`. The callback receives the mapping ID; hold mode adds releases. Defaults to observing input; Stable 156 adds `consume = true` to suppress the bound native input while invoking Lua. Keyboard, MOUSE1..5, MOUSEWHEELUP/DOWN and gamepad buttons/triggers are supported; wheel holds emit press/release pulses and triggers use a 0.5 threshold. Gamepad behavior remains experimental. Pause and voice capture support keyboard and mouse buttons; use Lua/rebind for wheel/gamepad controls. Mappings pause while a WebUI owns input. Re-registering preserves saved rebinds; unregister/stop/rebind/focus changes release consumption. See [key mappings](/docs/keybindings)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.input.rebind",
+    "sourceDescriptionSha256": "fbfb00d8fafb08ae2102b4638dec7c6c1728fc19cc8ac19b5d1d9f1c3a3f75d6",
+    "description": "Requires `input.actions`. Rebinds the mapping identified by `resource` and `id` to `key` (same key vocabulary as `Open77.input.isDown`), persists it machine-globally, and raises `open77:keybinds:changed`. Used by the pause KEY BINDINGS tab. Stable 156 accepts wheel and gamepad button/trigger mappings; `consume` is an optional boolean on registered mapping specs. See [supported controls](/docs/keybindings#key-names)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.input.mappings",
+    "sourceDescriptionSha256": "3b43304ec5cf3a611b83082c4c269665b44a1c654f507449baf62301fa4ac438",
+    "description": "Requires `input.actions`. Returns an array of `{ resource, id, name, key, defaultKey, hold, rebound }` records for the rebinding UI. Only serialisable metadata is exposed; the callbacks stay in their owning resource. Stable 156 accepts wheel and gamepad button/trigger mappings; `consume` is an optional boolean on registered mapping specs. See [supported controls](/docs/keybindings#key-names)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.input.setActionBlocked",
+    "sourceDescriptionSha256": "3313b303176469ec2dd79b0d05e1fc7e3020a77fe0d1f5dd9e6636e7d8e3a07f",
+    "description": "Requires `input.actions`. Sets or releases this resource's action block; another owner's block remains effective. Claims are released on resource stop. Stable 156 supports NextWeapon, Reload, SwitchItem, Grenade, Consumable, RadialWheels, VehicleInsideWheel and PocketRadioWheel. NextWeapon blocks native selection/holstering while preserving held-weapon fire and Lua setActive. Blocking an open wheel cancels its modal state. VehicleWheel remains inferred and cannot lift the enforced CallVehicle policy. Movement, Map, Hub, FastTravel, WeaponWheel remain available; Attack, Melee, Jump and Sprint have inferred confidence. Unknown, unsupported and enforced names fail explicitly. See [input blocking](/docs/input-blocking).",
+    "sourceOverlaySha256": "7e43b72ef6fa8d82e208e7f3c5243c9ce3f99a58d48bbaf821a7ce041018ed0d"
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.input.blockableActions",
+    "sourceDescriptionSha256": "33f9adf68fc610b54b25f20b28debce7b5b0a5fdee8cea9c9d3a60aa6e681eda",
+    "description": "Requires `input.actions`. Returns the current action vocabulary, mechanism and confidence. Stable 156 supports NextWeapon, Reload, SwitchItem, Grenade, Consumable, RadialWheels, VehicleInsideWheel and PocketRadioWheel. NextWeapon blocks native selection/holstering while preserving held-weapon fire and Lua setActive. Blocking an open wheel cancels its modal state. VehicleWheel remains inferred and cannot lift the enforced CallVehicle policy. Movement, Map, Hub, FastTravel, WeaponWheel remain available; Attack, Melee, Jump and Sprint have inferred confidence. Unknown, unsupported and enforced names fail explicitly. See [input blocking](/docs/input-blocking)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.world.raycast",
+    "sourceDescriptionSha256": "9db80e531efd03931076369ef64b46efd35d608cc6029e0175b63d1f93f34358",
+    "description": "Traces the segment from `from` to `to`. Requires `world.query`. Synchronous native raycast on the client game thread. Defaults to Static and Dynamic groups; the nearer hit wins. Stable 156 adds `groups`, 1..16 case-sensitive native names such as Vehicle, Static and Terrain, checked against the engine registry. It replaces static/dynamic flags; combining them fails with `collision_groups_conflict`. Unknown names return `invalid_collision_group`; malformed lists return `invalid_collision_groups`. With `entities = true`, entity identity comes from the hit proxy's actual native owner, never a nearest-object guess. Geometry without an owner has no entity; unavailable owner lookup returns `ray_entity_lookup_unavailable`. The optional entity contains engineEntity, className, kind, position, distance and a canonical playerId/vehicleId/npcId/propId when owned. `ignore` is unsupported and returns `ray_ignore_unavailable`. See [world queries](/docs/world-queries#choosing-collision-groups)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.camera.aimRay",
+    "sourceDescriptionSha256": "3831f23b19adea5bee9eb0e3d65d1adfff56bb6045767aec9c326d4b4b7b7067",
+    "description": "Traces from the camera along its forward vector. Requires `world.query`. Synchronous native raycast on the client game thread. Defaults to Static and Dynamic groups; the nearer hit wins. Stable 156 adds `groups`, 1..16 case-sensitive native names such as Vehicle, Static and Terrain, checked against the engine registry. It replaces static/dynamic flags; combining them fails with `collision_groups_conflict`. Unknown names return `invalid_collision_group`; malformed lists return `invalid_collision_groups`. With `entities = true`, entity identity comes from the hit proxy's actual native owner, never a nearest-object guess. Geometry without an owner has no entity; unavailable owner lookup returns `ray_entity_lookup_unavailable`. The optional entity contains engineEntity, className, kind, position, distance and a canonical playerId/vehicleId/npcId/propId when owned. `ignore` is unsupported and returns `ray_ignore_unavailable`. See [world queries](/docs/world-queries#choosing-collision-groups)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.props.create",
+    "sourceDescriptionSha256": "24088b5c81c7246288f1edd3b493e0614600709376050b9fa3e6ad2cfdb022a4",
+    "description": "Requires `world.props`. This is the **client** meaning of the name: the prop is never replicated and never visible to anyone else -- a placement ghost, a build cursor, a preview being dragged. It is charged against this resource's quota and released when the resource stops. The identically-named *server* function mints an authoritative, replicated prop instead; the two `Open77` tables are different objects on different machines. Stable 156 accepts raw .mesh and .ent depot paths without an alias whitelist. Every observer needs the assets and dependencies mounted. Mesh loading is asynchronous; rendered stays false until ready. Raw .ent requires kind=\"prop\" and retains its authored graph/appearance. Visual scale does not rescale collision. Attached props are non-blocking; collision=false keeps raw decorations non-solid after detach. Arbitrary gameplay/physics template families remain experimental. Existing alias and registered-model routing is preserved. See [model limits](/docs/props#model-and-collision-limits)."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.props.create",
+    "sourceDescriptionSha256": "fc8239987e74b54179b0436f67d4c9a74a504e997374d5a8e2d13c16575ebb22",
+    "description": "Requires `world.props`. This is the **server** meaning of the name: the prop is owned by the creating resource, streamed per player rather than broadcast to a bucket, and visible to everyone in range. The identically named *client* function makes a local, unreplicated decoration instead. Definitions accept `model`, `position`, `yaw`, `scale` (a number or `{ x, y, z }`), `appearance`, `bucket`, `physics` (`static`, `kinematic`, `dynamic`, `none`), `collision`, `visible`, `kind` (`prop`, `light`, `effect`), `light`, `streamingRadius` (10 to 2000, default 120), `streamingHysteresis` (default 30) and `ttlMs` (0 for no expiry, seven days maximum). The registry holds 8,192 props, of which one resource may own 2,048. Ids are decimal strings; do not pass them through `tonumber`. Stable 156 accepts raw .mesh and .ent depot paths without an alias whitelist. Every observer needs the assets and dependencies mounted. Mesh loading is asynchronous; rendered stays false until ready. Raw .ent requires kind=\"prop\" and retains its authored graph/appearance. Visual scale does not rescale collision. Attached props are non-blocking; collision=false keeps raw decorations non-solid after detach. Arbitrary gameplay/physics template families remain experimental. Existing alias and registered-model routing is preserved. See [model limits](/docs/props#model-and-collision-limits)."
+  },
+  {
+    "runtime": "server",
+    "qualified": "Open77.npcs.get",
+    "sourceDescriptionSha256": "c08166058295e766c876941804dddf4f057a650219d8bb30bcbeee49f1695b52",
+    "description": "Requires `world.npcs`. Answers `nil` for an unknown id. The snapshot is the server's record, so it is available before the body has streamed to anyone. Stable 156 snapshots include armor. Server create accepts armor (default 0), update preserves it when omitted; finite 0..100000 points absorb canonical damage before health. Matching protocol 1.50 is required. See [NPC armor](/docs/npcs#armor)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.npcs.get",
+    "sourceDescriptionSha256": "7f0336a9021d74cab86c3516b07c0c7ad5f3a935958e6f87b67d655ca29c799b",
+    "description": "Read-only and guarded by npcs.read. The snapshot includes the exact Character record; template is the legacy alias or 'record' for direct spawns. The local entity handle is generation-checked and becomes invalid after stream-out. Observe onNpcReady/onNpcSpawnFailed for asynchronous projection readiness; see wiki/npcs.md. Stable 156 snapshots include armor. Server create accepts armor (default 0), update preserves it when omitted; finite 0..100000 points absorb canonical damage before health. Matching protocol 1.50 is required. See [NPC armor](/docs/npcs#armor)."
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.blips.setColor",
+    "sourceDescriptionSha256": "7bce809e730dece881da145d5187ad03da410d00867a19b139afa172e79ac529",
+    "description": "Experimental per-blip styling; requires the matching native client adapter. Accepts exactly #RRGGBB, #RRGGBBAA or false to clear the override. Works with native sprites and custom SVGs without changing other blips sharing the sprite. For SVGs it replaces RGB and multiplies each painted shape's source alpha. Clearing the icon does not clear this override; visual-only updates preserve native tracking. On Cyberpunk 2077 2.5, use Stable 156 or later for corrected map, minimap, legend and world presentation. Existing options remain compatible.",
+    "sourceOverlaySha256": "7fb83583fed90d2164752bbf7d251f99e858c715bc31ad541ac3b698867c30c4"
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.blips.setIcon",
+    "sourceDescriptionSha256": "a990a59d81bb335ddb7a54f237347005b739098f1b112d15aee0d84351f0a78d",
+    "description": "Experimental native SVG adapter; requires a matching OPEN//77 client. On Cyberpunk 2077 2.5, use Stable 156 or later for the corrected adapter. Accepts a declared resource-relative .svg path, { asset, size }, or false to restore the native sprite. Size is 16–128 native Ink units (default 48). Color overrides remain when the icon is cleared. Visual-only edits preserve tracking; malformed or unsupported SVG leaves the existing icon unchanged. URLs and PNG/WebP are rejected.",
+    "sourceOverlaySha256": "96b5d2e3d3a852cfc2615eaec0d7d9024c66df2bb53d7f305bf5f6d515045d04"
+  },
+  {
+    "runtime": "client",
+    "qualified": "Open77.blips.update",
+    "sourceDescriptionSha256": "f5e00278ece32f75b8043dd857a9e742deb4262e74933ca7820ec912d7461eba",
+    "description": "Updates mutable fields on an owned blip. Visual-only icon/color changes preserve its native identity and tracking selection. Structural changes register a replacement before removing the previous mappin. position switches to positional mode; entity switches to attached mode. routable cannot be changed. Invalid SVG or color replacements leave the existing visual unchanged. On Cyberpunk 2077 2.5, use Stable 156 or later for corrected map, minimap, legend and world presentation. Existing options remain compatible.",
+    "sourceOverlaySha256": "87e4888478113ac6ef3bcb6cf3a09e4953c44920b626f1f1b43c221021335274"
   }
 ]

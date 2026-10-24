@@ -2,7 +2,7 @@
 
 Use your own SVG icons for shops, jobs and other points of interest. `Open77.blips` draws them inside native mappins, with per-blip colors on the world map, minimap, HUD and map legend. Native selection, tooltips and tracking remain available.
 
-**Client only · Experimental.** Requires Cyberpunk 2077 2.31, an OPEN//77 client with the native SVG blip adapter, and the `ui.vanilla.map` permission. Older clients cannot gain SVG rendering through a Lua resource update alone. Keep a native `sprite` as the fallback and check API availability before using the new options.
+**Client only · Experimental.** On Cyberpunk 2077 2.5, use Stable 156 or later and the `ui.vanilla.map` permission. This version fixes the native SVG pin adapter; existing `icon`, `sprite` and color options remain compatible. Older clients cannot gain SVG rendering through a Lua resource update alone. Keep a native `sprite` as the fallback and check API availability before using the new options.
 
 For entity attachment, GPS routes and the native sprite catalogue, see [Blips and map pins](blips.md).
 

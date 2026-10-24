@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
   "guides": 110,
-  "apiEntries": 1759,
+  "apiEntries": 1769,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -112,11 +112,16 @@
       "target": "content/docs/attachments.md",
       "slug": "attachments",
       "title": "Synchronized attachments",
-      "bytes": 8757,
-      "sha256": "1b9a1eb4b6cce971d50016c2724edf6ed065079df43efa14fd35a238a2d3248c",
+      "bytes": 9186,
+      "sha256": "a39c6d755f6f308d7bc6ed29720a77d8472f4538bf9b6f7b3677810b7519dff8",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "7ea954d90f482bbf1f809497bc5f12dd3c480e2ea80a59e06dfab26d4ad96e22"
+        "upstreamSnapshotSha256": "7ea954d90f482bbf1f809497bc5f12dd3c480e2ea80a59e06dfab26d4ad96e22",
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
+        }
       },
       "siteAmendment": {
         "experimentalContract": "Server itemContact / prop attachment.contact; matching native runtime and assets required, visual compatibility validation incomplete"
@@ -127,11 +132,16 @@
       "target": "content/docs/blips.md",
       "slug": "blips",
       "title": "Vanilla blips and mappins",
-      "bytes": 19377,
-      "sha256": "6cc5e0a9f17a1d8bf54d2c98862d0955329f7bcc73e4b23c04e46a75bad2b05c",
+      "bytes": 19410,
+      "sha256": "ff8d200b0d8afc878cf1522392a704b5f025442bd212c8cc82bd148aee3c1bd1",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "15fd8a284253b63073a2d642f7a9a2b0a42243b3dcfe24dcc582d0d6afe45084"
+        "upstreamSnapshotSha256": "15fd8a284253b63073a2d642f7a9a2b0a42243b3dcfe24dcc582d0d6afe45084",
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
+        }
       },
       "siteAmendment": {
         "blipSvgContract": "Native SVG icons and per-blip RGB/RGBA; experimental matching client adapter required. Reviewed against uncommitted open77-base implementation; upstream sync provenance preserved."
@@ -547,11 +557,16 @@
       "target": "content/docs/input-blocking.md",
       "slug": "input-blocking",
       "title": "Blocking player input",
-      "bytes": 9561,
-      "sha256": "278a8a7bb6d43ba13df74413c5e541bda0bc2f0ab8706023df7d7d0be03e40eb",
+      "bytes": 8500,
+      "sha256": "96fa8d30ca9ad9d9399a4eb1f6b17706841a7d8193b39f5c18abedbdbd3c2fb6",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "ce76f0e63ae2e7a08cf45b3662d8b89875db9cf211cb2af02fd68f6314b33094"
+        "upstreamSnapshotSha256": "ce76f0e63ae2e7a08cf45b3662d8b89875db9cf211cb2af02fd68f6314b33094",
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
+        }
       }
     },
     {
@@ -638,11 +653,16 @@
       "target": "content/docs/keybindings.md",
       "slug": "keybindings",
       "title": "Key mappings",
-      "bytes": 12539,
-      "sha256": "713df441b5f6c4b9dc19eb35aef03b3fd6ed30644b1012e0d5761b7b19d74a01",
+      "bytes": 13473,
+      "sha256": "af49a8a445a2a17062c17b72c20d565a42448cfb1fecfcfa48c176be5578967f",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "7829ba9f8aa2b92c3cb987db17f46d8399afa5b1f20f135829b27d7a4e036ace"
+        "upstreamSnapshotSha256": "7829ba9f8aa2b92c3cb987db17f46d8399afa5b1f20f135829b27d7a4e036ace",
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
+        }
       }
     },
     {
@@ -775,8 +795,8 @@
       "target": "content/docs/npcs.md",
       "slug": "npcs",
       "title": "Server-owned NPCs",
-      "bytes": 47079,
-      "sha256": "ca289427e39828da6f9054f34d8afbd0cc274a1f69e745104267bf328fc18549",
+      "bytes": 48518,
+      "sha256": "d9a2562126a2bded90bfc5072c5fa3d90304bfa058a6853d871756a0e3e36211",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "86fc7f6b93c095495ee619f115b25139cc339e179cd0e8affac49448f2ac9f52",
@@ -792,6 +812,11 @@
           "clientVersion": "2.31.21+op77.147",
           "serverVersion": "2.31.21+op77.147",
           "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        },
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
         }
       }
     },
@@ -896,11 +921,16 @@
       "target": "content/docs/player-interactions.md",
       "slug": "player-interactions",
       "title": "Player interactions",
-      "bytes": 14746,
-      "sha256": "b703bd0fb3483bc16ad09f6b6a2a9195456593db0c515748ab809c7d7e66e220",
+      "bytes": 19365,
+      "sha256": "9f320c04078aa314cc9edfc36e6e1aab8dde5c4e9ed28307d7963f7485ed5134",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "d98aa416968053d959999cee4f94b7184746669cdfe0aa19b7ad5bbcdaae42d4"
+        "upstreamSnapshotSha256": "d98aa416968053d959999cee4f94b7184746669cdfe0aa19b7ad5bbcdaae42d4",
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
+        }
       }
     },
     {
@@ -920,8 +950,8 @@
       "target": "content/docs/player-utilities.md",
       "slug": "player-utilities",
       "title": "Player checks and controls",
-      "bytes": 5936,
-      "sha256": "8b4a482f700f06355b0871d568abd9a13b79dc72eca5f4800b1f359dc5c24074",
+      "bytes": 7037,
+      "sha256": "ce417cb7e392ed6e00db537533a1b3e3ec438ec543a1ca47c9668b2a9418bcb1",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "6d33d0f39f5cdd2af75511d888345506c8cc8dab587fe885f50a6fa57cc352bc",
@@ -973,6 +1003,11 @@
             "server:Open77.players.setDriveByEnabled"
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries"
+        },
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
         }
       }
     },
@@ -1007,11 +1042,16 @@
       "target": "content/docs/props.md",
       "slug": "props",
       "title": "Server-owned world props",
-      "bytes": 44423,
-      "sha256": "4bb462d875a2401279283e7f3617b155af096f421c9705594db479ae439d2f5f",
+      "bytes": 44397,
+      "sha256": "cfa5ffa9dd083d108f664bf28b395ee2a1ea07d5b89ffc1e3718c23c64a88906",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "873fb103dc149227b7aed7587dd49f6c8f2d1eba00a868982a7858180abaf4dd"
+        "upstreamSnapshotSha256": "873fb103dc149227b7aed7587dd49f6c8f2d1eba00a868982a7858180abaf4dd",
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
+        }
       }
     },
     {
@@ -1421,8 +1461,8 @@
       "target": "content/docs/weapons-api.md",
       "slug": "weapons-api",
       "title": "Weapon Lua API",
-      "bytes": 30453,
-      "sha256": "d49aa46fdfa20621230d9655fc1c4dd36174a6d3bfb8a32ea0096282fd818b09",
+      "bytes": 33096,
+      "sha256": "d2d5938a80c0a809c5b26e4c235d3f1fcfa2ca5a53888f878f7f84231f3905d2",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "da99c0133f9086a12e101c45ed777d368e82e592a6c44e0ba7f5042a129e9c43",
@@ -1478,6 +1518,11 @@
           "sourceRevision": "36772b3b88404ffa9467bb2d06fcf1abd47568d9",
           "sourceWorkingTreeDirty": false,
           "scope": "onPlayerExplosion and the open77_weapons blast relay (relayBlast, setBlastPolicy, open77_blasts, applyBlast)"
+        },
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
         }
       },
       "stable152Amendment": "See stable152Documentation for reviewed dual-wield and cosmetic cyberware contracts."
@@ -1499,11 +1544,16 @@
       "target": "content/docs/world-queries.md",
       "slug": "world-queries",
       "title": "World queries: raycast, ground height, objects around the player, entity axes, district",
-      "bytes": 24691,
-      "sha256": "5950cd561bf53c07b3d51062ec6ad33a74b21506ef339f8a77d73872f3999b8f",
+      "bytes": 26630,
+      "sha256": "b759d53db62746ab9d52f9ad0862b16c9024381ac6f189b6f389b705bb320271",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "08e0e71b9eeb896d468fe696d52ce149000e4011e35c2d5987647fb265bbfee6"
+        "upstreamSnapshotSha256": "08e0e71b9eeb896d468fe696d52ce149000e4011e35c2d5987647fb265bbfee6",
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
+        }
       }
     },
     {
@@ -1545,12 +1595,17 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1759,
-      "bytes": 2545532,
-      "sha256": "de669e4f5197aca7c5b11eefc7f46e579dfe358c460443c9394ba575a5c6c85c",
+      "entries": 1769,
+      "bytes": 2565716,
+      "sha256": "74db1c02c67af4a0f806c28c1b31794baa601f38dbaf1277d3a3444df46eb5a1",
       "siteEditorial": {
         "owner": "website",
-        "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6"
+        "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6",
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
+        }
       },
       "siteAmendment": {
         "sourceCommit": "75f0e59cfa26606e83d9257ec1c7c07c6929c977",
@@ -1575,8 +1630,8 @@
       "source": "wiki/data/permissions.json",
       "target": "content/api/permissions.json",
       "entries": 175,
-      "bytes": 156339,
-      "sha256": "47168f1b1bc42d5dbcebfea6f1d5ba3e08fc39b6fc2a25025624c4a363c1760c",
+      "bytes": 158078,
+      "sha256": "54314dbe61ed0f8967e78234e8205cd2257df445430466328c25d9ca9647e4bb",
       "siteAmendment": {
         "0": "V",
         "1": "e",
@@ -1746,25 +1801,46 @@
         "165": ".",
         "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
       },
-      "stable152Amendment": "See stable152Documentation for reviewed dual-wield and cosmetic cyberware contracts."
+      "stable152Amendment": "See stable152Documentation for reviewed dual-wield and cosmetic cyberware contracts.",
+      "siteEditorial": {
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
+        }
+      }
     },
     {
       "source": "wiki/data/events.json",
       "target": "content/api/events.json",
       "entries": 543,
-      "bytes": 384531,
-      "sha256": "4182dba89c06ab38a851d5f8f428d2c10fdbdbfffe34bdfe2c0ea9e39b3c2809",
+      "bytes": 385167,
+      "sha256": "a3c674889c803f9e84bf16edda8f55da8b3c6e7a73c68b1056c75ff5194f73af",
       "siteAmendment": {
         "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
       },
-      "stable152Amendment": "See stable152Documentation for reviewed dual-wield and cosmetic cyberware contracts."
+      "stable152Amendment": "See stable152Documentation for reviewed dual-wield and cosmetic cyberware contracts.",
+      "siteEditorial": {
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
+        }
+      }
     },
     {
       "source": "wiki/data/releases.json",
       "target": "content\\api/releases.json",
       "entries": 83,
-      "bytes": 7065,
-      "sha256": "df7796a5c122529c50ec2e07d311c85f681e16fc2260c80acd206077277c4fd1"
+      "bytes": 7243,
+      "sha256": "1157e2372564b6bbec13a1d5f5069e820a443330e5807f9fb8c161f994601433",
+      "siteEditorial": {
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
+        }
+      }
     },
     {
       "source": "wiki/data/catalogues/animations.json",
@@ -2184,8 +2260,8 @@
       "target": "content/docs/custom-clothing.md",
       "slug": "custom-clothing",
       "title": "Custom clothing",
-      "bytes": 11392,
-      "sha256": "3812479bb7e9a70a91ce52f764d732f2419cc0b10e26d02680c9099ea919c6cb",
+      "bytes": 12005,
+      "sha256": "2a0d1c9449375205d8dd195ca8791ed2f3d2e452ac034a860be65aa73f364b94",
       "siteEditorial": {
         "owner": "website",
         "stable145Amendment": {
@@ -2202,6 +2278,11 @@
           "clientVersion": "2.31.21+op77.147",
           "serverVersion": "2.31.21+op77.147",
           "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        },
+        "stable156Amendment": {
+          "owner": "website",
+          "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+          "clientVersion": "2.50.0+op77.156"
         }
       }
     },
@@ -2605,6 +2686,51 @@
       "server:Open77.weapons.setAmmo",
       "server:Open77.weapons.setComponent",
       "server:Open77.weapons.unequip"
+    ]
+  },
+  "stable156Documentation": {
+    "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
+    "sourceWorkingTreeDirty": false,
+    "mode": "Manual review of released bindings; preserve unrelated site entries and upstream provenance.",
+    "authoredGuides": [
+      "custom-blip-icons",
+      "dual-wielding",
+      "props-and-effects"
+    ],
+    "addedApiRouteIds": [
+      "client:Open77.weapons.shotCounters",
+      "client:Open77.world.isBurning",
+      "client:Open77.players.allowEncumbrance",
+      "client:AllowEncumbrance",
+      "server:Open77.npcs.setArmor",
+      "server:Open77.npcs.getArmor",
+      "server:Open77.players.attach",
+      "server:Open77.players.detach",
+      "server:Open77.players.getAttachment",
+      "server:Open77.players.listAttachments"
+    ],
+    "amendedApiRouteIds": [
+      "client:RegisterKeyMapping",
+      "client:Open77.blips.setColor",
+      "client:Open77.blips.setIcon",
+      "client:Open77.blips.update",
+      "client:Open77.camera.aimRay",
+      "client:Open77.input.blockableActions",
+      "client:Open77.input.mappings",
+      "client:Open77.input.rebind",
+      "client:Open77.input.registerKeyMapping",
+      "client:Open77.input.setActionBlocked",
+      "client:Open77.npcs.get",
+      "client:Open77.props.create",
+      "client:Open77.weapons.all",
+      "client:Open77.weapons.setAmmo",
+      "client:Open77.weapons.snapshot",
+      "client:Open77.world.raycast",
+      "server:Open77.npcs.create",
+      "server:Open77.npcs.get",
+      "server:Open77.npcs.update",
+      "server:Open77.props.create",
+      "server:Open77.weapons.setAmmo"
     ]
   }
 }
