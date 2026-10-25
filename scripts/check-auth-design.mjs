@@ -54,7 +54,7 @@ try {
       if(window.__authScenario==='network') throw new TypeError('Simulated offline');
       if(window.__authScenario==='rate') return json({code:'rate_limited'},429);
       if(p.endsWith('/login')) return window.__authScenario==='bad-login'?json({code:'invalid_credentials',message:'E-mail or password is incorrect.'},401):json({...window.__testAccount,token:'auth-test-token',expiresAtUtc:'2099-01-01T00:00:00Z'});
-      if(p.endsWith('/register')) return json({accountId:'test-account',email:body.email,verificationToken:null});
+      if(p.endsWith('/register')) return json({accountId:'test-account',email:body.email,verificationToken:null,...(window.__authScenario==='auto-verified'?{emailVerified:true}:{})});
       if(p.endsWith('/password/forgot')) return window.__authScenario==='unknown-email'?json({code:'unknown'},404):new Response(null,{status:202});
       if(p.endsWith('/password/reset')) return window.__authScenario==='expired'?json({code:'invalid_reset',message:'Expired'},400):new Response(null,{status:204});
       if(p.endsWith('/verify-email')) return window.__authScenario==='expired'?json({code:'invalid_token',message:'Verification link expired.'},400):new Response(null,{status:204});
@@ -114,6 +114,10 @@ try {
   check('unapproved account is not presented as Alpha and has an honest empty state',await evaluate("return !document.querySelector('[data-server-download]')&&!!document.querySelector('[data-account-empty]')&&document.querySelector('[data-account-status]').textContent==='Platform account';"));
   await shot('account-dashboard-empty');
   await signedOut();
+  await evaluate("window.__authScenario='auto-verified';window.__authCalls=[];[...document.querySelectorAll('[role=tab]')].find(b=>b.textContent.includes('Create')).click();");await delay(150);
+  await fill('[name=display-name]','Auth QA');await fill('[name=email]','tester@example.invalid');await fill('[name=password]','test-passphrase');await submit();await delay(650);
+  check('automatically verified registration signs in without requesting an e-mail code',await evaluate("return !!localStorage.getItem('open77.session')&&!!document.querySelector('[data-account-overview]')&&!document.querySelector('[name=verification-code]')&&window.__authCalls.some(c=>c.path.endsWith('/register'))&&window.__authCalls.some(c=>c.path.endsWith('/login'))&&!window.__authCalls.some(c=>c.path.includes('/verify-email'));"));
+  await signedOut();await evaluate("window.__authScenario='ok';");
   await evaluate("window.__testAccount={...window.__testAccount,displayName:'Night City Builder',alphaAccess:true,identities:[{userId:'qa-client-8a619d8c',displayName:'My game client',linkedAtUtc:'2026-09-15T15:00:00Z'},{userId:'qa-client-d9d78981',displayName:'Second client',linkedAtUtc:'2026-09-17T16:00:00Z'}]};");
   await signedIn();await delay(400);await resize(1680);await shot('account-dashboard-desktop');
   check('live profile, identity count and Alpha entitlement are shown',await evaluate("return !!document.querySelector('[data-server-download]')&&document.querySelector('[data-identity-count]').textContent==='2'&&document.querySelectorAll('#identities li').length===2&&document.querySelector('#account-pass-title').textContent.includes('Night City Builder');"));

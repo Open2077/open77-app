@@ -50,6 +50,8 @@ export type RegisterResult = {
   email: string;
   /** Present only where the master has no mailer (local dev); null in production. */
   verificationToken: string | null;
+  /** Older masters omit this; only explicit true skips e-mail verification. */
+  emailVerified?: boolean;
 };
 
 export type LoginResult = {

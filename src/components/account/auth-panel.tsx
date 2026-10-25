@@ -82,6 +82,11 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
       if (mode === "login") await signIn({ email, password });
       else {
         const created = await master.register({ email, password, displayName });
+        if (created.emailVerified === true) {
+          await signIn({ email: created.email, password });
+          setPassword("");
+          return;
+        }
         setPendingVerify({ email: created.email, password, tokenFromMaster: !!created.verificationToken });
         setVerifyToken(created.verificationToken ?? "");
         setPassword("");
