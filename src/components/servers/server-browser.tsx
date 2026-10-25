@@ -41,8 +41,8 @@ const MIN_PLAYER_OPTIONS = [
   { value: 100, label: "100+" },
 ];
 const SORTS = [
-  { value: "nearby", label: "Near you" },
   { value: "players", label: "Most players" },
+  { value: "nearby", label: "Near you" },
   { value: "name", label: "Name A–Z" },
   { value: "recent", label: "Recently added" },
 ] as const;
@@ -137,11 +137,11 @@ function useDirectoryFilters() {
   return useMemo(() => {
     const p = new URLSearchParams(search);
     const requestedMode = p.get("mode") ?? "all";
-    const requestedSort = p.get("sort") ?? "nearby";
+    const requestedSort = p.get("sort") ?? "players";
     return {
       query: p.get("q") ?? "",
       mode: MODE_CHIPS.includes(requestedMode as (typeof MODE_CHIPS)[number]) ? requestedMode : "all",
-      sort: SORTS.some((s) => s.value === requestedSort) ? (requestedSort as Sort) : ("nearby" as Sort),
+      sort: SORTS.some((s) => s.value === requestedSort) ? (requestedSort as Sort) : ("players" as Sort),
       favorites: p.get("favorites") === "true",
       region: p.get("region") ?? "all",
       lang: p.get("lang") ?? "all",
