@@ -4,21 +4,22 @@
  * (NCWE repository, `scripts/release.ps1` and `scripts/publish-release.ps1`).
  */
 export const NCWE_RELEASE = {
-  version: "0.1.0-beta.15",
-  date: "2026-10-23",
-  url: "https://cdn.open77.dev/ncwe/studio/0.1.0-beta.15/NCWE-Studio-0.1.0-beta.15-win-x64.zip",
-  sha256: "fea8e4dc827dee77837bbad8ecd13b23425d1a09fff9b3aecf0fce443f7080ec",
-  bytes: 218_331_911,
+  version: "0.1.0-beta.16",
+  date: "2026-10-26",
+  url: "https://cdn.open77.dev/ncwe/studio/0.1.0-beta.16/NCWE-Studio-0.1.0-beta.16-win-x64.zip",
+  sha256: "efe3a7d68feef70b6019b3f95b6127ff7903dc288a803c46dc780e980e759dd1",
+  bytes: 218_330_449,
   game: "2.5",
 } as const;
 
 /**
- * ArchiveXL has no official release for Cyberpunk 2.5 yet: the OPEN//77 build players install meanwhile
- * (github.com/Open2077/archive-xl, the GitHub release asset mirrored on our CDN).
+ * The OPEN//77 build of ArchiveXL 1.28.0 that NCWE worlds need on Cyberpunk 2.5: the official 1.28.0 crashes
+ * on deleted game objects and cannot remove their collision (github.com/Open2077/archive-xl, the GitHub
+ * release asset mirrored on our CDN).
  */
 export const NCWE_ARCHIVEXL = {
-  version: "1.27.5-open77.5",
-  url: "https://cdn.open77.dev/ncwe/archivexl/1.27.5-open77.5/ArchiveXL-1.27.5-open77.5.zip",
+  version: "1.28.0-open77.1",
+  url: "https://cdn.open77.dev/ncwe/archivexl/1.28.0-open77.1/ArchiveXL-1.28.0-open77.1.zip",
   source: "https://github.com/Open2077/archive-xl",
 } as const;
 

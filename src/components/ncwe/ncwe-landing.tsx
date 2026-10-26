@@ -122,8 +122,9 @@ const QUESTIONS = [
     a: (
       <>
         Cyberpunk 2077 {NCWE_RELEASE.game}, on Windows 10 or 11 with a DirectX 11 graphics card. To play what you export,
-        the game needs ArchiveXL and RED4ext. ArchiveXL has no official 2.5 release yet: install{" "}
-        <a href={NCWE_ARCHIVEXL.url}>our 2.5 build of ArchiveXL</a> ({NCWE_ARCHIVEXL.version}, source on{" "}
+        the game needs ArchiveXL and RED4ext. Install{" "}
+        <a href={NCWE_ARCHIVEXL.url}>our build of ArchiveXL 1.28</a> ({NCWE_ARCHIVEXL.version}): the official 1.28.0
+        crashes on deleted game objects and keeps their collision. Source on{" "}
         <a href={NCWE_ARCHIVEXL.source} target="_blank" rel="noopener noreferrer">
           GitHub
         </a>
