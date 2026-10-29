@@ -133,6 +133,17 @@ The most recent active assignment wins **per field**: one resource can own the a
 
 Top-level customization calls are staged until the resource starts successfully. A failed start or reload cannot replace the active appearance. Stopping or reloading a resource, or disconnecting, releases its claims. A successful restart reapplies `pause_menu_logo`; `resetAppearance()` is not a permanent edit to the manifest.
 
+## City map entry
+
+The menu's **CITY MAP** entry opens the game's map unless a resource registers as a **map provider**. A provider is a client resource that answers a few `open77:mapProvider:*` events; the menu opens the provider with the highest priority and falls back to the game's map when none answers within 1.5 seconds. Branding does not change which map opens.
+
+```lua
+local provider = exports.open77_pause:mapProvider()
+print(provider and provider.resource or "the game's map")
+```
+
+See [Custom city maps (map providers)](map-providers.md) for the contract and its client requirement, and [op77_map3d](map3d.md) for a complete 3D map that registers this way.
+
 ## Troubleshooting
 
 | Error or symptom | What to check |
@@ -153,5 +164,6 @@ A malformed manifest logo or missing permission can prevent the resource from ac
 
 - [Server branding](server-branding.md): launcher and website icon/banner.
 - [Native map](native-map.md): map title, accent and custom tabs.
+- [Custom city maps](map-providers.md): change what CITY MAP opens.
 - [WebUI keyboard input](webui-input.md): consume Escape in your own UI.
 - [Resource runtime](resource-runtime.md): manifests, permissions and lifecycle.

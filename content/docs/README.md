@@ -14,6 +14,9 @@ covers animated in-cabin moves, automatic driver takeover and Lua controls.
 New building blocks: [player checks and controls](player-utilities.md) and
 [package audio, local and networked](package-audio.md).
 
+New maps and encounters: the [3D city map and GPS](map3d.md), [custom city maps for the pause
+menu](map-providers.md) and the [Chimera boss encounter](chimera.md).
+
 The server selects the resource set for a session. A connecting client downloads that set, verifies
 its signature and content hashes, and activates it before entering the world. Only Open77's trusted
 bootstrap resources load outside the server-provided generation.

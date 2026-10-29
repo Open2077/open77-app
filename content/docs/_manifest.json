@@ -3,7 +3,7 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 110,
+  "guides": 111,
   "apiEntries": 1769,
   "files": [
     {
@@ -11,14 +11,20 @@
       "target": "content/docs/pause-menu.md",
       "slug": "pause-menu",
       "title": "Pause menu customization",
-      "bytes": 7067,
-      "sha256": "5f39fa071acf3da2e4af2155ab87309fe59fee1fd35ca203f525e2590b2fcf81",
+      "bytes": 7805,
+      "sha256": "12d04bdcc05912a37929873aa596e1f39765515430aa14017510900d77afa81f",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "91da018b286376d48479e58a7cc5fff0afac80f55608a0373857ac647b6061e6",
         "sourceRevision": "bb39271cfba51fa6589bc80ddaf7137c8cc3c964",
         "sourceWorkingTreeDirty": true,
-        "clientVersion": "2.31.13+op77.85"
+        "clientVersion": "2.31.13+op77.85",
+        "unstable167Amendment": {
+          "owner": "website",
+          "sourceRevision": "8e6800c518691733d1b7f1e09f5044c5de0c8c24",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.50.0-unstable+op77.167"
+        }
       }
     },
     {
@@ -26,8 +32,8 @@
       "target": "content/docs/README.md",
       "slug": "index",
       "title": "Open77 resource documentation",
-      "bytes": 21880,
-      "sha256": "26538554b55b74b9e9cd4fbab1d7a088a755ade37a46b4c276dd39e0c97ba985",
+      "bytes": 22045,
+      "sha256": "189ade71280cb65f1ff56fa528f7cfc0e504a86a0e975420d46782140823e630",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "810d219b7f95e33bedb17bb6f0efc96ae920ecf58308bbcf8b6e0b22e50bb0e7",
@@ -67,6 +73,12 @@
           "clientVersion": "2.31.21+op77.147",
           "serverVersion": "2.31.21+op77.147",
           "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        },
+        "unstable167Amendment": {
+          "owner": "website",
+          "sourceRevision": "8e6800c518691733d1b7f1e09f5044c5de0c8c24",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.50.0-unstable+op77.167"
         }
       }
     },
@@ -132,8 +144,8 @@
       "target": "content/docs/blips.md",
       "slug": "blips",
       "title": "Vanilla blips and mappins",
-      "bytes": 19410,
-      "sha256": "ff8d200b0d8afc878cf1522392a704b5f025442bd212c8cc82bd148aee3c1bd1",
+      "bytes": 19605,
+      "sha256": "bc20f1204fcea08c188bbf39b3cedb9e26dea23139bb3867bdc4429a86456edc",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "15fd8a284253b63073a2d642f7a9a2b0a42243b3dcfe24dcc582d0d6afe45084",
@@ -141,6 +153,12 @@
           "owner": "website",
           "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
           "clientVersion": "2.50.0+op77.156"
+        },
+        "unstable167Amendment": {
+          "owner": "website",
+          "sourceRevision": "8e6800c518691733d1b7f1e09f5044c5de0c8c24",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.50.0-unstable+op77.167"
         }
       },
       "siteAmendment": {
@@ -653,8 +671,8 @@
       "target": "content/docs/keybindings.md",
       "slug": "keybindings",
       "title": "Key mappings",
-      "bytes": 13473,
-      "sha256": "af49a8a445a2a17062c17b72c20d565a42448cfb1fecfcfa48c176be5578967f",
+      "bytes": 14389,
+      "sha256": "3691e57d86f74a2dc8bf37870e2fc66428660092574d4ab22041b4e9c287cbbe",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "7829ba9f8aa2b92c3cb987db17f46d8399afa5b1f20f135829b27d7a4e036ace",
@@ -662,6 +680,12 @@
           "owner": "website",
           "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
           "clientVersion": "2.50.0+op77.156"
+        },
+        "unstable167Amendment": {
+          "owner": "website",
+          "sourceRevision": "8e6800c518691733d1b7f1e09f5044c5de0c8c24",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.50.0-unstable+op77.167"
         }
       }
     },
@@ -706,8 +730,8 @@
       "target": "content/docs/native-map.md",
       "slug": "native-map",
       "title": "Native map and player waypoints",
-      "bytes": 18427,
-      "sha256": "c25570a0597a8303e8a3e99775d50a02608e9f476ae988e17a16a250d76dbd12",
+      "bytes": 18582,
+      "sha256": "dd83c7702a6aff731501c75d9910241bfa97ae2889dc9bc0a03161435f14b1c7",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "9311287adb14fe4282f62c147f53b450a877af2076abce840cf43f443e39df5a",
@@ -746,6 +770,12 @@
           ],
           "guideMode": "site-owned-technical-amendment",
           "apiMode": "merge-selected-cards-preserve-other-site-entries"
+        },
+        "unstable167Amendment": {
+          "owner": "website",
+          "sourceRevision": "8e6800c518691733d1b7f1e09f5044c5de0c8c24",
+          "sourceWorkingTreeDirty": false,
+          "clientVersion": "2.50.0-unstable+op77.167"
         }
       }
     },
@@ -2321,6 +2351,21 @@
           "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
         }
       }
+    },
+    {
+      "source": "wiki/map-providers.md",
+      "target": "content/docs/map-providers.md",
+      "slug": "map-providers",
+      "title": "Custom city maps (map providers)",
+      "bytes": 7017,
+      "sha256": "a20ccb75da153201fed919d0f041d1d1f5345875fe323c088972ce36af21296c",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "5359d0a5f8a22ececb40ac5e2666b24af96ab6fc7c96ac9ecaa0c4485564880a",
+        "sourceRevision": "8e6800c518691733d1b7f1e09f5044c5de0c8c24",
+        "sourceWorkingTreeDirty": false,
+        "clientVersion": "2.50.0-unstable+op77.167"
+      }
     }
   ],
   "partialSync": {
@@ -2731,6 +2776,26 @@
       "server:Open77.npcs.update",
       "server:Open77.props.create",
       "server:Open77.weapons.setAmmo"
+    ]
+  },
+  "unstable167Documentation": {
+    "sourceRevision": "8e6800c518691733d1b7f1e09f5044c5de0c8c24",
+    "sourceWorkingTreeDirty": false,
+    "clientVersion": "2.50.0-unstable+op77.167",
+    "mode": "Manual review of release/unstable-164 (client 165-167): pause menu map providers, numpad key names; site-owned guides preserve upstream provenance.",
+    "addedGuides": [
+      "map-providers"
+    ],
+    "authoredGuides": [
+      "map3d",
+      "chimera"
+    ],
+    "amendedGuides": [
+      "pause-menu",
+      "native-map",
+      "keybindings",
+      "blips",
+      "index"
     ]
   }
 }

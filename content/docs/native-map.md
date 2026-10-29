@@ -12,7 +12,7 @@ permissions { "map.read", "map.control", "network.events" }
 
 ## Standalone map
 
-Open **Pause → City map**, use the player's normal map binding, or call `Open77.map.open()`. The native map is framed with margins and a blurred backdrop. Only a **Map** tab appears by default; resources can add tabs without replacing the native header.
+Open **Pause → City map**, use the player's normal map binding, or call `Open77.map.open()`. A resource can make **City map** open its own map instead; see [Custom city maps (map providers)](map-providers.md) and the 3D map [op77_map3d](map3d.md). The native map is framed with margins and a blurred backdrop. Only a **Map** tab appears by default; resources can add tabs without replacing the native header.
 
 Drag to pan, use the wheel to zoom and the native track-waypoint action (right-click by default) to place or remove a destination. Escape returns to gameplay. Opening the screen does not pause multiplayer simulation or grant invulnerability. It does not open the solo character hub.
 
