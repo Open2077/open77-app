@@ -8,7 +8,7 @@ permissions { "ui.vanilla.map" }
 
 The ids returned are 64-bit decimal strings. Keep them as they are: never convert them with `tonumber`.
 
-Use this guide to mark a position or an entity on the player's map, minimap, and HUD.
+Use this guide to mark a position or an entity on the player's map, minimap, and HUD. On a server running the 3D city map [op77_map3d](map3d.md), which replaces the game's map and minimap, add your points with its own blip API too; the player's waypoint stays shared between both.
 
 ## A first blip
 

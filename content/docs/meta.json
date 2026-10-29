@@ -295,6 +295,14 @@
           "kind": "guide",
           "nav": "Cordon: battle royale",
           "description": "Squads, the closing cordon, loot, revives and configuration."
+        },
+        {
+          "slug": "chimera",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Chimera boss (PvE)",
+          "title": "Chimera boss encounter (PvE)",
+          "description": "Run the Phantom Liberty Chimera as a server-controlled multiplayer boss: install, exports, phases and repair, weak spots, difficulty scaling, targeting, the staff lab menu and a raid built around it."
         }
       ]
     },
@@ -675,15 +683,29 @@
     },
     {
       "id": "map",
-      "title": "Map, markers & zones",
+      "title": "Map, markers & GPS",
       "group": "Game systems",
-      "description": "Customize the map, place markers and query locations and areas.",
+      "description": "Customize or replace the city map, add blips, pins and world markers, and guide players with waypoints and GPS.",
       "pages": [
         {
           "slug": "native-map",
           "kind": "guide",
           "nav": "Native map & custom tabs",
           "description": "Customize the native map title, accent and resource WebUI tabs with Lua and JavaScript lifecycle events. Control map views, read player waypoints and pick destinations without fast travel."
+        },
+        {
+          "slug": "map-providers",
+          "kind": "guide",
+          "nav": "Pause menu city map",
+          "description": "Make the pause menu's CITY MAP open your own map: register as a map provider, answer show requests within 1.5 seconds, priorities, the fallback to the game's map and client requirements."
+        },
+        {
+          "slug": "map3d",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "3D city map & GPS",
+          "title": "3D city map, minimap and GPS",
+          "description": "Install and configure the 3D city map that replaces the game's map and minimap: theme, blips for client and server, waypoint and GPS route events, map jamming, the pause menu entry and performance settings."
         },
         {
           "slug": "blips",
@@ -703,7 +725,15 @@
           "kind": "guide",
           "nav": "3D world markers",
           "description": "Eight native mesh shapes, RGBA colors, dimensions and rotation. Lua creation, updates, loading diagnostics, resource ownership and cleanup."
-        },
+        }
+      ]
+    },
+    {
+      "id": "world-zones",
+      "title": "World drawing & zones",
+      "group": "Game systems",
+      "description": "Draw points of interest in the world and query locations, areas and zones.",
+      "pages": [
         {
           "slug": "world-drawing",
           "kind": "guide",

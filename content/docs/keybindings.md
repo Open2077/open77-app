@@ -77,6 +77,21 @@ Mappings accept keyboard keys and the following device controls, normalized to u
 - `SPACE`, `ENTER`/`RETURN`, `TAB`, `SHIFT`, `CTRL`/`CONTROL`, `ALT`, `CAPSLOCK`, `BACKSPACE`,
   `INSERT`, `DELETE`, `HOME`, `END`, `PAGEUP`, `PAGEDOWN`, and the four arrow keys `UP`, `DOWN`,
   `LEFT`, `RIGHT`.
+- The numeric keypad (NumLock on): `NUMPAD0`–`NUMPAD9`, `NUMPADPLUS` (alias `NUMPADADD`),
+  `NUMPADMINUS` (`NUMPADSUBTRACT`), `NUMPADMULTIPLY` (`NUMPADSTAR`), `NUMPADDIVIDE`
+  (`NUMPADSLASH`) and `NUMPADDECIMAL` (`NUMPADPERIOD`). They are keys of their own: `+` and `-`
+  name the main row's keys, `NUMPADPLUS` and `NUMPADMINUS` the keypad's. Numpad names require
+  client **2.50.0-unstable+op77.167** or later; older clients refuse them with
+  `unsupported_action_key`, so register a fallback key when that error comes back.
+
+```lua
+local function zoom() zoomMinimap() end
+local ok, keyOrReason = RegisterKeyMapping("map.zoomIn", "Minimap: zoom in", "NUMPADPLUS", zoom)
+if not ok and tostring(keyOrReason):find("unsupported", 1, true) then
+    -- An older client: a separate id keeps the player's numpad binding for later.
+    RegisterKeyMapping("map.zoomIn.fallback", "Minimap: zoom in", "PAGEUP", zoom)
+end
+```
 
 Wheel bindings produce one press per notch; in hold mode each press is followed by
 a release. Each mapping receives its own pulses. Triggers use a 0.5 threshold;
