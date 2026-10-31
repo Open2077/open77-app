@@ -391,6 +391,14 @@
           "description": "Control AI, combat, perception and voice lines per NPC with authoritative server Lua APIs."
         },
         {
+          "slug": "population",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "World population",
+          "title": "World population: pedestrians and traffic",
+          "description": "How the seated pedestrians, the walking crowd and ambient traffic are built, every setting that tunes them (convars, tunables, server NPC limits), runtime commands, and ready-made profiles from off to high population."
+        },
+        {
           "slug": "npc-catalogue",
           "kind": "guide",
           "nav": "NPC catalogue",
