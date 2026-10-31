@@ -181,6 +181,14 @@
           "description": "Open, configure and close SQLite files from server Lua with no server configuration: the sqlite.access permission, open options, query/insert/execute/batch/transaction/backup, parameters, concurrency, lifecycle, errors and limits."
         },
         {
+          "slug": "http-client",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "HTTP requests",
+          "title": "HTTP requests from Lua",
+          "description": "Call web APIs, webhooks and file hosts from server Lua: every method, JSON, form and multipart bodies, binary data, authentication, redirects, timeouts, cancellation, uploads, downloads, the operator allow-list, errors and limits."
+        },
+        {
           "slug": "vectors",
           "kind": "guide",
           "nav": "Vectors and quaternions",

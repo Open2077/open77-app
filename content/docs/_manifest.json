@@ -1208,9 +1208,14 @@
       "target": "content/docs/server-api.md",
       "slug": "server-api",
       "title": "Complete server Lua API",
-      "bytes": 210172,
-      "sha256": "e1a8e4541de8ee7d55838eb9999d37b948fb827f3b026f1b1d9c5903acaa0869",
+      "bytes": 211524,
+      "sha256": "2bd6ffee679ee5771f6e410e4b46e844aa633bcdf147398f0633dfffe6dc475b",
       "siteEditorial": {
+        "httpClientAmendment": {
+          "sourceRevision": "cd001547b930e2b0859a6bce13df21d1783c2d86",
+          "sourceWorkingTreeDirty": false,
+          "review": "Outbound HTTP section rewritten by hand from docs/http-client.md and wiki/server-api.md; full guide authored at content/guides/http-client.md."
+        },
         "sqliteAmendment": {
           "sourceRevision": "15c0c386bf47e22a2fea86526cc86a63d84bb6f2",
           "sourceWorkingTreeDirty": false,

@@ -2900,33 +2900,46 @@ heals on its own admin command should publish its own event, under its own names
 
 ## Outbound HTTP
 
-`PerformHttpRequest` (alias `Open77.http.request`) requires the `http.request` permission **and**
-a server that enabled the bridge with an allow-list. Same shape as the database bridge: the
-request leaves the tick thread at once, the exchange runs on the thread pool, and the callback
-runs on the owning resource's own tick.
+`Open77.http` calls web APIs, webhooks and file hosts. It requires the `http.request`
+permission and a server that enabled outbound HTTP with an allow-list. The request leaves the
+tick thread at once, and the callback (or `.await`) resumes on the owning resource's own tick.
 
 ```lua
-PerformHttpRequest("https://discord.com/api/webhooks/…", function(status, body, headers, err)
-    if status == 0 then print("webhook failed: " .. tostring(err)) return end
-    print(("webhook answered %d"):format(status))
-end, "POST", { content = "Race heat finished" }, { ["Content-Type"] = "application/json" })
+CreateThread(function()
+    local response, err = Open77.http.post.await("https://discord.com/api/webhooks/ID/TOKEN", {
+        json = { content = "Race heat finished" },
+    })
+    if not response then return print("webhook failed: " .. err) end
+    print(response.status, response.ok)
+end)
 ```
 
-| Argument | Meaning |
+| Function | Request |
 |---|---|
-| `url` | Absolute `http://` or `https://` URL, no credentials, host on the server's allow-list. |
-| `callback` | `(status, body, headers, err)`. `status` is the HTTP status code, or `0` when the exchange did not complete; `err` then names the reason. Optional. |
-| `method` | `GET` (default), `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`. |
-| `body` | A string, or a table that is JSON-encoded for you. At most 256 KiB. |
-| `headers` | `{ name = value }`, at most 32; no CR/LF. |
+| `Open77.http.get/post/put/patch/delete/head/options(url, options?, cb?)` | That method; each has `.await(url, options?)`. |
+| `Open77.http.request(options, cb?)` / `.request.await(options)` | Any method; `options.url` is required. A string first argument makes it `PerformHttpRequest`. |
+| `Open77.http.upload(url, parts, options?, cb?)` | `multipart/form-data`; parts `{ name, value or data or file or json, filename?, contentType? }`. |
+| `Open77.http.download(url, path, options?, cb?)` | Writes the body to `data/<path>` (`filesystem.write`). |
+| `Open77.http.cancel(id)` | Cancels a request started with the callback form, which returns the id. |
+| `Open77.http.encodeQuery`, `parseQuery`, `urlEncode`, `urlDecode`, `base64Encode`, `base64Decode` | Encoding helpers. |
+| `Open77.http.isAllowed(urlOrHost)`, `Open77.http.limits()` | The operator's list and limits. |
 
-Returns `true` when the request was accepted, else `false, reason`; a refused request still
-invokes the callback with `status = 0` and the reason, so a script never waits on it.
+The callback receives `(response, err)` and `.await` returns `response` or `nil, err`; neither
+raises. An HTTP error status is a response with `ok = false`; `err` is set only when the
+exchange did not complete (`timeout`, `cancelled`, `dns_failed`, `connection_failed`,
+`tls_failed`, `address_not_allowed`, `response_too_large`, `too_many_redirects`, and others).
 
-Reasons: `permission_denied:http.request`, `http_unavailable` (bridge off on this server),
-`invalid_url`, `host_not_allowed`, `invalid_method`, `body_too_large`, `too_many_headers`,
-`invalid_header`, `too_many_requests` (16 in flight per resource); completion errors `timeout`,
-`response_too_large`, `request_failed`.
+Options: `method`, `query`, `headers`, `auth` (`{ bearer }` or `{ username, password }`), one
+body (`body` raw bytes, `json`, `form`, `multipart` or `file`), `contentType`, `timeout` (ms),
+`followRedirects`, `maxRedirects`, `maxBytes`, `responseType` (`auto`, `text`, `json`,
+`base64`) and `saveTo`. The response has `status`, `ok`, `statusText`, `headers` (lower-case
+names), `contentType`, `body` (raw bytes), `json` (decoded when the response is JSON), `url`,
+`redirected`, `redirects`, `bytes`, `durationMs`, `file` and `id`.
+
+`PerformHttpRequest(url, cb, method?, body?, headers?)` keeps its FiveM shape, with
+`cb(status, body, headers, err)` and `status = 0` when the exchange did not complete.
+`PerformHttpRequestAwait(url, method?, body?, headers?)` returns the same four values from a
+thread.
 
 Operator side (`server.jsonc`):
 
@@ -2935,13 +2948,19 @@ Operator side (`server.jsonc`):
   "enabled": true,
   "allowedHosts": ["discord.com", "*.example.com"],
   "timeoutSeconds": 10,
-  "maxResponseBytes": 1048576
+  "maxTimeoutSeconds": 120,
+  "maxResponseBytes": 1048576,
+  "maxRequestBytes": 8388608,
+  "maxDownloadBytes": 67108864,
+  "maxConcurrentRequests": 16
 }
 ```
 
 An exact entry matches that host only; `*.example.com` matches one level of subdomain and the
-bare host. An empty list reaches nothing. Redirects are never followed, so the list is the whole
-reachable surface.
+bare host; `*` matches any host on the public internet, with loopback, private, link-local and
+multicast addresses refused after DNS. A host listed explicitly may resolve to any address. An
+empty list reaches nothing. Redirects are followed only when a request asks, and each hop is
+checked again. Full guide: [HTTP requests from Lua](/docs/http-client).
 
 ## Serving HTTP
 
