@@ -50,6 +50,7 @@ const NAV = [
   { href: "/admin/dev-tracker", label: "Dev Tracker", group: "Workspace", icon: checkList, note: "Review community ideas, publish progress and keep discussions constructive." },
   { href: "/admin/incidents", label: "Crash reports", group: "Workspace", icon: bug01, note: "Investigate player reports, correlate incidents and inspect the evidence." },
   { href: "/admin/servers", label: "Servers", group: "Network", icon: serverStack01, note: "Connected worlds, player capacity and heartbeat observations." },
+  { href: "/admin/highlights", label: "Highlights", group: "Network", icon: flag02, note: "Schedule launcher spotlights for events, communities and new worlds." },
   { href: "/admin/releases", label: "Releases", group: "Network", icon: packageBox, note: "Published channels, trusted builds and controlled release operations." },
   { href: "/admin/mods", label: "Mod library", group: "Network", icon: puzzle, note: "Review provenance, redistribution rights and the mod allowlist." },
   { href: "/admin/mods/requests", label: "Mod queue", group: "Network", icon: hourglass, note: "Review incoming mod submissions and make explicit approval decisions." },
