@@ -173,6 +173,14 @@
           "description": "Local modules, published dependency libraries and `require`: the per-resource cache, the permissions a module runs under, what reload does to it, and how a module differs from an export."
         },
         {
+          "slug": "sqlite",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "SQLite databases",
+          "title": "SQLite databases from Lua",
+          "description": "Open, configure and close SQLite files from server Lua with no server configuration: the sqlite.access permission, open options, query/insert/execute/batch/transaction/backup, parameters, concurrency, lifecycle, errors and limits."
+        },
+        {
           "slug": "vectors",
           "kind": "guide",
           "nav": "Vectors and quaternions",

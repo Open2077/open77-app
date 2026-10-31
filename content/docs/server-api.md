@@ -2729,6 +2729,44 @@ Both need `database.access`, the same capability the queries need, and answer
 would let a resource that may not query the database still learn whether the operator runs one.
 `ready` also answers `invalid_argument` for anything that is not a function.
 
+## SQLite
+
+`SQLite` (also `Open77.sqlite`) opens SQLite files under the resource's own `data/` directory.
+Nothing is configured in `server.jsonc`: the resource chooses the file and its settings in
+`SQLite.open`, the returned handle is the connection, and `close` ends it. Requires
+`sqlite.access`. Requests use the same two forms as `MySQL`: a callback receiving
+`(result, err)`, or `.await` from a managed coroutine.
+
+```lua
+CreateThread(function()
+    local db = SQLite.open.await("garage.db", { journal = "wal", busyTimeout = 5000 })
+    db.execute.await("CREATE TABLE IF NOT EXISTS garage (plate TEXT PRIMARY KEY, owner TEXT)")
+    db.insert.await("INSERT OR REPLACE INTO garage VALUES (?, ?)", { plate, identifier })
+    local row = db.single.await("SELECT owner FROM garage WHERE plate = :plate", { plate = plate })
+    db.close.await()
+end)
+```
+
+| Function | Result |
+|---|---|
+| `SQLite.open(path, options?, callback)` / `SQLite.open.await(path, options?)` | A database handle. Options: `readOnly`, `create`, `journal`, `synchronous`, `foreignKeys`, `busyTimeout`, `maxRows`. |
+| `db.query(sql, params?, cb?)` | Array of rows. `db.prepare` is an alias. |
+| `db.single(sql, params?, cb?)` | First row or `nil`. |
+| `db.scalar(sql, params?, cb?)` | First column of the first row or `nil`. |
+| `db.insert(sql, params?, cb?)` | `last_insert_rowid()`. |
+| `db.update(sql, params?, cb?)` | Rows changed. |
+| `db.execute(sql, params?, cb?)` | Runs every statement of a script; total rows changed. |
+| `db.batch(sql, paramSets, cb?)` | One statement per parameter table, in one transaction; total rows changed. |
+| `db.transaction(statements, cb?)` | `true` on commit; `.await` returns `false, reason` on rollback. |
+| `db.backup(path, cb?)` | Online copy into another file under `data/`; `true`. |
+| `db.close(cb?)`, `db.isOpen()` | Close after pending requests; open state. |
+| `SQLite.exists(path)`, `SQLite.remove(path)`, `SQLite.version()`, `SQLite.openCount()` | File checks, deletion with companion files, library version, open handles. |
+
+Paths are relative to `data/` (or `":memory:"`); absolute paths and `..` fail with
+`invalid_path`. A handle runs its requests one at a time in order. A resource holds at most
+32 handles, and stopping or reloading it closes them. Parameters bind `?`, `?NNN`, `@name`,
+`:name` and `$name`; up to 999 per statement. Full guide: [SQLite databases from Lua](/docs/sqlite).
+
 ## Admin events
 
 Warden used to act in silence: a resource learned a player had been banned only by watching

@@ -1208,9 +1208,14 @@
       "target": "content/docs/server-api.md",
       "slug": "server-api",
       "title": "Complete server Lua API",
-      "bytes": 207756,
-      "sha256": "6756ae505982537b30b75ebafba47ede6886f49d62509bb033907ed271a79451",
+      "bytes": 210172,
+      "sha256": "e1a8e4541de8ee7d55838eb9999d37b948fb827f3b026f1b1d9c5903acaa0869",
       "siteEditorial": {
+        "sqliteAmendment": {
+          "sourceRevision": "15c0c386bf47e22a2fea86526cc86a63d84bb6f2",
+          "sourceWorkingTreeDirty": false,
+          "review": "SQLite section added by hand from docs/sqlite.md and wiki/server-api.md; full guide authored at content/guides/sqlite.md."
+        },
         "owner": "website",
         "upstreamSnapshotSha256": "e7367a5197ea2774f591e48e7f6a7a8645f6611f194e74b0c6b1e6b0841d2ca2",
         "driveByAmendment": {
