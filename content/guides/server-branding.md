@@ -1,5 +1,7 @@
 # Branding your server
 
+For colored names and descriptions, see [Launcher colors & text styles](/docs/launcher-text-formatting), with a live palette and copyable examples.
+
 Set a square server icon and a wide banner for the launcher and website. Both are optional; servers without images use a placeholder.
 
 Upload images from Warden. Icon changes do not require a server restart.

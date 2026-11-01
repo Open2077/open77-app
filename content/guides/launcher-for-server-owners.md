@@ -1,5 +1,7 @@
 # Your server in the launcher
 
+For colored names and descriptions, see [Launcher colors & text styles](/docs/launcher-text-formatting), with a live palette and copyable examples.
+
 Make your server available through the launcher directory, History or Direct Connect. Direct Connect accepts hostnames and IP addresses, including local development endpoints.
 
 This page is the operator's half of that contract. The player's half is

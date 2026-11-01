@@ -99,6 +99,14 @@
           "nav": "Branding your server",
           "title": "Branding your server",
           "description": "Give your server an icon and a banner from the Warden panel, with no SSH and no restart: what the two images are, the real size and shape limits (including the combined budget that decides whether your server is listed at all), and what to check when an image does not appear."
+        },
+        {
+          "slug": "launcher-text-formatting",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Launcher colors & text styles",
+          "title": "Launcher colors & text styles",
+          "description": "Style your server name and description with color codes, bold, italic and variable-width text. Try the live palette, preview your name and copy ready-to-use examples."
         }
       ]
     },

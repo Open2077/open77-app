@@ -5,6 +5,7 @@ import { AgentNote } from "@/components/docs/agent-note";
 import { DocPager } from "@/components/docs/doc-pager";
 import { DocProse } from "@/components/docs/doc-prose";
 import { DocsShell } from "@/components/docs/docs-shell";
+import { LauncherTextPlayground } from "@/components/docs/launcher-text-playground";
 import { NpcCatalogue } from "@/components/docs/npc-catalogue";
 import { JsonLd } from "@/components/json-ld";
 import {
@@ -116,6 +117,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         toc={guide.toc}
       >
         {slug === "npc-catalogue" || slug === "player-model-catalogue" ? <NpcCatalogue /> : null}
+        {slug === "launcher-text-formatting" ? <LauncherTextPlayground /> : null}
         <DocProse html={guide.html} />
         <AgentNote markdownHref={docMarkdownHref(slug)} />
         <DocPager {...neighbours} />
