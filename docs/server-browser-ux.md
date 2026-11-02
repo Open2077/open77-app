@@ -1,98 +1,107 @@
 # Server browser
 
-The server browser follows the landing page's visual system: a `#050e16` night
-background, `#08dfec` cyan accents, blue panels and rounded
-controls, Saira body text, Rajdhani headings and mono data labels.
-`src/styles/server-directory.css` owns the styles scoped to the directory.
+The website directory shares the launcher's presentation: dark panels, yellow
+actions, compact featured communities, formatted server names, and a bottom
+drawer with community links and player activity. Components and CSS modules live
+in `src/components/servers/`; the shared site header stays visible and usable.
 
-## The directory is a full-window application
+## Browsing
 
-`/servers` fills the entire viewport below the shared glass header, edge to edge,
-without an introductory section or outer gutters. Only its internal panes scroll.
-The workspace has four parts:
+- The command bar contains search, game modes, sorting, refresh and freshness.
+  The filter rail adds favorites, language, country, region, availability and
+  tags. It collapses on desktop and opens as a drawer on smaller screens.
+- Featured servers precede community servers. The selected sort applies within
+  each group **and** to the featured cards. Most players is the default;
+  featured order only breaks ties. A purple line spans the full row width at
+  the end of the featured group.
+- Featured rows use a subdued banner fading to transparent. Compact cards scroll
+  away with the list; on phones they scroll horizontally rather than consuming
+  multiple rows above the directory. View all expands the featured selection.
+- Purple **FEATURED**, green **OFFICIAL** and yellow **WITH MODS** chips come
+  from the master's flags and required-mod list. A server name or arbitrary tag
+  cannot grant one of these badges. Featured chips have a restrained shine,
+  disabled for reduced-motion preferences.
+- Featured rows show the highest **recorded** population in the last 48 hours
+  below the current player count. Missing history displays a dash, not zero.
+- Names and descriptions use the same `$rgb`, `$o`, `$i`, `$n`, `$w`, `$t`, `$s`,
+  `$g`, `$z` and `$$` formatting as the launcher. Unknown codes remain literal.
+  Rendering uses text nodes and styled spans, never HTML. Search, sorting,
+  accessible labels and public link previews use the readable plain text.
 
-- **Command bar** — search (`/` focuses it), the game-type segmented control with
-  live counts, a language filter, sort, the freshness readout and Refresh. The status dot on Refresh
-  is green, cyan while updating and amber when the last refresh failed.
-- **Filter rail** — All servers / Favorites, game type, region, language,
-  country, availability and the most common tags. Collapsible on desktop and
-  remembered per browser; a drawer on narrow screens.
-- **List** — 64px desktop rows, with two-line 96px rows on mobile: icon, name (shareable link to the profile) and description, game
-  type and tags as clickable filters, flag and `US · EN` locale, cyan player count
-  with a capacity bar (amber when full), favorite, and a quiet Connect that lights
-  up on hover or selection. Only the list and the rail scroll.
-- **Inspector** — the launcher's detail pane. Idle with "Select a world" until a
-  row is selected with a click or the keyboard, then cover, description, capacity, locale facts, tags,
-  community links, Connect, favorite and the link to the full page. Nothing is
-  selected on the player's behalf. Below 1200px it is an overlay that appears
-  only for a selected server.
+Filters and sorting live in the URL; the collapsed rail preference and favorites
+stay in local storage. Near you uses browser language preferences to rank
+country, language and region; the site does not invent ping measurements.
 
-**Near you.** The default sort is "Near you": the browser's language
-preferences (`navigator.languages`, no permission, no geolocation service) give
-the player's country, language and region bucket, and servers rank by same
-country, then same language, then same region, then population. Same-country
-rows light their locale cell cyan, the inspector shows a "Near you" mark, and the
-rail offers one-click "My country" / "My language" filters. The directory
-carries no latency, so locale stands in for ping; nothing is filtered out by
-default.
+## Server details
 
-Keyboard: ↑/↓ walk the list, Enter connects, Escape clears the selection or
-closes the filter drawer. Filters, sort and search live in the URL so links,
-reload and Back restore the same view; result scroll is restored when returning
-from a profile. A single click on a row or its name selects the server and shows
-its inspector; clicking the selected row again keeps it selected. Double-clicking
-the row/name or choosing **View details** in the inspector replaces the directory
-interior with the redesigned profile, retaining the full-window frame. Row actions
-(favorites, tags and Connect) do not open the profile on double-click. Native History API
-updates the shareable `/servers/{id}` URL without a route reload. The mounted
-list retains filters and scroll; Back to server list and browser Back/Forward
-restore it. Directory data renders immediately while the detail request fills
-in the roster. Direct profile links use the same workspace. Public profiles are prerendered
-with their real name, description, banner (or icon), canonical and breadcrumb
-markup. They are indexable in production and included in the sitemap. Static
-profiles and the sitemap revalidate every five minutes; new IDs generate on
-first visit. Unknown/offline IDs remain noindex. The browser fetches fresh
-players/status after hydration, using a serialized snapshot clock to avoid
-hydration mismatches on cached pages. Temporary API failures preserve a previous
-successful ISR profile. Offline builds defer profiles to on-demand generation.
+A row or card opens a wide bottom drawer with banner, icon, formatted title,
+tags, population, Join, favorite, description, visible Discord/website links,
+locale and activity. The drawer casts a shadow above the directory and leaves
+the site's navigation usable. Background controls are inert. Escape, the
+backdrop or the close button dismiss it; the close button remains reachable
+while scrolling. Focus returns to the previous control, and reduced motion
+disables its entrance animation.
 
-The list stays mounted across the 30-second background
-refresh, and a failed refresh keeps the last results. Connect still uses the
-`open77://connect?server=…` handoff; nothing about accounts or launching changed.
+Full profile opens the shareable `/servers/{id}` view with player roster,
+connection address and technical information. It includes the same formatting,
+badges, community links and chart. Native History API navigation retains the
+mounted directory, filters and scroll. Back restores them. Direct profile links
+are generated on first visit with real title, description, image, canonical and
+breadcrumbs; ISR caches them and refreshes every five minutes. Builds do not
+request every individual profile, avoiding a burst against the public API rate
+limit. The sitemap still lists the full catalog. Unknown/offline profiles remain noindex.
+
+The keyboard supports `/` to search, arrows to select, Enter to join and Escape
+to dismiss. The graph handles its own arrow keys, Home and End to read actual
+observations without triggering directory shortcuts.
+
+## Player activity and request budget
+
+`GET /api/v1/servers/{id}/player-history?hours=24|48` supplies ten-minute
+observations; 48 hours is selected initially. The browser validates identity,
+period, bounds, ordering, sample limits and nonnegative integer counts.
+
+The chart fits the available readings to its entire width, draws one continuous
+line and gradient across missing intervals, and shows a centred point for a
+single observation. Its caption explains that intervening values are not
+measured. Peak and average use actual observations only. Zero is a real sample;
+missing readings never become zero. Dates use local time, and the coverage
+label distinguishes partial history from a complete window.
+
+Visible featured peaks and profiles share a bounded, in-memory 60-second cache
+and deduplicated request queue with at most two requests in flight. Peaks are
+loaded only when visible. Background tabs pause refresh; HTTP 429 applies a
+shared cooldown honoring Retry-After. Transient errors retain the last history
+with a notice; 404 clears old history. Empty, loading and unavailable states are
+explicit. Demo data never requests activity.
+
+The public directory fetches all pages of 100 records, deduplicates by ID and
+rejects pagination that makes no progress. Its 30-second refresh retains the
+previous successful list on failure. Join still uses
+`open77://connect?server=…`; account and launch handling are unchanged.
 
 ## Local review
 
-The master's CORS only allows the production origin, so a local `next dev` cannot
-read the live directory directly. Point `NEXT_PUBLIC_MASTER_URL` at a local
-master, or run a loopback relay that forwards `GET /api/v1/servers…` to
-`https://master.open2077.net` on `127.0.0.1:8090` (the development default).
+The development master defaults to `http://127.0.0.1:8090`. Configure
+`NEXT_PUBLIC_OP77_MASTER_URL` for another master with an allowed CORS origin.
+Production defaults to `https://master.open2077.net`.
 
 ```sh
-npm run dev -- --hostname 127.0.0.1 --port 3100
+npm run dev -- --hostname 127.0.0.1 --port 3151
+npm run check
+npm run test:servers
+npm run verify:servers:browser -- http://127.0.0.1:3151
+npm run build
 ```
 
-Then open `http://127.0.0.1:3100/servers`.
+The browser check uses Playwright (`OP77_PLAYWRIGHT` may point to an existing
+installation) and headless Edge, intercepts public reads with fixtures and never
+joins a server. It checks pagination, formatting and search, flag trust,
+featured sorting, cached peaks, continuous/partial/single/zero/missing history,
+keyboard interactions, header access, mobile layout, and profile navigation.
+Screenshots are written under ignored `artifacts/server-directory/`.
 
-For a local visual review with one illustrative server, open
-`/servers?preview=1` on localhost. The preview displays a demo-data notice,
-opens the inspector from the server name, and disables launcher handoff and
-full-detail navigation. Production hosts always use the live directory.
-
-Browser regression checks (synthetic read-only API fixtures):
-
-```sh
-node scripts/check-server-workspaces.mjs http://localhost:3113
-```
-
-This covers in-place navigation, history, filter/scroll retention, responsive
-profiles, error recovery and the account creations/key workspaces.
-
-Image hydration regression check:
-
-```sh
-node scripts/check-server-images.mjs http://localhost:3113
-```
-
-This delays JavaScript until both public profile images have decoded, then
-checks actual visibility after hydration and a warm reload. It guards the
-pre-rendered image case where the load event precedes React handler attachment.
+`/servers?preview=1` on localhost remains available for a demo without a master.
+Connections and full-profile navigation are disabled there. Production always
+uses the live directory. `scripts/check-server-images.mjs` separately covers
+image decoding before hydration on public profiles.

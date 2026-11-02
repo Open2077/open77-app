@@ -1,7 +1,6 @@
 .browser {
   --gutter: clamp(16px, 2.8vw, 48px);
   --rail-width: 208px;
-  --inspector-width: 340px;
   --sticky-top: calc(var(--header-live) + var(--command-h, 64px));
   position: relative;
 }
@@ -168,8 +167,7 @@
   }
 }
 
-/* Workspace: the inspector column exists only while a server is selected,
-   so an idle list gets the whole width. ------------------------------------ */
+/* The profile floats above the directory; opening it never resizes rows. */
 
 .workspace {
   grid-template-columns: var(--rail-width) minmax(0, 1fr);
@@ -183,22 +181,6 @@
 }
 .railCollapsed .rail {
   display: none;
-}
-@media screen and (min-width: 1360px) {
-  .hasSelection .workspace {
-    grid-template-columns: var(--rail-width) minmax(0, 1fr) var(--inspector-width);
-  }
-  .railCollapsed.hasSelection .workspace {
-    grid-template-columns: minmax(0, 1fr) var(--inspector-width);
-  }
-  /* The inspector carries Connect for the selected server; the rows give their
-     button width back to the names while it is open. */
-  .hasSelection .table {
-    --actions-width: 2.25rem;
-  }
-  .hasSelection .connect {
-    display: none !important;
-  }
 }
 
 /* Rail */
@@ -498,6 +480,8 @@
   padding: 0.55rem 1rem;
   transition: background-color var(--transition-link);
   position: relative;
+  isolation: isolate;
+  min-height: 78px;
 }
 .row + .row {
   border-top: 1px solid var(--line);
@@ -707,10 +691,7 @@
     display: none;
   }
 }
-/* Cards: on a narrow list each server becomes a two-line card. The switch is
-   made in server-browser.tsx from the list's real width and whether the
-   inspector is open (the rows then drop their Connect button and the table
-   still fits), so opening the inspector never reflows rows above the viewport. */
+/* Cards follow the list's width. Opening the floating profile never resizes it. */
 .cards .columns {
   display: none;
 }
@@ -744,9 +725,31 @@
   display: flex;
 }
 .cards .players {
-  flex-direction: row;
+  flex-direction: column;
   align-items: baseline;
 }
+
+.featuredSection { margin: 0 0 1rem; }
+.featuredSection header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: .65rem; }
+.featuredSection h2 { border-left: 3px solid var(--tone); padding-left: .65rem; font: 600 .68rem var(--font-nippo); text-transform: uppercase; letter-spacing: .08em; }
+.featuredSection h2 span { color: var(--text-dim); margin-left: .5rem; }
+.featuredSection header button { font-size: .68rem; color: var(--text-dim); }
+.featuredSection header button:hover { color: var(--tone); }
+.featuredCards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; }
+.featuredCard { position: relative; isolation: isolate; display: flex; gap: .75rem; align-items: center; text-align: left; min-width: 0; min-height: 105px; border: 1px solid var(--line-strong); padding: .85rem; background: var(--surface-1); transition: border-color .2s; overflow: hidden; }
+.featuredCard:hover { border-color: #d3a2ff; }
+.featuredCard .featuredArt { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; opacity: .5; }
+.featuredCard:before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #050d16cc, #050d1633), linear-gradient(0deg, #050d1699, transparent); }
+.featuredIcon { width: 40px; height: 40px; flex: none; }
+.featuredIdentity { display: flex; flex-direction: column; gap: .3rem; min-width: 0; flex: 1; }
+.featuredIdentity > strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: .9rem; }
+.featuredIdentity > span:not(:last-child) { font-size: .67rem; color: var(--text-dim); }
+.featuredIdentity b { color: var(--text-primary); }
+.featuredArrow { font-size: 1.5rem; }
+.row .rowBanner { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: .25; pointer-events: none; mask-image: linear-gradient(90deg, #000 0%, #0009 45%, transparent 85%); }
+.row.featuredEnd:after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #cf9bff, #cf9bff44); z-index: 2; pointer-events: none; }
+.row.featuredRow .identity { gap: .25rem; }
+@container list (max-width: 920px) { .featuredCards { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: min(85%, 320px); overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: .5rem; } .featuredCard { min-height: 80px; padding: .6rem .8rem; scroll-snap-align: start; } }
 .cards .meter {
   display: none;
 }

@@ -8,6 +8,10 @@ import { useFavorites } from "@/components/favorites";
 import { ServerLocale } from "@/components/servers/country-flag";
 import { ServerImage } from "@/components/servers/server-image";
 import { ServerInspector } from "@/components/servers/server-inspector";
+import { ServerBadges } from "@/components/servers/server-badges";
+import { ServerText } from "@/components/servers/server-text";
+import { ServerPeak } from "@/components/servers/server-player-activity";
+import { plainLauncherText } from "@/lib/launcher-text";
 import { BrandTile } from "@/components/servers/server-placeholder";
 import { useToast } from "@/components/toast";
 import { Button } from "@/components/ui/button";
@@ -50,8 +54,6 @@ type Sort = (typeof SORTS)[number]["value"];
 /** Sentinel for "listings whose operator gave no region subtag at all". */
 const NO_COUNTRY = "none";
 const RAIL_KEY = "open77.directory.rail";
-/** Where the three-column layout (with the inspector) starts; matches the CSS. */
-const INSPECTOR_QUERY = "(min-width: 1360px)";
 
 /**
  * How close a server is to the player, by locale: the directory carries no
@@ -66,15 +68,13 @@ function proximity(server: GameServer, me: PlayerLocale): number {
   return score;
 }
 function sortServers(list: GameServer[], sort: Sort, me: PlayerLocale): GameServer[] {
-  const out = [...list];
-  if (sort === "nearby")
-    out.sort(
-      (a, b) => proximity(b, me) - proximity(a, me) || b.players - a.players || a.name.localeCompare(b.name),
-    );
-  if (sort === "players") out.sort((a, b) => b.players - a.players || a.name.localeCompare(b.name));
-  if (sort === "name") out.sort((a, b) => a.name.localeCompare(b.name));
-  if (sort === "recent") out.sort((a, b) => a.addedDaysAgo - b.addedDaysAgo);
-  return out;
+  return [...list].sort((a, b) => {
+    const group = Number(Boolean(b.featured)) - Number(Boolean(a.featured));
+    const name = plainLauncherText(a.name).localeCompare(plainLauncherText(b.name));
+    const order = sort === "nearby" ? proximity(b, me) - proximity(a, me) || b.players - a.players
+      : sort === "players" ? b.players - a.players : sort === "name" ? name : a.addedDaysAgo - b.addedDaysAgo;
+    return group || order || (a.featuredOrder ?? Number.MAX_SAFE_INTEGER) - (b.featuredOrder ?? Number.MAX_SAFE_INTEGER) || name || a.id.localeCompare(b.id);
+  });
 }
 /**
  * The values a `<select>` should offer: those actually present in the listing on
@@ -93,8 +93,8 @@ function localeHaystack(country: string | null | undefined): string {
 }
 function haystack(server: GameServer): string {
   return [
-    server.name,
-    server.desc,
+    plainLauncherText(server.name),
+    plainLauncherText(server.desc),
     ...server.tags,
     server.lang,
     server.region,
@@ -185,15 +185,9 @@ function writeRail(open: boolean) {
   for (const listener of railListeners) listener();
 }
 
-function subscribeInspector(listener: () => void) {
-  const list = window.matchMedia(INSPECTOR_QUERY);
-  list.addEventListener("change", listener);
-  return () => list.removeEventListener("change", listener);
-}
-
 /** Whether a keyboard event started inside a text field or another control. */
 function insideControl(target: EventTarget | null): boolean {
-  return Boolean((target as HTMLElement | null)?.closest("input, textarea, select, [contenteditable=true]"));
+  return Boolean((target as HTMLElement | null)?.closest("input, textarea, select, button, a, [role=button], [contenteditable=true]"));
 }
 
 export function ServerBrowser({
@@ -215,6 +209,7 @@ export function ServerBrowser({
   const { query, mode, sort, favorites: favsOnly } = filters;
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [allFeatured, setAllFeatured] = useState(false);
   const { isFavorite, toggle } = useFavorites();
   const me = usePlayerLocale();
   const { show: showToast, node: toastNode } = useToast();
@@ -229,8 +224,6 @@ export function ServerBrowser({
   // the prerendered page and the first client render agree (open).
   const railOpen = useSyncExternalStore(subscribeRail, readRail, () => true);
   const toggleRail = () => writeRail(!railOpen);
-  // Without the inspector column, choosing a row opens the full profile instead.
-  const hasInspector = useSyncExternalStore(subscribeInspector, () => window.matchMedia(INSPECTOR_QUERY).matches, () => true);
 
   // The list's own width decides between the table and the two-line cards.
   const [listWidth, setListWidth] = useState(0);
@@ -341,10 +334,8 @@ export function ServerBrowser({
   // The selection follows the directory: a world that refreshed away or was
   // filtered out is no longer inspected, and the pane says so by going idle.
   const selected = useMemo(() => visible.find((server) => server.id === selectedId) ?? null, [visible, selectedId]);
-  // With the inspector open the rows drop their Connect button, so the table
-  // still fits a narrower list: the switch to cards waits until 560px instead
-  // of 760px, and opening the inspector never reflows the rows.
-  const cards = listWidth > 0 && listWidth <= (selected && hasInspector ? 560 : 760);
+  const cards = listWidth > 0 && listWidth <= 760;
+  const featured = visible.filter(server => server.featured);
 
   const join = (server: GameServer) => {
     if (preview) {
@@ -356,8 +347,7 @@ export function ServerBrowser({
   };
 
   const choose = (server: GameServer) => {
-    if (!hasInspector && onOpenServer && !preview) onOpenServer(server.id);
-    else setSelectedId(server.id);
+    setSelectedId(server.id);
   };
 
   // Keyboard: `/` searches, ↑/↓ walk the list, Enter connects, Escape clears.
@@ -368,6 +358,7 @@ export function ServerBrowser({
   useEffect(() => {
     if (!isActive) return;
     const handleKey = (event: KeyboardEvent) => {
+      if ((event.target as HTMLElement)?.closest('[data-inspector]')) return;
       const { visible, selected, join, filtersOpen } = keyState.current;
       const inControl = insideControl(event.target);
       if (event.key === "/" && !event.ctrlKey && !event.metaKey && !inControl) {
@@ -449,7 +440,6 @@ export function ServerBrowser({
         styles.browser,
         filtersOpen && styles.filtersOpen,
         !railOpen && styles.railCollapsed,
-        selected && styles.hasSelection,
       )}
       // A tool page: the site header slims down while the list is on screen, so
       // the list starts right under it (see --header-live in system.css).
@@ -463,7 +453,7 @@ export function ServerBrowser({
         <Image src="/home/img/players-bg.webp" alt="" fill sizes="100vw" quality={75} loading="eager" />
       </div>
 
-      <div ref={commandRef} className={styles.command} role="search">
+      <div ref={commandRef} className={styles.command} role="search" inert={Boolean(selected && isActive)}>
         <div className={styles.commandInner}>
           <Button
             lines="none"
@@ -529,7 +519,7 @@ export function ServerBrowser({
       </div>
 
       <div className={styles.workspace}>
-        <aside className={styles.rail} aria-label="Directory filters" id={filterPanelId}>
+        <aside className={styles.rail} aria-label="Directory filters" id={filterPanelId} inert={Boolean(selected && isActive)}>
           <div className={styles.railInner}>
             <div className={styles.railHead}>
               <Eyebrow>Directory</Eyebrow>
@@ -720,7 +710,7 @@ export function ServerBrowser({
           onClick={() => setFiltersOpen(false)}
         />
 
-        <section className={styles.main} aria-label="Server directory" ref={listRef}>
+        <section className={styles.main} aria-label="Server directory" ref={listRef} inert={Boolean(selected && isActive)}>
           {servers.length === 0 ? (
             (emptyState ?? (
               <EmptyState
@@ -762,6 +752,14 @@ export function ServerBrowser({
                   </button>
                 </div>
               ) : null}
+              {featured.length ? <section className={styles.featuredSection} aria-label="Featured communities">
+                <header><h2>Featured communities <span>{featured.length}</span></h2>{featured.length > 3 ? <button type="button" aria-expanded={allFeatured} onClick={() => setAllFeatured(value => !value)}>{allFeatured ? "Show less ↑" : `View all (${featured.length}) →`}</button> : null}</header>
+                <div className={styles.featuredCards}>{(allFeatured ? featured : featured.slice(0, 3)).map(server => <button type="button" key={server.id} className={styles.featuredCard} onClick={() => choose(server)} aria-label={`View ${plainLauncherText(server.name)}`} data-featured-card={server.id}>
+                  <ServerImage src={server.banner} kind="banner" className={styles.featuredArt} />
+                  <ServerImage src={server.icon} kind="icon" className={styles.featuredIcon} fallback={<BrandTile />} />
+                  <span className={styles.featuredIdentity}><strong><ServerText text={server.name} /></strong><span>{server.mode} · <b>{server.players}</b> / {server.max}</span><ServerBadges server={server} /></span><span className={styles.featuredArrow} aria-hidden="true">→</span>
+                </button>)}</div>
+              </section> : null}
               <div className={cx(styles.table, cards && styles.cards)}>
                 <div className={styles.columns} aria-hidden="true">
                   <span className={styles.colServer}>
@@ -781,11 +779,12 @@ export function ServerBrowser({
                   <span />
                 </div>
                 <ul className={styles.list} data-server-list>
-                  {visible.map((server) => (
+                  {visible.map((server, index) => (
                     <ServerRow
                       key={server.id}
                       server={server}
                       preview={preview}
+                      lastFeatured={Boolean(server.featured && visible[index + 1] && !visible[index + 1]?.featured)}
                       onOpen={onOpenServer ? () => onOpenServer(server.id) : undefined}
                       near={proximity(server, me) >= 4}
                       isFavorite={isFavorite(server.id)}
@@ -812,6 +811,7 @@ export function ServerBrowser({
                 </EmptyState>
               ) : null}
               <p className={styles.hints} aria-hidden="true">
+                {featured.length ? <>Featured first · </> : null}
                 <kbd>↑</kbd> <kbd>↓</kbd> select · <kbd>Enter</kbd> connect · <kbd>/</kbd> search · Alpha access
                 required to play and host · <NextLink href="/download">Need the launcher?</NextLink>
               </p>
@@ -819,8 +819,9 @@ export function ServerBrowser({
           )}
         </section>
 
-        {selected ? (
+        {selected && isActive ? (
           <ServerInspector
+            key={selected.id}
             preview={preview}
             onOpen={onOpenServer ? () => onOpenServer(selected.id) : undefined}
             server={selected}
@@ -840,6 +841,7 @@ export function ServerBrowser({
 function ServerRow({
   server,
   preview,
+  lastFeatured,
   onOpen,
   near,
   isFavorite,
@@ -850,6 +852,7 @@ function ServerRow({
 }: {
   server: GameServer;
   preview: boolean;
+  lastFeatured: boolean;
   onOpen?: () => void;
   /** Same country as the player: the locale cell lights up. */
   near: boolean;
@@ -863,7 +866,8 @@ function ServerRow({
   const otherTags = server.tags.filter((t) => t.toLowerCase() !== server.mode.toLowerCase()).slice(0, 3);
   return (
     <li
-      className={cx(styles.row, isSelected && styles.selected, full && styles.full)}
+      className={cx(styles.row, isSelected && styles.selected, full && styles.full, server.featured && styles.featuredRow, lastFeatured && styles.featuredEnd)}
+      data-featured-end={lastFeatured || undefined}
       data-server-id={server.id}
       data-mode={server.mode}
       data-selected={isSelected || undefined}
@@ -880,29 +884,31 @@ function ServerRow({
         onOpen?.();
       }}
     >
+      {server.featured && server.banner ? <ServerImage src={server.banner} kind="banner" className={styles.rowBanner} /> : null}
       <ServerImage src={server.icon} kind="icon" className={styles.thumb} fallback={<BrandTile />} />
       <div className={styles.identity}>
         {preview ? (
           <button type="button" className={styles.rowLink} onClick={onSelect}>
-            <span className={styles.name} data-server-name>{server.name}</span>
+            <span className={styles.name} data-server-name><ServerText text={server.name} /></span>
           </button>
         ) : (
           <NextLink
             className={styles.rowLink}
             data-server-link
             href={`/servers/${server.id}`}
-            aria-label={`Select ${server.name}`}
+            aria-label={`Select ${plainLauncherText(server.name)}`}
             onNavigate={(event) => {
               event.preventDefault();
               onSelect();
             }}
           >
-            <span className={styles.name} data-server-name>{server.name}</span>
+            <span className={styles.name} data-server-name><ServerText text={server.name} /></span>
           </NextLink>
         )}
-        <span className={styles.desc} title={server.desc}>
-          {server.desc || "Community server"}
+        <span className={styles.desc} title={plainLauncherText(server.desc)}>
+          <ServerText text={server.desc || "Community server"} />
         </span>
+        <ServerBadges server={server} />
       </div>
       {/* Table cells on wide lists; one wrapped line under the name on narrow ones. */}
       <div className={styles.facts}>
@@ -928,6 +934,7 @@ function ServerRow({
             <b>{server.players}</b>
             <span> / {server.max}</span>
           </span>
+          {server.featured ? <ServerPeak id={server.id} preview={preview} /> : null}
           <Meter value={occupancyPercent(server)} label={`${server.players} of ${server.max} players`} className={styles.meter} />
         </span>
       </div>
@@ -937,7 +944,7 @@ function ServerRow({
           className={styles.fav}
           data-favorite
           aria-pressed={isFavorite}
-          aria-label={isFavorite ? `Remove ${server.name} from favorites` : `Add ${server.name} to favorites`}
+          aria-label={isFavorite ? `Remove ${plainLauncherText(server.name)} from favorites` : `Add ${plainLauncherText(server.name)} to favorites`}
           onClick={onToggleFavorite}
         >
           <Icon glyph={star} />
@@ -948,7 +955,7 @@ function ServerRow({
           color="neutral"
           border
           onClick={onConnect}
-          aria-label={`Connect to ${server.name}`}
+          aria-label={`Connect to ${plainLauncherText(server.name)}`}
           className={styles.connect}
         >
           Connect

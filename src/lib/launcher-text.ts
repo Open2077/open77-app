@@ -1,5 +1,10 @@
 export type LauncherTextRun = { text: string; color?: string; bold?: boolean; italic?: boolean; upper?: boolean; shadow?: boolean; width?: "n" | "w" };
 
+/** Readable text for search, sorting, accessible labels and link previews. */
+export function plainLauncherText(value: string): string {
+  return parseLauncherText(value).map(run => run.text).join("");
+}
+
 /** Matches launcher-text.js. Unrecognized/incomplete codes remain literal. */
 export function parseLauncherText(value: string): LauncherTextRun[] {
   const runs: LauncherTextRun[] = [];

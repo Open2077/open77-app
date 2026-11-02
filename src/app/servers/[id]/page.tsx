@@ -2,24 +2,19 @@ import type { Metadata } from "next";
 import { JsonLd } from "@/components/json-ld";
 import { LiveServerBrowser } from "@/components/servers/live-server-browser";
 import { Page } from "@/components/ui/page";
-import { getPublicServer, getPublicServerSnapshot, listPublicServers } from "@/lib/server-catalog";
+import { getPublicServer, getPublicServerSnapshot } from "@/lib/server-catalog";
 import { serverProfileSummary } from "@/lib/server-profile-seo";
 import { breadcrumbNode, jsonLdGraph, pageMetadata } from "@/lib/seo";
 import { absoluteUrl } from "@/lib/site";
 
-// Known profiles are static at build time; newly listed servers are generated
-// on first visit. ISR refreshes their text/images while the browser refreshes live data.
+// Profiles are generated on first visit. ISR refreshes their text/images while
+// the browser refreshes live data; builds must not fan out a request per server
+// against the master's shared public rate limit. The sitemap still lists them.
 export const revalidate = 300;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  try { return (await listPublicServers()).map(server => ({ id: server.id })); }
-  catch {
-    // Offline builds (including CI) can still ship the app. Real profiles will
-    // be generated on demand; a failed regeneration never overwrites a good page.
-    console.warn("Server catalog unavailable at build time; profiles will be generated on demand.");
-    return [];
-  }
+  return [];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {

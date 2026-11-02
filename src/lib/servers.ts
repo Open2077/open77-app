@@ -40,6 +40,9 @@ export type GameServer = {
   /** Round-trip latency in milliseconds. */
   ping: number;
   featured?: boolean;
+  featuredOrder?: number;
+  official?: boolean;
+  withMods?: boolean;
   addedDaysAgo: number;
   /**
    * Cover image for the row/hero: the master's wide `bannerUrl` when the server
@@ -88,6 +91,10 @@ export const serverDirectory = {
  * {@link GameServer} view.
  */
 export type CatalogServer = {
+  featured?: boolean;
+  featuredOrder?: number | null;
+  official?: boolean;
+  requiredMods?: unknown[] | null;
   id: string;
   name: string;
   description: string;
@@ -348,14 +355,14 @@ function daysSince(iso: string): number {
 /**
  * Projects a master {@link CatalogServer} onto the {@link GameServer} the
  * browser renders. Fields the directory does not carry are derived where the
- * locale allows (language, region) or left neutral: there is no `featured`
- * flag, no owner, no ruleset and — deliberately — no latency, since ping is a
- * client-measured value the directory never reports.
+ * locale allows (language, region) or left neutral: there is no owner,
+ * ruleset or latency, since ping is a client-measured value the directory
+ * never reports.
  */
 export function catalogToGameServer(server: CatalogServer): GameServer {
   const tags = server.tags ?? [];
-  const website = server.website?.trim() || undefined;
-  const discord = server.discord?.trim() || undefined;
+  const website = communityUrl(server.website);
+  const discord = communityUrl(server.discord);
   return {
     catalog: server,
     id: server.id,
@@ -372,7 +379,10 @@ export function catalogToGameServer(server: CatalogServer): GameServer {
     // The master directory reports no latency; ping is measured client-side, so
     // live rows show "—" rather than an invented number (see formatPing).
     ping: 0,
-    featured: false,
+    featured: server.featured === true,
+    featuredOrder: server.featuredOrder ?? undefined,
+    official: server.official === true,
+    withMods: Array.isArray(server.requiredMods) && server.requiredMods.length > 0,
     addedDaysAgo: daysSince(server.startedAtUtc),
     banner: server.bannerUrl ?? server.iconUrl ?? "",
     icon: server.iconUrl ?? undefined,
@@ -389,8 +399,25 @@ export function catalogToGameServer(server: CatalogServer): GameServer {
  * `server-catalog.ts` instead. Errors surface as `MasterApiError`.
  */
 export async function fetchServers(): Promise<GameServer[]> {
-  const page = await masterCall<CatalogPage>("/api/v1/servers?pageSize=100");
-  return (page.items ?? []).map((item) => catalogToGameServer(withAbsoluteImageUrls(item)));
+  const items = new Map<string, GameServer>();
+  for (let number = 1; number <= 100; number++) {
+    const page = await masterCall<CatalogPage>(`/api/v1/servers?page=${number}&pageSize=100`, { signal: AbortSignal.timeout(30_000) });
+    const before = items.size;
+    for (const item of page.items ?? []) items.set(item.id, catalogToGameServer(withAbsoluteImageUrls(item)));
+    if (number * 100 >= page.total || !page.items?.length) return [...items.values()];
+    if (items.size === before) throw new Error("The directory did not finish responding. Try refreshing.");
+  }
+  throw new Error("The directory returned too many pages. Try refreshing.");
+}
+
+/** Operators supply these links; only ordinary public web URLs are clickable. */
+export function communityUrl(value: string | null | undefined): string | undefined {
+  if (!value?.trim()) return undefined;
+  try {
+    const url = new URL(value.trim());
+    if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) return undefined;
+    return url.href;
+  } catch { return undefined; }
 }
 
 /**

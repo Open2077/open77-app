@@ -4,6 +4,11 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { FlaggedCountry } from "@/components/servers/country-flag";
 import { ServerActions } from "@/components/servers/server-actions";
+import { ServerText } from "@/components/servers/server-text";
+import { ServerBadges } from "@/components/servers/server-badges";
+import { ServerCommunityLinks } from "@/components/servers/server-community-links";
+import { ServerPlayerActivity } from "@/components/servers/server-player-activity";
+import { plainLauncherText } from "@/lib/launcher-text";
 import { ServerImage } from "@/components/servers/server-image";
 import { BrandTile, modeArt } from "@/components/servers/server-placeholder";
 import { Button } from "@/components/ui/button";
@@ -12,7 +17,7 @@ import { CopyButton } from "@/components/ui/code-block";
 import { DefinitionList } from "@/components/ui/data";
 import { EmptyState, Loader, Meter } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
-import { arrowLeft01, discord, globe02, plug01 } from "@/components/ui/icons";
+import { arrowLeft01, plug01 } from "@/components/ui/icons";
 import { Eyebrow } from "@/components/ui/typography";
 import { MasterApiError } from "@/lib/account/api";
 import { formatLocaleTag } from "@/lib/locale";
@@ -152,9 +157,8 @@ function ServerProfile({ server, now, back }: { server: CatalogServer; now: numb
   const view = catalogToGameServer(server);
   const live = isServerLive(server, now);
   const uptime = formatUptime(server.startedAtUtc, now);
-  const website = view.links?.website;
-  const discordUrl = view.links?.discord;
-  const initial = server.name.trim().charAt(0).toUpperCase() || "?";
+  const plainName = plainLauncherText(server.name);
+  const initial = plainName.trim().charAt(0).toUpperCase() || "?";
   const pop = popClass(view);
 
   return (
@@ -181,8 +185,8 @@ function ServerProfile({ server, now, back }: { server: CatalogServer; now: numb
                   {live ? "Live" : "Offline"}
                 </span>
               </p>
-              <h1 className={server.name.length > 18 ? `${styles.name} ${styles.long}` : styles.name} data-profile-name>
-                <span data-glitch={server.name}>{server.name}</span>
+              <h1 className={plainName.length > 18 ? `${styles.name} ${styles.long}` : styles.name} data-profile-name>
+                <ServerText text={server.name} />
               </h1>
               <p className={styles.sub}>
                 <Tag variant="solid">{view.mode}</Tag>
@@ -190,6 +194,7 @@ function ServerProfile({ server, now, back }: { server: CatalogServer; now: numb
                 <span>{view.region} region</span>
                 <span>{view.lang}</span>
               </p>
+              <ServerBadges server={view} />
             </div>
           </div>
           <ServerActions id={server.id} />
@@ -232,7 +237,8 @@ function ServerProfile({ server, now, back }: { server: CatalogServer; now: numb
         <div className={styles.main}>
           <section className={styles.section}>
             <h2 className={styles.h2}>About this server</h2>
-            <p className={styles.desc}>{view.desc || "This server has not published a description yet."}</p>
+            <p className={styles.desc}><ServerText text={view.desc || "This server has not published a description yet."} /></p>
+            <ServerCommunityLinks server={view} />
             {view.tags.length > 0 ? (
               <div className={styles.tags}>
                 {view.tags.map((tag) => (
@@ -243,6 +249,8 @@ function ServerProfile({ server, now, back }: { server: CatalogServer; now: numb
               </div>
             ) : null}
           </section>
+
+          <section className={styles.section}><ServerPlayerActivity id={server.id} /></section>
 
           <section className={`${styles.section} ${styles.connect}`}>
             <h2 className={styles.h2}>Connect</h2>
@@ -260,25 +268,6 @@ function ServerProfile({ server, now, back }: { server: CatalogServer; now: numb
             </p>
           </section>
 
-          <section className={styles.section}>
-            <h2 className={styles.h2}>Community</h2>
-            {website || discordUrl ? (
-              <div className={styles.links}>
-                {website ? (
-                  <Button lines="none" size="sm" color="neutral" border icon={globe02} iconPosition="left" href={website}>
-                    {displayHost(website)}
-                  </Button>
-                ) : null}
-                {discordUrl ? (
-                  <Button lines="none" size="sm" color="neutral" border icon={discord} iconPosition="left" href={discordUrl}>
-                    Discord
-                  </Button>
-                ) : null}
-              </div>
-            ) : (
-              <p className={styles.muted}>This server has not listed any community links.</p>
-            )}
-          </section>
         </div>
 
         <aside className={styles.side}>
@@ -378,15 +367,6 @@ function PlayerRoster({ roster, now }: { roster: ServerRoster; now: number }) {
       </p>
     </>
   );
-}
-
-/** Bare host for a community URL, so a long link renders as a tidy label. */
-function displayHost(url: string): string {
-  try {
-    return new URL(url).host.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
 }
 
 /** "12s ago", "4m ago", "2h ago": for the last-heartbeat readout. */

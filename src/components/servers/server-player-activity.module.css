@@ -1,0 +1,31 @@
+.activity { min-width: 0; }
+.heading { display: flex; justify-content: space-between; align-items: start; gap: 1rem; }
+.heading h2 { font: 600 .83rem var(--font-main); text-transform: uppercase; letter-spacing: .06em; }
+.heading p { color: var(--text-dim); font-size: .75rem; margin-top: .35rem; }
+.periods { display: flex; border: 1px solid var(--line-strong); }
+.periods button { padding: .35rem .65rem; color: var(--text-dim); font: .65rem var(--font-nippo); }
+.periods button[aria-pressed=true] { color: var(--tone); background: #f5f5000d; }
+.stats { display: flex; gap: 2rem; margin: 1.2rem 0 .5rem; }
+.stats dd { font: 700 1.7rem var(--font-main); }
+.stats dt { font: .55rem var(--font-nippo); text-transform: uppercase; color: var(--text-dim); margin-top: .3rem; }
+.chart { width: 100%; min-width: 0; }
+.plot { position: relative; color: var(--tone); }
+.plot:focus-visible { outline: 1px solid var(--tone); outline-offset: 4px; }
+.plot svg { display: block; width: 100%; height: auto; }
+.grid line { stroke: var(--line); stroke-width: 1; }
+.grid text, .tick { fill: var(--text-dim); font: 9px var(--font-main); }
+.cursor { stroke: var(--text-dim); stroke-width: 1; opacity: .5; }
+.tooltip { position: absolute; top: 0; transform: translateX(-50%); pointer-events: none; padding: .5rem .65rem; background: var(--body); border: 1px solid var(--line-strong); box-shadow: 0 4px 16px #0006; font-size: .7rem; white-space: nowrap; }
+.tooltip span { display: block; margin-top: .15rem; color: var(--text-dim); font-size: .62rem; }
+.legend { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1rem; font-size: .62rem; color: var(--text-dim); }
+.legend i { display: inline-block; width: 12px; height: 2px; margin: 0 .4rem .15rem 0; background: var(--tone); }
+.caption { margin-top: .7rem; font-size: .64rem; color: var(--text-faint); }
+.empty { display: grid; place-content: center; gap: 1rem; text-align: center; min-height: 240px; color: var(--text-dim); font-size: .8rem; }
+.scan { display: block; height: 2px; width: 160px; margin: auto; background: linear-gradient(90deg, transparent, var(--tone), transparent); animation: scan 1.4s ease-in-out infinite; }
+.peak { display: block; color: #d3a2ff; font-size: .62rem; line-height: 1.5; white-space: nowrap; }
+.peak b { font-weight: 600; }
+.peak > span { color: var(--text-dim); }
+.loading { animation: scan 1.4s ease-in-out infinite; }
+.notice { font-size: .7rem; color: var(--text-dim); margin-top: .7rem; }
+@keyframes scan { 50% { opacity: .2; } }
+@media (prefers-reduced-motion: reduce) { .scan, .loading { animation: none; } }

@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { serverProfileSummary, SERVER_ID } from "../src/lib/server-profile-seo.ts";
+import { registerHooks } from "node:module";
+registerHooks({ resolve(specifier, context, next) { return next(specifier === "./launcher-text" ? "./launcher-text.ts" : specifier, context); } });
+const { serverProfileSummary, SERVER_ID } = await import("../src/lib/server-profile-seo.ts");
+
+test("link previews strip server formatting codes while preserving readable text", () => {
+  assert.equal(serverProfileSummary({ name: "$o$ff0Night City$z", description: "$iRoleplay$z · $$5", bannerUrl: null, iconUrl: null }).title, "Night City");
+  assert.equal(serverProfileSummary({ name: "$tworld", description: "$iRoleplay$z · $$5", bannerUrl: null, iconUrl: null }).description, "Roleplay · $5");
+});
 
 test("server previews use real text and prefer a banner, then icon, then brand fallback", () => {
   const server = { name: "  My world  ", description: "Roleplay.\nMeet your neighbours.", bannerUrl: "https://master.example/banner.png", iconUrl: "https://master.example/icon.png" };

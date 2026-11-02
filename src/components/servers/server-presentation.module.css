@@ -1,0 +1,17 @@
+@font-face { font-family: ServerSaira; src: url('/fonts/Saira.ttf') format('truetype'); font-weight: 100 900; font-stretch: 50% 125%; font-display: swap; }
+.variableText { font-family: ServerSaira, sans-serif; }
+.badges { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.badges:empty { display: none; }
+.badge { position: relative; overflow: hidden; display: inline-flex; align-items: center; padding: .12rem .38rem; border: 1px solid currentColor; font: 600 .58rem/1.3 var(--font-nippo), sans-serif; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+.featured { color: #d3a2ff; background: #ae60ff14; }
+.official { color: #42e9ab; background: #42e9ab12; }
+.mods { color: #f5f500; background: #f5f50012; }
+.featured:after { content: ''; position: absolute; inset: -50%; pointer-events: none; background: linear-gradient(110deg, transparent 35%, #f4e2ff66 50%, transparent 65%); transform: translateX(-110%); animation: shine 7s ease-in-out infinite; }
+@keyframes shine { 0%, 65% { transform: translateX(-110%); } 90%, 100% { transform: translateX(110%); } }
+.communityLinks { display: grid; gap: .65rem; margin: 1.3rem 0; }
+.communityLinks a { display: flex; align-items: center; gap: .8rem; border: 1px solid #a781df77; background: linear-gradient(110deg, #9464d820, transparent); padding: 1rem; color: var(--tone); transition: background .2s, border-color .2s; }
+.communityLinks a:hover { border-color: var(--tone); background: #eaff0010; }
+.communityLinks a > span { flex: 1; min-width: 0; }
+.communityLinks strong { display: block; text-transform: uppercase; font: 600 .8rem var(--font-nippo); letter-spacing: .06em; }
+.communityLinks small { display: block; margin-top: .2rem; color: var(--text-dim); font-size: .72rem; overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) { .featured:after { animation: none; display: none; } }

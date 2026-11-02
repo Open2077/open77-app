@@ -151,7 +151,7 @@
 }
 .name {
   font-family: var(--font-heading);
-  text-transform: uppercase;
+  text-transform: none;
   letter-spacing: -0.08em;
   overflow-wrap: anywhere;
   text-wrap: balance;
