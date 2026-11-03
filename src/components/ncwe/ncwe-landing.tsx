@@ -100,7 +100,7 @@ const STEPS = [
   { title: "Download and extract", body: <p>Unzip the whole archive into a folder of your choice. Do not start NCWE from inside the zip.</p> },
   {
     title: "Start NCWE.Studio.exe",
-    body: <p>The beta is not signed yet: if Windows SmartScreen appears, choose More info, then Run anyway.</p>,
+    body: <p>The release is not signed yet: if Windows SmartScreen appears, choose More info, then Run anyway.</p>,
   },
   {
     title: "Open Night City",
@@ -137,8 +137,12 @@ const QUESTIONS = [
     a: "No. Projects are stored as changes, and an export is a separate mod you install and remove. Your vanilla files are never rewritten.",
   },
   {
-    q: "It is a beta. What does that mean?",
-    a: "Things move fast and some break. Help > Open the logs folder collects what we need for a bug report; bring it to the OPEN//77 Discord.",
+    q: "How do I update from the beta?",
+    a: "Close NCWE, download the stable release and extract it to a new folder. Start NCWE.Studio.exe from that folder. Your settings and sign-in are kept, and your projects stay where you saved them.",
+  },
+  {
+    q: "Where can I report a problem?",
+    a: "Help > Open the logs folder collects what we need for a bug report. Bring the logs and the steps to reproduce the problem to the OPEN//77 Discord.",
   },
 ];
 
@@ -168,7 +172,7 @@ export function NcweLanding() {
         titleId="ncwe-title"
         eyebrow={
           <>
-            Night City World Editor <Tag tone="blue" variant="solid">Open beta</Tag>
+            Night City World Editor <Tag tone="blue" variant="solid">Stable {NCWE_RELEASE.version}</Tag>
           </>
         }
         title={["Shape", "Night City", "as you want."]}
@@ -283,10 +287,13 @@ export function NcweLanding() {
       <Section id="download" className={styles.downloadSection}>
         <div className={styles.download}>
           <div className={styles.downloadCopy}>
-            <Eyebrow>Open beta</Eyebrow>
+            <Eyebrow>Stable release</Eyebrow>
             <Display size="md" lines={["Get", "NCWE."]} accent={[1]} />
             <p className={styles.downloadText}>
               Free, no account, nothing else to install: .NET and the Windows App SDK come in the zip.
+            </p>
+            <p className={styles.aside}>
+              <ArrowLink href={NCWE_RELEASE.notes}>{`What is new in NCWE ${NCWE_RELEASE.version}`}</ArrowLink>
             </p>
             <DownloadAction
               href={NCWE_RELEASE.url}
@@ -329,7 +336,7 @@ export function NcweLanding() {
           . Without them it would not exist: thank you to their authors.
         </p>
         <p className={styles.fineprint}>
-          NCWE is in open beta and free software (GPL-3.0). It is an independent community project, unaffiliated with CD
+          NCWE is free software (GPL-3.0). It is an independent community project, unaffiliated with CD
           PROJEKT RED; Cyberpunk 2077 is a trademark of CD PROJEKT S.A. No game data is included.
         </p>
       </Section>

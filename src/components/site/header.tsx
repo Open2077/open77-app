@@ -52,7 +52,7 @@ const SHORTCUTS = [
   { href: "/docs", title: "Documentation", detail: "Play, host and build: every guide", keywords: "help learn tutorial lua" },
   { href: "/docs/api", title: "Lua API reference", detail: "Search the client and server APIs", keywords: "functions vehicles players native scripting" },
   { href: "/workshop", title: "Workshop", detail: "Community resources, ready to install", keywords: "resources scripts mods library" },
-  { href: "/ncwe", title: "Map Editor", detail: "NCWE, the Night City World Editor · open beta", keywords: "ncwe editor mapping world builder maps download archivexl" },
+  { href: "/ncwe", title: "Map Editor", detail: "NCWE, the Night City World Editor · stable release", keywords: "ncwe editor mapping world builder maps download archivexl" },
   { href: "/dev-tracker", title: "Dev Tracker", detail: "Ideas, community votes and development progress", keywords: "roadmap feedback suggestions forum" },
   { href: "/status", title: "Service status", detail: "Live health, uptime and incidents", keywords: "outage availability cdn master downloads maintenance" },
   { href: "/devblog", title: "Devblog", detail: "What shipped, one post per working day", keywords: "news updates" },
