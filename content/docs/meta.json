@@ -1067,6 +1067,14 @@
           "description": "Use Cyberpunk's native screen fades from client Lua: fade out, hold and return, color options, completion events, resource ownership and automatic recovery. Includes server-coordinated transitions and HUD limitations."
         },
         {
+          "slug": "braindance",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Braindance",
+          "title": "Braindance",
+          "description": "The braindance launch as a scriptable sequence (white-out flash, black screen to hide a teleport or a set change, the braindance look, events for every phase) and the VISUAL, THERMAL and AUDIO vision layers with a native heatmap of every body around the player: open77_braindance exports and Open77.braindance."
+        },
+        {
           "slug": "photo-mode",
           "kind": "guide",
           "nav": "Photo mode",
