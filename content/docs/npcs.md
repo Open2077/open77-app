@@ -30,7 +30,10 @@ permissions { "world.npcs", "npcs.read" }
   radius. Hysteresis prevents rapid stream-in/stream-out near the boundary.
 - One ready client receives a short simulation lease and executes native REDengine commands. The
   lease carries an epoch; reports from an old owner or epoch are rejected.
-- Other clients interpolate authoritative motion and never run a competing task.
+- Other clients run a copy of the NPC and never run a competing task. Outside combat the copy
+  follows the simulating client's motion. In combat it keeps its own native combat AI, so it aims,
+  shoots and reacts on every screen, but it fights the simulating client's target and is guided
+  onto its position: see [Combat with several players](#combat-with-several-players).
 - Late joiners receive the complete NPC state and active tasks.
 - Movement, look, action and full-body channels execute independently. Starting a look-at does not
   cancel movement, and starting movement does not stop an active full-body animation.
@@ -98,6 +101,10 @@ living local player in the same bucket within 30 metres, provided a chest-height
 Static/Dynamic world raycast is clear and no closer hostile NPC was selected. The engine
 still decides movement and firing. This is a perception aid, not an AI task or a damage
 grant; gamemode shields and damage validation remain authoritative.
+
+`authoritativePlayerHits = true` hands the NPC's hits on players to your resource: the game
+deals no damage to a player on its own, and each hit reaches your server script as
+[`onNpcPlayerHit`](#npc-hits-on-players) for you to price.
 
 Metadata without a top-level `weapon` never enters the player-proxy equipment path.
 Gang records retain their native inventory. A nested `combat.weapon` is ignored.
@@ -708,6 +715,80 @@ still-hostile NPC may re-acquire the same target by perception.
 
 **There is no `cover` task.** Native cover commands require authored `NodeRef` positions that Open77 cannot create or enumerate. NPCs can use native cover during combat. The `guard` task uses a `moveTo` leash rather than a native guard-area command, which has the same `NodeRef` restriction.
 
+## Combat with several players
+
+Available on Stable 187 or later, client and server.
+
+One player's client **simulates** each NPC (the authority lease above): its copy runs the real
+combat AI, and its position, health and death are what the server keeps. Every other player in
+range holds a **copy**, and the platform keeps each copy fighting the same fight:
+
+- **Same target.** The simulating client reports who its NPC is fighting; the server relays it to
+  every other viewer, and each copy prioritises that body over everyone else. When the NPC
+  switches target, every copy switches with it.
+- **Same place.** In a fight a copy keeps its own combat AI, so it still aims, shoots, crouches and
+  reacts on every screen, but it is guided onto the simulating NPC:
+  - it may stand at most 1 m from it;
+  - it follows as soon as the NPC relocates (from 0.8 m/s);
+  - it runs back when it falls more than 2.5 m behind;
+  - it faces its target while moving, as the simulating NPC does.
+
+  Measured with two players, a copy stands on average 0.2–0.9 m from the simulating NPC. Brief
+  4–7 m gaps remain while the NPC sprints to new cover.
+- **One grenade per throw.** Only the simulating copy throws. Every other player sees and hears
+  the blast where it actually went off, and a player caught in it takes the damage (kind
+  `explosion`). There is no second grenade from a copy and no replayed "ghost" blast.
+- **Clean takeover.** When the simulating player leaves, the NPC passes to another nearby player,
+  whose copy is first placed on the NPC's real position, so the NPC does not jump. A player who
+  disconnects hands over at once. A client that freezes or crashes keeps its NPCs for about 10 s
+  first, so that an ordinary hitch does not move them.
+
+The simulating client is chosen by the server (nearest ready client, or spread across players);
+`onNpcAuthorityChanged` reports each change.
+
+### NPC hits on players
+
+Each player's own client reports the NPC hits **it** takes, because only the victim's machine sees
+an NPC's shot meet that player's body with the game's own accuracy. Before this, hits were judged
+on the simulating client, where shots at another player's remote body almost never landed: NPCs
+rarely hurt anyone but the player simulating them.
+
+For an NPC whose loadout sets `combat.authoritativePlayerHits = true`, every accepted hit reaches
+the resource that owns the NPC:
+
+```lua
+AddEventHandler("onNpcPlayerHit", function(npcId, victimId, damage, kind, epoch, authorityPlayerId) end)
+```
+
+Nothing has been applied yet: price the hit and apply it yourself. `damage` is the game's price on
+the victim's machine. `kind` is `firearm`, `melee`, `explosion` or `unknown`. As with every server
+resource event, all arguments are strings.
+
+The server accepts a report only:
+
+- from the NPC's simulating client, or from the player the NPC is fighting (with a 3 s grace after
+  a target switch, for a shot already in flight);
+- for a living NPC within 150 m of the victim, in the same routing bucket;
+- up to 40 hits a second per victim, with `damage` clamped to 250.
+
+The simulating client may also report a blast from its own NPC's grenade on another player, within
+40 m. Refusals are counted, never raised.
+
+```lua
+local VICTIM_HITS = Open77.npcs.victimHits == true
+
+AddEventHandler("onNpcPlayerHit", function(npcId, victimId, damage, kind)
+    if not VICTIM_HITS or not myEnemies[npcId] then return end
+    Open77.players.damage(tonumber(victimId), math.min(tonumber(damage), 40),
+        { attacker = npcId, cause = "firearm" })
+end)
+```
+
+`Open77.npcs.victimHits` is `true` on a server that raises `onNpcPlayerHit`. Older resources
+relayed the client event `open77:npcPlayerHit` from the simulating client to their server script.
+When the flag is set, **stop that relay**, or the simulating player's own hits count twice. The
+bundled Cordon gamemode and Light RP switch automatically.
+
 ## Health, damage and death
 
 ```lua
@@ -736,6 +817,7 @@ AddEventHandler("onNpcAuthorityChanged", function(npcId, playerId, epoch, reason
 AddEventHandler("onNpcDamaged", function(npcId, source, amount, health, cause) end)
 AddEventHandler("onNpcDied", function(npcId, source, cause) end)
 AddEventHandler("onNpcTargetChanged", function(npcId, kind, targetId, previousKind, previousTargetId) end)
+AddEventHandler("onNpcPlayerHit", function(npcId, victimId, damage, kind, epoch, authorityPlayerId) end)
 AddEventHandler("onNpcInteracted", function(npcId, playerId, interactionId, choiceId, distance) end)
 ```
 
@@ -878,8 +960,11 @@ damage-resistance modifier that would reduce the same hit twice.
 - Server persistence storage is resource-defined; `persistent=true` only changes cleanup policy.
 - Records outside `Character.*`, raw REDengine handles and client-side canonical mutation are
   unsupported. A valid Character record may still depend on unavailable DLC/assets or quest logic.
-- Native attack/shoot/melee/combat tasks are not in the stable API yet. Use server-authoritative
-  scripted damage until animation, targeting and hit validation are proven safe for each rig.
+- Native shoot/melee commands are not exposed; `attack` leaves the firing to the game's combat AI.
+- Copies on other players' screens run their own combat AI near the simulating NPC: their exact
+  steps, cover and stance can differ slightly. A copy's shot counts only when it hits the player
+  whose machine runs it; its shots at other players' remote bodies are ignored. See
+  [Combat with several players](#combat-with-several-players).
 - Native authored patrol paths (`NodeRef`) are not exposed; Open77 patrols sequence `moveTo` tasks.
 - A client authority lease is required for native navigation. With no ready client, tasks suspend
   and resume when authority becomes available.

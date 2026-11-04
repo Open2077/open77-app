@@ -154,6 +154,9 @@ The value must be one of these two strings; anything else returns `npc_behavior_
 `Open77.npcs.getBehavior(id).hitPricing` reads it back. The bundled Cordon, Deathmatch and
 Freeroam PvP bots state `"resource"` explicitly.
 
+The other direction, an NPC hitting a player, is covered in
+[NPC hits on players](npcs.md#npc-hits-on-players).
+
 Damage no player caused is always reported by the client that simulates the NPC: environment,
 falls, fire, explosions without a player instigator, and the NPC's own grenade. Vehicle collisions
 are not player hits; opt in to [vehicle contact damage](#vehicle-contact-damage) for those.

@@ -796,8 +796,8 @@
       "target": "content/docs/npc-behavior.md",
       "slug": "npc-behavior",
       "title": "NPC AI, combat and voice control",
-      "bytes": 15988,
-      "sha256": "ba9e71caba580ea6534038648d58c6876922bdee4f73b437c66cb29b6747bd23",
+      "bytes": 16101,
+      "sha256": "66169fb7a7663bada24a3248145d5b72c900214ccac27fe36eb453da257960df",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2fa2bb7f9aed3b7e76d80f865e4b08a40955985e3bb33a3971944202973deb1",
@@ -825,8 +825,8 @@
       "target": "content/docs/npcs.md",
       "slug": "npcs",
       "title": "Server-owned NPCs",
-      "bytes": 48518,
-      "sha256": "d9a2562126a2bded90bfc5072c5fa3d90304bfa058a6853d871756a0e3e36211",
+      "bytes": 53308,
+      "sha256": "4e7a886ec89dd4b1e5e28598957e2e22cc171285064a65c5d316b9c52c7713e0",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "86fc7f6b93c095495ee619f115b25139cc339e179cd0e8affac49448f2ac9f52",
