@@ -688,7 +688,7 @@ frame — see
 
 ## Sandbox and quotas
 
-Default client limits apply per resource, except the frame budget, which is shared by the client host. Clients without these capabilities may use lower limits; require the appropriate runtime for resources that depend on them.
+Default client limits apply per resource, except the frame budget, which is shared by the client host, and the WebUI page pool, which is shared by all of the server's resources. Clients without these capabilities may use lower limits; require the appropriate runtime for resources that depend on them.
 
 | Limit | Value |
 |---|---|
@@ -698,7 +698,7 @@ Default client limits apply per resource, except the frame budget, which is shar
 | Scheduled tasks | 3,072 |
 | Event handlers | 6,144 |
 | WebUI handlers | 1,536 |
-| WebUI surfaces | 24 |
+| WebUI pages | 24 per resource (`webui_surface_limit`), and 32 per client for all of the server's resources together, Open77's own included (`webui_surface_quota`). The client's built-in pages have a separate pool. See [WebUI budget](webui-budget.md) |
 | Lua source size | 12 MiB per file |
 | `readFile` result | 3 MiB |
 | Lua files in a resource | 3,072 (including `open77.lua`) |

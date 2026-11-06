@@ -3,8 +3,8 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 111,
-  "apiEntries": 1769,
+  "guides": 112,
+  "apiEntries": 1771,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -1635,9 +1635,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1769,
-      "bytes": 2565716,
-      "sha256": "74db1c02c67af4a0f806c28c1b31794baa601f38dbaf1277d3a3444df46eb5a1",
+      "entries": 1771,
+      "bytes": 2570521,
+      "sha256": "7c1e3269473dec1049cf08072baca656301c5499eb453730d54cd0881d26407e",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6",
@@ -1655,7 +1655,8 @@
         "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved.",
         "predictionSync": "Vendored from open77-base 36772b3b88404ffa9467bb2d06fcf1abd47568d9 through scripts/doc-api-editorial.json. Preserved site entries: the eight drive-by cards (not on that revision), the four SVG blip cards, named CreateVehicle/ResetVehiclePaint/SetVehicleTransform parameters, and the permission-free Open77.markers.shapes. Open77.prediction.setPolicy/stats carry reviewed signatures and examples from ResourceHost.cpp.",
         "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved.",
-        "w3InputActions": "Open77.input.setActionBlocked lists Melee, Jump, Sprint and WeaponWheel, and Open77.movement.setWalkMode tells how to hold a player to the pace (block Sprint); both from open77-base feat/wave3-jobs a56f501e (wiki/data/api.json). Other site wording preserved."
+        "w3InputActions": "Open77.input.setActionBlocked lists Melee, Jump, Sprint and WeaponWheel, and Open77.movement.setWalkMode tells how to hold a player to the pace (block Sprint); both from open77-base feat/wave3-jobs a56f501e (wiki/data/api.json). Other site wording preserved.",
+        "webuiBudget": "Merged two cards from the uncommitted open77-base feat/webui-surface-budget wiki/data/api.json (base 65ff0bc0, sha256 a80cb987566f6ccb): client:Open77.webui.budget and server:Open77.vehicles.positions. Every other site entry is preserved; the upstream file lacks 26 site cards, so it was not copied whole."
       },
       "stable152Amendment": "See stable152Documentation for reviewed dual-wield and cosmetic cyberware contracts."
     },
@@ -2293,6 +2294,22 @@
         "sourceRevision": "6a071fdc5f55526cc8fc8d02411fb896ea4c76aa",
         "sourceWorkingTreeDirty": true,
         "sharedAssetsAmendment": "Expanded from the implemented resource asset contract with complete provider and consumer examples, compatibility requirements, origin checks, caching, limits and troubleshooting."
+      }
+    },
+    {
+      "target": "content/docs/webui-budget.md",
+      "source": "wiki/webui-budget.md",
+      "slug": "webui-budget",
+      "title": "WebUI budget and performance",
+      "bytes": 8294,
+      "sha256": "27cb7c44aacdab8a4a6aa05eeeed28f8328ee462bb0fb7b26339881224d2a3a1",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "ccca3879ab7a30a9dab8de78b66490b8778664fbbfd09b468c4915d81d1a564e",
+        "sourceRevision": "65ff0bc0637316b593ba87e1862ef732b6ac0733",
+        "sourceBranch": "feat/webui-surface-budget",
+        "sourceWorkingTreeDirty": true,
+        "webuiBudgetAmendment": "New guide from the uncommitted open77-base wiki/webui-budget.md (surface pools, refusal log, Open77.webui.budget). Site copy links the Lua API reference instead of the unpublished wiki/webui.md."
       }
     },
     {

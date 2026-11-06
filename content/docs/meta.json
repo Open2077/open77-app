@@ -977,6 +977,13 @@
           "description": "Share images, CSS, JavaScript, fonts and data between resource interfaces with open77://. Provider and consumer manifests, URL rules, caching, limits and troubleshooting."
         },
         {
+          "slug": "webui-budget",
+          "kind": "guide",
+          "nav": "WebUI budget",
+          "title": "WebUI budget and performance",
+          "description": "What one WebUI page costs at each resolution, the 24-per-resource limit, the 32 pages a server's resources share and the separate pool for built-in pages, reading a `webui_surface_quota` refusal, `WebUI.budget()`, and keeping a big server inside the budget."
+        },
+        {
           "slug": "notifications",
           "kind": "guide",
           "nav": "Notifications",
