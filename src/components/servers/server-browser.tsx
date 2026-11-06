@@ -867,26 +867,28 @@ function ServerRow({
       {server.featured && server.banner ? <ServerImage src={server.banner} kind="banner" className={styles.rowBanner} /> : null}
       <ServerImage src={server.icon} kind="icon" className={styles.thumb} fallback={<BrandTile />} />
       <div className={styles.identity}>
-        {preview ? (
-          <button type="button" className={styles.rowLink} onClick={onSelect} title={plainLauncherText(server.name)}>
-            <span className={styles.name} data-server-name><ServerText text={server.name} /></span>
-          </button>
-        ) : (
-          <NextLink
-            className={styles.rowLink}
-            data-server-link
-            href={`/servers/${server.id}`}
-            aria-label={`Select ${plainLauncherText(server.name)}`}
-            title={plainLauncherText(server.name)}
-            onNavigate={(event) => {
-              event.preventDefault();
-              onSelect();
-            }}
-          >
-            <span className={styles.name} data-server-name><ServerText text={server.name} /></span>
-          </NextLink>
-        )}
-        {server.featured || server.official || server.withMods ? <span className={styles.rowBadges}><ServerBadges server={server} /></span> : null}
+        <span className={styles.titleLine}>
+          {preview ? (
+            <button type="button" className={styles.rowLink} onClick={onSelect} title={plainLauncherText(server.name)}>
+              <span className={styles.name} data-server-name><ServerText text={server.name} /></span>
+            </button>
+          ) : (
+            <NextLink
+              className={styles.rowLink}
+              data-server-link
+              href={`/servers/${server.id}`}
+              aria-label={`Select ${plainLauncherText(server.name)}`}
+              title={plainLauncherText(server.name)}
+              onNavigate={(event) => {
+                event.preventDefault();
+                onSelect();
+              }}
+            >
+              <span className={styles.name} data-server-name><ServerText text={server.name} /></span>
+            </NextLink>
+          )}
+          {server.featured || server.official || server.withMods ? <span className={styles.rowBadges}><ServerBadges server={server} /></span> : null}
+        </span>
         {description ? <span className={styles.desc} data-server-description title={description}>{description}</span> : null}
       </div>
       <span className={cx(styles.players, styles[popClass(server)])}>

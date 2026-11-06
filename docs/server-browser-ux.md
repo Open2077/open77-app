@@ -14,13 +14,15 @@ in `src/components/servers/`; the shared site header stays visible and usable.
   each group **and** to the featured cards. Most players is the default;
   featured order only breaks ties. Featured and regular rows share the same
   subtle dividers, with no purple separator between groups.
-- Desktop rows are 38px tall with 28px icons. Names, badges and descriptions
-  share a single line; descriptions use all remaining width before the player
-  count, truncate when necessary and expose the complete text on hover.
+- Desktop rows are 64px tall with 38px icons, a little larger than the FiveM
+  directory at 1080p and above (60px rows, 30px icons, 15px names). Each row
+  has two lines: the name (16px bold) with its badges, then the description
+  (13px), which uses all remaining width before the player count, truncates
+  when necessary and exposes the complete text on hover.
   Player counts, recorded peaks, region flags and favorites stay aligned.
   There is no per-row Connect button: click a row to open its details and join.
-  Narrow layouts keep compact rows, hiding descriptions, then badges as space
-  decreases; full information remains available in the drawer.
+  Narrow layouts hide descriptions, then badges as space decreases; full
+  information remains available in the drawer.
 - Featured rows use a subdued banner fading to transparent. Compact cards scroll
   away with the list; on phones they scroll horizontally rather than consuming
   multiple rows above the directory. View all expands the featured selection.

@@ -388,7 +388,7 @@
 
 /* One grid for the head and every row, so the columns line up. */
 .table {
-  --cols: 28px minmax(0, 1fr) 100px 86px 30px;
+  --cols: 38px minmax(0, 1fr) 120px 96px 36px;
   background: oklch(from var(--surface-1) l c h / 0.88);
   border: 1px solid var(--line);
   position: relative;
@@ -409,7 +409,7 @@
 .row {
   grid-template-columns: var(--cols);
   align-items: center;
-  column-gap: 12px;
+  column-gap: 16px;
   display: grid;
 }
 .columns {
@@ -424,9 +424,9 @@
     linear-gradient(oklch(from var(--surface-1) l c h / 0.88), oklch(from var(--surface-1) l c h / 0.88)),
     var(--body);
   border-bottom: 1px solid var(--line);
-  min-height: 28px;
-  padding: 4px 12px;
-  font-size: 0.58rem;
+  min-height: 36px;
+  padding: 6px 16px;
+  font-size: 0.66rem;
   transition: top 0.35s var(--ease-out-expo);
   position: sticky;
   top: var(--sticky-top);
@@ -446,7 +446,7 @@
   letter-spacing: -0.05em;
   color: var(--tone);
   margin-left: 0.4em;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   font-style: italic;
   font-weight: 500;
 }
@@ -455,7 +455,7 @@
   text-transform: none;
   letter-spacing: 0;
   color: var(--text-faint);
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-style: normal;
 }
 .colPlayers {
@@ -478,11 +478,11 @@
   cursor: pointer;
   scroll-margin-top: calc(var(--sticky-top) + 2.6rem);
   scroll-margin-bottom: 1rem;
-  padding: 4px 12px;
+  padding: 10px 16px;
   transition: background-color var(--transition-link);
   position: relative;
   isolation: isolate;
-  min-height: 38px;
+  min-height: 64px;
 }
 .row + .row {
   border-top: 1px solid var(--line);
@@ -516,13 +516,21 @@
   bottom: 0;
 }
 .thumb {
-  width: 28px;
-  height: 28px;
-  font-size: 0.7rem;
+  width: 38px;
+  height: 38px;
+  font-size: 0.85rem;
 }
+/* Two lines, like the FiveM directory: name and badges, then the description. */
 .identity {
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  display: flex;
+}
+.titleLine {
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   min-width: 0;
   display: flex;
   overflow: hidden;
@@ -540,21 +548,23 @@
 .name {
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 18px;
+  font-size: 16px;
+  font-weight: 700;
+  /* The body pins the variable font's axis; font-weight alone would not apply. */
+  font-variation-settings: "wght" 700;
+  line-height: 21px;
   transition: color var(--transition-link);
   display: block;
   overflow: hidden;
 }
 .desc {
-  flex: 1 1 0;
   min-width: 0;
   color: var(--text-dim);
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 18px;
+  display: block;
   overflow: hidden;
 }
 .rowBadges {
@@ -567,27 +577,31 @@
   gap: 4px;
 }
 .rowBadges :global([data-badge]) {
-  padding: 1px 4px;
-  font-size: 8px;
+  padding: 2px 5px;
+  font-size: 9.5px;
   line-height: 1.2;
   letter-spacing: .04em;
 }
 .locale {
   min-width: 0;
-  font-size: 10px;
+  font-size: 12px;
+}
+.locale svg {
+  width: 22px;
+  height: auto;
 }
 .near {
   color: var(--tone);
 }
 .players {
   flex-direction: column;
-  gap: 0;
+  gap: 3px;
   display: flex;
 }
 .players :global([data-server-peak]) {
   color: var(--text-dim);
-  font-size: 9px;
-  line-height: 11px;
+  font-size: 12px;
+  line-height: 15px;
 }
 .players :global([data-server-peak]) > span {
   display: none;
@@ -603,13 +617,14 @@
 }
 .count b {
   font-family: var(--font-main);
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 700;
-  line-height: 15px;
+  font-variation-settings: "wght" 700;
+  line-height: 20px;
 }
 .count span {
   color: var(--text-faint);
-  font-size: 11px;
+  font-size: 13px;
 }
 .pop-low .count b {
   color: var(--text-dim);
@@ -631,9 +646,9 @@
   flex: none;
   justify-content: center;
   align-items: center;
-  width: 28px;
-  height: 28px;
-  font-size: 1rem;
+  width: 34px;
+  height: 34px;
+  font-size: 1.2rem;
   transition: color var(--transition-link);
   display: flex;
 }
@@ -668,43 +683,45 @@
 /* Columns follow the directory width, including its collapsible filter rail. */
 @container list (max-width: 1060px) {
   .table {
-    --cols: 28px minmax(0, 1fr) 90px 70px 30px;
+    --cols: 38px minmax(0, 1fr) 104px 80px 34px;
   }
 }
 @container list (max-width: 760px) {
-  .table { --cols: 28px minmax(0, 1fr) 70px 30px; }
-  .row, .columns { column-gap: 8px; }
+  .table { --cols: 38px minmax(0, 1fr) 88px 34px; }
+  .row, .columns { column-gap: 12px; }
   .locale, .colLocale { display: none; }
 }
 @container list (max-width: 620px) {
   .desc { display: none; }
-  .row { min-height: 44px; }
+  .row { min-height: 56px; }
 }
 @container list (max-width: 480px) {
-  .table { --cols: 28px minmax(0, 1fr) 62px 28px; }
-  .row, .columns { padding-inline: 8px; }
+  .table { --cols: 32px minmax(0, 1fr) 72px 30px; }
+  .row, .columns { padding-inline: 10px; column-gap: 10px; }
+  .thumb { width: 32px; height: 32px; }
+  .name { font-size: 15px; }
   .rowBadges { display: none; }
 }
 
 .featuredSection { margin: 0 0 1rem; }
 .featuredSection header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: .65rem; }
-.featuredSection h2 { border-left: 3px solid var(--tone); padding-left: .65rem; font: 600 .68rem var(--font-nippo); text-transform: uppercase; letter-spacing: .08em; }
+.featuredSection h2 { border-left: 3px solid var(--tone); padding-left: .65rem; font: 600 .76rem var(--font-nippo); text-transform: uppercase; letter-spacing: .08em; }
 .featuredSection h2 span { color: var(--text-dim); margin-left: .5rem; }
-.featuredSection header button { font-size: .68rem; color: var(--text-dim); }
+.featuredSection header button { font-size: .76rem; color: var(--text-dim); }
 .featuredSection header button:hover { color: var(--tone); }
 .featuredCards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; }
-.featuredCard { position: relative; isolation: isolate; display: flex; gap: .75rem; align-items: center; text-align: left; min-width: 0; min-height: 80px; border: 1px solid var(--line-strong); padding: .6rem .8rem; background: var(--surface-1); transition: border-color .2s; overflow: hidden; }
+.featuredCard { position: relative; isolation: isolate; display: flex; gap: .75rem; align-items: center; text-align: left; min-width: 0; min-height: 92px; border: 1px solid var(--line-strong); padding: .75rem 1rem; background: var(--surface-1); transition: border-color .2s; overflow: hidden; }
 .featuredCard:hover { border-color: #d3a2ff; }
 .featuredCard .featuredArt { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; opacity: .5; }
 .featuredCard:before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #050d16cc, #050d1633), linear-gradient(0deg, #050d1699, transparent); }
-.featuredIcon { width: 40px; height: 40px; flex: none; }
-.featuredIdentity { display: flex; flex-direction: column; gap: .3rem; min-width: 0; flex: 1; }
-.featuredIdentity > strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: .9rem; }
-.featuredIdentity > span:not(:last-child) { font-size: .67rem; color: var(--text-dim); }
+.featuredIcon { width: 48px; height: 48px; flex: none; }
+.featuredIdentity { display: flex; flex-direction: column; gap: .35rem; min-width: 0; flex: 1; }
+.featuredIdentity > strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.05rem; font-weight: 700; font-variation-settings: "wght" 700; }
+.featuredIdentity > span:not(:last-child) { font-size: .8rem; color: var(--text-dim); }
 .featuredIdentity b { color: var(--text-primary); }
 .featuredArrow { font-size: 1.5rem; }
 .row .rowBanner { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: .25; pointer-events: none; mask-image: linear-gradient(90deg, #000 0%, #0009 45%, transparent 85%); }
-@container list (max-width: 920px) { .featuredCards { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: min(85%, 320px); overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: .5rem; } .featuredCard { min-height: 80px; padding: .6rem .8rem; scroll-snap-align: start; } }
+@container list (max-width: 920px) { .featuredCards { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: min(85%, 320px); overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: .5rem; } .featuredCard { min-height: 84px; padding: .65rem .85rem; scroll-snap-align: start; } }
 
 /* Narrow layouts -------------------------------------------------------- */
 
