@@ -59,9 +59,9 @@ try {
   }
   await call("Page.enable"); await call("Runtime.enable");
   await call("Page.addScriptToEvaluateOnNewDocument", { source: `
-    window.__hostTest = {mode:localStorage.getItem('host-test-mode') || 'alpha', meCalls:0};
+    window.__hostTest = {mode:localStorage.getItem('host-test-mode') || 'alpha', meCalls:0, licenseRequests:[], adminMutations:0};
     const account = {accountId:'11111111-2222-4333-8444-555555555555',email:'preview@example.test',
-      displayName:'Preview developer',role:'user',emailVerified:true,identities:[]};
+      displayName:'Open Alpha developer',role:'user',emailVerified:__hostTest.mode!=='unverified',identities:[]};
     if (__hostTest.mode === 'guest') localStorage.removeItem('open77.session');
     else localStorage.setItem('open77.session',JSON.stringify({...account,role:__hostTest.mode==='admin'?'admin':'user',
       token:'synthetic-host-ui-token',expiresAtUtc:'2036-09-11T00:00:00Z'}));
@@ -69,6 +69,20 @@ try {
     window.fetch = async (input, init) => {
       const url = new URL(typeof input === 'string' ? input : input.url || input, location.href);
       if (!url.pathname.startsWith('/api/v1/')) return originalFetch(input, init);
+      if (url.pathname.startsWith('/api/v1/admin/alpha-access')) {
+        if (init?.method === 'POST') { __hostTest.adminMutations++; return Response.json({code:'blocked_test_mutation'},{status:403}); }
+        return Response.json({alphaAccessRequired:false,page:1,pageSize:25,total:1,items:[{
+          ...account,status:'active',alphaAccess:false,alphaAccessImplicit:false,createdAtUtc:'2026-11-06T00:00:00Z',
+          grantedAtUtc:null,grantedByAccountId:null,grantedByEmail:null
+        }]});
+      }
+      if (url.pathname === '/api/v1/accounts/licenses') {
+        if (init?.method !== 'POST') return Response.json([]);
+        __hostTest.licenseRequests.push(JSON.parse(init.body));
+        if (!account.emailVerified) return Response.json({code:'email_unverified'},{status:403});
+        return Response.json({licenseId:'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee',label:JSON.parse(init.body).label,
+          key:'synthetic-license-for-browser-test-only',keyHint:'test-only',createdAtUtc:new Date().toISOString()},{status:201});
+      }
       if (url.pathname !== '/api/v1/accounts/me')
         return new Response(JSON.stringify({code:'test_only'}),{status:403,headers:{'Content-Type':'application/json'}});
       __hostTest.meCalls++;
@@ -121,14 +135,14 @@ try {
     assert.equal(await evaluate(`document.querySelector('[data-release-channel="server"]').dataset.releaseVersion`), serverRelease.version);
     assert.deepEqual((await evaluate(downloadLinks)).sort(), Object.values(serverRelease.builds).map(build => downloadUrl(build.url)).sort(), "Host offers exactly the current CDN archives");
     for (const url of await evaluate(downloadLinks)) assert.ok(url.startsWith(`${cdn}/server/`));
-    assert.ok(await evaluate(`!document.querySelector('[data-host-locked]')`), "Approved non-admin sees downloads");
-    assert.ok(await evaluate("__hostTest.meCalls > 0"), "Approval comes from a fresh /me response");
+    assert.ok(await evaluate(`!document.querySelector('[data-host-locked]')`), "Public downloads are visible");
+    assert.equal(await evaluate("__hostTest.meCalls"), 0, "Public downloads never request account approval");
     await evaluate(`document.getElementById('download').scrollIntoView()`);
     await pause(150);
     assert.ok(await evaluate(`Array.from(document.querySelectorAll('#download [data-release-channel="server"] a[href*="/server/"]')).every(a=>{
       const r=a.getBoundingClientRect(); return r.width>0 && r.left>=0 && r.right<=innerWidth+1;
     })`), "Download buttons fit viewport");
-    await fs.writeFile(path.join(output, `approved-${width}.png`), Buffer.from((await call("Page.captureScreenshot")).data, "base64"));
+    await fs.writeFile(path.join(output, `open-alpha-${width}.png`), Buffer.from((await call("Page.captureScreenshot")).data, "base64"));
     const previewLinks = `Array.from(document.querySelectorAll('[data-release-channel="server-unstable"] a[href*="/server/"]')).map(a=>a.href)`;
     assert.deepEqual(await evaluate(previewLinks), [], "Unstable links absent before consent");
     await evaluate(`document.querySelector('[data-server-preview] summary').click()`);
@@ -143,22 +157,39 @@ try {
   await waitFor(() => evaluate(`!!document.querySelector('[data-server-download] a[href="/host"]')`));
   for (const mode of ["member", "guest", "failure", "expired", "admin"]) {
     await visit("/host", mode);
-    if (mode === "admin") await waitFor(() => evaluate(`(${downloadLinks}).length===2`));
-    else {
-      await waitFor(() => evaluate(`!!document.querySelector('[data-host-locked]')`));
-      assert.deepEqual(await evaluate(downloadLinks), [], `${mode} must not see archive buttons`);
-      if (mode === "failure") {
-        assert.ok(await evaluate(`document.querySelector('[data-host-locked]').textContent.includes('Unable to verify')`));
-        await evaluate(`__hostTest.mode='alpha';document.querySelector('[data-host-locked] button').click()`);
-        await waitFor(() => evaluate(`(${downloadLinks}).length===2`));
-      }
-    }
+    await waitFor(() => evaluate(`(${downloadLinks}).length===2`));
+    assert.ok(await evaluate(`!document.querySelector('[data-host-locked], [data-auth-panel]')`), `${mode}: public downloads`);
+    assert.equal(await evaluate("__hostTest.meCalls"), 0, `${mode}: no account lookup needed`);
+    assert.deepEqual((await evaluate(downloadLinks)).sort(), Object.values(serverRelease.builds).map(build => downloadUrl(build.url)).sort());
   }
   await visit("/account", "member");
   await waitFor(() => evaluate(`!!document.querySelector('[data-account-overview]')`));
-  assert.ok(await evaluate(`!document.querySelector('[data-server-download]')`));
+  assert.ok(await evaluate(`!!document.querySelector('[data-server-download] a[href="/host"]')`));
+
+  await visit("/account/keys", "member");
+  await waitFor(() => evaluate(`Array.from(document.querySelectorAll('button')).some(b=>b.textContent.trim()==='New key'&&!b.disabled)`));
+  await evaluate(`Array.from(document.querySelectorAll('button')).find(b=>b.textContent.trim()==='New key').click()`);
+  await waitFor(() => evaluate(`!!document.querySelector('[data-key-form] input')`));
+  await evaluate(`const input=document.querySelector('[data-key-form] input');
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(input,'Open Alpha test server');
+    input.dispatchEvent(new Event('input',{bubbles:true}));`);
+  await waitFor(() => evaluate(`!document.querySelector('[data-key-form] button[type="submit"]').disabled`));
+  await evaluate(`document.querySelector('[data-key-form]').requestSubmit()`);
+  await waitFor(() => evaluate(`!!document.querySelector('[data-key-reveal]')`));
+  assert.deepEqual(await evaluate(`__hostTest.licenseRequests`), [{ label: "Open Alpha test server" }], "Ordinary verified account without an Alpha grant can create a license");
+
+  await visit("/account/keys", "unverified");
+  await waitFor(() => evaluate(`Array.from(document.querySelectorAll('button')).some(b=>b.textContent.trim()==='New key'&&b.disabled)`));
+  assert.deepEqual(await evaluate(`__hostTest.licenseRequests`), [], "Email verification remains required for licensing");
+  await visit("/account/keys", "guest");
+  await waitFor(() => evaluate(`!!document.querySelector('[data-auth-panel]')`));
+  assert.ok(await evaluate(`!document.querySelector('[data-key-form], [data-key-reveal]')`), "Private license management still requires sign-in");
+  await visit("/admin/alpha-access", "admin");
+  await waitFor(() => evaluate(`document.body.textContent.includes('Open Alpha is active') && !!document.querySelector('tbody tr')`));
+  assert.ok(await evaluate(`!Array.from(document.querySelectorAll('main button')).some(b=>/^(Grant|Revoke)$/.test(b.textContent.trim()))`), "Historical grants cannot be edited when Open Alpha is active");
+  assert.equal(await evaluate(`__hostTest.adminMutations`), 0);
   assert.deepEqual(errors, []);
-  console.log("PASS: download page shows independent live launcher/server versions; host links match current CDN; refresh preserves scroll; alpha/admin and other account gates; desktop/mobile; no hydration errors.");
+  console.log("PASS: public downloads for guests, ordinary accounts, admins and failed/expired sessions; desktop/mobile; current CDN versions; no hydration errors; verified non-Alpha account creates a license; private keys and email verification remain protected.");
   await call("Browser.close").catch(() => {});
 } finally {
   socket?.close();

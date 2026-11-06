@@ -198,8 +198,8 @@ export default function DesignSystemPage() {
 
       <Section eyebrow="Feedback" title="Notices and empty states">
         <div style={{ display: "grid", gap: "1rem" }}>
-          <Notice title="Alpha access required">
-            Use <code>/alpha apply</code> on our Discord to play, host and build.
+          <Notice title="Open Alpha is here">
+            Download the launcher, host a server and build with Lua. No access application is needed.
           </Notice>
           <Notice kind="warning" title="Directory unreachable" action={<Button size="sm" lines="none" border>Retry</Button>}>
             The master server did not answer. Showing the last known list.

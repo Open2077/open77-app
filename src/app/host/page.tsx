@@ -15,8 +15,7 @@ import {
   UnavailableRelease,
 } from "@/components/downloads/product-blocks";
 import { ProductHero } from "@/components/downloads/product-hero";
-import { HostGate } from "@/components/host/host-gate";
-import { ServerBuilds, ServerBuildsPreview } from "@/components/host/server-builds";
+import { ServerBuilds } from "@/components/host/server-builds";
 import { UnstableDownloads } from "@/components/host/unstable-downloads";
 import { JsonLd } from "@/components/json-ld";
 import { ReleaseRefresh } from "@/components/release-refresh";
@@ -36,12 +35,9 @@ export const metadata: Metadata = {
   ...pageMetadata({
     title: "Host a Server",
     description:
-      "Everyone with Alpha access can download the OPEN//77 server for Windows or Linux and build a custom Cyberpunk 2077 gamemode. No separate developer application or game install on the host.",
+      "Download the OPEN//77 server for Windows or Linux and build a custom Cyberpunk 2077 gamemode. Open Alpha is available to everyone. No approval or game install on the host.",
     path: "/host",
   }),
-  // Server downloads are exposed to Alpha accounts and staff. Keep this
-  // account-gated page out of search results until access is unrestricted.
-  robots: { index: false, follow: false },
 };
 
 const IN_THE_ARCHIVE = [
@@ -84,7 +80,7 @@ const SETUP_STEPS = [
     body: (
       <p>
         Open the game and resource-download ports, then start the configured server. Public servers register with the master
-        so Alpha players can discover and join them.
+        so players can discover and join them.
       </p>
     ),
   },
@@ -106,21 +102,21 @@ const REQUIREMENTS = [
   },
   {
     title: "Your players still need the game",
-    body: `Everyone who connects needs ${PLAYER_REQUIREMENT_SHORT} on their own machine, plus Alpha access. Hosting changes nothing about that.`,
+    body: `Everyone who connects needs ${PLAYER_REQUIREMENT_SHORT} on their own machine and a free OPEN//77 account. No access application is needed.`,
   },
 ];
 
 const QUESTIONS = [
   {
-    q: "Do I need special developer access?",
-    a: "No. Everyone with Alpha access can download and run the server. Sign in with your Alpha-enabled OPEN//77 account to see the archives. No separate developer application, project review or staff role.",
+    q: "Do I need approval to host a server?",
+    a: "No. Open Alpha server downloads are public, with no sign-in or approval required. Create a free OPEN//77 account and verify your email to generate a server license key. No developer application or staff role is needed.",
   },
   {
-    q: "I am signed in but see no downloads.",
+    q: "The server downloads are unavailable.",
     a: (
       <>
-        Check that the account you are signed in with is the one with Alpha access, then use “Check access again”. To
-        request access, use <code>/alpha apply</code> in any channel on our Discord.
+        Downloads are public. If the release service is temporarily unavailable, refresh this page or check the{" "}
+        <Link href="/status">service status</Link>. You do not need an account or an access grant to see the archives.
       </>
     ),
   },
@@ -185,8 +181,8 @@ export default async function HostPage() {
         accent={[1]}
         lead={
           <>
-            Everyone with Alpha access can download the dedicated server and start building. No separate developer
-            application. License it to your account and create your own gamemode. The host machine never needs{" "}
+            Download the dedicated server and start building in Open Alpha. No access application or approval is needed.
+            License it to your account and create your own gamemode. The host machine never needs{" "}
             <strong>Cyberpunk&nbsp;2077</strong> installed.
           </>
         }
@@ -198,7 +194,7 @@ export default async function HostPage() {
             facts={[
               { icon: windowsGlyph, label: "Windows server", value: "64-bit · .zip archive" },
               { icon: linuxGlyph, label: "Linux server", value: "64-bit · .tar.gz archive" },
-              { icon: userGroup, label: "Who can download", value: "Every Alpha account, and staff" },
+              { icon: userGroup, label: "Who can download", value: "Everyone · no sign-in needed" },
               { icon: serverStack01, label: "Runs on", value: "Your hardware or a rented machine" },
             ]}
           />
@@ -243,12 +239,10 @@ export default async function HostPage() {
             ))}
           </ul>
         </div>
-        <HostGate preview={release ? <ServerBuildsPreview release={release} /> : null}>
-          {release ? <ServerBuilds release={release} /> : <UnavailableRelease kind="server" />}
-          <UnstableDownloads key={unstable?.version ?? "unavailable"} available={Boolean(unstable)}>
-            {unstable ? <ServerBuilds release={unstable} /> : null}
-          </UnstableDownloads>
-        </HostGate>
+        {release ? <ServerBuilds release={release} /> : <UnavailableRelease kind="server" />}
+        <UnstableDownloads key={unstable?.version ?? "unavailable"} available={Boolean(unstable)}>
+          {unstable ? <ServerBuilds release={unstable} /> : null}
+        </UnstableDownloads>
         <ReleaseStatus
           className={styles.status}
           note="Stable is recommended. Unstable is a separate, opt-in server channel for testing; the launcher has its own version."

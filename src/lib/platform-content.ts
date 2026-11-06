@@ -76,7 +76,7 @@ export const SERVER_POINTS = [
   },
   {
     title: "Operated by communities",
-    body: "Everyone with Alpha access can download the Windows or Linux server, configure their platform license and build their own worlds. No separate developer application is required. Players need Alpha access to join.",
+    body: "Anyone can download the Windows or Linux server, create a license with a verified account and build their own worlds. Open Alpha needs no access application or approval.",
   },
 ];
 
@@ -168,7 +168,7 @@ export const ROADMAP = [
     stage: "NOW",
     chip: "ALPHA",
     title: "Build and test today",
-    body: "Launcher and Windows/Linux server packages, Freeroam, a live server browser, WebUI and documented client/server Lua APIs. Everyone with Alpha access can start building without a separate developer application.",
+    body: "Launcher and Windows/Linux server packages, Freeroam, a live server browser, WebUI and documented client/server Lua APIs. Everyone can start building in Open Alpha without an application or approval.",
   },
   {
     stage: "NEXT",
@@ -228,12 +228,12 @@ export const FAQ = [
   {
     question: "Can I play it right now?",
     answer:
-      "Yes, with Alpha access. Download the launcher and sign in with your approved OPEN//77 account to join a server. Need access? Use the bot command /alpha apply in any channel on our official Discord. Alpha can still have bugs, crashes and incomplete features; this is not a stable release.",
+      "Yes. Open Alpha is available to everyone. Download the launcher and sign in with your free OPEN//77 account to join a server. No access application or approval is needed. Alpha can still have bugs, crashes and incomplete features; this is not a stable release.",
   },
   {
     question: "Can I host my own server?",
     answer:
-      "Yes. Everyone with Alpha access can download the Windows or Linux server and start developing, with no separate developer application or special access required. The Freeroam template and system resources are included. Follow the hosting guide, configure your license and reachable endpoints, and invite other Alpha players.",
+      "Yes. Anyone can download the Windows or Linux server and start developing. Downloads are public; a free account with a verified email lets you create a license key. The Freeroam template and system resources are included. Follow the hosting guide, configure your license and reachable endpoints, and invite your community.",
   },
   {
     question: "What can server creators actually customize?",

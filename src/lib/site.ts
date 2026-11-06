@@ -30,10 +30,10 @@ export const site = {
   locale: "en_US",
   lang: "en",
   themeColor: "#080E19",
-  stage: "ALPHA",
-  stageLabel: "Alpha",
+  stage: "OPEN ALPHA",
+  stageLabel: "Open Alpha",
   alphaNotice:
-    "Everyone with Alpha access can download the server and start building. No separate developer application is required. Need Alpha access? Use /alpha apply in any channel on our Discord. Expect bugs and API changes during Alpha.",
+    "Open Alpha is available to everyone. Download the launcher, host your own server and build with Lua. No access application or approval is needed. Expect bugs and API changes during Alpha.",
   tagline: "Cyberpunk 2077 multiplayer. Find a world to play in, or build your own.",
   description:
     "OPEN//77 lets you play Cyberpunk 2077 online on community servers, or create your own server and multiplayer experience. Roleplay, racing, combat, freeroam: pick a world, press connect.",
@@ -45,9 +45,8 @@ export const site = {
     "OPEN//77 is an open, community-run multiplayer platform for Cyberpunk 2077. It is not a single " +
     "server: it is the client, dedicated server and scripting layer that lets communities host and " +
     "script their own persistent Night City worlds. This site documents the platform and its Lua API, " +
-    "and hosts the live server browser. Everyone with Alpha access can download the Windows or Linux server " +
-    "and build a custom gamemode without a separate developer application. To request Alpha access, use " +
-    "/alpha apply in any channel on the official Discord. " +
+    "and hosts the live server browser. Open Alpha is available to everyone: download the launcher, " +
+    "host a Windows or Linux server and build a custom gamemode. No access application or approval is needed. " +
     "APIs and features may change. The project is unaffiliated with CD PROJEKT RED.",
   disclaimer:
     "OPEN//77 is an unofficial, independent community project. It is not affiliated with, endorsed by, " +
@@ -99,9 +98,8 @@ export function absoluteUrl(pathname: string): string {
 /**
  * Primary navigation, shared by the header, the mobile menu and the sitemap.
  *
- * `/download` leads to the current launcher. Download availability is separate
- * from permission to join a server: Alpha access remains approved
- * per account, and the download page makes that distinction explicit.
+ * `/download` leads to the current launcher. Open Alpha needs no access grant;
+ * accounts identify players and own server licenses.
  */
 export const mainNav = [
   { href: "/download", label: "Download" },

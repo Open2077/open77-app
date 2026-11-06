@@ -111,7 +111,7 @@ try {
   await fill('[name=verification-code]','v'.repeat(43));await submit();await delay(500);
   check('verify then sign in restores account dashboard',await evaluate("return !!localStorage.getItem('open77.session')&&!document.querySelector('[data-account-mode=guest]')&&!!document.querySelector('[data-account-overview]');"));
   check('account shortcuts use supported routes and a real identities anchor',await evaluate(`return ['/account/keys','#identities','/download#get','/host','/docs','/account/profile','/account/github','/account/connections','/forgot-password'].every(href=>[...document.querySelectorAll('[data-account-overview] a')].some(a=>a.getAttribute('href')===href))&&!!document.querySelector('#identities');`));
-  check('unapproved account is not presented as Alpha and has an honest empty state',await evaluate("return !document.querySelector('[data-server-download]')&&!!document.querySelector('[data-account-empty]')&&document.querySelector('[data-account-status]').textContent==='Platform account';"));
+  check('account without an old grant can host in Open Alpha',await evaluate("return !!document.querySelector('[data-server-download]')&&!!document.querySelector('[data-account-empty]')&&document.querySelector('[data-account-status]').textContent==='Open Alpha';"));
   await shot('account-dashboard-empty');
   await signedOut();
   await evaluate("window.__authScenario='auto-verified';window.__authCalls=[];[...document.querySelectorAll('[role=tab]')].find(b=>b.textContent.includes('Create')).click();");await delay(150);
@@ -120,7 +120,7 @@ try {
   await signedOut();await evaluate("window.__authScenario='ok';");
   await evaluate("window.__testAccount={...window.__testAccount,displayName:'Night City Builder',alphaAccess:true,identities:[{userId:'qa-client-8a619d8c',displayName:'My game client',linkedAtUtc:'2026-09-15T15:00:00Z'},{userId:'qa-client-d9d78981',displayName:'Second client',linkedAtUtc:'2026-09-17T16:00:00Z'}]};");
   await signedIn();await delay(400);await resize(1680);await shot('account-dashboard-desktop');
-  check('live profile, identity count and Alpha entitlement are shown',await evaluate("return !!document.querySelector('[data-server-download]')&&document.querySelector('[data-identity-count]').textContent==='2'&&document.querySelectorAll('#identities li').length===2&&document.querySelector('#account-pass-title').textContent.includes('Night City Builder');"));
+  check('live profile, identity count and public server download are shown',await evaluate("return !!document.querySelector('[data-server-download]')&&document.querySelector('[data-identity-count]').textContent==='2'&&document.querySelectorAll('#identities li').length===2&&document.querySelector('#account-pass-title').textContent.includes('Night City Builder');"));
   for(const width of [1680,1440,1100,1024,820,760,420,375,320]){
     await resize(width);await delay(100);
     check('account '+width+'px fits',await evaluate("return window.__fits()&&document.querySelectorAll('main').length===1;"));
@@ -190,7 +190,7 @@ try {
     for(const width of [1440,375,320]) {await resize(width);await delay(100);check(route.split('?')[0]+' '+width+'px fits',await evaluate("return window.__fits()&&document.querySelectorAll('main').length===1;"));}
   }
   await resize(1440);await visit('/host');
-  check('embedded host sign-in keeps new fields',await evaluate("return !!document.querySelector('[data-auth-panel] [name=email]')&&!!document.querySelector('[data-reveal]');"));
+  check('host downloads do not require a sign-in form',await evaluate("return !document.querySelector('[data-auth-panel]')&&document.querySelectorAll('#download [data-release-channel=server] a[href*=\"/server/\"]').length===2;"));
   }
   await resize(1440);
   await visit('/account');await signedIn();await delay(200);

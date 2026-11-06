@@ -537,7 +537,7 @@ try {
         check(`Alpha ${route} ${width}px has no page overflow`, await session.evaluate("return document.documentElement.scrollWidth <= innerWidth;"));
         check(`Alpha ${route} ${width}px has current access guidance`, await session.evaluate(`
           const text = document.body.innerText;
-          return text.includes('/alpha apply') && !/developer[ -]?preview|preview access|join preview/i.test(text) &&
+          return /open alpha/i.test(text) && !/alpha apply|developer[ -]?preview|preview access|join preview/i.test(text) &&
             !document.querySelector('a[href*="docs.google.com/forms"]');
         `));
         reportConsole(`Alpha ${route} ${width}px`);
@@ -549,54 +549,11 @@ try {
       }
     }
     await session.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
-    for (const fixture of [
-      { name: "approved non-staff", role: "user", storedRole: "user", alphaAccess: true, allowed: true },
-      { name: "staff", role: "admin", storedRole: "admin", alphaAccess: false, allowed: true },
-      { name: "unapproved", role: "user", storedRole: "user", alphaAccess: false, allowed: false },
-      { name: "stale stored admin", role: "user", storedRole: "admin", alphaAccess: false, allowed: false },
-      { name: "master unavailable", role: "user", storedRole: "user", alphaAccess: true, allowed: false, offline: true },
-      { name: "signed out", allowed: false, signedOut: true },
-    ]) {
-      // Browser-only fixtures: /me is intercepted before fetch so no fake token
-      // reaches the real master, and no account or production policy is changed.
-      const { identifier } = await session.send("Page.addScriptToEvaluateOnNewDocument", { source: `
-        (() => {
-          const fixture = ${JSON.stringify(fixture)};
-          localStorage.removeItem('open77.session');
-          if (!fixture.signedOut) localStorage.setItem('open77.session', JSON.stringify({
-            token: 'host-access-browser-fixture', accountId: 'host-fixture',
-            expiresAtUtc: new Date(Date.now() + 3600000).toISOString(),
-            displayName: 'Alpha test', role: fixture.storedRole, emailVerified: true
-          }));
-          const originalFetch = window.fetch.bind(window);
-          window.fetch = async (input, init) => {
-            const url = typeof input === 'string' ? input : input.url;
-            if (new URL(url, location.href).pathname === '/api/v1/accounts/me') {
-              if (fixture.offline) throw new TypeError('Simulated unavailable master');
-              return new Response(JSON.stringify({accountId:'host-fixture', displayName:'Alpha test',
-                role:fixture.role, alphaAccess:fixture.alphaAccess, alphaGateActive:true,
-                email:'alpha@example.test', emailVerified:true, identities:[]}),
-                {status:200, headers:{'Content-Type':'application/json'}});
-            }
-            return originalFetch(input, init);
-          };
-        })();
-      ` });
-      try {
-        await visit("/host");
-        const access = await session.evaluate(`
-          for (let i=0; i<50 && document.querySelector('.ac-loading'); i++) await new Promise(r => setTimeout(r, 100));
-          return { downloads: document.querySelectorAll('a[href*="cdn.open2077.net/server/"]').length,
-            locked: !!document.querySelector('.host-locked'), text: document.body.innerText };
-        `);
-        check(`host gate: ${fixture.name}`, fixture.allowed ? access.downloads >= 2 && !access.locked : access.downloads === 0 && access.locked);
-        if (fixture.offline) check("host gate reports an availability error", access.text.includes("Unable to verify Alpha access."));
-        if (!fixture.allowed) check(`host gate ${fixture.name} explains Discord access`, access.text.includes('/alpha apply'));
-        reportConsole(`host gate ${fixture.name}`);
-      } finally {
-        await session.send("Page.removeScriptToEvaluateOnNewDocument", { identifier });
-      }
-    }
+    await visit("/host");
+    check("public server downloads are visible without sign-in", await session.evaluate(`
+      return document.querySelectorAll('#download [data-release-channel="server"] a[href*="/server/"]').length === 2 &&
+        !document.querySelector('[data-auth-panel], [data-host-locked]');
+    `));
     await session.evaluate("localStorage.removeItem('open77.session');");
   }
 

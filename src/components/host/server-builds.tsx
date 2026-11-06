@@ -6,7 +6,6 @@ import { Tag } from "@/components/ui/chip";
 import { cx } from "@/components/ui/cx";
 import { DefinitionList } from "@/components/ui/data";
 import { Icon } from "@/components/ui/icon";
-import { lock } from "@/components/ui/icons";
 import { Display, Eyebrow } from "@/components/ui/typography";
 import { formatBytes, formatReleaseDate } from "@/lib/cdn";
 import type { ServerBuild, ServerRelease } from "@/lib/server-release";
@@ -47,31 +46,6 @@ export function ServerBuilds({ release }: { release: ServerRelease }) {
         {release.builds.map((build) => (
           <BuildCard key={build.platform} build={build} unstable={unstable} />
         ))}
-      </ul>
-    </div>
-  );
-}
-
-/** What the gate keeps closed: the version and its platforms, with no download links. */
-export function ServerBuildsPreview({ release }: { release: ServerRelease }) {
-  return (
-    <div className={styles.preview}>
-      <span className={styles.previewLabel}>
-        Latest stable · <span className={styles.previewVersion}>{release.version}</span>
-      </span>
-      <ul className={styles.previewList}>
-        {release.builds
-          .filter((build) => build.url)
-          .map((build) => (
-            <li key={build.platform}>
-              <Icon glyph={build.os === "windows" ? windowsGlyph : linuxGlyph} />
-              <span>
-                {build.label} · .{build.archiveKind}
-                {build.sizeBytes !== null ? ` · ${formatBytes(build.sizeBytes)}` : ""}
-              </span>
-              <Icon glyph={lock} className={styles.previewLock} />
-            </li>
-          ))}
       </ul>
     </div>
   );

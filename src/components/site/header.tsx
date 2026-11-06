@@ -40,7 +40,7 @@ const MORE = [
   { label: "Workshop", href: "/workshop" },
   { label: "Host a server", href: "/host" },
   { label: "Lua API", href: "/docs/api" },
-  { label: "Alpha access", href: "/docs/alpha-access" },
+  { label: "Open Alpha", href: "/docs/alpha-access" },
 ] as const;
 
 /** Destinations for quick navigation (Ctrl / ⌘ K). */
@@ -48,7 +48,7 @@ const SHORTCUTS = [
   { href: "/servers", title: "Server browser", detail: "Every community server, live", keywords: "browse roleplay racing pvp servers" },
   { href: "/download", title: "Download launcher", detail: "Signs you in, checks your game, installs the mod", keywords: "play client windows install" },
   { href: "/create", title: "Create a server", detail: "Run your own Night City", keywords: "build host hosting" },
-  { href: "/host", title: "Download dedicated server", detail: "Windows & Linux · Alpha access", keywords: "hosting release" },
+  { href: "/host", title: "Download dedicated server", detail: "Windows & Linux · public downloads", keywords: "hosting release" },
   { href: "/docs", title: "Documentation", detail: "Play, host and build: every guide", keywords: "help learn tutorial lua" },
   { href: "/docs/api", title: "Lua API reference", detail: "Search the client and server APIs", keywords: "functions vehicles players native scripting" },
   { href: "/workshop", title: "Workshop", detail: "Community resources, ready to install", keywords: "resources scripts mods library" },
@@ -56,7 +56,7 @@ const SHORTCUTS = [
   { href: "/dev-tracker", title: "Dev Tracker", detail: "Ideas, community votes and development progress", keywords: "roadmap feedback suggestions forum" },
   { href: "/status", title: "Service status", detail: "Live health, uptime and incidents", keywords: "outage availability cdn master downloads maintenance" },
   { href: "/devblog", title: "Devblog", detail: "What shipped, one post per working day", keywords: "news updates" },
-  { href: "/docs/alpha-access", title: "Alpha access", detail: "/alpha apply on Discord to play, host and build", keywords: "apply discord join access" },
+  { href: "/docs/alpha-access", title: "Open Alpha", detail: "Play, host and build — no application needed", keywords: "getting started account play host lua" },
   { href: "/account", title: "Account", detail: "Profile, keys, saved servers and creations", keywords: "login sign in profile settings" },
 ];
 

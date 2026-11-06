@@ -79,7 +79,7 @@ export function Creators() {
       id="creators"
       tone="blue"
       title={TITLE}
-      description="Run a dedicated server that stays online for your community, with your rules, your mods, and gameplay you design. Everyone with Alpha access can download it and start building now. No separate developer application."
+      description="Run a dedicated server that stays online for your community, with your rules, your mods, and gameplay you design. Downloads are public. Create a license key with your verified account and start building in Open Alpha."
       background={{ src: "/home/img/creators-bg.webp", alt: "Creators", width: 2524, height: 1176 }}
       character={{ src: "/home/img/creators-character.webp", alt: "Creators", width: 1261, height: 1253 }}
       buttons={

@@ -131,7 +131,7 @@ export function AlphaAccessPanel() {
   const { token, data, setData, error, setError, loading } = useAdminData(load);
 
   async function setAccess(row: AlphaAccessRow, granted: boolean) {
-    if (!token) return;
+    if (!token || !data?.alphaAccessRequired) return;
     setError(null);
     setPending((current) => [...current, row.accountId]);
     setData((current) =>
@@ -167,7 +167,7 @@ export function AlphaAccessPanel() {
 
   return (
     <AdminPanel
-      title="Alpha access"
+      title="Access history"
       icon={ticket01}
       brackets
       actions={
@@ -181,11 +181,8 @@ export function AlphaAccessPanel() {
       }
       footnote={
         <>
-          Alpha access is an entitlement, not a role: it lets somebody join a world and grants no
-          staff powers. Administrators hold it implicitly through their role, so those rows show
-          access with no granter. Granting one explicitly anyway is what survives a later demotion,
-          and revoking one only clears that explicit record while the role keeps them in. Both
-          actions are idempotent and land in the audit log.
+          These are historical per-account grants. Open Alpha does not require a grant to play, host or build.
+          Account suspensions, bans, server ownership and community admission rules still apply.
         </>
       }
     >
@@ -193,7 +190,7 @@ export function AlphaAccessPanel() {
       <ErrorStrip message={error} />
 
       <Toolbar>
-        <Filters label="Filter by access">
+        <Filters label="Filter historical grants">
           {FILTERS.map((option) => (
             <Chip
               key={option.value}
@@ -220,21 +217,21 @@ export function AlphaAccessPanel() {
           {query
             ? `No account matches “${query}”.`
             : filter === "granted"
-              ? "No account holds alpha access yet."
+              ? "No historical grant matches this filter."
               : filter === "withheld"
-                ? "Every account already has alpha access."
+                ? "Every account has a historical grant or an administrator role."
                 : "There are no accounts."}
         </EmptyBlock>
       ) : null}
 
       {data && data.items.length > 0 ? (
-        <AdminTable caption="Alpha access by account" minWidth="62rem">
+        <AdminTable caption="Historical access grants by account" minWidth="62rem">
           <thead>
             <tr>
               <th>Account</th>
               <th>Role</th>
               <th>Status</th>
-              <th>Alpha access</th>
+              <th>Historical grant</th>
               <th>Granted by</th>
               <th>Granted</th>
               <th className={cell.actions}>Actions</th>
@@ -245,6 +242,7 @@ export function AlphaAccessPanel() {
               <AccessRow
                 key={row.accountId}
                 row={row}
+                gateActive={data.alphaAccessRequired}
                 busy={pending.includes(row.accountId)}
                 onSet={(granted) => setAccess(row, granted)}
               />
@@ -267,27 +265,28 @@ export function AlphaAccessPanel() {
 function GateBanner({ required }: { required: boolean }) {
   if (required) {
     return (
-      <Notice kind="info" title="The alpha gate is on.">
-        Only the accounts listed here as having access can join a world; everyone else can install,
-        sign in and stay updated, and is refused when their client asks for a connect ticket.
+      <Notice kind="warning" title="The master still enforces access grants.">
+        Open Alpha should not require approval. Disable AlphaAccessRequired in the master configuration
+        to let all eligible accounts join; changing an individual grant does not open access for everyone.
       </Notice>
     );
   }
   return (
-    <Notice kind="warning" title="The alpha gate is off, so grants decide nothing today.">
-      Every signed-in account can join a world regardless of this list. Grants made here are still
-      recorded and take effect the moment the gate is switched on in the master configuration, but
-      granting one now lets nobody in who was not already in.
+    <Notice kind="success" title="Open Alpha is active — no approval needed.">
+      Players can join without a historical grant. Server downloads are public and every verified account
+      can create license keys. This list is kept for reference; grant actions are disabled in Open Alpha.
     </Notice>
   );
 }
 
 function AccessRow({
   row,
+  gateActive,
   busy,
   onSet,
 }: {
   row: AlphaAccessRow;
+  gateActive: boolean;
   busy: boolean;
   onSet: (granted: boolean) => void;
 }) {
@@ -316,7 +315,7 @@ function AccessRow({
       </td>
       <td>
         <Stack>
-          {row.alphaAccess ? <StatusTag status="ok">access</StatusTag> : <StatusTag status="neutral">no access</StatusTag>}
+          {row.alphaAccess ? <StatusTag status="ok">recorded</StatusTag> : <StatusTag status="neutral">none</StatusTag>}
           {row.alphaAccessImplicit ? <Sub plain>via admin role{explicit ? " + granted" : ""}</Sub> : null}
         </Stack>
       </td>
@@ -327,7 +326,7 @@ function AccessRow({
         <Mono tone="dim">{row.grantedAtUtc ? formatDateTime(row.grantedAtUtc) : "—"}</Mono>
       </td>
       <td className={cell.actions}>
-        {explicit ? (
+        {!gateActive ? <Sub plain>Open Alpha</Sub> : explicit ? (
           <ArmButton label="Revoke" confirmLabel="Confirm revoke?" disabled={busy} onConfirm={() => onSet(false)} />
         ) : (
           <Button size="sm" color="neutral" border lines="none" disabled={busy} onClick={() => onSet(true)}>

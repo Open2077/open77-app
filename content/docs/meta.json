@@ -19,9 +19,9 @@
           "slug": "alpha-access",
           "kind": "guide",
           "source": "authored",
-          "nav": "Alpha access & building",
-          "title": "Alpha access: play, host and build",
-          "description": "Everyone with Alpha access can download the server and build a custom gamemode. Request Alpha access with /alpha apply on Discord, then explore hosting, Lua APIs and the changelog."
+          "nav": "Open Alpha: get started",
+          "title": "Open Alpha: play, host and build",
+          "description": "Play, host a server and build with Lua in Open Alpha. Public downloads, free accounts and server licenses without an access application or approval."
         },
         {
           "slug": "platform",

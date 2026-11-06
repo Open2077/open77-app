@@ -34,11 +34,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const marketing: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), changeFrequency: "monthly" },
-    // `/download` is listed and indexable again, together with its `robots`
-    // metadata and its navigation entries — the three go as one set. `/host` is
-    // still absent: the dedicated-server download stays behind its gate.
-    // Weekly, because the page's content is a release pointer, not prose.
+    // Both public download pages follow the current release pointers.
     { url: absoluteUrl("/download"), changeFrequency: "weekly" },
+    { url: absoluteUrl("/host"), changeFrequency: "weekly" },
     { url: absoluteUrl("/servers"), changeFrequency: "daily" },
     { url: absoluteUrl("/status"), changeFrequency: "hourly" },
     { url: absoluteUrl("/dev-tracker"), changeFrequency: "daily" },

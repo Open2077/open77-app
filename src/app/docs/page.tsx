@@ -214,7 +214,7 @@ export default async function DocsHomePage() {
           <Image src="/home/img/server-custom-worlds.webp" alt="" fill sizes="(max-width: 1084px) 100vw, 60vw" quality={75} className={styles.alphaArt} />
           <div className={styles.alphaCopy}>
             <Eyebrow>
-              <span className={styles.liveDot} aria-hidden="true" /> Alpha access · Build now
+              <span className={styles.liveDot} aria-hidden="true" /> Open Alpha · Build now
             </Eyebrow>
             <Display size="lg" id="docs-alpha-title" lines={["It’s time", "to build."]} accent={[1]} />
             <p className={styles.alphaText}>{site.alphaNotice}</p>
@@ -223,7 +223,7 @@ export default async function DocsHomePage() {
                 Download server
               </Button>
               <Link className={styles.headLink} href="/docs/alpha-access">
-                Alpha guide <Icon glyph={arrowRight01} />
+                Open Alpha guide <Icon glyph={arrowRight01} />
               </Link>
             </div>
           </div>

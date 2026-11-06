@@ -252,7 +252,7 @@ export function Keymaster({ session, serverLaunch }: { session: StoredSession; s
         id="keys"
         eyebrow={licenses ? `${active} active · ${licenses.length - active} revoked` : "License keys"}
         title="License keys"
-        lead="Only you see the labels. Each key registers one dedicated server with the platform."
+          lead="Every verified account can create keys in Open Alpha. Each key registers one dedicated server; no access application or approval is needed. Only you see its label."
         actions={
           !createOpen ? (
             <Button lines="none" icon={add01} iconPosition="left" disabled={!emailVerified} onClick={() => setCreateOpen(true)}>

@@ -4,6 +4,9 @@ date: "2026-08-30"
 description: "OPEN//77's Cyberpunk 2077 multiplayer mod added major third-person progress, launcher fixes, and new server tools for Cyberpunk 2077 online."
 tags: ["cyberpunk-2077-multiplayer", "cyberpunk-2077-multiplayer-mod", "cp2077-multiplayer", "cyberpunk-2077-dedicated-server", "night-city-online"]
 ---
+
+> **Open Alpha update — November 6, 2026:** This post describes an earlier release. OPEN//77 is now available to everyone: play, host and build without an access application or approval. See the [Open Alpha guide](/docs/alpha-access) for current instructions.
+
 OPEN//77 had a very player-visible day. The biggest headline is that the new third-person system for our **Cyberpunk 2077 multiplayer mod** has now been merged and verified in live multiplayer sessions, while the launcher also picked up several fixes for failed starts, stuck connecting states, and interrupted downloads.
 
 ## Third-person multiplayer is now merged and proven in live sessions

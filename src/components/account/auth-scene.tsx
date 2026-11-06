@@ -99,9 +99,9 @@ export function AuthFootnote({ notes }: { notes?: string[] }) {
         </ul>
       ) : null}
       <p className={styles.alpha}>
-        <span>Creating an account is free. Alpha access is a separate step to play and host.</span>{" "}
+        <span>Create a free account to play and host. Open Alpha needs no access approval.</span>{" "}
         <SmartLink href="/docs/alpha-access" className={styles.alphaLink}>
-          How Alpha access works
+          Get started in Open Alpha
           <Icon glyph={arrowRight01} />
         </SmartLink>
       </p>

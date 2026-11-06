@@ -161,18 +161,17 @@ const QUESTIONS = [
     a: (
       <>
         Hosting is a different download. A dedicated server never needs Cyberpunk 2077 installed and does not use this
-        launcher. Start at <Link href="/create">Create a Server</Link>, then <Link href="/host">download the server</Link> with your
-        Alpha account.
+        launcher. Start at <Link href="/create">Create a Server</Link>, then <Link href="/host">download the server</Link>.
+        The archives are public; a free account with a verified email lets you create its license key.
       </>
     ),
   },
   {
-    q: "Does downloading give me Alpha access?",
+    q: "Do I need to apply before playing?",
     a: (
       <>
-        No. The download is public; joining a server needs an Alpha-enabled OPEN//77 account. Request access with{" "}
-        <code>/alpha apply</code> in any channel on our Discord, and read the <Link href="/docs/alpha-access">Alpha guide</Link>{" "}
-        before your first connection.
+        No. Open Alpha is available to everyone. Download the launcher, sign in with your free OPEN//77 account and join a
+        community server. Read the <Link href="/docs/alpha-access">Open Alpha guide</Link> for setup and requirements.
       </>
     ),
   },
@@ -219,36 +218,33 @@ export default async function DownloadPage() {
         </div>
         <div className={styles.heroLinks}>
           <JumpLink href="#requirements">What you need</JumpLink>
-          <JumpLink href="#alpha">Alpha access</JumpLink>
+          <JumpLink href="#alpha">Open Alpha</JumpLink>
           <ArrowLink href="/docs/launcher">Launcher guide</ArrowLink>
         </div>
       </ProductHero>
 
       <Section
         id="alpha"
-        eyebrow="Access & release channels"
-        title={["Free to download.", "Alpha to play."]}
+        eyebrow="Open Alpha · Play, host and build"
+        title={["Night City", "is open."]}
         lead={
           <>
-            Joining a server requires an <strong>Alpha-enabled OPEN//77 account</strong>; downloading does not grant access.
-            Every Alpha member can also download the dedicated server and start building, without an extra application.
+            Download the launcher and sign in with your <strong>free OPEN//77 account</strong> to play.
+            You can also host a server and build your own gamemode. No access application or approval is needed.
           </>
         }
       >
         <div className={styles.channels}>
           <ArtCard
             image="/home/img/server-roleplay.webp"
-            sub="Alpha access"
-            title="Play and build with Alpha access."
+            sub="Open Alpha"
+            title="Play, host and build today."
             href="/docs/alpha-access"
-            action="Read the Alpha guide"
+            action="Read the Open Alpha guide"
           >
             <p>
-              Need access? Use <code>/alpha apply</code> in any channel on our{" "}
-              <a href={DISCORD} target="_blank" rel="noreferrer noopener" className={styles.inlineLink}>
-                Discord
-              </a>
-              . Sign in to the launcher with the account you applied with, and the server browser opens up.
+              Create an account, let the launcher verify your game and choose a community server.
+              Ready to create? Download the dedicated server and explore the Lua and WebUI documentation.
             </p>
           </ArtCard>
           <div id="server" data-release-channel="server" data-release-version={serverRelease?.version}>
@@ -264,7 +260,7 @@ export default async function DownloadPage() {
             >
               <p>
                 {serverRelease
-                  ? "Ready-to-play Freeroam and system resources, with the .NET runtime included. No Cyberpunk 2077 installation required on the host. Available to everyone with Alpha access."
+                  ? "Ready-to-play Freeroam and system resources, with the .NET runtime included. No Cyberpunk 2077 installation required on the host. Public downloads for everyone."
                   : "We couldn’t verify the latest server release from the CDN. No older build is substituted; the page checks again automatically."}
               </p>
             </ArtCard>
@@ -344,8 +340,7 @@ export default async function DownloadPage() {
           <a href={DISCORD} target="_blank" rel="noreferrer noopener">
             Discord
           </a>{" "}
-          is where you can request access with <code>/alpha apply</code>, report reproducible issues and follow the changelog
-          once you have Alpha access.
+          is where you can get help, report reproducible issues, meet other creators and follow the changelog.
         </Notice>
       </Section>
 

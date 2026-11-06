@@ -17,7 +17,7 @@ export const HOSTING_DESCRIPTION =
   "Install and configure an OPEN//77 dedicated server on Windows or Linux: downloads, license keys, first-run setup, network endpoints and startup.";
 
 export const HOSTING_LEDE =
-  "Everyone with Alpha access can download and run a dedicated server, with no separate developer application. Configure its license and reachable endpoints, then invite Alpha players. Cyberpunk 2077 is not required on the host.";
+  "Anyone can download and run a dedicated server in Open Alpha. Create a license with a verified account, configure reachable endpoints and invite your community. Cyberpunk 2077 is not required on the host.";
 
 export const HOSTING_OVERVIEW =
   "The dedicated server is a self-contained Windows or Linux application. It uses a platform license to register with the Master and publish its name, endpoint and status. Public, eligible servers appear in the directory; private or hidden servers do not.";

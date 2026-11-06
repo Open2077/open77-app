@@ -313,8 +313,8 @@ npm run verify:served    # the built site, over HTTP and in a real browser
 ### Download release freshness
 
 `/download` shows the **launcher** and **dedicated server** as separate channels.
-`/host` keeps the Alpha account gate and offers the Windows/Linux
-archives. Each channel reads its own CDN `latest.json` at request time, with
+`/host` offers public Windows/Linux archives, without a sign-in or entitlement
+check. Each channel reads its own CDN `latest.json` at request time, with
 `no-store` and a bounded timeout. These two pages are not build-time/ISR release
 snapshots; publishing a pointer updates them without redeploying the website.
 Only metadata for immutable, versioned artefacts is cached.
@@ -347,6 +347,27 @@ After `npm run build` and `npm start`, run
 rendered versions/links against the live CDN and check preview gates, manual
 refresh, hydration and desktop/mobile layouts. Browser account responses are
 synthetic: this test uses no production credentials.
+
+### Open Alpha access
+
+Playing, hosting and developing no longer require an Alpha application or grant.
+The account dashboard, onboarding, documentation and public download pages reflect
+that policy. `/docs/alpha-access` remains the stable URL for the Open Alpha guide,
+including old links and Markdown consumers. `/host` is indexable and in the sitemap.
+
+The master controls joining through `Master.AlphaAccessRequired`; production was
+verified with this flag **false** on November 6, 2026. Its license API already
+allows ordinary accounts with verified emails to create keys, without an Alpha
+entitlement or staff role. Sign-in, email verification, license ownership, quotas,
+bans and server-specific admission rules continue to apply. The administrative
+access page retains historical grants but disables grant actions while the master
+reports Open Alpha.
+
+`npm run verify:alpha` checks the current policy text and public entry points.
+The host browser check above covers anonymous downloads, old accounts without a
+grant, expired sessions, account API failures and license creation with a synthetic
+ordinary verified account. It also checks that unverified accounts cannot create
+keys and signed-out visitors cannot see private license management.
 
 Zero-config on Vercel: framework detection handles the build, and there is deliberately no
 `vercel.json`. Redirects, rewrites, headers and image settings all live in `next.config.ts`, which

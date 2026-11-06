@@ -1,31 +1,26 @@
-# Alpha access: play, host and build
+# Open Alpha: play, host and build
 
-Everyone with Alpha access can download the OPEN//77 dedicated server and start building a custom Cyberpunk 2077 gamemode. Roleplay, PvP, Battle Royale, Racing, Survival or something entirely your own: use the Lua APIs and resources to create your experience in Night City.
+OPEN//77 is in **Open Alpha**, available to everyone. Download the launcher to play, host your own server, or build a custom Cyberpunk 2077 gamemode with Lua and WebUI. No access application, invitation or staff approval is needed.
 
-No separate developer application, project review or special developer access is required. Alpha remains an early-access release, not a stable release or unrestricted public access. Expect bugs, crashes, incomplete features and breaking API changes.
+Open Alpha is still an early release, not a stable release. Expect bugs, crashes, incomplete features and breaking API changes.
 
-## Get access
+## Get started
 
-**Already have Alpha access?** Sign into your [OPEN//77 account](/account), [download the server](/host) and start building. You do not need to apply again.
+1. [Download the launcher](/download) and create or sign in to your free [OPEN//77 account](/account).
+2. Let the launcher verify your game installation and install the multiplayer update.
+3. Choose a community server, or [download the dedicated server](/host) to create your own.
 
-If you do not have Alpha access yet:
+Both launcher and server downloads are public. You do not need to join Discord or request access before using them. The [official Discord](https://discord.open2077.net) is there for support, release updates and meeting other players and creators.
 
-1. Join the [official Discord](https://discord.open2077.net).
-2. Use the bot command `/alpha apply` in any channel and follow its instructions.
-3. Once Alpha access is enabled on your account, use that account on the site and in the launcher.
-
-Creating an account or downloading the launcher alone does not grant Alpha access. Alpha members also have access to the Discord changelog channel for release updates.
-
-Approval is checked when joining a world. The live directory and launcher download
-are available before approval; `/host` enables server downloads for Alpha
-accounts and staff. A server license identifies a hosted server;
-it does not grant player access to the account using it. Individual servers can
-also enforce their own admission rules.
+A free account with a verified email can create [server license keys](/account/keys).
+There is no developer role, project review or Alpha entitlement to obtain. A license
+identifies the server and its owner. Individual servers can still enforce their own
+admission rules, such as a password or community whitelist.
 
 ## Install and connect
 
 Use the [official launcher download](/download). Playing requires your own legal
-copy of **Cyberpunk 2077 2.31 with Phantom Liberty**, on 64-bit Windows 10 or 11.
+copy of **Cyberpunk 2077 2.5 with Phantom Liberty**, on 64-bit Windows 10 or 11.
 Let the launcher verify your installation and apply the current multiplayer update.
 
 Select a world in the [live server directory](/servers), or use **Direct Connect**
@@ -33,7 +28,7 @@ in the launcher with a hostname/IP and port. **History** keeps confirmed connect
 including local development servers. Local/private addresses are hidden from the
 launcher's normal server list, not from History or Direct Connect.
 
-Direct Connect does not bypass account approval, connection tickets or server rules.
+Direct Connect uses the same account authentication, connection tickets and server rules.
 An address absent from the master directory can have an unknown availability status;
 that is not proof that the server is offline.
 

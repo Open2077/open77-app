@@ -57,7 +57,7 @@ const NAV = [
   { href: "/admin/resources", label: "Workshop review", group: "Access & safety", icon: store01, note: "Review community project pages and inspected package releases." },
   { href: "/admin/resources/reports", label: "Workshop reports", group: "Access & safety", icon: flag02, note: "Investigate community reports and record moderation outcomes." },
   { href: "/admin/users", label: "Accounts", group: "Access & safety", icon: users, note: "Find accounts, inspect roles and manage access to the network." },
-  { href: "/admin/alpha-access", label: "Alpha access", group: "Access & safety", icon: ticket01, note: "Manage Alpha grants and inspect the current access gate." },
+  { href: "/admin/alpha-access", label: "Access history", group: "Access & safety", icon: ticket01, note: "Historical grants and current Open Alpha configuration." },
   { href: "/admin/ncwe-beta", label: "NCWE beta", group: "Access & safety", icon: beaker, note: "Review closed beta applications for the world editor; accepting gives the Discord role." },
   { href: "/admin/game-ownership", label: "Genuine whitelist", group: "Access & safety", icon: checkmarkBadge01, note: "Approve game access for individual accounts and review linked stores." },
   { href: "/admin/licenses", label: "Licenses", group: "Access & safety", icon: key01, note: "Server ownership, license status and revocation controls." },

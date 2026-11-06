@@ -39,9 +39,9 @@ export function DemoDataNotice({ scope = "listings" }: { scope?: "listings" | "p
         </button>
       </p>
       <p className={styles.note} id={noteId} hidden={!expanded}>
-        This view uses illustrative demo data. Its player counts, pings and communities are not real. Alpha is
-        active; use the <Link href="/servers">live directory</Link> for actual listings. Joining a world requires an
-        approved account.
+        This view uses illustrative demo data. Its player counts, pings and communities are not real. Use the{" "}
+        <Link href="/servers">live directory</Link> for actual listings. Open Alpha is available to everyone;
+        sign in with your OPEN//77 account to join a world.
       </p>
     </div>
   );

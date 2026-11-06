@@ -4,6 +4,9 @@ date: "2026-09-10"
 description: "OPEN//77 improved its Cyberpunk 2077 multiplayer mod with launcher diagnostics, direct connect, crash reporting, and sturdier server sync."
 tags: ["cyberpunk-2077-multiplayer", "cyberpunk-2077-multiplayer-mod", "cp2077-multiplayer", "cyberpunk-2077-dedicated-server"]
 ---
+
+> **Open Alpha update — November 6, 2026:** This post describes an earlier release. OPEN//77 is now available to everyone: play, host and build without an access application or approval. See the [Open Alpha guide](/docs/alpha-access) for current instructions.
+
 OPEN//77 had a very practical day: better first-run experience in the launcher, better protection against multiplayer session breakage, and stronger tools for diagnosing multiplayer problems. For anyone following our **Cyberpunk 2077 multiplayer mod**, this update is less about flashy content and more about making **Cyberpunk 2077 online** feel smoother and more dependable.
 
 ## Launcher improvements that make joining easier

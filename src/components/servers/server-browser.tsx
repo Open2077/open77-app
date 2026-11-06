@@ -797,7 +797,7 @@ export function ServerBrowser({
               ) : null}
               <p className={styles.hints} aria-hidden="true">
                 {featured.length ? <>Featured first · </> : null}
-                <kbd>↑</kbd> <kbd>↓</kbd> select · <kbd>Enter</kbd> connect · <kbd>/</kbd> search · Alpha access
+                <kbd>↑</kbd> <kbd>↓</kbd> select · <kbd>Enter</kbd> connect · <kbd>/</kbd> search · Open Alpha
                 required to play and host · <NextLink href="/download">Need the launcher?</NextLink>
               </p>
             </>

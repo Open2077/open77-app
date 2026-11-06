@@ -22,7 +22,7 @@ import styles from "./create.module.css";
 
 export const metadata = pageMetadata({
   title: "Create a Server",
-  description: `Everyone with Alpha access can download the OPEN//77 server and build a custom Cyberpunk 2077 gamemode. No separate developer application. Players need ${PLAYER_REQUIREMENT_SHORT}.`,
+  description: `Download the OPEN//77 server and build a custom Cyberpunk 2077 gamemode in Open Alpha. No access application or approval needed. Players need ${PLAYER_REQUIREMENT_SHORT}.`,
   path: "/create",
 });
 
@@ -122,7 +122,7 @@ export default function CreatePage() {
         lead={
           <>
             A dedicated Cyberpunk&nbsp;2077 server that stays online for your community, with your rules, your identity, and
-            gameplay you design. <strong>Everyone with Alpha access can download it and start building now.</strong>
+            gameplay you design. <strong>Anyone can download it and start building in Open Alpha.</strong>
           </>
         }
         className={styles.hero}
@@ -218,13 +218,12 @@ export default function CreatePage() {
           <Video id="hero" />
         </div>
         <div className={styles.bandInner}>
-          <Eyebrow>Alpha access · Build now</Eyebrow>
+          <Eyebrow>Open Alpha · Build now</Eyebrow>
           <Display id="alpha-title" size="lg" lines={["It's time", "to build."]} accent={[1]} />
           <p className={styles.bandText}>
-            Everyone with Alpha access can now download the server and start building. Roleplay, PvP, Battle Royale, Racing,
-            Survival: create your own gamemode and your own experience in Night City. No separate developer application,
-            project review or staff role. Need Alpha access? Use <code>/alpha apply</code> with the bot in any channel on our
-            official Discord.
+            Anyone can download the server and start building today. Roleplay, PvP, Battle Royale, Racing,
+            Survival: create your own gamemode and your own experience in Night City. Create a free account, verify your email
+            and generate a server license key. Open Alpha needs no access application, project review or approval.
           </p>
           <div className={styles.actions}>
             <Button
@@ -237,7 +236,7 @@ export default function CreatePage() {
               Join our Discord
             </Button>
             <Button color="blue" border lines="none" href="/docs/alpha-access">
-              Read the Alpha guide
+              Read the Open Alpha guide
             </Button>
           </div>
         </div>

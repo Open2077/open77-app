@@ -27,7 +27,6 @@ import { Panel } from "@/components/ui/panel";
 import { Display, Eyebrow } from "@/components/ui/typography";
 import * as master from "@/lib/account/api";
 import { type Account, MasterApiError } from "@/lib/account/api";
-import { canDownloadServer } from "@/lib/account/host-access";
 import { type StoredSession, useSession } from "@/lib/account/session";
 import { ArrowLink, Block, Fine, Glyph, Pending, Row, Rows, formatDay, padlock } from "./kit";
 
@@ -89,7 +88,7 @@ function SettingLink({ href, glyph, title, detail }: { href: string; glyph: stri
   );
 }
 
-/** Live master data only; the cached session must never imply Alpha entitlement. */
+/** Profile and identity details come from the live master, not a cached session. */
 export function AccountOverview({ session }: { session: StoredSession }) {
   const { clear, update } = useSession();
   const [account, setAccount] = useState<Account | null>(null);
@@ -188,7 +187,6 @@ export function AccountOverview({ session }: { session: StoredSession }) {
       </div>
     );
 
-  const alpha = canDownloadServer(account);
   const identityCount = account.identities.length;
 
   return (
@@ -252,24 +250,14 @@ export function AccountOverview({ session }: { session: StoredSession }) {
           <div className={styles.passStatus}>
             <Eyebrow>Profile</Eyebrow>
             <span data-account-status>
-              {alpha ? (
-                <Tag variant="solid" className={styles.status}>
-                  Alpha access enabled
-                </Tag>
-              ) : (
-                <Tag tone="neutral" className={styles.status}>
-                  Platform account
-                </Tag>
-              )}
+              <Tag variant="solid" className={styles.status}>Open Alpha</Tag>
             </span>
           </div>
           <Display as="h2" size="sm" id="account-pass-title" className={styles.passTitle}>
             Signed in as <span className={styles.passName}>{account.displayName || account.email}</span>
           </Display>
           <p className={styles.passText}>
-            {alpha
-              ? "Your account can play on community servers and download the Windows and Linux dedicated server. No further application needed."
-              : "Your account is ready. Joining servers and hosting need Alpha access. Request it with /alpha apply on our Discord."}
+            Play on community servers, host your own and build with Lua. Open Alpha needs no access application or approval.
           </p>
         </div>
         <DefinitionList
@@ -317,7 +305,7 @@ export function AccountOverview({ session }: { session: StoredSession }) {
           glyph={gameController03}
           description="It signs you in, checks your game build, installs the mod and opens the server browser."
         />
-        <div className={cx(styles.card, styles.static)} data-server-download={alpha ? "" : undefined}>
+        <div className={cx(styles.card, styles.static)} data-server-download>
           <span className={styles.cardTop}>
             <Glyph glyph={serverStack01} />
             <span className={styles.os}>Win / Linux</span>
@@ -325,9 +313,7 @@ export function AccountOverview({ session }: { session: StoredSession }) {
           <span className={styles.cardLabel}>Host</span>
           <span className={styles.cardTitle}>Dedicated server</span>
           <span className={styles.cardText}>
-            {alpha
-              ? "Your account can download and run the Windows and Linux dedicated server. You do not need to apply again or have a staff role."
-              : "Every Alpha account can download the dedicated server, with no separate developer application. This account does not have Alpha access yet."}
+            Download and run the Windows or Linux dedicated server. Create a license key with your verified account and start building.
           </span>
           <span className={styles.cardAction}>
             <Button lines="none" size="sm" border icon={download02} href="/host">Download server</Button>
@@ -398,7 +384,7 @@ export function AccountOverview({ session }: { session: StoredSession }) {
           <ArrowLink href="/servers">Find a server</ArrowLink>
           <ArrowLink href="/workshop">Explore the Workshop</ArrowLink>
           <ArrowLink href="/docs">Documentation</ArrowLink>
-          {!alpha ? <ArrowLink href="/docs/alpha-access">About Alpha access</ArrowLink> : null}
+          <ArrowLink href="/docs/alpha-access">Open Alpha guide</ArrowLink>
         </div>
       </aside>
     </div>

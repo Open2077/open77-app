@@ -8,10 +8,9 @@ The launcher checks the game build, required files and account identity before s
 
 **Launcher 149 (`2.50.0+op77.149`) restores the official directory and updates** for older settings left on Local development. Download it from [the download page](/download), close the previous launcher and open the new file. On its first run, it switches those legacy settings to **Open//77 Alpha**, selects **Stable** and enables update checks. The multiplayer client and server remain on Stable 148.
 
-> **Play and build with Alpha access.** The launcher, multiplayer updates and live
-> server directory are available now. Everyone with Alpha access can also download
-> the server without a separate developer application. Need access? Use `/alpha apply`
-> in any channel on the official Discord. Read the [Alpha guide](/docs/alpha-access).
+> **Play, host and build in Open Alpha.** The launcher, multiplayer updates and live
+> server directory are available to everyone. Server downloads are public, and no
+> access application or approval is needed. Read the [Open Alpha guide](/docs/alpha-access).
 
 ## What you need
 
@@ -136,8 +135,8 @@ stores**. Normal Open77 account sign-in still applies.
 
 If your store is not supported yet, use **Skip for now**. Open77 support can also
 manually approve accounts; this approval is retained for when linking becomes
-mandatory. Skipping does not create a store ID, mark ownership as verified or
-automatically grant Alpha access.
+mandatory. Skipping does not create a store ID or mark ownership as verified.
+Open Alpha itself requires no access application or approval.
 
 ## The mod menu
 
@@ -305,7 +304,7 @@ comes up already joining that world instead of dropping you on the server browse
 If a client is already running, it joins in place rather than launching a second
 one.
 
-The directory is live. Joining requires Alpha access on your account. If the list
+The directory is live. Sign in with your OPEN//77 account to join; no Alpha approval is needed. If the list
 is empty, clear filters, refresh it and check the selected master and your connection.
 Local/private addresses are deliberately hidden from this list.
 
@@ -416,7 +415,7 @@ launcher found and what it hashed to, without touching the network or your files
 | You were signed in yesterday and are signed out today | Sessions expire. An expired one is treated as signed out rather than half-working; sign in again |
 | The game starts but there is no OPEN//77 in it | Almost always a failed redscript compile reverting to vanilla scripts. The preflight exists to stop this, so check whether anything was installed outside the launcher |
 | The server list is empty | Clear filters, refresh and check the selected master/network; use History or Direct Connect for local servers |
-| Alpha access is required | Sign in with your Alpha account; request access with `/alpha apply` on Discord if needed. Downloading the launcher alone does not grant access |
+| An old launcher asks for Alpha approval | Update the launcher and sign in again. Open Alpha needs no application. If the message persists, contact support with your launcher version and diagnostics |
 
 ## See also
 

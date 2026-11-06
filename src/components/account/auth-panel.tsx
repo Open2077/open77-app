@@ -239,7 +239,7 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
         <p className={styles.text}>
           {mode === "login"
             ? "Your OPEN//77 platform account, the same one the launcher uses."
-            : "Free, and it takes a minute. Alpha access is a separate step."}
+            : "Free, and it takes a minute. Open Alpha needs no access approval."}
         </p>
         {feedback}
         <form className={styles.form} onSubmit={onSubmit} aria-busy={busy}>
@@ -328,7 +328,7 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
         </form>
         {mode === "register" ? (
           <p className={styles.note}>
-            Creating an account is free. <SmartLink href="/docs/alpha-access">Alpha access</SmartLink> is a separate step to play and host.
+            Create a free account to play and host in <SmartLink href="/docs/alpha-access">Open Alpha</SmartLink>. No access application needed.
           </p>
         ) : null}
       </div>

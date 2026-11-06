@@ -111,7 +111,7 @@ export function Hero() {
               Play <strong>Cyberpunk&nbsp;2077 online</strong> on community servers, or create your own server and your
               own multiplayer&nbsp;experience.{" "}
             </p>
-            <p className={styles.alpha}>Everyone with Alpha access can download the server and start building&nbsp;now.</p>
+            <p className={styles.alpha}>Open Alpha is here. Play, host your server and start building&nbsp;now.</p>
           </div>
         </div>
         <div ref={renderRef} className={styles.render}>

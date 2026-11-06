@@ -152,7 +152,7 @@ export default async function PlatformPage() {
             That is the real API, not a sketch: every registered function is listed in the{" "}
             <Link href="/docs/api">Lua API reference</Link>, separated by runtime so a client projection is never mistaken
             for server authority. The surface will still change while the project is in Alpha. Read the{" "}
-            <Link href="/docs/alpha-access">access guide and limitations</Link>.
+            <Link href="/docs/alpha-access">Open Alpha guide and limitations</Link>.
           </DocText>
         </DocSection>
 

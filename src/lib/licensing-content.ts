@@ -14,7 +14,7 @@ export const LICENSING_DESCRIPTION =
   "Create, configure and revoke server license keys. Understand Master enrollment, account ownership and run leases.";
 
 export const LICENSING_LEDE =
-  "A platform license associates a dedicated server with its owner's account. Create a key, configure it on the server and authenticate with the Master at startup.";
+  "A platform license associates a dedicated server with its owner's account. Any free account with a verified email can create a key in Open Alpha. Configure it on the server and authenticate with the Master at startup; no access application or staff approval is needed.";
 
 export const LICENSING_OVERVIEW =
   "Servers need a valid license for Master enrollment, directory registration and run leases. Manage keys in your account. An invalid or revoked key prevents enrollment.";

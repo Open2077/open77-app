@@ -18,8 +18,8 @@ import { absoluteUrl, site } from "@/lib/site";
  *
  * Every entry points at the Markdown twin rather than the HTML page, because a
  * model that follows one of these links should get the text, not a parsed DOM.
- * Preview availability and account approval are stated together. Downloads,
- * directory visibility and permission to join a world are different things.
+ * Public downloads and Open Alpha onboarding are stated consistently with the
+ * rendered pages and the full Markdown corpus.
  */
 export const dynamic = "force-static";
 
@@ -39,19 +39,19 @@ export async function GET() {
     "## Status",
     "",
     `- ${site.alphaNotice}`,
-    "- The Windows player launcher is available at /download. Everyone with Alpha access",
+    "- The Windows player launcher is available at /download. Anyone",
     "  can access Windows/Linux dedicated-server downloads at /host, with Freeroam and system resources.",
     "- /servers reads the live master directory. Any explicitly labelled demo view is illustrative only.",
-    "- Account registration or downloading the launcher does not grant approval to join worlds.",
+    "- Open Alpha needs no access application or approval. Sign in to play; verify your email to create server license keys.",
     "- Unaffiliated with CD PROJEKT RED. Playing requires your own legal copy of Cyberpunk 2077.",
     "",
     "## Site",
     "",
     `- [Home](${absoluteUrl("/")}): what the platform is, for players and for server owners.`,
-    `- [Download](${absoluteUrl("/download")}): the current Windows launcher, requirements and first run; joining requires account approval.`,
+    `- [Download](${absoluteUrl("/download")}): the current Windows launcher, requirements and first run in Open Alpha.`,
     `- [Server browser](${absoluteUrl("/servers")}): live master directory.`,
-    `- [Create a server](${absoluteUrl("/create")}): Server downloads and custom gamemodes for everyone with Alpha access.`,
-    `- [Host a server](${absoluteUrl("/host")}): Windows/Linux server downloads for everyone with Alpha access.`,
+    `- [Create a server](${absoluteUrl("/create")}): Server downloads and custom gamemodes for everyone in Open Alpha.`,
+    `- [Host a server](${absoluteUrl("/host")}): Windows/Linux server downloads for everyone in Open Alpha.`,
     `- [Workshop](${absoluteUrl("/workshop")}): community-made resources, gamemodes, maps and tools for servers, free to download.`,
     `- [Brand kit](${absoluteUrl("/brand")}): logo, mark, colours and social assets.`,
     `- [Devblog](${absoluteUrl("/devblog")}): development updates as they ship, one post per working day.`,

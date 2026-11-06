@@ -4,6 +4,9 @@ date: "2026-08-29"
 description: "OPEN//77 added a public launcher download, safer mod handling, better loading screens, and pursuit upgrades for Cyberpunk 2077 multiplayer."
 tags: ["cyberpunk-2077-multiplayer", "cp2077-multiplayer", "cyberpunk-2077-online", "cyberpunk-2077-dedicated-server", "cyberpunk-2077-co-op"]
 ---
+
+> **Open Alpha update — November 6, 2026:** This post describes an earlier release. OPEN//77 is now available to everyone: play, host and build without an access application or approval. See the [Open Alpha guide](/docs/alpha-access) for current instructions.
+
 OPEN//77 had a big quality-of-life day. The team pushed a public launcher download page, improved server joining with better loading screens, upgraded pursuit mode, and made the launcher much safer for players who already use mods in their own Cyberpunk 2077 install.
 
 For anyone tracking Cyberpunk 2077 multiplayer, this is one of those updates that is less about flashy trailers and more about removing friction. Getting in, understanding what is happening, and keeping your single-player setup intact all matter if a Cyberpunk 2077 multiplayer mod is going to feel usable day to day.

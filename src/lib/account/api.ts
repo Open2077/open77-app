@@ -76,7 +76,7 @@ export type Account = {
   displayName: string;
   role: string;
   identities: LinkedIdentity[];
-  /** Effective preview entitlement returned by the master, not the stored role. */
+  /** Legacy access fields retained for compatibility; public downloads do not depend on them. */
   alphaAccess?: boolean;
   alphaGateActive?: boolean;
 };

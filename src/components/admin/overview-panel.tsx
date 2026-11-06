@@ -27,7 +27,7 @@ const TILES = [
 const QUICK = [
   { href: "/admin/incidents", glyph: bug01, title: "Investigate a crash", text: "Correlate reports and inspect evidence" },
   { href: "/admin/releases", glyph: packageBox, title: "Manage releases", text: "Channels, compatibility and trusted builds" },
-  { href: "/admin/alpha-access", glyph: ticket01, title: "Manage Alpha access", text: "Find an account and review its permissions" },
+  { href: "/admin/licenses", glyph: ticket01, title: "Server licenses", text: "Inspect server ownership and license status" },
 ] as const;
 
 /** The dashboard: five platform metrics plus the freshest audit entries. */
