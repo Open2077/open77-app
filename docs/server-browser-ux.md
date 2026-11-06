@@ -12,8 +12,15 @@ in `src/components/servers/`; the shared site header stays visible and usable.
   tags. It collapses on desktop and opens as a drawer on smaller screens.
 - Featured servers precede community servers. The selected sort applies within
   each group **and** to the featured cards. Most players is the default;
-  featured order only breaks ties. A purple line spans the full row width at
-  the end of the featured group.
+  featured order only breaks ties. Featured and regular rows share the same
+  subtle dividers, with no purple separator between groups.
+- Desktop rows are 38px tall with 28px icons. Names, badges and descriptions
+  share a single line; descriptions use all remaining width before the player
+  count, truncate when necessary and expose the complete text on hover.
+  Player counts, recorded peaks, region flags and favorites stay aligned.
+  There is no per-row Connect button: click a row to open its details and join.
+  Narrow layouts keep compact rows, hiding descriptions, then badges as space
+  decreases; full information remains available in the drawer.
 - Featured rows use a subdued banner fading to transparent. Compact cards scroll
   away with the list; on phones they scroll horizontally rather than consuming
   multiple rows above the directory. View all expands the featured selection.
@@ -23,10 +30,12 @@ in `src/components/servers/`; the shared site header stays visible and usable.
   disabled for reduced-motion preferences.
 - Featured rows show the highest **recorded** population in the last 48 hours
   below the current player count. Missing history displays a dash, not zero.
-- Names and descriptions use the same `$rgb`, `$o`, `$i`, `$n`, `$w`, `$t`, `$s`,
+- Names and detail descriptions use the same `$rgb`, `$o`, `$i`, `$n`, `$w`, `$t`, `$s`,
   `$g`, `$z` and `$$` formatting as the launcher. Unknown codes remain literal.
   Rendering uses text nodes and styled spans, never HTML. Search, sorting,
   accessible labels and public link previews use the readable plain text.
+  List descriptions strip those codes, preserve the original letter case and
+  use a consistent muted style. Empty descriptions leave no placeholder.
 
 Filters and sorting live in the URL; the collapsed rail preference and favorites
 stay in local storage. Near you uses browser language preferences to rank

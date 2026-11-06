@@ -15,9 +15,9 @@ import { plainLauncherText } from "@/lib/launcher-text";
 import { BrandTile } from "@/components/servers/server-placeholder";
 import { useToast } from "@/components/toast";
 import { Button } from "@/components/ui/button";
-import { Chip, Tag } from "@/components/ui/chip";
+import { Chip } from "@/components/ui/chip";
 import { cx } from "@/components/ui/cx";
-import { EmptyState, Meter } from "@/components/ui/feedback";
+import { EmptyState } from "@/components/ui/feedback";
 import { Checkbox, Input, Select } from "@/components/ui/field";
 import { Icon } from "@/components/ui/icon";
 import { cancel01, filterHorizontal, search01, star, userGroup } from "@/components/ui/icons";
@@ -29,7 +29,6 @@ import {
   PRIMARY_MODES,
   REGIONS,
   joinServer,
-  occupancyPercent,
   popClass,
   type GameServer,
 } from "@/lib/servers";
@@ -225,16 +224,6 @@ export function ServerBrowser({
   const railOpen = useSyncExternalStore(subscribeRail, readRail, () => true);
   const toggleRail = () => writeRail(!railOpen);
 
-  // The list's own width decides between the table and the two-line cards.
-  const [listWidth, setListWidth] = useState(0);
-  useEffect(() => {
-    const list = listRef.current;
-    if (!list) return;
-    const observer = new ResizeObserver(([entry]) => setListWidth(entry?.contentRect.width ?? 0));
-    observer.observe(list);
-    return () => observer.disconnect();
-  }, []);
-
   // The sticky command bar publishes its height for the sticky rail, table head,
   // inspector and row scroll margins.
   useEffect(() => {
@@ -334,7 +323,6 @@ export function ServerBrowser({
   // The selection follows the directory: a world that refreshed away or was
   // filtered out is no longer inspected, and the pane says so by going idle.
   const selected = useMemo(() => visible.find((server) => server.id === selectedId) ?? null, [visible, selectedId]);
-  const cards = listWidth > 0 && listWidth <= 760;
   const featured = visible.filter(server => server.featured);
 
   const join = (server: GameServer) => {
@@ -760,14 +748,12 @@ export function ServerBrowser({
                   <span className={styles.featuredIdentity}><strong><ServerText text={server.name} /></strong><span>{server.mode} · <b>{server.players}</b> / {server.max}</span><ServerBadges server={server} /></span><span className={styles.featuredArrow} aria-hidden="true">→</span>
                 </button>)}</div>
               </section> : null}
-              <div className={cx(styles.table, cards && styles.cards)}>
+              <div className={styles.table}>
                 <div className={styles.columns} aria-hidden="true">
                   <span className={styles.colServer}>
                     {favsOnly ? "Favorites" : "Servers"} <b>{visible.length}</b>
                     {active.length ? <i> of {servers.length}</i> : null}
                   </span>
-                  <span className={styles.colTags}>Game type · Tags</span>
-                  <span className={styles.colLocale}>Locale</span>
                   <button
                     type="button"
                     tabIndex={-1}
@@ -776,22 +762,21 @@ export function ServerBrowser({
                   >
                     Players {sort === "players" ? "↓" : ""}
                   </button>
+                  <span className={styles.colLocale}>Region</span>
                   <span />
                 </div>
                 <ul className={styles.list} data-server-list>
-                  {visible.map((server, index) => (
+                  {visible.map((server) => (
                     <ServerRow
                       key={server.id}
                       server={server}
                       preview={preview}
-                      lastFeatured={Boolean(server.featured && visible[index + 1] && !visible[index + 1]?.featured)}
                       onOpen={onOpenServer ? () => onOpenServer(server.id) : undefined}
                       near={proximity(server, me) >= 4}
                       isFavorite={isFavorite(server.id)}
                       isSelected={selected?.id === server.id}
                       onSelect={() => choose(server)}
                       onToggleFavorite={() => toggle(server.id)}
-                      onConnect={() => join(server)}
                     />
                   ))}
                 </ul>
@@ -841,18 +826,15 @@ export function ServerBrowser({
 function ServerRow({
   server,
   preview,
-  lastFeatured,
   onOpen,
   near,
   isFavorite,
   isSelected,
   onSelect,
   onToggleFavorite,
-  onConnect,
 }: {
   server: GameServer;
   preview: boolean;
-  lastFeatured: boolean;
   onOpen?: () => void;
   /** Same country as the player: the locale cell lights up. */
   near: boolean;
@@ -860,17 +842,15 @@ function ServerRow({
   isSelected: boolean;
   onSelect: () => void;
   onToggleFavorite: () => void;
-  onConnect: () => void;
 }) {
-  const full = server.max > 0 && server.players >= server.max;
-  const otherTags = server.tags.filter((t) => t.toLowerCase() !== server.mode.toLowerCase()).slice(0, 3);
+  const description = plainLauncherText(server.desc, { preserveCase: true }).replace(/\s+/g, " ").trim();
   return (
     <li
-      className={cx(styles.row, isSelected && styles.selected, full && styles.full, server.featured && styles.featuredRow, lastFeatured && styles.featuredEnd)}
-      data-featured-end={lastFeatured || undefined}
+      className={cx(styles.row, isSelected && styles.selected)}
       data-server-id={server.id}
       data-mode={server.mode}
       data-selected={isSelected || undefined}
+      title={server.mode}
       onClick={(event) => {
         // Links and buttons inside the row keep their own behaviour.
         if ((event.target as HTMLElement).closest("a, button")) return;
@@ -888,7 +868,7 @@ function ServerRow({
       <ServerImage src={server.icon} kind="icon" className={styles.thumb} fallback={<BrandTile />} />
       <div className={styles.identity}>
         {preview ? (
-          <button type="button" className={styles.rowLink} onClick={onSelect}>
+          <button type="button" className={styles.rowLink} onClick={onSelect} title={plainLauncherText(server.name)}>
             <span className={styles.name} data-server-name><ServerText text={server.name} /></span>
           </button>
         ) : (
@@ -897,6 +877,7 @@ function ServerRow({
             data-server-link
             href={`/servers/${server.id}`}
             aria-label={`Select ${plainLauncherText(server.name)}`}
+            title={plainLauncherText(server.name)}
             onNavigate={(event) => {
               event.preventDefault();
               onSelect();
@@ -905,39 +886,17 @@ function ServerRow({
             <span className={styles.name} data-server-name><ServerText text={server.name} /></span>
           </NextLink>
         )}
-        <span className={styles.desc} title={plainLauncherText(server.desc)}>
-          <ServerText text={server.desc || "Community server"} />
-        </span>
-        <ServerBadges server={server} />
+        {server.featured || server.official || server.withMods ? <span className={styles.rowBadges}><ServerBadges server={server} /></span> : null}
+        {description ? <span className={styles.desc} data-server-description title={description}>{description}</span> : null}
       </div>
-      {/* Table cells on wide lists; one wrapped line under the name on narrow ones. */}
-      <div className={styles.facts}>
-        <span className={styles.tags}>
-          <Tag onClick={() => updateFilters({ mode: server.mode })} title={`Find ${server.mode} servers`}>
-            {server.mode}
-          </Tag>
-          {otherTags.map((tag) => (
-            <Tag
-              key={tag}
-              tone="neutral"
-              className={styles.extraTag}
-              onClick={() => updateFilters({ tag: tag.toLowerCase() })}
-              title={`Filter by ${tag}`}
-            >
-              {tag}
-            </Tag>
-          ))}
+      <span className={cx(styles.players, styles[popClass(server)])}>
+        <span className={styles.count}>
+          <b>{server.players}</b>
+          <span> / {server.max}</span>
         </span>
-        <ServerLocale className={cx(styles.locale, near && styles.near)} country={server.country} lang={server.lang} />
-        <span className={cx(styles.players, styles[popClass(server)])}>
-          <span className={styles.count}>
-            <b>{server.players}</b>
-            <span> / {server.max}</span>
-          </span>
-          {server.featured ? <ServerPeak id={server.id} preview={preview} /> : null}
-          <Meter value={occupancyPercent(server)} label={`${server.players} of ${server.max} players`} className={styles.meter} />
-        </span>
-      </div>
+        {server.featured ? <ServerPeak id={server.id} preview={preview} /> : null}
+      </span>
+      <ServerLocale compact className={cx(styles.locale, near && styles.near)} country={server.country} lang={server.lang} />
       <span className={styles.actions}>
         <button
           type="button"
@@ -949,17 +908,6 @@ function ServerRow({
         >
           <Icon glyph={star} />
         </button>
-        <Button
-          lines="none"
-          size="sm"
-          color="neutral"
-          border
-          onClick={onConnect}
-          aria-label={`Connect to ${plainLauncherText(server.name)}`}
-          className={styles.connect}
-        >
-          Connect
-        </Button>
       </span>
     </li>
   );

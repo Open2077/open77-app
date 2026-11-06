@@ -388,7 +388,7 @@
 
 /* One grid for the head and every row, so the columns line up. */
 .table {
-  --cols: 40px minmax(0, 2.3fr) minmax(0, 1.6fr) 6.75rem 6.5rem var(--actions-width, 9rem);
+  --cols: 28px minmax(0, 1fr) 100px 86px 30px;
   background: oklch(from var(--surface-1) l c h / 0.88);
   border: 1px solid var(--line);
   position: relative;
@@ -409,7 +409,7 @@
 .row {
   grid-template-columns: var(--cols);
   align-items: center;
-  column-gap: 1.1rem;
+  column-gap: 12px;
   display: grid;
 }
 .columns {
@@ -424,7 +424,8 @@
     linear-gradient(oklch(from var(--surface-1) l c h / 0.88), oklch(from var(--surface-1) l c h / 0.88)),
     var(--body);
   border-bottom: 1px solid var(--line);
-  padding: 0.65rem 1rem;
+  min-height: 28px;
+  padding: 4px 12px;
   font-size: 0.58rem;
   transition: top 0.35s var(--ease-out-expo);
   position: sticky;
@@ -477,11 +478,11 @@
   cursor: pointer;
   scroll-margin-top: calc(var(--sticky-top) + 2.6rem);
   scroll-margin-bottom: 1rem;
-  padding: 0.55rem 1rem;
+  padding: 4px 12px;
   transition: background-color var(--transition-link);
   position: relative;
   isolation: isolate;
-  min-height: 78px;
+  min-height: 38px;
 }
 .row + .row {
   border-top: 1px solid var(--line);
@@ -515,20 +516,22 @@
   bottom: 0;
 }
 .thumb {
-  clip-path: polygon(16% 0, 100% 0, 84% 100%, 0 100%);
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   font-size: 0.7rem;
 }
 .identity {
-  flex-direction: column;
-  gap: 0.15rem;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
   display: flex;
+  overflow: hidden;
 }
 .rowLink {
   text-align: left;
+  min-width: 0;
   max-width: 100%;
+  flex: 0 1 auto;
 }
 .rowLink:hover .name,
 .rowLink:focus-visible .name {
@@ -537,50 +540,60 @@
 .name {
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.98rem;
+  font-size: 12px;
   font-weight: 600;
-  line-height: 1.3;
+  line-height: 18px;
   transition: color var(--transition-link);
   display: block;
   overflow: hidden;
 }
 .desc {
+  flex: 1 1 0;
+  min-width: 0;
   color: var(--text-dim);
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.82rem;
+  font-size: 11px;
+  line-height: 18px;
   overflow: hidden;
 }
-/* The facts are table cells on a wide list. */
-.facts {
-  display: contents;
-}
-/* One line of tags: a tag that does not fit wraps onto a hidden second line
-   instead of being cut in the middle of its word. */
-.tags {
-  flex-wrap: wrap;
-  align-content: flex-start;
-  align-items: center;
-  gap: 1.5rem 0.4rem;
-  min-width: 0;
-  max-height: 1.75rem;
-  padding: 0.1rem 0 0 3px;
+.rowBadges {
   display: flex;
-  overflow: hidden;
-}
-.tags > * {
   flex: none;
+  align-items: center;
+}
+.rowBadges > span {
+  flex-wrap: nowrap;
+  gap: 4px;
+}
+.rowBadges :global([data-badge]) {
+  padding: 1px 4px;
+  font-size: 8px;
+  line-height: 1.2;
+  letter-spacing: .04em;
 }
 .locale {
   min-width: 0;
+  font-size: 10px;
 }
 .near {
   color: var(--tone);
 }
 .players {
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0;
   display: flex;
+}
+.players :global([data-server-peak]) {
+  color: var(--text-dim);
+  font-size: 9px;
+  line-height: 11px;
+}
+.players :global([data-server-peak]) > span {
+  display: none;
+}
+.players :global([data-server-peak]) > span:only-child {
+  display: inline;
 }
 .count {
   white-space: nowrap;
@@ -589,32 +602,20 @@
   display: flex;
 }
 .count b {
-  font-family: var(--font-heading);
-  letter-spacing: -0.05em;
-  font-size: 1.05rem;
-  font-style: italic;
-  font-weight: 500;
-  line-height: 1;
+  font-family: var(--font-main);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 15px;
 }
 .count span {
   color: var(--text-faint);
-  font-size: 0.78rem;
-}
-.meter {
-  --meter: var(--text-faint);
+  font-size: 11px;
 }
 .pop-low .count b {
   color: var(--text-dim);
 }
-.pop-mid .meter,
-.pop-high .meter {
-  --meter: var(--tone);
-}
 .pop-high .count b {
   color: var(--tone);
-}
-.pop-full .meter {
-  --meter: var(--red);
 }
 .pop-full .count b {
   color: var(--red);
@@ -630,8 +631,8 @@
   flex: none;
   justify-content: center;
   align-items: center;
-  width: 2rem;
-  height: 2rem;
+  width: 28px;
+  height: 28px;
   font-size: 1rem;
   transition: color var(--transition-link);
   display: flex;
@@ -644,24 +645,6 @@
 }
 .fav[aria-pressed="true"] :global(svg path) {
   fill: currentColor;
-}
-/* Quiet until the row is in focus, so forty buttons do not shout at once. */
-.connect {
-  --btn-padding-x: 1.05em;
-  --btn-padding-y: 1.35em;
-  font-size: 0.7rem;
-}
-.row:hover .connect,
-.selected .connect {
-  color: var(--body);
-}
-.row:hover .connect:before,
-.selected .connect:before {
-  background: var(--tone);
-  border-color: var(--tone);
-}
-.full .connect {
-  opacity: 0.55;
 }
 .hints {
   color: var(--text-faint);
@@ -682,51 +665,25 @@
   color: var(--tone);
 }
 
-/* The columns follow the list's own width (rail and inspector take their share). */
+/* Columns follow the directory width, including its collapsible filter rail. */
 @container list (max-width: 1060px) {
   .table {
-    --cols: 40px minmax(0, 1fr) 7.25rem 6.5rem 5.75rem var(--actions-width, 8.75rem);
-  }
-  .extraTag {
-    display: none;
+    --cols: 28px minmax(0, 1fr) 90px 70px 30px;
   }
 }
-/* Cards follow the list's width. Opening the floating profile never resizes it. */
-.cards .columns {
-  display: none;
+@container list (max-width: 760px) {
+  .table { --cols: 28px minmax(0, 1fr) 70px 30px; }
+  .row, .columns { column-gap: 8px; }
+  .locale, .colLocale { display: none; }
 }
-.cards .row {
-  grid-template-columns: 40px minmax(0, 1fr) auto;
-  grid-template-areas:
-    "thumb identity actions"
-    "thumb facts facts";
-  row-gap: 0.5rem;
-  padding: 0.75rem 0.9rem;
+@container list (max-width: 620px) {
+  .desc { display: none; }
+  .row { min-height: 44px; }
 }
-.cards .thumb {
-  grid-area: thumb;
-  align-self: start;
-}
-.cards .identity {
-  grid-area: identity;
-}
-.cards .actions {
-  grid-area: actions;
-}
-.cards .tags {
-  max-height: none;
-  row-gap: 0.4rem;
-}
-.cards .facts {
-  flex-wrap: wrap;
-  grid-area: facts;
-  align-items: center;
-  gap: 0.45rem 1rem;
-  display: flex;
-}
-.cards .players {
-  flex-direction: column;
-  align-items: baseline;
+@container list (max-width: 480px) {
+  .table { --cols: 28px minmax(0, 1fr) 62px 28px; }
+  .row, .columns { padding-inline: 8px; }
+  .rowBadges { display: none; }
 }
 
 .featuredSection { margin: 0 0 1rem; }
@@ -736,7 +693,7 @@
 .featuredSection header button { font-size: .68rem; color: var(--text-dim); }
 .featuredSection header button:hover { color: var(--tone); }
 .featuredCards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; }
-.featuredCard { position: relative; isolation: isolate; display: flex; gap: .75rem; align-items: center; text-align: left; min-width: 0; min-height: 105px; border: 1px solid var(--line-strong); padding: .85rem; background: var(--surface-1); transition: border-color .2s; overflow: hidden; }
+.featuredCard { position: relative; isolation: isolate; display: flex; gap: .75rem; align-items: center; text-align: left; min-width: 0; min-height: 80px; border: 1px solid var(--line-strong); padding: .6rem .8rem; background: var(--surface-1); transition: border-color .2s; overflow: hidden; }
 .featuredCard:hover { border-color: #d3a2ff; }
 .featuredCard .featuredArt { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; opacity: .5; }
 .featuredCard:before { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, #050d16cc, #050d1633), linear-gradient(0deg, #050d1699, transparent); }
@@ -747,25 +704,7 @@
 .featuredIdentity b { color: var(--text-primary); }
 .featuredArrow { font-size: 1.5rem; }
 .row .rowBanner { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: .25; pointer-events: none; mask-image: linear-gradient(90deg, #000 0%, #0009 45%, transparent 85%); }
-.row.featuredEnd:after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #cf9bff, #cf9bff44); z-index: 2; pointer-events: none; }
-.row.featuredRow .identity { gap: .25rem; }
 @container list (max-width: 920px) { .featuredCards { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: min(85%, 320px); overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: .5rem; } .featuredCard { min-height: 80px; padding: .6rem .8rem; scroll-snap-align: start; } }
-.cards .meter {
-  display: none;
-}
-.cards .desc {
-  white-space: normal;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  display: -webkit-box;
-}
-/* A phone cannot run the launcher: the row keeps the favourite, the profile
-   (a tap away) keeps Connect. */
-@container list (max-width: 480px) {
-  .connect {
-    display: none !important;
-  }
-}
 
 /* Narrow layouts -------------------------------------------------------- */
 

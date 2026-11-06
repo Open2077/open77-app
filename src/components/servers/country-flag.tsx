@@ -420,10 +420,12 @@ export function ServerLocale({
   country,
   lang,
   className,
+  compact = false,
 }: {
   country?: string | null;
   lang: string;
   className?: string;
+  compact?: boolean;
 }) {
   const shortCode = regionCode(country);
   return (
@@ -433,10 +435,10 @@ export function ServerLocale({
     >
       <CountryFlag code={country} width={16} />
       <span className={styles.code}>{shortCode ?? "—"}</span>
-      <span className={styles.sep} aria-hidden="true">
+      {!compact ? <><span className={styles.sep} aria-hidden="true">
         ·
       </span>
-      <span className={styles.lang}>{lang}</span>
+      <span className={styles.lang}>{lang}</span></> : null}
     </span>
   );
 }

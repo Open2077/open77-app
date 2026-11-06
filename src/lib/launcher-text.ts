@@ -1,15 +1,15 @@
 export type LauncherTextRun = { text: string; color?: string; bold?: boolean; italic?: boolean; upper?: boolean; shadow?: boolean; width?: "n" | "w" };
 
 /** Readable text for search, sorting, accessible labels and link previews. */
-export function plainLauncherText(value: string): string {
-  return parseLauncherText(value).map(run => run.text).join("");
+export function plainLauncherText(value: string, options?: { preserveCase?: boolean }): string {
+  return parseLauncherText(value, options).map(run => run.text).join("");
 }
 
 /** Matches launcher-text.js. Unrecognized/incomplete codes remain literal. */
-export function parseLauncherText(value: string): LauncherTextRun[] {
+export function parseLauncherText(value: string, { preserveCase = false }: { preserveCase?: boolean } = {}): LauncherTextRun[] {
   const runs: LauncherTextRun[] = [];
   let state: Omit<LauncherTextRun, "text"> = {}, buffer = "";
-  const flush = () => { if (buffer) runs.push({ ...state, text: state.upper ? buffer.toUpperCase() : buffer }); buffer = ""; };
+  const flush = () => { if (buffer) runs.push({ ...state, text: state.upper && !preserveCase ? buffer.toUpperCase() : buffer }); buffer = ""; };
   for (let i = 0; i < value.length; i++) {
     if (value[i] !== "$" || i + 1 === value.length) { buffer += value[i]; continue; }
     const code = value.charAt(i + 1).toLowerCase(), color = value.slice(i + 1, i + 4);
