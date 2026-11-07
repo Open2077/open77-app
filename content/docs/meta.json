@@ -623,6 +623,13 @@
           "description": "Server-controlled RGB paint, replication and change events."
         },
         {
+          "slug": "vehicle-customization",
+          "kind": "guide",
+          "nav": "Vehicle customization",
+          "title": "Vehicle customization",
+          "description": "Liveries, neon and its animation, lamp colours, rims and body parts, plate text, window tint, performance stages, engine sounds and stickers: the server natives and their permissions, FiveM equivalents, the packs a server ships, the measured limits and a worked tuning shop. Ships with the next Open77 release."
+        },
+        {
           "slug": "vehicle-ai",
           "kind": "guide",
           "nav": "Autonomous vehicles & AI",

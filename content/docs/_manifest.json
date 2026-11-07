@@ -3,7 +3,7 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 112,
+  "guides": 113,
   "apiEntries": 1771,
   "files": [
     {
@@ -1397,6 +1397,22 @@
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "2f81072ecdf2b884faa3e706ee48c91b0e3021a1de65a361faefc0e9dfa3022a"
+      }
+    },
+    {
+      "source": "wiki/vehicle-customization.md",
+      "target": "content/docs/vehicle-customization.md",
+      "slug": "vehicle-customization",
+      "title": "Vehicle customization",
+      "bytes": 34364,
+      "sha256": "d1776aa4744d1bdb435b503a7c534e4bfea333976ef81dbc02ae3cd1275e7261",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "ae6b476327979894bfc3b8a56f5b530fe9902d08af2f55a52034d8faab0eaa27",
+        "sourceRevision": "9560b6dda6cf810e261d2de9241057be67d5b437",
+        "sourceBranch": "feat/vehicle-customization",
+        "sourceWorkingTreeDirty": false,
+        "vehicleCustomizationAmendment": "New guide from the unreleased open77-base wiki/vehicle-customization.md, wiki/vehicle-paint.md, wiki/vehicles.md and docs/vehicle-visual-contract.md (feat/vehicle-customization 9560b6dd), with the Light RP Auto Studio summarised from light-rp feat/auto-studio-full 041aae9b (resources/gamemodes/op77_lightrp/docs/vehicle-customization.md). Window tint follows the contract and the Light RP status (tinted glass renders with the client fixes b9f21aa3 and 15013360), not the older wiki wording. The site copy is self-contained because the public vehicles.md does not have the kit, livery and tint sections yet; the Blender rim tutorial and lab diaries are left out."
       }
     },
     {
