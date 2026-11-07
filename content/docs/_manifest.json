@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
   "guides": 113,
-  "apiEntries": 1771,
+  "apiEntries": 1800,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -1651,9 +1651,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1771,
-      "bytes": 2570521,
-      "sha256": "7c1e3269473dec1049cf08072baca656301c5499eb453730d54cd0881d26407e",
+      "entries": 1800,
+      "bytes": 2624442,
+      "sha256": "93cbc0dee3428a903c87ee862aee586821ed4f87f0f2a5d7d109e0771b21e1ca",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6",
@@ -1661,7 +1661,8 @@
           "owner": "website",
           "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
           "clientVersion": "2.50.0+op77.156"
-        }
+        },
+        "vehicleCustomization": "Merged the vehicle customization delta of open77-base feat/vehicle-customization a18cd4eb (wiki/data/api.json, against merge base b8e334ad): 29 new Open77.vehicles cards (customization, parts, liveries, neon, lamp colours, engine sound, stickers, plate, window tint) and the reviewed descriptions of getProperties, setProperties, setLightsHue and unsupportedProperties. Every other site entry is preserved. The cards carry no `since` until a published build ships them."
       },
       "siteAmendment": {
         "sourceCommit": "75f0e59cfa26606e83d9257ec1c7c07c6929c977",
@@ -1686,9 +1687,9 @@
     {
       "source": "wiki/data/permissions.json",
       "target": "content/api/permissions.json",
-      "entries": 175,
-      "bytes": 158078,
-      "sha256": "54314dbe61ed0f8967e78234e8205cd2257df445430466328c25d9ca9647e4bb",
+      "entries": 177,
+      "bytes": 159077,
+      "sha256": "0f74fef53bf602f5f4e4379ab71f6cd3928d4b22b0b793a171dff0ab0ee0db8a",
       "siteAmendment": {
         "0": "V",
         "1": "e",
