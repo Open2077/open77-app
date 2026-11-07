@@ -6239,7 +6239,7 @@
    "runtimes": [
     "server"
    ],
-   "summary": "Enforced by the server; gates 173 natives in Open77.effects, Open77.players, Open77.vehicles, Open77.vehicles.ai, _G.",
+   "summary": "Enforced by the server; gates 189 natives in Open77.effects, Open77.players, Open77.vehicles, Open77.vehicles.ai, _G.",
    "curated": false,
    "natives": [
     "server:CreateVehicle",
@@ -6421,7 +6421,16 @@
     "server:Open77.vehicles.setPlate",
     "server:Open77.vehicles.setStickers",
     "server:Open77.vehicles.setWheels",
-    "server:Open77.vehicles.setWindowTint"
+    "server:Open77.vehicles.setWindowTint",
+    "server:GetVehicleLivery",
+    "server:GetVehicleMod",
+    "server:GetVehicleWindowTint",
+    "server:SetVehicleLivery",
+    "server:SetVehicleMod",
+    "server:SetVehicleNeonLightEnabled",
+    "server:SetVehicleNeonLightsColour",
+    "server:SetVehicleWheelType",
+    "server:SetVehicleWindowTint"
    ],
    "guides": [
     "armed-vehicles.md",
@@ -6545,9 +6554,26 @@
    "runtimes": [
     "server"
    ],
-   "summary": "Enforced by the server; gates 0 natives.",
+   "summary": "Enforced by the server; gates 16 natives in Open77.vehicles, _G.",
    "curated": false,
-   "natives": [],
+   "natives": [
+    "server:Open77.vehicles.clearNeon",
+    "server:Open77.vehicles.setAppearance",
+    "server:Open77.vehicles.setLightColors",
+    "server:Open77.vehicles.setNeon",
+    "server:Open77.vehicles.setNeonAnimation",
+    "server:Open77.vehicles.setPaintProfile",
+    "server:Open77.vehicles.setParts",
+    "server:Open77.vehicles.setPlate",
+    "server:Open77.vehicles.setStickers",
+    "server:Open77.vehicles.setWheels",
+    "server:Open77.vehicles.setWindowTint",
+    "server:SetVehicleLivery",
+    "server:SetVehicleMod",
+    "server:SetVehicleNeonLightEnabled",
+    "server:SetVehicleNeonLightsColour",
+    "server:SetVehicleWindowTint"
+   ],
    "guides": [
     "vehicle-customization.md"
    ],

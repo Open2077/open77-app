@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { getDocumentedServerApi } from "@/lib/server-api-docs";
 import { getDoorServiceApi } from "@/lib/door-service-api";
+import { isVehicleCustomization } from "@/lib/api-categories";
 
 const API_FILE = path.join(process.cwd(), "content", "api", "api.json");
 
@@ -227,6 +228,9 @@ function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
       (runtime === "server" && raw.namespace === "Open77.npcs" &&
        ["setBody", "getBody"].includes(raw.name))) {
     return { usageGuideHref: "/docs/character-previews", usageGuideLabel: "Character previews & player-shaped NPCs" };
+  }
+  if (isVehicleCustomization({ runtime, namespace: raw.namespace, name: raw.name })) {
+    return { usageGuideHref: "/docs/vehicle-customization-natives", usageGuideLabel: "Vehicle customization natives" };
   }
   if (runtime === "server" && raw.namespace === "Open77.vehicles") {
     if (["setEngineHold", "isEngineHeld"].includes(raw.name)) {

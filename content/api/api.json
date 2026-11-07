@@ -31101,6 +31101,111 @@
  },
  {
   "namespace": "_G",
+  "name": "GetVehicleLivery",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reads the FiveM index of a car's livery.",
+  "description": "Requires `world.vehicles`: it reads the car through `Open77.vehicles.getVisual` and `listPaintProfiles`. Answers the 0-based position of the car's current profile in `Open77.vehicles.listPaintProfiles`, or `-1` for generic paint, for a profile the list no longer holds (its pack stopped), and on a failure (then with the reason as a second value).",
+  "params": [
+   {
+    "name": "vehicle",
+    "type": "vehicle id",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "index, or -1",
+   "reason on failure"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Compat.cs",
+  "example": "local livery = GetVehicleLivery(vehicle)\nif livery >= 0 then print('livery ' .. livery) end",
+  "inferred": false,
+  "source_line": 386,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "GetVehicleLivery",
+  "route_id": "server:GetVehicleLivery"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetVehicleMod",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reads the FiveM index of a car's choice for one mod type.",
+  "description": "Requires `world.vehicles`: it reads the car through `Open77.vehicles.listParts` and `getVisual`. Answers the index of the current choice in the same index space `SetVehicleMod` uses, or `-1` for stock and on a failure (then with the reason as a second value).",
+  "params": [
+   {
+    "name": "vehicle",
+    "type": "vehicle id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "modType",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "index, or -1",
+   "reason on failure"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Compat.cs",
+  "example": "local spoiler = GetVehicleMod(vehicle, 0)",
+  "inferred": false,
+  "source_line": 506,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "GetVehicleMod",
+  "route_id": "server:GetVehicleMod"
+ },
+ {
+  "namespace": "_G",
+  "name": "GetVehicleWindowTint",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reads the window tint as a FiveM index.",
+  "description": "Requires `world.vehicles`: it reads the car through `Open77.vehicles.getWindowTint`. Answers `3`, `2` or `5` for Open77 levels 1 to 3, and `-1` for factory glass (FiveM's \"no tint set\") or on a failure (then with the reason as a second value). A car set with `1` (PURE_BLACK) therefore reads back `5`, the index of the same level.",
+  "params": [
+   {
+    "name": "vehicle",
+    "type": "vehicle id",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "FiveM tint index, or -1",
+   "reason on failure"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Compat.cs",
+  "example": "if GetVehicleWindowTint(vehicle) == 5 then print('limo tint') end",
+  "inferred": false,
+  "source_line": 447,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "GetVehicleWindowTint",
+  "route_id": "server:GetVehicleWindowTint"
+ },
+ {
+  "namespace": "_G",
   "name": "GetVehicles",
   "handler": "GetVehicles",
   "summary": "Low-level alias of `Open77.vehicles.all`.",
@@ -34852,6 +34957,49 @@
  },
  {
   "namespace": "_G",
+  "name": "SetVehicleLivery",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Applies a livery by its FiveM index.",
+  "description": "Requires `world.vehicles`; a call that changes the look also requires `world.vehicles.appearance`. The FiveM spelling over `Open77.vehicles` (see the native for the details), with its permissions and its `false, reason` refusals. The vehicle handle is the canonical vehicle id. The index is the 0-based position in `Open77.vehicles.listPaintProfiles` for that car (the build's own templates first, then those running resources registered), and `-1` goes back to generic paint. An index past the list is `invalid_profile`; a non-integer is `invalid_argument`.",
+  "params": [
+   {
+    "name": "vehicle",
+    "type": "vehicle id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "livery",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Compat.cs",
+  "example": "SetVehicleLivery(vehicle, 0) -- the first livery this model lists\nSetVehicleLivery(vehicle, -1) -- generic paint again",
+  "inferred": false,
+  "source_line": 374,
+  "permissions": [
+   "world.vehicles",
+   "world.vehicles.appearance"
+  ],
+  "reasons": [
+   "invalid_argument",
+   "invalid_profile"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "SetVehicleLivery",
+  "route_id": "server:SetVehicleLivery"
+ },
+ {
+  "namespace": "_G",
   "name": "SetVehicleLocked",
   "handler": "SetVehicleLocked",
   "summary": "Low-level alias of `Open77.vehicles.setLocked`.",
@@ -34890,6 +35038,161 @@
   "constant": false,
   "qualified": "SetVehicleLocked",
   "route_id": "server:SetVehicleLocked"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetVehicleMod",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Chooses a kit part or a rim by FiveM mod type and index.",
+  "description": "Requires `world.vehicles`; a call that changes the look also requires `world.vehicles.appearance`. The FiveM spelling over `Open77.vehicles` (see the native for the details), with its permissions and its `false, reason` refusals. The vehicle handle is the canonical vehicle id. Mod types 23 and 24 (front and back wheels) are the rims; any other type is the registered parts whose catalogue entry declares that `modType`. The index space of a type on a car is every (part, variant) pair that fits it, ordered by part id then variant id, so an index is stable while the catalogue is. One choice per mod type, like a FiveM slot: choosing a part takes the other parts of that type off. `-1` is stock. An index past the list is `invalid_mod_index`; `customTires` has no counterpart and is ignored.",
+  "params": [
+   {
+    "name": "vehicle",
+    "type": "vehicle id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "modType",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "modIndex",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "customTires",
+    "type": "boolean",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Compat.cs",
+  "example": "SetVehicleMod(vehicle, 0, 1)  -- the second spoiler option registered with modType = 0\nSetVehicleMod(vehicle, 23, -1) -- factory rims",
+  "inferred": false,
+  "source_line": 479,
+  "permissions": [
+   "world.vehicles",
+   "world.vehicles.appearance"
+  ],
+  "reasons": [
+   "invalid_argument",
+   "invalid_mod_index"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "SetVehicleMod",
+  "route_id": "server:SetVehicleMod"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetVehicleNeonLightEnabled",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Switches a car's neon on or off.",
+  "description": "Requires `world.vehicles`; a call that changes the look also requires `world.vehicles.appearance`. The FiveM spelling over `Open77.vehicles` (see the native for the details), with its permissions and its `false, reason` refusals. The vehicle handle is the canonical vehicle id. Cyberpunk's neon is one light set laid out per chassis, not four strips, so any `index` switches all of it. Switching on a car that has no neon yet lights it in FiveM's default colour, magenta; switching off a car without one is accepted and does nothing. `toggle` must be a boolean (`invalid_argument`).",
+  "params": [
+   {
+    "name": "vehicle",
+    "type": "vehicle id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "index",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "toggle",
+    "type": "boolean",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Compat.cs",
+  "example": "for index = 0, 3 do SetVehicleNeonLightEnabled(vehicle, index, true) end",
+  "inferred": false,
+  "source_line": 401,
+  "permissions": [
+   "world.vehicles",
+   "world.vehicles.appearance"
+  ],
+  "reasons": [
+   "invalid_argument"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "SetVehicleNeonLightEnabled",
+  "route_id": "server:SetVehicleNeonLightEnabled"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetVehicleNeonLightsColour",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Sets the colour of a car's neon.",
+  "description": "Requires `world.vehicles`; a call that changes the look also requires `world.vehicles.appearance`. The FiveM spelling over `Open77.vehicles` (see the native for the details), with its permissions and its `false, reason` refusals. The vehicle handle is the canonical vehicle id. Keeps the on/off state, so a colour set before the lights are switched on is the colour they come on in. Each channel is 0-255.",
+  "params": [
+   {
+    "name": "vehicle",
+    "type": "vehicle id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "r",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "g",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "b",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Compat.cs",
+  "example": "SetVehicleNeonLightsColour(vehicle, 0, 229, 255)\nSetVehicleNeonLightEnabled(vehicle, 0, true)",
+  "inferred": false,
+  "source_line": 414,
+  "permissions": [
+   "world.vehicles",
+   "world.vehicles.appearance"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "SetVehicleNeonLightsColour",
+  "route_id": "server:SetVehicleNeonLightsColour"
  },
  {
   "namespace": "_G",
@@ -35010,6 +35313,87 @@
   "constant": false,
   "qualified": "SetVehicleTransform",
   "route_id": "server:SetVehicleTransform"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetVehicleWheelType",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Accepted for ported tuning menus; changes nothing.",
+  "description": "Requires `world.vehicles`: it reads the car to check it exists. There are no wheel families in this game: every rim is a catalogue part, chosen with `SetVehicleMod` mod type 23 or 24 (or `Open77.vehicles.setWheels`). The call answers true for a car that exists, so a ported menu does not fail on its first line, and `false, reason` otherwise.",
+  "params": [
+   {
+    "name": "vehicle",
+    "type": "vehicle id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "wheelType",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Compat.cs",
+  "example": "SetVehicleWheelType(vehicle, 7) -- accepted, no effect\nSetVehicleMod(vehicle, 23, 2)  -- the rim itself",
+  "inferred": false,
+  "source_line": 425,
+  "permissions": [
+   "world.vehicles"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "SetVehicleWheelType",
+  "route_id": "server:SetVehicleWheelType"
+ },
+ {
+  "namespace": "_G",
+  "name": "SetVehicleWindowTint",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Sets the window tint by its FiveM index.",
+  "description": "Requires `world.vehicles`; a call that changes the look also requires `world.vehicles.appearance`. The FiveM spelling over `Open77.vehicles` (see the native for the details), with its permissions and its `false, reason` refusals. The vehicle handle is the canonical vehicle id. FiveM's index maps onto the three Open77 levels: `-1`, `0` (NONE) and `4` (STOCK) are factory glass, `3` (LIGHTSMOKE) is level 1, `2` (DARKSMOKE) level 2, `1` (PURE_BLACK) and `5` (LIMO) level 3. `6` (GREEN) has no counterpart and is refused as `unsupported_property:windowTint` rather than drawn black; anything else is `invalid_tint`.",
+  "params": [
+   {
+    "name": "vehicle",
+    "type": "vehicle id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "tint",
+    "type": "integer",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true, or false",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.Compat.cs",
+  "example": "SetVehicleWindowTint(vehicle, 1) -- PURE_BLACK: the darkest level",
+  "inferred": false,
+  "source_line": 436,
+  "permissions": [
+   "world.vehicles",
+   "world.vehicles.appearance"
+  ],
+  "reasons": [
+   "invalid_tint"
+  ],
+  "since": null,
+  "constant": false,
+  "qualified": "SetVehicleWindowTint",
+  "route_id": "server:SetVehicleWindowTint"
  },
  {
   "namespace": "_G",
@@ -57468,7 +57852,7 @@
   "name": "clearNeon",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Removes a car's under-chassis lights.",
-  "description": "Requires `world.vehicles`; a call that CHANGES the look also needs `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. Takes the neon off entirely (`getVisual` then has no `neon`); `setNeon(id, { enabled = false })` instead keeps the colour for later.",
+  "description": "Requires `world.vehicles`; a call that CHANGES the look also requires `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. Takes the neon off entirely (`getVisual` then has no `neon`); `setNeon(id, { enabled = false })` instead keeps the colour for later.",
   "params": [
    {
     "name": "id",
@@ -57488,7 +57872,8 @@
   "inferred": false,
   "source_line": 9499,
   "permissions": [
-   "world.vehicles"
+   "world.vehicles",
+   "world.vehicles.appearance"
   ],
   "reasons": [],
   "since": null,
@@ -59854,7 +60239,7 @@
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "Open77.vehicles.registerEngineSounds({\n  { id = \"s01\", label = \"Inline-six, rough\", class = \"car\", set = \"v_car_archer_hella\", index = 1,\n    models = { \"Vehicle.v_standard2_archer_hella_player\" }, maxStage = 3 },\n})",
+  "example": "-- s01 uses the vanilla set of a city compact; the pack generated its records\n-- for this model at stages 0 to 3\nOpen77.vehicles.registerEngineSounds({\n  { id = \"s01\", label = \"Compact, city buzz\", class = \"car\", set = \"v_car_makigai_maimai\", index = 1,\n    models = { \"Vehicle.v_standard2_makigai_maimai_player\" }, maxStage = 3 },\n})",
   "inferred": false,
   "source_line": 9499,
   "permissions": [],
@@ -60603,7 +60988,7 @@
   "name": "setAppearance",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Swaps the appearance variant on a live car, on every viewer.",
-  "description": "Requires `world.vehicles` **and** `world.vehicles.appearance`. The second string exists because this is the one vehicle write that changes what the world LOOKS like rather than what a car does: it reaches a native entity-appearance reschedule on every viewer at once, for every car a resource can name, and a resource that wants to repaint the city should have to say so -- the same argument that gave adoption its own string. **It gates a CHANGE, never a restatement**: writing the variant a car already wears is accepted without it, which is what makes `setProperties(id, getProperties(id))` work for a resource that never changes a look.\n\n`nil` or `\"\"` restores the record's default variant. The name is not validated here, because only the client holds the entity template: a variant the model does not define is a no-op on each projection and the canonical value stays as written. `Open77.data.vehicle(record)` looks a record up but does not enumerate variants -- the shipped 2.31 catalogue does not carry them.\n\n**No intent window, and that is structural rather than lucky.** The physics owner's durable report has no appearance field and no colour field of any kind, so the twice-a-second merge that used to undo server writes cannot reach this one. On the client the variant is applied through `entEntity::ScheduleAppearanceChange` and held on the replica until the projection attaches -- measured at up to about 3.7 s after the create -- then re-applied if the entity is torn down and streamed back.",
+  "description": "Requires `world.vehicles`, and a change requires `world.vehicles.appearance` too. The second string exists because this is the one vehicle write that changes what the world LOOKS like rather than what a car does: it reaches a native entity-appearance reschedule on every viewer at once, for every car a resource can name, and a resource that wants to repaint the city should have to say so -- the same argument that gave adoption its own string. **It gates a CHANGE, never a restatement**: writing the variant a car already wears is accepted without it, which is what makes `setProperties(id, getProperties(id))` work for a resource that never changes a look.\n\n`nil` or `\"\"` restores the record's default variant. The name is not validated here, because only the client holds the entity template: a variant the model does not define is a no-op on each projection and the canonical value stays as written. `Open77.data.vehicle(record)` looks a record up but does not enumerate variants -- the shipped 2.31 catalogue does not carry them.\n\n**No intent window, and that is structural rather than lucky.** The physics owner's durable report has no appearance field and no colour field of any kind, so the twice-a-second merge that used to undo server writes cannot reach this one. On the client the variant is applied through `entEntity::ScheduleAppearanceChange` and held on the replica until the projection attaches -- measured at up to about 3.7 s after the create -- then re-applied if the entity is torn down and streamed back.",
   "params": [
    {
     "name": "id",
@@ -60629,7 +61014,8 @@
   "inferred": false,
   "source_line": 8999,
   "permissions": [
-   "world.vehicles"
+   "world.vehicles",
+   "world.vehicles.appearance"
   ],
   "reasons": [],
   "since": "2.31.13+op77.67",
@@ -61401,7 +61787,7 @@
   "name": "setLightColors",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Colours a car's brake, reverse, blinker and interior lights.",
-  "description": "Requires `world.vehicles`; a change also needs `world.vehicles.appearance`. `colors` is `{ brake?, reverse?, blinkers?, interior? }`, each a colour (`{r,g,b}`, `{r=,g=,b=}` or `\"#rrggbb\"`); the table is the whole set, so a group it does not name goes back to its factory colour, and `nil` or `{}` gives every group its factory colour back. Every client applies it through the car's light controller, again after every rebuild, stream-in and paint change. Headlights are not a group: `setPaint`'s lights hue keeps them. Red or blue blinkers and blue brake lights are refused: they read as an emergency vehicle.",
+  "description": "Requires `world.vehicles`; a change also requires `world.vehicles.appearance`. `colors` is `{ brake?, reverse?, blinkers?, interior? }`, each a colour (`{r,g,b}`, `{r=,g=,b=}` or `\"#rrggbb\"`); the table is the whole set, so a group it does not name goes back to its factory colour, and `nil` or `{}` gives every group its factory colour back. Every client applies it through the car's light controller, again after every rebuild, stream-in and paint change. Headlights are not a group: `setPaint`'s lights hue keeps them. Red or blue blinkers and blue brake lights are refused: they read as an emergency vehicle.",
   "params": [
    {
     "name": "id",
@@ -61427,7 +61813,8 @@
   "inferred": false,
   "source_line": 9499,
   "permissions": [
-   "world.vehicles"
+   "world.vehicles",
+   "world.vehicles.appearance"
   ],
   "reasons": [],
   "since": null,
@@ -61684,7 +62071,7 @@
   "name": "setNeon",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Turns on or changes the under-chassis lights of a car.",
-  "description": "Requires `world.vehicles`; a call that CHANGES the look also needs `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. `neon` is `{ enabled?, color = {r,g,b} | {r=,g=,b=} | \"#rrggbb\", intensity? (0-5000, default 600), radius? (0.5-8 m, default 3), layout? (\"auto\") }`. Absent fields keep the current neon's values; `color` is required on a car without a neon. `enabled = false` keeps the colour and switches the lights off. The server owns the look: every visual setter writes one JSON value, the platform-reserved `open77.visual` key of the vehicle's state bag, which each client applies on stream-in, after an appearance change and after a rebuild, so it reaches current viewers, late joiners and reconnects alike. A resource cannot write that key itself (`reserved_state_key`).",
+  "description": "Requires `world.vehicles`; a call that CHANGES the look also requires `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. `neon` is `{ enabled?, color = {r,g,b} | {r=,g=,b=} | \"#rrggbb\", intensity? (0-5000, default 600), radius? (0.5-8 m, default 3), layout? (\"auto\") }`. Absent fields keep the current neon's values; `color` is required on a car without a neon. `enabled = false` keeps the colour and switches the lights off. The server owns the look: every visual setter writes one JSON value, the platform-reserved `open77.visual` key of the vehicle's state bag, which each client applies on stream-in, after an appearance change and after a rebuild, so it reaches current viewers, late joiners and reconnects alike. A resource cannot write that key itself (`reserved_state_key`).",
   "params": [
    {
     "name": "id",
@@ -61710,7 +62097,8 @@
   "inferred": false,
   "source_line": 9499,
   "permissions": [
-   "world.vehicles"
+   "world.vehicles",
+   "world.vehicles.appearance"
   ],
   "reasons": [],
   "since": null,
@@ -61723,7 +62111,7 @@
   "name": "setNeonAnimation",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Makes a car's neon pulse, breathe, strobe, chase, cycle hues or follow its speed or brakes.",
-  "description": "Requires `world.vehicles`; a call that CHANGES the look also needs `world.vehicles.appearance`, while restating the current value needs only the first. `animation` is `{ mode, periodMs?, color2? }`, or `nil` for a steady neon. `mode` is one of `pulse`, `breathe`, `strobe`, `chase`, `rainbow`, `speed`, `brake`. `periodMs` is an integer from 250 to 10000 (a strobe at least 333, so never faster than 3 Hz); without it the mode's default is stored (breathe 4000, strobe 500, chase 1000, rainbow 6000, the others 1200). `color2` (`{r,g,b}`, `{r=,g=,b=}` or `\"#rrggbb\"`) is the second colour of pulse, breathe, strobe and chase, the colour `speed` blends to at speed and the colour `brake` flares to while braking; it is refused on `rainbow`. Every client computes the light from the server clock, so all of them show the same moment. The neon itself is still `setNeon`: without one, nothing shows. A red or blue strobe, or a red/blue pair in pulse, breathe, strobe or chase, is refused (`emergency_look:neonAnimation`), judged with the neon colour, so a later `setNeon` can be refused for it too.",
+  "description": "Requires `world.vehicles`; a call that CHANGES the look also requires `world.vehicles.appearance`, while restating the current value needs only the first. `animation` is `{ mode, periodMs?, color2? }`, or `nil` for a steady neon. `mode` is one of `pulse`, `breathe`, `strobe`, `chase`, `rainbow`, `speed`, `brake`. `periodMs` is an integer from 250 to 10000 (a strobe at least 333, so never faster than 3 Hz); without it the mode's default is stored (breathe 4000, strobe 500, chase 1000, rainbow 6000, the others 1200). `color2` (`{r,g,b}`, `{r=,g=,b=}` or `\"#rrggbb\"`) is the second colour of pulse, breathe, strobe and chase, the colour `speed` blends to at speed and the colour `brake` flares to while braking; it is refused on `rainbow`. Every client computes the light from the server clock, so all of them show the same moment. The neon itself is still `setNeon`: without one, nothing shows. A red or blue strobe, or a red/blue pair in pulse, breathe, strobe or chase, is refused (`emergency_look:neonAnimation`), judged with the neon colour, so a later `setNeon` can be refused for it too.",
   "params": [
    {
     "name": "id",
@@ -61749,7 +62137,8 @@
   "inferred": false,
   "source_line": 9499,
   "permissions": [
-   "world.vehicles"
+   "world.vehicles",
+   "world.vehicles.appearance"
   ],
   "reasons": [],
   "since": null,
@@ -61800,7 +62189,7 @@
   "name": "setPaintProfile",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Applies a TwinTone colour template (a livery) to a car, on every viewer.",
-  "description": "Requires `world.vehicles`; a call that CHANGES the look also needs `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. `profileId` is an id from `listPaintProfiles` for this car's record, or `nil` to go back to generic paint; an id the record does not list is `invalid_profile`. Restating the car's current profile always passes, even one whose pack is stopped. A later `setPaint`, `resetPaint` or repaint through `update` clears it. The server owns the look: every visual setter writes one JSON value, the platform-reserved `open77.visual` key of the vehicle's state bag, which each client applies on stream-in, after an appearance change and after a rebuild, so it reaches current viewers, late joiners and reconnects alike. A resource cannot write that key itself (`reserved_state_key`). On a car with stickers, a livery whose decals would take the car past 12 with them is refused (`decal_budget_exceeded`, see `getDecalBudget`).",
+  "description": "Requires `world.vehicles`; a call that CHANGES the look also requires `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. `profileId` is an id from `listPaintProfiles` for this car's record, or `nil` to go back to generic paint; an id the record does not list is `invalid_profile`. Restating the car's current profile always passes, even one whose pack is stopped. A later `setPaint`, `resetPaint` or repaint through `update` clears it. The server owns the look: every visual setter writes one JSON value, the platform-reserved `open77.visual` key of the vehicle's state bag, which each client applies on stream-in, after an appearance change and after a rebuild, so it reaches current viewers, late joiners and reconnects alike. A resource cannot write that key itself (`reserved_state_key`). On a car with stickers, a livery whose decals would take the car past 12 with them is refused (`decal_budget_exceeded`, see `getDecalBudget`).",
   "params": [
    {
     "name": "id",
@@ -61826,7 +62215,8 @@
   "inferred": false,
   "source_line": 9499,
   "permissions": [
-   "world.vehicles"
+   "world.vehicles",
+   "world.vehicles.appearance"
   ],
   "reasons": [],
   "since": null,
@@ -61883,7 +62273,7 @@
   "name": "setParts",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Puts kit parts on a car, or takes them off.",
-  "description": "Requires `world.vehicles`; a call that CHANGES the look also needs `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. `parts` is `{ [partId] = variantId | true | false }`: `true` picks the only variant, `false` takes the part off; parts not named are left as they are. A bare id names a part of the calling resource, a qualified one (`<resource>:<id>`) any running resource's. A rim named here replaces the car's current rim, and two rims in one call answer `conflicting_parts`; which body parts exclude each other (two front lips) is the resource's to enforce. The server owns the look: every visual setter writes one JSON value, the platform-reserved `open77.visual` key of the vehicle's state bag, which each client applies on stream-in, after an appearance change and after a rebuild, so it reaches current viewers, late joiners and reconnects alike. A resource cannot write that key itself (`reserved_state_key`).",
+  "description": "Requires `world.vehicles`; a call that CHANGES the look also requires `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. `parts` is `{ [partId] = variantId | true | false }`: `true` picks the only variant, `false` takes the part off; parts not named are left as they are. A bare id names a part of the calling resource, a qualified one (`<resource>:<id>`) any running resource's. A rim named here replaces the car's current rim, and two rims in one call answer `conflicting_parts`; which body parts exclude each other (two front lips) is the resource's to enforce. The server owns the look: every visual setter writes one JSON value, the platform-reserved `open77.visual` key of the vehicle's state bag, which each client applies on stream-in, after an appearance change and after a rebuild, so it reaches current viewers, late joiners and reconnects alike. A resource cannot write that key itself (`reserved_state_key`).",
   "params": [
    {
     "name": "id",
@@ -61909,7 +62299,8 @@
   "inferred": false,
   "source_line": 9499,
   "permissions": [
-   "world.vehicles"
+   "world.vehicles",
+   "world.vehicles.appearance"
   ],
   "reasons": [],
   "since": null,
@@ -62000,7 +62391,7 @@
   "name": "setPlate",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Sets the text on a car's licence plate.",
-  "description": "Requires `world.vehicles`; a call that CHANGES the look also needs `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. The text is trimmed, then upper-cased; A-Z, 0-9, space and `-` only, 1 to 10 characters, no two spaces in a row, anything else is `invalid_plate`. `nil` or `\"\"` goes back to the model's own plate. The platform rule is permissive on purpose: format, uniqueness and banned words are the resource's to enforce. Shown on models whose plate pack carries the plate widget; on a model without it the car keeps its stock plate and the text is still stored. The same plate in another case (`\"nc 01\"` after `\"NC 01\"`) is a restatement.",
+  "description": "Requires `world.vehicles`; a call that CHANGES the look also requires `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. The text is trimmed, then upper-cased; A-Z, 0-9, space and `-` only, 1 to 10 characters, no two spaces in a row, anything else is `invalid_plate`. `nil` or `\"\"` goes back to the model's own plate. The platform rule is permissive on purpose: format, uniqueness and banned words are the resource's to enforce. Shown on models whose plate pack carries the plate widget; on a model without it the car keeps its stock plate and the text is still stored. The same plate in another case (`\"nc 01\"` after `\"NC 01\"`) is a restatement.",
   "params": [
    {
     "name": "id",
@@ -62026,7 +62417,8 @@
   "inferred": false,
   "source_line": 9499,
   "permissions": [
-   "world.vehicles"
+   "world.vehicles",
+   "world.vehicles.appearance"
   ],
   "reasons": [],
   "since": null,
@@ -62235,7 +62627,7 @@
   "name": "setStickers",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Sets the stickers on a car.",
-  "description": "Requires `world.vehicles`; a change also needs `world.vehicles.appearance`. `stickers` is the whole list in order, at most 12 ids, each once; `nil` or `{}` takes them off. With the livery's own decals they must fit 12 decals: a thirteenth crashes every client that sees the car, so the server refuses it (`decal_budget_exceeded`, see `getDecalBudget`). A decal two stickers share counts once. A sticker whose pack stops stays chosen but is not shown until the pack comes back.",
+  "description": "Requires `world.vehicles`; a change also requires `world.vehicles.appearance`. `stickers` is the whole list in order, at most 12 ids, each once; `nil` or `{}` takes them off. With the livery's own decals they must fit 12 decals: a thirteenth crashes every client that sees the car, so the server refuses it (`decal_budget_exceeded`, see `getDecalBudget`). A decal two stickers share counts once. A sticker whose pack stops stays chosen but is not shown until the pack comes back.",
   "params": [
    {
     "name": "id",
@@ -62261,7 +62653,8 @@
   "inferred": false,
   "source_line": 9499,
   "permissions": [
-   "world.vehicles"
+   "world.vehicles",
+   "world.vehicles.appearance"
   ],
   "reasons": [],
   "since": null,
@@ -62554,7 +62947,7 @@
   "name": "setWheels",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Fits a rim design on every wheel of a car, or puts the factory rims back.",
-  "description": "Requires `world.vehicles`; a call that CHANGES the look also needs `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. `wheels` is `{ rim = partId, variant? }`; `nil` or `{}` takes the rim off. The rim goes on every wheel slot (four on a car, two on a bike, or the fit's own `wheels` list for this record) and hides the factory rim components its fit lists for the model, or for the car's current appearance when the fit has an override for it. The server owns the look: every visual setter writes one JSON value, the platform-reserved `open77.visual` key of the vehicle's state bag, which each client applies on stream-in, after an appearance change and after a rebuild, so it reaches current viewers, late joiners and reconnects alike. A resource cannot write that key itself (`reserved_state_key`).",
+  "description": "Requires `world.vehicles`; a call that CHANGES the look also requires `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. `wheels` is `{ rim = partId, variant? }`; `nil` or `{}` takes the rim off. A bare `rim` names a part of the calling resource; a qualified id (`<resource>:<id>`, the form `listParts` answers) names a part any running resource registered, so a shop resource selling another resource's rims passes the qualified id. `variant` may be left out when the rim has a single variant. The rim goes on every wheel slot (four on a car, two on a bike, or the fit's own `wheels` list for this record) and hides the factory rim components its fit lists for the model, or for the car's current appearance when the fit has an override for it. The server owns the look: every visual setter writes one JSON value, the platform-reserved `open77.visual` key of the vehicle's state bag, which each client applies on stream-in, after an appearance change and after a rebuild, so it reaches current viewers, late joiners and reconnects alike. A resource cannot write that key itself (`reserved_state_key`).",
   "params": [
    {
     "name": "id",
@@ -62571,16 +62964,17 @@
   ],
   "returns": [
    "true, or false",
-   "reason: invalid_wheels, unknown_part, part_not_a_rim, part_not_for_model, unknown_variant, variant_required, visual_too_large, permission_denied:world.vehicles.appearance, vehicle_not_found, invalid_vehicle_id, vehicles_unavailable, permission_denied:world.vehicles"
+   "reason: invalid_wheels, unknown_part, part_not_a_rim, part_not_for_model, unknown_variant, variant_required, attach_limit, visual_too_large, permission_denied:world.vehicles.appearance, vehicle_not_found, invalid_vehicle_id, vehicles_unavailable, permission_denied:world.vehicles"
   ],
   "api_set": "network",
   "runtime": "server",
   "source": "LuaResourceRuntime.cs",
-  "example": "Open77.vehicles.setWheels(vehicleId, { rim = \"rim_fork\", variant = \"black\" })\n-- back to the factory rims\nOpen77.vehicles.setWheels(vehicleId, nil)",
+  "example": "-- a rim this resource registered\nOpen77.vehicles.setWheels(vehicleId, { rim = \"rim_fork\", variant = \"black\" })\n-- a rim another resource registered: pass the qualified id listParts answers\nOpen77.vehicles.setWheels(vehicleId, { rim = \"my_kit:rim_fork\", variant = \"black\" })\n-- back to the factory rims\nOpen77.vehicles.setWheels(vehicleId, nil)",
   "inferred": false,
   "source_line": 9499,
   "permissions": [
-   "world.vehicles"
+   "world.vehicles",
+   "world.vehicles.appearance"
   ],
   "reasons": [],
   "since": null,
@@ -62637,7 +63031,7 @@
   "name": "setWindowTint",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Sets the window tint level of a car.",
-  "description": "Requires `world.vehicles`; a call that CHANGES the look also needs `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. `level` is an integer from 1 (light smoke) to 3 (limo), or `0` / `nil` for factory glass. A fraction, a string or a value out of range is `invalid_tint`. The level is stored on any car; it is drawn on the side and rear glass of the models the client's tint pack covers (`customizationAvailable` on the client names the others), never on the windshield. Which models a resource offers tint on is its own choice.",
+  "description": "Requires `world.vehicles`; a call that CHANGES the look also requires `world.vehicles.appearance` (`permission_denied:world.vehicles.appearance`), while restating the current value needs only the first -- the rule `setAppearance` follows, which keeps `setProperties(id, getProperties(id))` free. `level` is an integer from 1 (light smoke) to 3 (limo), or `0` / `nil` for factory glass. A fraction, a string or a value out of range is `invalid_tint`. The level is stored on any car; it is drawn on the side and rear glass of the models the client's tint pack covers (`customizationAvailable` on the client names the others), never on the windshield. Which models a resource offers tint on is its own choice.",
   "params": [
    {
     "name": "id",
@@ -62654,7 +63048,7 @@
   ],
   "returns": [
    "true, or false",
-   "reason: invalid_tint, permission_denied:world.vehicles.appearance, vehicle_not_found, invalid_vehicle_id, vehicles_unavailable, permission_denied:world.vehicles"
+   "reason: invalid_tint, visual_too_large, permission_denied:world.vehicles.appearance, vehicle_not_found, invalid_vehicle_id, vehicles_unavailable, permission_denied:world.vehicles"
   ],
   "api_set": "network",
   "runtime": "server",
@@ -62663,7 +63057,8 @@
   "inferred": false,
   "source_line": 9499,
   "permissions": [
-   "world.vehicles"
+   "world.vehicles",
+   "world.vehicles.appearance"
   ],
   "reasons": [],
   "since": null,

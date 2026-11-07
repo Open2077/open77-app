@@ -543,6 +543,12 @@ local ok, reason = Open77.vehicles.setProperties(id, portedTable)
 | `plateText`, `plateIndex` | Cyberpunk has no readable or writable plate. Carry it in a [state bag](state-bags.md#recipe-a-number-plate) -- the recipe is on that page. |
 | `fuelLevel` | No fuel model. Fuel is a state-bag field owned by the bundled [`open77_fuel`](state-bags.md#the-fuel-sample-open77_fuel) sample: `exports.open77_fuel:level(id)` reads it, `:set(id, litres)` and `:refuel(id)` write it. |
 
+**Coming in the next release.** [Vehicle customization](vehicle-customization.md) gives several
+of these a counterpart: `setProperties` then reads `neonEnabled`, `neonColor`, `livery` and
+`windowTint` (any index but GREEN), and points `wheels`, `wheelType`, `mods`, `modKit` and `plateText` at
+`setWheels`, `setParts` and `setPlate`. See
+[FiveM equivalents](vehicle-customization-fivem.md#ported-property-tables).
+
 `Open77.vehicles.unsupportedProperties` is the same list as a table, keyed by property name, so a
 porting script can ask before it writes:
 

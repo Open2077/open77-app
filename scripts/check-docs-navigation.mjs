@@ -6,7 +6,7 @@ const nav = JSON.parse(await readFile("content/docs/meta.json", "utf8"));
 const pages = nav.sections.flatMap((section) => section.pages);
 assert.equal(new Set(nav.sections.map((section) => section.id)).size, nav.sections.length, "Duplicate topic IDs");
 assert.equal(new Set(pages.map((page) => page.slug)).size, pages.length, "A guide must have exactly one navigation home");
-assert.equal(pages.length, 158, "Review guide coverage when adding or removing pages");
+assert.equal(pages.length, 164, "Review guide coverage when adding or removing pages");
 const collections = [...new Set(nav.sections.map((section) => section.group))];
 assert.deepEqual(collections, ["Start & host", "Build resources", "Game systems", "Reference & tools"]);
 let previous = "";
@@ -29,7 +29,8 @@ for (const [id, slugs] of Object.entries({
   reference: ["rtti", "rtti-testing", "debug-runtime", "agent-testing"],
   server: ["host-a-server", "server-startup", "server-licensing", "database", "launcher-text-formatting"],
   "server-administration": ["warden", "rcon", "metrics", "community-hub-warden", "warden-players"],
-  vehicles: ["vehicles", "vehicle-sirens", "vehicle-seat-switching", "vehicle-paint", "vehicle-customization", "vehicle-ai", "vehicle-weapons", "drive-by", "armed-vehicles"],
+  vehicles: ["vehicles", "vehicle-sirens", "vehicle-seat-switching", "vehicle-ai", "vehicle-weapons", "drive-by", "armed-vehicles"],
+  "vehicle-customization": ["vehicle-customization", "vehicle-customization-natives", "vehicle-paint", "vehicle-customization-packs", "vehicle-customization-models", "vehicle-customization-persistence", "vehicle-customization-fivem", "vehicle-customization-examples"],
   weapons: ["weapons-api", "dual-wielding", "weapon-customization", "consumables-api"],
   cyberware: ["cyberware", "cyberware-customization", "gorilla-arms"],
   players: ["client-players", "player-utilities", "local-puppet-visibility"],

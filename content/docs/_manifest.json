@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
   "guides": 113,
-  "apiEntries": 1800,
+  "apiEntries": 1809,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -468,13 +468,14 @@
       "target": "content/docs/fivem-compatibility.md",
       "slug": "fivem-compatibility",
       "title": "FiveM compatibility aliases",
-      "bytes": 43129,
-      "sha256": "fc7e8cc32b83b0b0d4bc1a2872641e075542285051a4a28651ede87614b3a1c9",
+      "bytes": 45806,
+      "sha256": "5f4ed0f445d9a4387d4254db009f4dc5aa8c95b4c9cca61af71c9ba8c57ddcbe",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "10e78aeaa47519b78b454843f78818f896665ecba967ca53db992d70f6440fc4",
         "serverVersion": "2.31.13+op77.102",
-        "masterVersion": "2.31.13+op77.103"
+        "masterVersion": "2.31.13+op77.103",
+        "vehicleCustomizationRows": "Vehicle customization rows in Availability at a glance (liveries, neon, mods, wheel type, extras, tint, plate, custom colours, xenon), reviewed against open77-base vc/docs-api c2a13d47 and 4cb09667 (on feat/vehicle-customization 979ec10d)."
       },
       "siteAmendment": {
         "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved."
@@ -1404,15 +1405,16 @@
       "target": "content/docs/vehicle-customization.md",
       "slug": "vehicle-customization",
       "title": "Vehicle customization",
-      "bytes": 34364,
-      "sha256": "d1776aa4744d1bdb435b503a7c534e4bfea333976ef81dbc02ae3cd1275e7261",
+      "bytes": 7220,
+      "sha256": "0790ca6cbef24fb6ce74f4a71563afc1e01e5c270887f488d6c0e861528e7bbc",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "ae6b476327979894bfc3b8a56f5b530fe9902d08af2f55a52034d8faab0eaa27",
         "sourceRevision": "9560b6dda6cf810e261d2de9241057be67d5b437",
         "sourceBranch": "feat/vehicle-customization",
         "sourceWorkingTreeDirty": false,
-        "vehicleCustomizationAmendment": "New guide from the unreleased open77-base wiki/vehicle-customization.md, wiki/vehicle-paint.md, wiki/vehicles.md and docs/vehicle-visual-contract.md (feat/vehicle-customization 9560b6dd), with the Light RP Auto Studio summarised from light-rp feat/auto-studio-full 041aae9b (resources/gamemodes/op77_lightrp/docs/vehicle-customization.md). Window tint follows the contract and the Light RP status (tinted glass renders with the client fixes b9f21aa3 and 15013360), not the older wiki wording. The site copy is self-contained because the public vehicles.md does not have the kit, livery and tint sections yet; the Blender rim tutorial and lab diaries are left out."
+        "vehicleCustomizationAmendment": "New guide from the unreleased open77-base wiki/vehicle-customization.md, wiki/vehicle-paint.md, wiki/vehicles.md and docs/vehicle-visual-contract.md (feat/vehicle-customization 9560b6dd), with the Light RP Auto Studio summarised from light-rp feat/auto-studio-full 041aae9b (resources/gamemodes/op77_lightrp/docs/vehicle-customization.md). Window tint follows the contract and the Light RP status (tinted glass renders with the client fixes b9f21aa3 and 15013360), not the older wiki wording. The site copy is self-contained because the public vehicles.md does not have the kit, livery and tint sections yet; the Blender rim tutorial and lab diaries are left out.",
+        "vehicleCustomizationSectionAmendment": "Rewritten as the overview of the Vehicle customization docs section; natives, content packs, model coverage, persistence, FiveM equivalents and worked examples moved to app-owned guides (content/guides/vehicle-customization-*.md). Permissions table corrected (list functions need nothing with a record name; a look change needs world.vehicles.appearance). Reviewed against open77-base vc/docs-api c2a13d47 and 4cb09667 (on feat/vehicle-customization 979ec10d)."
       }
     },
     {
@@ -1438,8 +1440,8 @@
       "target": "content/docs/vehicles.md",
       "slug": "vehicles",
       "title": "Network vehicles",
-      "bytes": 119691,
-      "sha256": "217993070b5e5ccc7f8899d5cce912be28c101dba23bedd61a5a7dc98657bd62",
+      "bytes": 120106,
+      "sha256": "67ca668a9d304deb1f5411bd361a736738613da878b8f25e8314f6c5c53bb240",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "57aac056238de1dbaa30823cf9f387f7e8576bd68d15b80ac247460a8dec8aae",
@@ -1468,7 +1470,8 @@
           "clientVersion": "2.31.21+op77.147",
           "serverVersion": "2.31.21+op77.147",
           "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
-        }
+        },
+        "vehicleCustomizationNote": "Forward note under What Cyberpunk does not have: the ported FiveM keys the next release lands in vehicle customization, from open77-base vc/docs-api c2a13d47 and 4cb09667 (on feat/vehicle-customization 979ec10d)."
       }
     },
     {
@@ -1651,9 +1654,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1800,
-      "bytes": 2624442,
-      "sha256": "93cbc0dee3428a903c87ee862aee586821ed4f87f0f2a5d7d109e0771b21e1ca",
+      "entries": 1809,
+      "bytes": 2638254,
+      "sha256": "6eca46fef072b455e22b868df7c9fcb862213f45f8341e86486456eaf3148d2a",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6",
@@ -1662,7 +1665,8 @@
           "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
           "clientVersion": "2.50.0+op77.156"
         },
-        "vehicleCustomization": "Merged the vehicle customization delta of open77-base feat/vehicle-customization a18cd4eb (wiki/data/api.json, against merge base b8e334ad): 29 new Open77.vehicles cards (customization, parts, liveries, neon, lamp colours, engine sound, stickers, plate, window tint) and the reviewed descriptions of getProperties, setProperties, setLightsHue and unsupportedProperties. Every other site entry is preserved. The cards carry no `since` until a published build ships them."
+        "vehicleCustomization": "Merged the vehicle customization delta of open77-base feat/vehicle-customization a18cd4eb (wiki/data/api.json, against merge base b8e334ad): 29 new Open77.vehicles cards (customization, parts, liveries, neon, lamp colours, engine sound, stickers, plate, window tint) and the reviewed descriptions of getProperties, setProperties, setLightsHue and unsupportedProperties. Every other site entry is preserved. The cards carry no `since` until a published build ships them.",
+        "vehicleCustomizationDocs": "Card delta vendored from open77-base vc/docs-api c2a13d47 and 4cb09667 (on feat/vehicle-customization 979ec10d): setWheels (qualified part ids, attach_limit), registerEngineSounds (a real sound set in the example), setWindowTint (visual_too_large), the look-change setters now name world.vehicles.appearance, and nine new server global cards for the FiveM aliases (SetVehicleLivery, GetVehicleLivery, SetVehicleNeonLightEnabled, SetVehicleNeonLightsColour, SetVehicleMod, GetVehicleMod, SetVehicleWheelType, SetVehicleWindowTint, GetVehicleWindowTint). Rows inserted in place; every other site entry is preserved. The new cards carry no since until a published build ships them."
       },
       "siteAmendment": {
         "sourceCommit": "75f0e59cfa26606e83d9257ec1c7c07c6929c977",
@@ -1688,8 +1692,8 @@
       "source": "wiki/data/permissions.json",
       "target": "content/api/permissions.json",
       "entries": 177,
-      "bytes": 159077,
-      "sha256": "0f74fef53bf602f5f4e4379ab71f6cd3928d4b22b0b793a171dff0ab0ee0db8a",
+      "bytes": 160048,
+      "sha256": "c9d67bc4760138679a6f28e6d5040bb23c178e0424ae8988e8c4a26505e3a465",
       "siteAmendment": {
         "0": "V",
         "1": "e",
@@ -1866,7 +1870,8 @@
           "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
           "clientVersion": "2.50.0+op77.156"
         }
-      }
+      },
+      "vehicleCustomizationDocs": "world.vehicles.appearance gates the sixteen look-change natives and FiveM aliases, and world.vehicles lists the nine FiveM vehicle customization globals, from open77-base vc/docs-api c2a13d47 and 4cb09667 (on feat/vehicle-customization 979ec10d) (wiki/data/permissions.json). Only those two rows changed."
     },
     {
       "source": "wiki/data/events.json",
