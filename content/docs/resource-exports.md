@@ -496,9 +496,15 @@ A plate is shown only while the camera can see its player. Every plate is
 line-of-sight tested natively, from the camera to the player's head and then to
 his chest, against static geometry, doors and terrain -- walls, floors, closed
 doors, the ground. Vehicles and other people never hide a plate. A sightline may
-cross up to two panes of glass; each crossing is traced again from the player's
-side, so glass mounted on concrete, or the back of a display case, still hides
-him. A lying or dead body is tested at floor height. The verdict is smoothed so
+cross up to two see-through surfaces: clear glass, car windows, plexiglass and
+wire mesh, recognised by the game's physics material names (`glass`,
+`glass_bulletproof`, `glass_car`, `glass_dst`, `plexiglass`,
+`metal_transparent`). Opaque, frosted and display glass still hides a plate.
+Each crossing is traced again from the player's side, so glass mounted on
+concrete, or the back of a display case, still hides him. The sight point is the
+head: 1.60 m over the feet standing, 1.00 m crouched, so a player crouched behind
+a planter stays hidden while only a sliver of hair shows. A lying or dead body is
+tested at floor height. The verdict is smoothed so
 that a railing or a lamppost cannot blink a plate: it appears on the first clear
 test, hides only after at least two blocked tests spanning 120 ms or more, never
 flashes on a player first seen behind a wall, and fades between the two over the
