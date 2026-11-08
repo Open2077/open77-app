@@ -2,7 +2,8 @@
 
 How a car's customization is stored, how it reaches every player, how to keep it across a server
 restart, and the measured limits a server should design around. The natives here are **coming in
-the next Open77 release**, except paint, the lights hue and trims.
+the next Open77 release**, except paint, the lights hue, trims and the property table
+(`getProperties`, `setProperties`), which are public without the customization described here.
 
 ## One value per car
 
@@ -28,9 +29,12 @@ change that would pass it is refused with `visual_too_large` or
   car after an appearance change or a rebuild.
 - Each client draws what its game can: a model a pack does not cover, or a pack the player's game
   did not mount, is skipped on that client only and listed in `customizationAvailable(id).skipped`.
-- **A stopped pack leaves the choice dormant.** A part, livery or sticker whose pack resource
-  stops, or that the car's current record does not list, stays chosen and is answered by
-  `getVisual`, but is not drawn. It shows again when the pack runs.
+- **A stopped pack leaves a held choice dormant.** A part, livery or sticker the car **already
+  holds** stays chosen when its pack resource stops, or when the car's current record does not list
+  it, and is answered by `getVisual`, but is not drawn. It shows again when the pack runs. This
+  covers only choices made while the pack was running: a **new** choice of a part, livery or sticker
+  that no running resource has registered is refused (`unknown_part`, `invalid_profile`,
+  `unknown_sticker`).
 
 A **restatement** (setting the value a car already has) changes nothing, publishes nothing and
 needs only `world.vehicles`, so a resource can re-apply a stored look without the appearance
@@ -39,8 +43,10 @@ permission.
 ## Keeping a tuned car across a restart
 
 Open77 does not write vehicles to disk. To keep a tuned car, store `getProperties(id)` and apply it
-to the new car with `setProperties`. The table carries `visual`, and the round trip is exact, plate
-and tint included.
+to the new car with `setProperties`. From the next release the table carries `visual`, and the
+round trip is exact, plate and tint included. On the current public build it carries paint, the
+lights hue and the trim, and `setProperties` refuses a `visual` field as
+`unsupported_property:visual`.
 
 ```lua
 -- Park: store everything the car wears
@@ -61,8 +67,33 @@ On a freshly spawned car the stored look is a change, not a restatement, so a ga
 customized cars declares `world.vehicles.appearance` as well. See
 [Vehicle properties](vehicles.md#vehicle-properties-and-what-cyberpunk-does-not-have).
 
-The pack resources must be running when the car is restored: a part or a livery whose pack is not
-registered yet is kept dormant, and shows once the pack registers.
+The pack resources must be running when the car is restored. A freshly spawned car holds no part,
+livery or sticker yet, so nothing in the stored look can be dormant: a part, livery or sticker
+whose pack is not running is a new choice that no resource has registered, and `setProperties`
+refuses it (`unknown_part`, `invalid_profile`, `unknown_sticker`) and applies **nothing**, paint and
+damage included. Two habits keep a garage working:
+
+- declare the pack resources as `dependency` in the garage's `open77.lua`, so they start, and
+  register, before the garage restores anything;
+- on one of those refusals, restore the rest without the look, and keep the stored row:
+
+```lua
+local LOOK_REFUSALS = {
+    ["unsupported_property:visual"] = true,   -- a server of the current public build
+    unknown_part = true, part_not_for_model = true, unknown_variant = true,
+    invalid_profile = true, unknown_sticker = true, sticker_not_for_model = true,
+}
+
+local ok, reason = Open77.vehicles.setProperties(id, stored)
+if not ok and LOOK_REFUSALS[reason] then
+    local look = stored.visual
+    stored.visual = nil       -- a versioned table with no visual leaves the look alone
+    ok, reason = Open77.vehicles.setProperties(id, stored)
+    stored.visual = look      -- keep it for the next retrieval
+end
+```
+
+The full garage is in [Worked examples](vehicle-customization-examples.md#a-garage-that-keeps-tuned-cars).
 
 ## Events
 
@@ -87,7 +118,7 @@ Compare `rev` with `customizationAvailable(id).appliedRev` to know when this cli
 | Customization value | 4 KiB, 256 JSON values, 16 attachments | The change is refused (`visual_too_large`, `attach_limit`) |
 | Lit neon | 12 cars per client, nearest first, within 60 m; four lights per car | Further cars show no neon |
 | Plate text | The engine writes it only on a car born within about 10 m of the camera | The client rebuilds such a car once when the camera is within about 9 m and the car is empty and stopped; it vanishes for about 0.4 s. A moving or occupied car keeps a blank plate until then. |
-| Lights hue | One hue, `0..1`, shown on the headlights | Brightness and saturation are not kept; a grey reads as red |
+| Lights hue | One hue, `0..1`, shown on the headlights from the next client release; white headlights before it | Brightness and saturation are not kept; a grey reads as red |
 | Sticker changes | Only on a car within 40 m of the client's camera | A distant car keeps what it shows; an approaching car shows its stickers from about 40 m |
 | Paint and tint at distance | Drawn up to the appearance proxy: about 50 m at `LODPreset` Low, 80 m above | Past it the car shows its factory look |
 | Network event shape | 8 levels, 1,024 values per event, 64 KiB per string | The client drops the event and logs only `dropped malformed network event payload` |

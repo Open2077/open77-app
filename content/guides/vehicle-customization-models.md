@@ -12,8 +12,8 @@ and trims, which are in the current public build.
 
 | Category | Decided by | Ask from Lua | A model that is not covered |
 |---|---|---|---|
-| Paint, lights hue | The record's own paint component, flagged in the game data | `Open77.data.vehicle(record).customization` (`paint`, `lights`), or client `customizationAvailable(id)` | The value is stored; the car keeps its authored look |
-| Factory trim | The record's own appearance variants | `getAppearance(id)` | Only the record's variants apply |
+| Paint, lights hue | The record's own paint component, flagged in the game data | client only, from the next client release: `Open77.data.vehicle(record).customization` (`paint`, `lights`; the server's `Open77.data.vehicle` has no such field), or client `customizationAvailable(id)` | The value is stored; the car keeps its authored look |
+| Factory trim | The record's own appearance variants | `getAppearance(id)` answers only the variant the car wears now; no native lists a record's variants, so keep your own list | Only the record's variants apply |
 | Factory livery | The record's own colour template list | `listPaintProfiles(record)` | `invalid_profile` |
 | Custom livery | Rows a pack registered for that record with `registerPaintProfiles` | `listPaintProfiles(record)` | `invalid_profile` |
 | Neon, neon animation, lamp colours | Nothing: any car | — | Always drawn; a motorcycle gets one neon light |

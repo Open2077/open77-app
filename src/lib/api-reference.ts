@@ -36,6 +36,12 @@ export type ApiEntryRaw = {
   callSignature?: string;
   signatureKnown?: boolean;
   guideHref?: string;
+  /**
+   * Release status of a function no published build carries yet: `"next"` means it
+   * arrives with the next Open77 release. The wiki drops the marker once a published
+   * build registers the function, and the description then no longer opens with it.
+   */
+  release?: string;
 };
 
 export type ApiRuntime = "client" | "server";

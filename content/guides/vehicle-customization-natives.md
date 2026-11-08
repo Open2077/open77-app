@@ -5,10 +5,11 @@ unless a row says **client**. Each one also has an API card; the whole set is gr
 [Vehicle customization](/docs/api?category=vehicle-customization) in the API reference.
 
 Everything on this page except paint, the lights hue and `setAppearance` is **coming in the next
-Open77 release** and is not in the current public build. Test for a native before calling it:
+Open77 release** and is not in the current public build; the API reference marks those cards
+**Next release**. Test for a native before calling it:
 
 ```lua
-if not Open77.vehicles.setWheels then
+if type(Open77.vehicles.setWheels) ~= "function" then
     print("this server has no rims yet")
     return
 end
@@ -18,15 +19,19 @@ end
 
 - `id` is a canonical vehicle id, the one `Open77.vehicles.create` answers.
 - A setter answers `true`, or `false, reason`. A list or read answers its value, or `nil, reason`.
-  Check the reason: it names what was wrong.
+  Check the reason: it names what was wrong. The exceptions are `setPaint` and `resetPaint`: they
+  answer a bare `false`, with no reason, for an unknown car or a missing `world.vehicles`, and
+  raise a Lua error on a malformed paint table or colour.
 - **Look change** in the tables means `world.vehicles` plus `world.vehicles.appearance` for a call
   that changes the look, `world.vehicles` alone for a restatement of the current value. A
-  restatement changes nothing and answers `true`.
+  restatement changes nothing and answers `true`. A change without the second permission answers
+  `false, "permission_denied:world.vehicles.appearance"` and applies nothing.
 - Colours accept `"#rrggbb"` (exactly seven characters), `{ r = 0, g = 216, b = 255 }` or
   `{ 0, 216, 255 }`, as for [paint](vehicle-paint.md#color-formats).
-- Every setter can also answer `vehicle_not_found`, `invalid_vehicle_id`, `vehicles_unavailable`
-  and `permission_denied:world.vehicles`; the tables below list only the reasons specific to the
-  native.
+- Every setter except `setPaint` and `resetPaint` can also answer `vehicle_not_found`,
+  `invalid_vehicle_id`, `vehicles_unavailable` and `permission_denied:world.vehicles`, and a look
+  change `permission_denied:world.vehicles.appearance`; the tables below list only the reasons
+  specific to the native.
 - A Lua table passed to a native crosses as JSON: at most 4,096 values, 16 levels deep, strings up
   to 16 KiB. A large catalogue registers in several calls, which merge.
 - The look of a car is one value of at most 4 KiB, 256 JSON values and 16 attachments. Any visual
@@ -35,19 +40,21 @@ end
 
 ## Paint, lights hue and trim
 
-These are in the current public build and are covered in [Vehicle paint](vehicle-paint.md).
+These are in the current public build and are covered in [Vehicle paint](vehicle-paint.md). On
+that build the lights hue is stored, replicated and read back, but the headlights stay white:
+clients colour the headlights from the hue only from the next client release.
 
 | Native | Signature | Result | Permission |
 |---|---|---|---|
 | `setPaint` | `(id, paint)` | Primary and secondary RGB. A later paint clears a livery. | `world.vehicles` |
 | `getPaint` | `(id)` | `{ applied, primary, secondary }`, or `nil` | `world.vehicles` |
 | `resetPaint` | `(id)` | The record's own paint | `world.vehicles` |
-| `setLightsHue` | `(id, hue?)` | Hue `0..1` on the headlights; `nil` restores the record's colour | `world.vehicles` |
+| `setLightsHue` | `(id, hue?)` | Hue `0..1` for the car's lights, shown on the headlights from the next client release; `nil` restores the record's colour | `world.vehicles` |
 | `setHeadlightColor` | `(id, color?)` | The same hue from a colour; only the hue is kept. Alias: `setHeadlightColour` | `world.vehicles` |
 | `clearLightsHue` | `(id)` | Back to the record's colour | `world.vehicles` |
 | `getLightsHue` | `(id)` | `0..1`, or `nil` for the record's colour. Alias: `getHeadlightHue` | `world.vehicles` |
 | `setAppearance` | `(id, name?)` | Swaps the appearance variant; `nil` or `""` is the record's default | look change |
-| `getAppearance` | `(id)` | The variant name, or `""` | `world.vehicles` |
+| `getAppearance` | `(id)` | The variant the car wears now, or `""` for the record's default. No native lists a record's variants. | `world.vehicles` |
 
 The lights hue is **one hue**, not a colour: `#800000` and `#FF0000` light the car the same way,
 and a grey has no hue. Brake, reverse, blinker and interior lamps are
@@ -57,7 +64,7 @@ and a grey has no hue. Brake, reverse, blinker and interior lamps are
 
 | Native | Signature | Result | Permission |
 |---|---|---|---|
-| `listPaintProfiles` | `(recordOrId)` | `{ { id, label?, main?, sec?, appearances, hasPattern, resource? }, ... }`: the model's factory templates first, then those running resources registered, each with its `resource` | nothing for a record name, `world.vehicles` for an id |
+| `listPaintProfiles` | `(recordOrId)` | `{ { id, label?, main?, sec?, appearances, hasPattern, resource?, decals? }, ... }`: the model's factory templates first, then those running resources registered, each with its `resource`; `decals` is what the template spends of the [decal budget](#stickers), present only when it spends any | nothing for a record name, `world.vehicles` for an id |
 | `setPaintProfile` | `(id, profileId?)` | Applies one template; `nil` goes back to generic paint | look change |
 | `registerPaintProfiles` | `(catalogue)` | Declares the templates this resource's TweakXL pack adds | nothing |
 
@@ -167,14 +174,15 @@ saturation of 0.5 and a value of 0.3.
 | Native | Signature | Result | Permission |
 |---|---|---|---|
 | `registerParts` | `(catalogue)` | Declares this resource's parts and how they fit each record | nothing |
-| `listParts` | `(recordOrId)` | `{ { id, kind, label?, slot?, modType?, variants = { [variant] = model } }, ... }` that fit the record, ids fully qualified | nothing for a record name, `world.vehicles` for an id |
+| `listParts` | `(recordOrId)` | `{ { id, kind, label?, slot?, carrier?, modType?, variants = { [variant] = model } }, ... }` that fit the record, ids fully qualified; `carrier` is the opening panel a body part rides on | nothing for a record name, `world.vehicles` for an id |
 | `setParts` | `(id, { [partId] = variant \| true \| false })` | Puts parts on or takes them off; parts not named stay as they are | look change |
 | `setWheels` | `(id, { rim, variant? } \| nil)` | One rim on every wheel slot; `nil` or `{}` gives the stock rims back | look change |
 
-**Part ids are namespaced.** `registerParts` stores `wing_gt` of resource `my_kit` as
-`my_kit:wing_gt`. A **bare id** passed to `setParts` or `setWheels` names a part of the calling
-resource; another resource (a shop selling a kit resource's rims) passes the **qualified id**,
-which is the form `listParts` answers.
+**Part ids are namespaced by the resource that registers them.** `registerParts` is a server
+native, and a call from resource `my_kit` stores `wing_gt` as `my_kit:wing_gt`, whichever resource
+registered the prop models the variants point at. A **bare id** passed to `setParts` or
+`setWheels` names a part of the calling resource; another resource (a shop selling the parts
+`my_kit` registered) passes the **qualified id**, which is the form `listParts` answers.
 
 `setParts` values: a variant name, `true` for a part with a single variant or a toggle, `false`
 to take the part off. A rim named in `setParts` replaces the car's current rim, and two rims in
@@ -404,22 +412,27 @@ resource. Other refusals: `invalid_sticker_catalogue`, `invalid_sticker:<id>.<fi
 
 | Side | Call | Answers |
 |---|---|---|
-| Server | `getVisual(id)` | `{ rev, profile?, neon?, parts, wheels?, plate?, tint?, neonAnimation?, lightColors?, engineSound?, stickers? }`. `parts` lists every chosen part with its variant, the rim included; `wheels` is `{ rim, variant }`. A choice whose pack is stopped is still answered. |
+| Server | `getVisual(id)` | `{ rev, profile?, neon?, parts, wheels?, plate?, tint?, neonAnimation?, lightColors?, engineSound?, stickers? }`. `parts` lists every chosen part with its variant, the rim included; `wheels` is `{ rim, variant }`. A livery, part or sticker the car holds is still answered while its pack is stopped; `engineSound` is not: it is `nil` while no running resource lists the sound. |
 | Client | `Open77.vehicles.getVisual(id)` | The raw replicated value: `{ v, rev, profile, neon, hide, show, attach, plate, tint, na, lc, st }`, or `nil` for the factory look. Needs `vehicles.read`. |
 | Client | `Open77.vehicles.customizationAvailable(id)` | What this game can draw and how far it got: `{ record, paint, rims, lights, twintone, profiles, appearance, streamed, destroyed, neonLit, rev, appliedRev, skipped }`, or `nil` and `unknown_vehicle`, `vehicles_unavailable` or `permission_denied:vehicles.read`. |
-| Client | `Open77.data.vehicle(record).customization` | The record's flags from the game data: `{ paint, rims, lights, twintone, twintoneModel, profiles, appearance }`. |
+| Client | `Open77.data.vehicle(record).customization` | Client only: the record's flags from the game data, `{ paint, rims, lights, twintone, twintoneModel, profiles, appearance }`. The server's `Open77.data.vehicle` has no `customization` field. |
 
 The client's raw value is the network form; read it for debugging and use the server's `getVisual`
 for logic. `skipped` lists what this client did not draw, as `<category>:<item>:<reason>`, for
 example `attach:rims.fl:model_not_registered`, `plate:<record>:no_plate_widget` or
-`tint:<record>:not_covered`. Read it once `appliedRev` has reached `rev`.
+`tint:<record>:not_covered`. Read it once `appliedRev` has reached `rev`. **The list only grows**:
+each entry is added once and stays while the car exists on this client, even after the tint or
+part that caused it is taken off. Check that the car still wears the category (client
+`getVisual`) before warning about an entry.
 
 ```lua
 -- client script; the resource needs vehicles.read
-local state = Open77.vehicles.customizationAvailable(vehicleId)
-if state and state.appliedRev >= state.rev then
-    for _, entry in ipairs(state.skipped) do
-        print("not drawn on this client: " .. entry)
+if type(Open77.vehicles.customizationAvailable) == "function" then
+    local state = Open77.vehicles.customizationAvailable(vehicleId)
+    if state and state.appliedRev >= state.rev then
+        for _, entry in ipairs(state.skipped) do
+            print("not drawn on this client since it streamed the car: " .. entry)
+        end
     end
 end
 ```

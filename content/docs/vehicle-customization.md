@@ -5,13 +5,16 @@ colours, rims and body parts, plate text, window tint, performance stages, engin
 stickers. The server is authoritative for all of them. A resource calls a server native, and
 every client that streams the car draws the result, late joiners included.
 
-**Availability.** Paint, the lights hue and factory trims (`setAppearance`) are in the current
-public build; see [Vehicle paint](vehicle-paint.md). Every other native in this section is
-**coming in the next Open77 release**: it is not in the current public build, and its API card
-carries no `since` version yet. The drawing side (neon, the plate script, the tint switch, the
-sticker script, the headlight colour) ships in the Open77 client of that same release, so players
-need it too. Test for a native before calling it, for example `if Open77.vehicles.setNeon then`,
-so a resource still loads on an older server, and grey the option in your menu otherwise.
+**Availability.** Paint, the lights hue, factory trims (`setAppearance`) and the property table
+(`getProperties`, `setProperties`) are in the current public build; see
+[Vehicle paint](vehicle-paint.md). On that build the lights hue is stored and replicated but the
+headlights stay white, and the property table carries no `visual` field. Every other native in
+this section is **coming in the next Open77 release**: it is not in the current public build, and
+its API card is marked **Next release**. The drawing side (neon, the plate script, the tint switch,
+the sticker script, the headlight colour) ships in the Open77 client of that same release, so
+players need it too. Test for a native before calling it, for example
+`if type(Open77.vehicles.setNeon) == "function" then`, so a resource still loads on an older
+server, and grey the option in your menu otherwise.
 
 All the natives are listed together in the API reference under
 [Vehicle customization](/docs/api?category=vehicle-customization).
@@ -33,7 +36,7 @@ All the natives are listed together in the API reference under
 | Category | What players see | Server natives | Content needed |
 |---|---|---|---|
 | Paint | Two body colours, any RGB | `setPaint`, `getPaint`, `resetPaint` | None |
-| Lights colour | One hue on the headlights, lamp glow and beam | `setLightsHue`, `clearLightsHue`, `setHeadlightColor` | None |
+| Lights colour | One hue for the car's lights, shown on the headlights (lamp glow and beam) from the next client release | `setLightsHue`, `clearLightsHue`, `setHeadlightColor` | None |
 | Factory trim | Another appearance variant of the same model | `setAppearance` | None |
 | Factory livery | The model's own TwinTone two-tone schemes | `listPaintProfiles`, `setPaintProfile` | None |
 | Custom livery | A pack's patterned colour template | `registerPaintProfiles`, then `setPaintProfile` | Archive + TweakXL records |
@@ -68,7 +71,8 @@ as customizable, a fit a resource registered for that record, or a record a pack
    car, the platform-reserved vehicle state bag key `open77.visual`.
 3. **Every client** that streams the car reads that value and draws it, again after a stream-in,
    an appearance change and a rebuild. A client that cannot draw something lists it in
-   `customizationAvailable(id).skipped` instead of failing.
+   `customizationAvailable(id).skipped` instead of failing. The list only grows while the car
+   exists on that client: an entry stays after its cause is gone.
 
 Stages and engine sounds are records, not part of that value: the server rebuilds the empty car in
 place on the record, under the same id, and keeps everything else.

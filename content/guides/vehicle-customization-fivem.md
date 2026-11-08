@@ -3,15 +3,17 @@
 How a FiveM tuning script maps onto Open77. Some FiveM vehicle natives exist under their FiveM
 name as **server** globals over the `Open77.vehicles` natives; the others have a native with
 another shape. Everything on this page is **coming in the next Open77 release**, except
-`setPaint`, `setLightsHue`, `setHeadlightColor` and the `SetVehiclePaint` global, which are in the
-current public build.
+`setPaint`, `setLightsHue`, `setHeadlightColor`, `setAppearance`, `setProperties` and the
+`SetVehiclePaint` global, which are in the current public build. On that build the lights hue is
+stored and replicated but the headlights stay white: clients show it from the next client release.
+The cards of the coming natives and globals are marked **Next release** in the API reference.
 
 ## Mapping table
 
 | FiveM | Open77 | Alias |
 |---|---|---|
 | `SetVehicleCustomPrimaryColour`, `SetVehicleCustomSecondaryColour` | `Open77.vehicles.setPaint(id, { primary = ..., secondary = ... })`, or the positional global `SetVehiclePaint(id, r1, g1, b1, r2, g2, b2)` | no |
-| `SetVehicleXenonLightsCustomColor` | `setLightsHue`, `setHeadlightColor` (one hue, not a colour) | no |
+| `SetVehicleXenonLightsCustomColor` | `setLightsHue`, `setHeadlightColor` (one hue, not a colour; the headlights show it from the next client release) | no |
 | `SetVehicleLivery`, `GetVehicleLivery` | `setPaintProfile`, `listPaintProfiles` | yes, server |
 | `SetVehicleLivery`, used for a factory trim | `setAppearance` | no |
 | `SetVehicleNeonLightEnabled`, `SetVehicleNeonLightsColour` | `setNeon` | yes, server |
@@ -101,17 +103,31 @@ index of the same level.
 
 ## Ported property tables
 
-`setProperties` reads four FiveM keys of a ported property table and lands them in the
-customization: `neonEnabled` (a boolean, or FiveM's four per-side booleans), `neonColor`, `livery`
-(the same 0-based index, `-1` for none) and `windowTint` (the index above). A FiveM key wins over
-the matching field of `visual`.
-
-It refuses the keys with no counterpart **by name**, as `unsupported_property:<key>`, and the
-reason names the Open77 native to use instead: `wheels` and `wheelType` point at `setWheels`,
-`modKit` and `mods` at `registerParts` and `setParts`, `plateText` at `setPlate`.
-`Open77.vehicles.unsupportedProperties` is the full list as a table, keyed by property name; pass
+`setProperties` refuses a FiveM key with no counterpart **by name**: the reason is
+`unsupported_property:<key>`, for example `unsupported_property:wheels`.
+`Open77.vehicles.unsupportedProperties` is the full list as a table keyed by property name, and
+the **value** of `unsupportedProperties[key]` says why and which Open77 native to use instead. Pass
 `{ ignoreUnsupported = true }` to skip those keys instead. See
 [What Cyberpunk does not have](vehicles.md#what-cyberpunk-does-not-have).
+
+```lua
+local ok, reason = Open77.vehicles.setProperties(id, ported)
+local key = not ok and reason and reason:match("^unsupported_property:(.+)$")
+if key then
+    print(key .. ": " .. (Open77.vehicles.unsupportedProperties[key] or "not a vehicle property"))
+end
+```
+
+On the current public build `neonEnabled`, `neonColor`, `livery` and `windowTint` are in that list
+too, so a table that carries them is refused.
+
+**From the next release**, `setProperties` reads those four keys and lands them in the
+customization: `neonEnabled` (a boolean, or FiveM's four per-side booleans), `neonColor`, `livery`
+(the same 0-based index, `-1` for none) and `windowTint` (the index above; GREEN, `6`, is still
+refused). A FiveM key wins over the matching field of `visual`. The values of
+`unsupportedProperties` then name the new natives: `wheels` and `wheelType` point at `setWheels`,
+`modKit` and `mods` at `registerParts`, `setParts` and `setWheels`, `plateText` at `setPlate`.
+`plateText` itself stays refused: set the plate with `setPlate`.
 
 ## Porting a tuning menu
 
@@ -129,6 +145,7 @@ end)
 -- server.lua; the resource's open77.lua declares
 -- permissions { "network.events", "world.vehicles", "world.vehicles.appearance" }
 RegisterNetEvent("tuning:tint", function(tint)
+    if type(SetVehicleWindowTint) ~= "function" then return end -- not on this server's build
     local seat = Open77.vehicles.getPlayerSeat(source)
     if not seat or seat.seat ~= "seat_front_left" then return end
     local ok, reason = SetVehicleWindowTint(seat.vehicleId, tint)

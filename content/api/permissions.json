@@ -4723,7 +4723,7 @@
    "runtimes": [
     "client"
    ],
-   "summary": "Enforced by the client; gates 32 natives in Open77.players, Open77.vehicles.",
+   "summary": "Enforced by the client; gates 34 natives in Open77.players, Open77.vehicles.",
    "curated": false,
    "natives": [
     "Open77.players.getVehicleSeat",

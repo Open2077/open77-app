@@ -255,6 +255,7 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
                           </code>
                           <span className={styles.rowSummary}>{entry.summary.replace(/\*\*|`/g, "")}</span>
                         </span>
+                        <ReleaseTag release={entry.release} />
                         <RuntimeTag runtime={entry.runtime} />
                       </a>
                     </li>
@@ -287,7 +288,10 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
             <div key={entryKey(selected)} className={styles.detailInner}>
               <div className={styles.detailMeta}>
                 <span>{apiEntryCategory(selected).label}</span>
-                <RuntimeTag runtime={selected.runtime} />
+                <span className={styles.metaTags}>
+                  <ReleaseTag release={selected.release} />
+                  <RuntimeTag runtime={selected.runtime} />
+                </span>
               </div>
               <p className={styles.namespace}>{selected.namespace === "_G" ? "Global function" : selected.namespace}</p>
               <h2 className={styles.fnName}>{selected.name}</h2>
@@ -439,6 +443,16 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
         </section>
       </div>
     </div>
+  );
+}
+
+/** A function merged for the next release, in no published build yet. */
+function ReleaseTag({ release }: { release?: string }) {
+  if (release !== "next") return null;
+  return (
+    <span className={styles.runtimeTag} title="Not in the current public build: arrives with the next Open77 release" data-api-release>
+      <Tag tone="red">Next release</Tag>
+    </span>
   );
 }
 
