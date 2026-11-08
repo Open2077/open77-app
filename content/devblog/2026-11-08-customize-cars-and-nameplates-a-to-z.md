@@ -178,6 +178,16 @@ That registers the 48 parts (18 rims and 30 body parts) under your resource's na
 
 **7. Check it.** The server log names each pack's ZIP at start (`preloads 'dist/…zip' as required mod`) and prints `started` for every resource. Any `part … refused` line from your resource names the part and the reason. In game, the `skipped` list (Step 7 below) tells you what one player's game could not draw.
 
+### Where Warden fits, and what players see
+
+**You upload nothing to Warden.** The `preload_mod` line in a pack's manifest is what attaches it to your server. At start, the server reads the ZIP, checks what is inside and adds it to your server's required mods on its own. The log says so: `Resource 'lightrp_vk_rims' preloads 'dist/…zip' as required mod 'lightrp_vk_rims-assets'`, then `Required mods: N declared`. Warden's **Mods** page lists these packs with a `resource <name>` badge and no remove button. The resource owns them, so you remove a pack by removing its resource and restarting. Warden's upload button is for the other case, a mod you have as a loose archive with no resource around it: [Mods your server requires](/docs/server-mods) covers that.
+
+**Why not the normal resource download?** A resource's scripts and files reach players while the game is already running, and can even be reloaded live. A new rim cannot arrive that way, because the game reads its archives and its records once, when it boots, and never looks again. Anything that adds a model or a record must be on the player's disk before the game starts, and that is exactly what a required mod is. Paint, neon, lamp colours and the game's own liveries (Steps 2 and 5) need no mod at all: they only use what every copy of the game already has, so the script alone is enough.
+
+**What a player sees.** When they press Connect, the launcher lists everything your world requires and asks them to agree. Each pack is named, with its size and whether Open77 has reviewed it. Because TweakXL and ArchiveXL contain code, the server list shows your server as unsecured, and players confirm that before joining. The launcher then downloads what they are missing from your server and checks every byte against its hash. It installs the files into a profile for your world only, then starts the game. Their own install and their solo profile are never touched, and the next time they join, nothing is downloaded again.
+
+**What it costs you.** Those files come from your server, so the bandwidth is yours. Light RP's seven packs and the two loaders weigh about 25 MB, sent once per new player: 500 new players is about 13 GB. Returning players download nothing. The [bandwidth section](/docs/server-mods#bandwidth-you-are-the-host) has the details.
+
 ## Step 4: sell rims and body parts
 
 This is where a pack meets your gameplay. Some resource calls `registerParts` at start: for Light RP's packs it is `my_lightrp_parts` from Step 3, and for your own packs it is a resource of yours. That call declares each part, its finishes (variants), and **how it fits each car model**. Your shop then asks what fits *this* car and buys only from that answer:
