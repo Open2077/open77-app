@@ -15,7 +15,7 @@ import { arrowUpRight01, search01 } from "@/components/ui/icons";
 import { Tabs } from "@/components/ui/tabs";
 import { Display } from "@/components/ui/typography";
 import type { ApiEntry } from "@/lib/api-reference";
-import { API_CATEGORIES, apiCategory, apiExplorerHref } from "@/lib/api-categories";
+import { API_CATEGORIES, apiEntryCategory, apiExplorerHref } from "@/lib/api-categories";
 import { InlineMarkdown } from "./inline-markdown";
 
 import styles from "./api-explorer.module.css";
@@ -80,21 +80,21 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
     server: entries.filter((entry) => entry.runtime === "server").length,
   }), [entries]);
   const available = useMemo(() => entries.filter((entry) => side === "all" || entry.runtime === side), [entries, side]);
-  const categories = API_CATEGORIES.map((item) => ({ ...item, count: available.filter((entry) => apiCategory(entry.namespace).id === item.id).length }));
-  const namespaces = [...new Set(available.filter((entry) => category === "all" || apiCategory(entry.namespace).id === category).map((entry) => entry.namespace))].sort();
+  const categories = API_CATEGORIES.map((item) => ({ ...item, count: available.filter((entry) => apiEntryCategory(entry).id === item.id).length }));
+  const namespaces = [...new Set(available.filter((entry) => category === "all" || apiEntryCategory(entry).id === category).map((entry) => entry.namespace))].sort();
   const results = useMemo(() => {
     const terms = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
     return available.filter((entry) =>
-      (category === "all" || apiCategory(entry.namespace).id === category) &&
+      (category === "all" || apiEntryCategory(entry).id === category) &&
       (namespace === "all" || entry.namespace === namespace) &&
-      terms.every((term) => `${entry.qualified} ${entry.summary} ${entry.description} ${apiCategory(entry.namespace).label}`.toLowerCase().includes(term)),
+      terms.every((term) => `${entry.qualified} ${entry.summary} ${entry.description} ${apiEntryCategory(entry).label}`.toLowerCase().includes(term)),
     ).sort((a, b) => a.qualified.localeCompare(b.qualified) || a.runtime.localeCompare(b.runtime));
   }, [available, category, namespace, query]);
   // A deep link names an entry; the list filters must not be allowed to hide
   // it. Look it up in the full set before falling back to the first row.
   const selected = results.find((entry) => entryKey(entry) === selectedKey) ??
     entries.find((entry) => entryKey(entry) === selectedKey) ?? results[0];
-  const groups = API_CATEGORIES.map((item) => ({ ...item, entries: results.filter((entry) => apiCategory(entry.namespace).id === item.id) })).filter((item) => item.entries.length);
+  const groups = API_CATEGORIES.map((item) => ({ ...item, entries: results.filter((entry) => apiEntryCategory(entry).id === item.id) })).filter((item) => item.entries.length);
 
   useEffect(() => {
     if (!selectedKey) return;
@@ -255,6 +255,7 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
                           </code>
                           <span className={styles.rowSummary}>{entry.summary.replace(/\*\*|`/g, "")}</span>
                         </span>
+                        <ReleaseTag release={entry.release} />
                         <RuntimeTag runtime={entry.runtime} />
                       </a>
                     </li>
@@ -286,8 +287,11 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
           {selected ? (
             <div key={entryKey(selected)} className={styles.detailInner}>
               <div className={styles.detailMeta}>
-                <span>{apiCategory(selected.namespace).label}</span>
-                <RuntimeTag runtime={selected.runtime} />
+                <span>{apiEntryCategory(selected).label}</span>
+                <span className={styles.metaTags}>
+                  <ReleaseTag release={selected.release} />
+                  <RuntimeTag runtime={selected.runtime} />
+                </span>
               </div>
               <p className={styles.namespace}>{selected.namespace === "_G" ? "Global function" : selected.namespace}</p>
               <h2 className={styles.fnName}>{selected.name}</h2>
@@ -439,6 +443,16 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
         </section>
       </div>
     </div>
+  );
+}
+
+/** A function merged for the next release, in no published build yet. */
+function ReleaseTag({ release }: { release?: string }) {
+  if (release !== "next") return null;
+  return (
+    <span className={styles.runtimeTag} title="Not in the current public build: arrives with the next Open77 release" data-api-release>
+      <Tag tone="red">Next release</Tag>
+    </span>
   );
 }
 

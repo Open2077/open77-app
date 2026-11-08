@@ -116,7 +116,7 @@ event as the two body colours.
 Two consequences follow from that shared event, and both are visible in the API:
 
 - the hue lives inside `paint` in a property table, and `getPaint`/`getProperties` report it there;
-- it is **not** governed by `paintApplied`. A car can wear a tinted headlight over its stock body
+- it is **not** governed by `paintApplied`. A car can carry a lights hue over its stock body
   paint, and `resetPaint` clears both because it resets the whole template.
 
 `nil` means the record's own colour rather than zero, because zero is a real hue -- red -- and the
@@ -127,6 +127,11 @@ Open77.vehicles.setLightsHue(vehicleId, 0.55)
 Open77.vehicles.setHeadlightColor(vehicleId, "#00D8FF")  -- converted to a hue; only the hue survives
 Open77.vehicles.clearLightsHue(vehicleId)
 ```
+
+**What players see.** On the current public build the hue is stored, replicated to every client and
+read back by `getLightsHue`, but the headlights stay white. From the next Open77 client release,
+clients colour the headlights, the lamp glow and the beam, from the hue; brake, reverse, blinker
+and interior lamps keep their own colours.
 
 **This is the closest build 2.31 has to `SetVehicleNeonLights` or `SetVehicleHeadlightsColour`, and
 it is not the same thing.** There is no underglow and no xenon palette in this game. See

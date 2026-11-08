@@ -246,6 +246,11 @@
 .runtimeTag {
   flex: none;
 }
+.metaTags {
+  align-items: center;
+  gap: 0.5rem;
+  display: flex;
+}
 .noResults {
   border: 0;
   margin: 1rem;

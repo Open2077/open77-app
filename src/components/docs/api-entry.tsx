@@ -38,6 +38,11 @@ export async function ApiEntryCard({ entry }: { entry: ApiEntry }) {
               <Tag tone="yellow">Inferred</Tag>
             </span>
           ) : null}
+          {entry.release === "next" ? (
+            <span title="Not in the current public build: arrives with the next Open77 release" data-api-release>
+              <Tag tone="red">Next release</Tag>
+            </span>
+          ) : null}
         </span>
       </header>
 

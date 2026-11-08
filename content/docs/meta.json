@@ -596,7 +596,7 @@
       "id": "vehicles",
       "title": "Vehicles & driving",
       "group": "Game systems",
-      "description": "Spawn vehicles, manage seats and paint, automate driving, use mounted weapons and control passenger drive-by.",
+      "description": "Spawn vehicles, manage seats, automate driving, use mounted weapons and control passenger drive-by.",
       "pages": [
         {
           "slug": "vehicles",
@@ -615,12 +615,6 @@
           "kind": "guide",
           "nav": "Changing seats",
           "description": "Animate front and rear seat changes, control automatic driver takeover, cancel requests and handle Lua client/server lifecycle events."
-        },
-        {
-          "slug": "vehicle-paint",
-          "kind": "guide",
-          "nav": "Vehicle paint",
-          "description": "Server-controlled RGB paint, replication and change events."
         },
         {
           "slug": "vehicle-ai",
@@ -645,6 +639,75 @@
           "kind": "guide",
           "nav": "Armed vehicle catalogue",
           "description": "Exact spawn IDs for 172 vehicle records declaring weapon mounts, with live-tested Basilisk, Outlaw and Shion variants, mount profiles, spawn examples and the machine-readable catalogue."
+        }
+      ]
+    },
+    {
+      "id": "vehicle-customization",
+      "title": "Vehicle customization",
+      "group": "Game systems",
+      "description": "Paint, liveries, neon, lamp colours, rims and body parts, plate, tint, stages, engine sounds and stickers: the server natives, the content packs that carry them and the models they cover.",
+      "pages": [
+        {
+          "slug": "vehicle-customization",
+          "kind": "guide",
+          "nav": "Overview",
+          "title": "Vehicle customization",
+          "description": "Tune networked cars from the server: liveries, neon, lamp colours, rims and body parts, plate, tint, stages, engine sounds and stickers. Categories, permissions and how the look reaches every player. Ships with the next Open77 release."
+        },
+        {
+          "slug": "vehicle-customization-natives",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Natives by category",
+          "title": "Vehicle customization natives",
+          "description": "Every vehicle customization native by category: arguments, results, refusal reasons, permissions and limits, server and client."
+        },
+        {
+          "slug": "vehicle-paint",
+          "kind": "guide",
+          "nav": "Paint & lights hue",
+          "description": "Server-controlled RGB paint, replication and change events."
+        },
+        {
+          "slug": "vehicle-customization-packs",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Content packs",
+          "title": "Vehicle customization content packs",
+          "description": "What a rim, livery, sticker, stage, sound, plate or tint pack holds, how it reaches players, the vehicle kit pipeline, fit tables and the 12-decal cap."
+        },
+        {
+          "slug": "vehicle-customization-models",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Model coverage",
+          "title": "Vehicle customization model coverage",
+          "description": "Why coverage is data, one fit per record, what happens on a model a pack does not cover, and how a server covers more models."
+        },
+        {
+          "slug": "vehicle-customization-persistence",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Persistence & multiplayer",
+          "title": "Vehicle customization: persistence and multiplayer",
+          "description": "The per-car visual value, late joiners and dormant choices, keeping a tuned car across a restart, events and the measured limits."
+        },
+        {
+          "slug": "vehicle-customization-fivem",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "FiveM equivalents",
+          "title": "Vehicle customization: FiveM equivalents",
+          "description": "SetVehicleMod, SetVehicleLivery, neon, window tint and plate: the FiveM aliases, their index mappings and the natives with another shape."
+        },
+        {
+          "slug": "vehicle-customization-examples",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Worked examples",
+          "title": "Vehicle customization worked examples",
+          "description": "A tuning shop, neon with refusals, a stage and sound bench, a garage that keeps tuned cars, a client menu, and Light RP's Auto Studio."
         }
       ]
     },
