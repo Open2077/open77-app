@@ -64,8 +64,9 @@ The tools that built the reference packs are public:
 [`tools/vehicle-kit`](https://github.com/Open2077/open77-resources/tree/next/tools/vehicle-kit) in
 open77-resources, on the `next` branch until the release that brings the natives. The folder
 mirrors the platform repository, so run every command from it; its `README.md` lists each builder
-with its command and guide. The packs it built for Light RP are published, ready to use, in
-[Light RP's `resources/assets/models`](https://github.com/Open2077/light-rp/tree/main/resources/assets/models).
+with its command and guide. The packs it built for Light RP are published in
+[Light RP's `resources/assets/models`](https://github.com/Open2077/light-rp/tree/main/resources/assets/models);
+see [Using Light RP's packs on another server](#using-light-rps-packs-on-another-server).
 The rim and body part pipeline turns a JSON spec into a ready-to-copy asset resource in one
 command, without the game running:
 
@@ -151,6 +152,53 @@ local ok, reason = Open77.vehicles.setWheels(vehicleId, { rim = "rim_vk1", varia
 
 Another resource, a shop for example, names the same rim `my_vehicle_parts:rim_vk1`, the form
 `listParts` answers.
+
+## Using Light RP's packs on another server
+
+The liveries, stickers, stages and plate packs register their own content, so copying the folder
+is enough. The rims and body kit packs are asset resources: their parts and fits are a catalogue
+that Light RP generates into `op77_lightrp/server/config/` (`vehicle_kit.lua`,
+`vehicle_kit_player_rims.lua`, `vehicle_kit_trims.lua`) and registers from its gamemode. On
+another server, copy those three files into a resource of yours that depends on both packs, and
+register each part:
+
+```lua
+-- open77.lua
+resource 'my_lightrp_parts'
+version '1.0.0'
+dependency 'lightrp_vk_rims'
+dependency 'lightrp_vk_body'
+server_script 'vehicle_kit.lua'
+server_script 'vehicle_kit_player_rims.lua'
+server_script 'vehicle_kit_trims.lua'
+server_script 'server.lua'
+```
+
+```lua
+-- server.lua
+local KIT = LightRpVehicleKit
+local playerRims = LightRpVehicleKitPlayerRims.fit
+local trims = LightRpVehicleKitTrims.rims
+
+for _, section in ipairs({ "rims", "body" }) do
+    for id, part in pairs(KIT[section].parts) do
+        if section == "rims" then
+            for record, fit in pairs(playerRims) do part.fit[record] = part.fit[record] or fit end
+            for record, appearances in pairs(trims) do
+                if part.fit[record] then part.fit[record].appearances = appearances end
+            end
+        end
+        local ok, reason = Open77.vehicles.registerParts({ [id] = part })
+        if not ok then print(("part %s refused: %s"):format(id, tostring(reason))) end
+    end
+end
+```
+
+The parts are then `my_lightrp_parts:<id>`. The dependencies also start the two packs, which are
+`auto_start false`; the plate pack is too, so a server that wants plates starts it with
+`ensure open77_vehicle_plates` in `startup.commands`. The liveries, stickers and stages need the
+`tweakxl` loader 1.12.0 or later, and the plate and tint need `archivexl` 1.28.0 or later, both from
+open77-resources `libraries/` on the `next` branch until the release.
 
 ## Fit tables: one fit per record
 
