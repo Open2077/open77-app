@@ -96,7 +96,7 @@ Two details matter for a shop:
 - **Setting the value a car already has changes nothing**, publishes nothing, and needs only `world.vehicles`. A garage can re-apply a stored look without the appearance permission.
 - The look has a budget: 4 KiB, 256 values and 16 attached parts. A change that would go past it is refused with `visual_too_large` or `attach_limit`, and nothing is applied.
 
-## Step 3: get the content packs
+## Step 3: install the content packs
 
 You do not have to build anything to start. The Light RP server publishes the seven packs it runs, ready to copy, in [`resources/assets/models`](https://github.com/Open2077/light-rp/tree/main/resources/assets/models):
 
@@ -112,18 +112,75 @@ You do not have to build anything to start. The Light RP server publishes the se
 
 Every one of them is **original content**: no file from the game is copied into a ZIP. Game data is only *named*, by path or record, and the builds check it byte by byte.
 
-To turn them on:
+Five of them work as soon as they run. The rims and the body kit need one small resource of yours, explained below. Here is the setup, start to finish.
 
-1. **Loaders.** Liveries, stickers and stages need the `tweakxl` loader (1.12.0 or later), and plates need ArchiveXL 1.28.0. Both are in the [open77-resources](https://github.com/Open2077/open77-resources) `libraries/` folder. They contain code, so the world must run [unsecured](/docs/server-mods#unsecured-mode).
-2. **Copy** the pack folders into your server's `resources/`.
-3. **List them in `resources.load`** in `server.jsonc`, before the resources that use them. That list is an allowlist: a resource missing from it never starts, and it logs nothing.
-4. **Players reconnect**, so the launcher can mount the new ZIPs before the game starts.
+**1. A server of the next release.** On an older server the packs' scripts skip themselves, and the natives they serve do not exist yet.
 
-The pack folder names are load-bearing. Every path inside the archive starts with `open77\assets\<resource name>\`, so renaming a folder breaks it. Rebuild under the new name instead (step 8).
+**2. The loaders.** Liveries, stickers and stages need the `tweakxl` loader, 1.12.0 or later. The plate text and the window tint need `archivexl`, 1.28.0 or later. Both are resources in the [open77-resources](https://github.com/Open2077/open77-resources/tree/next/libraries) `libraries/` folder. Take them from the `next` branch for now, because `main` still has older versions (TweakXL 1.11.4, ArchiveXL 1.27.1) that are too old. Copy the `tweakxl` and `archivexl` folders into your `resources/`.
+
+**3. The packs.** Copy the pack folders into your `resources/`, and keep their names. Every path inside a pack's archive starts with `open77\assets\<resource name>\`, so a renamed folder no longer finds its own files. To use another name, rebuild the pack under it (Step 8 below).
+
+**4. A resource that registers the rims and body parts.** The rims and body packs carry only the 3D models. The part that matters for gameplay is the catalogue that says which part fits which car, where it sits and which stock pieces it hides. Light RP generates that catalogue into three files, and its gamemode registers it at start. On your server, a resource of yours does that job. Copy the three files from Light RP's [`op77_lightrp/server/config`](https://github.com/Open2077/light-rp/tree/main/resources/gamemodes/op77_lightrp/server/config) folder (`vehicle_kit.lua`, `vehicle_kit_player_rims.lua` and `vehicle_kit_trims.lua`) into a new resource folder, and add these two files:
+
+```lua
+-- resources/my_lightrp_parts/open77.lua
+resource "my_lightrp_parts"
+version "1.0.0"
+dependency "lightrp_vk_rims"                 -- also starts the two packs
+dependency "lightrp_vk_body"
+server_script "vehicle_kit.lua"              -- the rims and body parts, with their fits on the dealer cars
+server_script "vehicle_kit_player_rims.lua"  -- the rims' fits on every other player car
+server_script "vehicle_kit_trims.lua"        -- trims whose stock rims differ
+server_script "server.lua"
+```
+
+```lua
+-- resources/my_lightrp_parts/server.lua
+local KIT = LightRpVehicleKit
+local playerRims = LightRpVehicleKitPlayerRims.fit
+local trims = LightRpVehicleKitTrims.rims
+
+for _, section in ipairs({ "rims", "body" }) do
+    for id, part in pairs(KIT[section].parts) do
+        if section == "rims" then
+            for record, fit in pairs(playerRims) do part.fit[record] = part.fit[record] or fit end
+            for record, appearances in pairs(trims) do
+                if part.fit[record] then part.fit[record].appearances = appearances end
+            end
+        end
+        local ok, reason = Open77.vehicles.registerParts({ [id] = part })   -- one part per call
+        if not ok then print(("part %s refused: %s"):format(id, tostring(reason))) end
+    end
+end
+```
+
+That registers the 48 parts (18 rims and 30 body parts) under your resource's name, `my_lightrp_parts:rim_lattice` for example. We ran this exact resource on a bare server: 43 parts fit an Archer Hella, 42 a Herrera Outlaw, and not one was refused. The Light RP server itself does not need this resource, because its gamemode already registers the parts.
+
+**5. `server.jsonc`.** Three settings:
+
+```jsonc
+"requiredMods": { "enabled": true, "unsecured": true },
+"resources": {
+  "load": [ "tweakxl", "archivexl",
+            "lightrp_vk_rims", "lightrp_vk_body", "my_lightrp_parts",
+            "lightrp_vk_liveries", "lightrp_vehicle_original_stickers", "lightrp_vehicle_stickers",
+            "lightrp_vehicle_stages", "open77_vehicle_plates",
+            "my_tuning_shop" ]
+},
+"startup": { "commands": [ "ensure open77_vehicle_plates" ] }
+```
+
+- `requiredMods.enabled` lets the server send the packs to players. `unsecured` is needed because TweakXL and ArchiveXL contain code: see [unsecured mode](/docs/server-mods#unsecured-mode).
+- `resources.load` is an allowlist. A resource missing from it never starts, and nothing is logged. List the loaders and packs before the resources that use them.
+- The rims, body and plate packs do not start by themselves (`auto_start false`). A resource that declares them as a `dependency` starts them, which is why `my_lightrp_parts` needs nothing more. Nothing depends on the plate pack, so `ensure` starts it.
+
+**6. Restart the server, then players reconnect.** The launcher mounts each pack's ZIP before the game starts, so a new or changed pack needs a server restart, and every player needs a fresh connection to get it. A player whose game is missing a pack sees that car stock, and nothing else fails.
+
+**7. Check it.** The server log names each pack's ZIP at start (`preloads 'dist/…zip' as required mod`) and prints `started` for every resource. Any `part … refused` line from your resource names the part and the reason. In game, the `skipped` list (Step 7 below) tells you what one player's game could not draw.
 
 ## Step 4: sell rims and body parts
 
-This is where a pack meets your gameplay. The pack's server script calls `registerParts` at start. It declares each part, its finishes (variants), and **how it fits each car model**. Your shop then asks what fits *this* car and buys only from that answer:
+This is where a pack meets your gameplay. Some resource calls `registerParts` at start: for Light RP's packs it is `my_lightrp_parts` from Step 3, and for your own packs it is a resource of yours. That call declares each part, its finishes (variants), and **how it fits each car model**. Your shop then asks what fits *this* car and buys only from that answer:
 
 ```lua
 -- server.lua of a shop that sells the rims another resource registered
@@ -155,7 +212,7 @@ Body parts work the same way with `setParts(carId, { [partId] = variant })`. Pas
 Three things to know:
 
 - **The client never picks an id.** It picks an index in the offer the server built, so nobody can ask for a part the car does not fit.
-- **Part ids are namespaced** by the resource that *registered* them: `lightrp_parts:rim_lattice`, not `rim_lattice`. `listParts` answers the full ids, so take them from there.
+- **Part ids are namespaced** by the resource that *registered* them: `my_lightrp_parts:rim_lattice`, not `rim_lattice`, and never the pack's name. `listParts` answers the full ids, so take them from there.
 - **A fit is per car record.** A rim is one 3D model, scaled and placed per model, with the stock rim components hidden (the tyre stays the car's own). A car whose record has no fit answers `part_not_for_model`. That is why the reference packs cover a known list of cars. The [model coverage guide](/docs/vehicle-customization-models) explains how to cover more.
 
 Parts are **visual only**: no collision and no physics, so a wing never changes how a car drives.
@@ -237,6 +294,8 @@ You need:
 - Blender 4.5 for the 3D parts.
 
 Without a spec, each builder rebuilds the Light RP reference pack, which is the quickest way to check your setup. Then copy a spec from `scripts/vehicle-kit/specs/` and change it.
+
+The liveries, stickers and stages builders also write the server script that registers what they built. The rims and body part builder writes the asset resource only, just like Light RP's packs. Your own server resource then registers the parts with their fits, as in Step 3, and the [content packs guide](/docs/vehicle-customization-packs#the-gameplay-resource) shows a minimal one.
 
 The builds refuse to produce a broken pack. They enforce three rules you would otherwise learn the hard way:
 
