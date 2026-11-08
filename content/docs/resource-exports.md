@@ -434,11 +434,44 @@ The lower-level method schema is in the generated `Open77.markers.*` reference.
 
 | Export | Signature | Result |
 |---|---|---|
-| `setEnabled` | `setEnabled(enabled)` | Enables/disables caller-owned overrides. |
+| `setEnabled` | `setEnabled(enabled)` | Turns every plate this resource draws on (`true`) or off (`false`). Overrides are kept. |
 | `isEnabled` | `isEnabled()` | Current enable state. |
-| `set` | `set(playerId, options)` | Sets a nameplate override for one player. |
+| `set` | `set(playerId, options)` | Sets a nameplate override for one player. `options` are those of `Open77.nameplates.set`: `label`, `sublabel`, `color`, `accent`, `bar`, `barColor`, `maxDistance`, `visible`, `showDistance`, `throughWalls`. |
 | `remove` | `remove(playerId)` | Removes one override. |
-| `clear` | `clear()` | Removes every caller-owned override. |
+| `clear` | `clear()` | Removes every override `open77_nameplates` holds, whoever set it through these exports; the competitive policy re-applies its own at once. Plates stay drawn. |
+| `setPolicy` | `setPolicy(policy)` | `"auto"`, `"open"` or `"competitive"`; anything else answers `false, "invalid_policy"`. |
+| `setFriendlies` | `setFriendlies(players, options?)` | Declares the players who keep a plate and puts this client in competitive play. `options.inFight = false` restores open plates without forgetting the server is competitive (a lobby). Answers `false, "policy_open"` while the policy is `open`. |
+| `policy` | `policy()` | A copy of the current state: `policy`, `competitive`, `inFight`, `friendlies` and `overrides` (counts), `config`. |
+
+#### Who gets a plate
+
+By default every other player you can see within 35 m has a plate. In
+competitive play the resource switches to squad-only plates, so a name cannot be
+used to spot enemies: squadmates keep a plate, with health and shield, through
+walls on purpose so a squad can find itself, and an enemy you have just hit shows
+a short health and shield readout. With the default `policy` of `auto`, Cordon and
+the deathmatch are recognised from their own state events. Any other gamemode
+declares its teams from a client script:
+
+```lua
+exports.open77_nameplates:setFriendlies({ 12, 15, 21 }, { inFight = true })
+exports.open77_nameplates:setPolicy("competitive")   -- or "auto", "open"
+```
+
+`setFriendlies` also accepts a table keyed by player id, such as
+`{ [12] = { name = "Vik" } }`. The operator retunes the policy live from Warden
+(group "Nameplates") or with `tunable.set open77_nameplates <key> <value>` -- see
+[Operator tunables](tunables.md):
+
+| Tunable | Default | Meaning |
+|---|---|---|
+| `policy` | `auto` | `auto`: plates for everyone until a competitive gamemode says otherwise; `open`: always every player; `competitive`: squad-only always |
+| `friendlyPlates` | `true` | Keep plates over your squad or team (visible through walls) |
+| `friendlyDistance` | `200` m | How far a squadmate's plate is drawn |
+| `friendlyVitals` | `true` | Add health and shield to a squadmate's plate |
+| `enemyVitals` | `engaged` | `engaged`: readout over an enemy you just damaged; `off`: nothing for enemies |
+| `enemyVitalsSeconds` | `2.5` s | How long that readout stays after your last hit |
+| `enemyVitalsDistance` | `120` m | Range of that readout |
 
 **Invisible players never get a plate, whatever the override says.** When the
 server hides a player with
@@ -456,6 +489,121 @@ reconnect, or the hiding resource stopping). Client code never has to reconcile
 it: the roster is filtered from the replicated life flag, which is the single
 source of truth -- **2.31 exposes no readable hidden flag on the engine side, so
 no client can be asked whether a body is really hidden right now.**
+
+#### Hidden behind walls
+
+A plate is shown only while the camera can see its player. Every plate is
+line-of-sight tested natively, from the camera to the player's head and then to
+his chest, against static geometry, doors and terrain -- walls, floors, closed
+doors, the ground. Vehicles and other people never hide a plate. A sightline may
+cross up to two panes of glass; each crossing is traced again from the player's
+side, so glass mounted on concrete, or the back of a display case, still hides
+him. A lying or dead body is tested at floor height. The verdict is smoothed so
+that a railing or a lamppost cannot blink a plate: it appears on the first clear
+test, hides only after at least two blocked tests spanning 120 ms or more, never
+flashes on a player first seen behind a wall, and fades between the two over the
+theme's `fade`. From the first blocked test, a plate stays where its player was
+last seen clear -- through the smoothing that may keep it up a moment longer,
+then through the fade: it never follows him behind the wall.
+
+This applies to every consumer of the roster -- the native drawer, a page fed by
+`Open77.nameplates.stream(page)`, and `Open77.nameplates.snapshot()` -- so a page
+cannot show what the native plate hides. `Open77.nameplates.style({ occlusion =
+false })` turns the test off for the server, and
+`Open77.nameplates.set(id, { throughWalls = true })` exempts one player.
+`open77_nameplates` does the latter for squadmates in competitive play. Use it for
+allies and objectives, never as a default: on anyone else it is a wallhack.
+
+#### Theme
+
+`Open77.nameplates.style(theme)` (client, `ui.nameplates`) sets the look of every
+plate the native drawer renders -- the drawer `open77_nameplates` turns on -- so a
+server reproduces its own design without a page:
+
+```lua
+-- A client older than the themed drawer has no `style`: test before calling,
+-- or the script stops on "attempt to call a nil value" there.
+if Open77.nameplates.style then
+    local ok, reason = Open77.nameplates.style({
+        font = "rajdhani", uppercase = false,
+        accent = "#FCEE0A", background = "#14120ACC",
+        shape = "rounded", corner = 4, accentSide = "bottom",
+        voice = "speaker", tip = "dot",
+    })
+    if not ok then
+        print("nameplate style refused: " .. tostring(reason))
+    end
+end
+```
+
+It can be called at the top of a script: what a resource sets while its scripts
+load is kept when it starts, and on a reload replaces what the previous instance
+set instead of being released with it.
+
+The keys apply over the calling resource's previous style, or over the defaults
+the first time, all or nothing: an unknown key answers
+`false, "unknown_style_key:<key>"`, a wrong type, an unparseable colour or an
+unknown name `false, "invalid_style_value:<key>"`, and nothing changes. Numbers
+outside their range are clamped, not refused. The most recent resource to call
+`style` decides the look; when it stops, the previous resource's style returns,
+and `Open77.nameplates.resetStyle()` drops the caller's style without stopping.
+
+Colours are `#RRGGBB`, `#RRGGBBAA`, or `false` for transparent. The five colours
+whose default is *accent* follow the plate's accent while unset or set to
+`"accent"`, so a per-player `set(id, { accent = ... })` recolours that one plate.
+Sizes are pixels on a 1080-line screen; the drawer scales them with the viewport,
+with distance (`nearScale` to `farScale`) and with `scale`. The defaults are the
+Open77 design system.
+
+| Key | Type | Default | Range / values | Meaning |
+|---|---|---|---|---|
+| `font` | string | `"chakra"` | `chakra`/`ui`, `rajdhani`/`body`, `segoe`/`system`, `bahnschrift`/`condensed` | Face of both lines. Chakra Petch and Rajdhani are embedded in the plugin; Segoe UI and Bahnschrift come from Windows and fall back to Chakra Petch |
+| `size` | number | `14` | 6 - 48 px | Label size |
+| `letterSpacing` | number | `0.08` | -0.1 - 0.5 em | Extra advance per glyph, like CSS `letter-spacing` |
+| `uppercase` | boolean | `true` | | Upper-case the label and the second line |
+| `textColor` | colour | `#E6EAEC` | | Label colour; `set()` `color` overrides it per player |
+| `textShadow` | colour | `#000000B4` | | Shadow under both lines; `false` draws none |
+| `sublabelColor` | colour | `#8A94A2` | | Second line and distance readout |
+| `sublabelScale` | number | `0.78` | 0.4 - 1.5 | Second-line size relative to the label |
+| `shape` | string | `"chamfer"` | `chamfer`, `rounded`, `pill`, `square`, `none` | Chip shape. `chamfer` cuts the top-left and bottom-right corners; `none` draws the text alone, with no chip, border or accent bar |
+| `corner` | number | `6` | 0 - 24 px | Chamfer cut, or corner radius of `rounded` |
+| `paddingX` | number | `9` | 0 - 32 px | Horizontal padding inside the chip |
+| `paddingY` | number | `4` | 0 - 24 px | Vertical padding inside the chip |
+| `background` | colour | `#0B0E14B8` | | Chip fill |
+| `backgroundTalking` | colour | `#0A2A2ED6` | | Chip fill while the player talks |
+| `border` | colour or `"accent"` | accent at 14 % | | Chip outline |
+| `borderTalking` | colour or `"accent"` | accent at 45 % | | Chip outline while the player talks |
+| `borderWidth` | number | `1` | 0 - 6 px | Outline width; `0` draws none |
+| `accent` | colour | `#22D8E2` | | Accent of every plate; `set()` `accent` overrides it per player |
+| `accentSide` | string | `"left"` | `left`, `top`, `bottom`, `none` | Edge of the chip that carries the accent bar |
+| `accentWidth` | number | `2` | 0 - 12 px | Accent bar thickness |
+| `voice` | string | `"bars"` | `bars`, `speaker`, `none` | Talking indicator: three bars that follow the voice level, or a speaker glyph |
+| `voiceIdle` | colour | `#3A4250` | | Indicator while the player is silent |
+| `voiceActive` | colour or `"accent"` | accent | | Indicator while the player talks |
+| `voiceIdleVisible` | boolean | `true` | | Draw the indicator while the player is silent |
+| `pin` | number | `9` | 0 - 64 px | Length of the line from the chip down to the head |
+| `pinWidth` | number | `1` | 0 - 6 px | Pin width |
+| `pinColor` | colour or `"accent"` | accent | | Pin and tip colour |
+| `tip` | string | `"diamond"` | `diamond`, `dot`, `none` | Marker at the end of the pin |
+| `tipSize` | number | `7` | 0 - 32 px | Diamond diagonal or dot diameter |
+| `tipGlow` | boolean | `true` | | Soft halo behind the tip |
+| `tipPulse` | boolean | `true` | | Ring pulsing out of the tip while the player talks |
+| `barHeight` | number | `3` | 1 - 16 px | Height of the bar a `set()` `bar` draws |
+| `barBackground` | colour | `#0000008C` | | Empty part of the bar |
+| `barColor` | colour or `"accent"` | accent | | Filled part; `set()` `barColor` overrides it per player |
+| `nearScale` | number | `1` | 0.2 - 3 | Size multiplier at the camera |
+| `farScale` | number | `0.6` | 0.2 - 3 | Size multiplier at the edge of the plate's range |
+| `fadeFrom` | number | `0.75` | 0 - 1 | Fraction of the range where the plate starts fading out; it is gone at the edge |
+| `fade` | number | `160` | 0 - 2000 ms | Duration of the appear and disappear fade (coming into view, occlusion) |
+| `maxDistance` | number | `35` | 1 - 250 m | Range of a plate whose `set()` gives no `maxDistance` |
+| `occlusion` | boolean | `true` | | Hide plates of players behind walls, floors and the ground |
+| `offset` | number | `0` | -3 - 5 m | Metres added above the default anchor, just over the head |
+| `showDistance` | boolean | `false` | | Add the distance to the second line of every plate |
+| `scale` | number | `1` | 0.25 - 4 | Multiplier on every size |
+
+`maxDistance`, `offset`, `occlusion` and `fade` also shape what `stream(page)` and
+`snapshot()` return, because they decide where a plate sits and which players are
+listed. Every other key only affects the native drawer.
 
 ### `open77_notifications`
 

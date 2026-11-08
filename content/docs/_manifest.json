@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
   "guides": 112,
-  "apiEntries": 1771,
+  "apiEntries": 1773,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -1089,8 +1089,8 @@
       "target": "content/docs/reflex-overdrive.md",
       "slug": "reflex-overdrive",
       "title": "Reflex overdrive",
-      "bytes": 15173,
-      "sha256": "3d365b3ff36a5aca5bef661c3773faaa378b8749f0c36d1ad35a3811268a90dd",
+      "bytes": 15339,
+      "sha256": "70ad1dc5f084eed072d9746817cd12ddcb45503aec0c401a0866500df76ab495",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "f5c3f1a307ccc7a6c8db177712a42eee61a70195995078ad7d7d94438191f488"
@@ -1101,8 +1101,8 @@
       "target": "content/docs/resource-exports.md",
       "slug": "resource-exports",
       "title": "Official resource exports",
-      "bytes": 39040,
-      "sha256": "a9579da085f3305281c37f70314edf2a66de6c1ed8dd2d4649152b3a3f3cea82",
+      "bytes": 49426,
+      "sha256": "c91a55ac561a5d08677c5e25c2892f3f905de18f9d2382c4d91a5eef34b33770",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "7e1c4a507b28b9441863585bb4103134dc407b59c0ac5f29361eb0e771543871"
@@ -1472,8 +1472,8 @@
       "target": "content/docs/voice.md",
       "slug": "voice",
       "title": "Integrated voice chat",
-      "bytes": 15527,
-      "sha256": "ac64af3d650fd840b36ab2926fc578243348ea77fab0c15498cdfa5a85914e35",
+      "bytes": 15833,
+      "sha256": "369da759834b6a8fa50e90455fb40af5e36a4a4cc0fcc3a332d85749ec83fb4e",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "55226fd769b2cce01f9a32c02b88b53eb77e1eff4ced607562311149f90451a0",
@@ -1635,9 +1635,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1771,
-      "bytes": 2570521,
-      "sha256": "7c1e3269473dec1049cf08072baca656301c5499eb453730d54cd0881d26407e",
+      "entries": 1773,
+      "bytes": 2581074,
+      "sha256": "6731432fcc46fddc0f191cddea1d70aa6e48f38320c4376a2b53b412501ba5b4",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6",
@@ -1671,8 +1671,8 @@
       "source": "wiki/data/permissions.json",
       "target": "content/api/permissions.json",
       "entries": 175,
-      "bytes": 158078,
-      "sha256": "54314dbe61ed0f8967e78234e8205cd2257df445430466328c25d9ca9647e4bb",
+      "bytes": 158304,
+      "sha256": "45676b146208e0d9e3f7a01520213c5c069345bd1d3a1ec9da47a0ed304c49e9",
       "siteAmendment": {
         "0": "V",
         "1": "e",
@@ -1856,7 +1856,7 @@
       "target": "content/api/events.json",
       "entries": 543,
       "bytes": 385167,
-      "sha256": "a3c674889c803f9e84bf16edda8f55da8b3c6e7a73c68b1056c75ff5194f73af",
+      "sha256": "cb096c436cf7bb6ed3c1871bf536ada78584ca1e16368557fbd81efb6059e1dd",
       "siteAmendment": {
         "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
       },
@@ -2823,6 +2823,31 @@
       "keybindings",
       "blips",
       "index"
+    ]
+  },
+  "nativeNameplatesDocumentation": {
+    "sourceRevision": "d39a94856c2ce58ba933932a719081fc25caab64",
+    "sourceWorkingTreeDirty": false,
+    "clientVersion": "unreleased (open77-base main)",
+    "mode": "Manual merge of the native nameplate series (themed drawer, line-of-sight occlusion, voice level). API: the ten client:Open77.nameplates.* cards replaced or added from wiki/data/api.json; every other site card and site-only description preserved. Events: source lines of open77:nameplates:policy and open77:nameplates:ready. Permissions: ui.nameplates (10 natives). Guides: nameplate sections ported by hand; the open77_nameplates policy exports and tunables come from the resource itself, and the setEnabled row was corrected against its client/main.lua.",
+    "apiRouteIds": [
+      "client:Open77.nameplates.clear",
+      "client:Open77.nameplates.remove",
+      "client:Open77.nameplates.render",
+      "client:Open77.nameplates.resetStyle",
+      "client:Open77.nameplates.set",
+      "client:Open77.nameplates.setTalking",
+      "client:Open77.nameplates.snapshot",
+      "client:Open77.nameplates.stopStream",
+      "client:Open77.nameplates.stream",
+      "client:Open77.nameplates.style"
+    ],
+    "amendedGuides": [
+      "resource-exports",
+      "world-drawing",
+      "resource-runtime",
+      "voice",
+      "reflex-overdrive"
     ]
   }
 }

@@ -174,7 +174,9 @@ CyberwareA                 ->      CyberwareA // OVERDRIVE
 
 It is raised with the sustained layers and lowered on every path that ends them,
 so a plate can never claim a boost that has already finished. Nothing marks the
-boosted player's own plate: he is not an observer of himself.
+boosted player's own plate: he is not an observer of himself. Like every plate,
+the marker is shown only while the camera can see the boosted player: behind a
+wall, a floor or the ground it is hidden with the rest of his plate.
 
 **One thing to know if you drive nameplates yourself.** A nameplate override
 belongs to whichever resource claims it first. If your own resource is setting

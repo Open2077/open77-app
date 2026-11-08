@@ -15,7 +15,7 @@ tells clients what to draw through net events.
 | A card, ring or dot pinned to a world point or a moving entity, frame-tight, hidden behind static geometry | `Open77.anchors` with `render` | the plugin, per frame |
 | Screen coordinates for a world point, delivered to your own WebUI page every frame | `Open77.anchors` (default `render = "page"`) | your page |
 | A contextual prompt with several choices, hold keys, entity attachment | `open77_interactions` | the interactions package |
-| A label above remote players | `Open77.nameplates` | the plugin, per frame |
+| A themed label above the remote players the camera can see | `Open77.nameplates` | the plugin, per frame |
 | A pin on the map or minimap | `Open77.blips` | vanilla mappin system |
 | "Did the player walk into this circle?" — no drawing at all | [`open77_zones`](https://github.com/Open2077/open77-resources/tree/main/system/open77_zones) | nothing |
 | A one-shot screen coordinate for a world point | `Open77.camera.project` | you |
@@ -627,24 +627,42 @@ accumulator, never reset it. See
 
 ## Nameplates
 
-Nameplates label remote players. They require `ui.nameplates`, and overrides
-are owner-scoped: another resource cannot change or remove yours.
+Nameplates label the remote players the camera can see. The plugin draws them
+natively, and the shipped
+[`open77_nameplates`](resource-exports.md#open77_nameplates) resource turns that
+on for every server. They require `ui.nameplates`, and overrides are
+owner-scoped: another resource cannot change or remove yours.
 
 ```lua
 permissions { "ui.nameplates" }
 ```
 
 ```lua
-Open77.nameplates.set(playerId, {
-    label       = "Officer Reyes",
-    color       = "#22D8E2",
-    maxDistance = 60.0,
-    visible     = true,
-    showDistance = true,     -- native path only
+local ok, reason = Open77.nameplates.set(playerId, {
+    label        = "Officer Reyes",
+    sublabel     = "NCPD",      -- a second line under the name
+    accent       = "#3399FF",   -- this plate's side bar, border, pin and voice bars
+    bar          = 0.8,         -- a health or progress bar, 0..1
+    maxDistance  = 60.0,
+    showDistance = true,        -- native drawer only
 })
+if not ok then
+    print("plate refused: " .. tostring(reason))
+end
 Open77.nameplates.remove(playerId)
 Open77.nameplates.clear()
 ```
+
+The other options are `color` (the label colour), `barColor`, `visible` and
+`throughWalls`. An option you omit follows the server's theme, `color` and
+`maxDistance` included, so an override that only renames a player keeps the
+server's palette and range. Each call replaces your whole override for that
+player: restate every option you want to keep. A player another resource already
+overrides answers `owned_by_another_resource`. `clear()` drops your overrides and
+talking assertions only; your style, stream and drawer stay until the resource
+stops. Clients released before the themed drawer also switched your stream and
+drawer off in `clear()`, so a resource that must run on them removes its
+overrides one by one with `remove` instead.
 
 There are three delivery paths, in decreasing order of preference:
 
@@ -677,10 +695,67 @@ a reload from leaving one frame painted.
 Nameplates are the instructive case for the rule at the top of this page.
 `Open77.nameplates.snapshot()` was *already* projected natively and already
 correct; only the **delivery** sat on a `Wait(33)` loop, and that alone was
-enough to make plates lag. The event name and payload are identical across
-paths 2 and 3 — `nameplates:update` carrying
-`{ players = { { id, label, color, x, y, distance } } }` — so a page that
-already handles it needs no edit.
+enough to make plates lag. The event name and the keys a page already reads
+are the same across paths 2 and 3 — `nameplates:update` carrying
+`{ players = { { id, label, color, x, y, distance, talking } } }` — so a page
+that already handles it needs no edit. Each player also carries `sublabel`,
+`accent`, `level` (voice, 0..1), `alpha` (the appear and occlusion fade, 0..1:
+multiply your own opacity by it) and `bar`. A streamed frame sends `bar = -1`
+when no `set()` gave one; a `snapshot()` entry then has no `bar` at all, and
+also carries `occluded`, the latest line-of-sight verdict.
+
+### Nameplate look — `Open77.nameplates.style`
+
+The native drawer used to draw one fixed box, so a server that wanted its own
+design drew it in a page and paid for it: the plate trailed the body through
+the WebUI chain again. The look is now data. `style` sets one theme for every
+plate the native drawer renders:
+
+```lua
+-- Absent on clients older than the themed drawer: test before calling.
+if Open77.nameplates.style then
+    local ok, reason = Open77.nameplates.style({
+        accent = "#FCEE0A", font = "rajdhani", uppercase = false,
+        shape = "rounded", voice = "speaker", maxDistance = 25,
+    })
+    if not ok then
+        print("nameplate style refused: " .. tostring(reason))
+    end
+end
+```
+
+It covers the label (font, size, letter spacing, case, colours), the chip
+(`chamfer`, `rounded`, `pill`, `square` or `none`, padding, fill, border), the
+accent bar and its side, the voice indicator (`bars`, `speaker` or `none`), the
+pin and its tip, the bar, distance scaling (`nearScale`, `farScale`,
+`fadeFrom`, `fade`, `maxDistance`) and behaviour (`occlusion`, `offset`,
+`showDistance`, `scale`). The call is all or nothing: an unknown key refuses
+it with `unknown_style_key:<key>` and a bad value with
+`invalid_style_value:<key>`, so a typo shows up in the log instead of as a
+plate that silently ignores half its theme. Numbers out of range are clamped.
+The most recent resource to call it decides the look; when it stops, the
+previous resource's style returns, and `Open77.nameplates.resetStyle()` hands
+the look back without stopping. Every key, with its default and range, is in
+[the `open77_nameplates` exports](resource-exports.md#open77_nameplates).
+
+### Nameplates and line of sight
+
+A plate is shown only while the camera can see its player. Every plate is
+line-of-sight tested natively, camera to head and then to chest, against static
+geometry, doors and terrain — walls, floors, closed doors, the ground; not
+vehicles or people — crossing up to two panes of glass. The verdict is
+smoothed so a sightline grazing a railing does not blink the plate, and a plate
+fades out where its player was last seen rather than following him behind the
+wall. The native drawer, `stream(page)` and `snapshot()` all get the same
+filtered roster, so a page cannot show what the native plate hides.
+
+`style{ occlusion = false }` turns the test off for a server;
+`set(id, { throughWalls = true })` exempts one player. That is for squadmates
+and objectives, never a default: on anyone else it is a wallhack.
+
+The plate also reads the voice engine itself: it shows talking when a resource
+asserted `Open77.nameplates.setTalking` or the player is audible above a small
+threshold, and the voice bars follow his level.
 
 ## HUD ground circles — `open77_groundcircle`
 
