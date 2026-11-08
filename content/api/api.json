@@ -810,7 +810,7 @@
    "players.model.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "GetPlayerModel",
   "route_id": "GetPlayerModel"
@@ -1304,7 +1304,7 @@
    "players.model.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "IsPlayerModelReady",
   "route_id": "IsPlayerModelReady"
@@ -1337,7 +1337,7 @@
    "players.model.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "IsPlayerModelValid",
   "route_id": "IsPlayerModelValid"
@@ -3626,7 +3626,7 @@
   "reasons": [
    "anchors_backend_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13+op77.83",
   "constant": false,
   "qualified": "Open77.anchors.frame",
   "route_id": "Open77.anchors.frame"
@@ -5186,7 +5186,7 @@
    "invalid_color:expected_#RRGGBB_or_#RRGGBBAA",
    "native_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.blips.setColor",
   "route_id": "Open77.blips.setColor"
@@ -8137,7 +8137,7 @@
    "invalid_consumable_request",
    "invalid_consumable_state"
   ],
-  "since": null,
+  "since": "2.31.21+op77.111",
   "constant": false,
   "qualified": "Open77.consumables.configure",
   "route_id": "Open77.consumables.configure"
@@ -8185,7 +8185,7 @@
    "invalid_consumable_request",
    "invalid_consumable_state"
   ],
-  "since": null,
+  "since": "2.31.21+op77.111",
   "constant": false,
   "qualified": "Open77.consumables.equip",
   "route_id": "Open77.consumables.equip"
@@ -8227,7 +8227,7 @@
    "invalid_consumable_request",
    "invalid_consumable_state"
   ],
-  "since": null,
+  "since": "2.31.21+op77.111",
   "constant": false,
   "qualified": "Open77.consumables.get",
   "route_id": "Open77.consumables.get"
@@ -8269,7 +8269,7 @@
    "invalid_consumable_request",
    "invalid_consumable_state"
   ],
-  "since": null,
+  "since": "2.31.21+op77.111",
   "constant": false,
   "qualified": "Open77.consumables.reset",
   "route_id": "Open77.consumables.reset"
@@ -8317,7 +8317,7 @@
    "invalid_consumable_request",
    "invalid_consumable_state"
   ],
-  "since": null,
+  "since": "2.31.21+op77.111",
   "constant": false,
   "qualified": "Open77.consumables.setCount",
   "route_id": "Open77.consumables.setCount"
@@ -8365,7 +8365,7 @@
    "invalid_consumable_request",
    "invalid_consumable_state"
   ],
-  "since": null,
+  "since": "2.31.21+op77.111",
   "constant": false,
   "qualified": "Open77.consumables.setRecharge",
   "route_id": "Open77.consumables.setRecharge"
@@ -8413,7 +8413,7 @@
    "invalid_consumable_request",
    "invalid_consumable_state"
   ],
-  "since": null,
+  "since": "2.31.21+op77.111",
   "constant": false,
   "qualified": "Open77.consumables.setType",
   "route_id": "Open77.consumables.setType"
@@ -8455,7 +8455,7 @@
    "invalid_consumable_request",
    "invalid_consumable_state"
   ],
-  "since": null,
+  "since": "2.31.21+op77.111",
   "constant": false,
   "qualified": "Open77.consumables.snapshot",
   "route_id": "Open77.consumables.snapshot"
@@ -8497,7 +8497,7 @@
    "invalid_consumable_request",
    "invalid_consumable_state"
   ],
-  "since": null,
+  "since": "2.31.21+op77.111",
   "constant": false,
   "qualified": "Open77.consumables.unequip",
   "route_id": "Open77.consumables.unequip"
@@ -11455,7 +11455,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.activate",
   "route_id": "Open77.gizmos.activate"
@@ -11481,7 +11481,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.active",
   "route_id": "Open77.gizmos.active"
@@ -11514,7 +11514,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.cancel",
   "route_id": "Open77.gizmos.cancel"
@@ -11547,7 +11547,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.capabilities",
   "route_id": "Open77.gizmos.capabilities"
@@ -11580,7 +11580,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.commit",
   "route_id": "Open77.gizmos.commit"
@@ -11613,7 +11613,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.create",
   "route_id": "Open77.gizmos.create"
@@ -11646,7 +11646,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.deactivate",
   "route_id": "Open77.gizmos.deactivate"
@@ -11679,7 +11679,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.destroy",
   "route_id": "Open77.gizmos.destroy"
@@ -11712,7 +11712,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.get",
   "route_id": "Open77.gizmos.get"
@@ -11738,7 +11738,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.list",
   "route_id": "Open77.gizmos.list"
@@ -11771,7 +11771,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.redo",
   "route_id": "Open77.gizmos.redo"
@@ -11810,7 +11810,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.setTransform",
   "route_id": "Open77.gizmos.setTransform"
@@ -11843,7 +11843,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.undo",
   "route_id": "Open77.gizmos.undo"
@@ -11882,7 +11882,7 @@
    "gizmos.edit"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.gizmos.update",
   "route_id": "Open77.gizmos.update"
@@ -13994,7 +13994,7 @@
    "map.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.addTab",
   "route_id": "Open77.map.addTab"
@@ -14076,7 +14076,7 @@
    "map.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.focus",
   "route_id": "Open77.map.focus"
@@ -14101,7 +14101,7 @@
    "map.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.getScreen",
   "route_id": "Open77.map.getScreen"
@@ -14151,7 +14151,7 @@
    "map.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.getView",
   "route_id": "Open77.map.getView"
@@ -14290,7 +14290,7 @@
    "map.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.recenter",
   "route_id": "Open77.map.recenter"
@@ -14322,7 +14322,7 @@
    "map.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.removeTab",
   "route_id": "Open77.map.removeTab"
@@ -14347,7 +14347,7 @@
    "map.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.resetAppearance",
   "route_id": "Open77.map.resetAppearance"
@@ -14379,7 +14379,7 @@
    "map.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.selectTab",
   "route_id": "Open77.map.selectTab"
@@ -14411,7 +14411,7 @@
    "map.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.setAccentColor",
   "route_id": "Open77.map.setAccentColor"
@@ -14443,7 +14443,7 @@
    "map.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.setCameraMode",
   "route_id": "Open77.map.setCameraMode"
@@ -14481,7 +14481,7 @@
    "map.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.setTabLabel",
   "route_id": "Open77.map.setTabLabel"
@@ -14513,7 +14513,7 @@
    "map.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.setTitle",
   "route_id": "Open77.map.setTitle"
@@ -14545,7 +14545,7 @@
    "map.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.map.setZoomLevel",
   "route_id": "Open77.map.setZoomLevel"
@@ -14670,7 +14670,7 @@
    "not_found",
    "permission_denied:world.markers"
   ],
-  "since": null,
+  "since": "2.31.13+op77.83",
   "constant": false,
   "qualified": "Open77.markers.get",
   "route_id": "Open77.markers.get"
@@ -14755,7 +14755,7 @@
   "source_line": 25496,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.83",
   "constant": false,
   "qualified": "Open77.markers.shapes",
   "route_id": "Open77.markers.shapes"
@@ -14831,7 +14831,7 @@
    "missing_prop_or_page",
    "permission_denied:world.props"
   ],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.media.bind",
   "route_id": "Open77.media.bind"
@@ -14857,7 +14857,7 @@
    "world.props"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.media.clear",
   "route_id": "Open77.media.clear"
@@ -14883,7 +14883,7 @@
    "world.props"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.media.list",
   "route_id": "Open77.media.list"
@@ -14916,7 +14916,7 @@
    "world.props"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.media.unbind",
   "route_id": "Open77.media.unbind"
@@ -14955,7 +14955,7 @@
    "world.props"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.media.update",
   "route_id": "Open77.media.update"
@@ -15073,7 +15073,7 @@
    "permission_denied:player.motion.project",
    "resource_not_running"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "Open77.motion.launch",
   "route_id": "Open77.motion.launch"
@@ -15136,7 +15136,7 @@
    "prediction_backend_unavailable",
    "resource_not_running"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.119",
   "constant": false,
   "qualified": "Open77.motion.predictAction",
   "route_id": "Open77.motion.predictAction"
@@ -15165,7 +15165,7 @@
    "permission_denied:player.motion.project",
    "prediction_backend_unavailable"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.119",
   "constant": false,
   "qualified": "Open77.motion.predictionStats",
   "route_id": "Open77.motion.predictionStats"
@@ -15202,7 +15202,7 @@
    "motion_backend_unavailable",
    "permission_denied:player.motion.project"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.119",
   "constant": false,
   "qualified": "Open77.motion.refutePrediction",
   "route_id": "Open77.motion.refutePrediction"
@@ -15563,7 +15563,7 @@
    "ui.nameplates"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "qualified": "Open77.nameplates.resetStyle",
   "route_id": "Open77.nameplates.resetStyle"
@@ -15762,7 +15762,7 @@
    "ui.nameplates"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "qualified": "Open77.nameplates.style",
   "route_id": "Open77.nameplates.style"
@@ -16456,7 +16456,7 @@
    "pause_menu.customize"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.87",
   "constant": false,
   "qualified": "Open77.pauseMenu.getAppearance",
   "route_id": "Open77.pauseMenu.getAppearance"
@@ -16482,7 +16482,7 @@
    "pause_menu.customize"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.87",
   "constant": false,
   "qualified": "Open77.pauseMenu.resetAppearance",
   "route_id": "Open77.pauseMenu.resetAppearance"
@@ -16515,7 +16515,7 @@
    "pause_menu.customize"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.87",
   "constant": false,
   "qualified": "Open77.pauseMenu.setAccentColor",
   "route_id": "Open77.pauseMenu.setAccentColor"
@@ -16548,7 +16548,7 @@
    "pause_menu.customize"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.87",
   "constant": false,
   "qualified": "Open77.pauseMenu.setLogo",
   "route_id": "Open77.pauseMenu.setLogo"
@@ -17829,7 +17829,7 @@
    "players.model.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.players.getModel",
   "route_id": "Open77.players.getModel"
@@ -18211,7 +18211,7 @@
    "permission_denied:players.local.visibility",
    "unexpected_arguments"
   ],
-  "since": null,
+  "since": "2.31.21+op77.111",
   "constant": false,
   "qualified": "Open77.players.isLocalPuppetVisible",
   "route_id": "Open77.players.isLocalPuppetVisible"
@@ -18244,7 +18244,7 @@
    "players.model.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.players.isModelReady",
   "route_id": "Open77.players.isModelReady"
@@ -18277,7 +18277,7 @@
    "players.model.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.players.isModelValid",
   "route_id": "Open77.players.isModelValid"
@@ -18678,7 +18678,7 @@
    "players.local.visibility"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21+op77.111",
   "constant": false,
   "qualified": "Open77.players.setLocalPuppetVisible",
   "route_id": "Open77.players.setLocalPuppetVisible"
@@ -18715,7 +18715,7 @@
    "game_unavailable_on_this_host",
    "permission_denied:players.read"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.114",
   "constant": false,
   "qualified": "Open77.players.getDriveByState",
   "route_id": "Open77.players.getDriveByState"
@@ -18752,7 +18752,7 @@
    "game_unavailable_on_this_host",
    "permission_denied:players.read"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.114",
   "constant": false,
   "qualified": "Open77.players.isDriveByEnabled",
   "route_id": "Open77.players.isDriveByEnabled"
@@ -18789,7 +18789,7 @@
    "game_unavailable_on_this_host",
    "permission_denied:players.read"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.114",
   "constant": false,
   "qualified": "Open77.players.isInDriveBy",
   "route_id": "Open77.players.isInDriveBy"
@@ -18824,7 +18824,7 @@
   "reasons": [
    "permission_denied:players.driveby"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.114",
   "constant": false,
   "qualified": "Open77.players.setLocalDriveByEnabled",
   "route_id": "Open77.players.setLocalDriveByEnabled"
@@ -18860,7 +18860,7 @@
    "permission_denied:players.life.read",
    "player_unavailable"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.114",
   "constant": false,
   "qualified": "Open77.players.getDriveByState",
   "route_id": "server:Open77.players.getDriveByState"
@@ -18896,7 +18896,7 @@
    "permission_denied:players.life.read",
    "player_unavailable"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.114",
   "constant": false,
   "qualified": "Open77.players.isDriveByEnabled",
   "route_id": "server:Open77.players.isDriveByEnabled"
@@ -18932,7 +18932,7 @@
    "permission_denied:players.life.read",
    "player_unavailable"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.114",
   "constant": false,
   "qualified": "Open77.players.isInDriveBy",
   "route_id": "server:Open77.players.isInDriveBy"
@@ -18975,7 +18975,7 @@
    "permission_denied:players.driveby",
    "player_unavailable"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.114",
   "constant": false,
   "qualified": "Open77.players.setDriveByEnabled",
   "route_id": "server:Open77.players.setDriveByEnabled"
@@ -19015,7 +19015,7 @@
    "prediction_backend_unavailable",
    "resource_not_running"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.119",
   "constant": false,
   "qualified": "Open77.prediction.setPolicy",
   "route_id": "Open77.prediction.setPolicy"
@@ -19041,7 +19041,7 @@
   "reasons": [
    "prediction_backend_unavailable"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.119",
   "constant": false,
   "qualified": "Open77.prediction.stats",
   "route_id": "Open77.prediction.stats"
@@ -19490,7 +19490,7 @@
    "permission_denied:world.props",
    "props_backend_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13+op77.84",
   "constant": false,
   "qualified": "Open77.props.projected",
   "route_id": "Open77.props.projected"
@@ -19921,7 +19921,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.bindHud",
   "route_id": "Open77.remoteCamera.bindHud"
@@ -19965,7 +19965,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.bindWebUI",
   "route_id": "Open77.remoteCamera.bindWebUI"
@@ -20003,7 +20003,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.bindWorld",
   "route_id": "Open77.remoteCamera.bindWorld"
@@ -20035,7 +20035,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.bindings",
   "route_id": "Open77.remoteCamera.bindings"
@@ -20060,7 +20060,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.budget",
   "route_id": "Open77.remoteCamera.budget"
@@ -20085,7 +20085,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.capabilities",
   "route_id": "Open77.remoteCamera.capabilities"
@@ -20117,7 +20117,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.create",
   "route_id": "Open77.remoteCamera.create"
@@ -20149,7 +20149,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.destroy",
   "route_id": "Open77.remoteCamera.destroy"
@@ -20181,7 +20181,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.get",
   "route_id": "Open77.remoteCamera.get"
@@ -20213,7 +20213,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.getBinding",
   "route_id": "Open77.remoteCamera.getBinding"
@@ -20238,7 +20238,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.list",
   "route_id": "Open77.remoteCamera.list"
@@ -20270,7 +20270,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.unbind",
   "route_id": "Open77.remoteCamera.unbind"
@@ -20308,7 +20308,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.update",
   "route_id": "Open77.remoteCamera.update"
@@ -20346,7 +20346,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.updateBinding",
   "route_id": "Open77.remoteCamera.updateBinding"
@@ -20371,7 +20371,7 @@
    "camera.capture"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.remoteCamera.worldModels",
   "route_id": "Open77.remoteCamera.worldModels"
@@ -21414,7 +21414,7 @@
    "network.client"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.80",
   "constant": false,
   "qualified": "Open77.session.openLauncher",
   "route_id": "Open77.session.openLauncher"
@@ -23029,7 +23029,7 @@
    "unknown_vehicle",
    "vehicles_unavailable"
   ],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.customizationAvailable",
@@ -25586,7 +25586,7 @@
    "permission_denied:player.weapons.edit",
    "weapon_blast_unavailable"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.112",
   "constant": false,
   "qualified": "Open77.weapons.applyBlast",
   "route_id": "Open77.weapons.applyBlast"
@@ -25665,7 +25665,7 @@
    "permission_denied:player.weapons.edit",
    "weapon_tuning_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "Open77.weapons.clearTuning",
   "route_id": "Open77.weapons.clearTuning"
@@ -26074,7 +26074,7 @@
    "permission_denied:player.weapons.edit",
    "weapon_tuning_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "Open77.weapons.setTuning",
   "route_id": "Open77.weapons.setTuning"
@@ -26205,7 +26205,7 @@
    "permission_denied:player.weapons.read",
    "weapon_tuning_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "Open77.weapons.tuning",
   "route_id": "Open77.weapons.tuning"
@@ -26278,7 +26278,7 @@
    "permission_denied:webui.policy",
    "webui_policy_backend_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.webui.blocklist",
   "route_id": "Open77.webui.blocklist"
@@ -26307,7 +26307,7 @@
    "permission_denied:webui.policy",
    "webui_policy_backend_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.webui.blocklistState",
   "route_id": "Open77.webui.blocklistState"
@@ -27325,7 +27325,7 @@
   "source_line": 24442,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "WebUI.Page.setConsumedKeys",
   "route_id": "WebUI.Page.setConsumedKeys"
@@ -29577,7 +29577,7 @@
    "npcs_unavailable",
    "permission_denied:world.npcs"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.112",
   "constant": false,
   "qualified": "GetNpcCapacity",
   "route_id": "server:GetNpcCapacity"
@@ -30209,7 +30209,7 @@
    "player_models_unavailable",
    "player_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "GetPlayerModel",
   "route_id": "server:GetPlayerModel"
@@ -30270,7 +30270,7 @@
   "reasons": [
    "invalid_player"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "GetPlayerObservers",
   "route_id": "server:GetPlayerObservers"
@@ -30667,7 +30667,7 @@
   "reasons": [
    "invalid_player"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "GetPlayersInScope",
   "route_id": "server:GetPlayersInScope"
@@ -31187,7 +31187,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "GetVehicleLivery",
@@ -31227,7 +31227,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "GetVehicleMod",
@@ -31261,7 +31261,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "GetVehicleWindowTint",
@@ -31593,7 +31593,7 @@
   "reasons": [
    "invalid_player"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "IsPlayerInScope",
   "route_id": "server:IsPlayerInScope"
@@ -31631,7 +31631,7 @@
    "player_models_unavailable",
    "player_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "IsPlayerModelReady",
   "route_id": "server:IsPlayerModelReady"
@@ -31744,7 +31744,7 @@
    "invalid_argument",
    "permission_denied:world.vehicles"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.112",
   "constant": false,
   "qualified": "IsVehicleVisibleTo",
   "route_id": "server:IsVehicleVisibleTo"
@@ -32895,7 +32895,7 @@
    "player_models_unavailable",
    "resource_stopping"
   ],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "ResetPlayerModel",
   "route_id": "server:ResetPlayerModel"
@@ -34314,7 +34314,7 @@
    "player_models_unavailable",
    "resource_stopping"
   ],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "SetPlayerModel",
   "route_id": "server:SetPlayerModel"
@@ -35056,7 +35056,7 @@
    "invalid_argument",
    "invalid_profile"
   ],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "SetVehicleLivery",
@@ -35153,7 +35153,7 @@
    "invalid_argument",
    "invalid_mod_index"
   ],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "SetVehicleMod",
@@ -35202,7 +35202,7 @@
   "reasons": [
    "invalid_argument"
   ],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "SetVehicleNeonLightEnabled",
@@ -35255,7 +35255,7 @@
    "world.vehicles.appearance"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "SetVehicleNeonLightsColour",
@@ -35415,7 +35415,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "SetVehicleWheelType",
@@ -35458,7 +35458,7 @@
   "reasons": [
    "invalid_tint"
   ],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "SetVehicleWindowTint",
@@ -40079,7 +40079,7 @@
    "invalid_player_id",
    "permission_denied:players.stats.read"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.combat.getVehicleHits",
   "route_id": "server:Open77.combat.getVehicleHits"
@@ -41019,7 +41019,7 @@
    "request_too_large",
    "resource_stopping"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "Open77.cyberware.activityPlayers",
   "route_id": "server:Open77.cyberware.activityPlayers"
@@ -45373,7 +45373,7 @@
    "permission_denied:world.interest",
    "resource_stopping"
   ],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.interest.clear",
   "route_id": "server:Open77.interest.clear"
@@ -45418,7 +45418,7 @@
    "permission_denied:world.interest",
    "resource_stopping"
   ],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.interest.remove",
   "route_id": "server:Open77.interest.remove"
@@ -45469,7 +45469,7 @@
    "permission_denied:world.interest",
    "resource_stopping"
   ],
-  "since": null,
+  "since": "2.31.13+op77.82",
   "constant": false,
   "qualified": "Open77.interest.set",
   "route_id": "server:Open77.interest.set"
@@ -46665,7 +46665,7 @@
    "metrics_disabled",
    "permission_denied:metrics.write"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.96",
   "constant": false,
   "qualified": "Open77.metrics.gauge",
   "route_id": "server:Open77.metrics.gauge"
@@ -46708,7 +46708,7 @@
    "metrics_disabled",
    "permission_denied:metrics.write"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.96",
   "constant": false,
   "qualified": "Open77.metrics.increment",
   "route_id": "server:Open77.metrics.increment"
@@ -46751,7 +46751,7 @@
    "metrics_disabled",
    "permission_denied:metrics.write"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.96",
   "constant": false,
   "qualified": "Open77.metrics.observe",
   "route_id": "server:Open77.metrics.observe"
@@ -46945,7 +46945,7 @@
    "permission_denied:players.motion.read",
    "resource_stopping"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "Open77.motion.launch",
   "route_id": "server:Open77.motion.launch"
@@ -47661,7 +47661,7 @@
    "npcs_unavailable",
    "permission_denied:world.npcs"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.112",
   "constant": false,
   "qualified": "Open77.npcs.capacity",
   "route_id": "server:Open77.npcs.capacity"
@@ -48010,7 +48010,7 @@
    "permission_denied:npcs.foreign",
    "permission_denied:world.npcs"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.119",
   "constant": false,
   "qualified": "Open77.npcs.presence",
   "route_id": "server:Open77.npcs.presence"
@@ -51284,7 +51284,7 @@
    "player_models_unavailable",
    "player_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.players.getModel",
   "route_id": "server:Open77.players.getModel"
@@ -51597,7 +51597,7 @@
   "reasons": [
    "invalid_player"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "Open77.players.inScope",
   "route_id": "server:Open77.players.inScope"
@@ -51764,7 +51764,7 @@
   "reasons": [
    "invalid_player"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "Open77.players.isInScope",
   "route_id": "server:Open77.players.isInScope"
@@ -51802,7 +51802,7 @@
    "player_models_unavailable",
    "player_unavailable"
   ],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.players.isModelReady",
   "route_id": "server:Open77.players.isModelReady"
@@ -52114,7 +52114,7 @@
   "reasons": [
    "invalid_player"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.99",
   "constant": false,
   "qualified": "Open77.players.observers",
   "route_id": "server:Open77.players.observers"
@@ -52389,7 +52389,7 @@
    "player_models_unavailable",
    "resource_stopping"
   ],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.players.resetModel",
   "route_id": "server:Open77.players.resetModel"
@@ -53137,7 +53137,7 @@
    "player_models_unavailable",
    "resource_stopping"
   ],
-  "since": null,
+  "since": "2.31.13+op77.79",
   "constant": false,
   "qualified": "Open77.players.setModel",
   "route_id": "server:Open77.players.setModel"
@@ -57945,7 +57945,7 @@
    "world.vehicles.appearance"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.clearNeon",
@@ -58625,7 +58625,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.getDecalBudget",
@@ -58725,7 +58725,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.getEngineSound",
@@ -58856,7 +58856,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.getLightColors",
@@ -58956,7 +58956,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.getNeonAnimation",
@@ -59217,7 +59217,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.getStickers",
@@ -59315,7 +59315,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.getVisual",
@@ -59349,7 +59349,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.getWindowTint",
@@ -59772,7 +59772,7 @@
    "invalid_argument",
    "permission_denied:world.vehicles"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.112",
   "constant": false,
   "qualified": "Open77.vehicles.isVisibleTo",
   "route_id": "server:Open77.vehicles.isVisibleTo"
@@ -59839,7 +59839,7 @@
   "source_line": 9499,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.listEngineSounds",
@@ -59871,7 +59871,7 @@
   "source_line": 9499,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.listPaintProfiles",
@@ -59903,7 +59903,7 @@
   "source_line": 9499,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.listParts",
@@ -59935,7 +59935,7 @@
   "source_line": 9499,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.listStickers",
@@ -60256,7 +60256,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.170",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.positions",
@@ -60326,7 +60326,7 @@
   "source_line": 9499,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.registerEngineSounds",
@@ -60358,7 +60358,7 @@
   "source_line": 9499,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.registerPaintProfiles",
@@ -60390,7 +60390,7 @@
   "source_line": 9499,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.registerParts",
@@ -60422,7 +60422,7 @@
   "source_line": 9499,
   "permissions": [],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.registerStickers",
@@ -60933,7 +60933,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.respawnAs",
@@ -61904,7 +61904,7 @@
    "world.vehicles.appearance"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.setLightColors",
@@ -62189,7 +62189,7 @@
    "world.vehicles.appearance"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.setNeon",
@@ -62230,7 +62230,7 @@
    "world.vehicles.appearance"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.setNeonAnimation",
@@ -62309,7 +62309,7 @@
    "world.vehicles.appearance"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.setPaintProfile",
@@ -62394,7 +62394,7 @@
    "world.vehicles.appearance"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.setParts",
@@ -62513,7 +62513,7 @@
    "world.vehicles.appearance"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.setPlate",
@@ -62750,7 +62750,7 @@
    "world.vehicles.appearance"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.setStickers",
@@ -63071,7 +63071,7 @@
    "world.vehicles.appearance"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.setWheels",
@@ -63156,7 +63156,7 @@
    "world.vehicles.appearance"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.setWindowTint",
@@ -63723,7 +63723,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.112",
   "constant": false,
   "qualified": "Open77.vehicles.ai.capacity",
   "route_id": "server:Open77.vehicles.ai.capacity"
@@ -63990,7 +63990,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.112",
   "constant": false,
   "qualified": "Open77.vehicles.ai.panic",
   "route_id": "server:Open77.vehicles.ai.panic"
@@ -64138,7 +64138,7 @@
   "reasons": [
    "invalid_traffic_pattern"
   ],
-  "since": null,
+  "since": "2.31.13-unstable+op77.93",
   "constant": false,
   "qualified": "Open77.vehicles.ai.setTrafficPattern",
   "route_id": "server:Open77.vehicles.ai.setTrafficPattern"
@@ -66386,7 +66386,7 @@
    "screen.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.screen.isLoading",
   "route_id": "Open77.screen.isLoading"
@@ -66411,7 +66411,7 @@
    "screen.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.screen.loadingState",
   "route_id": "Open77.screen.loadingState"
@@ -66444,7 +66444,7 @@
    "vehicles.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.vehicles.cancelSeatSwitch",
   "route_id": "Open77.vehicles.cancelSeatSwitch"
@@ -66470,7 +66470,7 @@
    "vehicles.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.vehicles.isAutoSeatSwitchEnabled",
   "route_id": "Open77.vehicles.isAutoSeatSwitchEnabled"
@@ -66496,7 +66496,7 @@
    "vehicles.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.vehicles.seatSwitchState",
   "route_id": "Open77.vehicles.seatSwitchState"
@@ -66529,7 +66529,7 @@
    "vehicles.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.vehicles.setAutoSeatSwitchEnabled",
   "route_id": "Open77.vehicles.setAutoSeatSwitchEnabled"
@@ -66562,7 +66562,7 @@
    "vehicles.control"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.vehicles.switchSeat",
   "route_id": "Open77.vehicles.switchSeat"
@@ -66601,7 +66601,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.vehicles.cancelPlayerSeatSwitch",
   "route_id": "server:Open77.vehicles.cancelPlayerSeatSwitch"
@@ -66634,7 +66634,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.vehicles.getPlayerSeatSwitch",
   "route_id": "server:Open77.vehicles.getPlayerSeatSwitch"
@@ -66667,7 +66667,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.vehicles.isPlayerAutoSeatSwitchEnabled",
   "route_id": "server:Open77.vehicles.isPlayerAutoSeatSwitchEnabled"
@@ -66706,7 +66706,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.vehicles.setPlayerAutoSeatSwitchEnabled",
   "route_id": "server:Open77.vehicles.setPlayerAutoSeatSwitchEnabled"
@@ -66745,7 +66745,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.vehicles.switchPlayerSeat",
   "route_id": "server:Open77.vehicles.switchPlayerSeat"
@@ -66795,7 +66795,7 @@
    "rtti.native"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21+op77.132",
   "constant": false,
   "qualified": "Open77.rtti.call",
   "route_id": "Open77.rtti.call"
@@ -66839,7 +66839,7 @@
    "rtti.native"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21+op77.132",
   "constant": false,
   "qualified": "Open77.rtti.hook",
   "route_id": "Open77.rtti.hook"
@@ -66871,7 +66871,7 @@
    "rtti.native"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21+op77.132",
   "constant": false,
   "qualified": "Open77.rtti.release",
   "route_id": "Open77.rtti.release"
@@ -66909,7 +66909,7 @@
    "rtti.native"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21+op77.132",
   "constant": false,
   "qualified": "Open77.rtti.resolve",
   "route_id": "Open77.rtti.resolve"
@@ -66941,7 +66941,7 @@
    "rtti.native"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21+op77.132",
   "constant": false,
   "qualified": "Open77.rtti.unhook",
   "route_id": "Open77.rtti.unhook"
@@ -66974,7 +66974,7 @@
   "reasons": [
    "open77_animations"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.animations.isPointing",
   "route_id": "Open77.animations.isPointing"
@@ -67007,7 +67007,7 @@
   "reasons": [
    "open77_animations"
   ],
-  "since": null,
+  "since": "2.31.21-unstable+op77.122",
   "constant": false,
   "qualified": "Open77.animations.setPointing",
   "route_id": "Open77.animations.setPointing"
@@ -67040,7 +67040,7 @@
    "vehicles.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.127",
   "constant": false,
   "qualified": "Open77.vehicles.getSteeringInput",
   "route_id": "Open77.vehicles.getSteeringInput"
@@ -67073,7 +67073,7 @@
    "vehicles.read"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.127",
   "constant": false,
   "qualified": "Open77.vehicles.getSteeringWheelAngle",
   "route_id": "Open77.vehicles.getSteeringWheelAngle"
@@ -67109,7 +67109,7 @@
    "permission_denied:vehicles.read",
    "vehicles_unavailable"
   ],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.getVisual",
@@ -67152,7 +67152,7 @@
    "npc_task_invalid_point",
    "permission_denied:world.npcs"
   ],
-  "since": null,
+  "since": "2.31.21+op77.132",
   "constant": false,
   "qualified": "Open77.npcs.tasks.traffic",
   "route_id": "server:Open77.npcs.tasks.traffic"
@@ -67191,7 +67191,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.31.21-unstable+op77.127",
   "constant": false,
   "qualified": "Open77.vehicles.setLaunchVelocity",
   "route_id": "server:Open77.vehicles.setLaunchVelocity"
@@ -67269,7 +67269,7 @@
    "world.vehicles"
   ],
   "reasons": [],
-  "since": null,
+  "since": "2.50.0-unstable+op77.205",
   "constant": false,
   "release": "next",
   "qualified": "Open77.vehicles.setEngineSound",
@@ -67509,7 +67509,7 @@
    "locomotion.register"
   ],
   "reasons": [],
-  "since": "2.31.21+op77.145",
+  "since": "2.31.21-unstable+op77.144",
   "constant": false,
   "qualified": "Open77.locomotion.register",
   "route_id": "Open77.locomotion.register"
@@ -67542,7 +67542,7 @@
    "locomotion.register"
   ],
   "reasons": [],
-  "since": "2.31.21+op77.145",
+  "since": "2.31.21-unstable+op77.144",
   "constant": false,
   "qualified": "Open77.locomotion.register",
   "route_id": "server:Open77.locomotion.register"
@@ -67587,7 +67587,7 @@
    "locomotion.control"
   ],
   "reasons": [],
-  "since": "2.31.21+op77.145",
+  "since": "2.31.21-unstable+op77.144",
   "constant": false,
   "qualified": "Open77.locomotion.set",
   "route_id": "server:Open77.locomotion.set"
@@ -67620,7 +67620,7 @@
    "locomotion.read"
   ],
   "reasons": [],
-  "since": "2.31.21+op77.145",
+  "since": "2.31.21-unstable+op77.144",
   "constant": false,
   "qualified": "Open77.locomotion.get",
   "route_id": "server:Open77.locomotion.get"
@@ -67653,7 +67653,7 @@
    "locomotion.control"
   ],
   "reasons": [],
-  "since": "2.31.21+op77.145",
+  "since": "2.31.21-unstable+op77.144",
   "constant": false,
   "qualified": "Open77.locomotion.reset",
   "route_id": "server:Open77.locomotion.reset"
@@ -67698,7 +67698,7 @@
    "locomotion.control"
   ],
   "reasons": [],
-  "since": "2.31.21+op77.145",
+  "since": "2.31.21-unstable+op77.144",
   "constant": false,
   "qualified": "Open77.locomotion.playClip",
   "route_id": "server:Open77.locomotion.playClip"
@@ -67743,7 +67743,7 @@
    "locomotion.control"
   ],
   "reasons": [],
-  "since": "2.31.21+op77.145",
+  "since": "2.31.21-unstable+op77.144",
   "constant": false,
   "qualified": "Open77.locomotion.stopClip",
   "route_id": "server:Open77.locomotion.stopClip"
@@ -68335,5 +68335,143 @@
   "constant": false,
   "qualified": "Open77.players.listAttachments",
   "route_id": "server:Open77.players.listAttachments"
+ },
+ {
+  "namespace": "Open77.npcs",
+  "name": "applyCrossfireDamage",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Applies managed NPC-to-NPC crossfire with difficulty.",
+  "description": "Requires `world.npcs`; both victim and attacker must belong to the caller. Applies attacker damageMultiplier and victim healthMultiplier to the supplied damage through the NPC damage policy. This is distinct from exact `applyDamage`; it does not change unrelated PvP damage.",
+  "params": [
+   {
+    "name": "victimId",
+    "type": "NPC id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "attackerId",
+    "type": "NPC id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "amount",
+    "type": "number",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "source",
+    "type": "string",
+    "optional": true,
+    "default": null
+   },
+   {
+    "name": "cause",
+    "type": "string",
+    "optional": true,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local ok, reason = Open77.npcs.applyCrossfireDamage(victimId, attackerId, 10, \"script\", \"generic\")\nif not ok then print(reason) end",
+  "inferred": false,
+  "source_line": 9638,
+  "permissions": [
+   "world.npcs"
+  ],
+  "reasons": [],
+  "since": "2.50.0-unstable+op77.161",
+  "constant": false,
+  "qualified": "Open77.npcs.applyCrossfireDamage",
+  "route_id": "server:Open77.npcs.applyCrossfireDamage"
+ },
+ {
+  "namespace": "Open77.npcs",
+  "name": "getDifficulty",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Reads an owned NPC's difficulty multipliers.",
+  "description": "Requires `world.npcs`. Returns `{healthMultiplier, damageMultiplier}` or `nil, reason`. The same canonical settings appear in `Open77.npcs.get(id).difficulty`.",
+  "params": [
+   {
+    "name": "id",
+    "type": "NPC id",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "table or nil",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local difficulty, reason = Open77.npcs.getDifficulty(npcId)\nif difficulty then print(difficulty.healthMultiplier, difficulty.damageMultiplier) else print(reason) end",
+  "inferred": false,
+  "source_line": 9574,
+  "permissions": [
+   "world.npcs"
+  ],
+  "reasons": [
+   "npcs_unavailable",
+   "permission_denied:world.npcs"
+  ],
+  "since": "2.50.0-unstable+op77.161",
+  "constant": false,
+  "qualified": "Open77.npcs.getDifficulty",
+  "route_id": "server:Open77.npcs.getDifficulty"
+ },
+ {
+  "namespace": "Open77.npcs",
+  "name": "setDifficulty",
+  "handler": "LuaResourceRuntime.Bootstrap",
+  "summary": "Patches an owned NPC's difficulty multipliers.",
+  "description": "Requires `world.npcs`. Accepts a partial table of finite `healthMultiplier` (0.01..100) and `damageMultiplier` (0..100); omitted values stay unchanged. Invalid keys, types or ranges return `false, \"npc_difficulty_invalid\"` without mutation. H divides admitted native body and admitted player body/weakspot fractions after admission, without rescaling authored part-break bonuses. D is used by resource-authored NPC-to-player damage and managed crossfire. Health fraction and phase are unchanged; exact scripted damage and setHealth are not scaled.",
+  "params": [
+   {
+    "name": "id",
+    "type": "NPC id",
+    "optional": false,
+    "default": null
+   },
+   {
+    "name": "difficulty",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "boolean",
+   "reason"
+  ],
+  "api_set": "network",
+  "runtime": "server",
+  "source": "LuaResourceRuntime.cs",
+  "example": "local ok, reason = Open77.npcs.setDifficulty(npcId, { healthMultiplier = 2 })\nif not ok then print(reason) end",
+  "inferred": false,
+  "source_line": 9570,
+  "permissions": [
+   "world.npcs"
+  ],
+  "reasons": [
+   "invalid_json",
+   "json_too_large",
+   "npc_body_invalid",
+   "npc_difficulty_invalid",
+   "npc_loadout_invalid"
+  ],
+  "since": "2.50.0-unstable+op77.161",
+  "constant": false,
+  "qualified": "Open77.npcs.setDifficulty",
+  "route_id": "server:Open77.npcs.setDifficulty"
  }
 ]

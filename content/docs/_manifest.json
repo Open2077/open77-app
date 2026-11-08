@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
   "guides": 113,
-  "apiEntries": 1811,
+  "apiEntries": 1814,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -1656,9 +1656,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1811,
-      "bytes": 2659854,
-      "sha256": "2e2089f6dffaba07c3c2e54bbf34b61bf217dc3534994a2791c4fcc0e297388e",
+      "entries": 1814,
+      "bytes": 2667665,
+      "sha256": "8251aa431b0bc0b16834d222c952ab64e96fdf12e5848de30588ec9807676e40",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6",
@@ -1695,9 +1695,9 @@
     {
       "source": "wiki/data/permissions.json",
       "target": "content/api/permissions.json",
-      "entries": 177,
-      "bytes": 160274,
-      "sha256": "d36ec01ca17a6bee121df7ae97caa8fd0c4cdecbb533a2ad886f3660b8c8d58c",
+      "entries": 180,
+      "bytes": 161708,
+      "sha256": "a5d6fbdb034e3b752fbe9631552a2575d273c38c71f6e3a0f9e1560eb22f6303",
       "siteAmendment": {
         "0": "V",
         "1": "e",
@@ -1881,9 +1881,9 @@
     {
       "source": "wiki/data/events.json",
       "target": "content/api/events.json",
-      "entries": 543,
-      "bytes": 385167,
-      "sha256": "cb096c436cf7bb6ed3c1871bf536ada78584ca1e16368557fbd81efb6059e1dd",
+      "entries": 576,
+      "bytes": 400344,
+      "sha256": "f51f3b34e82808a4c208febc7a63f461643d6a140f7d0af1c13e68f42830a086",
       "siteAmendment": {
         "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
       },
@@ -2669,51 +2669,56 @@
   },
   "apiGapSync": {
     "tool": "scripts/sync-api-gaps.mjs",
-    "syncedAt": "2026-10-12T11:18:58.990Z",
-    "sourceRevision": "13c990f422bc78241ff8e88f1894b0d803caf2f0",
+    "syncedAt": "2026-11-08T20:36:57.181Z",
+    "sourceRevision": "d2691f2f6eefb9d971183e256f7e9a0af8f5bd63",
     "mode": "append-missing-preserve-site-entries",
     "added": {
       "natives": [
-        "client:Open77.animations.isPointing",
-        "client:Open77.animations.setPointing",
-        "client:Open77.vehicles.getSteeringInput",
-        "client:Open77.vehicles.getSteeringWheelAngle",
-        "server:Open77.npcs.tasks.traffic",
-        "server:Open77.vehicles.setLaunchVelocity"
+        "server:Open77.npcs.applyCrossfireDamage",
+        "server:Open77.npcs.getDifficulty",
+        "server:Open77.npcs.setDifficulty"
       ],
       "events": [
-        "open77:actions:cancel",
-        "open77:actions:carry",
-        "open77:actions:end",
-        "open77:actions:intent",
-        "open77:actions:present",
-        "open77:actions:putdown",
-        "open77:actions:refused",
-        "open77:actions:sync",
-        "open77:actions:targets",
-        "open77:privacy:request",
-        "open77:privacy:set",
-        "open77:privacy:state",
-        "open77:seating:refused",
-        "open77:seating:seats",
-        "open77:seating:sit",
-        "open77:seating:stand",
-        "open77:seating:state",
-        "open77:seating:sync"
+        "onNpcPartHit",
+        "onNpcPlayerHit",
+        "onVehicleVisualChanged",
+        "open77:appearance:opened",
+        "open77:chimera:state",
+        "open77:chimera:visuals",
+        "open77:chimeraFrame",
+        "open77:chimeraLab:open",
+        "open77:chimeraLab:request",
+        "open77:chimeraLab:response",
+        "open77:chimeraReady",
+        "open77:chimeraVisuals",
+        "open77:cursor:changed",
+        "open77:mapProvider:query",
+        "open77:mapProvider:register",
+        "open77:mapProvider:show",
+        "open77:mapProvider:shown",
+        "open77:mapProvider:withdraw",
+        "open77:npcs:blast",
+        "open77:npcs:blastFx",
+        "open77:npcs:combatTarget",
+        "open77:npcs:victimHit",
+        "open77:playerGunfire",
+        "open77:scenes:idle",
+        "open77:scenes:refused",
+        "open77:scenes:spots",
+        "open77:scenes:stand",
+        "open77:scenes:start",
+        "open77:scenes:state",
+        "open77:scenes:sync",
+        "open77:vehicleSiren:toggle",
+        "open77:vehicleVisualChanged"
       ],
       "permissions": [
-        "pause_menu.render",
-        "players.driveby",
-        "rtti.native"
+        "clothing.register",
+        "props.register",
+        "webui.cursor"
       ]
     },
-    "refreshed": [
-      "client:TriggerEvent",
-      "client:Open77.events.emit",
-      "server:CreateNpc",
-      "server:Open77.npcs.create",
-      "server:Open77.npcs.tasks.workspot"
-    ]
+    "refreshed": []
   },
   "stable147Documentation": {
     "sourceRevision": "cbae41b2557c0e4257cfe8b8cd14f8eb26fa4f56",
@@ -2877,5 +2882,15 @@
       "reflex-overdrive"
     ],
     "sightMaterialsAmendment": "Line-of-sight wording brought to open77-base a469956455a49eae0f245acd0666b02b859c7be4 (wiki/resource-exports.md, docs/lua-resources.md): see-through is the exact list of six game physics materials, opaque/frosted/display glass hides, the head point is 1.60 m standing and 1.00 m crouched. Applied to resource-exports and world-drawing."
+  },
+  "releaseSinceRefresh": {
+    "tool": "open77-base wiki/tools/sync-releases.py + api_since.py (read through compute())",
+    "refreshedAt": "2026-11-08T20:37:13.709Z",
+    "sourceRevision": "d2691f2f6eefb9d971183e256f7e9a0af8f5bd63",
+    "latestRelease": "2.50.0-unstable+op77.207",
+    "releases": "content/api/releases.json copied from the CDN server listing (114 builds, 2.31.0+op77.3 .. 2.50.0-unstable+op77.207).",
+    "since": "Every card whose route id the release reader sees takes the first published build registering it. Builds are read at the baseCommit their CDN release.json records (39 builds, 10 of which the first-parent walk of main resolved to another commit); the others at the main commit at publication time. A card the reader cannot see (Open77.webui.budget, the nine server Open77.consumables cards, Open77.players.allowEncumbrance and AllowEncumbrance) keeps its previous value.",
+    "schemas": "content/api/schemas copied from open77-base d2691f2f: manifest.schema.json as committed, server-config.schema.json regenerated by extract-schemas.py (outbound HTTP limits).",
+    "gaps": "See apiGapSync: natives, events and permissions appended from open77-base d2691f2f, events.json and permissions.json regenerated there by extract-events.py and extract-permissions.py; site entries untouched."
   }
 }
