@@ -743,7 +743,11 @@ the look back without stopping. Every key, with its default and range, is in
 A plate is shown only while the camera can see its player. Every plate is
 line-of-sight tested natively, camera to head and then to chest, against static
 geometry, doors and terrain — walls, floors, closed doors, the ground; not
-vehicles or people — crossing up to two panes of glass. The verdict is
+vehicles or people — crossing up to two see-through surfaces: clear glass, car
+windows, plexiglass and wire mesh, matched by the game's physics material names.
+Frosted and display glass still hide a plate. The sight point follows the
+stance, 1.60 m over the feet standing and 1.00 m crouched, so a player crouched
+behind a planter stays hidden. The verdict is
 smoothed so a sightline grazing a railing does not blink the plate, and a plate
 fades out where its player was last seen rather than following him behind the
 wall. The native drawer, `stream(page)` and `snapshot()` all get the same

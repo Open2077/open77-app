@@ -1102,8 +1102,8 @@
       "target": "content/docs/resource-exports.md",
       "slug": "resource-exports",
       "title": "Official resource exports",
-      "bytes": 49426,
-      "sha256": "c91a55ac561a5d08677c5e25c2892f3f905de18f9d2382c4d91a5eef34b33770",
+      "bytes": 49843,
+      "sha256": "cb527d851d72b7198761e7940bfa70fffa490bc62c3c94bce131741292b530c8",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "7e1c4a507b28b9441863585bb4103134dc407b59c0ac5f29361eb0e771543871"
@@ -2875,6 +2875,7 @@
       "resource-runtime",
       "voice",
       "reflex-overdrive"
-    ]
+    ],
+    "sightMaterialsAmendment": "Line-of-sight wording brought to open77-base a469956455a49eae0f245acd0666b02b859c7be4 (wiki/resource-exports.md, docs/lua-resources.md): see-through is the exact list of six game physics materials, opaque/frosted/display glass hides, the head point is 1.60 m standing and 1.00 m crouched. Applied to resource-exports and world-drawing."
   }
 }
