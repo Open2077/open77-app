@@ -5,8 +5,8 @@ vehicle record; what decides whether a given model can wear a rim, a livery or a
 the game's own data, a row a resource registered for that record, or a record a pack generated.
 A server covers more models by adding data, never by waiting for a new platform build.
 
-The natives on this page are **coming in the next Open77 release**, except paint, the lights hue
-and trims, which are in the current public build.
+The natives on this page are public since Open77 **Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205**; paint, the lights hue
+and trims are older.
 
 ## What decides coverage
 

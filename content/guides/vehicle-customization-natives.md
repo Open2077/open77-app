@@ -4,9 +4,9 @@ Every vehicle customization native, by category. They are server natives on `Ope
 unless a row says **client**. Each one also has an API card; the whole set is grouped under
 [Vehicle customization](/docs/api?category=vehicle-customization) in the API reference.
 
-Everything on this page except paint, the lights hue and `setAppearance` is **coming in the next
-Open77 release** and is not in the current public build; the API reference marks those cards
-**Next release**. Test for a native before calling it:
+Everything on this page except paint, the lights hue and `setAppearance` is public since Open77
+**Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205**. Test for a native before calling it, so a resource still loads on an
+older server:
 
 ```lua
 if type(Open77.vehicles.setWheels) ~= "function" then
@@ -42,9 +42,9 @@ end
 
 ## Paint, lights hue and trim
 
-These are in the current public build and are covered in [Vehicle paint](vehicle-paint.md). On
-that build the lights hue is stored, replicated and read back, but the headlights stay white:
-clients colour the headlights from the hue only from the next client release.
+These are older than the rest of the section and are covered in [Vehicle paint](vehicle-paint.md).
+Clients colour the headlights from the hue since Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205; on older builds the hue is
+stored, replicated and read back, but the headlights stay white.
 
 | Native | Signature | Result | Permission |
 |---|---|---|---|

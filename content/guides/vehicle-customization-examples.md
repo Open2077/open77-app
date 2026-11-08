@@ -2,10 +2,10 @@
 
 Complete patterns for resources built on the vehicle customization natives: a tuning shop, a
 stage and sound bench, a garage that keeps tuned cars across restarts, and a client menu that
-greys what a player's game cannot draw. The natives are **coming in the next Open77 release**
-(paint, the lights hue, trims and the property table are already public). Every example tests each
-coming native with `type(Open77.vehicles.<name>) == "function"` before it calls it, so the
-resource still loads, and does nothing harmful, on a server of the current public build.
+greys what a player's game cannot draw. The natives are public since Open77 **Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205**
+(paint, the lights hue, trims and the property table are older). Every example tests each
+native with `type(Open77.vehicles.<name>) == "function"` before it calls it, so the
+resource still loads, and does nothing harmful, on a server of an older build.
 
 ## A tuning shop
 
@@ -31,7 +31,7 @@ permissions { "network.events", "world.vehicles", "world.vehicles.appearance" }
 
 ```lua
 -- server.lua
--- listParts and setWheels arrive with the next Open77 release
+-- listParts and setWheels: Open77 2.50.0+op77.208 (Stable) / unstable 205 and later
 local hasRims = type(Open77.vehicles.listParts) == "function"
     and type(Open77.vehicles.setWheels) == "function"
 
@@ -154,8 +154,8 @@ end
 
 ## A garage that keeps tuned cars
 
-From the next release, `getProperties` carries the whole customization, stage and engine sound
-included, in its `visual` field; on the current public build it carries paint, the lights hue and
+Since Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205, `getProperties` carries the whole customization, stage and engine sound
+included, in its `visual` field; on older builds it carries paint, the lights hue and
 the trim, and `setProperties` refuses a `visual` field as `unsupported_property:visual`. The garage
 stores the table when the car is parked and restores it on a new car after a restart. On a new car
 the stored look is a change, so the garage declares `world.vehicles.appearance` too, and it depends
@@ -178,7 +178,7 @@ end
 
 -- What setProperties answers when the stored look cannot go on this car right now
 local LOOK_REFUSALS = {
-    ["unsupported_property:visual"] = true,   -- a server of the current public build
+    ["unsupported_property:visual"] = true,   -- a server older than 2.50.0+op77.208
     unknown_part = true, part_not_for_model = true, unknown_variant = true,
     invalid_profile = true, unknown_sticker = true, sticker_not_for_model = true,
 }
@@ -253,11 +253,11 @@ grey paint on a body that takes none before the player picks a colour.
 
 ## A full studio: Light RP's Auto Studio
 
-Light RP's Auto Studio is a complete shop built on these natives. It is **coming with the next
-Light RP update**, on top of the next Open77 release; it is not live on Light RP servers yet. Every
-category below has been watched from a second client, and all of them except Trim came back after a
-server restart and a late join. Players will open the studio at a studio bay, or with **Customize
-vehicle** in a public garage, with their own car parked, empty and stopped.
+Light RP's Auto Studio is a complete shop built on these natives, live on the Light RP testing
+server. Every category below has been watched from a second client, and all of
+them except Trim came back after a server restart and a late join. Players open the studio at a
+studio bay, or with **Customize vehicle** in a public garage, with their own car parked, empty and
+stopped.
 
 | Studio category | Natives it calls |
 |---|---|

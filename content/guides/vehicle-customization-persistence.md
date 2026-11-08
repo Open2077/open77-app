@@ -1,9 +1,10 @@
 # Vehicle customization: persistence and multiplayer
 
 How a car's customization is stored, how it reaches every player, how to keep it across a server
-restart, and the measured limits a server should design around. The natives here are **coming in
-the next Open77 release**, except paint, the lights hue, trims and the property table
-(`getProperties`, `setProperties`), which are public without the customization described here.
+restart, and the measured limits a server should design around. The natives here are public
+since Open77 **Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205**; paint, the lights hue, trims and the property table
+(`getProperties`, `setProperties`) are older, and on older builds carry none of the customization
+described here.
 
 ## One value per car
 
@@ -43,8 +44,8 @@ permission.
 ## Keeping a tuned car across a restart
 
 Open77 does not write vehicles to disk. To keep a tuned car, store `getProperties(id)` and apply it
-to the new car with `setProperties`. From the next release the table carries `visual`, and the
-round trip is exact, plate and tint included. On the current public build it carries paint, the
+to the new car with `setProperties`. Since Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205 the table carries `visual`, and
+the round trip is exact, plate and tint included. On older builds it carries paint, the
 lights hue and the trim, and `setProperties` refuses a `visual` field as
 `unsupported_property:visual`.
 
@@ -79,7 +80,7 @@ damage included. Two habits keep a garage working:
 
 ```lua
 local LOOK_REFUSALS = {
-    ["unsupported_property:visual"] = true,   -- a server of the current public build
+    ["unsupported_property:visual"] = true,   -- a server older than 2.50.0+op77.208
     unknown_part = true, part_not_for_model = true, unknown_variant = true,
     invalid_profile = true, unknown_sticker = true, sticker_not_for_model = true,
 }

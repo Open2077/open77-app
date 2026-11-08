@@ -5,14 +5,13 @@ colours, rims and body parts, plate text, window tint, performance stages, engin
 stickers. The server is authoritative for all of them. A resource calls a server native, and
 every client that streams the car draws the result, late joiners included.
 
-**Availability.** Paint, the lights hue, factory trims (`setAppearance`) and the property table
-(`getProperties`, `setProperties`) are in the current public build; see
-[Vehicle paint](vehicle-paint.md). On that build the lights hue is stored and replicated but the
-headlights stay white, and the property table carries no `visual` field. Every other native in
-this section is **coming in the next Open77 release**: it is not in the current public build, and
-its API card is marked **Next release**. The drawing side (neon, the plate script, the tint switch,
-the sticker script, the headlight colour) ships in the Open77 client of that same release, so
-players need it too. Test for a native before calling it, for example
+**Availability.** Every native in this section is public since Open77 **Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205**.
+Paint, the lights hue, factory trims (`setAppearance`) and the property table (`getProperties`,
+`setProperties`) are older; see [Vehicle paint](vehicle-paint.md). The drawing side (neon, the
+plate script, the tint switch, the sticker script, the headlight colour) ships in the Open77 client
+of the same builds, so players need that client too. Servers older than those builds have only
+paint, the lights hue (stored, but the headlights stay white), trims and a property table without
+a `visual` field. Test for a native before calling it, for example
 `if type(Open77.vehicles.setNeon) == "function" then`, so a resource still loads on an older
 server, and grey the option in your menu otherwise.
 
