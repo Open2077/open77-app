@@ -33,7 +33,9 @@ end
   change `permission_denied:world.vehicles.appearance`; the tables below list only the reasons
   specific to the native.
 - A Lua table passed to a native crosses as JSON: at most 4,096 values, 16 levels deep, strings up
-  to 16 KiB. A large catalogue registers in several calls, which merge.
+  to 16 KiB. The four catalogues (`registerParts`, `registerPaintProfiles`, `registerEngineSounds`,
+  `registerStickers`) are read once at start and accept up to 262,144 values per call; a large
+  catalogue can also register in several calls, which merge.
 - The look of a car is one value of at most 4 KiB, 256 JSON values and 16 attachments. Any visual
   setter can answer `visual_too_large`, and a setter that adds props (`setParts`, `setWheels`)
   `attach_limit`.

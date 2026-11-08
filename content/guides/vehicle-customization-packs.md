@@ -60,9 +60,14 @@ record (stages, sounds). Stickers are a special case of the rule: the server acc
 
 ## The vehicle kit pipeline
 
-The platform repository ships the tools that build the reference packs, under
-`scripts/vehicle-kit`, with the same release as the natives. The rim and body part pipeline turns
-a JSON spec into a ready-to-copy asset resource in one command, without the game running:
+The tools that built the reference packs are public:
+[`tools/vehicle-kit`](https://github.com/Open2077/open77-resources/tree/next/tools/vehicle-kit) in
+open77-resources, on the `next` branch until the release that brings the natives. The folder
+mirrors the platform repository, so run every command from it; its `README.md` lists each builder
+with its command and guide. The packs it built for Light RP are published, ready to use, in
+[Light RP's `resources/assets/models`](https://github.com/Open2077/light-rp/tree/main/resources/assets/models).
+The rim and body part pipeline turns a JSON spec into a ready-to-copy asset resource in one
+command, without the game running:
 
 ```text
 spec.json ─► Blender (procedural, original geometry) ─► .glb
@@ -72,7 +77,8 @@ spec.json ─► Blender (procedural, original geometry) ─► .glb
 ```
 
 It needs PowerShell 7, Blender 4.5 with the Cyberpunk IO Suite add-on, WolvenKit CLI 8.20 and
-Node.js 18 or later; the game folder is only read, for two template files. The build fails rather
+Node.js 18 or later; the livery and sticker builders also need Python 3 with `numpy` and `Pillow`.
+The game folder is only read, for two template files. The build fails rather
 than ship a pack that breaks a rule:
 
 - every material is local, and nothing references a game resource outside a short allowlist;
@@ -192,8 +198,9 @@ each of many nearby cars is fine: the cap counts per car.
   registered by a server resource beside it; the livery, sticker, stage and sound builders write
   that server script into their own resource.
 - Each call is atomic: one bad entry refuses the whole call, with a reason naming the entry and
-  the field (`invalid_part:<id>.<field>`). One call crosses at most 4,096 Lua values; a large
-  catalogue registers in several calls, which merge.
+  the field (`invalid_part:<id>.<field>`). One call reads at most 262,144 Lua values, 16 levels
+  deep, strings up to 16 KiB, and each catalogue keeps its own limits (1,024 stickers, for
+  example). A large catalogue can also register in several calls, which merge.
 - Ids belong to the first running resource that registers them and are dropped when it stops.
   Part ids are namespaced by the resource that **calls** `registerParts`
   (`my_vehicle_parts:rim_vk1` in the example above), not by the resource that ships the models.
