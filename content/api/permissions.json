@@ -6837,6 +6837,81 @@
      "line": 35
     }
    ]
+  },
+  {
+   "name": "clothing.register",
+   "runtimes": [
+    "client",
+    "server"
+   ],
+   "summary": "Enforced by the client and server; gates 0 natives.",
+   "curated": false,
+   "natives": [],
+   "guides": [
+    "custom-clothing.md"
+   ],
+   "sources": [
+    {
+     "file": "scripting/src/ClothingBindings.inl",
+     "line": 19
+    },
+    {
+     "file": "scripting/src/ClothingBindings.inl",
+     "line": 19
+    },
+    {
+     "file": "scripting/src/ClothingBindings.inl",
+     "line": 60
+    },
+    {
+     "file": "scripting/src/ClothingBindings.inl",
+     "line": 60
+    },
+    {
+     "file": "server/src/Open77.Server.Scripting/Runtime/LuaResourceRuntime.Clothing.cs",
+     "line": 22
+    }
+   ]
+  },
+  {
+   "name": "props.register",
+   "runtimes": [
+    "client"
+   ],
+   "summary": "Enforced by the client; gates 0 natives.",
+   "curated": false,
+   "natives": [],
+   "guides": [],
+   "sources": [
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 13454
+    },
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 13455
+    }
+   ]
+  },
+  {
+   "name": "webui.cursor",
+   "runtimes": [
+    "client"
+   ],
+   "summary": "Enforced by the client; gates 0 natives.",
+   "curated": false,
+   "natives": [],
+   "guides": [],
+   "sources": [
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 21042
+    },
+    {
+     "file": "scripting/src/ResourceHost.cpp",
+     "line": 21043
+    }
+   ]
   }
  ]
 }
