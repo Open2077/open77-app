@@ -7,7 +7,7 @@ sounds and stickers, ArchiveXL patches for the plate and the tint. A server ship
 **pack**: a resource whose `preload_mod` ZIP the launcher mounts before the game starts, plus a
 server script that tells the platform what the content is.
 
-The natives these packs serve are **coming in the next Open77 release**.
+The natives these packs serve are public since Open77 **Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205**.
 
 ## What each pack holds
 

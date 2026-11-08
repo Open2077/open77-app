@@ -468,8 +468,8 @@
       "target": "content/docs/fivem-compatibility.md",
       "slug": "fivem-compatibility",
       "title": "FiveM compatibility aliases",
-      "bytes": 45806,
-      "sha256": "5f4ed0f445d9a4387d4254db009f4dc5aa8c95b4c9cca61af71c9ba8c57ddcbe",
+      "bytes": 45766,
+      "sha256": "362babb1347dd17a105eb7b77281f9ab93ccb3c3040988e11b49d460807c3b7d",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "10e78aeaa47519b78b454843f78818f896665ecba967ca53db992d70f6440fc4",
@@ -1393,8 +1393,8 @@
       "target": "content/docs/vehicle-paint.md",
       "slug": "vehicle-paint",
       "title": "Authoritative vehicle paint",
-      "bytes": 6198,
-      "sha256": "2c60c207b8d7c3d64e477ecd60c1069c2ac5d24cb65ca24554b05f8d9ded88a1",
+      "bytes": 6223,
+      "sha256": "030361be0d4b0d82ed791335bde8afe529b339250656ceebbf856bf8eb2554c4",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "2f81072ecdf2b884faa3e706ee48c91b0e3021a1de65a361faefc0e9dfa3022a",
@@ -1406,8 +1406,8 @@
       "target": "content/docs/vehicle-customization.md",
       "slug": "vehicle-customization",
       "title": "Vehicle customization",
-      "bytes": 7584,
-      "sha256": "abc2501989fe03c3391b02e870017226c8d9c24fc871fef5c1c2c29c6fff9be9",
+      "bytes": 7549,
+      "sha256": "fb6e229bb85f8418ac3aebc1e4a8c10296a0dd2c1a537568a8849d242e6ccc75",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "ae6b476327979894bfc3b8a56f5b530fe9902d08af2f55a52034d8faab0eaa27",
@@ -1442,8 +1442,8 @@
       "target": "content/docs/vehicles.md",
       "slug": "vehicles",
       "title": "Network vehicles",
-      "bytes": 120106,
-      "sha256": "67ca668a9d304deb1f5411bd361a736738613da878b8f25e8314f6c5c53bb240",
+      "bytes": 120141,
+      "sha256": "cbdc69f5aed10397ccf88b9111da4e9e1aa0e20cc2be8fac97526e4d94c26f35",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "57aac056238de1dbaa30823cf9f387f7e8576bd68d15b80ac247460a8dec8aae",

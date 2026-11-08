@@ -2,11 +2,10 @@
 
 How a FiveM tuning script maps onto Open77. Some FiveM vehicle natives exist under their FiveM
 name as **server** globals over the `Open77.vehicles` natives; the others have a native with
-another shape. Everything on this page is **coming in the next Open77 release**, except
+another shape. Everything on this page is public since Open77 **Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205**, except
 `setPaint`, `setLightsHue`, `setHeadlightColor`, `setAppearance`, `setProperties` and the
-`SetVehiclePaint` global, which are in the current public build. On that build the lights hue is
-stored and replicated but the headlights stay white: clients show it from the next client release.
-The cards of the coming natives and globals are marked **Next release** in the API reference.
+`SetVehiclePaint` global, which are older. On older builds the lights hue is stored and replicated
+but the headlights stay white.
 
 ## Mapping table
 
@@ -118,10 +117,10 @@ if key then
 end
 ```
 
-On the current public build `neonEnabled`, `neonColor`, `livery` and `windowTint` are in that list
-too, so a table that carries them is refused.
+On builds older than Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205, `neonEnabled`, `neonColor`, `livery` and `windowTint`
+are in that list too, so a table that carries them is refused.
 
-**From the next release**, `setProperties` reads those four keys and lands them in the
+**Since those builds**, `setProperties` reads those four keys and lands them in the
 customization: `neonEnabled` (a boolean, or FiveM's four per-side booleans), `neonColor`, `livery`
 (the same 0-based index, `-1` for none) and `windowTint` (the index above; GREEN, `6`, is still
 refused). A FiveM key wins over the matching field of `visual`. The values of

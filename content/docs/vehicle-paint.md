@@ -128,10 +128,10 @@ Open77.vehicles.setHeadlightColor(vehicleId, "#00D8FF")  -- converted to a hue; 
 Open77.vehicles.clearLightsHue(vehicleId)
 ```
 
-**What players see.** On the current public build the hue is stored, replicated to every client and
-read back by `getLightsHue`, but the headlights stay white. From the next Open77 client release,
-clients colour the headlights, the lamp glow and the beam, from the hue; brake, reverse, blinker
-and interior lamps keep their own colours.
+**What players see.** Since Open77 Stable 2.50.0+op77.208 and Unstable 2.50.0-unstable+op77.205, clients colour the headlights, the lamp
+glow and the beam from the hue; brake, reverse, blinker and interior lamps keep their own colours.
+On older builds the hue is stored, replicated to every client and read back by `getLightsHue`, but
+the headlights stay white.
 
 **This is the closest build 2.31 has to `SetVehicleNeonLights` or `SetVehicleHeadlightsColour`, and
 it is not the same thing.** There is no underglow and no xenon palette in this game. See
