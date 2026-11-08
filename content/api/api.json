@@ -15455,8 +15455,8 @@
   "namespace": "Open77.nameplates",
   "name": "clear",
   "handler": "LuaNameplateClear",
-  "summary": "Removes every nameplate override owned by the calling resource.",
-  "description": "Requires `ui.nameplates`; other owners are unaffected.",
+  "summary": "Removes every nameplate override and talking assertion owned by the calling resource.",
+  "description": "Requires `ui.nameplates`; other owners are unaffected. Only the per-player state goes: this resource's `style`, `stream` and `render(true)` stay until it stops. Clients released before the native plate themes also switched off the resource's own `stream` and `render` here, so a resource that must run on them removes its overrides one by one with `remove` instead.",
   "params": [],
   "returns": [
    "true on success"
@@ -15466,7 +15466,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- Leaving the arena: drop every plate override this resource set\nAddEventHandler(\"arena:left\", function()\n    Open77.nameplates.clear()\nend)",
   "inferred": false,
-  "source_line": 25450,
+  "source_line": 28132,
   "permissions": [
    "ui.nameplates"
   ],
@@ -15499,7 +15499,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- The player left the team: back to the default plate\nRegisterNetEvent(\"team:left\", function(playerId)\n    Open77.nameplates.remove(playerId)\nend)",
   "inferred": false,
-  "source_line": 25449,
+  "source_line": 28131,
   "permissions": [
    "ui.nameplates"
   ],
@@ -15514,7 +15514,7 @@
   "name": "render",
   "handler": "LuaNameplateRender",
   "summary": "Draws remote-player nameplates natively, with no WebUI surface at all.",
-  "description": "Requires `ui.nameplates`. `stream` had already taken Lua off the per-frame path, and plates still trailed the world: what was left is the CEF chain itself -- IPC, a page repaint on the page's own timer, an offscreen raster, a shared-texture handoff, then the composite -- and every stage buffers. `render(true)` draws the plate in the frame that presents it, from a projection taken on that same frame, so there is nothing left to buffer and no page to create.\n\nGuard the call rather than invoking it bare: a client older than the native drawer has no `render` at all, and indexing nil takes the whole resource down instead of falling back. `Open77.nameplates.render ~= nil and Open77.nameplates.render(true)` is the shipped form, with `stream(page)` and then a `Wait(33)` poll loop as the two fallbacks.\n\n`render(false)` stops it. The drawer is released on stop, reload and world exit anyway, but asking explicitly is what keeps a reload from leaving one frame painted. `Open77.nameplates.set` gains `showDistance` on this path; `label`, `color` and `maxDistance` apply to every path.",
+  "description": "Requires `ui.nameplates`. `stream` had already taken Lua off the per-frame path, and plates still trailed the world: what was left is the CEF chain itself -- IPC, a page repaint on the page's own timer, an offscreen raster, a shared-texture handoff, then the composite -- and every stage buffers. `render(true)` draws the plate in the frame that presents it, from a projection taken on that same frame, so there is nothing left to buffer and no page to create.\n\nGuard the call rather than invoking it bare: a client older than the native drawer has no `render` at all, and indexing nil takes the whole resource down instead of falling back. `Open77.nameplates.render ~= nil and Open77.nameplates.render(true)` is the shipped form, with `stream(page)` and then a `Wait(33)` poll loop as the two fallbacks.\n\n`render(false)` stops it. The drawer is released on stop, reload and world exit anyway, but asking explicitly is what keeps a reload from leaving one frame painted.\n\nThe drawer draws the server's theme (`Open77.nameplates.style`), places each plate between game ticks so it stays on the body during a camera turn, scales it with distance (`nearScale`, `farScale`) and fades it near the edge of its range (`fadeFrom`). It shows only players the camera can see: every plate is line-of-sight tested against walls, floors, closed doors and the ground, with the hysteresis described under `style`. A plate shows talking when a resource asserted `setTalking` or the voice engine plays the player above a small threshold, and the voice bars follow his level. Every `set()` option applies here. `showDistance` and the theme's drawing keys (fonts, chip, pin, voice indicator) only apply on this path; a page fed by `stream` receives `sublabel`, `accent`, `bar` and `level` as data and draws them itself.",
   "params": [
    {
     "name": "enabled",
@@ -15532,7 +15532,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- Let the plugin draw the plates natively (guarded for older clients)\nif Open77.nameplates.render then\n    Open77.nameplates.render(true)\nend",
   "inferred": false,
-  "source_line": 25454,
+  "source_line": 28136,
   "permissions": [
    "ui.nameplates"
   ],
@@ -15544,10 +15544,36 @@
  },
  {
   "namespace": "Open77.nameplates",
+  "name": "resetStyle",
+  "handler": "LuaNameplateResetStyle",
+  "summary": "Drops the calling resource's nameplate style.",
+  "description": "Requires `ui.nameplates`. The look returns to the style of the most recent other resource that set one, or to the defaults when none did. Resetting a style that was never set succeeds. A stopped or reloaded resource's style is dropped on its own, so this is for a resource that wants the usual look back while it keeps running.",
+  "params": [],
+  "returns": [
+   "true on success, otherwise false",
+   "reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "-- The neon night is over: give the plates back the server's usual look\nAddEventHandler(\"neonNight:ended\", function()\n    Open77.nameplates.resetStyle()\nend)",
+  "inferred": false,
+  "source_line": 28139,
+  "permissions": [
+   "ui.nameplates"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.nameplates.resetStyle",
+  "route_id": "Open77.nameplates.resetStyle"
+ },
+ {
+  "namespace": "Open77.nameplates",
   "name": "set",
   "handler": "LuaNameplateSet",
   "summary": "Creates or updates the calling resource's nameplate override for a remote player.",
-  "description": "Requires `ui.nameplates`. Options accept `label`, `color`, `maxDistance`, and `visible`. Overrides are owner-scoped and cleaned up with the resource.",
+  "description": "Requires `ui.nameplates`. Options:\n\n- `label`: replaces the player's name;\n- `sublabel`: a second line under it (a job, a squad, a status);\n- `color`: the label colour;\n- `accent`: this plate's accent -- the side bar, the border, the pin, the voice bars and the bar fill follow it unless the theme pins them;\n- `bar`: a health or progress bar, 0..1 (above 1 is clamped); `false` or absent draws none;\n- `barColor`: the bar fill;\n- `maxDistance`: range in metres, 1-250;\n- `visible`: `false` withholds the plate;\n- `showDistance`: adds the distance to the second line on the native drawer;\n- `throughWalls`: exempts this player from the line-of-sight test, so his plate shows through walls.\n\nAn option you omit follows the server's theme (`Open77.nameplates.style`), `color` and `maxDistance` included: an override that only renames a player keeps the server's palette and range instead of freezing one into his plate. `label` and `sublabel` are at most 96 bytes with no control characters, and colours are `#RRGGBB` or `#RRGGBBAA`; anything else answers `invalid_argument`. A string option may be `nil` or `false` for unset; any other type, a `maxDistance` or `bar` that is not a number, or `options` that is not a table answers `false` and `invalid_argument:<key>` (`invalid_argument` for the table) instead of raising. `inf` and `nan` are refused.\n\n`throughWalls` is for squadmates and objectives, never a default: on any other player it is a wallhack.\n\nEach call replaces this resource's whole override for that player, so restate every option you want to keep. A player another resource already overrides answers `owned_by_another_resource`. Overrides are owner-scoped and cleaned up with the resource.",
   "params": [
    {
     "name": "playerId",
@@ -15569,9 +15595,9 @@
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "-- Team-mates get a blue plate visible from further away\nRegisterNetEvent(\"team:joined\", function(playerId, name)\n    Open77.nameplates.set(playerId, { label = \"[TEAM] \" .. name, color = \"#3399FF\", maxDistance = 60 })\nend)",
+  "example": "-- Squadmates: green accent, their role on a second line, found through walls\nRegisterNetEvent(\"squad:member\", function(playerId, name, role)\n    local ok, reason = Open77.nameplates.set(playerId, {\n        label = name,\n        sublabel = role,\n        accent = \"#3DDC84\",\n        maxDistance = 150,\n        throughWalls = true,\n    })\n    if not ok then\n        print(\"squad plate refused: \" .. tostring(reason))\n    end\nend)",
   "inferred": false,
-  "source_line": 25448,
+  "source_line": 28130,
   "permissions": [
    "ui.nameplates"
   ],
@@ -15586,11 +15612,11 @@
   "name": "setTalking",
   "handler": "LuaNameplateTalking",
   "summary": "Shows or clears the native speaker icon on one remote player's nameplate.",
-  "description": "Requires `ui.nameplates`. Talking assertions are owner-scoped and automatically released on stop; several voice/HUD resources may assert the same player without racing. The integrated voice package drives this from authenticated native talker state.",
+  "description": "Requires `ui.nameplates`. Talking assertions are owner-scoped and automatically released on stop; several voice/HUD resources may assert the same player without racing. The integrated voice package drives this from authenticated native talker state.\n\nThe plate also reads the voice engine itself while a voice session is up: it shows talking when any resource asserted it **or** the player is audible above a small threshold, and the voice bars follow his smoothed level either way. An assertion therefore turns the indicator on; clearing it does not silence a player the voice engine still hears.",
   "params": [
    {
     "name": "playerId",
-    "type": "integer",
+    "type": "integer|string",
     "optional": false,
     "default": null
    },
@@ -15610,7 +15636,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- Show the speaker icon while the voice package reports the player talking\nfor _, talker in ipairs(Open77.voice.talkers() or {}) do\n    Open77.nameplates.setTalking(talker.playerId, talker.speaking == true)\nend",
   "inferred": false,
-  "source_line": 25455,
+  "source_line": 28137,
   "permissions": [
    "ui.nameplates"
   ],
@@ -15625,18 +15651,18 @@
   "name": "snapshot",
   "handler": "LuaNameplateSnapshot",
   "summary": "Returns the currently rendered remote-player nameplates.",
-  "description": "Requires `ui.nameplates`. Screen coordinates and distance describe the most recent presentation snapshot.",
+  "description": "Requires `ui.nameplates`. Every plate the camera can see this frame, from the same occlusion-tested pass the native drawer and `stream(page)` use: a player behind a wall, a floor or the ground is not returned once his plate has faded out. Screen coordinates and distance describe the most recent presentation snapshot.\n\nEach entry carries `id` (a string), `label`, `sublabel`, `color` (the resolved label colour as `#RRGGBBAA`: the override's when one is set, else the theme's), `accent` (resolved, `#RRGGBBAA`), `x` and `y` (0..1 of the viewport, from the top left), `distance` in metres, `talking`, `level` (smoothed voice level, 0..1), `alpha` (the appear and occlusion fade, 0..1), `bar` (only when the override set one) and `occluded` (the latest line-of-sight verdict). A plate can be `occluded` and still have `alpha > 0` for the few frames it takes to fade out.",
   "params": [],
   "returns": [
-   "array of { id, label, color, x, y, distance }, or nil",
+   "array of { id, label, sublabel, color, accent, x, y, distance, talking, level, alpha, bar?, occluded }, or nil",
    "reason"
   ],
   "api_set": "game",
   "runtime": "client",
   "source": "ResourceHost.cpp",
-  "example": "-- Draw a health bar under each rendered plate\nfor _, plate in ipairs(Open77.nameplates.snapshot() or {}) do\n    healthBars.place(plate.id, plate.x, plate.y + 0.02)\nend",
+  "example": "-- Draw a health bar under each rendered plate, fading with it\nfor _, plate in ipairs(Open77.nameplates.snapshot() or {}) do\n    healthBars.place(plate.id, plate.x, plate.y + 0.02, plate.alpha)\nend",
   "inferred": false,
-  "source_line": 25451,
+  "source_line": 28133,
   "permissions": [
    "ui.nameplates"
   ],
@@ -15665,7 +15691,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- Stop streaming plates when the HUD page is closed\nAddEventHandler(\"hud:closed\", function()\n    Open77.nameplates.stopStream()\nend)",
   "inferred": false,
-  "source_line": 25453,
+  "source_line": 28135,
   "permissions": [
    "ui.nameplates"
   ],
@@ -15680,7 +15706,7 @@
   "name": "stream",
   "handler": "LuaNameplateStream",
   "summary": "Streams the native nameplate projection to a page, once per game frame.",
-  "description": "Requires `ui.nameplates` and a WebUI page this resource owns. The projection was always native and always correct; relaying it from a Lua timer is what made plates lag and freeze. This publishes the same `nameplates:update` event with the same `{ players = { { id, label, color, x, y, distance } } }` payload, so an existing page needs no change and the resource can delete its `Wait(33)` loop. An identical frame is not re-sent.",
+  "description": "Requires `ui.nameplates` and a WebUI page this resource owns. The projection was always native and always correct; relaying it from a Lua timer is what made plates lag and freeze. This publishes the same `nameplates:update` event, and the keys an existing page reads are unchanged -- `{ players = { { id, label, color, x, y, distance, talking } } }` -- so the page needs no edit and the resource can delete its `Wait(33)` loop. An identical frame is not re-sent.\n\nEach player also carries `sublabel`, `accent` (resolved, `#RRGGBBAA`), `level` (smoothed voice level, 0..1), `alpha` (the appear and occlusion fade, 0..1: multiply your own opacity by it) and `bar` (0..1, or `-1` when no `set()` gave one). `color` is always filled, as `#RRGGBBAA`: the override's when one is set, else the theme's label colour. `id` is a string.\n\nThe roster is the occlusion-tested one the native drawer uses: a player behind a wall, a floor or the ground leaves the payload once his plate has faded out, unless `set(id, { throughWalls = true })` exempts him or the server's style sets `occlusion = false`.",
   "params": [
    {
     "name": "page",
@@ -15698,7 +15724,7 @@
   "source": "ResourceHost.cpp",
   "example": "-- Feed the native plate projection to this resource's HUD page every frame\nOpen77.nameplates.stream(hudPage)",
   "inferred": false,
-  "source_line": 25452,
+  "source_line": 28134,
   "permissions": [
    "ui.nameplates"
   ],
@@ -15707,6 +15733,39 @@
   "constant": false,
   "qualified": "Open77.nameplates.stream",
   "route_id": "Open77.nameplates.stream"
+ },
+ {
+  "namespace": "Open77.nameplates",
+  "name": "style",
+  "handler": "LuaNameplateStyle",
+  "summary": "Sets the look of every native nameplate: font, chip, colours, accent, voice indicator, pin, distance scaling and occlusion.",
+  "description": "Requires `ui.nameplates`. A web page could always draw any plate a designer wanted, and paid for it twice: the plate trailed the body through the CEF chain, and a page anchor was never occlusion-tested. `style` keeps the drawer native and makes the look data, so a server reproduces its own design without a page. It restyles the plates `render(true)` draws -- the shipped `open77_nameplates` resource turns that on -- for every player at once; per-player details stay in `set()`.\n\nThe keys are applied over this resource's previous style, or over the defaults the first time, **all or nothing**: on the first key it cannot apply nothing changes, and the call answers `false` and a reason naming the key -- `unknown_style_key:<key>` for a typo, `invalid_style_value:<key>` for a wrong type, an unparseable colour or an unknown name. `invalid_style` means the argument is not a table or has more than 64 keys, `invalid_style_key` a key that is not a string. Numbers out of range are clamped, not refused; `inf` and `nan` are refused as `invalid_style_value:<key>`.\n\nThe most recent resource to call it decides the look of every plate. When that resource stops, the style of the one before it returns; `resetStyle()` hands the look back without stopping.\n\nColours are `#RRGGBB`, `#RRGGBBAA`, or `false` for transparent. `border`, `borderTalking`, `voiceActive`, `pinColor` and `barColor` follow the plate's accent while unset or set to `\"accent\"`, which is what lets a per-player `accent` from `set()` recolour one plate without restating the palette. Defaults are the Open77 design system: Chakra Petch in upper case, cyan accent `#22D8E2`, a chamfered chip. Fonts: `chakra`/`ui` and `rajdhani`/`body` are embedded in the plugin; `segoe`/`system` and `bahnschrift`/`condensed` are read from Windows and fall back to the UI face.\n\nKeys -- label: `font`, `size`, `letterSpacing`, `uppercase`, `textColor`, `textShadow`, `sublabelColor`, `sublabelScale`; chip: `shape` (`chamfer`, `rounded`, `pill`, `square`, `none`), `corner`, `paddingX`, `paddingY`, `background`, `backgroundTalking`, `border`, `borderTalking`, `borderWidth`; accent: `accent`, `accentSide` (`left`, `top`, `bottom`, `none`), `accentWidth`; voice: `voice` (`bars`, `speaker`, `none`), `voiceIdle`, `voiceActive`, `voiceIdleVisible`; pin: `pin`, `pinWidth`, `pinColor`, `tip` (`diamond`, `dot`, `none`), `tipSize`, `tipGlow`, `tipPulse`; bar: `barHeight`, `barBackground`, `barColor`; distance: `nearScale`, `farScale`, `fadeFrom`, `fade` (milliseconds), `maxDistance`; behaviour: `occlusion`, `offset`, `showDistance`, `scale`. Types, defaults and ranges are in the *Official resource exports* guide, under `open77_nameplates`.\n\n`maxDistance`, `offset`, `occlusion` and `fade` also shape what `stream(page)` and `snapshot()` return, because they decide where a plate sits and which players are listed.\n\n**Occlusion.** Every plate is line-of-sight tested natively, from the camera to the player's head and then to his chest, against static geometry, doors and terrain -- walls, floors, closed doors, the ground; never vehicles or people -- crossing up to two panes of glass. A plate shows on the first clear test, hides after at least two blocked tests spanning 120 ms or more, never flashes on a player first seen behind a wall, and fades between the two over `fade`. `occlusion = false` turns the test off for the whole server; `set(id, { throughWalls = true })` exempts one player.",
+  "params": [
+   {
+    "name": "theme",
+    "type": "table",
+    "optional": false,
+    "default": null
+   }
+  ],
+  "returns": [
+   "true on success, otherwise false",
+   "reason"
+  ],
+  "api_set": "game",
+  "runtime": "client",
+  "source": "ResourceHost.cpp",
+  "example": "-- A yellow-accent RP look for every plate on this server\nlocal ok, reason = Open77.nameplates.style({\n    font = \"rajdhani\",\n    size = 16,\n    uppercase = false,\n    accent = \"#FCEE0A\",\n    textColor = \"#FFF8D6\",\n    background = \"#14120ACC\",\n    backgroundTalking = \"#2A2608E0\",\n    shape = \"rounded\",\n    corner = 4,\n    accentSide = \"bottom\",\n    voice = \"speaker\",\n    tip = \"dot\",\n    maxDistance = 25,\n})\nif not ok then\n    print(\"nameplate style refused: \" .. tostring(reason))\nend",
+  "inferred": false,
+  "source_line": 28138,
+  "permissions": [
+   "ui.nameplates"
+  ],
+  "reasons": [],
+  "since": null,
+  "constant": false,
+  "qualified": "Open77.nameplates.style",
+  "route_id": "Open77.nameplates.style"
  },
  {
   "namespace": "Open77.net",
@@ -60278,7 +60337,7 @@
   "name": "registerPaintProfiles",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Declares the colour template records this resource's TweakXL pack adds, per model.",
-  "description": "**Next release.** This native is not in the current public build; it arrives with the next Open77 release, so test that it exists before calling it.\n\n`catalogue` is `{ [record] = { { id, label?, main?, sec?, pattern?, match?, decals? }, ... } }`. `record` is a vehicle record (`Vehicle.` + letters, digits, `_`; a stage record inherits its base's rows). `id` is the template record, `Vehicle.o77_` + letters, digits, `_`, at most 128 characters: the prefix keeps every vanilla template out of reach, and an id belongs to the first running resource that registers it. `label` (1-64 characters) and `main` / `sec` (`{r,g,b}`, `{r=,g=,b=}` or `\"#rrggbb\"`) are for a UI's swatches; `pattern` (default false) is `hasPattern`; `match` (appearance names) is listed as `appearances`. A vehicle kit `profiles.json` `records` table is accepted as is.\n\n**A template the pack adds must carry at most 12 `customDecals`**: 13 or more crash every client that spawns the car (2.5, `Cyberpunk2077.exe+0x37DD77`), whatever the number of cars nearby. The server cannot read the pack, so the cap is the pack builder's job.\n\nMerged into this resource's set: a row restating an id on the same record replaces it, others are added, and nothing is taken away until the resource stops. Then its profiles go: a car wearing one keeps the choice (`getVisual` still answers it) but shows generic paint until the resource registers it again. **Needs no permission**: it paints no car, and applying a profile is still `setPaintProfile`. `decals` (0-12, default 0) is the template's `customDecals` count: it counts against the car's 12-decal budget with its stickers, and a livery above 12 is refused, since it would crash every client on its own. Caps: 64 rows per record, 256 records, 1024 rows per resource; one call carries at most 4096 Lua values, so register a large catalogue in several calls. Atomic.",
+  "description": "**Next release.** This native is not in the current public build; it arrives with the next Open77 release, so test that it exists before calling it.\n\n`catalogue` is `{ [record] = { { id, label?, main?, sec?, pattern?, match?, decals? }, ... } }`. `record` is a vehicle record (`Vehicle.` + letters, digits, `_`; a stage record inherits its base's rows). `id` is the template record, `Vehicle.o77_` + letters, digits, `_`, at most 128 characters: the prefix keeps every vanilla template out of reach, and an id belongs to the first running resource that registers it. `label` (1-64 characters) and `main` / `sec` (`{r,g,b}`, `{r=,g=,b=}` or `\"#rrggbb\"`) are for a UI's swatches; `pattern` (default false) is `hasPattern`; `match` (appearance names) is listed as `appearances`. A vehicle kit `profiles.json` `records` table is accepted as is.\n\n**A template the pack adds must carry at most 12 `customDecals`**: 13 or more crash every client that spawns the car (2.5, `Cyberpunk2077.exe+0x37DD77`), whatever the number of cars nearby. The server cannot read the pack, so the cap is the pack builder's job.\n\nMerged into this resource's set: a row restating an id on the same record replaces it, others are added, and nothing is taken away until the resource stops or is reloaded: a hot reload declares the set again from scratch, so what the new generation does not register goes, and a reload that fails keeps the running set. A resource that fails to load releases whatever it registered first. Then its profiles go: a car wearing one keeps the choice (`getVisual` still answers it) but shows generic paint until the resource registers it again. **Needs no permission**: it paints no car, and applying a profile is still `setPaintProfile`. `decals` (0-12, default 0) is the template's `customDecals` count: it counts against the car's 12-decal budget with its stickers, and a livery above 12 is refused, since it would crash every client on its own. Give it for a livery with decals: left out, the livery counts as 0, `getDecalBudget` under-reports, and stickers past the real budget are accepted, then dropped by the client. Caps: 64 rows per record, 256 records, 1024 rows per resource; one call is read with a budget of 262,144 Lua values (not the 4096 of a network event), so a catalogue within these caps registers in one call. Atomic.",
   "params": [
    {
     "name": "catalogue",
@@ -60310,7 +60369,7 @@
   "name": "registerParts",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Declares this resource's kit parts and rims, and how they fit each model.",
-  "description": "**Next release.** This native is not in the current public build; it arrives with the next Open77 release, so test that it exists before calling it.\n\nIds are namespaced by resource (`<resource>:<id>`) and vanish when the resource stops; cars wearing a vanished part republish without it and get it back when the kit is registered again. **Needs no permission**: it changes no car, only what this resource's own ids mean.\n\nEntry: `{ kind = \"rim\" | \"part\" | \"toggle\", label?, slot? (part: the vehicle component it attaches to), carrier? (part: the slot of the opening panel it rides on), modType?, variants = { [variant] = model }, fit = { [record] = { slot?, carrier?, offset?, rotation?, scale?, hide?, show?, wheels?, appearances? } } }`. `carrier = \"trunk_a\"` makes a part fitted on the body follow the trunk lid as it opens: the offsets stay those of `slot` with the lid shut, and the client moves the part as far as the carrier slot has moved (it measures the shut pose itself, and follows `slot` alone until then or on a car without that slot). A fit's `carrier = false` means none on that record; a rim or a toggle has none. A rim's `wheels = { { slot, offset?, rotation?, scale? }, ... }` (1-8 entries, unique slots) replaces its default wheel slots on that record, one prop per entry. `appearances = { [\"<appearance>\"] = { offset?, rotation?, scale?, wheels?, hide?, show? } }` (at most 32, never `slot` or `carrier`) fits the part per trim: a car wearing that appearance gets the record fit with those fields replaced. The look follows the car's appearance on its own: `setAppearance`, `setProperties` and `respawnAs` republish it in the same call. A model is `asset:<resource>/<model>`, a prop a pack resource registered, resolved like `Open77.props.create`; the client skips and logs a model it cannot resolve (`model_not_registered`, for instance from an archive the game did not mount at start). A part applies only to the records its `fit` lists (`part_not_for_model`). Atomic.",
+  "description": "**Next release.** This native is not in the current public build; it arrives with the next Open77 release, so test that it exists before calling it.\n\nIds are namespaced by resource (`<resource>:<id>`) and vanish when the resource stops; cars wearing a vanished part republish without it and get it back when the kit is registered again. A hot reload declares the kit again from scratch: a part the new generation does not register vanishes the same way, and a reload that fails keeps the running kit whole. A resource that fails to load releases whatever it registered first. **Register at the top level of the script**: a reload republishes the cars as soon as the top level has run, so a kit registered later (a `CreateThread`, a database callback) first shows them without its parts, then with them, and a write naming one in between is refused (`unknown_part`). A part a failed reload put on a car stays chosen but dormant until the kit registers it again. **Needs no permission**: it changes no car, only what this resource's own ids mean.\n\nEntry: `{ kind = \"rim\" | \"part\" | \"toggle\", label?, slot? (part: the vehicle component it attaches to), carrier? (part: the slot of the opening panel it rides on), modType?, variants = { [variant] = model }, fit = { [record] = { slot?, carrier?, offset?, rotation?, scale?, hide?, show?, wheels?, appearances? } } }`. `carrier = \"trunk_a\"` makes a part fitted on the body follow the trunk lid as it opens: the offsets stay those of `slot` with the lid shut, and the client moves the part as far as the carrier slot has moved (it measures the shut pose itself, and follows `slot` alone until then or on a car without that slot). A fit's `carrier = false` means none on that record; a rim or a toggle has none. A rim's `wheels = { { slot, offset?, rotation?, scale? }, ... }` (1-8 entries, unique slots) replaces its default wheel slots on that record, one prop per entry. `appearances = { [\"<appearance>\"] = { offset?, rotation?, scale?, wheels?, hide?, show? } }` (at most 32, never `slot` or `carrier`) fits the part per trim: a car wearing that appearance gets the record fit with those fields replaced. The look follows the car's appearance on its own: `setAppearance`, `setProperties` and `respawnAs` republish it in the same call. A model is `asset:<resource>/<model>`, a prop a pack resource registered, resolved like `Open77.props.create`; the client skips and logs a model it cannot resolve (`model_not_registered`, for instance from an archive the game did not mount at start). A part applies only to the records its `fit` lists (`part_not_for_model`). Atomic.",
   "params": [
    {
     "name": "catalogue",
@@ -62576,7 +62635,7 @@
   "name": "setProperties",
   "handler": "LuaResourceRuntime.Bootstrap",
   "summary": "Applies a stored property table to a vehicle.",
-  "description": "Requires `world.vehicles`, plus `world.vehicles.appearance` if -- and only if -- the table CHANGES the appearance variant. Restating the variant a car already wears is free, which is what keeps the round trip working for a resource that never changes a look.\n\n**`version` decides how absence is read, and it is the only thing that does.** A table carrying `version = 1` -- which is every table `getProperties` hands back -- is a COMPLETE description, so an absent optional field means \"this car has none\": no lights hue, no performance ceiling. A table without `version` is a PATCH, so an absent field is left exactly as it was, and `setProperties(id, { paint = { primary = \"#FF0000\" } })` is a repaint and nothing else.\n\n**A property with no Cyberpunk counterpart is refused by name**, as `unsupported_property:modEngine` or `unsupported_property:paint.neonColor` -- the offending key alphabetically first, so the refusal is reproducible whatever `pairs` decides that run. Any key the table format does not name is refused the same way, `visual` included, and so are the FiveM keys `neonEnabled`, `neonColor`, `livery` and `windowTint`. Pass `{ ignoreUnsupported = true }` to skip them instead, in which case the third return value lists what was skipped: the alphabetically first unsupported key of the top level, of `paint` and of `damage`. Refusing is deliberate: a garage that silently loses two thirds of its table is worse than one that fails loudly on day one. `Open77.vehicles.unsupportedProperties` maps every such name to the reason.\n\n`record` is checked, never applied: REDengine cannot change a spawned entity's record, so a Quadra table handed to a Thorton answers `record_mismatch` rather than half-restoring. Detached parts are one-way on a live projection, so a table asking for fewer than the car has already lost answers `detached_parts_not_reattachable`; respawn and apply the table to the new car.\n\n**The order of application is deliberate.** Health, paint, doors, windows and the durable damage go in ONE `update`, so no viewer ever sees a half-restored car. The electrical bits then go through `setEngine`, `setLights`, `setSiren` and `setDrivable`, because those are what record the server intent that stops the physics owner's next durable report from undoing them -- writing them as raw flags would look like it worked and quietly revert about half a second later. The visual template and the performance ceiling follow on their own durable channels. Stable 147 includes engineHold in the property table; setProperties applies it through the canonical engine-hold setter.\n\n**From the next release:** `setProperties` restores the vehicle customization too. The unsupported check also covers the `visual` table and runs before the vehicle is read or anything is applied, and `ignoreUnsupported` hands back every skipped key, sorted, nested ones prefixed (`paint.`, `damage.`, `visual.`). `visual` is applied as `getVisual` shapes it (`rev` is ignored), its wave 2 fields `neonAnimation`, `lightColors` and `stickers` included, with their setters' refusals, and the whole look is validated before anything is applied. `neonEnabled` (a boolean, or FiveM's four per-side booleans) and `neonColor` become `visual.neon`; `livery` is a 0-based index into `listPaintProfiles(record)`, `-1` for none; `windowTint` is the FiveM index mapped onto `visual.tint`, GREEN (`6`) refused as `unsupported_property:windowTint`. A FiveM key wins over its `visual` field. In a versioned table a field absent from `visual` means none, but a table with no `visual` at all leaves the look alone. Changing the look needs `world.vehicles.appearance`; restating it does not. **Only a choice the car already holds survives a stopped pack:** on a freshly spawned car every part, livery and sticker is a new choice, so one that no running resource has registered is refused (`unknown_part`, `invalid_profile`, `unknown_sticker`) and the call applies nothing. `record` is then applied within the same model: a stage or engine-sound record of the same model (`_o77s<n>`, `_o77a<k>`, `_o77s<n>a<k>`) respawns the car onto it first, in place and under the same id, after every check and before the update, exactly as `respawnAs` would (`vehicle_occupied` while anyone is in it), so a garage that spawns the base model gets the tuned car back from the table. A sound record no running resource covers is not spawned blind: the sound is dropped and the stage kept. `visual.engineSound` must agree with `record` (`engine_sound_mismatch`); in a table without `record` it is applied like `setEngineSound`.",
+  "description": "Requires `world.vehicles`, plus `world.vehicles.appearance` if -- and only if -- the table CHANGES the appearance variant. Restating the variant a car already wears is free, which is what keeps the round trip working for a resource that never changes a look.\n\n**`version` decides how absence is read, and it is the only thing that does.** A table carrying `version = 1` -- which is every table `getProperties` hands back -- is a COMPLETE description, so an absent optional field means \"this car has none\": no lights hue, no performance ceiling. A table without `version` is a PATCH, so an absent field is left exactly as it was, and `setProperties(id, { paint = { primary = \"#FF0000\" } })` is a repaint and nothing else.\n\n**A property with no Cyberpunk counterpart is refused by name**, as `unsupported_property:modEngine` or `unsupported_property:paint.neonColor` -- the offending key alphabetically first, so the refusal is reproducible whatever `pairs` decides that run. Any key the table format does not name is refused the same way, `visual` included, and so are the FiveM keys `neonEnabled`, `neonColor`, `livery` and `windowTint`. Pass `{ ignoreUnsupported = true }` to skip them instead, in which case the third return value lists what was skipped: the alphabetically first unsupported key of the top level, of `paint` and of `damage`. Refusing is deliberate: a garage that silently loses two thirds of its table is worse than one that fails loudly on day one. `Open77.vehicles.unsupportedProperties` maps every such name to the reason.\n\n`record` is checked, never applied: REDengine cannot change a spawned entity's record, so a Quadra table handed to a Thorton answers `record_mismatch` rather than half-restoring. Detached parts are one-way on a live projection, so a table asking for fewer than the car has already lost answers `detached_parts_not_reattachable`; respawn and apply the table to the new car.\n\n**The order of application is deliberate.** Health, paint, doors, windows and the durable damage go in ONE `update`, so no viewer ever sees a half-restored car. The electrical bits then go through `setEngine`, `setLights`, `setSiren` and `setDrivable`, because those are what record the server intent that stops the physics owner's next durable report from undoing them -- writing them as raw flags would look like it worked and quietly revert about half a second later. The visual template and the performance ceiling follow on their own durable channels. Stable 147 includes engineHold in the property table; setProperties applies it through the canonical engine-hold setter.\n\n**From the next release:** `setProperties` restores the vehicle customization too. The unsupported check also covers the `visual` table and runs before the vehicle is read or anything is applied, and `ignoreUnsupported` hands back every skipped key, sorted, nested ones prefixed (`paint.`, `damage.`, `visual.`). `visual` is applied as `getVisual` shapes it (`rev` is ignored), its wave 2 fields `neonAnimation`, `lightColors` and `stickers` included, with their setters' refusals, and the whole look is validated before anything is applied. **One exception, for a restore**: in a versioned table a sticker past the decal budget stays chosen but undrawn (dormant), as when a heavier livery is registered under the car, instead of refusing the table, since the table describes a car whose sticker was already dormant. A patch that adds a sticker is a purchase and is still refused with `decal_budget_exceeded`, as by `setStickers`. `neonEnabled` (a boolean, or FiveM's four per-side booleans) and `neonColor` become `visual.neon`; `livery` is a 0-based index into `listPaintProfiles(record)`, `-1` for none; `windowTint` is the FiveM index mapped onto `visual.tint`, GREEN (`6`) refused as `unsupported_property:windowTint`. A FiveM key wins over its `visual` field. In a versioned table a field absent from `visual` means none, but a table with no `visual` at all leaves the look alone. Changing the look needs `world.vehicles.appearance`; restating it does not. **Only a choice the car already holds survives a stopped pack:** on a freshly spawned car every part, livery and sticker is a new choice, so one that no running resource has registered is refused (`unknown_part`, `invalid_profile`, `unknown_sticker`) and the call applies nothing. `record` is then applied within the same model: a stage or engine-sound record of the same model (`_o77s<n>`, `_o77a<k>`, `_o77s<n>a<k>`) respawns the car onto it first, in place and under the same id, after every check and before the update, exactly as `respawnAs` would (`vehicle_occupied` while anyone is in it), so a garage that spawns the base model gets the tuned car back from the table. A sound record no running resource covers is not spawned blind: the sound is dropped and the stage kept. `visual.engineSound` must agree with `record` (`engine_sound_mismatch`); in a table without `record` it is applied like `setEngineSound`.\n\n**Nothing is applied before the whole table is proved**: the record, the visual, the update, the electrical values, the appearance and hue, the ceiling, each by the checks of the setter that then applies it. A refused table leaves the car exactly as it was: not respawned, not repainted, its profile untouched. **A repaint replaces a TwinTone profile**, as it does through `update`: a table whose colours change the paint clears the profile whatever else it carries, unless the table states the profile itself (`visual.profile`, `livery`, or a `visual` in a versioned table), which then wins.",
   "params": [
    {
     "name": "id",

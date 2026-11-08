@@ -4,7 +4,7 @@
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
   "guides": 113,
-  "apiEntries": 1809,
+  "apiEntries": 1811,
   "files": [
     {
       "source": "wiki/pause-menu.md",
@@ -1090,8 +1090,8 @@
       "target": "content/docs/reflex-overdrive.md",
       "slug": "reflex-overdrive",
       "title": "Reflex overdrive",
-      "bytes": 15173,
-      "sha256": "3d365b3ff36a5aca5bef661c3773faaa378b8749f0c36d1ad35a3811268a90dd",
+      "bytes": 15339,
+      "sha256": "70ad1dc5f084eed072d9746817cd12ddcb45503aec0c401a0866500df76ab495",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "f5c3f1a307ccc7a6c8db177712a42eee61a70195995078ad7d7d94438191f488"
@@ -1102,8 +1102,8 @@
       "target": "content/docs/resource-exports.md",
       "slug": "resource-exports",
       "title": "Official resource exports",
-      "bytes": 39040,
-      "sha256": "a9579da085f3305281c37f70314edf2a66de6c1ed8dd2d4649152b3a3f3cea82",
+      "bytes": 49426,
+      "sha256": "c91a55ac561a5d08677c5e25c2892f3f905de18f9d2382c4d91a5eef34b33770",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "7e1c4a507b28b9441863585bb4103134dc407b59c0ac5f29361eb0e771543871"
@@ -1493,8 +1493,8 @@
       "target": "content/docs/voice.md",
       "slug": "voice",
       "title": "Integrated voice chat",
-      "bytes": 15527,
-      "sha256": "ac64af3d650fd840b36ab2926fc578243348ea77fab0c15498cdfa5a85914e35",
+      "bytes": 15833,
+      "sha256": "369da759834b6a8fa50e90455fb40af5e36a4a4cc0fcc3a332d85749ec83fb4e",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "55226fd769b2cce01f9a32c02b88b53eb77e1eff4ced607562311149f90451a0",
@@ -1656,9 +1656,9 @@
     {
       "source": "wiki/data/api.json",
       "target": "content/api/api.json",
-      "entries": 1809,
-      "bytes": 2647230,
-      "sha256": "443ddb4f806e60a4406856f1ce4691a1ceb4dcc7c0e219dbb63c6d9f9817a632",
+      "entries": 1811,
+      "bytes": 2659854,
+      "sha256": "2e2089f6dffaba07c3c2e54bbf34b61bf217dc3534994a2791c4fcc0e297388e",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "a2ab1237881a8ac872f3f2963eefbf77906b06d73256e24e3696c9fdc95bdda6",
@@ -1669,7 +1669,8 @@
         },
         "vehicleCustomization": "Merged the vehicle customization delta of open77-base feat/vehicle-customization a18cd4eb (wiki/data/api.json, against merge base b8e334ad): 29 new Open77.vehicles cards (customization, parts, liveries, neon, lamp colours, engine sound, stickers, plate, window tint) and the reviewed descriptions of getProperties, setProperties, setLightsHue and unsupportedProperties. Every other site entry is preserved. The cards carry no `since` until a published build ships them.",
         "vehicleCustomizationDocs": "Card delta vendored from open77-base vc/docs-api c2a13d47 and 4cb09667 (on feat/vehicle-customization 979ec10d): setWheels (qualified part ids, attach_limit), registerEngineSounds (a real sound set in the example), setWindowTint (visual_too_large), the look-change setters now name world.vehicles.appearance, and nine new server global cards for the FiveM aliases (SetVehicleLivery, GetVehicleLivery, SetVehicleNeonLightEnabled, SetVehicleNeonLightsColour, SetVehicleMod, GetVehicleMod, SetVehicleWheelType, SetVehicleWindowTint, GetVehicleWindowTint). Rows inserted in place; every other site entry is preserved. The new cards carry no since until a published build ships them.",
-        "vehicleCustomizationReleaseStatus": "Release status vendored from open77-base vc/docs-api 3a649486. The 39 cards no published build registers carry `release: \"next\"` and open with the Next release sentence: 28 server Open77.vehicles cards (positions included), client customizationAvailable and getVisual, and the nine FiveM vehicle globals. getProperties, setProperties, unsupportedProperties and setLightsHue describe the current public build first, then the next release. listPaintProfiles documents decals and listParts carrier. The site's positions card keeps its own text and gains only the marker. getProperties and setProperties keep the site's Stable 147 engineHold sentence (scripts/doc-api-editorial.json)."
+        "vehicleCustomizationReleaseStatus": "Release status vendored from open77-base vc/docs-api 3a649486. The 39 cards no published build registers carry `release: \"next\"` and open with the Next release sentence: 28 server Open77.vehicles cards (positions included), client customizationAvailable and getVisual, and the nine FiveM vehicle globals. getProperties, setProperties, unsupportedProperties and setLightsHue describe the current public build first, then the next release. listPaintProfiles documents decals and listParts carrier. The site's positions card keeps its own text and gains only the marker. getProperties and setProperties keep the site's Stable 147 engineHold sentence (scripts/doc-api-editorial.json).",
+        "vehicleCustomizationMainSync": "Merged with the site's main, then the three Open77.vehicles cards open77-base changed after 3a649486 were brought to open77-base main 0dc15565 (wiki/data/api.json sha256 7d964ea4068f729a): registerParts and registerPaintProfiles take base's text (catalogue budget, hot reload, failed loads); setProperties keeps the site's engineHold sentence and gains base's dormant-sticker restore and all-or-nothing paragraphs, through scripts/doc-api-editorial.json."
       },
       "siteAmendment": {
         "sourceCommit": "75f0e59cfa26606e83d9257ec1c7c07c6929c977",
@@ -1695,8 +1696,8 @@
       "source": "wiki/data/permissions.json",
       "target": "content/api/permissions.json",
       "entries": 177,
-      "bytes": 160048,
-      "sha256": "339c8aa516e222e0de66fa128028891aa4b7d4bf2398aab2bc7ce771cc02c7fb",
+      "bytes": 160274,
+      "sha256": "d36ec01ca17a6bee121df7ae97caa8fd0c4cdecbb533a2ad886f3660b8c8d58c",
       "siteAmendment": {
         "0": "V",
         "1": "e",
@@ -1882,7 +1883,7 @@
       "target": "content/api/events.json",
       "entries": 543,
       "bytes": 385167,
-      "sha256": "a3c674889c803f9e84bf16edda8f55da8b3c6e7a73c68b1056c75ff5194f73af",
+      "sha256": "cb096c436cf7bb6ed3c1871bf536ada78584ca1e16368557fbd81efb6059e1dd",
       "siteAmendment": {
         "loadingSeatDocs": "See loadingSeatDocumentation; other contracts were preserved."
       },
@@ -2849,6 +2850,31 @@
       "keybindings",
       "blips",
       "index"
+    ]
+  },
+  "nativeNameplatesDocumentation": {
+    "sourceRevision": "d39a94856c2ce58ba933932a719081fc25caab64",
+    "sourceWorkingTreeDirty": false,
+    "clientVersion": "unreleased (open77-base main)",
+    "mode": "Manual merge of the native nameplate series (themed drawer, line-of-sight occlusion, voice level). API: the ten client:Open77.nameplates.* cards replaced or added from wiki/data/api.json; every other site card and site-only description preserved. Events: source lines of open77:nameplates:policy and open77:nameplates:ready. Permissions: ui.nameplates (10 natives). Guides: nameplate sections ported by hand; the open77_nameplates policy exports and tunables come from the resource itself, and the setEnabled row was corrected against its client/main.lua.",
+    "apiRouteIds": [
+      "client:Open77.nameplates.clear",
+      "client:Open77.nameplates.remove",
+      "client:Open77.nameplates.render",
+      "client:Open77.nameplates.resetStyle",
+      "client:Open77.nameplates.set",
+      "client:Open77.nameplates.setTalking",
+      "client:Open77.nameplates.snapshot",
+      "client:Open77.nameplates.stopStream",
+      "client:Open77.nameplates.stream",
+      "client:Open77.nameplates.style"
+    ],
+    "amendedGuides": [
+      "resource-exports",
+      "world-drawing",
+      "resource-runtime",
+      "voice",
+      "reflex-overdrive"
     ]
   }
 }

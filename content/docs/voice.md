@@ -244,8 +244,11 @@ assert(ok, reason)
 
 The host publishes `open77:voice:talkingChanged(playerId, talking, level, detail)` on the Lua tick
 thread. `open77_voice` mirrors it into `Open77.nameplates.setTalking`, which drives the native
-speaker icon. A bounded talker snapshot loop is the recovery path for late join, stream-in, and a
-dropped event. Puppet lip motion consumes the same native talking/level state; resources should not
+plate's talking indicator: three voice bars by default, or a speaker glyph with
+`Open77.nameplates.style({ voice = "speaker" })`. During a voice session the plate also reads the
+voice engine itself: it shows talking whenever the player is audible above a small threshold,
+asserted or not, and its bars follow his level. A bounded talker snapshot loop is the recovery path
+for late join, stream-in, and a dropped event. Puppet lip motion consumes the same native talking/level state; resources should not
 attempt to infer speech by polling network packets.
 
 For reach changes, the native host emits

@@ -443,7 +443,7 @@ function in it, generated from the runtime rather than maintained here.
 | `Open77.clipboard` | `clipboard.write` | Write bounded UTF-8 text to the OS clipboard; reading is never exposed |
 | `Open77.kvp` | none | Persistent typed client storage, isolated by connection address and resource |
 | `Open77.inspector` | none | Read and highlight the current streamed-world target |
-| `Open77.nameplates` | `ui.nameplates` | Customise remote-player labels; native per-frame delivery or drawing |
+| `Open77.nameplates` | `ui.nameplates` | Label remote players: per-player overrides (`set`: label, second line, accent, bar, through-walls), one server-wide look (`style`), native drawing (`render`) or the projection streamed to a page; a player the camera cannot see has no plate. See [Drawing in the world](world-drawing.md#nameplates) |
 | `Open77.blips` | `ui.vanilla.map` | Create resource-owned vanilla mappins |
 | `Open77.map` | `map.read`, `map.control` | Read player waypoints, pick destinations and customize the native map screen with resource WebUI tabs. See [Native map & waypoints](native-map.md). |
 | `Open77.markers` | `world.markers` | Create resource-owned 3D world markers |
