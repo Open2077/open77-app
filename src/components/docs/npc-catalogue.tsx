@@ -78,7 +78,9 @@ export function NpcCatalogue() {
   function reset() { setQuery(""); setCategory(""); setRisk(""); setFaction(""); setPage(0); }
 
   return (
-    <section className={styles.catalogue} aria-labelledby="npc-browser-title" aria-busy={!data && !error} data-npc-catalogue>
+    // A table of record ids and asset paths, re-rendered on every filter: left
+    // out of browser translation as a whole.
+    <section className={styles.catalogue} aria-labelledby="npc-browser-title" aria-busy={!data && !error} translate="no" data-npc-catalogue>
       <div className={styles.heading}>
         <div className={styles.headingCopy}>
           <Eyebrow>TweakDB · Game 2.31</Eyebrow>

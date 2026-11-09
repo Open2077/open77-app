@@ -52,7 +52,15 @@ export function DocTitle({
   const pieces = titlePieces(title, max);
   return (
     <div className={cx(styles.wrap, className)}>
-      <Display as="h1" size="lg" className={cx(styles.title, title.length > LONG_TITLE && styles.long, verbatim && styles.verbatim)} id={id}>
+      {/* An identifier title is never translated; a sentence is translated whole, then cut into words again. */}
+      <Display
+        as="h1"
+        size="lg"
+        className={cx(styles.title, title.length > LONG_TITLE && styles.long, verbatim && styles.verbatim)}
+        id={id}
+        translate={verbatim ? "no" : undefined}
+        data-translate-words={verbatim ? undefined : true}
+      >
         {pieces.map((piece, index) => (
           <Fragment key={`${piece.text}-${index}`}>
             {/* The space keeps the heading's text (and its accessible name)

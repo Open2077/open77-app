@@ -131,7 +131,13 @@ export async function getDocsManifest(): Promise<DocsManifest> {
 /* Markdown rendering                                                         */
 /* -------------------------------------------------------------------------- */
 
-export type TocEntry = { id: string; text: string; depth: number };
+export type TocEntry = {
+  id: string;
+  text: string;
+  depth: number;
+  /** An identifier (an API function name): never translated. */
+  verbatim?: boolean;
+};
 
 export type RenderedGuide = {
   slug: string;
@@ -290,6 +296,24 @@ export function rehypeLabelCode() {
   };
 }
 
+/**
+ * Marks code as not to be translated (`translate="no"`): inline code, blocks,
+ * keys, and the heading anchors' `#`. Browser translators (Chrome's own
+ * "Translate", the docs' translate control) then leave identifiers, commands
+ * and paths exactly as written.
+ */
+export function rehypeNoTranslateCode() {
+  const tags = new Set(["pre", "code", "kbd", "samp", "var"]);
+  return (tree: HastRoot) => {
+    visit(tree, "element", (node: Element) => {
+      const className = node.properties?.className;
+      const anchor = node.tagName === "a" && Array.isArray(className) && className.includes("doc-anchor");
+      if (!tags.has(node.tagName) && !anchor) return;
+      node.properties = { ...node.properties, translate: "no" };
+    });
+  };
+}
+
 function textOf(node: Element): string {
   let out = "";
   visit(node, "text", (child) => {
@@ -386,6 +410,7 @@ async function renderGuide(slug: string): Promise<RenderedGuide | null> {
       addLanguageClass: true,
     })
     .use(rehypeLabelCode)
+    .use(rehypeNoTranslateCode)
     .use(rehypeStringify)
     .process(markdown);
 

@@ -108,9 +108,9 @@ export default async function HostAServerPage() {
               title: row.os,
               body: (
                 <>
-                  Archive: {row.archive}
+                  Archive: <span translate="no">{row.archive}</span>
                   <br />
-                  Run: <code>{row.run}</code>
+                  Run: <code translate="no">{row.run}</code>
                 </>
               ),
             }))}
@@ -128,7 +128,7 @@ export default async function HostAServerPage() {
 
         <DocSection id="configure" title="Configure server.jsonc" intro={CONFIG_INTRO}>
           <Snippet filename="server.jsonc" badge="Server config" code={CONFIG_SAMPLE} html={configHtml} />
-          <Facts items={CONFIG_FIELDS.map((field) => ({ label: <code>{field.label}</code>, body: field.body }))} />
+          <Facts items={CONFIG_FIELDS.map((field) => ({ label: <code translate="no">{field.label}</code>, body: field.body }))} />
         </DocSection>
 
         <DocSection id="set-the-key" title="Set the license key" intro={ENV_INTRO}>

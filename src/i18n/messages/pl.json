@@ -1850,5 +1850,37 @@
       "more": "Co to oznacza?",
       "note": "Ten widok korzysta z przykładowych danych demo. Liczby graczy, pingi i społeczności nie są prawdziwe. Prawdziwe wpisy znajdziesz w <live>katalogu na żywo</live>. Open Alpha jest dostępna dla wszystkich; zaloguj się na konto OPEN//77, żeby dołączyć do świata."
     }
+  },
+  "docsTranslate": {
+    "bannerText": "Ta strona jest po angielsku.",
+    "bannerAction": "Przetłumacz automatycznie",
+    "dismiss": "Ukryj",
+    "translate": "Przetłumacz tę stronę",
+    "into": "Angielski → {language}",
+    "preparing": "Przygotowywanie…",
+    "downloading": "Pobieranie modelu tłumaczenia… {percent}%",
+    "translating": "Tłumaczenie… {done}/{total}",
+    "translated": "Przetłumaczono na {language}",
+    "showOriginal": "Pokaż oryginał",
+    "stop": "Zatrzymaj",
+    "auto": "Do końca tej wizyty strony dokumentacji tłumaczą się same. „Pokaż oryginał” to wyłącza.",
+    "note": "Tłumaczenie maszynowe wykonane przez twoją przeglądarkę na tym urządzeniu. Kod, polecenia i nazwy API pozostają po angielsku.",
+    "options": "Inne opcje",
+    "failed": "Tłumaczenie zatrzymało się przed końcem.",
+    "retry": "Spróbuj ponownie",
+    "fallbackTitle": "Przetłumacz w przeglądarce",
+    "unsupported": "Ta przeglądarka nie ma wbudowanego tłumacza, z którego strona mogłaby skorzystać.",
+    "unavailable": "Ta przeglądarka nie może na tym urządzeniu tłumaczyć z angielskiego na {language}.",
+    "howTo": {
+      "chrome": "Chrome: kliknij stronę prawym przyciskiem i wybierz „Przetłumacz”.",
+      "chromeMobile": "Chrome: otwórz menu ⋮ i dotknij „Przetłumacz”.",
+      "edge": "Edge: kliknij stronę prawym przyciskiem i wybierz „Przetłumacz” albo użyj ikony tłumaczenia na pasku adresu.",
+      "firefox": "Firefox: otwórz menu ☰ i wybierz „Przetłumacz stronę”.",
+      "safari": "Safari: użyj przycisku tłumaczenia na pasku adresu (w menu aA na iPhonie i iPadzie).",
+      "other": "Poszukaj opcji „Przetłumacz” w menu przeglądarki."
+    },
+    "google": "Otwórz w Tłumaczu Google",
+    "googleNote": "Otwiera publiczną stronę w translate.google.com.",
+    "close": "Zamknij"
   }
 }

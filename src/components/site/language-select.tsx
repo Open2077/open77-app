@@ -8,6 +8,7 @@ import { useLocale, useMessages, useRoutePath } from "@/i18n/client";
 import {
   LANGUAGE_COOKIE,
   LANGUAGE_COOKIE_MAX_AGE,
+  LANGUAGE_EVENT,
   LOCALE_INFO,
   LOCALES,
   isLocalizedPath,
@@ -25,6 +26,7 @@ import styles from "./language-select.module.css";
 function rememberLanguage(locale: Locale) {
   const secure = window.location.protocol === "https:" ? "; Secure" : "";
   document.cookie = `${LANGUAGE_COOKIE}=${encodeURIComponent(locale)}; Path=/; Max-Age=${LANGUAGE_COOKIE_MAX_AGE}; SameSite=Lax${secure}`;
+  window.dispatchEvent(new Event(LANGUAGE_EVENT));
 }
 
 /**

@@ -52,6 +52,8 @@ export function Display({
   as: Tag = "h2",
   className,
   id,
+  translate,
+  ...data
 }: {
   children?: ReactNode;
   lines?: string[];
@@ -62,10 +64,13 @@ export function Display({
   as?: ElementType;
   className?: string;
   id?: string;
+  /** `"no"` for identifiers browser translators must leave alone. */
+  translate?: "yes" | "no";
+  [data: `data-${string}`]: string | boolean | undefined;
 }) {
   const style = tone ? ({ "--tone": tone === "text" ? "var(--text-primary)" : `var(--${tone})` } as CSSProperties) : undefined;
   return (
-    <Tag id={id} className={cx(styles.display, styles[size], className)} style={style}>
+    <Tag id={id} className={cx(styles.display, styles[size], className)} style={style} translate={translate} {...data}>
       {lines
         ? lines.map((line, index) => (
             // The lines are blocks; the space keeps the text a sentence for

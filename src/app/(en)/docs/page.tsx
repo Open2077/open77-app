@@ -117,7 +117,8 @@ export default async function DocsHomePage() {
 
   return (
     <>
-      <section className={styles.hero} aria-labelledby="docs-home-title">
+      {/* `data-docs-translate` marks what the reader's browser translator may translate (DocsTranslate). */}
+      <section className={styles.hero} aria-labelledby="docs-home-title" data-docs-translate>
         <div className={styles.heroArt} aria-hidden="true">
           <Image src="/home/img/devs-bg.webp" alt="" fill preload sizes="100vw" quality={75} />
         </div>
@@ -167,7 +168,7 @@ export default async function DocsHomePage() {
         </div>
       </section>
 
-      <section id="start-here" className={`${styles.section} ${styles.sectionFirst}`} aria-labelledby="start-here-title">
+      <section id="start-here" className={`${styles.section} ${styles.sectionFirst}`} aria-labelledby="start-here-title" data-docs-translate>
         <header className={styles.sectionHead}>
           <div className={styles.sectionCopy}>
             <Eyebrow index={1}>Start here</Eyebrow>
@@ -209,7 +210,7 @@ export default async function DocsHomePage() {
         </ol>
       </section>
 
-      <div className={styles.bento}>
+      <div className={styles.bento} data-docs-translate>
         <section className={styles.alpha} aria-labelledby="docs-alpha-title">
           <Image src="/home/img/server-custom-worlds.webp" alt="" fill sizes="(max-width: 1084px) 100vw, 60vw" quality={75} className={styles.alphaArt} />
           <div className={styles.alphaCopy}>
@@ -251,7 +252,7 @@ export default async function DocsHomePage() {
         </section>
       </div>
 
-      <div className={styles.paths}>
+      <div className={styles.paths} data-docs-translate>
         {PATHS.map((path, index) => (
           <section id={path.id} key={path.id} className={styles.path} style={{ "--tone": path.tone } as CSSProperties} aria-labelledby={`${path.id}-title`}>
             <div className={styles.pathHead}>
@@ -279,7 +280,7 @@ export default async function DocsHomePage() {
         ))}
       </div>
 
-      <section id="explore" className={styles.section} aria-labelledby="explore-title">
+      <section id="explore" className={styles.section} aria-labelledby="explore-title" data-docs-translate>
         <header className={styles.sectionHead}>
           <div className={styles.sectionCopy}>
             <Eyebrow index={4}>Explore</Eyebrow>
@@ -328,7 +329,7 @@ export default async function DocsHomePage() {
         })}
       </section>
 
-      <div className={styles.bottom}>
+      <div className={styles.bottom} data-docs-translate>
         <p className={styles.bottomNote}>
           <Icon glyph={userGroup} />
           OPEN//77 is an unofficial, independent community project, unaffiliated with CD PROJEKT RED.

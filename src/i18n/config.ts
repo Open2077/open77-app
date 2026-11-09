@@ -27,6 +27,8 @@ export const PREFIXED_LOCALES = LOCALES.filter((locale) => locale !== DEFAULT_LO
 /** Remembers an explicit choice made in the language selector, English included. */
 export const LANGUAGE_COOKIE = "op77_lang";
 export const LANGUAGE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+/** Dispatched on `window` after the selector stores a choice (the docs translator listens). */
+export const LANGUAGE_EVENT = "open77:language";
 
 /**
  * Set by the proxy on requests under a language prefix that match no page

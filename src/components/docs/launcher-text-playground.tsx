@@ -33,7 +33,8 @@ export function LauncherTextPlayground() {
     try { await navigator.clipboard.writeText(text); setStatus("Copied. Paste into your server name or description."); }
     catch { input.current?.focus(); input.current?.select(); setStatus("Copy unavailable. The text is selected; press Ctrl+C or Cmd+C."); }
   }
-  return <section className={styles.panel} aria-label="Launcher text editor">
+  // A live editor of formatting codes: its preview shows exactly what was typed, so no translation.
+  return <section className={styles.panel} aria-label="Launcher text editor" translate="no">
     <header className={styles.heading}><span>{"// LIVE EDITOR"}</span><small>LAUNCHER 178+</small></header>
     <div className={styles.preview}>
       <span className={styles.caption}>SERVER PREVIEW</span>

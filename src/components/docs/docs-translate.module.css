@@ -1,0 +1,191 @@
+/* The docs translator: a corner card (banner, then control) and its how-to
+   panel. Fixed, so appearing after hydration never moves the page. */
+
+.dock {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 250;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+  width: max-content;
+  max-width: min(24rem, calc(100vw - 32px));
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text-primary);
+  pointer-events: none;
+}
+
+.card,
+.panel {
+  pointer-events: auto;
+  background: oklch(from var(--body) l c h / 0.94);
+  border: 1px solid var(--line-strong);
+  border-left: 3px solid var(--tone, var(--red));
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35rem 0.7rem;
+  padding: 0.55rem 0.6rem 0.55rem 0.8rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card,
+  .panel {
+    animation: docs-translate-in 0.35s var(--ease-out-expo);
+  }
+}
+@keyframes docs-translate-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+.glyph {
+  color: var(--tone, var(--red));
+  font-size: 1.15rem;
+}
+
+.text {
+  margin: 0;
+  min-width: 0;
+}
+
+/* An idle control is just its button: no empty middle column. */
+.card > .primary:nth-child(2) {
+  grid-column: 2 / -1;
+  justify-self: start;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.primary,
+.secondary {
+  padding: 0.35rem 0.7rem;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: left;
+  cursor: pointer;
+  background: none;
+  border: 1px solid transparent;
+  transition:
+    color var(--transition-link),
+    background-color var(--transition-link),
+    border-color var(--transition-link);
+}
+.primary {
+  color: var(--body);
+  background: var(--tone, var(--red));
+}
+.primary:hover,
+.primary:focus-visible {
+  background: var(--text-primary);
+}
+.secondary {
+  color: var(--text-primary);
+  border-color: var(--line-strong);
+}
+.secondary:hover,
+.secondary:focus-visible {
+  border-color: var(--text-primary);
+}
+
+.iconButton {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: none;
+  border: 0;
+  transition: color var(--transition-link);
+}
+.iconButton:hover,
+.iconButton:focus-visible {
+  color: var(--text-primary);
+}
+
+.small {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.meter {
+  grid-column: 1 / -1;
+  display: block;
+  height: 2px;
+  background: var(--line);
+}
+.meter > span {
+  display: block;
+  height: 100%;
+  background: var(--tone, var(--red));
+  transition: width 0.3s linear;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.75rem 0.9rem 0.9rem 1rem;
+}
+.panel p {
+  margin: 0;
+}
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: -0.35rem -0.45rem -0.2rem 0;
+}
+.panelTitle {
+  font-family: var(--font-nippo);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--tone, var(--red));
+}
+.reason {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.google {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  width: fit-content;
+  font-weight: 600;
+  color: var(--tone, var(--red));
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.google:hover,
+.google:focus-visible {
+  color: var(--text-primary);
+}
+
+@media print {
+  .dock {
+    display: none;
+  }
+}

@@ -51,7 +51,7 @@ export function renderInlineMarkdown(text: string): ReactNode[] {
     if (start > cursor) nodes.push(text.slice(cursor, start));
 
     const [, code, bold, linkText, linkTarget] = match;
-    if (code !== undefined) nodes.push(<code key={key++}>{code}</code>);
+    if (code !== undefined) nodes.push(<code key={key++} translate="no">{code}</code>);
     else if (bold !== undefined) nodes.push(<strong key={key++}>{renderInlineMarkdown(bold)}</strong>);
     else if (linkText !== undefined) {
       const href = guideHref(linkTarget ?? "");

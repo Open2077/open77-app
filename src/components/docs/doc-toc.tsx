@@ -18,7 +18,9 @@ export function DocToc({ entries, className }: { entries: TocEntry[]; className?
     <ul className={cx(styles.list, className)}>
       {entries.map((entry) => (
         <li className={entry.depth > 2 ? styles.sub : undefined} key={entry.id}>
-          <a href={`#${entry.id}`}>{entry.text}</a>
+          <a href={`#${entry.id}`} translate={entry.verbatim ? "no" : undefined}>
+            {entry.text}
+          </a>
         </li>
       ))}
     </ul>

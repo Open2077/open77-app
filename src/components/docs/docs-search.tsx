@@ -44,7 +44,7 @@ export function DocsSearchTrigger({ size = "md", className }: { size?: "md" | "l
     >
       <Icon glyph={search01} className={styles.triggerIcon} />
       <span className={styles.triggerLabel}>{size === "lg" ? "Search guides and API functions…" : "Search the docs…"}</span>
-      <span className={styles.triggerKeys} aria-hidden="true">
+      <span className={styles.triggerKeys} aria-hidden="true" translate="no">
         <kbd>Ctrl</kbd>
         <kbd>K</kbd>
       </span>
@@ -139,13 +139,13 @@ export function DocsSearch({ entries }: { entries: SearchEntry[] }) {
       footer={
         <p className={styles.hint}>
           <span>
-            <kbd>↑</kbd> <kbd>↓</kbd> move
+            <kbd translate="no">↑</kbd> <kbd translate="no">↓</kbd> move
           </span>
           <span>
-            <kbd>Enter</kbd> open
+            <kbd translate="no">Enter</kbd> open
           </span>
           <span>
-            <kbd>esc</kbd> close
+            <kbd translate="no">esc</kbd> close
           </span>
         </p>
       }

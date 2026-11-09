@@ -1819,5 +1819,37 @@
       "more": "Bu ne anlama geliyor?",
       "note": "Bu görünüm örnek demo verileri kullanıyor. Oyuncu sayıları, ping değerleri ve topluluklar gerçek değil. Gerçek kayıtlar için <live>canlı dizine</live> bak. Open Alpha herkese açık; bir dünyaya katılmak için OPEN//77 hesabınla giriş yap."
     }
+  },
+  "docsTranslate": {
+    "bannerText": "Bu sayfa İngilizce.",
+    "bannerAction": "Otomatik çevir",
+    "dismiss": "Gizle",
+    "translate": "Bu sayfayı çevir",
+    "into": "İngilizce → {language}",
+    "preparing": "Hazırlanıyor…",
+    "downloading": "Çeviri modeli indiriliyor… %{percent}",
+    "translating": "Çevriliyor… {done}/{total}",
+    "translated": "Çeviri: {language}",
+    "showOriginal": "Orijinali göster",
+    "stop": "Durdur",
+    "auto": "Bu ziyaret boyunca dokümantasyon sayfaları kendiliğinden çevrilir. “Orijinali göster” bunu kapatır.",
+    "note": "Tarayıcının bu cihazda yaptığı makine çevirisi. Kod, komutlar ve API adları İngilizce kalır.",
+    "options": "Diğer seçenekler",
+    "failed": "Çeviri bitmeden durdu.",
+    "retry": "Tekrar dene",
+    "fallbackTitle": "Tarayıcınla çevir",
+    "unsupported": "Bu tarayıcıda sayfanın kullanabileceği yerleşik bir çevirmen yok.",
+    "unavailable": "Bu tarayıcı bu cihazda İngilizce → {language} çevirisi yapamıyor.",
+    "howTo": {
+      "chrome": "Chrome: sayfaya sağ tıkla ve “Çevir”i seç.",
+      "chromeMobile": "Chrome: ⋮ menüsünü aç ve “Çevir”e dokun.",
+      "edge": "Edge: sayfaya sağ tıkla ve “Çevir”i seç ya da adres çubuğundaki çeviri simgesini kullan.",
+      "firefox": "Firefox: ☰ menüsünü aç ve “Sayfayı çevir”i seç.",
+      "safari": "Safari: adres çubuğundaki çeviri düğmesini kullan (iPhone ve iPad’de aA menüsünde).",
+      "other": "Tarayıcının menüsünde bir “Çevir” seçeneği ara."
+    },
+    "google": "Google Çeviri’de aç",
+    "googleNote": "Herkese açık sayfayı translate.google.com üzerinde açar.",
+    "close": "Kapat"
   }
 }

@@ -198,7 +198,7 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
         >
           <option value="all">All namespaces</option>
           {namespaces.map((name) => (
-            <option key={name} value={name}>
+            <option key={name} value={name} translate={name === "_G" ? undefined : "no"}>
               {name === "_G" ? "Globals" : name}
             </option>
           ))}
@@ -249,7 +249,7 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
                         }}
                       >
                         <span className={styles.rowText}>
-                          <code className={styles.rowName}>
+                          <code className={styles.rowName} translate="no">
                             {entry.qualified}
                             <span>({entry.params.map((param) => `${param.name}${param.optional ? "?" : ""}`).join(", ")})</span>
                           </code>
@@ -283,7 +283,8 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
           <p className={styles.listFooter}>{entries.length.toLocaleString("en-GB")} functions · Open77 wiki · Lua 5.4</p>
         </div>
 
-        <section className={styles.detail} ref={detail} aria-label="Selected function" data-api-detail>
+        {/* The selected function is the part of the explorer a reader can have translated (the list stays English). */}
+        <section className={styles.detail} ref={detail} aria-label="Selected function" data-api-detail data-docs-translate>
           {selected ? (
             <div key={entryKey(selected)} className={styles.detailInner}>
               <div className={styles.detailMeta}>
@@ -293,8 +294,12 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
                   <RuntimeTag runtime={selected.runtime} />
                 </span>
               </div>
-              <p className={styles.namespace}>{selected.namespace === "_G" ? "Global function" : selected.namespace}</p>
-              <h2 className={styles.fnName}>{selected.name}</h2>
+              <p className={styles.namespace} translate={selected.namespace === "_G" ? undefined : "no"}>
+                {selected.namespace === "_G" ? "Global function" : selected.namespace}
+              </p>
+              <h2 className={styles.fnName} translate="no">
+                {selected.name}
+              </h2>
               <p className={styles.summary}>
                 <InlineMarkdown text={selected.summary} />
               </p>
@@ -304,7 +309,7 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
                   <span>Lua signature</span>
                   <CopyButton text={selected.signature} />
                 </figcaption>
-                <pre>
+                <pre translate="no">
                   <code>
                     {selected.documentedSignature || selected.callSignature ? (
                       selected.signature
@@ -349,15 +354,15 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
                       {selected.params.map((param) => (
                         <div key={param.name}>
                           <dt>
-                            <code>{param.name}</code>
-                            <span>{param.type === "not specified" ? "" : param.type}</span>
+                            <code translate="no">{param.name}</code>
+                            <span translate="no">{param.type === "not specified" ? "" : param.type}</span>
                           </dt>
                           <dd>
                             <span className={param.optional ? styles.optional : styles.required}>{param.optional ? "Optional" : "Required"}</span>
                             {param.default !== null ? (
                               <>
                                 {" · Default: "}
-                                <code>{param.default}</code>
+                                <code translate="no">{param.default}</code>
                               </>
                             ) : null}
                           </dd>
@@ -392,7 +397,7 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
                         <span>example.lua</span>
                         <CopyButton text={selected.example} label="Copy example" />
                       </figcaption>
-                      <pre>
+                      <pre translate="no">
                         <code>{selected.example}</code>
                       </pre>
                     </figure>
@@ -425,7 +430,7 @@ export function ApiExplorer({ entries }: { entries: ApiEntry[] }) {
                 </div>
                 <details className={styles.source} data-api-source>
                   <summary>Source information</summary>
-                  <p>
+                  <p translate="no">
                     {selected.guideHref ? "Wiki: " : ""}
                     {selected.source}
                     {selected.source_line ? `:${selected.source_line}` : ""}

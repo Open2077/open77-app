@@ -1818,5 +1818,37 @@
       "more": "What does this mean?",
       "note": "This view uses illustrative demo data. Its player counts, pings and communities are not real. Use the <live>live directory</live> for actual listings. Open Alpha is available to everyone; sign in with your OPEN//77 account to join a world."
     }
+  },
+  "docsTranslate": {
+    "bannerText": "This page is in English.",
+    "bannerAction": "Translate automatically",
+    "dismiss": "Dismiss",
+    "translate": "Translate this page",
+    "into": "English → {language}",
+    "preparing": "Preparing…",
+    "downloading": "Downloading the translation model… {percent}%",
+    "translating": "Translating… {done}/{total}",
+    "translated": "Translated into {language}",
+    "showOriginal": "Show original",
+    "stop": "Stop",
+    "auto": "Docs pages translate themselves for the rest of this visit. “Show original” turns this off.",
+    "note": "Machine translation, made by your browser on this device. Code, commands and API names stay in English.",
+    "options": "Other options",
+    "failed": "The translation stopped before the end.",
+    "retry": "Try again",
+    "fallbackTitle": "Translate with your browser",
+    "unsupported": "This browser has no built-in translator the page can use.",
+    "unavailable": "This browser cannot translate English into {language} on this device.",
+    "howTo": {
+      "chrome": "Chrome: right-click the page, then choose “Translate”.",
+      "chromeMobile": "Chrome: open the ⋮ menu, then tap “Translate”.",
+      "edge": "Edge: right-click the page, then choose “Translate”, or use the translate icon in the address bar.",
+      "firefox": "Firefox: open the ☰ menu, then choose “Translate page”.",
+      "safari": "Safari: use the translate button in the address bar (in the aA menu on iPhone and iPad).",
+      "other": "Look for a “Translate” option in your browser’s menu."
+    },
+    "google": "Open in Google Translate",
+    "googleNote": "Opens the public page on translate.google.com.",
+    "close": "Close"
   }
 }

@@ -26,7 +26,7 @@ export async function ApiEntryCard({ entry }: { entry: ApiEntry }) {
   return (
     <article className={styles.entry} id={entry.anchor} data-api-entry>
       <header className={styles.head}>
-        <h3 className={styles.name} id={`${entry.anchor}-title`}>
+        <h3 className={styles.name} id={`${entry.anchor}-title`} translate="no">
           <a href={`#${entry.anchor}`}>{entry.name}</a>
         </h3>
         <span className={styles.tags}>
@@ -77,13 +77,13 @@ export async function ApiEntryCard({ entry }: { entry: ApiEntry }) {
               {entry.params.map((param) => (
                 <tr key={param.name}>
                   <td>
-                    <code className={styles.paramName}>{param.name}</code>
+                    <code className={styles.paramName} translate="no">{param.name}</code>
                   </td>
                   <td>
-                    <code className={styles.paramType}>{param.type}</code>
+                    <code className={styles.paramType} translate="no">{param.type}</code>
                   </td>
                   <td className={param.optional ? styles.optional : styles.required}>{param.optional ? "optional" : "required"}</td>
-                  <td>{param.default ? <code className={styles.paramType}>{param.default}</code> : <span className={styles.none}>—</span>}</td>
+                  <td>{param.default ? <code className={styles.paramType} translate="no">{param.default}</code> : <span className={styles.none}>—</span>}</td>
                 </tr>
               ))}
             </tbody>
@@ -118,7 +118,15 @@ export async function ApiEntryCard({ entry }: { entry: ApiEntry }) {
             {" · "}
           </>
         ) : null}
-        {entry.guideHref ? <a href={entry.guideHref}>Documented in {entry.source}</a> : <>Registered in {entry.source} as {entry.handler}</>}
+        {entry.guideHref ? (
+          <a href={entry.guideHref}>
+            Documented in <span translate="no">{entry.source}</span>
+          </a>
+        ) : (
+          <>
+            Registered in <span translate="no">{entry.source}</span> as <span translate="no">{entry.handler}</span>
+          </>
+        )}
         {entry.source_line ? ` (line ${entry.source_line})` : ""}.
       </p>
     </article>

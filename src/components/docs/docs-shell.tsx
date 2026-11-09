@@ -84,7 +84,8 @@ export async function DocsShell({
         <DocsNav groups={groups} />
       </div>
 
-      <article className={styles.main}>
+      {/* `data-docs-translate`: what the reader's browser translator may translate (DocsTranslate). */}
+      <article className={styles.main} data-docs-translate>
         <header className={styles.head}>
           {/* Location and section share one row: the title, then the text, come up sooner. */}
           <div className={styles.kicker}>
@@ -104,7 +105,7 @@ export async function DocsShell({
       </article>
 
       {hasToc ? (
-        <div className={styles.outline}>
+        <div className={styles.outline} data-docs-translate>
           <DocTocAside entries={toc!} />
         </div>
       ) : null}

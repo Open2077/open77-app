@@ -1818,5 +1818,37 @@
       "more": "O que isso significa?",
       "note": "Esta visualização usa dados de demonstração ilustrativos. O número de jogadores, os pings e as comunidades não são reais. Use o <live>diretório ao vivo</live> para ver os servidores de verdade. O Open Alpha está disponível para todos; entre com a sua conta do OPEN//77 para acessar um mundo."
     }
+  },
+  "docsTranslate": {
+    "bannerText": "Esta página está em inglês.",
+    "bannerAction": "Traduzir automaticamente",
+    "dismiss": "Dispensar",
+    "translate": "Traduzir esta página",
+    "into": "Inglês → {language}",
+    "preparing": "Preparando…",
+    "downloading": "Baixando o modelo de tradução… {percent}%",
+    "translating": "Traduzindo… {done}/{total}",
+    "translated": "Traduzido para o {language}",
+    "showOriginal": "Ver original",
+    "stop": "Parar",
+    "auto": "As páginas da documentação se traduzem sozinhas pelo resto da sua visita. “Ver original” desativa isso.",
+    "note": "Tradução automática feita pelo seu navegador neste dispositivo. Código, comandos e nomes de API continuam em inglês.",
+    "options": "Outras opções",
+    "failed": "A tradução parou antes do fim.",
+    "retry": "Tentar de novo",
+    "fallbackTitle": "Traduza com o seu navegador",
+    "unsupported": "Este navegador não tem um tradutor integrado que a página possa usar.",
+    "unavailable": "Este navegador não consegue traduzir do inglês para o {language} neste dispositivo.",
+    "howTo": {
+      "chrome": "Chrome: clique com o botão direito na página e escolha “Traduzir”.",
+      "chromeMobile": "Chrome: abra o menu ⋮ e toque em “Traduzir”.",
+      "edge": "Edge: clique com o botão direito na página e escolha “Traduzir”, ou use o ícone de tradução na barra de endereço.",
+      "firefox": "Firefox: abra o menu ☰ e escolha “Traduzir página”.",
+      "safari": "Safari: use o botão de tradução na barra de endereço (no menu aA do iPhone e do iPad).",
+      "other": "Procure uma opção “Traduzir” no menu do seu navegador."
+    },
+    "google": "Abrir no Google Tradutor",
+    "googleNote": "Abre a página pública em translate.google.com.",
+    "close": "Fechar"
   }
 }

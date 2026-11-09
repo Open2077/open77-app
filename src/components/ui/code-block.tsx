@@ -59,14 +59,17 @@ export function CodeBlock({
   return (
     <figure className={cx(styles.block, className)}>
       <figcaption className={styles.bar}>
-        <span className={styles.title}>{title ?? language ?? "code"}</span>
+        {/* File names and language ids: never translated, like the code itself. */}
+        <span className={styles.title} translate="no">
+          {title ?? language ?? "code"}
+        </span>
         {title && language ? <span className={styles.lang}>{language}</span> : null}
         <CopyButton text={code} />
       </figcaption>
       {html ? (
-        <div className={styles.body} dangerouslySetInnerHTML={{ __html: html }} />
+        <div className={styles.body} translate="no" dangerouslySetInnerHTML={{ __html: html }} />
       ) : (
-        <pre className={styles.body}>
+        <pre className={styles.body} translate="no">
           <code>{code}</code>
         </pre>
       )}

@@ -1818,5 +1818,37 @@
       "more": "Was heißt das?",
       "note": "Diese Ansicht nutzt beispielhafte Demodaten. Spielerzahlen, Pings und Communities sind nicht echt. Echte Einträge findest du im <live>Live-Verzeichnis</live>. Die Open Alpha steht allen offen; melde dich mit deinem OPEN//77-Konto an, um einer Welt beizutreten."
     }
+  },
+  "docsTranslate": {
+    "bannerText": "Diese Seite ist auf Englisch.",
+    "bannerAction": "Automatisch übersetzen",
+    "dismiss": "Ausblenden",
+    "translate": "Diese Seite übersetzen",
+    "into": "Englisch → {language}",
+    "preparing": "Wird vorbereitet…",
+    "downloading": "Übersetzungsmodell wird geladen… {percent} %",
+    "translating": "Wird übersetzt… {done}/{total}",
+    "translated": "Übersetzung: {language}",
+    "showOriginal": "Original anzeigen",
+    "stop": "Stopp",
+    "auto": "Für den Rest deines Besuchs übersetzen sich die Seiten der Dokumentation selbst. „Original anzeigen“ schaltet das ab.",
+    "note": "Maschinelle Übersetzung, erstellt von deinem Browser auf diesem Gerät. Code, Befehle und API-Namen bleiben auf Englisch.",
+    "options": "Weitere Optionen",
+    "failed": "Die Übersetzung wurde vor dem Ende abgebrochen.",
+    "retry": "Erneut versuchen",
+    "fallbackTitle": "Mit deinem Browser übersetzen",
+    "unsupported": "Dieser Browser hat keinen eingebauten Übersetzer, den die Seite nutzen kann.",
+    "unavailable": "Dieser Browser bietet auf diesem Gerät keine Übersetzung Englisch → {language}.",
+    "howTo": {
+      "chrome": "Chrome: Rechtsklick auf die Seite, dann „Übersetzen“ wählen.",
+      "chromeMobile": "Chrome: Menü ⋮ öffnen, dann „Übersetzen“ antippen.",
+      "edge": "Edge: Rechtsklick auf die Seite, dann „Übersetzen“ wählen, oder das Übersetzungssymbol in der Adressleiste nutzen.",
+      "firefox": "Firefox: Menü ☰ öffnen, dann „Seite übersetzen“ wählen.",
+      "safari": "Safari: die Übersetzen-Taste in der Adressleiste nutzen (im aA-Menü auf iPhone und iPad).",
+      "other": "Such im Menü deines Browsers nach einer Option „Übersetzen“."
+    },
+    "google": "In Google Übersetzer öffnen",
+    "googleNote": "Öffnet die öffentliche Seite auf translate.google.com.",
+    "close": "Schließen"
   }
 }

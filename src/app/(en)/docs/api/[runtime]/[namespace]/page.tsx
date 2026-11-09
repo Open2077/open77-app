@@ -70,6 +70,7 @@ export default async function ApiNamespacePage({
     id: entry.anchor,
     text: entry.name,
     depth: 2,
+    verbatim: true,
   }));
 
   return (
