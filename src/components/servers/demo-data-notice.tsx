@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useId, useState } from "react";
+import { useId, useState, type ReactNode } from "react";
 
 import { Icon } from "@/components/ui/icon";
 import { informationCircle } from "@/components/ui/icons";
+import { useLocalizeHref, useMessages } from "@/i18n/client";
+import { rich } from "@/i18n/format";
 
 import styles from "./demo-data-notice.module.css";
 
@@ -19,14 +21,16 @@ import styles from "./demo-data-notice.module.css";
 export function DemoDataNotice({ scope = "listings" }: { scope?: "listings" | "page" }) {
   const [expanded, setExpanded] = useState(false);
   const noteId = useId();
+  const m = useMessages("servers").demo;
+  const localize = useLocalizeHref();
 
   return (
     <div className={styles.notice}>
       <p className={styles.line} role="note">
         <Icon glyph={informationCircle} />
-        Demo view{" "}
+        {m.view}{" "}
         <span className={styles.dim}>
-          {scope === "page" ? "// this server page uses demo data" : "// server listings currently use demo data"}
+          {scope === "page" ? m.scopePage : m.scopeListings}
         </span>
         <button
           className={styles.more}
@@ -35,13 +39,11 @@ export function DemoDataNotice({ scope = "listings" }: { scope?: "listings" | "p
           aria-controls={noteId}
           onClick={() => setExpanded((open) => !open)}
         >
-          {expanded ? "Hide" : "What does this mean?"}
+          {expanded ? m.hide : m.more}
         </button>
       </p>
       <p className={styles.note} id={noteId} hidden={!expanded}>
-        This view uses illustrative demo data. Its player counts, pings and communities are not real. Use the{" "}
-        <Link href="/servers">live directory</Link> for actual listings. Open Alpha is available to everyone;
-        sign in with your OPEN//77 account to join a world.
+        {rich(m.note, { live: (chunk: ReactNode) => <Link href={localize("/servers")}>{chunk}</Link> })}
       </p>
     </div>
   );

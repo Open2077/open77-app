@@ -4,7 +4,16 @@ import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { MASTER_URL } from "@/lib/account/api";
 import { validatePlayerHistory, type PlayerHistory } from "@/lib/server-history-data";
 
-type Snapshot = { data?: PlayerHistory; error?: string; loading: boolean; checkedAt: number };
+/**
+ * Why the last read failed. A code, not a sentence: the cache is shared by every
+ * component on the page, and each one words it in the page language.
+ */
+export type HistoryError = "busy" | "missing" | "unavailable" | "invalid";
+class HistoryFailure extends Error {
+  readonly code: HistoryError;
+  constructor(code: HistoryError) { super(code); this.code = code; }
+}
+type Snapshot = { data?: PlayerHistory; error?: HistoryError; loading: boolean; checkedAt: number };
 const EMPTY: Snapshot = { loading: false, checkedAt: 0 };
 const cache = new Map<string, Snapshot>();
 const listeners = new Map<string, Set<() => void>>();
@@ -37,23 +46,26 @@ function request(id: string, hours: 24 | 48) {
     // Peaks below the viewport can leave the queue before they cost a request.
     if (!listeners.get(key)?.size) { pending.delete(key); cache.delete(key); return; }
     try {
-      if (Date.now() < cooldownUntil) throw new Error("Activity is busy. Retrying shortly.");
+      if (Date.now() < cooldownUntil) throw new HistoryFailure("busy");
       const response = await fetch(`${MASTER_URL}/api/v1/servers/${encodeURIComponent(id)}/player-history?hours=${hours}`, { signal: AbortSignal.timeout(30_000), headers: { Accept: "application/json" } });
       if (response.status === 429) {
         const retry = response.headers.get("Retry-After");
         const seconds = Number(retry);
         cooldownUntil = Math.max(Date.now() + 60_000, retry && Number.isFinite(seconds) ? Date.now() + seconds * 1000 : Date.parse(retry ?? "") || 0);
-        throw new Error("Activity is busy. Retrying shortly.");
+        throw new HistoryFailure("busy");
       }
       if (response.status === 404) {
-        publish(key, { loading: false, checkedAt: Date.now(), error: "No public activity history is available yet." });
+        publish(key, { loading: false, checkedAt: Date.now(), error: "missing" });
         return;
       }
-      if (!response.ok) throw new Error("Activity is temporarily unavailable.");
+      if (!response.ok) throw new HistoryFailure("unavailable");
       const data = validatePlayerHistory(await response.json(), id, hours);
       publish(key, { data, loading: false, checkedAt: Date.now() });
     } catch (error) {
-      publish(key, { data: current.data, loading: false, checkedAt: Date.now(), error: error instanceof Error && error.name === "Error" ? error.message : "Activity is temporarily unavailable." });
+      // A plain Error can only come from validatePlayerHistory; network, timeout
+      // and JSON failures carry their own names and read as unavailable.
+      const code: HistoryError = error instanceof HistoryFailure ? error.code : error instanceof Error && error.name === "Error" ? "invalid" : "unavailable";
+      publish(key, { data: current.data, loading: false, checkedAt: Date.now(), error: code });
     } finally { pending.delete(key); }
   });
   pump();

@@ -126,7 +126,8 @@
   letter-spacing: -0.08em;
   z-index: 50;
   flex-direction: column;
-  font-size: calc(4.44444vw + 1.77778px);
+  /* --fit: set by the component when a translated word is wider than its column. */
+  font-size: calc((4.44444vw + 1.77778px) * var(--fit, 1));
   font-style: italic;
   line-height: 0.85;
   display: flex;

@@ -188,9 +188,14 @@ try {
   }
 }
 for (const page of ["host", "download"]) {
-  const source = await readFile(`src/app/${page}/page.tsx`, "utf8");
+  // The page body lives in src/views (shared by the English route and the translated `[lang]` route).
+  const source = await readFile(`src/views/${page}.tsx`, "utf8");
   assert.match(source, /await connection\(\)/, `${page}: request-time rendering`);
-  assert.doesNotMatch(source, /export const revalidate\s*=\s*[1-9]/, `${page}: no stale ISR page`);
   assert.match(source, /<ReleaseRefresh/);
+  for (const route of [`src/app/(en)/${page}/page.tsx`, `src/app/[lang]/${page}/page.tsx`]) {
+    const routeSource = await readFile(route, "utf8");
+    assert.doesNotMatch(routeSource, /export const revalidate\s*=\s*[1-9]/, `${route}: no stale ISR page`);
+    assert.match(routeSource, /View locale=/, `${route}: renders the shared view`);
+  }
 }
 console.log("PASS: independent live release channels; publication changes; URLs/dates/sizes; malformed/outage recovery; visible-tab/focus/reconnect/manual refresh; cleanup.");

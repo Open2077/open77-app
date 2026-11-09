@@ -341,11 +341,16 @@ const FLAGS: Readonly<Record<string, () => ReactNode>> = {
 /**
  * The readable name for a listing's region subtag: "France" for `FR`, "Latin
  * America" for `419`, and an explicit phrase when the operator gave none — so
- * "no region" is stated rather than left as a gap.
+ * "no region" is stated rather than left as a gap. English unless a caller
+ * passes the page language and its wording for the missing case.
  */
-export function countryLabel(code: string | null | undefined): string {
+export function countryLabel(
+  code: string | null | undefined,
+  languageTag = "en",
+  unspecified = "Region not specified",
+): string {
   const region = regionCode(code);
-  return region ? regionDisplayName(region) : "Region not specified";
+  return region ? regionDisplayName(region, languageTag) : unspecified;
 }
 
 /**
@@ -390,21 +395,26 @@ export function CountryFlag({ code, width = 18 }: { code?: string | null; width?
 
 /**
  * Flag plus the country's full name — the roomier form, for the detail page.
- * The name is the label; the flag only decorates it.
+ * The name is the label; the flag only decorates it. `languageTag` names the
+ * country in the page language; `unspecified` words the missing case.
  */
 export function FlaggedCountry({
   code,
   className,
   width = 18,
+  languageTag,
+  unspecified,
 }: {
   code?: string | null;
   className?: string;
   width?: number;
+  languageTag?: string;
+  unspecified?: string;
 }) {
   return (
     <span className={className ? `${styles.country} ${className}` : styles.country}>
       <CountryFlag code={code} width={width} />
-      <span>{countryLabel(code)}</span>
+      <span>{countryLabel(code, languageTag, unspecified)}</span>
     </span>
   );
 }

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/data";
 import { logout03 } from "@/components/ui/icons";
 import * as master from "@/lib/account/api";
+import { useMessages } from "@/i18n/client";
 import { useSession } from "@/lib/account/session";
 import { AccountFrame, type SceneName } from "./account-frame";
 import { AccountNav } from "./account-nav";
@@ -65,9 +66,10 @@ export function AccountShell({
 /** Who is signed in, from the cached session (never an entitlement), and the way out. */
 function Identity() {
   const { session, clear } = useSession();
+  const m = useMessages("auth").identity;
   const [busy, setBusy] = useState(false);
   if (!session) return null;
-  const name = session.displayName || session.email || "Player";
+  const name = session.displayName || session.email || m.player;
 
   async function signOut() {
     if (busy || !session) return;
@@ -85,11 +87,11 @@ function Identity() {
     <div className={styles.identity} data-account-identity>
       <Avatar name={name} size={56} className={styles.avatar} />
       <div className={styles.who}>
-        <p className={styles.kicker}>Signed in</p>
+        <p className={styles.kicker}>{m.signedIn}</p>
         <p className={styles.name}>{name}</p>
         {session.email ? <p className={styles.email}>{session.email}</p> : null}
       </div>
-      <Button key={busy ? "Signing out…" : "Sign out"}
+      <Button key={busy ? m.signingOut : m.signOut}
         lines="none"
         color="neutral"
         border
@@ -100,7 +102,7 @@ function Identity() {
         onClick={() => void signOut()}
         className={styles.signOut}
       >
-        {busy ? "Signing out…" : "Sign out"}
+        {busy ? m.signingOut : m.signOut}
       </Button>
     </div>
   );

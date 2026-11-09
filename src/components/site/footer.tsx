@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
-import { footerNav, site } from "@/lib/site";
+import { site } from "@/lib/site";
+import { useMessages } from "@/i18n/client";
 
 import { Container } from "@/components/ui/container";
 import { SmartLink } from "@/components/ui/smart-link";
@@ -10,6 +11,7 @@ import { Icon } from "@/components/ui/icon";
 import { Logo } from "@/components/ui/logo";
 import { discord, newTwitter, tiktok, twitch, youtube } from "@/components/ui/icons";
 import { NUIXW_PATHS } from "@/components/ui/svg-data";
+import { LanguageSelect } from "@/components/site/language-select";
 
 import styles from "./footer.module.css";
 import socialStyles from "./socials.module.css";
@@ -23,15 +25,47 @@ const SOCIALS: Array<{ label: string; href: string | null; icon: string }> = [
   { label: "YouTube", href: site.links.youtube, icon: youtube },
 ];
 
-/** The first three footer groups, each tinted with one scene colour. */
-const COLUMNS = footerNav.slice(0, 3).map((group, index) => ({
-  ...group,
-  color: (["yellow", "blue", "red"] as const)[index],
-}));
+/** The three footer groups, each tinted with one scene colour. Labels come from the dictionary. */
+const COLUMNS = [
+  {
+    key: "play",
+    color: "yellow",
+    links: [
+      { key: "download", href: "/download" },
+      { key: "servers", href: "/servers" },
+      { key: "howItWorks", href: "/docs/platform#how-it-works" },
+      { key: "faq", href: "/docs/platform#faq" },
+    ],
+  },
+  {
+    key: "create",
+    color: "blue",
+    links: [
+      { key: "create", href: "/create" },
+      { key: "host", href: "/host" },
+      { key: "dedicated", href: "/docs/platform#dedicated-servers" },
+      { key: "resources", href: "/docs/server-resources" },
+      { key: "ncwe", href: "/ncwe" },
+    ],
+  },
+  {
+    key: "project",
+    color: "red",
+    links: [
+      { key: "status", href: "/status" },
+      { key: "devTracker", href: "/dev-tracker" },
+      { key: "roadmap", href: "/docs/platform#roadmap" },
+      { key: "devblog", href: "/devblog" },
+      { key: "workshop", href: "/workshop" },
+      { key: "docs", href: "/docs" },
+      { key: "brand", href: "/brand" },
+    ],
+  },
+] as const;
 
-function Socials() {
+function Socials({ label }: { label: string }) {
   return (
-    <ul className={socialStyles.socials} aria-label="Follow OPEN//77">
+    <ul className={socialStyles.socials} aria-label={label}>
       {SOCIALS.filter((social) => social.href).map((social) => (
         <li key={social.label}>
           <SmartLink href={social.href!}>
@@ -45,6 +79,7 @@ function Socials() {
 }
 
 export function Footer() {
+  const m = useMessages("chrome").footer;
   const logoRef = useRef<HTMLDivElement>(null);
   const markRef = useRef<HTMLDivElement>(null);
 
@@ -85,32 +120,38 @@ export function Footer() {
         <div className={styles.top}>
           <div className={styles.left}>
             <p className={styles.title}>
-              <span data-glitch="Cyberpunk 2077 multiplayer.">Cyberpunk 2077 multiplayer.</span>
-              <span data-glitch="Find a world to play in,">Find a world to play in,</span>
-              <span data-glitch="or build your own.">or build your own.</span>
+              {m.title.map((line, index) => (
+                <span key={index} data-glitch={line}>
+                  {line}
+                </span>
+              ))}
             </p>
-            <Socials />
+            <Socials label={m.follow} />
+            <LanguageSelect variant="footer" className={styles.languages} />
           </div>
-          {COLUMNS.map((column) => (
-            <div key={column.title} className={styles.right} data-color={column.color}>
-              <h3>{column.title}</h3>
-              <ul>
-                {column.links.map((link) => (
-                  <li key={link.href}>
-                    <SmartLink href={link.href} glitch>
-                      {link.label}
-                    </SmartLink>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {COLUMNS.map((column) => {
+            const labels: Record<string, string> = m.columns[column.key];
+            return (
+              <div key={column.key} className={styles.right} data-color={column.color}>
+                <h3>{m.columns[column.key].title}</h3>
+                <ul>
+                  {column.links.map((link) => (
+                    <li key={link.href}>
+                      <SmartLink href={link.href} glitch>
+                        {labels[link.key] ?? link.key}
+                      </SmartLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
           <p className={styles.copyright}>
-            <span> © 2026-2077. All rights reserved.</span>
+            <span> {m.copyright}</span>
             <span>
               {" "}
-              Concept &amp; design by
-              <SmartLink href="https://dribbble.com/nuixw" className={styles.nuixw} aria-label="nuixw on Dribbble">
+              {m.design}
+              <SmartLink href="https://dribbble.com/nuixw" className={styles.nuixw} aria-label={m.designLabel}>
                 <svg viewBox="0 0 78 16">
                   <path d={NUIXW_PATHS[0]} />
                   <path d={NUIXW_PATHS[1]} className={styles.x} />
@@ -119,13 +160,7 @@ export function Footer() {
             </span>
           </p>
         </div>
-        <p className={styles.bottom}>
-          OPEN//77 is an unofficial, independent community project. It is not affiliated with, endorsed by, or
-          sponsored by CD PROJEKT S.A. “Cyberpunk”, “Cyberpunk 2077” and related marks are trademarks of CD PROJEKT
-          S.A. Game imagery is used for illustration of a fan project. Playing on OPEN//77 will always require your own
-          legal copy of Cyberpunk 2077. The platform does not accept piracy, and pirated or cracked copies are neither
-          supported nor welcome.
-        </p>
+        <p className={styles.bottom}>{m.disclaimer}</p>
       </Container>
       <div ref={logoRef} className={styles.logo}>
         <Logo ref={markRef} className={styles.svg} />

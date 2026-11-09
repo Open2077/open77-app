@@ -10,10 +10,12 @@ import { arrowRight01, mail01, shield01, user } from "@/components/ui/icons";
 import { Panel } from "@/components/ui/panel";
 import { SmartLink } from "@/components/ui/smart-link";
 import { Display } from "@/components/ui/typography";
+import { rich } from "@/i18n/format";
 import * as master from "@/lib/account/api";
 import { MasterApiError } from "@/lib/account/api";
 import { useSession } from "@/lib/account/session";
 import { AuthField, PasswordField } from "./auth-fields";
+import { masterMessage, useAuthText } from "./auth-text";
 import { Glyph } from "./kit";
 
 import styles from "./auth-panel.module.css";
@@ -32,6 +34,8 @@ const FIELD_FOR_CODE: Record<string, FieldName> = {
 /** Shared sign-in card; credentials and verification codes stay in component memory. */
 export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
   const { start } = useSession();
+  const { m: auth, locale } = useAuthText();
+  const m = auth.panel;
   const id = useId();
   const [mode, setMode] = useState<Mode>("login");
   const [busy, setBusy] = useState(false);
@@ -48,9 +52,9 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
   function fail(err: unknown) {
     const field = err instanceof MasterApiError ? FIELD_FOR_CODE[err.code] : undefined;
     if (err instanceof MasterApiError && field && !pendingVerify) {
-      setFieldError({ field, message: err.message, code: err.code });
+      setFieldError({ field, message: masterMessage(err, auth, locale), code: err.code });
     } else {
-      setError(err instanceof MasterApiError ? err.message : "Something went wrong. Try again.");
+      setError(masterMessage(err, auth, locale));
     }
     onError?.(err);
   }
@@ -142,7 +146,7 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
   }
 
   const feedback = error ? (
-    <Notice kind="danger" title={mode === "login" && !pendingVerify ? "Sign-in failed" : undefined}>
+    <Notice kind="danger" title={mode === "login" && !pendingVerify ? m.signInFailed : undefined}>
       {error}
     </Notice>
   ) : null;
@@ -153,49 +157,47 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
         <div className={styles.head}>
           <Glyph glyph={mail01} />
           <Display as="h2" size="sm">
-            Verify your e-mail
+            {m.verifyTitle}
           </Display>
           <p className={styles.text}>
-            Account created for <strong>{pendingVerify.email}</strong>.{" "}
-            {pendingVerify.tokenFromMaster
-              ? "This development master has no mailer, so your verification code is prefilled below."
-              : "We sent a verification code to your inbox."}
+            {rich(m.created, { strong: (chunk) => <strong>{chunk}</strong> }, { email: pendingVerify.email })}{" "}
+            {pendingVerify.tokenFromMaster ? m.devToken : m.codeSent}
           </p>
         </div>
         {feedback}
         {resent ? (
-          <Notice kind="success" title="Verification e-mail requested">
-            Use the code from the latest e-mail.
+          <Notice kind="success" title={m.resentTitle}>
+            {m.resentBody}
           </Notice>
         ) : null}
         <form className={styles.form} onSubmit={onVerify} aria-busy={busy}>
           <AuthField
-            label="Verification code"
+            label={m.code}
             icon={shield01}
             name="verification-code"
             value={verifyToken}
             onChange={(event) => setVerifyToken(event.target.value)}
-            placeholder="Paste your verification code"
+            placeholder={m.codePlaceholder}
             autoComplete="one-time-code"
             spellCheck={false}
             required
             disabled={busy}
           />
           <div className={styles.actions}>
-            <Button key={busy ? "Working…" : "Verify and sign in"} type="submit" icon={arrowRight01} busy={busy} disabled={!verifyToken.trim()}>
-              {busy ? "Working…" : "Verify and sign in"}
+            <Button key={busy ? m.working : m.verify} type="submit" icon={arrowRight01} busy={busy} disabled={!verifyToken.trim()}>
+              {busy ? m.working : m.verify}
             </Button>
           </div>
           <div className={styles.secondary}>
             <Button lines="none" color="neutral" border size="sm" disabled={busy} onClick={() => void resend()}>
-              Resend verification e-mail
+              {m.resend}
             </Button>
             <button className={styles.textButton} type="button" disabled={busy} onClick={() => void onSkipVerify()}>
-              Skip for now
+              {m.skip}
             </button>
           </div>
         </form>
-        <p className={styles.note}>You can verify later; verification is required before you can create server license keys.</p>
+        <p className={styles.note}>{m.verifyLater}</p>
       </Panel>
     );
 
@@ -205,11 +207,11 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
     setFieldError(null);
   }
   const errorFor = (field: FieldName) => (fieldError?.field === field ? fieldError.message : undefined);
-  const submitLabel = busy ? (mode === "login" ? "Signing in…" : "Creating your account…") : mode === "login" ? "Sign in" : "Create account";
+  const submitLabel = busy ? (mode === "login" ? m.signingIn : m.creating) : mode === "login" ? m.signIn : m.register;
 
   return (
     <Panel brackets padding="md" className={styles.panel} data-auth-panel>
-      <div className={styles.tabs} role="tablist" aria-label="Sign in or create an account">
+      <div className={styles.tabs} role="tablist" aria-label={m.tabs}>
         {(["login", "register"] as const).map((value) => (
           <button
             key={value}
@@ -231,21 +233,19 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
             }}
           >
             <span className={styles.tabIndex}>{value === "login" ? "01" : "02"}</span>
-            {value === "login" ? "Sign in" : "Create account"}
+            {value === "login" ? m.signIn : m.register}
           </button>
         ))}
       </div>
       <div role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-${mode}`} className={styles.body}>
         <p className={styles.text}>
-          {mode === "login"
-            ? "Your OPEN//77 platform account, the same one the launcher uses."
-            : "Free, and it takes a minute. Open Alpha needs no access approval."}
+          {mode === "login" ? m.signInLead : m.registerLead}
         </p>
         {feedback}
         <form className={styles.form} onSubmit={onSubmit} aria-busy={busy}>
           {mode === "register" ? (
             <AuthField
-              label="Display name"
+              label={m.displayName}
               icon={user}
               name="display-name"
               value={displayName}
@@ -253,7 +253,7 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
                 setDisplayName(event.target.value);
                 clearFieldError("displayName");
               }}
-              placeholder="How other players see you"
+              placeholder={m.displayNamePlaceholder}
               autoComplete="nickname"
               maxLength={32}
               required
@@ -262,7 +262,7 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
             />
           ) : null}
           <AuthField
-            label="E-mail"
+            label={m.email}
             type="email"
             name="email"
             value={email}
@@ -270,7 +270,7 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
               setEmail(event.target.value);
               clearFieldError("email");
             }}
-            placeholder="you@example.net"
+            placeholder={m.emailPlaceholder}
             autoComplete="email"
             required
             disabled={busy}
@@ -284,7 +284,7 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
                     <>
                       {" "}
                       <button type="button" className={styles.inlineButton} onClick={() => selectMode("login")}>
-                        Sign in instead
+                        {m.signInInstead}
                       </button>
                     </>
                   ) : null}
@@ -295,28 +295,28 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
           <PasswordField
             key={mode}
             name="password"
-            label="Password"
+            label={m.password}
             value={password}
             onChange={(event) => {
               setPassword(event.target.value);
               clearFieldError("password");
             }}
-            placeholder={mode === "register" ? "Choose a strong password" : "Your password"}
+            placeholder={mode === "register" ? m.passwordNew : m.passwordCurrent}
             autoComplete={mode === "register" ? "new-password" : "current-password"}
             minLength={8}
             maxLength={128}
             required
             disabled={busy}
-            hint={mode === "register" ? "At least 8 characters. A passphrase works best." : undefined}
+            hint={mode === "register" ? m.passwordHint : undefined}
             error={errorFor("password")}
           />
           {mode === "login" ? (
             <div className={styles.row}>
               <Checkbox name="remember" checked={remember} disabled={busy} onChange={(event) => setRemember(event.target.checked)}>
-                Keep me signed in
+                {m.remember}
               </Checkbox>
               <SmartLink href="/forgot-password" className={styles.forgot}>
-                Forgot your password?
+                {m.forgot}
               </SmartLink>
             </div>
           ) : null}
@@ -328,7 +328,7 @@ export function AuthPanel({ onError }: { onError?: (error: unknown) => void }) {
         </form>
         {mode === "register" ? (
           <p className={styles.note}>
-            Create a free account to play and host in <SmartLink href="/docs/alpha-access">Open Alpha</SmartLink>. No access application needed.
+            {rich(m.registerNote, { alpha: (chunk) => <SmartLink href="/docs/alpha-access">{chunk}</SmartLink> })}
           </p>
         ) : null}
       </div>

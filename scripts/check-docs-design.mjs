@@ -14,7 +14,7 @@ let binary;
 for (const candidate of candidates) { try { await fs.access(candidate); binary = candidate; break; } catch { /* Next binary. */ } }
 if (!binary) throw new Error("Chrome not found");
 const profile = await fs.mkdtemp(path.join(os.tmpdir(), "open77-docs-design-"));
-const child = spawn(binary, ["--headless=new", `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, "--no-first-run", "--no-default-browser-check", "about:blank"], { windowsHide: true, stdio: "ignore" });
+const child = spawn(binary, ["--headless=new", `--lang=en-US`, `--accept-lang=en-US,en`, `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, "--no-first-run", "--no-default-browser-check", "about:blank"], { windowsHide: true, stdio: "ignore" });
 let socket;
 try {
   let endpoint;

@@ -401,3 +401,7 @@
     transform: none;
   }
 }
+/* The language row at the foot of the mobile menu. */
+.menuLanguage {
+  margin-top: 1.5rem;
+}

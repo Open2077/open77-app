@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { isLocalizedPath, LOCALE_INFO, LOCALES, localizeHref } from "@/i18n/config";
 import { getApiIndex } from "@/lib/api-reference";
 import { blogHref, getBlogPosts } from "@/lib/devblog";
 import { docHref, getDocsManifest, getDocsPages } from "@/lib/docs";
@@ -20,6 +21,10 @@ import { absoluteUrl } from "@/lib/site";
  *
  * `priority` is deliberately omitted: Google has stated it ignores it, and a
  * hand-tuned ladder of numbers is noise.
+ *
+ * Pages that exist in several languages are listed once per language, each
+ * entry carrying the full set of `hreflang` alternates (English is also
+ * `x-default`). Docs, devblog, workshop and the dev tracker are English-only.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [pages, api, servers, manifest, posts] = await Promise.all([
@@ -84,5 +89,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "daily",
   }));
 
-  return [...marketing, ...devblog, ...docs, ...apiPages, ...serverPages];
+  return [...marketing, ...devblog, ...docs, ...apiPages, ...serverPages].flatMap(inEveryLanguage);
+}
+
+/** One entry per language for a translated page; anything else unchanged. */
+function inEveryLanguage(entry: MetadataRoute.Sitemap[number]): MetadataRoute.Sitemap {
+  const path = new URL(entry.url).pathname;
+  if (!isLocalizedPath(path)) return [entry];
+  const languages: Record<string, string> = { "x-default": absoluteUrl(path) };
+  for (const locale of LOCALES) languages[LOCALE_INFO[locale].tag] = absoluteUrl(localizeHref(path, locale));
+  return LOCALES.map((locale) => ({ ...entry, url: absoluteUrl(localizeHref(path, locale)), alternates: { languages } }));
 }

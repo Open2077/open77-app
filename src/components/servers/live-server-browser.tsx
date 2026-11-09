@@ -10,9 +10,14 @@ import { cx } from "@/components/ui/cx";
 import { EmptyState, Loader } from "@/components/ui/feedback";
 import { Icon } from "@/components/ui/icon";
 import { refresh as refreshGlyph } from "@/components/ui/icons";
+import { useLocale } from "@/i18n/client";
+import { localizeHref, splitLocalePath } from "@/i18n/config";
+import { fill } from "@/i18n/format";
 import { MasterApiError } from "@/lib/account/api";
 import { fetchServers, type CatalogServer, type GameServer } from "@/lib/servers";
 import { DEMO_SERVERS } from "@/lib/servers-demo";
+
+import { useServerFormat } from "./server-format";
 
 import styles from "./live-server-browser.module.css";
 
@@ -50,7 +55,17 @@ const PREVIEW_SERVERS: GameServer[] = DEMO_SERVERS.slice(0, 1).map((server) => (
 
 type BrowserProps = { initialId?: string; initialSnapshot?: { server: CatalogServer; capturedAt: number } };
 
+/**
+ * The profile id in the address bar, read below any language prefix:
+ * `/servers/<id>` and `/fr/servers/<id>` open the same profile.
+ */
+function profileIdFromLocation(): string | null {
+  return splitLocalePath(window.location.pathname).path.match(/^\/servers\/([^/]+)\/?$/)?.[1] ?? null;
+}
+
 export function LiveServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
+  const locale = useLocale();
+  const { m } = useServerFormat();
   const preview = useSyncExternalStore(
     subscribeDirectoryUrl,
     () =>
@@ -66,9 +81,8 @@ export function LiveServerBrowser({ initialId, initialSnapshot }: BrowserProps) 
       status={
         <div className={styles.preview}>
           <DemoDataNotice />
-          {/* A full navigation unmounts the local preview and resets its filter state. */}
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-          <a href="/servers">Live directory ↗</a>
+          {/* A plain <a> on purpose: a full navigation unmounts the local preview and resets its filter state. */}
+          <a href={localizeHref("/servers", locale)}>{m.live.previewLink}</a>
         </div>
       }
     />
@@ -78,11 +92,10 @@ export function LiveServerBrowser({ initialId, initialSnapshot }: BrowserProps) 
 }
 
 function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
-  const detailId = useSyncExternalStore(
-    subscribeDirectoryUrl,
-    () => window.location.pathname.match(/^\/servers\/([^/]+)\/?$/)?.[1] ?? null,
-    () => initialId ?? null,
-  );
+  const locale = useLocale();
+  const f = useServerFormat();
+  const { m } = f;
+  const detailId = useSyncExternalStore(subscribeDirectoryUrl, profileIdFromLocation, () => initialId ?? null);
   const lastOpened = useRef<string | null>(null);
   const listScroll = useRef(0);
   const openServer = (id: string) => {
@@ -91,14 +104,15 @@ function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
     window.history.pushState(
       { open77DirectoryFrom: window.location.pathname + window.location.search },
       "",
-      `/servers/${encodeURIComponent(id)}${window.location.search}`,
+      // The profile keeps the page language: `/fr/servers` opens `/fr/servers/<id>`.
+      localizeHref(`/servers/${encodeURIComponent(id)}${window.location.search}`, locale),
     );
     window.dispatchEvent(new Event("open77-directory-url"));
   };
   const backToList = () => {
     if (window.history.state?.open77DirectoryFrom) window.history.back();
     else {
-      window.history.replaceState(null, "", `/servers${window.location.search}`);
+      window.history.replaceState(null, "", localizeHref(`/servers${window.location.search}`, locale));
       window.dispatchEvent(new Event("open77-directory-url"));
     }
   };
@@ -122,6 +136,12 @@ function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
   const [busy, setBusy] = useState(true);
   const inFlight = useRef(false);
 
+  // Read through a ref so a language change never re-creates the refresh loop.
+  const loadError = useRef(m.live.loadError);
+  useEffect(() => {
+    loadError.current = m.live.loadError;
+  });
+
   const refresh = useCallback(async () => {
     if (inFlight.current) return;
     inFlight.current = true;
@@ -132,7 +152,7 @@ function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
       setUpdated(new Date());
       setError(null);
     } catch (err: unknown) {
-      setError(err instanceof MasterApiError ? err.message : "The server directory could not be reached.");
+      setError(err instanceof MasterApiError ? err.message : loadError.current);
     } finally {
       inFlight.current = false;
       setBusy(false);
@@ -153,22 +173,22 @@ function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
   const state = error ? "error" : busy ? "loading" : "ok";
   const readout = error
     ? updated
-      ? "Refresh failed · showing last results"
-      : "Directory unavailable"
+      ? m.live.refreshFailed
+      : m.live.unavailable
     : busy
-      ? "Updating…"
-      : `Updated ${updated?.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+      ? m.live.updating
+      : fill(m.live.updated, { time: updated ? f.clock(updated) : "" });
 
   // Before the first successful read there is nothing to list: say why.
   const emptyState =
     updated === null ? (
       error ? (
         <EmptyState
-          eyebrow="Directory unreachable"
-          title="Unable to load servers"
+          eyebrow={m.shared.directoryUnreachable}
+          title={m.live.errorTitle}
           action={
             <Button lines="none" size="sm" border busy={busy} onClick={() => void refresh()}>
-              Try again
+              {m.shared.tryAgain}
             </Button>
           }
         >
@@ -176,8 +196,8 @@ function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
         </EmptyState>
       ) : (
         <div className={styles.loading} role="status" aria-busy="true">
-          <Loader label="DIRECTORY" />
-          <p>Reading the live directory. Community worlds appear here as soon as the master answers.</p>
+          <Loader label={m.live.loaderLabel} />
+          <p>{m.live.loading}</p>
           <ul className={styles.skeleton} aria-hidden="true">
             {Array.from({ length: 6 }, (_, index) => (
               <li key={index} style={{ animationDelay: `${index * 0.12}s` }} />
@@ -203,11 +223,11 @@ function MasterServerBrowser({ initialId, initialSnapshot }: BrowserProps) {
                 type="button"
                 className={styles.refresh}
                 disabled={busy}
-                title="Refresh the directory"
+                title={m.live.refreshTitle}
                 onClick={() => void refresh()}
               >
                 <Icon glyph={refreshGlyph} />
-                <span className="sr-only">{busy ? "Refreshing…" : "Refresh"}</span>
+                <span className="sr-only">{busy ? m.live.refreshing : m.live.refresh}</span>
               </button>
             </div>
           }

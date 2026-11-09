@@ -1,5 +1,6 @@
 "use client";
 
+import { useOptionalMessages } from "@/i18n/client";
 import { forwardRef, useId, useImperativeHandle, useRef, type ReactNode, type RefObject } from "react";
 
 import { cx } from "./cx";
@@ -43,6 +44,7 @@ export const Dialog = forwardRef<
   { title, eyebrow, children, footer, size = "md", onClose, dismissible = true, initialFocus, className },
   ref,
 ) {
+  const common = useOptionalMessages("common");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   useImperativeHandle(ref, () => ({
@@ -80,7 +82,7 @@ export const Dialog = forwardRef<
           <button
             type="button"
             className={styles.close}
-            aria-label="Close"
+            aria-label={common?.close ?? "Close"}
             disabled={!dismissible}
             onClick={() => dialogRef.current?.close()}
           >

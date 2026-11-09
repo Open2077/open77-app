@@ -9,6 +9,8 @@ import * as master from "@/lib/account/api";
 import { isOffline, MasterApiError } from "@/lib/account/api";
 import { AuthCard, CardText } from "./auth-card";
 import { AuthField } from "./auth-fields";
+import { rich } from "@/i18n/format";
+import { masterMessage, useAuthText } from "./auth-text";
 import { padlock } from "./kit";
 
 import styles from "./auth-forms.module.css";
@@ -25,6 +27,8 @@ export function ForgotPasswordForm() {
   const [busy, setBusy] = useState(false);
   const [sent_, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { m: auth, locale } = useAuthText();
+  const m = auth.forgot;
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -36,7 +40,7 @@ export function ForgotPasswordForm() {
       setSent(true);
     } catch (err) {
       if (err instanceof MasterApiError && (isOffline(err) || err.code === "rate_limited")) {
-        setError(err.message);
+        setError(masterMessage(err, auth, locale));
       } else {
         // Any other answer must look exactly like success.
         setSent(true);
@@ -51,35 +55,32 @@ export function ForgotPasswordForm() {
       <AuthCard
         glyph={sent}
         tone="blue"
-        eyebrow="Link requested"
-        title="Check your inbox"
+        eyebrow={m.sentEyebrow}
+        title={m.sentTitle}
         actions={
           <Button lines="none" border color="neutral" icon={arrowLeft01} iconPosition="left" href="/account">
-            Back to sign-in
+            {auth.back}
           </Button>
         }
       >
-        <Notice kind="success">
-          If an account exists for <strong>{email}</strong>, we&apos;ve sent a reset link. Check your inbox. The link expires after a short
-          while.
-        </Notice>
+        <Notice kind="success">{rich(m.sentBody, { strong: (chunk) => <strong>{chunk}</strong> }, { email })}</Notice>
       </AuthCard>
     );
   }
 
   return (
-    <AuthCard glyph={padlock} eyebrow="Password reset" title="Reset your password">
-      <CardText>Enter the e-mail address on your account and we&apos;ll send you a link to choose a new password.</CardText>
+    <AuthCard glyph={padlock} eyebrow={m.eyebrow} title={m.title}>
+      <CardText>{m.lead}</CardText>
       {error ? <Notice kind="danger">{error}</Notice> : null}
       <form className={styles.form} onSubmit={onSubmit} aria-busy={busy}>
         <AuthField
-          label="E-mail"
+          label={auth.panel.email}
           type="email"
           name="email"
           icon={mail01}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="you@example.net"
+          placeholder={auth.panel.emailPlaceholder}
           autoComplete="email"
           autoCapitalize="none"
           spellCheck={false}
@@ -87,13 +88,13 @@ export function ForgotPasswordForm() {
           required
         />
         <div className={styles.actions}>
-          <Button key={busy ? "Sending…" : "Send reset link"} type="submit" icon={arrowRight01} busy={busy}>
-            {busy ? "Sending…" : "Send reset link"}
+          <Button key={busy ? auth.sending : m.submit} type="submit" icon={arrowRight01} busy={busy}>
+            {busy ? auth.sending : m.submit}
           </Button>
         </div>
         <div className={styles.secondary}>
           <Button lines="none" border color="neutral" size="sm" icon={arrowLeft01} iconPosition="left" href="/account">
-            Back to sign-in
+            {auth.back}
           </Button>
         </div>
       </form>

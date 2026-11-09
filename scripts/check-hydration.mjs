@@ -149,7 +149,7 @@ const child = spawn(
   chrome,
   [
     "--headless=new",
-    `--remote-debugging-port=${DEBUG_PORT}`,
+    `--lang=en-US`, `--accept-lang=en-US,en`, `--remote-debugging-port=${DEBUG_PORT}`,
     `--user-data-dir=${profile}`,
     "--no-first-run",
     "--no-default-browser-check",

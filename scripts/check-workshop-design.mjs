@@ -51,7 +51,7 @@ try {
   const probe = createServer(); await new Promise((resolve, reject) => { probe.once('error', reject); probe.listen(3114, '127.0.0.1', resolve); }); await new Promise(resolve => probe.close(resolve));
   preview = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--hostname', '127.0.0.1', '--port', '3114'], { env: { ...process.env, OP77_COMMUNITY_API_URL: `http://127.0.0.1:${mock.address().port}` }, windowsHide: true, stdio: 'ignore' });
   for (let n = 0; n < 100; n++) { try { if ((await fetch(origin + '/workshop')).ok) break; } catch {} await delay(200); }
-  chrome = spawn('C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new', '--remote-debugging-address=127.0.0.1', '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', 'about:blank'], { windowsHide: true, stdio: 'ignore' });
+  chrome = spawn('C:/Program Files/Google/Chrome/Application/chrome.exe', ['--headless=new', '--remote-debugging-address=127.0.0.1', '--lang=en-US', '--accept-lang=en-US,en', '--remote-debugging-port=0', `--user-data-dir=${profile}`, '--no-first-run', '--no-default-browser-check', 'about:blank'], { windowsHide: true, stdio: 'ignore' });
   let port;
   for (let n = 0; n < 100; n++) { try { port = Number((await fs.readFile(path.join(profile, 'DevToolsActivePort'), 'utf8')).split('\n')[0]); break; } catch {} await delay(150); }
   const target = (await (await fetch(`http://127.0.0.1:${port}/json/list`)).json()).find(t => t.type === 'page');

@@ -5,6 +5,7 @@ import { useToast } from "@/components/toast";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { play, star } from "@/components/ui/icons";
+import { useMessages } from "@/i18n/client";
 import { joinServer } from "@/lib/servers";
 
 import styles from "./server-actions.module.css";
@@ -16,6 +17,7 @@ import styles from "./server-actions.module.css";
 export function ServerActions({ id }: { id: string }) {
   const { isFavorite, toggle } = useFavorites();
   const { show: showToast, node: toastNode } = useToast();
+  const m = useMessages("servers");
   const favorited = isFavorite(id);
 
   return (
@@ -27,21 +29,21 @@ export function ServerActions({ id }: { id: string }) {
           icon={play}
           iconPosition="left"
           onClick={() => {
-            showToast("Opening the OPEN//77 launcher…");
+            showToast(m.shared.opening);
             joinServer(id);
           }}
         >
-          Connect
+          {m.actions.connect}
         </Button>
         <button
           type="button"
           className={styles.fav}
           aria-pressed={favorited}
-          aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
+          aria-label={favorited ? m.actions.removeFavorite : m.shared.addToFavorites}
           onClick={() => toggle(id)}
         >
           <Icon glyph={star} />
-          <span>{favorited ? "Favorite" : "Add to favorites"}</span>
+          <span>{favorited ? m.actions.favorite : m.shared.addToFavorites}</span>
         </button>
       </div>
       {toastNode}

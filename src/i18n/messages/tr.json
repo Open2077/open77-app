@@ -1,0 +1,1823 @@
+{
+  "meta": {
+    "subtitle": "Cyberpunk 2077 Çok Oyunculu",
+    "description": "OPEN//77 ile Cyberpunk 2077’yi topluluk sunucularında çevrimiçi oyna ya da kendi sunucunu ve kendi çok oyunculu deneyimini yarat. Rol yapma, yarış, çatışma, serbest dolaşım: bir dünya seç ve bağlan.",
+    "tagline": "Cyberpunk 2077 çok oyunculu. Oynayacak bir dünya bul ya da kendininkini kur.",
+    "home": "Ana sayfa"
+  },
+  "chrome": {
+    "skip": "İçeriğe geç",
+    "homeLabel": "OPEN//77 ana sayfa",
+    "mainNav": "Ana gezinme",
+    "menuNav": "Menü",
+    "nav": {
+      "download": "İndir",
+      "servers": "Sunucular",
+      "create": "Sunucu kur",
+      "docs": "Belgeler",
+      "devblog": "Devblog",
+      "status": "Durum",
+      "devTracker": "Dev Tracker",
+      "ncwe": "NCWE"
+    },
+    "more": {
+      "workshop": "Workshop",
+      "host": "Sunucu barındır",
+      "luaApi": "Lua API",
+      "alpha": "Open Alpha",
+      "admin": "Yönetim",
+      "account": "Hesap",
+      "signIn": "Giriş yap",
+      "search": "Ara"
+    },
+    "discord": "Discord",
+    "downloadLauncherLabel": "Başlatıcıyı indir",
+    "downloadLauncher": "Başlatıcıyı indir",
+    "openMenu": "Menüyü aç",
+    "closeMenu": "Menüyü kapat",
+    "adminConsole": "Yönetim konsolu",
+    "yourAccount": "Hesabın",
+    "signIn": "Giriş yap",
+    "music": {
+      "turnOn": "Müziği aç",
+      "turnOff": "Müziği kapat",
+      "on": "Müzik açık · Cyberpunk 2077 orijinal müzikleri",
+      "off": "Müzik kapalı"
+    },
+    "search": {
+      "eyebrow": "Hızlı gezinme",
+      "title": "Şuraya git",
+      "label": "Sayfalarda ve araçlarda ara",
+      "placeholder": "Sayfalarda ve araçlarda ara…",
+      "empty": "Sonuç bulunamadı. “sunucu”, “Lua” ya da “Alpha” aramayı dene.",
+      "hint": "Kapatmak için <kbd>esc</kbd> · her yerden açmak için <kbd>Ctrl</kbd> <kbd>K</kbd>"
+    },
+    "shortcuts": {
+      "servers": {
+        "title": "Sunucu listesi",
+        "detail": "Tüm topluluk sunucuları, canlı",
+        "keywords": "göz at liste rol yapma roleplay rp yarış pvp sunucular servers browse"
+      },
+      "download": {
+        "title": "Başlatıcıyı indir",
+        "detail": "Giriş yapmanı sağlar, oyununu kontrol eder, modu kurar",
+        "keywords": "oyna istemci client windows kur kurulum launcher"
+      },
+      "create": {
+        "title": "Sunucu oluştur",
+        "detail": "Kendi Night City’ni yönet",
+        "keywords": "kur barındır barındırma host hosting build"
+      },
+      "host": {
+        "title": "Dedicated sunucuyu indir",
+        "detail": "Windows ve Linux · herkese açık indirmeler",
+        "keywords": "barındırma hosting sürüm release dedicated"
+      },
+      "docs": {
+        "title": "Dokümantasyon",
+        "detail": "Oyna, barındır, geliştir: tüm rehberler",
+        "keywords": "yardım öğren eğitim rehber kılavuz lua docs"
+      },
+      "api": {
+        "title": "Lua API referansı",
+        "detail": "İstemci ve sunucu API’lerinde ara",
+        "keywords": "fonksiyonlar araçlar oyuncular native script scripting vehicles"
+      },
+      "workshop": {
+        "title": "Workshop",
+        "detail": "Topluluk kaynakları, kurulmaya hazır",
+        "keywords": "kaynaklar scriptler modlar kütüphane resources"
+      },
+      "ncwe": {
+        "title": "Harita editörü",
+        "detail": "NCWE, Night City World Editor · kararlı sürüm",
+        "keywords": "ncwe editör harita mapping dünya builder haritalar indir archivexl"
+      },
+      "devTracker": {
+        "title": "Dev Tracker",
+        "detail": "Fikirler, topluluk oylamaları ve geliştirme süreci",
+        "keywords": "yol haritası roadmap geri bildirim öneriler forum"
+      },
+      "status": {
+        "title": "Hizmet durumu",
+        "detail": "Canlı durum, çalışma süresi ve olaylar",
+        "keywords": "kesinti erişilebilirlik cdn ana sunucu master indirmeler bakım"
+      },
+      "devblog": {
+        "title": "Devblog",
+        "detail": "Neler yayınlandı, her iş günü bir yazı",
+        "keywords": "haberler güncellemeler news"
+      },
+      "alpha": {
+        "title": "Open Alpha",
+        "detail": "Oyna, barındır, geliştir: başvuru gerekmez",
+        "keywords": "başlangıç hesap oyna barındır lua"
+      },
+      "account": {
+        "title": "Hesap",
+        "detail": "Profil, anahtarlar, kayıtlı sunucular ve içeriklerin",
+        "keywords": "giriş oturum aç profil ayarlar login"
+      }
+    },
+    "language": {
+      "label": "Dil",
+      "choose": "Bir dil seç",
+      "englishOnly": "Bu sayfa yalnızca İngilizce olarak mevcut."
+    },
+    "footer": {
+      "title": [
+        "Cyberpunk 2077 çok oyunculu.",
+        "Oynayacak bir dünya bul",
+        "ya da kendininkini kur."
+      ],
+      "follow": "OPEN//77’yi takip et",
+      "columns": {
+        "play": {
+          "title": "Oyna",
+          "download": "Başlatıcıyı indir",
+          "servers": "Sunucu listesi",
+          "howItWorks": "Nasıl çalışır?",
+          "faq": "SSS"
+        },
+        "create": {
+          "title": "Oluştur",
+          "create": "Sunucu oluştur",
+          "host": "Sunucuyu indir",
+          "dedicated": "Dedicated sunucular",
+          "resources": "Kaynaklar ve scriptler",
+          "ncwe": "Harita editörü"
+        },
+        "project": {
+          "title": "Proje",
+          "status": "Hizmet durumu",
+          "devTracker": "Dev Tracker",
+          "roadmap": "Yol haritası",
+          "devblog": "Devblog",
+          "workshop": "Workshop",
+          "docs": "Dokümantasyon",
+          "brand": "Marka kiti"
+        }
+      },
+      "copyright": "© 2026-2077. Tüm hakları saklıdır.",
+      "design": "Konsept ve tasarım:",
+      "designLabel": "nuixw, Dribbble’da",
+      "disclaimer": "OPEN//77 resmî olmayan, bağımsız bir topluluk projesidir. CD PROJEKT S.A. ile bağlantılı değildir; CD PROJEKT S.A. tarafından onaylanmamış ya da desteklenmemektedir. “Cyberpunk”, “Cyberpunk 2077” ve ilgili markalar CD PROJEKT S.A.’nın ticari markalarıdır. Oyun görselleri bir hayran projesini tanıtmak amacıyla kullanılmaktadır. OPEN//77’de oynamak için her zaman kendi yasal Cyberpunk 2077 kopyan gerekir. Platform korsanlığı kabul etmez; korsan ya da crack’li kopyalar desteklenmez ve hoş karşılanmaz."
+    }
+  },
+  "common": {
+    "close": "Kapat",
+    "loading": "Yükleniyor",
+    "optional": "İsteğe bağlı",
+    "copy": "Kopyala",
+    "copied": "Kopyalandı",
+    "copiedToClipboard": "Panoya kopyalandı",
+    "copyUnavailable": "Kopyalama kullanılamıyor",
+    "breadcrumb": "Sayfa yolu",
+    "englishOnly": "İngilizce",
+    "releaseRefresh": {
+      "note": "Canlı CDN sürümleri · bu sayfa açıkken her dakika kontrol edilir.",
+      "checking": "CDN kontrol ediliyor…",
+      "check": "Güncellemeleri kontrol et"
+    },
+    "expansion": "Phantom Liberty DLC",
+    "requirementShort": "Cyberpunk 2077 {build} + {expansion}",
+    "atAGlance": "Bir bakışta",
+    "downloadNote": "Doğrudan resmî OPEN//77 CDN’i üzerinden; yayımladığımız tek yer burası.",
+    "downloadRequested": "İndirme isteği gönderildi. Tarayıcının indirilenler bölümüne bak ya da yeniden denemek için tekrar tıkla.",
+    "unavailable": {
+      "launcherEyebrow": "Başlatıcı sürümü",
+      "serverEyebrow": "Sunucu sürümü",
+      "title": "Geçici olarak kullanılamıyor",
+      "launcherBody": "Güncel başlatıcı sürümünü CDN’den doğrulayamadık. Yerine eski bir sürüm sunulmaz. Sayfa her dakika yeniden kontrol eder; istersen “Güncellemeleri kontrol et” düğmesini de kullanabilirsin.",
+      "serverBody": "Güncel sunucu sürümünü CDN’den doğrulayamadık. Yerine eski bir sürüm sunulmaz. Sayfa her dakika yeniden kontrol eder; istersen “Güncellemeleri kontrol et” düğmesini de kullanabilirsin."
+    }
+  },
+  "notFound": {
+    "metaTitle": "Sayfa bulunamadı · OPEN//77",
+    "metaDescription": "Bu sayfa mevcut değil.",
+    "eyebrow": "Hata 404 · Sayfa bulunamadı",
+    "title": [
+      "Sinyal",
+      "kayboldu."
+    ],
+    "accent": [
+      1
+    ],
+    "lead": "Bu sayfa mevcut değil. Site yenilenirken taşınmış olabilir ya da hiç var olmamış olabilir. Proje Alpha aşamasında ve bazı şeyler gerçekten yer değiştiriyor.",
+    "home": "Ana sayfaya dön",
+    "docs": "Dokümantasyon",
+    "sections": "Ana bölümler",
+    "orTry": "Ya da şunları dene"
+  },
+  "home": {
+    "heading": "OPEN//77: Cyberpunk 2077 çok oyunculu",
+    "breadcrumb": "Ana sayfa",
+    "hero": {
+      "marquee": "Çok oyunculu",
+      "intro": "<strong>Cyberpunk 2077’yi çevrimiçi</strong> topluluk sunucularında oyna ya da kendi sunucunu kurup kendi çok oyunculu deneyimini yarat.",
+      "alpha": "Open Alpha başladı. Hemen oyna, sunucunu barındır ve geliştirmeye başla.",
+      "download": "Başlatıcıyı indir",
+      "build": "Sunucunu kur",
+      "altLeft": "Cyberpunk 2077’nin ana karakteri V, sola bakıyor",
+      "altRight": "Cyberpunk 2077’nin ana karakteri V, sağa bakıyor"
+    },
+    "audiences": {
+      "players": {
+        "label": "Oyuncular için",
+        "title": [
+          "Oyuncular",
+          "için"
+        ],
+        "marquee": "Oyuncular"
+      },
+      "creators": {
+        "label": "Sunucu kurucuları için",
+        "title": [
+          "Sunucu",
+          "kurucuları",
+          "için"
+        ],
+        "marquee": "Sunucu kurucuları"
+      },
+      "developers": {
+        "label": "Geliştiriciler için",
+        "title": [
+          "Geliştiriciler",
+          "için"
+        ],
+        "marquee": "Geliştiriciler"
+      }
+    },
+    "players": {
+      "title": [
+        "Birlikte",
+        "Cyberpunk",
+        "oyna"
+      ],
+      "titleFront": 1,
+      "description": "Topluluk sunucuları Night City’yi, her biri kendi kuralları ve kendi deneyimiyle çok oyunculu dünyalara dönüştürür. OPEN//77 bunu mümkün kılan katman.",
+      "backgroundAlt": "Oyuncular",
+      "characterAlt": "Oyuncular",
+      "download": "Başlatıcıyı indir",
+      "browser": "Sunucu listesi",
+      "cards": [
+        {
+          "sub": "Rol yapma",
+          "title": [
+            "Başka",
+            "bir hayat",
+            "yaşa"
+          ],
+          "description": "Kendi ekonomisi, fraksiyonları, meslekleri ve yetkilileri olan, kuralları sıkı rol yapma şehirleri."
+        },
+        {
+          "sub": "Özel dünyalar",
+          "title": [
+            "Kuralları",
+            "yeniden",
+            "yaz"
+          ],
+          "description": "PvP, hayatta kalma, serbest dolaşım ya da daha önce kimsenin görmediği bir oyun modu."
+        },
+        {
+          "sub": "Yarış",
+          "title": [
+            "Sokakların",
+            "hâkimi",
+            "ol"
+          ],
+          "description": "Yarış ligleri, gece buluşmaları ve açık yollarla dolu bir şehir."
+        }
+      ]
+    },
+    "creators": {
+      "title": [
+        "Kendi",
+        "sunucunu",
+        "kur"
+      ],
+      "titleFront": 1,
+      "description": "Topluluğun için sürekli çevrimiçi kalan bir dedicated sunucu çalıştır: kuralları, modları ve oynanışı sen belirlersin. İndirmeler herkese açık. Doğrulanmış hesabınla bir lisans anahtarı oluştur ve Open Alpha’da geliştirmeye başla.",
+      "backgroundAlt": "Sunucu kurucuları",
+      "characterAlt": "Sunucu kurucuları",
+      "serverAlt": "Dedicated sunucu",
+      "download": "Sunucuyu indir",
+      "guide": "Barındırma rehberi",
+      "features": [
+        {
+          "title": [
+            "Kendi",
+            "dedicated sunucun"
+          ],
+          "description": "Kendi donanımında ya da kiralık bir makinede, senin işlettiğin kalıcı bir dünya."
+        },
+        {
+          "title": [
+            "Senin kuralların,",
+            "senin topluluğun"
+          ],
+          "description": "Whitelist, moderasyon, yetkililer, kimlik. Sunucu sayfan, topluluğunun ön kapısı."
+        },
+        {
+          "title": [
+            "Özel",
+            "oynanış"
+          ],
+          "description": "Kuralları sıkı bir rol yapma şehrinden yarış ligine, daha önce kimsenin görmediği bir oyun moduna kadar her şeyi kur."
+        }
+      ]
+    },
+    "developers": {
+      "title": [
+        "Kendi",
+        "Night City’ni",
+        "kodla"
+      ],
+      "titleFront": 1,
+      "description": "OPEN//77 sunucusunda oynanış yapılandırılmaz, kodlanır. Kaynak (resource), sunucunun yüklediği, çalışırken yeniden yüklediği ve katılan her oyuncuya aktardığı küçük bir <strong>Lua 5.4</strong> paketidir. Bu, <kbd>/ride</kbd> komutunun tamamı. Şaka değil.",
+      "backgroundAlt": "Geliştiriciler",
+      "characterAlt": "Geliştiriciler",
+      "docs": "Belgeleri oku",
+      "platform": "Platform nasıl çalışır",
+      "resource": "Kaynak",
+      "pillars": [
+        {
+          "label": "Lua 5.4",
+          "title": "Tek dil, iki çalışma ortamı",
+          "body": "İstemci scriptleri oyunun içinde çalışır; sunucu scriptleri otoriter dünyanın sahibidir. Her kaynak kendi izole Lua VM’ini ve hot reload desteğini alır: dosyayı kaydet, anında devrede.",
+          "link": "Kaynak modeli"
+        },
+        {
+          "label": "Gerçek oyun API’leri",
+          "title": "Gerçek motoru yönet",
+          "body": "Araçlar, harita işaretleri, NPC’ler, hava durumu, ganimet, etkileşimler, bildirimler: OPEN//77’nin kendi kaynaklarının üzerine kurulduğu, izinlerle korunan native fonksiyonların aynısı.",
+          "link": "Lua API referansı"
+        },
+        {
+          "label": "Web arayüzleri",
+          "title": "Web teknolojileriyle arayüz",
+          "body": "Bir kaynak, Chromium tabanlı bir WebUI sayfasıyla gelebilir: HUD’ları, menüleri ve uygulamaları HTML, CSS ve JavaScript ile yap. Hepsi ayrı bir süreçte çalışır, yani arayüzünün bedelini oyun ödemez.",
+          "link": "Uygulamada WebUI"
+        }
+      ]
+    }
+  },
+  "download": {
+    "metaTitle": "Başlatıcıyı indir",
+    "metaDescription": "Windows için OPEN//77 başlatıcısını indir. Giriş yapmanı sağlar, Cyberpunk 2077 sürümünü kontrol eder, modu kurup günceller ve seni sunucu listesine götürür. Ücretsiz; oyunun kendi kopyan gerekir.",
+    "breadcrumb": "Başlatıcıyı indir",
+    "eyebrow": "İndir · Windows için OPEN//77",
+    "title": [
+      "Başlatıcıyı",
+      "indir"
+    ],
+    "accent": [
+      0
+    ],
+    "lead": "Tek bir Windows uygulaması: giriş yapmanı sağlar, oyununu kontrol eder, modu kurup günceller ve sunucu listesini açar. İndirmesi ücretsiz; senden istenen tek şey <strong>{requirement}</strong>.",
+    "facts": {
+      "platformLabel": "Oyuncu platformu",
+      "platformValue": "Windows 10 / 11 · 64 bit",
+      "buildLabel": "Oyun sürümü",
+      "buildValue": "Cyberpunk 2077 {build} · yalnızca bu sürüm",
+      "expansionLabel": "Gerekli genişleme paketi",
+      "sizeLabel": "İndirme boyutu",
+      "sizeUnavailable": "Boyut şu an bilinmiyor"
+    },
+    "jump": {
+      "requirements": "Gerekenler",
+      "alpha": "Open Alpha",
+      "guide": "Başlatıcı rehberi"
+    },
+    "alpha": {
+      "eyebrow": "Open Alpha · Oyna, barındır, geliştir",
+      "title": [
+        "Night City",
+        "kapılarını açtı."
+      ],
+      "lead": "Başlatıcıyı indir ve oynamak için <strong>ücretsiz OPEN//77 hesabınla</strong> giriş yap. Ayrıca sunucu barındırabilir ve kendi oyun modunu geliştirebilirsin. Erişim başvurusu ya da onay gerekmez.",
+      "cardSub": "Open Alpha",
+      "cardTitle": "Bugün oyna, barındır, geliştir.",
+      "cardAction": "Open Alpha rehberini oku",
+      "cardBody": "Bir hesap oluştur, başlatıcının oyununu doğrulamasına izin ver ve bir topluluk sunucusu seç. Oluşturmaya hazır mısın? Dedicated sunucuyu indir, Lua ve WebUI dokümantasyonunu keşfet.",
+      "serverSub": "Dedicated sunucu · Windows / Linux · başlatıcı değil",
+      "serverUnavailable": "Sunucu sürümü kullanılamıyor",
+      "serverAction": "Dedicated sunucuyu indir",
+      "serverBody": "Oynamaya hazır Freeroam (serbest dolaşım) modu ve sistem kaynakları, .NET çalışma ortamı dahil. Sunucu makinesinde Cyberpunk 2077 kurulu olması gerekmez. İndirmeler herkese açık.",
+      "serverBodyUnavailable": "En son sunucu sürümünü CDN’den doğrulayamadık. Yerine eski bir sürüm sunulmaz; sayfa otomatik olarak yeniden kontrol eder.",
+      "statusNote": "Başlatıcı ve dedicated sunucu ayrı güncelleme kanallarıdır, bu yüzden sürüm numaraları farklıdır. Başlatıcının kurduğu istemcinin sürümü, iletişim kurduğu sunucu sürümüne göre belirlenir."
+    },
+    "jobs": {
+      "eyebrow": "Ne yapar?",
+      "title": [
+        "Beş iş,",
+        "tek pencere."
+      ],
+      "accent": [
+        1
+      ],
+      "lead": "Başlatıcı, OPEN//77’nin oyuncu tarafının tamamıdır. Oyun klasörüne elle hiçbir şey kurmazsın, bir sunucuya katılmak için de config düzenlemezsin.",
+      "items": [
+        {
+          "title": "Giriş yapmanı sağlar",
+          "body": "Tek bir OPEN//77 hesabı; yetkilendirme uygulamada değil, tarayıcında yapılır. Başlatıcı şifreni asla görmez."
+        },
+        {
+          "title": "Oyununu kontrol eder",
+          "body": "Bir şey kurmadan önce Cyberpunk 2077 kurulumunun {build} sürümünde olduğundan ve {expansion} içerdiğinden emin olur. İstemci tam olarak bu sürüme göre derlenir; böylece bir uyumsuzluğu oturumun ortasında değil, en baştan öğrenirsin."
+        },
+        {
+          "title": "Modu kurar ve günceller",
+          "body": "OPEN//77 istemcisi senin için indirilir, doğrulanır ve güncel tutulur. Oyun klasörüne elle açılacak zip yok, devre dışı bıraktığında geride kalan bir şey de yok."
+        },
+        {
+          "title": "Neyin yükleneceğini yönetir",
+          "body": "Bir oturumda hangi modların etkin olacağını seç. Bazı sunucular temiz bir mod düzeni ister; böylece kendi kurulumunu koruyup yine de bağlanabilirsin."
+        },
+        {
+          "title": "Sana bir dünya bulur",
+          "body": "Topluluk sunucularına göz at, filtrele ve bağlan. Başlatıcı oyunu, seçtiğin dünyaya yönlendirilmiş olarak başlatır."
+        }
+      ]
+    },
+    "firstRun": {
+      "eyebrow": "İlk çalıştırma",
+      "title": "Gerçekte neler oluyor?",
+      "lead": "Zaten kurulu mu? Başlatıcıyı aç, bir sunucu seç ve bağlan. Gerisini o halleder.",
+      "steps": [
+        {
+          "title": "Windows bir uyarı gösterecek",
+          "body": "Başlatıcı henüz kod imzalı değil; bu yüzden ilk açılışta SmartScreen’in <em>“Windows bilgisayarınızı korudu”</em> ekranı çıkar. <strong>Ek bilgi</strong> bağlantısına, ardından <strong>Yine de çalıştır</strong> düğmesine tıkla, o kadar (İngilizce Windows’ta: More info, Run anyway). Windows bu mesajı, pek çok bağımsız başlatıcı dahil imzasız her uygulama için gösterir; dosyanın kendisi hakkında hiçbir şey söylemez. <guide>Başlatıcı rehberi</guide>, bu pencerenin ne anlama geldiğini ve gelmediğini tek tek açıklar."
+        },
+        {
+          "title": "Tarayıcından giriş yap",
+          "body": "Başlatıcı, bu sitedeki <authorize>yetkilendirme sayfasını</authorize> açar. Orada onaylarsın ve başlatıcı bir token alır. Şifren asla uygulamadan geçmez."
+        },
+        {
+          "title": "Oyununu göster, sonra oyna",
+          "body": "Cyberpunk 2077 kurulumunu bulur, sürümü kontrol eder, istemciyi kurar ve <servers>sunucu listesini</servers> açar. Oradan sonrası tek tuş."
+        }
+      ]
+    },
+    "requirements": {
+      "eyebrow": "Kurmadan önce",
+      "title": "Gerekenler.",
+      "items": [
+        {
+          "title": "Windows 10 ya da 11, 64 bit",
+          "body": "Başlatıcı bir Windows masaüstü uygulamasıdır; kurduğu istemci de oyun sürecinin içinde yüklenen native bir eklentidir. macOS ya da Linux için oyuncu sürümü yoktur."
+        },
+        {
+          "title": "Kendi Cyberpunk 2077 {build} kopyan",
+          "body": "Kendi yasal kopyan: OPEN//77 oyunu ya da oyunun hiçbir dosyasını asla dağıtmaz. Sürüm tam olarak {build} olmalı, bu bir alt sınır değil: istemci, motora o sürüme özgü adreslerden kanca atar ve başlatıcı bunu senin yerine kontrol eder."
+        },
+        {
+          "title": "{expansion}",
+          "body": "İsteğe bağlı değil, zorunlu: bağlandığında içine düştüğün dünya bir EP1 kaydıdır, yani o olmadan yüklenecek bir şey yoktur."
+        }
+      ],
+      "questions": "Sorular",
+      "faq": [
+        {
+          "q": "Windows bir güvenlik uyarısı mı gösteriyor?",
+          "a": "Beklenen bir durum: başlatıcı henüz kod imzalı değil, bu yüzden SmartScreen onu imzasız her uygulama gibi işaretler. <strong>Ek bilgi</strong> bağlantısına, ardından <strong>Yine de çalıştır</strong> düğmesine tıkla. Yalnızca bu sayfadan aldığın kopyayı çalıştır; aynı dosya olduğundan emin olmak istersen yukarıdaki “Dosya ayrıntıları ve doğrulama” bölümünde SHA-256 değerini karşılaştır. <guide>Başlatıcı rehberi</guide> bu pencereyi ayrıntılı olarak açıklar."
+        },
+        {
+          "q": "Başlatıcı ve sunucu sürümleri neden farklı?",
+          "a": "Bunlar ayrı güncelleme kanalları. Yukarıdaki Windows düğmesi her zaman güncel başlatıcıyı, <host>sunucu sayfası</host> ise güncel dedicated sunucuyu sunar. Biri kullanılamadığında hiçbiri onun yerine eski bir sürüm koymaz."
+        },
+        {
+          "q": "Oynamak değil, barındırmak istiyorum.",
+          "a": "Barındırmak için başka bir indirme gerekir. Dedicated sunucu Cyberpunk 2077’nin kurulu olmasını hiç gerektirmez ve bu başlatıcıyı kullanmaz. <create>Sunucu oluştur</create> sayfasından başla, sonra <host>sunucuyu indir</host>. Arşivler herkese açık; e-postası doğrulanmış ücretsiz bir hesapla lisans anahtarını oluşturabilirsin."
+        },
+        {
+          "q": "Oynamadan önce başvurmam gerekiyor mu?",
+          "a": "Hayır. Open Alpha herkese açık. Başlatıcıyı indir, ücretsiz OPEN//77 hesabınla giriş yap ve bir topluluk sunucusuna katıl. Kurulum ve gereksinimler için <alpha>Open Alpha rehberini</alpha> oku."
+        }
+      ],
+      "alphaTitle": "Bu bir Alpha yazılımı, kararlı bir sürüm değil.",
+      "alphaBody": "Hatalar, çökmeler, eksik özellikler ve API’leri değiştiren güncellemeler bekle. <discord>Discord</discord> sunucumuzda yardım alabilir, tekrarlanabilir sorunları bildirebilir, diğer yapımcılarla tanışabilir ve değişiklik günlüğünü takip edebilirsin."
+    },
+    "release": {
+      "latest": "En son başlatıcı",
+      "version": "Sürüm {version}",
+      "published": "Yayın tarihi: {date}",
+      "button": "Windows için indir",
+      "platform": "Windows 10 / 11 · 64 bit",
+      "details": "Dosya ayrıntıları ve doğrulama",
+      "file": "Dosya: <code>{file}</code>",
+      "shaIntro": "SHA-256 değerini, yayımlamanın hiçbir maliyeti olmadığı için yayımlıyoruz. İndirdiklerini doğruluyorsan bu PowerShell satırı aynı dizeyi yazdırır. Yapman gereken bir şey yok.",
+      "copySha": "Başlatıcının SHA-256 değerini kopyala",
+      "copyCommand": "Doğrulama komutunu kopyala",
+      "noChecksum": "Bu sürüm için sağlama toplamı yayımlanmadı.",
+      "official": "Bu indirme için hesap gerekmez. Resmî kaynak bu sayfadır: dosya doğrudan OPEN//77 CDN’inden gelir ve onu yalnızca burada yayımlıyoruz."
+    }
+  },
+  "create": {
+    "metaTitle": "Sunucu oluştur",
+    "metaDescription": "OPEN//77 sunucusunu indir ve Open Alpha’da Cyberpunk 2077 için kendi oyun modunu geliştir. Erişim başvurusu ya da onay gerekmez. Oyuncular için gereken: {requirement}.",
+    "breadcrumb": "Sunucu oluştur",
+    "eyebrow": "Sunucu oluştur",
+    "title": [
+      "Kendi",
+      "Night City’ni",
+      "yönet"
+    ],
+    "accent": [
+      1
+    ],
+    "lead": "Topluluğun için sürekli çevrimiçi kalan; kuralları, kimliği ve oynanışı sana ait bir dedicated Cyberpunk 2077 sunucusu. <strong>Herkes indirip Open Alpha’da geliştirmeye başlayabilir.</strong>",
+    "facts": {
+      "windowsLabel": "Windows sunucu",
+      "windowsValue": "64 bit · .NET çalışma ortamı dahil",
+      "linuxLabel": "Linux sunucu",
+      "linuxValue": "64 bit · .NET çalışma ortamı dahil",
+      "scriptingLabel": "Script",
+      "scriptingValue": "Lua 5.4 kaynakları · Chromium WebUI",
+      "hostingLabel": "Barındırma",
+      "hostingValue": "Kendi donanımın ya da kiralık bir makine"
+    },
+    "downloadServer": "Sunucuyu indir",
+    "hostingGuide": "Barındırma rehberi",
+    "technicalDocs": "Teknik dokümantasyon",
+    "experiences": {
+      "eyebrow": "RP’den yarışa, bilinmeyene",
+      "title": [
+        "Kodlayabildiğin",
+        "her deneyim."
+      ],
+      "lead": "OPEN//77 bir oyun moduyla gelmez; platformun kendisini sunar. Hardcore bir rol yapma şehri, dereceli bir yarış ligi, bir hayatta kalma bölgesi, hiç çatışma olmayan bir sosyal merkez ya da henüz kimsenin yapmadığı bir şey: hepsi sadece birer sunucu.",
+      "cards": [
+        {
+          "sub": "Rol yapma",
+          "title": "Başka bir hayat yaşa",
+          "body": "Kendi ekonomisi, fraksiyonları, meslekleri ve yetkilileri olan, kuralları sıkı rol yapma şehirleri."
+        },
+        {
+          "sub": "Yarış",
+          "title": "Sokakların hâkimi ol",
+          "body": "Yarış ligleri, gece buluşmaları ve açık yollarla dolu bir şehir."
+        },
+        {
+          "sub": "Özel dünyalar",
+          "title": "Kuralları yeniden yaz",
+          "body": "PvP, hayatta kalma, serbest dolaşım ya da daha önce kimsenin görmediği bir oyun modu."
+        }
+      ],
+      "modesLabel": "İnsanların kurduğu oyun modları",
+      "modes": [
+        "Rol yapma",
+        "Yarış",
+        "PvP",
+        "Battle Royale",
+        "Hayatta kalma",
+        "Sosyal merkez"
+      ]
+    },
+    "benefits": {
+      "eyebrow": "Sunucu sana ne kazandırır?",
+      "title": [
+        "Senin dünyan,",
+        "senin kararın."
+      ],
+      "accent": [
+        1
+      ],
+      "items": [
+        {
+          "title": "Dedicated, kalıcı bir dünya",
+          "body": "Oyuncular çıkış yaptığında sunucun çalışmaya devam eder. Ekonomiler, fraksiyonlar ve hikâyeler sürer. Dünya her şeyi hatırlar, çünkü onu sen barındırıyorsun.",
+          "action": "Barındırma rehberi"
+        },
+        {
+          "title": "Kuralların ve moderasyonun",
+          "body": "Whitelist ya da herkese açık, hardcore ya da rahat: kuralları sen koyar, yetkilileri sen seçer, topluluğunun kültürünü sen şekillendirirsin.",
+          "action": "Yönetim paneli Warden ile tanış"
+        },
+        {
+          "title": "Özel oynanış ve kaynaklar",
+          "body": "Meslekleri, ekonomileri, görevleri, araçları ve arayüzleri kaynaklarla ekle: sunucuya bırakıp kullandığın oynanış paketleri. Topluluğun paylaştıklarını kullan ya da kendininkini kodla.",
+          "action": "Kaynaklar nasıl çalışır?"
+        },
+        {
+          "title": "Topluluğun için bir ön kapı",
+          "body": "Herkese açık sunucu listesindeki sayfan dünyanı, modunu, dilini ve oyuncu sayını gösterir. Keşfedilmek platformun içinde hazır.",
+          "action": "Sunucu listesine göz at"
+        }
+      ]
+    },
+    "how": {
+      "eyebrow": "Nasıl çalışır?",
+      "title": "Kapıları açmak için üç adım.",
+      "steps": [
+        {
+          "title": "Sunucuyu edin",
+          "body": "<host>Dedicated sunucu yazılımını</host> indir ve kendi donanımında ya da kiralık bir makinede çalıştır. Sıradan bir sunucu sürecidir: Cyberpunk 2077’nin kurulu olmasını gerektirmez ve tamamen sana aittir."
+        },
+        {
+          "title": "Hesabına lisansla",
+          "body": "Ücretsiz bir hesap oluştur, <keys>anahtar yöneticisinde</keys> bir lisans anahtarı üret ve sunucu yapılandırmana ekle. Anahtar sunucuyu sana bağlar; ana sunucu, sunucuyu platforma almadan önce bunu kontrol eder."
+        },
+        {
+          "title": "Kapıları aç",
+          "body": "Slotlarını, kurallarını, dilini ve modunu belirle, istediğin kaynakları ekle; lisanslı sunucun herkese açık sunucu listesinde görünür. Oyuncuların istemcileri, dünyanın ihtiyaç duyduğu her şeyi otomatik olarak indirir."
+        }
+      ],
+      "noticeTitle": "Lisanslama.",
+      "notice": "Platformdaki her sunucu bir hesaba aittir. <licensing>Sunucu lisanslama rehberi</licensing>; hesap oluşturmayı, lisans anahtarı almayı ve ana sunucunun yetkilendirmesi için anahtarı sunucuna bağlamayı adım adım anlatır. <requirements>Platform gereksinimlerine</requirements> de göz at."
+    },
+    "band": {
+      "eyebrow": "Open Alpha · Hemen geliştir",
+      "title": [
+        "Geliştirmenin",
+        "tam zamanı."
+      ],
+      "accent": [
+        1
+      ],
+      "text": "Herkes sunucuyu indirip bugün geliştirmeye başlayabilir. Rol yapma, PvP, Battle Royale, yarış, hayatta kalma: Night City’de kendi oyun modunu ve kendi deneyimini yarat. Ücretsiz bir hesap oluştur, e-postanı doğrula ve bir sunucu lisans anahtarı üret. Open Alpha için erişim başvurusu, proje incelemesi ya da onay gerekmez.",
+      "discord": "Discord’umuza katıl",
+      "guide": "Open Alpha rehberini oku"
+    },
+    "builders": {
+      "eyebrow": "Geliştiriciler için",
+      "title": "Teknik ayrıntılar mı lazım?",
+      "lead": "Mimari, dedicated sunucular, kaynak formatı ve Lua API’nin tamamı dokümantasyonda; üretenler için yazıldı.",
+      "serverDocs": "Sunucu dokümantasyonu",
+      "licensing": "Sunucu lisanslama",
+      "api": "Lua API referansı"
+    },
+    "requirementsNote": "Bağlanan oyuncuların kendi bilgisayarlarında {requirement} olması gerekir. Dedicated sunucu için oyunun kurulu olması gerekmez."
+  },
+  "host": {
+    "metaTitle": "Sunucu barındır",
+    "metaDescription": "Windows ya da Linux için OPEN//77 sunucusunu indir ve Cyberpunk 2077 için kendi oyun modunu geliştir. Open Alpha herkese açık. Onay gerekmez, sunucu makinesine oyun kurmak da gerekmez.",
+    "breadcrumb": "Sunucu barındır",
+    "eyebrow": "Sunucu barındır · OPEN//77 dedicated sunucu",
+    "title": [
+      "Kendi sunucunu",
+      "barındır"
+    ],
+    "accent": [
+      0
+    ],
+    "lead": "Dedicated sunucuyu indir ve Open Alpha’da geliştirmeye başla. Erişim başvurusu ya da onay gerekmez. Sunucuyu hesabına lisansla ve kendi oyun modunu yarat. Sunucu makinesinde <strong>Cyberpunk 2077</strong> kurulu olması hiçbir zaman gerekmez.",
+    "facts": {
+      "windowsLabel": "Windows sunucu",
+      "windowsValue": "64 bit · .zip arşivi",
+      "linuxLabel": "Linux sunucu",
+      "linuxValue": "64 bit · .tar.gz arşivi",
+      "whoLabel": "Kimler indirebilir?",
+      "whoValue": "Herkes · giriş gerekmez",
+      "runsLabel": "Çalıştığı yer",
+      "runsValue": "Kendi donanımın ya da kiralık bir makine"
+    },
+    "getServer": "Sunucuyu indir",
+    "licenseKeys": "Lisans anahtarları",
+    "fullGuide": "Tam barındırma rehberi",
+    "officialNote": "Yalnızca resmî sürümler: sunucuyu bu sayfadan ya da resmî CDN’den indir, başka hiçbir yerden değil. Çalıştırdığın şeyi doğrulayabilmen için her arşivin SHA-256 değeri listelenir.",
+    "download": {
+      "eyebrow": "Her şey dahil indirmeler",
+      "title": [
+        "Her şey",
+        "arşivde."
+      ],
+      "accent": [
+        1
+      ],
+      "lead": "Lisansını ve erişilebilir uç noktalarını yapılandır; sunucu makinesinde Cyberpunk 2077 kurulumu gerekmez.",
+      "createLink": "Sunucu sana ne kazandırır?",
+      "archive": [
+        "Dedicated sunucu, .NET çalışma ortamı dahil",
+        "Oynamaya hazır Freeroam (serbest dolaşım) modu ve sistem kaynakları",
+        "Warden: ilk kurulum sihirbazı ve web yönetim paneli",
+        "Kendi kaynakların için Lua 5.4 çalışma ortamı"
+      ],
+      "statusNote": "Önerilen kanal Stable. Unstable, test için ayrı ve isteğe bağlı bir sunucu güncelleme kanalıdır; başlatıcının kendi sürümü vardır."
+    },
+    "start": {
+      "eyebrow": "Başlarken",
+      "title": "İndirmeden açılışa.",
+      "lead": "Yerel bir test sunucusu için de herkese açık bir sunucu için de aynı dört adım. Hazır gelen Freeroam moduyla başla, sonra kendine göre şekillendir.",
+      "steps": [
+        {
+          "title": "Lisans anahtarı oluştur",
+          "body": "<keys>Anahtar yöneticisinde</keys> bir tane oluştur. Anahtar sunucuyu hesabına bağlar ve yalnızca bir kez gösterilir; güvenli bir yerde sakla."
+        },
+        {
+          "title": "Arşivi aç ve yapılandır",
+          "body": "Yeni bir klasöre çıkar; Windows’ta <code>Start.cmd</code>, Linux’ta <code>./start.sh</code> çalıştır. Warden’ın ilk kurulum sihirbazı, sunucu adın, görünürlüğün ve herkese açık uç noktalarınla <code>server.jsonc</code> dosyasını oluşturur."
+        },
+        {
+          "title": "Lisansını yapılandır",
+          "body": "Lisansını kurulum sırasında gir ya da sunucuyu elle yapılandırırken <code>OP77_LICENSE_KEY</code> içinde tut. Ana sunucu adresi varsayılan olarak <code>https://master.open2077.net/</code> olur."
+        },
+        {
+          "title": "Çalıştır",
+          "body": "Oyun ve kaynak indirme portlarını aç, ardından yapılandırdığın sunucuyu başlat. Herkese açık sunucular, oyuncuların onları bulup katılabilmesi için ana sunucuya kaydolur."
+        }
+      ],
+      "noticeTitle": "Herkese açık bir sunucu mu çalıştırıyorsun?",
+      "notice": "Güvenlik duvarında oyun ve kaynak indirme portlarını aç, lisans anahtarını scriptlerden ve ekran görüntülerinden uzak tut, Warden erişimini koru. Oyuncuları davet etmeden önce bilmen gereken her şey <guide>barındırma rehberinde</guide>."
+    },
+    "requirements": {
+      "eyebrow": "Barındırmadan önce",
+      "title": "Gerekenler.",
+      "items": [
+        {
+          "title": "Oyun gerekmez",
+          "body": "Dedicated sunucu Cyberpunk 2077’den, REDengine’den ve istemci eklentisinden bağımsız çalışır. Hiçbir oyun içeriği yüklemez ve kurulu bir kopyaya asla ihtiyaç duymaz."
+        },
+        {
+          "title": "Windows x64 ya da Linux x64",
+          "body": "İki resmî paket de .NET çalışma ortamını ve native ağ bağımlılıklarını içerir. Sunucu makinesine ayrıca .NET kurman gerekmez; işletim sistemi düzeyindeki ön koşullar <guide>kurulum rehberinde</guide> listelenir."
+        },
+        {
+          "title": "Oyuncuların oyuna yine de ihtiyacı var",
+          "body": "Bağlanan herkesin kendi bilgisayarında {requirement} ve ücretsiz bir OPEN//77 hesabı olması gerekir. Erişim başvurusu gerekmez."
+        }
+      ],
+      "questions": "Sorular",
+      "faq": [
+        {
+          "q": "Sunucu barındırmak için onay gerekiyor mu?",
+          "a": "Hayır. Open Alpha sunucu indirmeleri herkese açık; giriş ya da onay gerekmez. Sunucu lisans anahtarı oluşturmak için ücretsiz bir OPEN//77 hesabı aç ve e-postanı doğrula. Geliştirici başvurusu ya da yetkili rolü gerekmez."
+        },
+        {
+          "q": "Sunucu indirmeleri kullanılamıyor.",
+          "a": "İndirmeler herkese açık. Yayın hizmeti geçici olarak kullanılamıyorsa bu sayfayı yenile ya da <status>hizmet durumunu</status> kontrol et. Arşivleri görmek için hesaba ya da erişim iznine ihtiyacın yok."
+        },
+        {
+          "q": "Lisans anahtarı nereye girilir?",
+          "a": "Warden’ın ilk kurulumunda gir ya da sunucuyu elle yapılandırırken <code>OP77_LICENSE_KEY</code> içinde tut. Etkinleştirme <licensing>lisanslama rehberinde</licensing> anlatılıyor. Anahtarları asla herkese açık scriptlere ya da ekran görüntülerine yapıştırma."
+        },
+        {
+          "q": "Mevcut bir sunucuyu nasıl güncellerim?",
+          "a": "Sürüm notlarını oku; yapılandırmanı, kaynaklarını ve verilerini yedekle; yeni arşivi üzerine açmadan önce sunucuyu durdur. Yeniden açmadan önce istemci/sunucu uyumluluğunu kontrol et ve kendi kaynaklarını test et."
+        }
+      ]
+    },
+    "tools": {
+      "eyebrow": "Sonraki adımlar",
+      "title": "Barındırma araçları.",
+      "items": [
+        {
+          "title": "Warden, yönetim paneli",
+          "body": "Sunucunu web panelinden kur, izle ve yönet: oyuncular, kaynaklar, Workshop kurulumları.",
+          "action": "Warden ile tanış"
+        },
+        {
+          "title": "Lua API",
+          "body": "Araçlar, harita işaretleri, NPC’ler, hava durumu, etkileşimler: OPEN//77’nin kendi kaynaklarının üzerine kurulduğu, izinlerle korunan native fonksiyonların aynısı.",
+          "action": "Lua API referansı"
+        },
+        {
+          "title": "Kaynaklar",
+          "body": "Kaynak formatı, manifest ve sunucunun yükleyip oyunculara aktardığı bir paketin yaşam döngüsü.",
+          "action": "Kaynaklar ve scriptler"
+        },
+        {
+          "title": "Oynamaya mı geldin?",
+          "body": "Oyuncuların ihtiyacı bu arşiv değil, başlatıcı. Giriş yapmanı sağlar, oyununu kontrol eder ve seni sunucu listesine götürür.",
+          "action": "Başlatıcıyı indir"
+        }
+      ]
+    },
+    "builds": {
+      "unstableEyebrow": "Unstable sunucu · test sürümü",
+      "stableEyebrow": "En son kararlı sunucu",
+      "previewTag": "Önizleme sürümü",
+      "officialTag": "Resmî sürüm",
+      "published": "Yayın tarihi: {date}",
+      "compat": "Uyumlu istemci: <code>{client}</code> · Ağ protokolü: <code>{protocol}</code>. Kararlı istemciler katılamayabilir.",
+      "archiveKind": "{os} · .{kind} arşivi",
+      "size": "Boyut",
+      "notPublished": "Yayımlanmadı",
+      "run": "Çalıştırma",
+      "runtime": "Çalışma ortamı",
+      "runtimeValue": ".NET dahil",
+      "downloadFor": "{os} için indir",
+      "downloadUnstableFor": "{os} için Unstable sürümü indir",
+      "details": "Arşiv ayrıntıları ve doğrulama",
+      "file": "Dosya: <code>{file}</code>",
+      "shaIntro": "Arşivin SHA-256 değeri. Çıkarmadan önce indirdiğin arşivle karşılaştır.",
+      "copySha": "{os} arşivinin SHA-256 değerini kopyala",
+      "noChecksum": "Bu sürüm için arşiv sağlama toplamı yayımlanmadı.",
+      "missing": "Bu platformun sürümü bu yayın için henüz yayımlanmadı. Yeniden denemek için aşağıdaki “Güncellemeleri kontrol et” düğmesini kullan."
+    },
+    "unstable": {
+      "summary": "Önizleme sürümü mü arıyorsun?",
+      "tag": "Unstable",
+      "title": "Test içindir. Canlı sunucun için değil.",
+      "warning": "Unstable, kaynakları ya da uyumluluğu bozabilecek değişiklikler içerir. Yapılandırmanı, kaynaklarını ve veritabanını yedekle, sonra ayrı bir klasöre çıkar. Canlıdaki bir sunucunun üzerine yazma.",
+      "players": "Oyuncuların başlatıcının Ayarlar bölümünde <strong>Unstable</strong> kanalını seçip uyumlu bir istemci kurması gerekir. Sunucu sürümünü değiştirmek oyuncularını otomatik olarak güncellemez.",
+      "consent": "Riskleri anlıyorum. Unstable indirmelerini göster.",
+      "none": "Şu anda doğrulanmış bir Unstable sürümü yok. Yeniden denemek için aşağıdaki “Güncellemeleri kontrol et” düğmesini kullan. Yukarıdaki kararlı indirmeler bundan etkilenmez."
+    }
+  },
+  "ncwe": {
+    "metaTitle": "NCWE {version}, Night City World Editor",
+    "metaDescription": "Cyberpunk 2077 için kararlı dünya editörü NCWE Studio {version} sürümünü indir. Night City’yi düzenle; yollar, arazi, ışıklar ve kendi modellerinle inşa et; ArchiveXL modu ya da OPEN//77 çok oyunculu dünyası olarak dışa aktar. Ücretsiz, hesap gerekmez.",
+    "eyebrow": "Night City World Editor",
+    "stableTag": "Kararlı {version}",
+    "title": [
+      "Night City’yi",
+      "istediğin gibi",
+      "şekillendir."
+    ],
+    "accent": [
+      1
+    ],
+    "lead": "<strong>NCWE</strong>, Cyberpunk 2077 için ücretsiz dünya editörü. Gerçek şehrin içinde uç, oradakini taşı ya da kaldır; yollar, arazi, ışıklar ve kendi modellerinle yeni yerler inşa et, sonra bunları bir ArchiveXL modu ya da OPEN//77 çok oyunculu dünyası olarak yayınla.",
+    "facts": {
+      "label": "Bir bakışta NCWE",
+      "priceLabel": "Fiyat",
+      "priceValue": "Ücretsiz ve açık kaynak",
+      "accountLabel": "Hesap",
+      "accountValue": "İnşa etmek için gerekmez",
+      "gameLabel": "Oyun",
+      "gameValue": "Cyberpunk 2077 {game}",
+      "shipsLabel": "Çıktı biçimi",
+      "shipsValue": "ArchiveXL modları · OPEN//77 dünyaları"
+    },
+    "heroDownload": "Windows için indir",
+    "heroNote": "Windows 10 ve 11 · Cyberpunk 2077 {game} · hesap gerekmez",
+    "trailer": {
+      "watch": "Fragmanı izle",
+      "watchLength": "Fragmanı izle ({length})",
+      "eyebrow": "Fragman · {length}"
+    },
+    "city": {
+      "eyebrow": "Gerçek şehir",
+      "title": [
+        "Night City, kameranın",
+        "etrafında canlı."
+      ],
+      "lead": "Boş bir ızgara değil, bir kopya da değil: editör şehri kendi oyunundan okur ve sen uçtukça çizer. Böylece inşa ettiğin şey ilk tıklamadan itibaren gerçek sokaklarda durur.",
+      "points": [
+        {
+          "title": "Oyun nasıl yüklüyorsa öyle yükler.",
+          "body": "Yüklenecek bir mahalle yok: sektörler, oyunun seçtiği şekilde kameranın etrafında belirir ve daha önce gittiğin bir yer neredeyse anında geri gelir."
+        },
+        {
+          "title": "Oyundaki gibi görünür.",
+          "body": "Kameraya yakın modeller gerçek malzemeleriyle görünür: katmanlı yüzeyler, cam, decal’lar, su, neonlar, ekranlar ve bitki örtüsü; güneş, gökyüzü ve gece önizlemesi altında."
+        },
+        {
+          "title": "Oyununa dokunmaz.",
+          "body": "Proje, oyunun verilerine karşı yapılan değişikliklerin bir listesidir. Kurulumundaki hiçbir şey yeniden yazılmaz ve her dışa aktarım, düzenlediklerine göre kontrol edilir."
+        }
+      ]
+    },
+    "tools": {
+      "eyebrow": "Araçlar",
+      "title": [
+        "Bir haritacının",
+        "aradığı her şey."
+      ],
+      "lead": "Tüm iş için tek editör: oyunun oraya koyduğunu değiştir, sonra hiç sahip olmadığını ekle.",
+      "items": [
+        {
+          "title": "Olanı taşı",
+          "body": "Oyunun kendi nesnelerini seç, taşı, döndür, ölçekle, gizle ya da değiştir; gizmo’lar, hizalama ve sınırsız geri alma ile."
+        },
+        {
+          "title": "Yollar",
+          "body": "Oyundaki herhangi bir yol tipiyle spline çiz, yatış ver, zemine oturt. Yüzeyi takip eden çarpışmayla birlikte dışa aktarılırlar."
+        },
+        {
+          "title": "Arazi",
+          "body": "Zemini şekillendir, kes ve boya. Bitkiler ve üzerinde duran nesneler de ona uyar."
+        },
+        {
+          "title": "Işıklar, efektler, decal’lar, sesler",
+          "body": "Nokta, spot ve alan ışıkları, parçacıklar, decal’lar ve ses kaynakları yerleştir ya da oyunun kendilerini düzenle."
+        },
+        {
+          "title": "Kapılar ve entity’ler",
+          "body": "Herhangi bir entity şablonunu yerleştir, görünümünü seç ve bir kapının nasıl açılıp kapandığını ve kilitlendiğini ayarla."
+        },
+        {
+          "title": "Asansörler",
+          "body": "Bir tip seç, durduğu her kata tıkla. Oyun kendi asansörlerini nasıl kuruyorsa öyle dışa aktarılır: çağırma panelleri ve kat kapılarıyla."
+        },
+        {
+          "title": "Çarpışma ve occlusion",
+          "body": "Oyunun gerçek çarpışma ve occluder’larını gör, düzenle, kendininkileri ekle ya da bir modele çarpışma oturt."
+        },
+        {
+          "title": "Trafik",
+          "body": "Araçların ve yayaların izlediği şeritleri görüntüle, düzenle, bağla ve çiz."
+        },
+        {
+          "title": "Kütüphane ve prefab’lar",
+          "body": "Oyunun objelerine ve entity’lerine küçük resimler ve canlı 3D önizlemelerle göz at. Kendi prefab’larını kaydet ve istediğin yere yerleştir."
+        }
+      ]
+    },
+    "reel": {
+      "eyebrow": "İki dakika",
+      "title": [
+        "Hareket halinde",
+        "izle."
+      ],
+      "accent": [
+        0
+      ]
+    },
+    "content": {
+      "eyebrow": "Kendi içeriğin",
+      "title": [
+        "Oyunda hiç olmayanı",
+        "sen getir."
+      ],
+      "lead": "Kütüphanen oyununkinin yanında durur. Bir dünyanın kullandıkları, onu dışa aktardığında ya da paylaştığında onunla birlikte gider.",
+      "items": [
+        {
+          "tag": "Modeller",
+          "title": "Senin modellerin",
+          "body": "glTF, FBX ya da OBJ içe aktar. NCWE dışa aktarırken bunları oyun modellerine ve dokularına dönüştürür."
+        },
+        {
+          "tag": "Görseller",
+          "title": "Senin decal’ların",
+          "body": "Her görsel, saydamlığı korunarak bir decal’a dönüşür. Onları bir bankada tut ve oyununkiler gibi yerleştir."
+        },
+        {
+          "tag": "Ses",
+          "title": "Senin seslerin",
+          "body": "OPEN//77 dünyaları için ortam sesleri ve müzik. Senkronize bir döngü her oyuncu için aynı anda çalar."
+        }
+      ]
+    },
+    "together": {
+      "eyebrow": "Birlikte",
+      "title": "Ekibinle birlikte inşa et.",
+      "items": [
+        {
+          "title": "Canlı oturumlar.",
+          "body": "Herkesin düzenlemeleri yapıldığı anda gelir; diğerlerinin kameralarını ve seçimlerini görürsün, sohbet de içinde."
+        },
+        {
+          "title": "Ortak dünyalar.",
+          "body": "Bir dünyayı davet koduyla paylaş: biri gece inşa eder, öbürü sabah devam eder."
+        },
+        {
+          "title": "Bulut kayıtları.",
+          "body": "Dünyalarının her sürümü, kullandıkları modeller ve seslerle birlikte, her bilgisayarda."
+        }
+      ],
+      "note": "Bu üçü ücretsiz bir OPEN//77 hesabı kullanır. Tek başına inşa etmek asla gerektirmez."
+    },
+    "agents": {
+      "eyebrow": "Yapay zekâ ajanları",
+      "title": "Ya da araçları bir ajana ver.",
+      "items": [
+        {
+          "title": "Bir MCP sunucusuyla gelir.",
+          "body": "Claude Code, Codex ya da herhangi bir MCP istemcisi çalışan editörü yönetebilir."
+        },
+        {
+          "title": "Çalışırken izlersin.",
+          "body": "Ajan ne planladığını söyler, ölçümlerini senin görünümünde yapar ve her toplu işlem tek bir geri alma adımıdır."
+        },
+        {
+          "title": "Seninle aynı araçlar.",
+          "body": "İç mekânlar, sokaklar ve yeni yerler, editörün zaten yaptıklarıyla inşa edilir."
+        }
+      ],
+      "note": "Otomasyon kanalı yereldir ve Windows kullanıcınla sınırlıdır."
+    },
+    "ship": {
+      "eyebrow": "Yayınla",
+      "title": [
+        "Editörden",
+        "oyuna."
+      ],
+      "lead": "Tek proje, üç çıkış yolu. Her dışa aktarım, neyi değiştirdiğini ve neye göre oluşturulduğunu belirten bir manifest taşır.",
+      "items": [
+        {
+          "tag": "Tek oyunculu",
+          "title": "ArchiveXL modu",
+          "body": "archive/pc/mod için kendi sektörleri ve korumalı yamaları olan bir paket. Editörden kur ve kaldır."
+        },
+        {
+          "tag": "Çok oyunculu",
+          "title": "OPEN//77 dünyası",
+          "body": "Başlatıcının, oyun başlamadan önce her oyuncu için kurduğu bir sunucu kaynağı. Senin haritan, senin sunucunda."
+        },
+        {
+          "tag": "WolvenKit",
+          "title": "World Builder",
+          "body": "WolvenKit’in World Builder’ı için bir dosya; yerleştirdiklerini o iş akışına taşımak için."
+        }
+      ],
+      "server": "Sunucu mu çalıştırıyorsun?",
+      "serverLink": "OPEN//77 sunucunu oluştur"
+    },
+    "download": {
+      "eyebrow": "Kararlı sürüm",
+      "title": [
+        "İndir:",
+        "NCWE."
+      ],
+      "accent": [
+        1
+      ],
+      "text": "Ücretsiz, hesapsız, kurulacak başka bir şey yok: .NET ve Windows App SDK zip’in içinde geliyor.",
+      "notes": "NCWE {version} sürümünde neler yeni",
+      "button": "NCWE {version} sürümünü indir",
+      "meta": "Windows 10 ve 11, 64 bit · {size}",
+      "copySha": "İndirmenin SHA-256 değerini kopyala",
+      "discord": "Discord’da geri bildirim ve yardım",
+      "stepsLabel": "Üç adım",
+      "steps": [
+        {
+          "title": "İndir ve çıkar",
+          "body": "Arşivin tamamını istediğin bir klasöre çıkar. NCWE’yi zip’in içinden başlatma."
+        },
+        {
+          "title": "NCWE.Studio.exe dosyasını başlat",
+          "body": "Sürüm henüz imzalı değil: Windows SmartScreen çıkarsa “Ek bilgi” bağlantısına, ardından “Yine de çalıştır” düğmesine tıkla."
+        },
+        {
+          "title": "Night City’yi aç",
+          "body": "NCWE, Cyberpunk 2077 kurulumunu kendisi bulur ya da klasörünü sorar. Sonra uçmaya başla."
+        }
+      ]
+    },
+    "faq": {
+      "eyebrow": "Başlamadan önce",
+      "title": "Sorular.",
+      "items": [
+        {
+          "q": "Ücretsiz mi?",
+          "a": "Evet. NCWE, GNU General Public License v3.0 kapsamında özgür bir yazılımdır. İçinde oyun verisi yoktur: şehri kendi kurulumundan okur."
+        },
+        {
+          "q": "Hesap gerekiyor mu?",
+          "a": "İnşa etmek için hayır. OPEN//77 hesabı yalnızca bulut kayıtları ve canlı iş birliği için istenir; giriş, tarayıcında open2077.net üzerinden yapılır."
+        },
+        {
+          "q": "Hangi oyun sürümü?",
+          "a": "Windows 10 ya da 11 üzerinde, DirectX 11 destekli bir ekran kartıyla Cyberpunk 2077 {game}. Dışa aktardıklarını oynamak için oyunda ArchiveXL ve RED4ext kurulu olmalı. <archivexl>ArchiveXL 1.28’in bizim derlememizi</archivexl> ({archivexlVersion}) kur: resmî 1.28.0 silinmiş oyun nesnelerinde çöküyor ve onların çarpışmasını koruyor. Kaynak kodu: <source>GitHub</source>."
+        },
+        {
+          "q": "Oyun dosyalarımı değiştirir mi?",
+          "a": "Hayır. Projeler değişiklik olarak saklanır; dışa aktarım ise kurup kaldırabildiğin ayrı bir moddur. Modsuz (vanilla) oyun dosyaların asla yeniden yazılmaz."
+        },
+        {
+          "q": "Beta sürümünden nasıl güncellerim?",
+          "a": "NCWE’yi kapat, kararlı sürümü indir ve yeni bir klasöre çıkar. NCWE.Studio.exe dosyasını o klasörden başlat. Ayarların ve oturumun korunur, projelerin de kaydettiğin yerde kalır."
+        },
+        {
+          "q": "Bir sorunu nereye bildirebilirim?",
+          "a": "“Help > Open the logs folder” menüsü, hata raporu için ihtiyacımız olan her şeyi toplar. Günlükleri ve sorunu yeniden oluşturma adımlarını OPEN//77 Discord sunucusuna getir."
+        }
+      ]
+    },
+    "thanks": "NCWE, <wolvenkit>WolvenKit</wolvenkit> ve <archivexl>ArchiveXL</archivexl> üzerine kurulu. Onlar olmasa var olmazdı: yazarlarına teşekkürler.",
+    "fineprint": "NCWE özgür bir yazılımdır (GPL-3.0). CD PROJEKT RED ile bağlantısı olmayan, bağımsız bir topluluk projesidir; Cyberpunk 2077, CD PROJEKT S.A.’nın ticari markasıdır. İçinde oyun verisi yoktur."
+  },
+  "status": {
+    "metaTitle": "Hizmet durumu",
+    "metaDescription": "Open//77 hizmetlerinin canlı durumu, 90 günlük erişilebilirlik, yanıt süreleri, tespit edilen olaylar ve Master, CDN, başlatıcı, web sitesi ve Workshop için planlı bakımlar.",
+    "hero": {
+      "watermark": "Erişim",
+      "eyebrow": "// Açık ağ · hizmet durumu",
+      "title": [
+        "Ağ durumu.",
+        "Tek bakışta."
+      ],
+      "accent": [
+        1
+      ],
+      "lead": "Canlı hizmet durumu, ölçülen erişilebilirlik ve her kesintinin şeffaf kaydı; doğrudan izleme sisteminden.",
+      "refresh": "Durumu yenile",
+      "json": "Durum JSON’u"
+    },
+    "signal": {
+      "label": "Güncel ağ durumu",
+      "noSignal": "Canlı sinyal yok",
+      "connected": "İzleme sistemine bağlı",
+      "connecting": "İzleme sistemine bağlanılıyor…",
+      "titles": {
+        "operational": "Tüm sistemler çalışıyor",
+        "degraded": "Bazı hizmetler yavaş yanıt veriyor",
+        "outage": "Bir hizmet kesintisi tespit edildi",
+        "unknown": "Güncel izleme verisi bekleniyor"
+      },
+      "lastMeasured": "Son ölçüm: {time} · 60 saniyede bir kontrol edilir",
+      "noHealthy": "Gerçek bir kontrol sonucu gelene kadar hiçbir hizmet sağlıklı olarak işaretlenmez.",
+      "services": "Hizmetler",
+      "pending": "Bekleniyor"
+    },
+    "states": {
+      "operational": "Çalışıyor",
+      "degraded": "Yavaş yanıt",
+      "outage": "Kesinti",
+      "unknown": "Yeni veri yok"
+    },
+    "alerts": {
+      "staleTitle": "İzleme verileri güncel değil.",
+      "errorTitle": "İzleme akışı yenilenemedi.",
+      "staleBody": "Son kaydedilen geçmiş aşağıda duruyor. Eski kontroller güncel durum olarak kabul edilmez.",
+      "errorBody": "Bu, hizmetlerin çalışıp çalışmadığını göstermez. Lütfen birazdan yeniden dene.",
+      "noscript": "Canlı güncellemeler için JavaScript gerekir. <feed>Herkese açık JSON akışı</feed> JavaScript olmadan da kullanılabilir."
+    },
+    "metrics": {
+      "operational": "Çalışan hizmetler",
+      "now": "Şu anda",
+      "waiting": "Kontrol bekleniyor",
+      "availability": "{days} günlük erişilebilirlik",
+      "availabilityDetail": "Başarılı ÷ tamamlanan kontroller",
+      "coverage": "İzleme kapsamı",
+      "coverageDetail": "Gözlenen dakika dilimleri",
+      "incidents": "Açık olaylar",
+      "incidentsRecorded": {
+        "one": "90 günde {count} kayıt",
+        "other": "90 günde {count} kayıt"
+      },
+      "historyUnavailable": "Geçmiş kullanılamıyor"
+    },
+    "services": {
+      "eyebrow": "Erişilebilirlik",
+      "title": "Platform hizmetleri",
+      "period": "Erişilebilirlik dönemi",
+      "days": {
+        "one": "{count} gün",
+        "other": "{count} gün"
+      },
+      "legend": "Gösterge",
+      "partial": "Çizgili = kısmi kapsam",
+      "uptime": "{days} günlük çalışma süresi",
+      "coverage": "{value} kapsam",
+      "awaiting": "Yeni bir kontrol bekleniyor",
+      "lastLatency": "Son ölçüm: {ms} ms",
+      "waiting": "İzleme verileri bekleniyor. Veri toplama başladığında erişilebilirlik geçmişi burada görünecek."
+    },
+    "bars": {
+      "group": "{name}: {days} günlük erişilebilirlik; ayrıntılar için bir gün seç",
+      "available": "{percent} erişilebilir",
+      "noData": "veri yok",
+      "noObservations": "Gözlem yok",
+      "day": "{date}: {availability}, {expected} kontrolden {checked} tanesi tamamlandı, {failed} başarısız, {slow} yavaş",
+      "detail": "{date} · {availability} · {checked}/{expected} kontrol · {failed} başarısız · {slow} yavaş",
+      "today": "Bugün · UTC"
+    },
+    "latency": {
+      "eyebrow": "Yanıt süresi",
+      "title": "Her milisaniye önemli.",
+      "service": "Hizmet",
+      "placeholderService": "Master API",
+      "note": "Uçtan uca kontrol süresi; oyun içi ping değil. CDN kontrolleri sürüm meta verilerini ve 4 KiB’lık kısmi indirmeleri içerir. Eksik ölçümler boşlukların üzerinden asla birleştirilmez.",
+      "average": "Ortalama · son 24 sa",
+      "slowest": "En yavaş dilim",
+      "measured": "Ölçülen dilimler",
+      "chartTitle": "{service} için 24 saatlik yanıt süresi. Ölçülen beş dakikalık dilim sayısı: {count}. Boşluklar, başarılı kontrol olmadığını gösterir.",
+      "noSample": "Örnek yok",
+      "empty": "// Henüz yanıt süresi örneği yok",
+      "dayAgo": "24 sa önce",
+      "halfDay": "12 sa",
+      "now": "Şimdi",
+      "view": "Yanıt süresi verilerini görüntüle",
+      "caption": "Beş dakikalık ortalama kontrol süreleri, UTC, en yeniden eskiye",
+      "time": "Saat",
+      "responseTime": "Yanıt süresi",
+      "noSuccessful": "Başarılı örnek yok"
+    },
+    "maintenance": {
+      "eyebrow": "Bakım",
+      "title": "Haberin olsun.",
+      "none": "Planlı bakım yok",
+      "unavailable": "Takvim kullanılamıyor",
+      "noneBody": "Son akışta etkin ya da yaklaşan bakım yok.",
+      "waiting": "İzleme anlık görüntüsü bekleniyor.",
+      "inProgress": "Sürüyor",
+      "scheduled": "Planlandı"
+    },
+    "monitor": {
+      "probe": "İzleme noktası",
+      "interval": "Kontrol aralığı",
+      "intervalValue": "{seconds} sn",
+      "unknownAfter": "Bilinmez sayılır",
+      "unknownAfterValue": "{seconds} sn veri gelmezse",
+      "since": "Veri toplama başlangıcı",
+      "retention": "Saklama süresi",
+      "retentionValue": "90 gün"
+    },
+    "incidents": {
+      "eyebrow": "Olay geçmişi",
+      "title": "Tahmin değil, kayıt.",
+      "note": "Son 90 gün · en yeniden eskiye",
+      "clearEyebrow": "// INCIDENTS.LOG clear",
+      "offlineEyebrow": "// INCIDENTS.LOG offline",
+      "nothing": "Bildirilecek bir şey yok",
+      "unavailable": "Geçmiş kullanılamıyor",
+      "nothingBody": "Gözlenen dönemde onaylanmış olay kaydı yok.",
+      "unavailableBody": "İzleme sistemi yanıt verene kadar olay geçmişi kullanılamaz.",
+      "recovered": "Düzeldi",
+      "notConfirmed": "Düzelme onaylanmadı",
+      "firstDetected": "İlk tespit: {time}",
+      "recoveryConfirmed": " · Düzelme onaylandı: {time} · gözlenen süre: {duration}",
+      "awaiting": " · İki başarılı kontrol bekleniyor",
+      "rules": "Olaylar art arda iki başarısız kontrolden sonra açılır, iki başarılı kontrolden sonra kapanır. Tekil hatalar yine de erişilebilirliğe yansır. Tespit, kök neden teşhisi değildir."
+    },
+    "method": {
+      "summary": "Erişilebilirliği nasıl ölçüyoruz?",
+      "source": "Ölçümler şuradan yapılır: {region}. Her dakika bir kontrol çalışır. Bu tek bir izleme noktasıdır, küresel bir hizmet düzeyi garantisi değildir. Topluluk oyun sunucuları ve uçtan uca giriş işlemi kapsam dışıdır.",
+      "configuredProbe": "operatörün yapılandırdığı izleme noktası",
+      "formula": "Erişilebilirlik = başarılı kontroller ÷ tamamlanan kontroller. Yavaş ama başarılı yanıtlar erişilebilir sayılır. Kapsam = tamamlanan kontroller ÷ seçilen UTC takvim günlerindeki planlı dakika dilimleri. İzleme başlamadan önceki dönem dahil, gözlenmeyen süreler bilinmez kabul edilir ve asla çalışma süresine sayılmaz. Bakım, başarısız kontrolleri silmez.",
+      "bars": "Günlük çubuklar gözlenen en kötü sonucu gösterir; çizgiler eksik kapsamı belirtir. Yanıt grafiği, başarılı kontrollerin beş dakikalık dilimlerdeki ortalamasını alır. Üç dakikadan eski veriler, son sonuç sağlıklı olsa bile bilinmez sayılır.",
+      "started": "Veri toplama {time} tarihinde başladı. ",
+      "notStarted": "Veri toplamanın ne zaman başladığı henüz bilinmiyor. ",
+      "retention": "Geçmiş 90 gün saklanır. İzleme sisteminde ya da ağda yaşanan bir kesinti gözlemleri engelleyebilir; olay zaman damgaları, iki kontrol arasında kesintinin hiç durmadan sürdüğünü kanıtlamaz."
+    },
+    "footer": {
+      "probePending": "izleme noktası bekleniyor",
+      "fineprint": "Durum, belirtilen izleme konumundan yapılan otomatik kontrolleri yansıtır; her ağdan erişilebilirlik garantisi değildir.",
+      "support": "Burada olmayan bir sorun mu var? Destekle iletişime geç"
+    },
+    "duration": {
+      "minutes": "{count} dk",
+      "hours": "{hours} sa {minutes} dk",
+      "days": {
+        "one": "{count} gün",
+        "other": "{count} gün"
+      }
+    }
+  },
+  "auth": {
+    "pages": {
+      "account": {
+        "metaTitle": "Hesap",
+        "metaDescription": "OPEN//77 platform hesabın: profil, e-posta doğrulama, bağlı oyun kimlikleri ve sunucu lisans anahtarları."
+      },
+      "verify": {
+        "metaTitle": "E-postanı doğrula",
+        "metaDescription": "OPEN//77 platform hesabındaki e-posta adresini onayla."
+      },
+      "forgot": {
+        "metaTitle": "Şifremi unuttum",
+        "metaDescription": "OPEN//77 platform hesabın için şifre sıfırlama bağlantısı iste."
+      },
+      "reset": {
+        "metaTitle": "Şifreyi sıfırla",
+        "metaDescription": "OPEN//77 platform hesabın için yeni bir şifre belirle."
+      },
+      "launcher": {
+        "metaTitle": "Başlatıcıyı yetkilendir",
+        "metaDescription": "Cihazındaki OPEN//77 başlatıcısını platform hesabına bağlamak için giriş yap."
+      }
+    },
+    "scenes": {
+      "account": {
+        "eyebrow": "Platform hesabı",
+        "title": [
+          "Senin",
+          "hesabın"
+        ],
+        "lead": "Tüm platform için tek hesap: sunucu listesi, oyun kimliklerin, Workshop içeriklerin ve sunucularının çalıştığı lisans anahtarları."
+      },
+      "forgot": {
+        "eyebrow": "// Hesap kurtarma",
+        "title": [
+          "Şifreni mi",
+          "unuttun?"
+        ],
+        "lead": "Olur böyle şeyler. Yeni bir şifre seçmen için sana tek kullanımlık bir bağlantı göndereceğiz.",
+        "notes": [
+          "En son e-postayı kullan: bağlantılar tek kullanımlıktır ve kısa süre sonra geçersiz olur.",
+          "Bağlantıyı kimseyle paylaşma. OPEN//77’den hiç kimse onu senden asla istemez."
+        ]
+      },
+      "reset": {
+        "eyebrow": "// Hesap kurtarma",
+        "title": [
+          "Yeni",
+          "şifre"
+        ],
+        "lead": "Gelen kutundaki bir sıfırlama bağlantısını takip ettin. Hesabın için yeni şifreni seç ve onunla giriş yap.",
+        "notes": [
+          "En son e-postayı kullan: bağlantılar tek kullanımlıktır ve kısa süre sonra geçersiz olur.",
+          "Bağlantıyı kimseyle paylaşma. OPEN//77’den hiç kimse onu senden asla istemez."
+        ]
+      },
+      "verify": {
+        "eyebrow": "// Platform hesabı",
+        "title": [
+          "E-postanı",
+          "doğrula"
+        ],
+        "lead": "Tek tıkla adresin onaylanır. Sunucu lisans anahtarı oluşturabilmek için doğrulama gerekir.",
+        "notes": [
+          "En son e-postayı kullan: bağlantılar tek kullanımlıktır ve kısa süre sonra geçersiz olur."
+        ]
+      },
+      "launcher": {
+        "eyebrow": "// Başlatıcı",
+        "title": [
+          "Başlatıcıyı",
+          "yetkilendir"
+        ],
+        "lead": "Bu cihazda çalışan OPEN//77 başlatıcısını platform hesabına bağla. Başlatıcı şifreni asla görmez.",
+        "notes": [
+          "Yalnızca kendi başlattığın işlemi onayla: bu sayfayı başlatıcıdan açmadıysan kapat.",
+          "Başlatıcı kısa ömürlü bir kod alır. Şifren bu sayfadan asla çıkmaz."
+        ]
+      },
+      "github": {
+        "eyebrow": "// Yapımcı bağlantıları",
+        "title": [
+          "GitHub",
+          "hesabını bağla"
+        ],
+        "lead": "Herkese açık kimliğini doğrula ve depolarına yazma izni vermeden sürüm dosyalarını Workshop’a aktar.",
+        "notes": [
+          "Yalnızca kendi başlattığın işlemi onayla: bu sayfayı GitHub’dan açmadıysan kapat.",
+          "Herkese açık kimliğine ve sürümlerine okuma erişimi. Yazma izni yok."
+        ]
+      },
+      "warden": {
+        "eyebrow": "// Yapımcı bağlantıları",
+        "title": [
+          "Warden’ı",
+          "onayla"
+        ],
+        "lead": "Sunucundaki Warden’ın, hesabın adına Workshop kaynak taslakları hazırlamasına izin ver. Onaylamadan önce tam olarak ne istediğini incele.",
+        "notes": [
+          "Yalnızca kendi başlattığın işlemi onayla: bu sayfayı kendi Warden panelinden açmadıysan kapat.",
+          "Seçtiğin proje için kapsamı sınırlı bir token; hesabından iptal edilebilir."
+        ]
+      }
+    },
+    "watermarks": {
+      "players": "Bağlan",
+      "recovery": "Sıfırla",
+      "verify": "Onayla",
+      "creator": "Bağla"
+    },
+    "footnote": {
+      "alpha": "Oynamak ve barındırmak için ücretsiz bir hesap oluştur. Open Alpha için erişim onayı gerekmez.",
+      "alphaLink": "Open Alpha’da başla",
+      "master": "Hesaplar OPEN//77 ana sunucusu üzerinden çalışır."
+    },
+    "loading": "Hesabın yükleniyor",
+    "verifying": "E-postan doğrulanıyor",
+    "pending": "Hesap",
+    "identity": {
+      "signedIn": "Giriş yapıldı",
+      "player": "Oyuncu",
+      "signOut": "Çıkış yap",
+      "signingOut": "Çıkış yapılıyor…"
+    },
+    "panel": {
+      "tabs": "Giriş yap ya da hesap oluştur",
+      "signIn": "Giriş yap",
+      "register": "Hesap oluştur",
+      "signInLead": "OPEN//77 platform hesabın; başlatıcının kullandığıyla aynı.",
+      "registerLead": "Ücretsiz ve bir dakikanı alır. Open Alpha için erişim onayı gerekmez.",
+      "signInFailed": "Giriş başarısız",
+      "displayName": "Görünen ad",
+      "displayNamePlaceholder": "Diğer oyuncular seni böyle görür",
+      "email": "E-posta",
+      "emailPlaceholder": "sen@example.net",
+      "password": "Şifre",
+      "passwordNew": "Güçlü bir şifre seç",
+      "passwordCurrent": "Şifren",
+      "passwordHint": "En az 8 karakter. En iyisi bir parola cümlesi.",
+      "signInInstead": "Bunun yerine giriş yap",
+      "remember": "Oturumum açık kalsın",
+      "forgot": "Şifreni mi unuttun?",
+      "signingIn": "Giriş yapılıyor…",
+      "creating": "Hesabın oluşturuluyor…",
+      "registerNote": "Ücretsiz bir hesap oluştur ve <alpha>Open Alpha</alpha> kapsamında oyna, sunucu barındır. Erişim başvurusu gerekmez.",
+      "verifyTitle": "E-postanı doğrula",
+      "created": "<strong>{email}</strong> için hesap oluşturuldu.",
+      "devToken": "Bu geliştirme ana sunucusunun e-posta göndericisi yok, bu yüzden doğrulama kodun aşağıya önceden dolduruldu.",
+      "codeSent": "Gelen kutuna bir doğrulama kodu gönderdik.",
+      "resentTitle": "Doğrulama e-postası istendi",
+      "resentBody": "En son e-postadaki kodu kullan.",
+      "code": "Doğrulama kodu",
+      "codePlaceholder": "Doğrulama kodunu yapıştır",
+      "working": "İşleniyor…",
+      "verify": "Doğrula ve giriş yap",
+      "resend": "Doğrulama e-postasını yeniden gönder",
+      "skip": "Şimdilik atla",
+      "verifyLater": "Daha sonra doğrulayabilirsin; sunucu lisans anahtarı oluşturabilmek için doğrulama gerekir."
+    },
+    "field": {
+      "show": "{label} göster",
+      "hide": "{label} gizle"
+    },
+    "back": "Girişe dön",
+    "sending": "Gönderiliyor…",
+    "generic": "Bir şeyler ters gitti. Yeniden dene.",
+    "verification": {
+      "eyebrow": "E-posta doğrulama",
+      "confirmedTitle": "Adres onaylandı",
+      "confirmedNotice": "E-posta doğrulandı.",
+      "confirmedBody": "Adresin onaylandı. Artık giriş yapıp sunucu lisans anahtarı oluşturabilirsin.",
+      "badLinkTitle": "Bağlantını kontrol et",
+      "badLinkFooter": "Giriş yaptıktan sonra <account>hesap sayfandan</account> da doğrulayabilirsin.",
+      "badLinkBody": "Bu doğrulama bağlantısı eksik. E-postadaki bağlantıyı yeniden aç ya da adres çubuğuna eksiksiz kopyala.",
+      "failedTitle": "Doğrulama başarısız",
+      "invalidLink": "Bu doğrulama bağlantısı geçersiz ya da süresi dolmuş.",
+      "resend": "Doğrulama e-postasını yeniden gönder",
+      "resentTitle": "Yeni bir doğrulama e-postası yolda.",
+      "resentBody": "Gönderildiği adres: <strong>{email}</strong>. En yeni bağlantı bunun yerini alır.",
+      "resendFailed": "E-posta istenemedi. Bir dakika bekleyip yeniden dene."
+    },
+    "forgot": {
+      "sentEyebrow": "Bağlantı istendi",
+      "sentTitle": "Gelen kutunu kontrol et",
+      "sentBody": "<strong>{email}</strong> adresine kayıtlı bir hesap varsa sıfırlama bağlantısı gönderdik. Gelen kutunu kontrol et. Bağlantının süresi kısa süre sonra dolar.",
+      "eyebrow": "Şifre sıfırlama",
+      "title": "Şifreni sıfırla",
+      "lead": "Hesabındaki e-posta adresini gir; yeni bir şifre seçmen için sana bir bağlantı gönderelim.",
+      "submit": "Sıfırlama bağlantısı gönder"
+    },
+    "reset": {
+      "tooShort": "Yeni şifre en az 8 karakter olmalı.",
+      "mismatch": "İki şifre birbiriyle eşleşmiyor.",
+      "linkEyebrow": "Sıfırlama bağlantısı",
+      "linkTitle": "Bağlantı kullanılamıyor",
+      "requestNew": "Yeni bağlantı iste",
+      "incomplete": "Bu sıfırlama bağlantısı eksik. E-postadaki bağlantıyı yeniden aç ya da adres çubuğuna eksiksiz kopyala.",
+      "expired": "Bu sıfırlama bağlantısı geçersiz ya da süresi dolmuş. Sıfırlama bağlantıları tek kullanımlıktır ve yalnızca kısa bir süre geçerlidir.",
+      "eyebrow": "Şifre sıfırlama",
+      "doneTitle": "Her şey hazır",
+      "doneNotice": "Şifre değiştirildi.",
+      "doneBody": "Yeni şifren etkin. Şimdi onunla giriş yap.",
+      "title": "Yeni bir şifre seç",
+      "lead": "<strong>{email}</strong> için yeni şifre belirleniyor.",
+      "newPassword": "Yeni şifre",
+      "newPlaceholder": "Güçlü bir şifre seç",
+      "hint": "8–128 karakter. Benzersiz bir parola cümlesi iyi iş görür.",
+      "confirm": "Yeni şifreyi onayla",
+      "confirmPlaceholder": "Aynı şifre, bir kez daha",
+      "updating": "Güncelleniyor…",
+      "submit": "Yeni şifreyi kaydet"
+    },
+    "launcher": {
+      "eyebrow": "Başlatıcı",
+      "badRedirect": "Bu başlatıcı bağlantısında geçerli bir yönlendirme adresi yok.",
+      "hostile": "Bu başlatıcı bağlantısı olmaması gereken bir yeri gösteriyor. Güvenliğin için giriş durduruldu.",
+      "noState": "Bu başlatıcı bağlantısı eksik (state yok).",
+      "badChallenge": "Bu başlatıcı bağlantısı eksik (geçersiz PKCE challenge).",
+      "stoppedTitle": "Bağlantı durduruldu",
+      "stoppedFooter": "Yeni bir giriş bağlantısı almak için OPEN//77 başlatıcısını yeniden başlat.",
+      "expired": "Oturumunun süresi doldu. Başlatıcıyı yetkilendirmek için yeniden giriş yap.",
+      "failed": "Başlatıcı yetkilendirilemedi.",
+      "doneTitle": "Başlatıcı yetkilendirildi",
+      "doneNotice": "OPEN//77 başlatıcısına dönebilirsin.",
+      "doneBody": "Şu anda giriş yapıyor. Bu sekmeyi kapatabilirsin.",
+      "title": "Başlatıcıyı yetkilendir",
+      "authorizing": "Yetkilendiriliyor…",
+      "authorize": "Başlatıcıyı yetkilendir",
+      "cancel": "İptal",
+      "lead": "Bu cihazdaki OPEN//77 başlatıcısı şu hesapla giriş yapmak istiyor:",
+      "account": "Hesap",
+      "email": "E-posta",
+      "hint": "Başlatıcı, yerel bir bağlantı üzerinden kısa ömürlü, tek kullanımlık bir kod alır; şifreni asla almaz. Yalnızca kendin başlattığın bir başlatıcıyı yetkilendir."
+    },
+    "errors": {
+      "invalid_email": "Geçerli bir e-posta adresi gerekli.",
+      "invalid_password": "Şifre 8-128 yazdırılabilir karakter içermeli.",
+      "invalid_display_name": "Görünen ad 1-32 yazdırılabilir karakter içermeli.",
+      "email_taken": "Bu e-posta adresiyle zaten bir hesap var.",
+      "invalid_credentials": "E-posta ya da şifre hatalı.",
+      "account_suspended": "Bu hesap askıya alındı.",
+      "invalid_session": "Oturum bilinmiyor, süresi dolmuş ya da iptal edilmiş.",
+      "invalid_verification": "Geçerli bir e-posta adresi ve token gerekli.",
+      "verification_rejected": "Token bilinmiyor, süresi dolmuş ya da zaten kullanılmış.",
+      "invalid_reset": "Geçerli bir e-posta adresi ve sıfırlama token’ı gerekli.",
+      "reset_rejected": "Sıfırlama bağlantısı bilinmiyor, süresi dolmuş ya da zaten kullanılmış.",
+      "email_unverified": "Lisans anahtarı oluşturmadan önce e-posta adresini doğrula.",
+      "rate_limited": "Çok fazla deneme. Bir dakika bekleyip yeniden dene.",
+      "network": "Ana sunucuya ulaşılamıyor. Bağlantını kontrol edip yeniden dene."
+    }
+  },
+  "servers": {
+    "meta": {
+      "title": "Sunucu listesi",
+      "description": "Cyberpunk 2077 için canlı OPEN//77 topluluk sunucularına göz at. Ara, oyuncu sayılarını karşılaştır ve doğrudan OPEN//77 ana sunucu dizininden moda, bölgeye ve dile göre filtrele.",
+      "collectionName": "OPEN//77 sunucu listesi",
+      "collectionDescription": "Cyberpunk 2077 için OPEN//77 topluluk sunucularının canlı dizini; OPEN//77 ana sunucusundan sunulur.",
+      "breadcrumb": "Sunucular",
+      "profileBreadcrumb": "Sunucu ayrıntıları",
+      "unavailableTitle": "Sunucu kullanılamıyor",
+      "unavailableDescription": "Bu sunucu şu anda OPEN//77’nin herkese açık dizininde değil.",
+      "profileTitle": "OPEN//77 topluluk sunucusu",
+      "profileDescription": "OPEN//77’deki bir Cyberpunk 2077 çok oyunculu sunucusuna katıl: {name}. Sunucu ayrıntılarını gör ve başlatıcıyla bağlan."
+    },
+    "shared": {
+      "opening": "OPEN//77 başlatıcısı açılıyor…",
+      "aboutServer": "Bu sunucu hakkında",
+      "noDescription": "Bu sunucu henüz bir açıklama yayımlamadı.",
+      "addToFavorites": "Favorilere ekle",
+      "tryAgain": "Yeniden dene",
+      "directoryUnreachable": "Dizine ulaşılamıyor",
+      "regionNotSpecified": "Bölge belirtilmemiş",
+      "badges": {
+        "featured": "Öne çıkan",
+        "official": "Resmî",
+        "withMods": "Modlu"
+      },
+      "links": {
+        "discord": "Discord’a katıl",
+        "website": "Web sitesini ziyaret et"
+      }
+    },
+    "live": {
+      "previewLink": "Canlı dizin ↗",
+      "loadError": "Sunucu dizinine ulaşılamadı.",
+      "refreshFailed": "Yenileme başarısız · son sonuçlar gösteriliyor",
+      "unavailable": "Dizin kullanılamıyor",
+      "updating": "Güncelleniyor…",
+      "updated": "Son güncelleme: {time}",
+      "errorTitle": "Sunucular yüklenemedi",
+      "loaderLabel": "Dizin",
+      "loading": "Canlı dizin okunuyor. Ana sunucu yanıt verir vermez topluluk dünyaları burada görünür.",
+      "refreshTitle": "Dizini yenile",
+      "refreshing": "Yenileniyor…",
+      "refresh": "Yenile"
+    },
+    "browser": {
+      "title": "Sunucu listesi",
+      "anyPlayers": "Fark etmez",
+      "minPlayersOption": "{count}+",
+      "sorts": {
+        "players": "En çok oyuncu",
+        "nearby": "Sana yakın",
+        "name": "Ad A–Z",
+        "recent": "Yeni eklenenler"
+      },
+      "demoConnect": "Demo sunucu: bu önizlemede bağlantılar devre dışı.",
+      "chips": {
+        "search": "Arama: {query}",
+        "favorites": "Favoriler",
+        "region": "Bölge: {region}",
+        "language": "Dil: {lang}",
+        "countryNone": "Ülke belirtilmemiş",
+        "tag": "Etiket: {tag}",
+        "minPlayers": {
+          "one": "{count}+ oyuncu",
+          "other": "{count}+ oyuncu"
+        },
+        "hideEmpty": "Boşları gizle",
+        "hideFull": "Yer var"
+      },
+      "filters": "Filtreler",
+      "filtersCount": "Filtreler · {count}",
+      "hideFilters": "Filtreleri gizle",
+      "showFilters": "Filtreleri göster",
+      "searchLabel": "Sunucularda ara",
+      "searchPlaceholder": "Sunucu, etiket, ülke ara…",
+      "gameTypeFilter": "Oyun türüne göre filtrele",
+      "allModes": "Tümü",
+      "sort": "Sırala",
+      "sortLabel": "Sunucuları sırala",
+      "rail": {
+        "label": "Dizin filtreleri",
+        "eyebrow": "Dizin",
+        "close": "Filtreleri kapat",
+        "collections": "Sunucu koleksiyonları",
+        "allServers": "Tüm sunucular",
+        "favorites": "Favoriler",
+        "nearYou": "Sana yakın",
+        "myCountry": "Ülkem",
+        "myLanguage": "Dilim",
+        "gameType": "Oyun türü",
+        "allTypes": "Tüm türler",
+        "locationLabel": "Konum ve dil",
+        "location": "Konum",
+        "language": "Dil",
+        "languageFilter": "Dile göre filtrele",
+        "anyLanguage": "Tüm diller",
+        "region": "Bölge",
+        "regionFilter": "Bölgeye göre filtrele",
+        "anyRegion": "Tüm bölgeler",
+        "country": "Ülke",
+        "countryFilter": "Ülkeye göre filtrele",
+        "anyCountry": "Tüm ülkeler",
+        "countryNone": "Belirtilmemiş",
+        "availability": "Doluluk",
+        "hideEmpty": "Boş sunucuları gizle",
+        "hasRoom": "Boş yeri olanlar",
+        "minPlayers": "Min. oyuncu",
+        "minPlayersFilter": "Minimum çevrimiçi oyuncu",
+        "tags": "Etiketler",
+        "createServer": "Sunucu oluştur",
+        "getLauncher": "Başlatıcıyı indir"
+      },
+      "directoryLabel": "Sunucu dizini",
+      "empty": {
+        "eyebrow": "OPEN//77 dizini",
+        "title": "Çevrimiçi sunucu yok",
+        "action": "Sunucu oluştur",
+        "body": "Dizin şu anda boş. Yeni sunucular burada otomatik olarak görünecek."
+      },
+      "summary": {
+        "servers": {
+          "one": "{count} sunucu",
+          "other": "{count} sunucu"
+        },
+        "serversOf": {
+          "one": "{count} / {total} sunucu",
+          "other": "{count} / {total} sunucu"
+        },
+        "players": {
+          "one": "{count} çevrimiçi oyuncu",
+          "other": "{count} çevrimiçi oyuncu"
+        },
+        "line": "{servers}, {players}"
+      },
+      "removeFilter": "{label} filtresini kaldır",
+      "resetAll": "Tümünü sıfırla",
+      "featured": {
+        "label": "Öne çıkan topluluklar",
+        "showLess": "Daha az göster ↑",
+        "viewAll": "Tümünü gör ({count}) →",
+        "view": "Görüntüle: {name}"
+      },
+      "columns": {
+        "servers": "Sunucular <b>{count}</b>",
+        "serversOf": "Sunucular <b>{count}</b><i> / {total}</i>",
+        "favorites": "Favoriler <b>{count}</b>",
+        "favoritesOf": "Favoriler <b>{count}</b><i> / {total}</i>",
+        "players": "Oyuncular",
+        "region": "Bölge"
+      },
+      "noMatch": {
+        "eyebrow": "Eşleşme yok",
+        "title": "Eşleşen sunucu yok",
+        "action": "Tüm sunucuları göster",
+        "body": "Bir filtreyi kaldır ya da farklı bir arama dene."
+      },
+      "featuredFirst": "Öne çıkanlar önce",
+      "hints": "<kbd>↑</kbd> <kbd>↓</kbd> seç · <kbd>Enter</kbd> bağlan · <kbd>/</kbd> ara · Oynamak ve barındırmak için Open Alpha gerekir · <launcher>Başlatıcı mı lazım?</launcher>",
+      "row": {
+        "select": "Seç: {name}",
+        "addFavorite": "{name} sunucusunu favorilere ekle",
+        "removeFavorite": "{name} sunucusunu favorilerden çıkar"
+      }
+    },
+    "inspector": {
+      "close": "Sunucu ayrıntılarını kapat",
+      "playersOnline": "Çevrimiçi oyuncular",
+      "join": "Sunucuya katıl",
+      "saved": "Favorilere kaydedildi",
+      "facts": {
+        "country": "Ülke",
+        "language": "Dil",
+        "mode": "Oyun modu",
+        "location": "Konum",
+        "nearYou": "Sana yakın"
+      },
+      "withMods": "<strong>Modlu.</strong> Bu sunucu, oturumun için kendi içeriğini kurar. Katıldığında ve ayrıldığında bunu başlatıcı yönetir.",
+      "fullProfileLabel": "Tam profil: {name}",
+      "fullProfile": "Tam profil",
+      "fullProfileHint": "Oyuncular, adres ve teknik ayrıntılar →"
+    },
+    "detail": {
+      "loadError": "Bu sunucunun ayrıntıları yüklenemedi.",
+      "back": "Sunucu listesine dön",
+      "label": "Sunucu ayrıntıları",
+      "loaderLabel": "Sunucu",
+      "loadingTitle": "Sunucu yükleniyor",
+      "loadingBody": "Bu kayıt OPEN//77 ana sunucu dizininden okunuyor.",
+      "errorTitle": "Sunucu ayrıntıları kullanılamıyor",
+      "backToBrowser": "Listeye dön",
+      "missingEyebrow": "Sunucu çevrimdışı",
+      "missingTitle": "Şu anda dizinde değil",
+      "browseLive": "Canlı sunuculara göz at",
+      "missingBody": "Bu sunucu şu anda canlı dizinde değil. Çevrimdışı olmuş olabilir ya da bağlantı güncel değil. Sunucular burada yalnızca açıkken ve sinyal gönderirken görünür.",
+      "kicker": "// Sunucu",
+      "live": "Canlı",
+      "offline": "Çevrimdışı",
+      "region": "{region} bölgesi",
+      "stats": {
+        "players": "Oyuncular",
+        "status": "Durum",
+        "uptime": "Çalışma süresi",
+        "country": "Ülke",
+        "language": "Dil",
+        "version": "Sürüm"
+      },
+      "meter": {
+        "one": "{players} / {max} oyuncu",
+        "other": "{players} / {max} oyuncu"
+      },
+      "connect": {
+        "title": "Bağlan",
+        "address": "Adres",
+        "copy": "Adresi kopyala",
+        "note": "“Bağlan”, OPEN//77 başlatıcısını açar ve doğrudan bu dünyayı başlatır. Hiçbir şey olmazsa önce başlatıcıyı kur."
+      },
+      "info": {
+        "title": "Sunucu bilgileri",
+        "status": "Durum",
+        "uptime": "Çalışma süresi",
+        "players": "Oyuncular",
+        "version": "Sürüm",
+        "protocol": "Protokol",
+        "gameBuild": "Oyun sürümü",
+        "locale": "Yerel ayar",
+        "lastHeartbeat": "Son sinyal"
+      },
+      "roster": {
+        "title": "Şu an çevrimiçi",
+        "private": "Bu sunucu oyuncu listesini yayımlamıyor.",
+        "empty": "Şu anda kimse çevrimiçi değil.",
+        "sampled": "Oyuncu listesi ({stamp})",
+        "asOf": "{time} alındı",
+        "label": "Çevrimiçi oyuncular",
+        "more": {
+          "one": "+ gösterilmeyen {count} kişi daha",
+          "other": "+ gösterilmeyen {count} kişi daha"
+        },
+        "timePlayed": "Oynama süresi"
+      },
+      "relative": {
+        "seconds": {
+          "one": "{count} sn önce",
+          "other": "{count} sn önce"
+        },
+        "minutes": {
+          "one": "{count} dk önce",
+          "other": "{count} dk önce"
+        },
+        "hours": {
+          "one": "{count} sa önce",
+          "other": "{count} sa önce"
+        },
+        "days": {
+          "one": "{count} gün önce",
+          "other": "{count} gün önce"
+        }
+      },
+      "uptime": {
+        "justNow": "az önce",
+        "daysHours": "{days} g {hours} sa",
+        "hoursMinutes": "{hours} sa {minutes} dk",
+        "minutes": "{minutes} dk"
+      }
+    },
+    "actions": {
+      "connect": "Bağlan",
+      "favorite": "Favori",
+      "removeFavorite": "Favorilerden çıkar"
+    },
+    "activity": {
+      "peakTitle": "Son 48 saatte kaydedilen en yüksek oyuncu sayısı",
+      "peak": "Zirve <b>{count}</b> <span>· 48 sa</span>",
+      "peakLoading": "Zirve…",
+      "peakNone": "Zirve —",
+      "title": "Oyuncu etkinliği",
+      "subtitle": "Zaman içinde bağlı oyuncular",
+      "periods": "Etkinlik dönemi",
+      "period": "{hours} sa",
+      "recordedPeak": "Kaydedilen zirve",
+      "recordedAverage": "Kaydedilen ortalama",
+      "loading": "Oyuncu etkinliği yükleniyor…",
+      "previewOnly": "Etkinlik verisi, herkese açık canlı sunucularda görünür.",
+      "firstPending": "İlk etkinlik ölçümü henüz kaydedilmedi.",
+      "stale": "Alınan son etkinlik gösteriliyor. {error}",
+      "errors": {
+        "busy": "Etkinlik servisi meşgul. Birazdan yeniden denenecek.",
+        "missing": "Henüz herkese açık bir etkinlik geçmişi yok.",
+        "unavailable": "Etkinlik verisi geçici olarak kullanılamıyor.",
+        "invalid": "Geçersiz etkinlik yanıtı"
+      },
+      "chart": {
+        "label": "Oyuncu etkinliği grafiği. Kaydedilen ölçümleri incelemek için sol ve sağ ok tuşlarını kullan.",
+        "summary": {
+          "one": "Oyuncu etkinliği ({coverage}). Zirve: {count} oyuncu.",
+          "other": "Oyuncu etkinliği ({coverage}). Zirve: {count} oyuncu."
+        },
+        "firstReading": "İlk ölçüm",
+        "recorded": "{hours} sa {minutes} dk kaydedildi",
+        "lastHours": {
+          "one": "Son {count} saat",
+          "other": "Son {count} saat"
+        },
+        "players": {
+          "one": "{count} oyuncu",
+          "other": "{count} oyuncu"
+        },
+        "legendPlayers": "Oyuncular · 10 dakikada bir",
+        "localTime": "Yerel saat",
+        "caption": "Çizgi, kaydedilen ölçümleri birbirine bağlar. Aradaki değerler ölçülmemiştir."
+      }
+    },
+    "demo": {
+      "view": "Demo görünümü",
+      "scopePage": "// bu sunucu sayfası demo veri kullanıyor",
+      "scopeListings": "// sunucu listesi şu anda demo veri kullanıyor",
+      "hide": "Gizle",
+      "more": "Bu ne anlama geliyor?",
+      "note": "Bu görünüm örnek demo verileri kullanıyor. Oyuncu sayıları, ping değerleri ve topluluklar gerçek değil. Gerçek kayıtlar için <live>canlı dizine</live> bak. Open Alpha herkese açık; bir dünyaya katılmak için OPEN//77 hesabınla giriş yap."
+    }
+  }
+}

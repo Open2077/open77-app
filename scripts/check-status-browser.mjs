@@ -17,7 +17,7 @@ for (const candidate of ["C:/Program Files/Google/Chrome/Application/chrome.exe"
 }
 if (!chrome) throw new Error("Chrome/Edge not found");
 const profile = await mkdtemp(join(tmpdir(), "open77-status-browser-"));
-const browser = spawn(chrome, ["--headless=new", `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, "--no-first-run", "--no-default-browser-check", "about:blank"], { windowsHide: true, stdio: "ignore" });
+const browser = spawn(chrome, ["--headless=new", `--lang=en-US`, `--accept-lang=en-US,en`, `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, "--no-first-run", "--no-default-browser-check", "about:blank"], { windowsHide: true, stdio: "ignore" });
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let socket;
 let id = 0;
@@ -84,8 +84,10 @@ try {
   const now = Date.now();
   for (let minute = 120; minute >= 0; minute--) for (const service of SERVICES) record(db, service.id, { state: "operational", latencyMs: 180 + minute % 10 * 18, detail: "Check passed" }, now - minute * MINUTE);
   feed = snapshot(db, { now });
+  // Rendered text only: the page's dictionary also travels in the RSC payload
+  // at the end of <body>, so body text holds every label, shown or not.
   await navigate();
-  await waitFor("document.body.textContent.includes('All systems operational')");
+  await waitFor("document.querySelector('main').textContent.includes('All systems operational')");
   assert.equal(await evaluate("document.querySelectorAll('main article').length"), 7);
   assert.equal(await evaluate("document.querySelectorAll('[aria-label*=\"90-day availability\"] button').length"), 630);
   await evaluate("[...document.querySelectorAll('main button')].find(b => b.textContent === '7 days').click()");
@@ -102,16 +104,16 @@ try {
 
   feed = { ...feed, generatedAt: new Date(now - 300000).toISOString() };
   await clickRefresh();
-  await waitFor("document.body.textContent.includes('Monitoring data is out of date.')");
-  assert.ok(await evaluate("document.body.textContent.includes('Awaiting fresh monitoring data')"));
+  await waitFor("document.querySelector('main').textContent.includes('Monitoring data is out of date.')");
+  assert.ok(await evaluate("document.querySelector('main').textContent.includes('Awaiting fresh monitoring data')"));
 
   apiCode = 503;
   await clickRefresh();
   await waitFor("!document.querySelector('main button').disabled");
   assert.equal(await evaluate("document.querySelectorAll('main article').length"), 7, "Last known history is preserved");
   await navigate();
-  await waitFor("document.body.textContent.includes('The monitoring feed could not be refreshed.')");
-  assert.ok(!await evaluate("document.body.textContent.includes('All systems operational')"));
+  await waitFor("document.querySelector('main').textContent.includes('The monitoring feed could not be refreshed.')");
+  assert.ok(!await evaluate("document.querySelector('main').textContent.includes('All systems operational')"));
 
   apiCode = 200;
   feed = snapshot(db, { now: Date.now() });
@@ -119,8 +121,8 @@ try {
   feed.incidents = [{ id: "test-only", service: "master", startedAt: new Date(now - MINUTE).toISOString(), detectedAt: new Date(now).toISOString(), resolvedAt: null, detail: "HTTP 503" }];
   feed.maintenance = [{ id: "test-only", title: "Test maintenance", message: "Isolated browser fixture, not a real incident.", startsAt: new Date(now + MINUTE).toISOString(), endsAt: new Date(now + 3600000).toISOString(), services: ["master"] }];
   await clickRefresh();
-  await waitFor("document.body.textContent.includes('A service disruption was detected')");
-  assert.ok(await evaluate("document.body.textContent.includes('Recovery not confirmed') && document.body.textContent.includes('Test maintenance')"));
+  await waitFor("document.querySelector('main').textContent.includes('A service disruption was detected')");
+  assert.ok(await evaluate("document.querySelector('main').textContent.includes('Recovery not confirmed') && document.querySelector('main').textContent.includes('Test maintenance')"));
   db.close();
   assert.deepEqual(errors, [], "Browser errors");
   console.log("Status browser acceptance passed: desktop/mobile, periods, day details, unknown/stale/error, retained history, incidents, maintenance and recovery from failed fetch.");

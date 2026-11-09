@@ -32,6 +32,9 @@ export const NCWE_TRAILER = {
   poster: "/assets/ncwe/trailer-poster.jpg",
 } as const;
 
-export function megabytes(bytes: number): string {
-  return `${Math.round(bytes / (1024 * 1024))} MB`;
+/** Whole megabytes; with a non-English language tag, the number and unit as that language writes them. */
+export function megabytes(bytes: number, languageTag?: string): string {
+  const value = Math.round(bytes / (1024 * 1024));
+  if (!languageTag || languageTag === "en") return `${value} MB`;
+  return new Intl.NumberFormat(languageTag, { style: "unit", unit: "megabyte", unitDisplay: "short" }).format(value);
 }

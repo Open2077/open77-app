@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import { FlaggedCountry } from "@/components/servers/country-flag";
 import { ServerActions } from "@/components/servers/server-actions";
+import { useServerFormat, type ServerFormat } from "@/components/servers/server-format";
 import { ServerText } from "@/components/servers/server-text";
 import { ServerBadges } from "@/components/servers/server-badges";
 import { ServerCommunityLinks } from "@/components/servers/server-community-links";
@@ -20,12 +21,12 @@ import { Icon } from "@/components/ui/icon";
 import { arrowLeft01, plug01 } from "@/components/ui/icons";
 import { Eyebrow } from "@/components/ui/typography";
 import { MasterApiError } from "@/lib/account/api";
+import { fill } from "@/i18n/format";
 import { formatLocaleTag } from "@/lib/locale";
 import {
   catalogToGameServer,
   fetchServer,
   formatProtocol,
-  formatUptime,
   isServerLive,
   normaliseRoster,
   occupancyPercent,
@@ -66,6 +67,13 @@ export function ServerDetail({
     initialServer ? { status: "ok", server: initialServer, now: initialNow ?? Date.now() } : { status: "loading" },
   );
   const [reload, setReload] = useState(0);
+  const f = useServerFormat();
+  const m = f.m.detail;
+  // Read through a ref: the fallback wording must not re-run the fetch.
+  const loadError = useRef(m.loadError);
+  useEffect(() => {
+    loadError.current = m.loadError;
+  });
 
   // Reset to the loading state and re-run the effect. Kept out of the effect
   // body so we never call setState synchronously during synchronization.
@@ -85,7 +93,7 @@ export function ServerDetail({
         if (cancelled) return;
         setState({
           status: "error",
-          message: error instanceof MasterApiError ? error.message : "This server's details could not be loaded.",
+          message: error instanceof MasterApiError ? error.message : loadError.current,
         });
       });
     return () => {
@@ -96,31 +104,31 @@ export function ServerDetail({
   const back = onBack ? (
     <button type="button" className={styles.back} onClick={onBack} data-profile-back>
       <Icon glyph={arrowLeft01} />
-      Back to server list
+      {m.back}
     </button>
   ) : null;
 
   if (state.status !== "ok") {
     return (
-      <section className={styles.stateView} aria-label="Server details" data-detail-state={state.status}>
+      <section className={styles.stateView} aria-label={m.label} data-detail-state={state.status}>
         {back}
         {state.status === "loading" ? (
           <div role="status" aria-busy="true" className={styles.stateBody}>
-            <Loader label="SERVER" />
-            <h1 className={styles.stateTitle}>Loading server</h1>
-            <p className={styles.stateText}>Reading this listing from the OPEN//77 master directory.</p>
+            <Loader label={m.loaderLabel} />
+            <h1 className={styles.stateTitle}>{m.loadingTitle}</h1>
+            <p className={styles.stateText}>{m.loadingBody}</p>
           </div>
         ) : state.status === "error" ? (
           <EmptyState
-            eyebrow="Directory unreachable"
-            title="Server details unavailable"
+            eyebrow={f.m.shared.directoryUnreachable}
+            title={m.errorTitle}
             action={
               <div className={styles.stateActions}>
                 <Button lines="none" size="sm" border onClick={retry} data-retry>
-                  Try again
+                  {f.m.shared.tryAgain}
                 </Button>
                 <Button lines="none" size="sm" color="neutral" href="/servers">
-                  Back to browser
+                  {m.backToBrowser}
                 </Button>
               </div>
             }
@@ -129,34 +137,36 @@ export function ServerDetail({
           </EmptyState>
         ) : (
           <EmptyState
-            eyebrow="Server offline"
-            title="Not in the directory right now"
+            eyebrow={m.missingEyebrow}
+            title={m.missingTitle}
             action={
               <div className={styles.stateActions}>
                 <Button lines="none" size="sm" href="/servers">
-                  Browse live servers
+                  {m.browseLive}
                 </Button>
                 <Button lines="none" size="sm" border onClick={retry}>
-                  Try again
+                  {f.m.shared.tryAgain}
                 </Button>
               </div>
             }
           >
-            This server is not in the live directory right now. It may have gone offline, or the link is out of date.
-            Servers appear here only while they are up and beating.
+            {m.missingBody}
           </EmptyState>
         )}
       </section>
     );
   }
 
-  return <ServerProfile server={state.server} now={state.now} back={back} />;
+  return <ServerProfile server={state.server} now={state.now} back={back} f={f} />;
 }
 
-function ServerProfile({ server, now, back }: { server: CatalogServer; now: number; back: ReactNode }) {
+function ServerProfile({ server, now, back, f }: { server: CatalogServer; now: number; back: ReactNode; f: ServerFormat }) {
+  const { m: messages } = f;
+  const m = messages.detail;
   const view = catalogToGameServer(server);
   const live = isServerLive(server, now);
-  const uptime = formatUptime(server.startedAtUtc, now);
+  const uptime = f.uptime(server.startedAtUtc, now);
+  const status = live ? m.live : m.offline;
   const plainName = plainLauncherText(server.name);
   const initial = plainName.trim().charAt(0).toUpperCase() || "?";
   const pop = popClass(view);
@@ -179,10 +189,10 @@ function ServerProfile({ server, now, back }: { server: CatalogServer; now: numb
             />
             <div className={styles.titleBlock}>
               <p className={styles.kicker}>
-                <Eyebrow as="span">{"// Server"}</Eyebrow>
+                <Eyebrow as="span">{m.kicker}</Eyebrow>
                 <span className={live ? styles.live : styles.offline}>
                   <span className={styles.pulse} aria-hidden="true" />
-                  {live ? "Live" : "Offline"}
+                  {status}
                 </span>
               </p>
               <h1 className={plainName.length > 18 ? `${styles.name} ${styles.long}` : styles.name} data-profile-name>
@@ -190,8 +200,8 @@ function ServerProfile({ server, now, back }: { server: CatalogServer; now: numb
               </h1>
               <p className={styles.sub}>
                 <Tag variant="solid">{view.mode}</Tag>
-                <FlaggedCountry code={view.country} />
-                <span>{view.region} region</span>
+                <FlaggedCountry code={view.country} languageTag={f.tag} unspecified={messages.shared.regionNotSpecified} />
+                <span>{fill(m.region, { region: view.region })}</span>
                 <span>{view.lang}</span>
               </p>
               <ServerBadges server={view} />
@@ -203,32 +213,36 @@ function ServerProfile({ server, now, back }: { server: CatalogServer; now: numb
 
       <dl className={styles.stats}>
         <div className={`${styles.stat} ${styles.players} ${styles[pop] ?? ""}`}>
-          <dt>Players</dt>
+          <dt>{m.stats.players}</dt>
           <dd>
             <b>{view.players}</b> / {view.max}
           </dd>
-          <Meter value={occupancyPercent(view)} label={`${view.players} of ${view.max} players`} className={styles.meter} />
+          <Meter
+            value={occupancyPercent(view)}
+            label={f.count(m.meter, view.max, { players: view.players, max: view.max })}
+            className={styles.meter}
+          />
         </div>
         <div className={styles.stat}>
-          <dt>Status</dt>
-          <dd>{live ? "Live" : "Offline"}</dd>
+          <dt>{m.stats.status}</dt>
+          <dd>{status}</dd>
         </div>
         <div className={styles.stat}>
-          <dt>Uptime</dt>
+          <dt>{m.stats.uptime}</dt>
           <dd>{uptime ?? "—"}</dd>
         </div>
         <div className={styles.stat}>
-          <dt>Country</dt>
+          <dt>{m.stats.country}</dt>
           <dd>
-            <FlaggedCountry code={view.country} />
+            <FlaggedCountry code={view.country} languageTag={f.tag} unspecified={messages.shared.regionNotSpecified} />
           </dd>
         </div>
         <div className={styles.stat}>
-          <dt>Language</dt>
+          <dt>{m.stats.language}</dt>
           <dd>{view.lang}</dd>
         </div>
         <div className={styles.stat}>
-          <dt>Version</dt>
+          <dt>{m.stats.version}</dt>
           <dd>{server.serverVersion || "—"}</dd>
         </div>
       </dl>
@@ -236,8 +250,8 @@ function ServerProfile({ server, now, back }: { server: CatalogServer; now: numb
       <div className={styles.body}>
         <div className={styles.main}>
           <section className={styles.section}>
-            <h2 className={styles.h2}>About this server</h2>
-            <p className={styles.desc}><ServerText text={view.desc || "This server has not published a description yet."} /></p>
+            <h2 className={styles.h2}>{messages.shared.aboutServer}</h2>
+            <p className={styles.desc}><ServerText text={view.desc || messages.shared.noDescription} /></p>
             <ServerCommunityLinks server={view} />
             {view.tags.length > 0 ? (
               <div className={styles.tags}>
@@ -253,37 +267,36 @@ function ServerProfile({ server, now, back }: { server: CatalogServer; now: numb
           <section className={styles.section}><ServerPlayerActivity id={server.id} /></section>
 
           <section className={`${styles.section} ${styles.connect}`}>
-            <h2 className={styles.h2}>Connect</h2>
+            <h2 className={styles.h2}>{m.connect.title}</h2>
             <div className={styles.connectBox}>
               <div className={styles.endpoint}>
-                <span className={styles.label}>Address</span>
+                <span className={styles.label}>{m.connect.address}</span>
                 <code>{server.connectEndpoint || "—"}</code>
               </div>
-              {server.connectEndpoint ? <CopyButton text={server.connectEndpoint} label="Copy address" /> : null}
+              {server.connectEndpoint ? <CopyButton text={server.connectEndpoint} label={m.connect.copy} /> : null}
             </div>
             <p className={styles.note}>
               <Icon glyph={plug01} />
-              Connect opens the OPEN//77 launcher and boots straight into this world. Install the launcher first if
-              nothing happens.
+              {m.connect.note}
             </p>
           </section>
 
         </div>
 
         <aside className={styles.side}>
-          <PlayersOnline server={server} now={now} />
+          <PlayersOnline server={server} now={now} f={f} />
           <section className={styles.panel}>
-            <h2 className={styles.h2}>Server info</h2>
+            <h2 className={styles.h2}>{m.info.title}</h2>
             <DefinitionList
               items={[
-                { label: "Status", value: live ? "Live" : "Offline" },
-                { label: "Uptime", value: uptime ?? "—" },
-                { label: "Players", value: `${view.players} / ${view.max}` },
-                { label: "Version", value: server.serverVersion || "—" },
-                { label: "Protocol", value: formatProtocol(server.protocol) },
-                { label: "Game build", value: server.expectedGameBuild ? String(server.expectedGameBuild) : "—" },
-                { label: "Locale", value: formatLocaleTag(server.locale) },
-                { label: "Last heartbeat", value: formatRelative(server.lastHeartbeatAtUtc, now) },
+                { label: m.info.status, value: status },
+                { label: m.info.uptime, value: uptime ?? "—" },
+                { label: m.info.players, value: `${view.players} / ${view.max}` },
+                { label: m.info.version, value: server.serverVersion || "—" },
+                { label: m.info.protocol, value: formatProtocol(server.protocol) },
+                { label: m.info.gameBuild, value: server.expectedGameBuild ? String(server.expectedGameBuild) : "—" },
+                { label: m.info.locale, value: formatLocaleTag(server.locale) },
+                { label: m.info.lastHeartbeat, value: f.relative(server.lastHeartbeatAtUtc, now) },
               ]}
             />
           </section>
@@ -306,34 +319,36 @@ const ROSTER_VISIBLE_ROWS = 10;
  * count always holds (it comes from the heartbeat); the roster is optional,
  * and its absence is an answer of its own rather than an empty box.
  */
-function PlayersOnline({ server, now }: { server: CatalogServer; now: number }) {
+function PlayersOnline({ server, now, f }: { server: CatalogServer; now: number; f: ServerFormat }) {
   const roster = normaliseRoster(server.players);
+  const m = f.m.detail.roster;
   return (
     <section className={styles.panel}>
       <h2 className={styles.h2}>
-        Online now
+        {m.title}
         <span className={styles.h2Count}>
           {server.connectedPlayers} / {server.maximumPlayers}
         </span>
       </h2>
       {roster ? (
-        <PlayerRoster roster={roster} now={now} />
+        <PlayerRoster roster={roster} now={now} f={f} />
       ) : (
-        <p className={styles.muted}>This server does not publish its player list.</p>
+        <p className={styles.muted}>{m.private}</p>
       )}
     </section>
   );
 }
 
-function PlayerRoster({ roster, now }: { roster: ServerRoster; now: number }) {
-  const stamp = roster.sampledAtUtc ? `as of ${formatRelative(roster.sampledAtUtc, now)}` : null;
+function PlayerRoster({ roster, now, f }: { roster: ServerRoster; now: number; f: ServerFormat }) {
+  const m = f.m.detail.roster;
+  const stamp = roster.sampledAtUtc ? fill(m.asOf, { time: f.relative(roster.sampledAtUtc, now) }) : null;
   const hidden = roster.total - roster.entries.length;
 
   if (roster.entries.length === 0) {
     return (
       <>
-        <p className={styles.muted}>Nobody is online right now.</p>
-        {stamp ? <p className={styles.rosterMore}>Roster {stamp}</p> : null}
+        <p className={styles.muted}>{m.empty}</p>
+        {stamp ? <p className={styles.rosterMore}>{fill(m.sampled, { stamp })}</p> : null}
       </>
     );
   }
@@ -348,7 +363,7 @@ function PlayerRoster({ roster, now }: { roster: ServerRoster; now: number }) {
         data-roster
         tabIndex={scrolls ? 0 : undefined}
         role={scrolls ? "group" : undefined}
-        aria-label={scrolls ? "Players online" : undefined}
+        aria-label={scrolls ? m.label : undefined}
       >
         <ul>
           {roster.entries.map((entry, index) => (
@@ -356,28 +371,14 @@ function PlayerRoster({ roster, now }: { roster: ServerRoster; now: number }) {
             <li key={`${index}-${entry.name}`}>
               <span className={styles.rosterDot} aria-hidden="true" />
               <span className={styles.rosterName}>{entry.name}</span>
-              {entry.joinedAtUtc ? <span className={styles.rosterSince}>{formatUptime(entry.joinedAtUtc, now) ?? "—"}</span> : null}
+              {entry.joinedAtUtc ? <span className={styles.rosterSince}>{f.uptime(entry.joinedAtUtc, now) ?? "—"}</span> : null}
             </li>
           ))}
         </ul>
       </div>
       <p className={styles.rosterMore}>
-        {hidden > 0 ? `+ ${hidden} more not shown · ` : ""}
-        Time played{stamp ? ` · ${stamp}` : ""}
+        {[hidden > 0 ? f.count(m.more, hidden) : null, m.timePlayed, stamp].filter(Boolean).join(" · ")}
       </p>
     </>
   );
-}
-
-/** "12s ago", "4m ago", "2h ago": for the last-heartbeat readout. */
-function formatRelative(iso: string, now: number): string {
-  const then = new Date(iso).getTime();
-  if (Number.isNaN(then)) return "—";
-  const s = Math.max(0, Math.floor((now - then) / 1000));
-  if (s < 60) return `${s}s ago`;
-  const m = Math.floor(s / 60);
-  if (m < 60) return `${m}m ago`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `${h}h ago`;
-  return `${Math.floor(h / 24)}d ago`;
 }

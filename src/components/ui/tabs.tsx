@@ -1,8 +1,9 @@
 "use client";
 
 import NextLink from "next/link";
-import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+
+import { useLocalizeHref, useRoutePath } from "@/i18n/client";
 
 import { cx } from "./cx";
 
@@ -33,7 +34,9 @@ export function Tabs({
   exact?: boolean;
   [data: `data-${string}`]: string | boolean | undefined;
 }) {
-  const pathname = usePathname();
+  // Compared without the language prefix; links follow the page language when they can.
+  const pathname = useRoutePath();
+  const localize = useLocalizeHref();
   return (
     <nav className={cx(styles.tabs, className)} aria-label={label} {...data}>
       <ul className={styles.list}>
@@ -42,7 +45,7 @@ export function Tabs({
             const current = exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <li key={item.href}>
-                <NextLink href={item.href} className={styles.tab} aria-current={current ? "page" : undefined}>
+                <NextLink href={localize(item.href)} className={styles.tab} aria-current={current ? "page" : undefined}>
                   {item.label}
                   {item.count !== undefined ? <span className={styles.count}>{item.count}</span> : null}
                 </NextLink>

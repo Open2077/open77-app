@@ -1,7 +1,6 @@
 "use client";
 
 import NextLink from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 import { Glitch } from "@/components/ui/glitch";
@@ -17,6 +16,8 @@ import {
   userAdd01,
   star,
 } from "@/components/ui/icons";
+
+import { useLocalizeHref, useRoutePath } from "@/i18n/client";
 
 import styles from "./account-nav.module.css";
 
@@ -70,7 +71,9 @@ const NUMBERED = GROUPS.map((group, groupIndex) => ({
 
 /** The workspace's section navigation: grouped, numbered, the current page in the tone. */
 export function AccountNav() {
-  const pathname = usePathname();
+  // Compared without the language prefix: /fr/account is the overview too.
+  const pathname = useRoutePath();
+  const localize = useLocalizeHref();
   const ref = useRef<HTMLElement>(null);
   // As a scrolling strip (narrow screens), bring the current section into view.
   useEffect(() => {
@@ -91,7 +94,7 @@ export function AccountNav() {
               const current = item.match ? item.match(pathname) : pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <li key={item.href}>
-                  <NextLink href={item.href} className={styles.link} aria-current={current ? "page" : undefined}>
+                  <NextLink href={localize(item.href)} className={styles.link} aria-current={current ? "page" : undefined}>
                     <span className={styles.index}>{String(item.number).padStart(2, "0")}</span>
                     <Icon glyph={item.glyph} className={styles.glyph} />
                     <Glitch className={styles.label}>{item.label}</Glitch>

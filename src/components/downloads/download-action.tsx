@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 
 import { cx } from "@/components/ui/cx";
 import { download02, tick02 } from "@/components/ui/icons";
+import { useOptionalMessages } from "@/i18n/client";
 import { CtaLink } from "./cta-link";
 
 import styles from "./download-action.module.css";
@@ -19,7 +20,7 @@ export function DownloadAction({
   lines = true,
   size = "lg",
   fullWidth = false,
-  note = "Straight from the official OPEN//77 CDN, the only place we publish it.",
+  note,
   className,
 }: {
   href: string;
@@ -35,6 +36,7 @@ export function DownloadAction({
   note?: string;
   className?: string;
 }) {
+  const common = useOptionalMessages("common");
   const feedbackId = useId();
   const [requested, setRequested] = useState(false);
   const [previousHref, setPreviousHref] = useState(href);
@@ -60,7 +62,9 @@ export function DownloadAction({
         {label}
       </CtaLink>
       <p id={feedbackId} className={cx(styles.feedback, requested && styles.requested)} role="status">
-        {requested ? "Download requested. Check your browser’s downloads, or click again to retry." : note}
+        {requested
+          ? (common?.downloadRequested ?? "Download requested. Check your browser’s downloads, or click again to retry.")
+          : (note ?? common?.downloadNote ?? "Straight from the official OPEN//77 CDN, the only place we publish it.")}
       </p>
     </div>
   );

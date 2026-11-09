@@ -10,6 +10,9 @@ import * as master from "@/lib/account/api";
 import { MasterApiError } from "@/lib/account/api";
 import { AuthCard, CardText } from "./auth-card";
 import { AuthLoading } from "./auth-scene";
+import { useLocalizeHref } from "@/i18n/client";
+import { rich } from "@/i18n/format";
+import { masterMessage, useAuthText } from "./auth-text";
 
 type Phase = { kind: "verifying" } | { kind: "verified" } | { kind: "bad-link" } | { kind: "failed"; message: string };
 
@@ -27,6 +30,9 @@ export function EmailVerifier() {
 
   const [phase, setPhase] = useState<Phase>(email && token ? { kind: "verifying" } : { kind: "bad-link" });
   const [resend, setResend] = useState<Resend>("idle");
+  const { m: auth, locale } = useAuthText();
+  const m = auth.verification;
+  const localize = useLocalizeHref();
 
   // React 18+ mounts effects twice in development; the token is single-use,
   // so the second pass would burn it and report a false failure.
@@ -41,10 +47,10 @@ export function EmailVerifier() {
       .catch((err: unknown) => {
         setPhase({
           kind: "failed",
-          message: err instanceof MasterApiError && err.code !== "unknown" ? err.message : "This verification link is invalid or has expired.",
+          message: err instanceof MasterApiError && err.code !== "unknown" ? masterMessage(err, auth, locale) : m.invalidLink,
         });
       });
-  }, [email, token]);
+  }, [email, token, auth, locale, m.invalidLink]);
 
   async function onResend() {
     setResend("sending");
@@ -56,23 +62,23 @@ export function EmailVerifier() {
     }
   }
 
-  if (phase.kind === "verifying") return <AuthLoading>Verifying your e-mail</AuthLoading>;
+  if (phase.kind === "verifying") return <AuthLoading>{auth.verifying}</AuthLoading>;
 
   if (phase.kind === "verified") {
     return (
       <AuthCard
         glyph={checkmarkBadge01}
         tone="blue"
-        eyebrow="E-mail verification"
-        title="Address confirmed"
+        eyebrow={m.eyebrow}
+        title={m.confirmedTitle}
         actions={
           <Button icon={arrowRight01} href="/account">
-            Sign in
+            {auth.panel.signIn}
           </Button>
         }
       >
-        <Notice kind="success" title="E-mail verified.">
-          Your address is confirmed. You can now sign in and create server license keys.
+        <Notice kind="success" title={m.confirmedNotice}>
+          {m.confirmedBody}
         </Notice>
       </AuthCard>
     );
@@ -83,17 +89,11 @@ export function EmailVerifier() {
       <AuthCard
         glyph={mail01}
         tone="red"
-        eyebrow="E-mail verification"
-        title="Check your link"
-        footer={
-          <>
-            You can also verify from your <a href="/account">account page</a> after signing in.
-          </>
-        }
+        eyebrow={m.eyebrow}
+        title={m.badLinkTitle}
+        footer={<>{rich(m.badLinkFooter, { account: (chunk) => <a href={localize("/account")}>{chunk}</a> })}</>}
       >
-        <Notice kind="danger">
-          This verification link is incomplete. Open the link from your e-mail again, or copy it in full into the address bar.
-        </Notice>
+        <Notice kind="danger">{m.badLinkBody}</Notice>
       </AuthCard>
     );
   }
@@ -102,16 +102,16 @@ export function EmailVerifier() {
     <AuthCard
       glyph={alert02}
       tone="red"
-      eyebrow="E-mail verification"
-      title="Verification failed"
+      eyebrow={m.eyebrow}
+      title={m.failedTitle}
       actions={
         resend === "sent" ? null : (
           <>
-            <Button key={resend === "sending" ? "Sending…" : "Resend verification e-mail"} icon={sent} busy={resend === "sending"} onClick={onResend}>
-              {resend === "sending" ? "Sending…" : "Resend verification e-mail"}
+            <Button key={resend === "sending" ? auth.sending : m.resend} icon={sent} busy={resend === "sending"} onClick={onResend}>
+              {resend === "sending" ? auth.sending : m.resend}
             </Button>
             <Button lines="none" border color="neutral" size="sm" icon={arrowLeft01} iconPosition="left" href="/account">
-              Back to sign-in
+              {auth.back}
             </Button>
           </>
         )
@@ -119,11 +119,11 @@ export function EmailVerifier() {
     >
       <Notice kind="danger">{phase.message}</Notice>
       {resend === "sent" ? (
-        <Notice kind="success" title="A fresh verification e-mail is on its way.">
-          It goes to <strong>{email}</strong>. The newest link replaces this one.
+        <Notice kind="success" title={m.resentTitle}>
+          {rich(m.resentBody, { strong: (chunk) => <strong>{chunk}</strong> }, { email })}
         </Notice>
       ) : null}
-      {resend === "failed" ? <CardText>The e-mail could not be requested. Wait a minute and try again.</CardText> : null}
+      {resend === "failed" ? <CardText>{m.resendFailed}</CardText> : null}
     </AuthCard>
   );
 }

@@ -7,6 +7,7 @@ import { cx } from "@/components/ui/cx";
 import { GlitchFrame } from "@/components/ui/glitch-frame";
 import { Page } from "@/components/ui/page";
 import { Display, Eyebrow, Lead } from "@/components/ui/typography";
+import { useOptionalMessages } from "@/i18n/client";
 
 import styles from "./account-frame.module.css";
 
@@ -98,6 +99,7 @@ export function AccountFrame({
   width?: "default" | "wide";
 }) {
   const art: SceneArt = SCENES[scene];
+  const watermark = useOptionalMessages("auth")?.watermarks[scene] ?? art.watermark;
   const guest = mode === "guest";
   // The guest title shrinks with its column so its longest word always fits ("notifications").
   const longest = Math.max(...title.flatMap((line) => line.split(/\s+/)).map((word) => word.length));
@@ -120,7 +122,7 @@ export function AccountFrame({
               className={styles.artImage}
               style={art.position ? { objectPosition: art.position } : undefined}
             />
-            <div className={styles.watermark}>{art.watermark}</div>
+            <div className={styles.watermark}>{watermark}</div>
             {guest
               ? art.characters.map((character) => (
                   <div

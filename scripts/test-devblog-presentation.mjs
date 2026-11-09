@@ -42,7 +42,7 @@ test('deep links validate input and cap search length',()=>{
 test('articles stay editorial and do not inherit decorative imagery',async()=>{
   assert.ok(BLOG_TOPICS.every(topic=>!('image' in topic)));
   const card=await fs.readFile('src/components/devblog/blog-card.tsx','utf8');
-  const article=await fs.readFile('src/app/devblog/[slug]/page.tsx','utf8');
+  const article=await fs.readFile('src/app/(en)/devblog/[slug]/page.tsx','utf8');
   assert.doesNotMatch(card, /<Image|blog-card-art/);
   assert.doesNotMatch(article, /<Image|postArtwork/);
   await fs.access('public/assets/artwork/devblog-nightdrive-v1.webp');

@@ -4,10 +4,11 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLenis } from "lenis/react";
-import { Fragment, useRef, useState, type DependencyList, type RefObject } from "react";
+import { Fragment, useEffect, useRef, useState, type DependencyList, type RefObject } from "react";
 
 import { scrollToScene } from "./horizontal";
 import { Marquee } from "@/components/ui/marquee";
+import { useMessages } from "@/i18n/client";
 
 import styles from "./section.module.css";
 
@@ -43,17 +44,46 @@ function useScrubTimeline(
 const ENTER = [100, -100, 100];
 const LEAVE = [-100, 100, -100];
 
+/**
+ * A translated title can hold a word wider than its column: "SERVIDORES" or
+ * "KURUCULARI" in the narrow middle one. Such a title shrinks just enough for
+ * its widest word to fit (`--fit` scales the font size); a title that fits, as
+ * every English one does, is never resized.
+ */
+function useFitTitles(ref: RefObject<HTMLElement | null>, words: string) {
+  useEffect(() => {
+    const section = ref.current;
+    if (!section) return;
+    /** 1 when every word fits, else how much the widest one must shrink. */
+    const fitRatio = (title: HTMLElement) =>
+      [...title.querySelectorAll("span")].reduce((ratio, word) => (word.scrollWidth > word.clientWidth + 1 ? Math.min(ratio, word.clientWidth / word.scrollWidth) : ratio), 1);
+    const fit = () => {
+      for (const title of section.querySelectorAll<HTMLElement>("[data-title]")) {
+        title.style.removeProperty("--fit");
+        // Hidden below the desktop breakpoint: nothing to measure.
+        if (!title.clientWidth) continue;
+        let scale = fitRatio(title);
+        // The measured ratio is close; settle the rounding in a few small steps.
+        for (let step = 0; scale < 1 && step < 8; step += 1) {
+          scale = Math.floor(scale * 100 - step) / 100;
+          title.style.setProperty("--fit", String(scale));
+          if (fitRatio(title) === 1) break;
+        }
+      }
+    };
+    fit();
+    void document.fonts.ready.then(fit);
+    const observer = new ResizeObserver(fit);
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [ref, words]);
+}
+
+/** The words come from the dictionary (`home.audiences`); translators set the line splits. */
 const AUDIENCES = [
-  { id: "players", label: "For players", selection: "yellow-reverse", title: ["For", "Players"], marquee: "Players", key: "players" },
-  {
-    id: "creators",
-    label: "For server creators",
-    selection: "blue-reverse",
-    title: ["For", "Server", "Creators"],
-    marquee: "Server Creators",
-    key: "creators",
-  },
-  { id: "developers", label: "For developers", selection: "red-reverse", title: ["For", "Devs"], marquee: "Devs", key: "devs" },
+  { id: "players", selection: "yellow-reverse", key: "players" },
+  { id: "creators", selection: "blue-reverse", key: "creators" },
+  { id: "developers", selection: "red-reverse", key: "devs" },
 ] as const;
 
 /**
@@ -66,6 +96,8 @@ export function Section() {
   const triggerRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
   const [active, setActive] = useState(false);
+  const audiences = useMessages("home").audiences;
+  useFitTitles(sectionRef, JSON.stringify(audiences));
 
   useGSAP(
     () => {
@@ -108,12 +140,12 @@ export function Section() {
   return (
     <>
       <div ref={sectionRef} className={styles.section} inert={!active}>
-        {AUDIENCES.map((audience, index) => (
+        {AUDIENCES.map((entry) => ({ ...entry, ...audiences[entry.id] })).map((audience, index) => (
           <div key={audience.id} className={styles.column} data-selection={audience.selection}>
             <div className={styles.item} data-item={index + 1}>
               <h2 className={styles.title} data-title={audience.key}>
                 {audience.title.map((word, wordIndex) => (
-                  <Fragment key={word}>
+                  <Fragment key={`${word}-${wordIndex}`}>
                     {wordIndex > 0 ? " " : null}
                     <span>{word}</span>
                   </Fragment>

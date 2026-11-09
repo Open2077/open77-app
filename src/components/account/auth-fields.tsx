@@ -5,6 +5,8 @@ import { useState, type InputHTMLAttributes, type ReactNode } from "react";
 import { Field, Input } from "@/components/ui/field";
 import { Icon } from "@/components/ui/icon";
 import { mail01, view, viewOff } from "@/components/ui/icons";
+import { useOptionalMessages } from "@/i18n/client";
+import { fill } from "@/i18n/format";
 import { padlock } from "./kit";
 
 import styles from "./auth-fields.module.css";
@@ -29,6 +31,7 @@ export function AuthField({ label, hint, error, icon = mail01, ...props }: Field
 /** A password input that can be revealed without losing its value or submitting the form. */
 export function PasswordField({ label = "Password", hint, error, ...props }: Omit<FieldProps, "type" | "icon">) {
   const [visible, setVisible] = useState(false);
+  const words = useOptionalMessages("auth")?.field ?? { show: "Show {label}", hide: "Hide {label}" };
   return (
     <Field label={label} hint={hint} error={error}>
       <Input
@@ -41,7 +44,7 @@ export function PasswordField({ label = "Password", hint, error, ...props }: Omi
             type="button"
             className={styles.reveal}
             disabled={props.disabled}
-            aria-label={`${visible ? "Hide" : "Show"} ${label.toLowerCase()}`}
+            aria-label={fill(visible ? words.hide : words.show, { label: label.toLowerCase() })}
             aria-pressed={visible}
             data-reveal
             onClick={() => setVisible((value) => !value)}

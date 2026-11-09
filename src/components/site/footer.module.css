@@ -135,3 +135,12 @@
 .svg * {
   fill: currentColor;
 }
+.languages {
+  margin-top: 2em;
+  margin-bottom: 3em;
+}
+@media screen and (max-width: 1100px) {
+  .languages {
+    margin-bottom: 0;
+  }
+}

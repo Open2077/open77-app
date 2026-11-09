@@ -122,7 +122,7 @@ async function waitForDevTools() {
 }
 
 const profile = await fs.mkdtemp(path.join(os.tmpdir(), 'open77-workspace-check-'));
-const child = spawn(await findChrome(), ['--headless=new', '--remote-debugging-port='+DEBUG_PORT, '--user-data-dir='+profile, '--no-first-run', 'about:blank'], {stdio:'ignore',windowsHide:true});
+const child = spawn(await findChrome(), ['--headless=new', '--lang=en-US', '--accept-lang=en-US,en', '--remote-debugging-port='+DEBUG_PORT, '--user-data-dir='+profile, '--no-first-run', 'about:blank'], {stdio:'ignore',windowsHide:true});
 let failures=0; const errors=[];
 const check=(name,pass)=>{console.log((pass?'PASS ':'FAIL ')+name);if(!pass)failures++;};
 const delay=ms=>new Promise(r=>setTimeout(r,ms));

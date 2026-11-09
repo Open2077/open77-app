@@ -18,7 +18,7 @@ for (const path of ["C:/Program Files/Google/Chrome/Application/chrome.exe", "C:
   try { await access(path); chrome = path; break; } catch { /* next */ }
 }
 if (!chrome) throw new Error("Chrome/Edge not found");
-const browser = spawn(chrome, ["--headless=new", `--remote-debugging-port=${port}`, `--user-data-dir=${await mkdtemp(join(tmpdir(), "open77-tracker-browser-"))}`, "--no-first-run", "--no-default-browser-check", "about:blank"], { windowsHide: true, stdio: "ignore" });
+const browser = spawn(chrome, ["--headless=new", `--lang=en-US`, `--accept-lang=en-US,en`, `--remote-debugging-port=${port}`, `--user-data-dir=${await mkdtemp(join(tmpdir(), "open77-tracker-browser-"))}`, "--no-first-run", "--no-default-browser-check", "about:blank"], { windowsHide: true, stdio: "ignore" });
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 let socket, sessionId, sequence = 0;
 const pending = new Map(), errors = [];

@@ -30,6 +30,18 @@ export type SceneTitleWord = {
 
 export type SceneImage = { src: string; alt: string; width: number; height: number };
 
+/**
+ * A scene title from translated words. The dictionary decides how many word
+ * groups there are and which one sits in front of the character; the design
+ * keeps the motion, one offset pair per position (extra words reuse the last).
+ */
+export function sceneTitle(words: string[], front: number, offsets: { from: number; to: number }[]): SceneTitleWord[] {
+  return words.map((text, index) => {
+    const offset = offsets[Math.min(index, offsets.length - 1)] ?? { from: 0, to: 0 };
+    return { text, ...offset, ...(index === front ? { front: true } : {}) };
+  });
+}
+
 /*
  * Active tone. Whichever scene most recently crossed the middle of the viewport
  * sets `<html data-active-tone>`, which recolours the logo slashes, and the

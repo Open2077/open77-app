@@ -6,6 +6,7 @@ import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore, type
 
 import { useFavorites } from "@/components/favorites";
 import { ServerLocale } from "@/components/servers/country-flag";
+import { useServerFormat } from "@/components/servers/server-format";
 import { ServerImage } from "@/components/servers/server-image";
 import { ServerInspector } from "@/components/servers/server-inspector";
 import { ServerBadges } from "@/components/servers/server-badges";
@@ -22,6 +23,8 @@ import { Checkbox, Input, Select } from "@/components/ui/field";
 import { Icon } from "@/components/ui/icon";
 import { cancel01, filterHorizontal, search01, star, userGroup } from "@/components/ui/icons";
 import { Eyebrow } from "@/components/ui/typography";
+import { localizeHref } from "@/i18n/config";
+import { fill, rich } from "@/i18n/format";
 import { languageDisplayName, regionCode, regionDisplayName } from "@/lib/locale";
 import { usePlayerLocale, type PlayerLocale } from "@/lib/player-locale";
 import {
@@ -37,19 +40,11 @@ import styles from "./server-browser.module.css";
 
 const MODE_CHIPS = ["all", ...PRIMARY_MODES, "Custom"] as const;
 const PRIMARY_MODE_SET: ReadonlySet<string> = new Set(PRIMARY_MODES);
-const MIN_PLAYER_OPTIONS = [
-  { value: 0, label: "Any" },
-  { value: 25, label: "25+" },
-  { value: 50, label: "50+" },
-  { value: 100, label: "100+" },
-];
-const SORTS = [
-  { value: "players", label: "Most players" },
-  { value: "nearby", label: "Near you" },
-  { value: "name", label: "Name A–Z" },
-  { value: "recent", label: "Recently added" },
-] as const;
-type Sort = (typeof SORTS)[number]["value"];
+/** Minimum-player thresholds; 0 is "any". Labels live in `servers.browser`. */
+const MIN_PLAYER_OPTIONS = [0, 25, 50, 100] as const;
+/** Sort keys, in menu order; labels live in `servers.browser.sorts`. */
+const SORTS = ["players", "nearby", "name", "recent"] as const;
+type Sort = (typeof SORTS)[number];
 /** Sentinel for "listings whose operator gave no region subtag at all". */
 const NO_COUNTRY = "none";
 const RAIL_KEY = "open77.directory.rail";
@@ -85,12 +80,18 @@ function presentOptions(all: readonly string[], present: ReadonlySet<string>, se
   if (selected !== "all" && !offered.includes(selected)) offered.push(selected);
   return offered;
 }
-/** Both the code and the readable name, so "France" finds an `fr-FR` listing. */
-function localeHaystack(country: string | null | undefined): string {
+/**
+ * The code and the readable name, so "France" finds an `fr-FR` listing. A
+ * translated page also matches the name in its own language ("Allemagne").
+ */
+function localeHaystack(country: string | null | undefined, languageTag: string): string {
   const region = regionCode(country);
-  return region ? `${region} ${regionDisplayName(region)}` : "";
+  if (!region) return "";
+  const english = regionDisplayName(region);
+  const local = languageTag === "en" ? english : regionDisplayName(region, languageTag);
+  return local === english ? `${region} ${english}` : `${region} ${english} ${local}`;
 }
-function haystack(server: GameServer): string {
+function haystack(server: GameServer, languageTag: string): string {
   return [
     plainLauncherText(server.name),
     plainLauncherText(server.desc),
@@ -99,7 +100,7 @@ function haystack(server: GameServer): string {
     server.region,
     server.mode,
     // Searching "France" should find fr-FR, not only "FR".
-    localeHaystack(server.country),
+    localeHaystack(server.country, languageTag),
     server.owner ?? "",
   ]
     .join(" ")
@@ -140,13 +141,13 @@ function useDirectoryFilters() {
     return {
       query: p.get("q") ?? "",
       mode: MODE_CHIPS.includes(requestedMode as (typeof MODE_CHIPS)[number]) ? requestedMode : "all",
-      sort: SORTS.some((s) => s.value === requestedSort) ? (requestedSort as Sort) : ("players" as Sort),
+      sort: (SORTS as readonly string[]).includes(requestedSort) ? (requestedSort as Sort) : ("players" as Sort),
       favorites: p.get("favorites") === "true",
       region: p.get("region") ?? "all",
       lang: p.get("lang") ?? "all",
       country: p.get("country") ?? "all",
       tag: p.get("tag")?.toLowerCase() ?? "all",
-      minPlayers: MIN_PLAYER_OPTIONS.some((o) => o.value === Number(p.get("minPlayers")))
+      minPlayers: (MIN_PLAYER_OPTIONS as readonly number[]).includes(Number(p.get("minPlayers")))
         ? Number(p.get("minPlayers"))
         : 0,
       hideEmpty: p.get("hideEmpty") === "true",
@@ -206,6 +207,9 @@ export function ServerBrowser({
 }) {
   const filters = useDirectoryFilters();
   const { query, mode, sort, favorites: favsOnly } = filters;
+  const f = useServerFormat();
+  const m = f.m.browser;
+  const languageTag = f.tag;
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [allFeatured, setAllFeatured] = useState(false);
@@ -272,12 +276,12 @@ export function ServerBrowser({
       regions,
       langs,
       countries: [...countries]
-        .map((code) => ({ code, name: regionDisplayName(code) }))
-        .sort((a, b) => a.name.localeCompare(b.name)),
+        .map((code) => ({ code, name: regionDisplayName(code, languageTag) }))
+        .sort((a, b) => a.name.localeCompare(b.name, languageTag)),
       unlocated,
       tags: [...tags].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 10),
     };
-  }, [servers]);
+  }, [servers, languageTag]);
 
   const modeCounts = useMemo(() => {
     const counts = new Map<string, number>();
@@ -312,13 +316,13 @@ export function ServerBrowser({
           (filters.hideFull && server.players >= server.max)
         )
           return false;
-        const text = haystack(server);
+        const text = haystack(server, languageTag);
         return terms.every((term) => text.includes(term));
       }),
       sort,
       me,
     );
-  }, [servers, filters, query, mode, sort, favsOnly, isFavorite, me]);
+  }, [servers, filters, query, mode, sort, favsOnly, isFavorite, me, languageTag]);
 
   // The selection follows the directory: a world that refreshed away or was
   // filtered out is no longer inspected, and the pane says so by going idle.
@@ -327,10 +331,10 @@ export function ServerBrowser({
 
   const join = (server: GameServer) => {
     if (preview) {
-      showToast("Demo server — connections are disabled in this preview.");
+      showToast(m.demoConnect);
       return;
     }
-    showToast("Opening the OPEN//77 launcher…");
+    showToast(f.m.shared.opening);
     joinServer(server.id);
   };
 
@@ -396,30 +400,37 @@ export function ServerBrowser({
 
   const countryOptions = [...facets.countries];
   if (filters.country !== "all" && filters.country !== NO_COUNTRY && !countryOptions.some((c) => c.code === filters.country))
-    countryOptions.push({ code: filters.country, name: regionDisplayName(filters.country) });
+    countryOptions.push({ code: filters.country, name: regionDisplayName(filters.country, languageTag) });
+  // Chip labels: our words around the user's own query, codes and tags, which stay as typed.
+  const chips = m.chips;
   const active = [
-    ...(query ? [{ key: "q", label: `Search: ${query}` }] : []),
+    ...(query ? [{ key: "q", label: fill(chips.search, { query }) }] : []),
     ...(mode !== "all" ? [{ key: "mode", label: mode }] : []),
-    ...(favsOnly ? [{ key: "favorites", label: "Favorites" }] : []),
-    ...(filters.region !== "all" ? [{ key: "region", label: `Region: ${filters.region}` }] : []),
-    ...(filters.lang !== "all" ? [{ key: "lang", label: `Language: ${filters.lang}` }] : []),
+    ...(favsOnly ? [{ key: "favorites", label: chips.favorites }] : []),
+    ...(filters.region !== "all" ? [{ key: "region", label: fill(chips.region, { region: filters.region }) }] : []),
+    ...(filters.lang !== "all" ? [{ key: "lang", label: fill(chips.language, { lang: filters.lang }) }] : []),
     ...(filters.country !== "all"
       ? [
           {
             key: "country",
-            label: filters.country === NO_COUNTRY ? "Country not specified" : regionDisplayName(filters.country),
+            label: filters.country === NO_COUNTRY ? chips.countryNone : regionDisplayName(filters.country, languageTag),
           },
         ]
       : []),
-    ...(filters.tag !== "all" ? [{ key: "tag", label: `Tag: ${filters.tag}` }] : []),
-    ...(filters.minPlayers > 0 ? [{ key: "minPlayers", label: `${filters.minPlayers}+ players` }] : []),
-    ...(filters.hideEmpty ? [{ key: "hideEmpty", label: "Hide empty" }] : []),
-    ...(filters.hideFull ? [{ key: "hideFull", label: "Has room" }] : []),
+    ...(filters.tag !== "all" ? [{ key: "tag", label: fill(chips.tag, { tag: filters.tag }) }] : []),
+    ...(filters.minPlayers > 0 ? [{ key: "minPlayers", label: f.count(chips.minPlayers, filters.minPlayers) }] : []),
+    ...(filters.hideEmpty ? [{ key: "hideEmpty", label: chips.hideEmpty }] : []),
+    ...(filters.hideFull ? [{ key: "hideFull", label: chips.hideFull }] : []),
   ];
   const reset = () => updateFilters({}, true);
   const railFilters = active.filter((item) => item.key !== "q" && item.key !== "mode").length;
   const visiblePlayers = visible.reduce((sum, s) => sum + s.players, 0);
   const favoriteCount = servers.filter((s) => isFavorite(s.id)).length;
+  const rail = m.rail;
+  const columnHead = favsOnly ? (active.length ? m.columns.favoritesOf : m.columns.favorites) : active.length ? m.columns.serversOf : m.columns.servers;
+  const summaryServers = active.length
+    ? f.count(m.summary.serversOf, visible.length, { total: servers.length })
+    : f.count(m.summary.servers, visible.length);
 
   return (
     <div
@@ -436,7 +447,7 @@ export function ServerBrowser({
       {/* The list is the page: the header marks "Servers" as current and the
           table head counts them, so the title is for assistive technology only.
           A profile shown in its place brings its own h1, so this one steps aside. */}
-      {isActive ? <h1 className="sr-only">Server browser</h1> : null}
+      {isActive ? <h1 className="sr-only">{m.title}</h1> : null}
       <div className={styles.backdrop} aria-hidden="true">
         <Image src="/home/img/players-bg.webp" alt="" fill sizes="100vw" quality={75} loading="eager" />
       </div>
@@ -455,18 +466,18 @@ export function ServerBrowser({
             aria-controls={filterPanelId}
             onClick={() => setFiltersOpen((open) => !open)}
           >
-            {railFilters ? `Filters · ${railFilters}` : "Filters"}
+            {railFilters ? fill(m.filtersCount, { count: railFilters }) : m.filters}
           </Button>
           <button
             type="button"
             className={styles.railToggle}
             aria-pressed={railOpen}
             aria-controls={filterPanelId}
-            title={railOpen ? "Hide filters" : "Show filters"}
+            title={railOpen ? m.hideFilters : m.showFilters}
             onClick={toggleRail}
           >
             <Icon glyph={filterHorizontal} />
-            <span className="sr-only">{railOpen ? "Hide filters" : "Show filters"}</span>
+            <span className="sr-only">{railOpen ? m.hideFilters : m.showFilters}</span>
             {railFilters ? <span className={styles.badge}>{railFilters}</span> : null}
           </button>
           <Input
@@ -474,13 +485,13 @@ export function ServerBrowser({
             className={styles.search}
             type="search"
             icon={search01}
-            aria-label="Search servers"
-            placeholder="Search servers, tags, countries…"
+            aria-label={m.searchLabel}
+            placeholder={m.searchPlaceholder}
             value={query}
             onChange={(e) => updateFilters({ q: e.target.value })}
             trailing={<kbd aria-hidden="true">/</kbd>}
           />
-          <div className={styles.modes} role="group" aria-label="Filter by game type" data-mode-chips>
+          <div className={styles.modes} role="group" aria-label={m.gameTypeFilter} data-mode-chips>
             {MODE_CHIPS.map((chip) => (
               <Chip
                 key={chip}
@@ -488,16 +499,16 @@ export function ServerBrowser({
                 count={modeCounts.get(chip) ?? 0}
                 onClick={() => updateFilters({ mode: chip })}
               >
-                {chip === "all" ? "All" : chip}
+                {chip === "all" ? m.allModes : chip}
               </Chip>
             ))}
           </div>
           <label className={styles.sort}>
-            <span className={styles.selectLabel}>Sort</span>
-            <Select compact aria-label="Sort servers" value={sort} onChange={(e) => updateFilters({ sort: e.target.value })}>
+            <span className={styles.selectLabel}>{m.sort}</span>
+            <Select compact aria-label={m.sortLabel} value={sort} onChange={(e) => updateFilters({ sort: e.target.value })}>
               {SORTS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
+                <option key={s} value={s}>
+                  {m.sorts[s]}
                 </option>
               ))}
             </Select>
@@ -507,15 +518,15 @@ export function ServerBrowser({
       </div>
 
       <div className={styles.workspace}>
-        <aside className={styles.rail} aria-label="Directory filters" id={filterPanelId} inert={Boolean(selected && isActive)}>
+        <aside className={styles.rail} aria-label={rail.label} id={filterPanelId} inert={Boolean(selected && isActive)}>
           <div className={styles.railInner}>
             <div className={styles.railHead}>
-              <Eyebrow>Directory</Eyebrow>
-              <button type="button" className={styles.railClose} onClick={() => setFiltersOpen(false)} aria-label="Close filters">
+              <Eyebrow>{rail.eyebrow}</Eyebrow>
+              <button type="button" className={styles.railClose} onClick={() => setFiltersOpen(false)} aria-label={rail.close}>
                 <Icon glyph={cancel01} />
               </button>
             </div>
-            <nav aria-label="Server collections" className={styles.collections}>
+            <nav aria-label={rail.collections} className={styles.collections}>
               <button
                 type="button"
                 className={styles.collection}
@@ -523,7 +534,7 @@ export function ServerBrowser({
                 onClick={reset}
               >
                 <Icon glyph={userGroup} />
-                <span>All servers</span>
+                <span>{rail.allServers}</span>
                 <small>{servers.length}</small>
               </button>
               <button
@@ -533,19 +544,19 @@ export function ServerBrowser({
                 onClick={() => updateFilters({ favorites: !favsOnly })}
               >
                 <Icon glyph={star} />
-                <span>Favorites</span>
+                <span>{rail.favorites}</span>
                 <small>{favoriteCount}</small>
               </button>
             </nav>
 
             {me.country || me.lang ? (
-              <section className={styles.railSection} aria-label="Near you">
-                <h2 className={styles.railTitle}>Near you</h2>
+              <section className={styles.railSection} aria-label={rail.nearYou}>
+                <h2 className={styles.railTitle}>{rail.nearYou}</h2>
                 <p className={styles.you}>
                   {me.country ? (
                     <ServerLocale country={me.country} lang={me.lang ?? "—"} />
                   ) : (
-                    <span>{me.lang ? languageDisplayName(me.lang.toLowerCase()) : ""}</span>
+                    <span>{me.lang ? languageDisplayName(me.lang.toLowerCase(), languageTag) : ""}</span>
                   )}
                 </p>
                 <div className={styles.chipRow}>
@@ -555,7 +566,7 @@ export function ServerBrowser({
                       pressed={filters.country === me.country}
                       onClick={() => updateFilters({ country: filters.country === me.country ? "all" : me.country! })}
                     >
-                      My country
+                      {rail.myCountry}
                     </Chip>
                   ) : null}
                   {me.lang ? (
@@ -564,15 +575,15 @@ export function ServerBrowser({
                       pressed={filters.lang === me.lang}
                       onClick={() => updateFilters({ lang: filters.lang === me.lang ? "all" : me.lang! })}
                     >
-                      My language
+                      {rail.myLanguage}
                     </Chip>
                   ) : null}
                 </div>
               </section>
             ) : null}
 
-            <section className={cx(styles.railSection, styles.railModes)} aria-label="Filter by game type">
-              <h2 className={styles.railTitle}>Game type</h2>
+            <section className={cx(styles.railSection, styles.railModes)} aria-label={m.gameTypeFilter}>
+              <h2 className={styles.railTitle}>{rail.gameType}</h2>
               {MODE_CHIPS.map((chip) => (
                 <button
                   type="button"
@@ -581,84 +592,84 @@ export function ServerBrowser({
                   aria-pressed={mode === chip}
                   onClick={() => updateFilters({ mode: chip })}
                 >
-                  <span>{chip === "all" ? "All types" : chip}</span>
+                  <span>{chip === "all" ? rail.allTypes : chip}</span>
                   <small>{modeCounts.get(chip) ?? 0}</small>
                 </button>
               ))}
             </section>
 
-            <section className={styles.railSection} aria-label="Location and language">
-              <h2 className={styles.railTitle}>Location</h2>
+            <section className={styles.railSection} aria-label={rail.locationLabel}>
+              <h2 className={styles.railTitle}>{rail.location}</h2>
               <label className={styles.stackedSelect}>
-                <span className={styles.selectLabel}>Language</span>
+                <span className={styles.selectLabel}>{rail.language}</span>
                 <Select
                   compact
-                  aria-label="Filter by language"
+                  aria-label={rail.languageFilter}
                   value={filters.lang}
                   onChange={(e) => updateFilters({ lang: e.target.value })}
                 >
-                  <option value="all">Any language</option>
+                  <option value="all">{rail.anyLanguage}</option>
                   {presentOptions(LANGUAGES, facets.langs, filters.lang).map((l) => (
                     <option key={l} value={l}>
-                      {l} · {languageDisplayName(l.toLowerCase())}
+                      {l} · {languageDisplayName(l.toLowerCase(), languageTag)}
                     </option>
                   ))}
                 </Select>
               </label>
               <label className={styles.stackedSelect}>
-                <span className={styles.selectLabel}>Region</span>
+                <span className={styles.selectLabel}>{rail.region}</span>
                 <Select
                   compact
-                  aria-label="Filter by region"
+                  aria-label={rail.regionFilter}
                   value={filters.region}
                   onChange={(e) => updateFilters({ region: e.target.value })}
                 >
-                  <option value="all">Any region</option>
+                  <option value="all">{rail.anyRegion}</option>
                   {presentOptions(REGIONS, facets.regions, filters.region).map((r) => (
                     <option key={r}>{r}</option>
                   ))}
                 </Select>
               </label>
               <label className={styles.stackedSelect}>
-                <span className={styles.selectLabel}>Country</span>
+                <span className={styles.selectLabel}>{rail.country}</span>
                 <Select
                   compact
-                  aria-label="Filter by country"
+                  aria-label={rail.countryFilter}
                   value={filters.country}
                   onChange={(e) => updateFilters({ country: e.target.value })}
                 >
-                  <option value="all">Any country</option>
+                  <option value="all">{rail.anyCountry}</option>
                   {countryOptions.map((c) => (
                     <option key={c.code} value={c.code}>
                       {c.name}
                     </option>
                   ))}
                   {facets.unlocated || filters.country === NO_COUNTRY ? (
-                    <option value={NO_COUNTRY}>Not specified</option>
+                    <option value={NO_COUNTRY}>{rail.countryNone}</option>
                   ) : null}
                 </Select>
               </label>
             </section>
 
-            <section className={styles.railSection} aria-label="Availability">
-              <h2 className={styles.railTitle}>Availability</h2>
+            <section className={styles.railSection} aria-label={rail.availability}>
+              <h2 className={styles.railTitle}>{rail.availability}</h2>
               <Checkbox checked={filters.hideEmpty} onChange={(e) => updateFilters({ hideEmpty: e.target.checked })}>
-                Hide empty servers
+                {rail.hideEmpty}
               </Checkbox>
               <Checkbox checked={filters.hideFull} onChange={(e) => updateFilters({ hideFull: e.target.checked })}>
-                Has room to join
+                {rail.hasRoom}
               </Checkbox>
               <label className={styles.stackedSelect}>
-                <span className={styles.selectLabel}>Min. players</span>
+                <span className={styles.selectLabel}>{rail.minPlayers}</span>
                 <Select
                   compact
-                  aria-label="Minimum players online"
+                  aria-label={rail.minPlayersFilter}
                   value={filters.minPlayers}
                   onChange={(e) => updateFilters({ minPlayers: Number(e.target.value) })}
                 >
-                  {MIN_PLAYER_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
+                  {MIN_PLAYER_OPTIONS.map((value) => (
+                    <option key={value} value={value}>
+                      {value === 0 ? m.anyPlayers : fill(m.minPlayersOption, { count: value })}
                     </option>
                   ))}
                 </Select>
@@ -666,8 +677,8 @@ export function ServerBrowser({
             </section>
 
             {facets.tags.length > 0 ? (
-              <section className={styles.railSection} aria-label="Tags">
-                <h2 className={styles.railTitle}>Tags</h2>
+              <section className={styles.railSection} aria-label={rail.tags}>
+                <h2 className={styles.railTitle}>{rail.tags}</h2>
                 <div className={styles.chipRow}>
                   {facets.tags.map(([tag, count]) => (
                     <Chip
@@ -685,41 +696,39 @@ export function ServerBrowser({
             ) : null}
 
             <div className={styles.railLinks}>
-              <NextLink href="/create">Create a server</NextLink>
-              <NextLink href="/download">Get the launcher</NextLink>
+              <NextLink href={localizeHref("/create", f.locale)}>{rail.createServer}</NextLink>
+              <NextLink href={localizeHref("/download", f.locale)}>{rail.getLauncher}</NextLink>
             </div>
           </div>
         </aside>
         <button
           type="button"
           className={styles.scrim}
-          aria-label="Close filters"
+          aria-label={rail.close}
           tabIndex={-1}
           onClick={() => setFiltersOpen(false)}
         />
 
-        <section className={styles.main} aria-label="Server directory" ref={listRef} inert={Boolean(selected && isActive)}>
+        <section className={styles.main} aria-label={m.directoryLabel} ref={listRef} inert={Boolean(selected && isActive)}>
           {servers.length === 0 ? (
             (emptyState ?? (
               <EmptyState
                 data-empty="directory"
-                eyebrow="OPEN//77 directory"
-                title="No servers online"
+                eyebrow={m.empty.eyebrow}
+                title={m.empty.title}
                 action={
                   <Button lines="none" size="sm" border href="/create">
-                    Create a server
+                    {m.empty.action}
                   </Button>
                 }
               >
-                The directory is empty right now. New servers will appear here automatically.
+                {m.empty.body}
               </EmptyState>
             ))
           ) : (
             <>
               <p className="sr-only" role="status">
-                {visible.length} {visible.length === 1 ? "server" : "servers"}
-                {active.length ? ` of ${servers.length}` : ""}, {visiblePlayers}{" "}
-                {visiblePlayers === 1 ? "player" : "players"} online
+                {fill(m.summary.line, { servers: summaryServers, players: f.count(m.summary.players, visiblePlayers) })}
               </p>
               {active.length ? (
                 <div className={styles.activeFilters}>
@@ -729,20 +738,20 @@ export function ServerBrowser({
                       key={item.key}
                       className={styles.activeFilter}
                       onClick={() => updateFilters({ [item.key]: "" })}
-                      aria-label={`Remove ${item.label} filter`}
+                      aria-label={fill(m.removeFilter, { label: item.label })}
                     >
                       {item.label}
                       <Icon glyph={cancel01} />
                     </button>
                   ))}
                   <button type="button" className={styles.clear} onClick={reset}>
-                    Reset all
+                    {m.resetAll}
                   </button>
                 </div>
               ) : null}
-              {featured.length ? <section className={styles.featuredSection} aria-label="Featured communities">
-                <header><h2>Featured communities <span>{featured.length}</span></h2>{featured.length > 3 ? <button type="button" aria-expanded={allFeatured} onClick={() => setAllFeatured(value => !value)}>{allFeatured ? "Show less ↑" : `View all (${featured.length}) →`}</button> : null}</header>
-                <div className={styles.featuredCards}>{(allFeatured ? featured : featured.slice(0, 3)).map(server => <button type="button" key={server.id} className={styles.featuredCard} onClick={() => choose(server)} aria-label={`View ${plainLauncherText(server.name)}`} data-featured-card={server.id}>
+              {featured.length ? <section className={styles.featuredSection} aria-label={m.featured.label}>
+                <header><h2>{m.featured.label} <span>{featured.length}</span></h2>{featured.length > 3 ? <button type="button" aria-expanded={allFeatured} onClick={() => setAllFeatured(value => !value)}>{allFeatured ? m.featured.showLess : fill(m.featured.viewAll, { count: featured.length })}</button> : null}</header>
+                <div className={styles.featuredCards}>{(allFeatured ? featured : featured.slice(0, 3)).map(server => <button type="button" key={server.id} className={styles.featuredCard} onClick={() => choose(server)} aria-label={fill(m.featured.view, { name: plainLauncherText(server.name) })} data-featured-card={server.id}>
                   <ServerImage src={server.banner} kind="banner" className={styles.featuredArt} />
                   <ServerImage src={server.icon} kind="icon" className={styles.featuredIcon} fallback={<BrandTile />} />
                   <span className={styles.featuredIdentity}><strong><ServerText text={server.name} /></strong><span>{server.mode} · <b>{server.players}</b> / {server.max}</span><ServerBadges server={server} /></span><span className={styles.featuredArrow} aria-hidden="true">→</span>
@@ -751,8 +760,7 @@ export function ServerBrowser({
               <div className={styles.table}>
                 <div className={styles.columns} aria-hidden="true">
                   <span className={styles.colServer}>
-                    {favsOnly ? "Favorites" : "Servers"} <b>{visible.length}</b>
-                    {active.length ? <i> of {servers.length}</i> : null}
+                    {rich(columnHead, COLUMN_TAGS, { count: visible.length, total: servers.length })}
                   </span>
                   <button
                     type="button"
@@ -760,9 +768,9 @@ export function ServerBrowser({
                     className={styles.colPlayers}
                     onClick={() => updateFilters({ sort: sort === "players" ? "nearby" : "players" })}
                   >
-                    Players {sort === "players" ? "↓" : ""}
+                    {m.columns.players} {sort === "players" ? "↓" : ""}
                   </button>
-                  <span className={styles.colLocale}>Region</span>
+                  <span className={styles.colLocale}>{m.columns.region}</span>
                   <span />
                 </div>
                 <ul className={styles.list} data-server-list>
@@ -771,6 +779,8 @@ export function ServerBrowser({
                       key={server.id}
                       server={server}
                       preview={preview}
+                      href={localizeHref(`/servers/${server.id}`, f.locale)}
+                      labels={m.row}
                       onOpen={onOpenServer ? () => onOpenServer(server.id) : undefined}
                       near={proximity(server, me) >= 4}
                       isFavorite={isFavorite(server.id)}
@@ -784,21 +794,23 @@ export function ServerBrowser({
               {visible.length === 0 ? (
                 <EmptyState
                   data-empty="no-match"
-                  eyebrow="No match"
-                  title="No matching servers"
+                  eyebrow={m.noMatch.eyebrow}
+                  title={m.noMatch.title}
                   action={
                     <Button lines="none" size="sm" border onClick={reset}>
-                      Show all servers
+                      {m.noMatch.action}
                     </Button>
                   }
                 >
-                  Remove a filter or try a different search.
+                  {m.noMatch.body}
                 </EmptyState>
               ) : null}
               <p className={styles.hints} aria-hidden="true">
-                {featured.length ? <>Featured first · </> : null}
-                <kbd>↑</kbd> <kbd>↓</kbd> select · <kbd>Enter</kbd> connect · <kbd>/</kbd> search · Open Alpha
-                required to play and host · <NextLink href="/download">Need the launcher?</NextLink>
+                {featured.length ? <>{m.featuredFirst} · </> : null}
+                {rich(m.hints, {
+                  kbd: (chunk) => <kbd>{chunk}</kbd>,
+                  launcher: (chunk) => <NextLink href={localizeHref("/download", f.locale)}>{chunk}</NextLink>,
+                })}
               </p>
             </>
           )}
@@ -823,9 +835,17 @@ export function ServerBrowser({
   );
 }
 
+/** The directory table's server-count heading: `<b>` is the count, `<i>` the "of N" tail. */
+const COLUMN_TAGS = {
+  b: (chunk: ReactNode) => <b>{chunk}</b>,
+  i: (chunk: ReactNode) => <i>{chunk}</i>,
+};
+
 function ServerRow({
   server,
   preview,
+  href,
+  labels,
   onOpen,
   near,
   isFavorite,
@@ -835,6 +855,9 @@ function ServerRow({
 }: {
   server: GameServer;
   preview: boolean;
+  /** The profile URL in the page language. */
+  href: string;
+  labels: { select: string; addFavorite: string; removeFavorite: string };
   onOpen?: () => void;
   /** Same country as the player: the locale cell lights up. */
   near: boolean;
@@ -844,6 +867,7 @@ function ServerRow({
   onToggleFavorite: () => void;
 }) {
   const description = plainLauncherText(server.desc, { preserveCase: true }).replace(/\s+/g, " ").trim();
+  const name = plainLauncherText(server.name);
   return (
     <li
       className={cx(styles.row, isSelected && styles.selected)}
@@ -876,8 +900,8 @@ function ServerRow({
             <NextLink
               className={styles.rowLink}
               data-server-link
-              href={`/servers/${server.id}`}
-              aria-label={`Select ${plainLauncherText(server.name)}`}
+              href={href}
+              aria-label={fill(labels.select, { name })}
               title={plainLauncherText(server.name)}
               onNavigate={(event) => {
                 event.preventDefault();
@@ -905,7 +929,7 @@ function ServerRow({
           className={styles.fav}
           data-favorite
           aria-pressed={isFavorite}
-          aria-label={isFavorite ? `Remove ${plainLauncherText(server.name)} from favorites` : `Add ${plainLauncherText(server.name)} to favorites`}
+          aria-label={fill(isFavorite ? labels.removeFavorite : labels.addFavorite, { name })}
           onClick={onToggleFavorite}
         >
           <Icon glyph={star} />

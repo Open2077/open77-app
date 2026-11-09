@@ -7,14 +7,15 @@ import { useLenis } from "lenis/react";
 import { useContext, useRef, useState } from "react";
 
 import { cx } from "@/components/ui/cx";
+import { useMessages } from "@/i18n/client";
 import { ContainerAnimationContext, registerSceneAnchor, scrollToScene, useTrackMode } from "./horizontal";
 
 import styles from "./progress.module.css";
 
 const SCENES = [
-  { id: "players", label: "For players", color: "yellow" },
-  { id: "creators", label: "For server creators", color: "blue" },
-  { id: "developers", label: "For developers", color: "red" },
+  { id: "players", color: "yellow" },
+  { id: "creators", color: "blue" },
+  { id: "developers", color: "red" },
 ] as const;
 
 /** Where a scene's progress starts: after the runway if it has one, else at its edge. */
@@ -38,6 +39,7 @@ function insideRange(trigger: ScrollTrigger) {
 
 /** Bottom bar: one segment per scene that fills as the scene scrolls by. */
 export function Progress() {
+  const audiences = useMessages("home").audiences;
   const ref = useRef<HTMLDivElement>(null);
   const triggers = useRef(new Map<string, ScrollTrigger>());
   const containerAnimation = useContext(ContainerAnimationContext);
@@ -139,7 +141,7 @@ export function Progress() {
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => scrollToScene(scene.id, lenis)}
         >
-          <span>{scene.label}</span>
+          <span>{audiences[scene.id].label}</span>
           <div className={styles.bar} />
         </button>
       ))}

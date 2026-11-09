@@ -10,6 +10,8 @@ import * as master from "@/lib/account/api";
 import { MasterApiError } from "@/lib/account/api";
 import { AuthCard, CardText } from "./auth-card";
 import { PasswordField } from "./auth-fields";
+import { rich } from "@/i18n/format";
+import { masterMessage, useAuthText } from "./auth-text";
 import { padlock } from "./kit";
 
 import styles from "./auth-forms.module.css";
@@ -33,6 +35,8 @@ export function ResetPasswordForm() {
   const [error, setError] = useState<string | null>(null);
   /** Which field the current error belongs to, so it shows under that field. */
   const [errorField, setErrorField] = useState<"password" | "confirm" | null>(null);
+  const { m: auth, locale } = useAuthText();
+  const m = auth.reset;
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -40,12 +44,12 @@ export function ResetPasswordForm() {
     setError(null);
     setErrorField(null);
     if (password.length < 8) {
-      setError("The new password must be at least 8 characters.");
+      setError(m.tooShort);
       setErrorField("password");
       return;
     }
     if (password !== confirm) {
-      setError("The two passwords don't match.");
+      setError(m.mismatch);
       setErrorField("confirm");
       return;
     }
@@ -55,13 +59,13 @@ export function ResetPasswordForm() {
       setDone(true);
     } catch (err) {
       if (err instanceof MasterApiError && err.code === "invalid_password") {
-        setError(err.message);
+        setError(masterMessage(err, auth, locale));
         setErrorField("password");
       } else if (err instanceof MasterApiError && (err.status === 400 || err.status === 409)) {
         // invalid_reset / reset_rejected: the token, not the password.
         setLinkDead(true);
       } else {
-        setError(err instanceof MasterApiError ? err.message : "Something went wrong. Try again.");
+        setError(masterMessage(err, auth, locale));
       }
     } finally {
       setBusy(false);
@@ -73,23 +77,21 @@ export function ResetPasswordForm() {
       <AuthCard
         glyph={alert02}
         tone="red"
-        eyebrow="Reset link"
-        title="Link unavailable"
+        eyebrow={m.linkEyebrow}
+        title={m.linkTitle}
         actions={
           <>
             <Button icon={refresh} href="/forgot-password">
-              Request a new link
+              {m.requestNew}
             </Button>
             <Button lines="none" border color="neutral" size="sm" icon={arrowLeft01} iconPosition="left" href="/account">
-              Back to sign-in
+              {auth.back}
             </Button>
           </>
         }
       >
         <Notice kind="danger">
-          {!email || !token
-            ? "This reset link is incomplete. Open the link from your e-mail again, or copy it in full into the address bar."
-            : "This reset link is invalid or has expired. Reset links are single-use and only live for a short while."}
+          {!email || !token ? m.incomplete : m.expired}
         </Notice>
       </AuthCard>
     );
@@ -100,48 +102,46 @@ export function ResetPasswordForm() {
       <AuthCard
         glyph={checkmarkBadge01}
         tone="blue"
-        eyebrow="Password reset"
-        title="You're all set"
+        eyebrow={m.eyebrow}
+        title={m.doneTitle}
         actions={
           <Button icon={arrowRight01} href="/account">
-            Sign in
+            {auth.panel.signIn}
           </Button>
         }
       >
-        <Notice kind="success" title="Password changed.">
-          Your new password is active. Sign in with it now.
+        <Notice kind="success" title={m.doneNotice}>
+          {m.doneBody}
         </Notice>
       </AuthCard>
     );
   }
 
   return (
-    <AuthCard glyph={padlock} eyebrow="Password reset" title="Choose a new password">
-      <CardText>
-        Setting a new password for <strong>{email}</strong>.
-      </CardText>
+    <AuthCard glyph={padlock} eyebrow={m.eyebrow} title={m.title}>
+      <CardText>{rich(m.lead, { strong: (chunk) => <strong>{chunk}</strong> }, { email })}</CardText>
       {error && !errorField ? <Notice kind="danger">{error}</Notice> : null}
       <form className={styles.form} onSubmit={onSubmit} aria-busy={busy}>
         <PasswordField
-          label="New password"
+          label={m.newPassword}
           name="new-password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          placeholder="Choose a strong password"
+          placeholder={m.newPlaceholder}
           autoComplete="new-password"
           minLength={8}
           maxLength={128}
           required
           disabled={busy}
-          hint="8–128 characters. A unique passphrase works well."
+          hint={m.hint}
           error={errorField === "password" ? error : undefined}
         />
         <PasswordField
-          label="Confirm new password"
+          label={m.confirm}
           name="confirm-password"
           value={confirm}
           onChange={(event) => setConfirm(event.target.value)}
-          placeholder="Same password again"
+          placeholder={m.confirmPlaceholder}
           autoComplete="new-password"
           minLength={8}
           maxLength={128}
@@ -150,8 +150,8 @@ export function ResetPasswordForm() {
           error={errorField === "confirm" ? error : undefined}
         />
         <div className={styles.actions}>
-          <Button key={busy ? "Updating…" : "Set new password"} type="submit" icon={arrowRight01} busy={busy}>
-            {busy ? "Updating…" : "Set new password"}
+          <Button key={busy ? m.updating : m.submit} type="submit" icon={arrowRight01} busy={busy}>
+            {busy ? m.updating : m.submit}
           </Button>
         </div>
       </form>

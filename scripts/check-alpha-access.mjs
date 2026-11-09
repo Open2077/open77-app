@@ -65,6 +65,17 @@ if (origin) {
     assert.doesNotMatch(body, stale, `${route}: retired access copy`);
     console.log(`served OK ${route}`);
   }
+  // The translated pages keep the programme's name (see src/i18n/messages/GLOSSARY.md).
+  for (const segment of ["fr", "es", "pt-br", "de", "pl", "ru", "tr"]) {
+    for (const route of ["", "/download", "/create", "/host", "/servers", "/account"]) {
+      const response = await fetch(new URL(`/${segment}${route}`, origin), { signal: AbortSignal.timeout(60000) });
+      assert.equal(response.status, 200, `/${segment}${route}`);
+      const body = await response.text();
+      assert.ok(body.includes("Open Alpha"), `/${segment}${route}: Open Alpha`);
+      assert.doesNotMatch(body, stale, `/${segment}${route}: retired access copy`);
+    }
+    console.log(`served OK /${segment}/…`);
+  }
   for (const [oldRoute, newRoute] of [
     ["/docs/developer-preview", "/docs/alpha-access"],
     ["/docs/developer-preview.md", "/docs/alpha-access.md"],

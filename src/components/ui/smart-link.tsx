@@ -4,6 +4,8 @@ import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { forwardRef, type AnchorHTMLAttributes, type MouseEvent, type ReactNode } from "react";
 
+import { useLocalizeHref, useRoutePath } from "@/i18n/client";
+
 import { cx } from "./cx";
 import { Glitch } from "./glitch";
 
@@ -31,9 +33,13 @@ export const SmartLink = forwardRef<HTMLAnchorElement, SmartLinkProps>(function 
   ref,
 ) {
   const pathname = usePathname();
+  // Links are written as English paths; a page in another language sends them
+  // to that language when the target exists in it (`/download` → `/fr/download`).
+  const routePath = useRoutePath();
+  const localize = useLocalizeHref();
   const external = /^[a-z][a-z0-9+.-]*:/i.test(href);
-  const anchor = href.startsWith("#") || href.startsWith(`${pathname}#`);
-  const current = !external && !anchor && pathname === href;
+  const anchor = href.startsWith("#") || href.startsWith(`${pathname}#`) || href.startsWith(`${routePath}#`);
+  const current = !external && !anchor && routePath === href;
   const content = glitch ? <Glitch>{children}</Glitch> : children;
   const classes = cx(className, (isActive ?? current) && activeClassName) || undefined;
 
@@ -52,8 +58,10 @@ export const SmartLink = forwardRef<HTMLAnchorElement, SmartLinkProps>(function 
       if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
       target.focus({ preventScroll: true });
     };
+    // An English in-page link (`/servers#faq`) on a localized page keeps the page's own URL.
+    const local = routePath !== pathname && href.startsWith(`${routePath}#`) ? `${pathname}${href.slice(routePath.length)}` : href;
     return (
-      <a ref={ref} href={href} title={title} className={classes} onClick={scroll} {...rest}>
+      <a ref={ref} href={local} title={title} className={classes} onClick={scroll} {...rest}>
         {content}
       </a>
     );
@@ -78,7 +86,7 @@ export const SmartLink = forwardRef<HTMLAnchorElement, SmartLinkProps>(function 
   }
 
   return (
-    <NextLink ref={ref} href={href} title={title} onClick={onClick} className={classes} {...rest}>
+    <NextLink ref={ref} href={localize(href)} title={title} onClick={onClick} className={classes} {...rest}>
       {content}
     </NextLink>
   );

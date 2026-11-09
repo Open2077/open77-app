@@ -1,9 +1,9 @@
 "use client";
 
 import NextLink from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 
+import { LanguageSelect } from "@/components/site/language-select";
 import { MusicToggle } from "@/components/site/music-toggle";
 import { Button } from "@/components/ui/button";
 import { cx } from "@/components/ui/cx";
@@ -16,56 +16,62 @@ import { SmartLink } from "@/components/ui/smart-link";
 import { useSession } from "@/lib/account/session";
 import { site } from "@/lib/site";
 import { toneForPath } from "@/lib/tone";
+import { useLocale, useLocalizeHref, useMessages, useRoutePath } from "@/i18n/client";
+import { rich } from "@/i18n/format";
 
 import styles from "./header.module.css";
 
 /** Split around the centred logo: four links on each side. */
 const NAV = {
   left: [
-    { label: "Download", href: "/download" },
-    { label: "Servers", href: "/servers" },
-    { label: "Create server", href: "/create" },
-    { label: "Docs", href: "/docs" },
+    { key: "download", href: "/download" },
+    { key: "servers", href: "/servers" },
+    { key: "create", href: "/create" },
+    { key: "docs", href: "/docs" },
   ],
   right: [
-    { label: "Devblog", href: "/devblog" },
-    { label: "Status", href: "/status" },
-    { label: "Dev Tracker", href: "/dev-tracker" },
-    { label: "NCWE", href: "/ncwe" },
+    { key: "devblog", href: "/devblog" },
+    { key: "status", href: "/status" },
+    { key: "devTracker", href: "/dev-tracker" },
+    { key: "ncwe", href: "/ncwe" },
   ],
 } as const;
 
 /** Everything the menu lists beyond the bar. */
 const MORE = [
-  { label: "Workshop", href: "/workshop" },
-  { label: "Host a server", href: "/host" },
-  { label: "Lua API", href: "/docs/api" },
-  { label: "Open Alpha", href: "/docs/alpha-access" },
+  { key: "workshop", href: "/workshop" },
+  { key: "host", href: "/host" },
+  { key: "luaApi", href: "/docs/api" },
+  { key: "alpha", href: "/docs/alpha-access" },
 ] as const;
 
-/** Destinations for quick navigation (Ctrl / ⌘ K). */
+/** Destinations for quick navigation (Ctrl / ⌘ K). The words come from the dictionary. */
 const SHORTCUTS = [
-  { href: "/servers", title: "Server browser", detail: "Every community server, live", keywords: "browse roleplay racing pvp servers" },
-  { href: "/download", title: "Download launcher", detail: "Signs you in, checks your game, installs the mod", keywords: "play client windows install" },
-  { href: "/create", title: "Create a server", detail: "Run your own Night City", keywords: "build host hosting" },
-  { href: "/host", title: "Download dedicated server", detail: "Windows & Linux · public downloads", keywords: "hosting release" },
-  { href: "/docs", title: "Documentation", detail: "Play, host and build: every guide", keywords: "help learn tutorial lua" },
-  { href: "/docs/api", title: "Lua API reference", detail: "Search the client and server APIs", keywords: "functions vehicles players native scripting" },
-  { href: "/workshop", title: "Workshop", detail: "Community resources, ready to install", keywords: "resources scripts mods library" },
-  { href: "/ncwe", title: "Map Editor", detail: "NCWE, the Night City World Editor · stable release", keywords: "ncwe editor mapping world builder maps download archivexl" },
-  { href: "/dev-tracker", title: "Dev Tracker", detail: "Ideas, community votes and development progress", keywords: "roadmap feedback suggestions forum" },
-  { href: "/status", title: "Service status", detail: "Live health, uptime and incidents", keywords: "outage availability cdn master downloads maintenance" },
-  { href: "/devblog", title: "Devblog", detail: "What shipped, one post per working day", keywords: "news updates" },
-  { href: "/docs/alpha-access", title: "Open Alpha", detail: "Play, host and build — no application needed", keywords: "getting started account play host lua" },
-  { href: "/account", title: "Account", detail: "Profile, keys, saved servers and creations", keywords: "login sign in profile settings" },
-];
+  { href: "/servers", key: "servers" },
+  { href: "/download", key: "download" },
+  { href: "/create", key: "create" },
+  { href: "/host", key: "host" },
+  { href: "/docs", key: "docs" },
+  { href: "/docs/api", key: "api" },
+  { href: "/workshop", key: "workshop" },
+  { href: "/ncwe", key: "ncwe" },
+  { href: "/dev-tracker", key: "devTracker" },
+  { href: "/status", key: "status" },
+  { href: "/devblog", key: "devblog" },
+  { href: "/docs/alpha-access", key: "alpha" },
+  { href: "/account", key: "account" },
+] as const;
 
 function isCurrent(pathname: string, href: string) {
   return pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 }
 
 export function Header() {
-  const pathname = usePathname();
+  // Routes compare without the language prefix; links get it back through `localize`.
+  const pathname = useRoutePath();
+  const locale = useLocale();
+  const localize = useLocalizeHref();
+  const m = useMessages("chrome");
   const { session } = useSession();
   const isAdmin = session?.role === "admin";
   const [menuOpen, setMenuOpen] = useState(false);
@@ -118,16 +124,17 @@ export function Header() {
     };
   }, [menuOpen]);
 
-  const terms = query.trim().toLowerCase();
-  const results = SHORTCUTS.filter((item) =>
-    `${item.title} ${item.detail} ${item.keywords}`.toLowerCase().includes(terms),
+  const terms = query.trim().toLocaleLowerCase(locale);
+  const shortcuts = SHORTCUTS.map((item) => ({ href: item.href, ...m.shortcuts[item.key] }));
+  const results = shortcuts.filter((item) =>
+    `${item.title} ${item.detail} ${item.keywords}`.toLocaleLowerCase(locale).includes(terms),
   );
-  const menuLinks = [...NAV.left, ...NAV.right];
+  const menuLinks = [...NAV.left, ...NAV.right].map((item) => ({ href: item.href, label: m.nav[item.key] }));
 
   return (
     <>
       <header className={cx(styles.header, menuOpen && styles.menuOpen)} style={style}>
-        <SmartLink href="/" className={styles.logo} aria-label={`${site.name} home`}>
+        <SmartLink href="/" className={styles.logo} aria-label={m.homeLabel}>
           <Logo />
         </SmartLink>
         <div className={cx(styles.buttons, styles.buttonsLeft)}>
@@ -138,7 +145,7 @@ export function Header() {
             className={styles.button}
             border
             href={site.links.discord ?? undefined}
-            aria-label="Discord"
+            aria-label={m.discord}
           />
           <Button
             lines="none"
@@ -146,17 +153,17 @@ export function Header() {
             iconOnly
             className={styles.button}
             href="/download"
-            aria-label="Download the launcher"
+            aria-label={m.downloadLauncherLabel}
           />
           <MusicToggle className={styles.button} />
         </div>
-        <nav className={styles.nav} aria-label="Main">
+        <nav className={styles.nav} aria-label={m.mainNav}>
           {Object.entries(NAV).map(([side, items]) => (
             <ul key={side} className={styles.list}>
               {items.map((item) => (
                 <li key={item.href}>
                   <SmartLink href={item.href} glitch aria-current={current(item.href)}>
-                    {item.label}
+                    {m.nav[item.key]}
                   </SmartLink>
                 </li>
               ))}
@@ -170,7 +177,7 @@ export function Header() {
               icon={menu09}
               iconOnly
               className={cx(styles.button, styles.buttonNav)}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-label={menuOpen ? m.closeMenu : m.openMenu}
               aria-expanded={menuOpen}
               aria-controls="site-menu"
               onClick={() => setMenuOpen((open) => !open)}
@@ -183,8 +190,8 @@ export function Header() {
               iconOnly
               className={cx(styles.button, styles.admin)}
               href="/admin"
-              aria-label="Admin console"
-              title="Admin console"
+              aria-label={m.adminConsole}
+              title={m.adminConsole}
               aria-current={current("/admin")}
             />
           ) : null}
@@ -195,18 +202,19 @@ export function Header() {
             className={styles.button}
             border
             href="/account"
-            aria-label={session ? "Your account" : "Sign in"}
-            title={session ? "Your account" : "Sign in"}
+            aria-label={session ? m.yourAccount : m.signIn}
+            title={session ? m.yourAccount : m.signIn}
           />
+          <LanguageSelect className={styles.button} />
         </div>
       </header>
 
       <div id="site-menu" className={styles.menu} hidden={!menuOpen} style={style}>
-        <nav className={styles.menuNav} aria-label="Menu">
+        <nav className={styles.menuNav} aria-label={m.menuNav}>
           <ol className={styles.menuList}>
             {menuLinks.map((item, index) => (
               <li key={item.href}>
-                <NextLink href={item.href} aria-current={current(item.href)} onClick={() => setMenuOpen(false)}>
+                <NextLink href={localize(item.href)} aria-current={current(item.href)} onClick={() => setMenuOpen(false)}>
                   <span className={styles.menuIndex}>{String(index + 1).padStart(2, "0")}</span>
                   <span className={styles.menuLabel} data-glitch={item.label}>
                     {item.label}
@@ -216,10 +224,14 @@ export function Header() {
             ))}
           </ol>
           <ul className={styles.menuMore}>
-            {[...MORE, ...(isAdmin ? [{ label: "Admin", href: "/admin" }] : []), { label: session ? "Account" : "Sign in", href: "/account" }].map(
+            {[
+              ...MORE.map((item) => ({ href: item.href, label: m.more[item.key] })),
+              ...(isAdmin ? [{ label: m.more.admin, href: "/admin" }] : []),
+              { label: session ? m.more.account : m.more.signIn, href: "/account" },
+            ].map(
               (item) => (
                 <li key={item.href}>
-                  <NextLink href={item.href} aria-current={current(item.href)} onClick={() => setMenuOpen(false)}>
+                  <NextLink href={localize(item.href)} aria-current={current(item.href)} onClick={() => setMenuOpen(false)}>
                     <Glitch>{item.label}</Glitch>
                     <Icon glyph={arrowRight01} />
                   </NextLink>
@@ -234,27 +246,28 @@ export function Header() {
                   searchRef.current?.open();
                 }}
               >
-                <Glitch>Search</Glitch>
+                <Glitch>{m.more.search}</Glitch>
                 <Icon glyph={search01} />
               </button>
             </li>
           </ul>
           <div className={styles.menuCta}>
             <Button lines="left" href="/download" size="lg">
-              Download launcher
+              {m.downloadLauncher}
             </Button>
+            <LanguageSelect className={styles.menuLanguage} variant="menu" />
           </div>
         </nav>
       </div>
 
-      <Dialog ref={searchRef} eyebrow="Quick navigation" title="Go to" onClose={() => setQuery("")}>
+      <Dialog ref={searchRef} eyebrow={m.search.eyebrow} title={m.search.title} onClose={() => setQuery("")}>
         <label className={styles.searchField}>
           <Icon glyph={search01} />
-          <span className="sr-only">Search pages and tools</span>
+          <span className="sr-only">{m.search.label}</span>
           <input
             autoFocus
             type="search"
-            placeholder="Search pages and tools…"
+            placeholder={m.search.placeholder}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
@@ -269,7 +282,7 @@ export function Header() {
         <div className={styles.searchResults} aria-live="polite">
           {results.length ? (
             results.map((item) => (
-              <NextLink key={item.href} href={item.href} onClick={() => searchRef.current?.close()}>
+              <NextLink key={item.href} href={localize(item.href)} onClick={() => searchRef.current?.close()}>
                 <span>
                   <strong>{item.title}</strong>
                   <small>{item.detail}</small>
@@ -278,12 +291,10 @@ export function Header() {
               </NextLink>
             ))
           ) : (
-            <p className={styles.searchEmpty}>No destination found. Try “server”, “Lua” or “Alpha”.</p>
+            <p className={styles.searchEmpty}>{m.search.empty}</p>
           )}
         </div>
-        <p className={styles.searchHint}>
-          <kbd>esc</kbd> to close · <kbd>Ctrl</kbd> <kbd>K</kbd> to open from anywhere
-        </p>
+        <p className={styles.searchHint}>{rich(m.search.hint, { kbd: (chunk) => <kbd>{chunk}</kbd> })}</p>
       </Dialog>
     </>
   );

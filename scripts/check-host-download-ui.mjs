@@ -20,7 +20,7 @@ await fs.mkdir(output, { recursive: true });
 const profile = await fs.mkdtemp(path.join(os.tmpdir(), "open77-host-ui-"));
 const browser = spawn("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe", [
   "--headless=new", "--disable-gpu", "--no-first-run", "--disable-background-networking",
-  "--remote-debugging-port=0", "--remote-debugging-address=127.0.0.1", `--user-data-dir=${profile}`, "about:blank",
+  "--lang=en-US", "--accept-lang=en-US,en", "--remote-debugging-port=0", "--remote-debugging-address=127.0.0.1", `--user-data-dir=${profile}`, "about:blank",
 ], { windowsHide: true, stdio: "ignore" });
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function waitFor(action) {

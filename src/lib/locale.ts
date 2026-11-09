@@ -83,57 +83,59 @@ export function regionCode(value: string | null | undefined): string | null {
   return typeof value === "string" && /^([A-Z]{2}|[0-9]{3})$/.test(value) ? value : null;
 }
 
-let regionNames: Intl.DisplayNames | null | undefined;
-let languageNames: Intl.DisplayNames | null | undefined;
+const displayNameFormats = new Map<string, Intl.DisplayNames | null>();
 
 /**
- * `Intl.DisplayNames` is asked for English names rather than the visitor's
- * locale: the site is English, and a stable answer keeps prerendered markup and
- * hydrated markup identical. A runtime without the data simply yields null and
- * every caller falls back to the code itself.
+ * `Intl.DisplayNames` in an explicit language, never the visitor's: English by
+ * default, or the page language when a translated page asks for it. A stable
+ * answer keeps prerendered markup and hydrated markup identical. A runtime
+ * without the data simply yields null and every caller falls back to the code
+ * itself.
  */
-function displayNames(type: "region" | "language"): Intl.DisplayNames | null {
+function displayNames(type: "region" | "language", tag: string): Intl.DisplayNames | null {
+  const key = `${type}|${tag}`;
+  if (displayNameFormats.has(key)) return displayNameFormats.get(key) ?? null;
+  let format: Intl.DisplayNames | null;
   try {
-    return new Intl.DisplayNames(["en"], { type });
+    format = new Intl.DisplayNames([tag], { type });
   } catch {
-    return null;
+    format = null;
   }
+  displayNameFormats.set(key, format);
+  return format;
 }
 
-const regionNameCache = new Map<string, string>();
+const nameCache = new Map<string, string>();
 
-/** "FR" → "France". Returns the code unchanged when it cannot be named. */
-export function regionDisplayName(region: string): string {
-  const cached = regionNameCache.get(region);
+function displayName(type: "region" | "language", code: string, tag: string): string {
+  const key = `${type}|${tag}|${code}`;
+  const cached = nameCache.get(key);
   if (cached !== undefined) return cached;
 
-  if (regionNames === undefined) regionNames = displayNames("region");
-  let name = region;
+  let name = code;
   try {
-    name = regionNames?.of(region) ?? region;
+    name = displayNames(type, tag)?.of(code) ?? code;
   } catch {
-    name = region;
+    name = code;
   }
-  regionNameCache.set(region, name);
+  nameCache.set(key, name);
   return name;
 }
 
-const languageNameCache = new Map<string, string>();
+/**
+ * "FR" → "France" (or "Frankreich" with `tag` "de"). Returns the code
+ * unchanged when it cannot be named.
+ */
+export function regionDisplayName(region: string, tag = "en"): string {
+  return displayName("region", region, tag);
+}
 
-/** "fr" → "French". Returns the subtag unchanged when it cannot be named. */
-export function languageDisplayName(language: string): string {
-  const cached = languageNameCache.get(language);
-  if (cached !== undefined) return cached;
-
-  if (languageNames === undefined) languageNames = displayNames("language");
-  let name = language;
-  try {
-    name = languageNames?.of(language) ?? language;
-  } catch {
-    name = language;
-  }
-  languageNameCache.set(language, name);
-  return name;
+/**
+ * "fr" → "French" (or "français" with `tag` "fr"). Returns the subtag
+ * unchanged when it cannot be named.
+ */
+export function languageDisplayName(language: string, tag = "en"): string {
+  return displayName("language", language, tag);
 }
 
 /**

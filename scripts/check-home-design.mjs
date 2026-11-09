@@ -136,7 +136,7 @@ async function waitForDevTools() {
 }
 
 const profile = await fs.mkdtemp(path.join(os.tmpdir(), "open77-home-check-"));
-const child = spawn(await findChrome(), ["--headless=new", "--remote-debugging-port=" + DEBUG_PORT, "--user-data-dir=" + profile, "--no-first-run", "--no-default-browser-check", "--force-device-scale-factor=1", "about:blank"], { stdio: "ignore", windowsHide: true });
+const child = spawn(await findChrome(), ["--headless=new", "--lang=en-US", "--accept-lang=en-US,en", "--remote-debugging-port=" + DEBUG_PORT, "--user-data-dir=" + profile, "--no-first-run", "--no-default-browser-check", "--force-device-scale-factor=1", "about:blank"], { stdio: "ignore", windowsHide: true });
 let failures = 0;
 const errors = [];
 const check = (name, result) => { console.log((result ? "PASS " : "FAIL ") + name); if (!result) failures++; };

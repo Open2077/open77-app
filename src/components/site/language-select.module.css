@@ -1,0 +1,112 @@
+/* The language selector: header popover, mobile-menu row and footer list. */
+
+.popover {
+  position: relative;
+  display: inline-flex;
+}
+.toggle {
+  font-size: 0.85em;
+}
+.panel {
+  position: absolute;
+  top: calc(100% + 0.75em);
+  right: 0;
+  z-index: 320;
+  min-width: 15em;
+  padding: 0.5em;
+  pointer-events: auto;
+  background: oklch(from var(--body) l c h / 0.94);
+  border: 1px solid oklch(from var(--text-primary) l c h / 12%);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  animation: language-in 0.25s var(--ease-out-expo);
+}
+.panel[hidden] {
+  display: none;
+}
+@keyframes language-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+.list {
+  display: flex;
+  flex-direction: column;
+}
+.link {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9em;
+  padding: 0.6em 0.75em;
+  font-size: 14px;
+  color: var(--text-secondary);
+  transition: color var(--transition-link), background-color var(--transition-link);
+  pointer-events: auto;
+}
+.link:hover,
+.link:focus-visible {
+  color: var(--text-primary);
+  background-color: oklch(from var(--text-primary) l c h / 6%);
+}
+.link[aria-current="true"] {
+  color: var(--active-color);
+}
+.short {
+  min-width: 2.2em;
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 400;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+}
+.toast {
+  position: absolute;
+  top: calc(100% + 0.75em);
+  right: 0;
+  z-index: 320;
+  width: max-content;
+  max-width: min(22rem, 80vw);
+  padding: 0.75em 1em;
+  font-size: 13px;
+  color: var(--text-primary);
+  background: oklch(from var(--body) l c h / 0.94);
+  border: 1px solid var(--active-color);
+}
+
+/* Inline variants: a wrapping row of names. */
+.inline .list {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.25em 1.25em;
+}
+.inline .link {
+  padding: 0.35em 0;
+  background: none;
+}
+.inline .link:hover,
+.inline .link:focus-visible {
+  background: none;
+}
+.inline .short {
+  display: none;
+}
+.heading {
+  margin-bottom: 0.75em;
+  font-family: var(--font-nippo);
+  font-variation-settings: "wght" 300;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.notice {
+  margin-top: 0.75em;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.footer {
+  width: 100%;
+}
+.menu .link {
+  font-size: 15px;
+}

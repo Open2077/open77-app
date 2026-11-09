@@ -29,7 +29,7 @@ for (const card of cards) {
 assert.ok(guide.includes("G.create({") && guide.includes("AddEventHandler('open77:gizmo:commit'"),
   "Guide must include runnable creation and lifecycle examples");
 assert.ok((await read("src/lib/api-reference.ts")).includes('usageGuideHref: "/docs/gizmos"'));
-assert.ok((await read("src/app/docs/[slug]/page.tsx")).includes('href="/docs/api/client/open77-gizmos"'));
+assert.ok((await read("src/app/(en)/docs/[slug]/page.tsx")).includes('href="/docs/api/client/open77-gizmos"'));
 
 if (process.argv[2]) {
   for (const [route, tokens] of [

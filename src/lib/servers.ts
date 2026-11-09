@@ -463,20 +463,34 @@ export function isServerLive(server: Pick<CatalogServer, "lastHeartbeatAtUtc">, 
  * Human uptime since `startedAtUtc`, e.g. "3d 4h", "2h 15m", "8m", "just now".
  * Returns null for an unparseable or future timestamp rather than an odd string.
  */
-export function formatUptime(startedAtUtc: string, now = Date.now()): string | null {
+export function formatUptime(startedAtUtc: string, now = Date.now(), units: UptimeUnits = UPTIME_UNITS): string | null {
   const started = new Date(startedAtUtc).getTime();
   if (Number.isNaN(started)) return null;
   const ms = now - started;
   if (ms < 0) return null;
   const minutes = Math.floor(ms / 60_000);
-  if (minutes < 1) return "just now";
+  if (minutes < 1) return units.justNow;
   const days = Math.floor(minutes / 1440);
   const hours = Math.floor((minutes % 1440) / 60);
   const mins = minutes % 60;
-  if (days > 0) return `${days}d ${hours}h`;
-  if (hours > 0) return `${hours}h ${mins}m`;
-  return `${mins}m`;
+  const fill = (template: string) =>
+    template.replace(/\{(days|hours|minutes)\}/g, (_, name: string) =>
+      String(name === "days" ? days : name === "hours" ? hours : mins),
+    );
+  if (days > 0) return fill(units.daysHours);
+  if (hours > 0) return fill(units.hoursMinutes);
+  return fill(units.minutes);
 }
+
+/** How {@link formatUptime} words a duration; translated pages pass their own. */
+export type UptimeUnits = { justNow: string; daysHours: string; hoursMinutes: string; minutes: string };
+
+const UPTIME_UNITS: UptimeUnits = {
+  justNow: "just now",
+  daysHours: "{days}d {hours}h",
+  hoursMinutes: "{hours}h {minutes}m",
+  minutes: "{minutes}m",
+};
 
 /** `major.minor` protocol string, or "—" when the directory omits it. */
 export function formatProtocol(protocol: CatalogServer["protocol"]): string {

@@ -171,15 +171,27 @@ export function FileDetails({ summary, children, className }: { summary: string;
 }
 
 /** A release pointer the CDN could not confirm. Honest about it; no older build is offered instead. */
-export function UnavailableRelease({ kind }: { kind: "launcher" | "server" }) {
+export function UnavailableRelease({
+  kind,
+  text,
+}: {
+  kind: "launcher" | "server";
+  /** The page language's wording (`common.unavailable`); English when omitted. */
+  text?: { launcherEyebrow: string; serverEyebrow: string; title: string; launcherBody: string; serverBody: string };
+}) {
+  const t = text ?? {
+    launcherEyebrow: "Launcher release",
+    serverEyebrow: "Server release",
+    title: "Temporarily unavailable",
+    launcherBody:
+      "We couldn’t verify the current launcher release from the CDN. No older build is substituted. The page checks again every minute, or use “Check for updates”.",
+    serverBody:
+      "We couldn’t verify the current server release from the CDN. No older build is substituted. The page checks again every minute, or use “Check for updates”.",
+  };
   return (
     <div role="status" className={styles.unavailable}>
-      <EmptyState
-        eyebrow={kind === "launcher" ? "Launcher release" : "Server release"}
-        title="Temporarily unavailable"
-      >
-        We couldn’t verify the current {kind === "launcher" ? "launcher" : "server"} release from the CDN. No older build
-        is substituted. The page checks again every minute, or use “Check for updates”.
+      <EmptyState eyebrow={kind === "launcher" ? t.launcherEyebrow : t.serverEyebrow} title={t.title}>
+        {kind === "launcher" ? t.launcherBody : t.serverBody}
       </EmptyState>
     </div>
   );

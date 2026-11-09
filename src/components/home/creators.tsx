@@ -8,40 +8,28 @@ import { useContext, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ContainerAnimationContext } from "./horizontal";
-import { Scene, type SceneTitleWord } from "./scene";
+import { useMessages } from "@/i18n/client";
+import { Scene, sceneTitle } from "./scene";
 
 import styles from "./creators.module.css";
 
-const TITLE: SceneTitleWord[] = [
-  { text: "Create", from: 0, to: -35 },
-  { text: "Your Own", from: -10, to: 10, front: true },
-  { text: "Server", from: 20, to: 0 },
+/** Motion of the title words and of the three feature cards, from the design. */
+const TITLE_MOTION = [
+  { from: 0, to: -35 },
+  { from: -10, to: 10 },
+  { from: 20, to: 0 },
 ];
-
-const FEATURES = [
-  {
-    title: ["Your Own", "Dedicated Server"],
-    description: "A persistent world you operate, on your hardware or a rented machine.",
-    from: 0,
-    to: 40,
-  },
-  {
-    title: ["Your Rules,", "Your Community"],
-    description: "Whitelists, moderation, staff, identity. Your server page is your front door.",
-    from: 0,
-    to: 20,
-  },
-  {
-    title: ["Custom", "Gameplay"],
-    description: "Build anything from a strict roleplay city to a racing league to a game mode nobody has seen yet.",
-    from: 0,
-    to: 0,
-  },
+const FEATURE_MOTION = [
+  { from: 0, to: 40 },
+  { from: 0, to: 20 },
+  { from: 0, to: 0 },
 ];
 
 export function Creators() {
   const listRef = useRef<HTMLUListElement>(null);
   const containerAnimation = useContext(ContainerAnimationContext);
+  const m = useMessages("home").creators;
+  const features = m.features.map((feature, index) => ({ ...feature, ...(FEATURE_MOTION[index] ?? { from: 0, to: 0 }) }));
 
   useGSAP(
     () => {
@@ -78,24 +66,24 @@ export function Creators() {
     <Scene
       id="creators"
       tone="blue"
-      title={TITLE}
-      description="Run a dedicated server that stays online for your community, with your rules, your mods, and gameplay you design. Downloads are public. Create a license key with your verified account and start building in Open Alpha."
-      background={{ src: "/home/img/creators-bg.webp", alt: "Creators", width: 2524, height: 1176 }}
-      character={{ src: "/home/img/creators-character.webp", alt: "Creators", width: 1261, height: 1253 }}
+      title={sceneTitle(m.title, m.titleFront, TITLE_MOTION)}
+      description={m.description}
+      background={{ src: "/home/img/creators-bg.webp", alt: m.backgroundAlt, width: 2524, height: 1176 }}
+      character={{ src: "/home/img/creators-character.webp", alt: m.characterAlt, width: 1261, height: 1253 }}
       buttons={
         <>
           <Button color="blue" lines="left" href="/host">
-            Download server
+            {m.download}
           </Button>
           <Button color="blue" lines="none" border href="/docs/host-a-server">
-            Hosting guide
+            {m.guide}
           </Button>
         </>
       }
     >
       <div className={styles.content}>
         <ul ref={listRef} className={styles.list}>
-          {FEATURES.map((feature) => (
+          {features.map((feature) => (
             <li
               key={feature.title.join("-")}
               className={styles.item}
@@ -104,8 +92,8 @@ export function Creators() {
               data-to={feature.to}
             >
               <h3 className={styles.title}>
-                {feature.title.map((line) => (
-                  <span key={line} data-typewrite="0.05">
+                {feature.title.map((line, lineIndex) => (
+                  <span key={`${line}-${lineIndex}`} data-typewrite="0.05">
                     {line}
                   </span>
                 ))}
@@ -117,7 +105,7 @@ export function Creators() {
         <div className={styles.server}>
           <Image
             src="/home/img/server-creators.webp"
-            alt="Dedicated server"
+            alt={m.serverAlt}
             width={1827}
             height={1423}
             quality={100}

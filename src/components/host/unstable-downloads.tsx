@@ -7,11 +7,21 @@ import { Checkbox } from "@/components/ui/field";
 import { Icon } from "@/components/ui/icon";
 import { alert02 } from "@/components/ui/icons";
 import { Display } from "@/components/ui/typography";
+import { rich } from "@/i18n/format";
+import type { Messages } from "@/i18n/types";
 
 import styles from "./unstable-downloads.module.css";
 
 /** Deliberate opt-in, never remembered between visits or release versions. */
-export function UnstableDownloads({ available, children }: { available: boolean; children: ReactNode }) {
+export function UnstableDownloads({
+  available,
+  children,
+  m,
+}: {
+  available: boolean;
+  children: ReactNode;
+  m: Messages["host"]["unstable"];
+}) {
   const [accepted, setAccepted] = useState(false);
 
   return (
@@ -24,22 +34,16 @@ export function UnstableDownloads({ available, children }: { available: boolean;
     >
       <summary className={styles.summary}>
         <Icon glyph={alert02} className={styles.summaryIcon} />
-        <span className={styles.summaryText}>Looking for a preview build?</span>
-        <Tag tone="yellow">Unstable</Tag>
+        <span className={styles.summaryText}>{m.summary}</span>
+        <Tag tone="yellow">{m.tag}</Tag>
         <span className={styles.toggle} aria-hidden="true" />
       </summary>
       <div className={styles.body}>
         <Display as="h3" size="sm">
-          For testing. Not your live server.
+          {m.title}
         </Display>
-        <p id="unstable-warning">
-          Unstable includes changes that may break resources or compatibility. Back up your configuration, resources and
-          database, then extract into a separate folder. Do not overwrite a production server.
-        </p>
-        <p>
-          Players must select <strong>Unstable</strong> in the launcher&apos;s Settings and install a compatible client.
-          Switching the server build does not update your players automatically.
-        </p>
+        <p id="unstable-warning">{m.warning}</p>
+        <p>{rich(m.players, { strong: (chunk) => <strong>{chunk}</strong> })}</p>
         {available ? (
           <>
             <div className={styles.consent}>
@@ -48,15 +52,14 @@ export function UnstableDownloads({ available, children }: { available: boolean;
                 aria-describedby="unstable-warning"
                 onChange={(event) => setAccepted(event.target.checked)}
               >
-                I understand the risks. Show Unstable downloads.
+                {m.consent}
               </Checkbox>
             </div>
             {accepted ? <div className={styles.downloads}>{children}</div> : null}
           </>
         ) : (
           <p role="status" className={styles.none}>
-            No verified Unstable build is available right now. Use “Check for updates” below to try again. Stable downloads
-            above are unaffected.
+            {m.none}
           </p>
         )}
       </div>

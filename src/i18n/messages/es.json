@@ -1,0 +1,1822 @@
+{
+  "meta": {
+    "subtitle": "Multijugador para Cyberpunk 2077",
+    "description": "OPEN//77 te permite jugar a Cyberpunk 2077 online en servidores de la comunidad, o crear tu propio servidor y tu propia experiencia multijugador. Rol, carreras, combate, mundo libre: elige un mundo y pulsa conectar.",
+    "tagline": "Cyberpunk 2077 multijugador. Encuentra un mundo donde jugar, o crea el tuyo.",
+    "home": "Inicio"
+  },
+  "chrome": {
+    "skip": "Saltar al contenido",
+    "homeLabel": "Inicio de OPEN//77",
+    "mainNav": "Principal",
+    "menuNav": "Menú",
+    "nav": {
+      "download": "Descargar",
+      "servers": "Servidores",
+      "create": "Crear",
+      "docs": "Docs",
+      "devblog": "Devblog",
+      "status": "Estado",
+      "devTracker": "Dev Tracker",
+      "ncwe": "NCWE"
+    },
+    "more": {
+      "workshop": "Workshop",
+      "host": "Alojar un servidor",
+      "luaApi": "API de Lua",
+      "alpha": "Open Alpha",
+      "admin": "Admin",
+      "account": "Cuenta",
+      "signIn": "Iniciar sesión",
+      "search": "Buscar"
+    },
+    "discord": "Discord",
+    "downloadLauncherLabel": "Descargar el launcher",
+    "downloadLauncher": "Descargar launcher",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "adminConsole": "Consola de administración",
+    "yourAccount": "Tu cuenta",
+    "signIn": "Iniciar sesión",
+    "music": {
+      "turnOn": "Activar la música",
+      "turnOff": "Desactivar la música",
+      "on": "Música activada · banda sonora original de Cyberpunk 2077",
+      "off": "Música desactivada"
+    },
+    "search": {
+      "eyebrow": "Navegación rápida",
+      "title": "Ir a",
+      "label": "Buscar páginas y herramientas",
+      "placeholder": "Busca páginas y herramientas…",
+      "empty": "No hay ningún destino. Prueba «servidor», «Lua» o «Alpha».",
+      "hint": "<kbd>esc</kbd> para cerrar · <kbd>Ctrl</kbd> <kbd>K</kbd> para abrir desde cualquier página"
+    },
+    "shortcuts": {
+      "servers": {
+        "title": "Explorador de servidores",
+        "detail": "Todos los servidores de la comunidad, en directo",
+        "keywords": "explorar lista rol roleplay carreras pvp servidores"
+      },
+      "download": {
+        "title": "Descargar launcher",
+        "detail": "Inicia tu sesión, comprueba tu juego e instala el mod",
+        "keywords": "jugar cliente windows instalar descarga launcher"
+      },
+      "create": {
+        "title": "Crear un servidor",
+        "detail": "Monta tu propia Night City",
+        "keywords": "crear construir alojar hosting servidor"
+      },
+      "host": {
+        "title": "Descargar servidor dedicado",
+        "detail": "Windows y Linux · descargas públicas",
+        "keywords": "alojar hosting versión release"
+      },
+      "docs": {
+        "title": "Documentación",
+        "detail": "Jugar, alojar y crear: todas las guías",
+        "keywords": "ayuda aprender tutorial guía docs lua"
+      },
+      "api": {
+        "title": "Referencia de la API de Lua",
+        "detail": "Busca en las API del cliente y del servidor",
+        "keywords": "funciones vehículos jugadores nativas natives scripting scripts"
+      },
+      "workshop": {
+        "title": "Workshop",
+        "detail": "Recursos de la comunidad, listos para instalar",
+        "keywords": "recursos scripts mods biblioteca"
+      },
+      "ncwe": {
+        "title": "Editor de mapas",
+        "detail": "NCWE, el editor de mundos de Night City · versión estable",
+        "keywords": "ncwe editor mapas mapeo mundo constructor descarga archivexl"
+      },
+      "devTracker": {
+        "title": "Dev Tracker",
+        "detail": "Ideas, votos de la comunidad y progreso del desarrollo",
+        "keywords": "hoja de ruta roadmap opiniones sugerencias foro"
+      },
+      "status": {
+        "title": "Estado del servicio",
+        "detail": "Salud en directo, disponibilidad e incidencias",
+        "keywords": "caída disponibilidad cdn master maestro descargas mantenimiento"
+      },
+      "devblog": {
+        "title": "Devblog",
+        "detail": "Lo que ha salido, una entrada por día laborable",
+        "keywords": "noticias novedades actualizaciones"
+      },
+      "alpha": {
+        "title": "Open Alpha",
+        "detail": "Juega, aloja y crea, sin solicitud previa",
+        "keywords": "empezar primeros pasos cuenta jugar alojar lua"
+      },
+      "account": {
+        "title": "Cuenta",
+        "detail": "Perfil, claves, servidores guardados y creaciones",
+        "keywords": "login iniciar sesión perfil ajustes"
+      }
+    },
+    "language": {
+      "label": "Idioma",
+      "choose": "Elige un idioma",
+      "englishOnly": "Esta página solo está disponible en inglés."
+    },
+    "footer": {
+      "title": [
+        "Cyberpunk 2077 multijugador.",
+        "Encuentra un mundo donde jugar,",
+        "o crea el tuyo."
+      ],
+      "follow": "Sigue a OPEN//77",
+      "columns": {
+        "play": {
+          "title": "Jugar",
+          "download": "Descargar el launcher",
+          "servers": "Explorador de servidores",
+          "howItWorks": "Cómo funciona",
+          "faq": "Preguntas frecuentes"
+        },
+        "create": {
+          "title": "Crear",
+          "create": "Crear un servidor",
+          "host": "Descargar el servidor",
+          "dedicated": "Servidores dedicados",
+          "resources": "Recursos y scripting",
+          "ncwe": "Editor de mapas"
+        },
+        "project": {
+          "title": "Proyecto",
+          "status": "Estado del servicio",
+          "devTracker": "Dev Tracker",
+          "roadmap": "Hoja de ruta",
+          "devblog": "Devblog",
+          "workshop": "Workshop",
+          "docs": "Documentación",
+          "brand": "Kit de marca"
+        }
+      },
+      "copyright": "© 2026-2077. Todos los derechos reservados.",
+      "design": "Concepto y diseño de",
+      "designLabel": "nuixw en Dribbble",
+      "disclaimer": "OPEN//77 es un proyecto comunitario independiente y no oficial. No está afiliado a CD PROJEKT S.A. ni cuenta con su respaldo o patrocinio. «Cyberpunk», «Cyberpunk 2077» y las marcas relacionadas son marcas comerciales de CD PROJEKT S.A. Las imágenes del juego se usan para ilustrar un proyecto de fans. Para jugar en OPEN//77 siempre necesitarás tu propia copia legal de Cyberpunk 2077. La plataforma no acepta la piratería: las copias pirateadas o crackeadas no tienen soporte ni son bienvenidas."
+    }
+  },
+  "common": {
+    "close": "Cerrar",
+    "loading": "Cargando",
+    "optional": "Opcional",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "copiedToClipboard": "Copiado al portapapeles",
+    "copyUnavailable": "No se puede copiar",
+    "breadcrumb": "Ruta de navegación",
+    "englishOnly": "En inglés",
+    "releaseRefresh": {
+      "note": "Versiones del CDN en directo · se comprueban cada minuto mientras esta página está visible.",
+      "checking": "Comprobando el CDN…",
+      "check": "Buscar actualizaciones"
+    },
+    "expansion": "DLC Phantom Liberty",
+    "requirementShort": "Cyberpunk 2077 {build} + {expansion}",
+    "atAGlance": "De un vistazo",
+    "downloadNote": "Directamente desde el CDN oficial de OPEN//77, el único sitio donde lo publicamos.",
+    "downloadRequested": "Descarga solicitada. Revisa las descargas de tu navegador o vuelve a hacer clic para reintentarlo.",
+    "unavailable": {
+      "launcherEyebrow": "Versión del launcher",
+      "serverEyebrow": "Versión del servidor",
+      "title": "No disponible temporalmente",
+      "launcherBody": "No hemos podido verificar en el CDN la versión actual del launcher. No se ofrece ninguna versión anterior en su lugar. La página vuelve a comprobarlo cada minuto, o puedes usar «Buscar actualizaciones».",
+      "serverBody": "No hemos podido verificar en el CDN la versión actual del servidor. No se ofrece ninguna versión anterior en su lugar. La página vuelve a comprobarlo cada minuto, o puedes usar «Buscar actualizaciones»."
+    }
+  },
+  "notFound": {
+    "metaTitle": "Página no encontrada · OPEN//77",
+    "metaDescription": "Esta página no existe.",
+    "eyebrow": "Error 404 · Página no encontrada",
+    "title": [
+      "Señal",
+      "perdida."
+    ],
+    "accent": [
+      1
+    ],
+    "lead": "Esta página no existe. Puede que se haya movido al rehacer la web, o que nunca haya existido. El proyecto está en fase alfa y las cosas cambian de sitio.",
+    "home": "Volver al inicio",
+    "docs": "Documentación",
+    "sections": "Secciones principales",
+    "orTry": "O prueba"
+  },
+  "home": {
+    "heading": "OPEN//77: Cyberpunk 2077 multijugador",
+    "breadcrumb": "Inicio",
+    "hero": {
+      "marquee": "Multijugador para",
+      "intro": "Juega a <strong>Cyberpunk 2077 online</strong> en servidores de la comunidad, o crea tu propio servidor y tu propia experiencia multijugador.",
+      "alpha": "La Open Alpha ya está aquí. Juega, aloja tu servidor y empieza a crear ya.",
+      "download": "Descargar launcher",
+      "build": "Crea tu servidor",
+      "altLeft": "V, protagonista de Cyberpunk 2077, mirando a la izquierda",
+      "altRight": "V, protagonista de Cyberpunk 2077, mirando a la derecha"
+    },
+    "audiences": {
+      "players": {
+        "label": "Para jugadores",
+        "title": [
+          "Para",
+          "jugadores"
+        ],
+        "marquee": "Jugadores"
+      },
+      "creators": {
+        "label": "Para creadores de servidores",
+        "title": [
+          "Para",
+          "creadores de",
+          "servidores"
+        ],
+        "marquee": "Creadores de servidores"
+      },
+      "developers": {
+        "label": "Para desarrolladores",
+        "title": [
+          "Para",
+          "devs"
+        ],
+        "marquee": "Devs"
+      }
+    },
+    "players": {
+      "title": [
+        "Juega a",
+        "Cyberpunk",
+        "en compañía"
+      ],
+      "titleFront": 1,
+      "description": "Los servidores de la comunidad convierten Night City en mundos multijugador, cada uno con sus propias reglas y su propia experiencia. OPEN//77 es la capa que los hace posibles.",
+      "backgroundAlt": "Jugadores",
+      "characterAlt": "Jugadores",
+      "download": "Descargar launcher",
+      "browser": "Explorador de servidores",
+      "cards": [
+        {
+          "sub": "Rol",
+          "title": [
+            "Vive",
+            "otra",
+            "vida"
+          ],
+          "description": "Ciudades de rol estricto con su propia economía, facciones, trabajos y staff."
+        },
+        {
+          "sub": "Mundos a medida",
+          "title": [
+            "Reescribe",
+            "las",
+            "reglas"
+          ],
+          "description": "PvP, supervivencia, mundo libre o un modo de juego que nadie ha visto todavía."
+        },
+        {
+          "sub": "Carreras",
+          "title": [
+            "Domina",
+            "las",
+            "calles"
+          ],
+          "description": "Ligas de carreras, encuentros nocturnos y una ciudad llena de carreteras abiertas."
+        }
+      ]
+    },
+    "creators": {
+      "title": [
+        "Crea",
+        "tu propio",
+        "servidor"
+      ],
+      "titleFront": 1,
+      "description": "Gestiona un servidor dedicado que sigue online para tu comunidad, con tus reglas, tus mods y la jugabilidad que tú diseñes. Las descargas son públicas. Crea una clave de licencia con tu cuenta verificada y empieza a crear en la Open Alpha.",
+      "backgroundAlt": "Creadores",
+      "characterAlt": "Creadores",
+      "serverAlt": "Servidor dedicado",
+      "download": "Descargar servidor",
+      "guide": "Guía de alojamiento",
+      "features": [
+        {
+          "title": [
+            "Tu propio",
+            "servidor dedicado"
+          ],
+          "description": "Un mundo persistente que gestionas tú, en tu propio hardware o en una máquina alquilada."
+        },
+        {
+          "title": [
+            "Tus reglas,",
+            "tu comunidad"
+          ],
+          "description": "Listas blancas, moderación, staff, identidad. La página de tu servidor es tu puerta de entrada."
+        },
+        {
+          "title": [
+            "Jugabilidad",
+            "a medida"
+          ],
+          "description": "Crea lo que quieras: desde una ciudad de rol estricto hasta una liga de carreras o un modo de juego que nadie ha visto todavía."
+        }
+      ]
+    },
+    "developers": {
+      "title": [
+        "Programa",
+        "tu",
+        "Night City"
+      ],
+      "titleFront": 2,
+      "description": "En un servidor de OPEN//77, la jugabilidad no se configura: se programa. Un recurso es un pequeño paquete de <strong>Lua 5.4</strong> que tu servidor carga, recarga en caliente y envía a cada jugador que entra. Este es el comando <kbd>/ride</kbd> completo, de verdad.",
+      "backgroundAlt": "Desarrolladores",
+      "characterAlt": "Desarrolladores",
+      "docs": "Documentación",
+      "platform": "Cómo funciona",
+      "resource": "Recursos",
+      "pillars": [
+        {
+          "label": "Lua 5.4",
+          "title": "Un lenguaje, dos entornos",
+          "body": "Los scripts de cliente se ejecutan dentro del juego; los de servidor controlan el mundo autoritativo. Cada recurso tiene su propia VM de Lua aislada y recarga en caliente: guardas el archivo y ya está en marcha.",
+          "link": "Modelo de recursos"
+        },
+        {
+          "label": "API reales del juego",
+          "title": "Controla el motor de verdad",
+          "body": "Vehículos, marcadores, NPC, clima, botín, interacciones, notificaciones: las mismas funciones nativas sujetas a permisos con las que están hechos los propios recursos de OPEN//77.",
+          "link": "Referencia de la API de Lua"
+        },
+        {
+          "label": "Interfaces web",
+          "title": "Tu UI con tecnologías web",
+          "body": "Un recurso puede incluir una página WebUI de Chromium: crea HUD, menús y apps en HTML, CSS y JavaScript, fuera del proceso del juego, para que tu UI nunca le cueste rendimiento.",
+          "link": "WebUI en la práctica"
+        }
+      ]
+    }
+  },
+  "download": {
+    "metaTitle": "Descarga el launcher",
+    "metaDescription": "Descarga el launcher de OPEN//77 para Windows. Inicia tu sesión, comprueba tu versión de Cyberpunk 2077, instala y actualiza el mod, y te lleva al explorador de servidores. Gratis; necesitas tu propia copia del juego.",
+    "breadcrumb": "Descargar el launcher",
+    "eyebrow": "Descarga · OPEN//77 para Windows",
+    "title": [
+      "Consigue el",
+      "launcher"
+    ],
+    "accent": [
+      1
+    ],
+    "lead": "Una sola app para Windows: inicia tu sesión, comprueba tu juego, instala y actualiza el mod, y abre el explorador de servidores. La descarga es gratis; tú pones <strong>{requirement}</strong>.",
+    "facts": {
+      "platformLabel": "Plataforma del jugador",
+      "platformValue": "Windows 10 / 11 · 64 bits",
+      "buildLabel": "Versión del juego",
+      "buildValue": "Cyberpunk 2077 {build} · exacta",
+      "expansionLabel": "Expansión necesaria",
+      "sizeLabel": "Descarga del launcher",
+      "sizeUnavailable": "Tamaño no disponible por ahora"
+    },
+    "jump": {
+      "requirements": "Qué necesitas",
+      "alpha": "Open Alpha",
+      "guide": "Guía del launcher"
+    },
+    "alpha": {
+      "eyebrow": "Open Alpha · Juega, aloja y crea",
+      "title": [
+        "Night City",
+        "está abierta."
+      ],
+      "lead": "Descarga el launcher e inicia sesión con tu <strong>cuenta gratuita de OPEN//77</strong> para jugar. También puedes alojar un servidor y crear tu propio modo de juego. No hace falta solicitar acceso ni esperar ninguna aprobación.",
+      "cardSub": "Open Alpha",
+      "cardTitle": "Juega, aloja y crea hoy mismo.",
+      "cardAction": "Lee la guía de la Open Alpha",
+      "cardBody": "Crea una cuenta, deja que el launcher verifique tu juego y elige un servidor de la comunidad. ¿Quieres crear? Descarga el servidor dedicado y explora la documentación de Lua y WebUI.",
+      "serverSub": "Servidor dedicado · Windows / Linux · no es el launcher",
+      "serverUnavailable": "Versión del servidor no disponible",
+      "serverAction": "Consigue el servidor dedicado",
+      "serverBody": "Freeroam listo para jugar y recursos del sistema, con el runtime de .NET incluido. No hace falta instalar Cyberpunk 2077 en la máquina que lo aloja. Descargas públicas para todo el mundo.",
+      "serverBodyUnavailable": "No hemos podido verificar en el CDN la última versión del servidor. No se ofrece ninguna versión anterior en su lugar; la página vuelve a comprobarlo automáticamente.",
+      "statusNote": "El launcher y el servidor dedicado son canales de publicación separados, así que sus números de versión no coinciden. El cliente que instala el launcher lleva la versión del servidor con el que se comunica."
+    },
+    "jobs": {
+      "eyebrow": "Qué hace",
+      "title": [
+        "Cinco tareas,",
+        "una ventana."
+      ],
+      "accent": [
+        1
+      ],
+      "lead": "El launcher es toda la parte del jugador de OPEN//77. No instalas nada a mano en la carpeta del juego ni editas ninguna configuración para entrar en un servidor.",
+      "items": [
+        {
+          "title": "Inicia tu sesión",
+          "body": "Una sola cuenta de OPEN//77, autorizada en tu navegador y no en la app. El launcher nunca ve tu contraseña."
+        },
+        {
+          "title": "Comprueba tu juego",
+          "body": "Se asegura de que tu instalación de Cyberpunk 2077 tenga la versión {build} con el {expansion} antes de instalar nada. El cliente está compilado para esa versión exacta, así que te enteras de cualquier incompatibilidad desde el principio y no a mitad de una sesión."
+        },
+        {
+          "title": "Instala y actualiza el mod",
+          "body": "El cliente de OPEN//77 se descarga, se verifica y se mantiene al día por ti. Nada que descomprimir a mano en la carpeta del juego, y nada que se quede atrás cuando lo desactivas."
+        },
+        {
+          "title": "Gestiona lo que se carga",
+          "body": "Elige qué mods están activos en cada sesión. Algunos servidores piden una configuración limpia: así conservas la tuya y aun así puedes conectarte."
+        },
+        {
+          "title": "Te encuentra un mundo",
+          "body": "Explora los servidores de la comunidad, fíltralos y pulsa conectar. El launcher abre el juego apuntando ya al mundo que has elegido."
+        }
+      ]
+    },
+    "firstRun": {
+      "eyebrow": "Primer arranque",
+      "title": "Lo que pasa de verdad.",
+      "lead": "¿Ya lo tienes instalado? Abre el launcher, elige un servidor y pulsa conectar. Él se encarga del resto.",
+      "steps": [
+        {
+          "title": "Windows mostrará un aviso",
+          "body": "El launcher aún no tiene firma de código, así que en el primer arranque aparece la pantalla de SmartScreen <em>«Windows protegió su PC»</em>. Elige <strong>Más información</strong> y luego <strong>Ejecutar de todas formas</strong>, y listo. Windows muestra ese mensaje con cualquier aplicación sin firmar, incluidos muchos launchers independientes, y no dice nada del archivo en sí. <guide>La guía del launcher</guide> explica con detalle qué significa ese cuadro de diálogo y qué no."
+        },
+        {
+          "title": "Inicia sesión desde tu navegador",
+          "body": "El launcher abre <authorize>la página de autorización</authorize> de este sitio. La apruebas allí y el launcher recibe un token. Tu contraseña nunca pasa por la app."
+        },
+        {
+          "title": "Indícale tu juego y a jugar",
+          "body": "Localiza tu instalación de Cyberpunk 2077, comprueba la versión, instala el cliente y abre el <servers>explorador de servidores</servers>. A partir de ahí, todo es un solo botón."
+        }
+      ]
+    },
+    "requirements": {
+      "eyebrow": "Antes de instalar",
+      "title": "Qué necesitas.",
+      "items": [
+        {
+          "title": "Windows 10 u 11, 64 bits",
+          "body": "El launcher es una aplicación de escritorio para Windows, y el cliente que instala es un plugin nativo que se carga dentro del proceso del juego. No hay versión para jugadores en macOS ni en Linux."
+        },
+        {
+          "title": "Tu propia copia de Cyberpunk 2077 {build}",
+          "body": "Tu propia copia legal: OPEN//77 nunca distribuye el juego ni ninguno de sus archivos. La versión tiene que ser exactamente la {build}, no una versión mínima: el cliente se engancha al motor en direcciones establecidas para esa versión, y el launcher te lo comprueba."
+        },
+        {
+          "title": "{expansion}",
+          "body": "Obligatorio, no opcional: el mundo en el que apareces al conectarte es una partida guardada de EP1, así que sin él no hay nada que cargar."
+        }
+      ],
+      "questions": "Preguntas",
+      "faq": [
+        {
+          "q": "¿Windows muestra un aviso de seguridad?",
+          "a": "Es lo esperado: el launcher aún no tiene firma de código, así que SmartScreen lo marca como a cualquier aplicación sin firmar. Elige <strong>Más información</strong> y luego <strong>Ejecutar de todas formas</strong>. Ejecuta solo la copia que hayas descargado de esta página y, si quieres asegurarte de que es el mismo archivo, compara su SHA-256 en «Detalles del archivo y verificación», más arriba. La <guide>guía del launcher</guide> explica el cuadro de diálogo al completo."
+        },
+        {
+          "q": "¿Por qué el launcher y el servidor tienen versiones distintas?",
+          "a": "Son canales de publicación separados. El botón de Windows de arriba siempre ofrece el launcher actual; <host>la página del servidor</host> ofrece el servidor dedicado actual. Ninguno de los dos ofrece una versión anterior cuando el otro no está disponible."
+        },
+        {
+          "q": "Quiero alojar, no jugar.",
+          "a": "Alojar es otra descarga. Un servidor dedicado nunca necesita Cyberpunk 2077 instalado y no usa este launcher. Empieza por <create>Crear un servidor</create> y luego <host>descarga el servidor</host>. Los archivos son públicos; con una cuenta gratuita y un correo verificado puedes crear su clave de licencia."
+        },
+        {
+          "q": "¿Tengo que solicitar acceso para jugar?",
+          "a": "No. La Open Alpha está abierta a todo el mundo. Descarga el launcher, inicia sesión con tu cuenta gratuita de OPEN//77 y entra en un servidor de la comunidad. Lee la <alpha>guía de la Open Alpha</alpha> para la configuración y los requisitos."
+        }
+      ],
+      "alphaTitle": "Esto es software en fase alfa, no una versión estable.",
+      "alphaBody": "Cuenta con bugs, cierres inesperados, funciones incompletas y actualizaciones que cambian las API. En el <discord>Discord</discord> puedes pedir ayuda, informar de problemas reproducibles, conocer a otros creadores y seguir el registro de cambios."
+    },
+    "release": {
+      "latest": "Último launcher",
+      "version": "Versión {version}",
+      "published": "Publicado el {date}",
+      "button": "Descargar para Windows",
+      "platform": "Windows 10 / 11 · 64 bits",
+      "details": "Detalles del archivo y verificación",
+      "file": "Archivo: <code>{file}</code>",
+      "shaIntro": "SHA-256, publicado porque publicarlo no cuesta nada. Si verificas tus descargas, esta línea de PowerShell imprime la misma cadena. No tienes que hacer nada.",
+      "copySha": "Copiar el SHA-256 del launcher",
+      "copyCommand": "Copiar el comando de verificación",
+      "noChecksum": "No se ha publicado ninguna suma de comprobación para esta versión.",
+      "official": "Esta descarga no requiere cuenta. Esta página es la fuente oficial: la versión viene directamente del CDN de OPEN//77, y es el único sitio donde la publicamos."
+    }
+  },
+  "create": {
+    "metaTitle": "Crear un servidor",
+    "metaDescription": "Descarga el servidor de OPEN//77 y crea un modo de juego personalizado para Cyberpunk 2077 en la Open Alpha. Sin solicitud de acceso ni aprobación. Los jugadores necesitan {requirement}.",
+    "breadcrumb": "Crear un servidor",
+    "eyebrow": "Crear un servidor",
+    "title": [
+      "Monta tu propia",
+      "Night City"
+    ],
+    "accent": [
+      1
+    ],
+    "lead": "Un servidor dedicado de Cyberpunk 2077 que sigue online para tu comunidad, con tus reglas, tu identidad y la jugabilidad que tú diseñes. <strong>Cualquiera puede descargarlo y empezar a crear en la Open Alpha.</strong>",
+    "facts": {
+      "windowsLabel": "Servidor en Windows",
+      "windowsValue": "64 bits · runtime de .NET incluido",
+      "linuxLabel": "Servidor en Linux",
+      "linuxValue": "64 bits · runtime de .NET incluido",
+      "scriptingLabel": "Scripting",
+      "scriptingValue": "Recursos en Lua 5.4 · WebUI de Chromium",
+      "hostingLabel": "Alojamiento",
+      "hostingValue": "Tu hardware o una máquina alquilada"
+    },
+    "downloadServer": "Descargar servidor",
+    "hostingGuide": "Guía de alojamiento",
+    "technicalDocs": "Docs técnicas",
+    "experiences": {
+      "eyebrow": "Del rol a las carreras y a lo desconocido",
+      "title": [
+        "Cualquier experiencia",
+        "que puedas programar."
+      ],
+      "lead": "OPEN//77 no trae un modo de juego. Trae la plataforma. Una ciudad de rol hardcore, una liga de carreras clasificatoria, un distrito de supervivencia, un punto de encuentro social sin combate o algo que nadie ha creado todavía: todo son simplemente servidores.",
+      "cards": [
+        {
+          "sub": "Rol",
+          "title": "Vive otra vida",
+          "body": "Ciudades de rol estricto con su propia economía, facciones, trabajos y staff."
+        },
+        {
+          "sub": "Carreras",
+          "title": "Domina las calles",
+          "body": "Ligas de carreras, encuentros nocturnos y una ciudad llena de carreteras abiertas."
+        },
+        {
+          "sub": "Mundos a medida",
+          "title": "Reescribe las reglas",
+          "body": "PvP, supervivencia, mundo libre o un modo de juego que nadie ha visto todavía."
+        }
+      ],
+      "modesLabel": "Modos de juego que crea la gente",
+      "modes": [
+        "Rol",
+        "Carreras",
+        "PvP",
+        "Battle Royale",
+        "Supervivencia",
+        "Hub social"
+      ]
+    },
+    "benefits": {
+      "eyebrow": "Lo que te da un servidor",
+      "title": [
+        "Tu mundo,",
+        "tú decides."
+      ],
+      "accent": [
+        1
+      ],
+      "items": [
+        {
+          "title": "Un mundo dedicado y persistente",
+          "body": "Tu servidor sigue funcionando cuando los jugadores se desconectan. La economía, las facciones y las historias continúan. El mundo recuerda, porque lo alojas tú.",
+          "action": "Guía de alojamiento"
+        },
+        {
+          "title": "Tus reglas y tu moderación",
+          "body": "Lista blanca o puertas abiertas, hardcore o casual: tú pones las reglas, eliges al staff y das forma a la cultura de tu comunidad.",
+          "action": "Warden, el panel de admin"
+        },
+        {
+          "title": "Jugabilidad y recursos a medida",
+          "body": "Añade trabajos, economías, misiones, vehículos e interfaz mediante recursos, paquetes de jugabilidad listos para usar. Usa lo que comparte la comunidad o programa los tuyos.",
+          "action": "Cómo funcionan los recursos"
+        },
+        {
+          "title": "Una puerta de entrada para tu comunidad",
+          "body": "La página de tu servidor en el explorador público muestra tu mundo, tu modo, tu idioma y tu número de jugadores. Que te descubran forma parte de la plataforma.",
+          "action": "Ver el explorador de servidores"
+        }
+      ]
+    },
+    "how": {
+      "eyebrow": "Cómo funciona",
+      "title": "Tres pasos para abrir las puertas.",
+      "steps": [
+        {
+          "title": "Consigue el servidor",
+          "body": "Descarga el <host>software de servidor dedicado</host> y ejecútalo en tu propio hardware o en una máquina alquilada. Es un proceso de servidor normal: no necesita Cyberpunk 2077 instalado y es completamente tuyo."
+        },
+        {
+          "title": "Vincula la licencia a tu cuenta",
+          "body": "Crea una cuenta gratuita, genera una clave de licencia en el <keys>gestor de claves</keys> y ponla en la configuración de tu servidor. La clave vincula el servidor contigo y es lo que comprueba el servidor maestro antes de dejarlo entrar en la plataforma."
+        },
+        {
+          "title": "Abre las puertas",
+          "body": "Ajusta tus plazas, reglas, idioma y modo, añade los recursos que quieras y tu servidor con licencia aparecerá en el explorador público. Los clientes de los jugadores descargan automáticamente todo lo que necesita tu mundo."
+        }
+      ],
+      "noticeTitle": "Licencias.",
+      "notice": "Cada servidor de la plataforma pertenece a una cuenta. La <licensing>guía de licencias de servidor</licensing> explica cómo crear una cuenta, conseguir una clave de licencia y vincularla a tu servidor para que el servidor maestro lo autorice. Consulta también los <requirements>requisitos de la plataforma</requirements>."
+    },
+    "band": {
+      "eyebrow": "Open Alpha · Crea ya",
+      "title": [
+        "Es hora",
+        "de crear."
+      ],
+      "accent": [
+        1
+      ],
+      "text": "Cualquiera puede descargar el servidor y empezar a crear hoy mismo. Rol, PvP, Battle Royale, carreras, supervivencia: crea tu propio modo de juego y tu propia experiencia en Night City. Crea una cuenta gratuita, verifica tu correo y genera una clave de licencia de servidor. La Open Alpha no requiere solicitud de acceso, revisión del proyecto ni aprobación.",
+      "discord": "Únete a nuestro Discord",
+      "guide": "Lee la guía de la Open Alpha"
+    },
+    "builders": {
+      "eyebrow": "Para creadores",
+      "title": "¿Quieres los detalles técnicos?",
+      "lead": "La arquitectura, los servidores dedicados, el formato de los recursos y la API de Lua completa están en la documentación, escrita para quienes crean.",
+      "serverDocs": "Docs del servidor",
+      "licensing": "Licencias de servidor",
+      "api": "Referencia de la API de Lua"
+    },
+    "requirementsNote": "Los jugadores que se conectan necesitan {requirement} en su propio equipo. El servidor dedicado no necesita el juego instalado."
+  },
+  "host": {
+    "metaTitle": "Alojar un servidor",
+    "metaDescription": "Descarga el servidor de OPEN//77 para Windows o Linux y crea un modo de juego personalizado para Cyberpunk 2077. La Open Alpha está abierta a todo el mundo. Sin aprobación y sin instalar el juego en el servidor.",
+    "breadcrumb": "Alojar un servidor",
+    "eyebrow": "Alojar un servidor · servidor dedicado de OPEN//77",
+    "title": [
+      "Aloja tu",
+      "propio servidor"
+    ],
+    "accent": [
+      1
+    ],
+    "lead": "Descarga el servidor dedicado y empieza a crear en la Open Alpha. No hace falta solicitar acceso ni esperar ninguna aprobación. Vincula la licencia a tu cuenta y crea tu propio modo de juego. La máquina que lo aloja nunca necesita <strong>Cyberpunk 2077</strong> instalado.",
+    "facts": {
+      "windowsLabel": "Servidor Windows",
+      "windowsValue": "64 bits · archivo .zip",
+      "linuxLabel": "Servidor Linux",
+      "linuxValue": "64 bits · archivo .tar.gz",
+      "whoLabel": "Quién puede descargarlo",
+      "whoValue": "Todo el mundo · sin iniciar sesión",
+      "runsLabel": "Funciona en",
+      "runsValue": "Tu hardware o una máquina alquilada"
+    },
+    "getServer": "Consigue el servidor",
+    "licenseKeys": "Claves de licencia",
+    "fullGuide": "Guía de alojamiento completa",
+    "officialNote": "Solo versiones oficiales: descarga el servidor desde esta página o desde el CDN oficial, de ningún otro sitio. Cada archivo indica su SHA-256 para que puedas verificar lo que ejecutas.",
+    "download": {
+      "eyebrow": "Descargas todo en uno",
+      "title": [
+        "Todo está en",
+        "el archivo."
+      ],
+      "accent": [
+        1
+      ],
+      "lead": "Configura tu licencia y unos endpoints accesibles; no hace falta instalar Cyberpunk 2077 en la máquina del servidor.",
+      "createLink": "Lo que te da un servidor",
+      "archive": [
+        "El servidor dedicado, con el runtime de .NET incluido",
+        "Freeroam, listo para jugar, y sus recursos del sistema",
+        "Warden, el asistente de primer arranque y el panel de administración web",
+        "El runtime de Lua 5.4 para tus propios recursos"
+      ],
+      "statusNote": "Se recomienda el canal Stable. Unstable es un canal de servidor aparte y opcional, para pruebas; el launcher tiene su propia versión."
+    },
+    "start": {
+      "eyebrow": "Primeros pasos",
+      "title": "De la descarga a las puertas abiertas.",
+      "lead": "Los mismos cuatro pasos para un servidor de pruebas local y para uno público. Empieza con el Freeroam incluido y luego hazlo tuyo.",
+      "steps": [
+        {
+          "title": "Genera una clave de licencia",
+          "body": "Créala en el <keys>gestor de claves</keys>. Vincula el servidor a tu cuenta y solo se muestra una vez, así que guárdala en un lugar seguro."
+        },
+        {
+          "title": "Descomprime y configura",
+          "body": "Extrae el archivo en una carpeta nueva y ejecuta <code>Start.cmd</code> en Windows o <code>./start.sh</code> en Linux. El asistente de primer arranque de Warden crea <code>server.jsonc</code> con el nombre de tu servidor, su visibilidad y sus endpoints públicos."
+        },
+        {
+          "title": "Configura tu licencia",
+          "body": "Introduce tu licencia durante la configuración, o guárdala en <code>OP77_LICENSE_KEY</code> si configuras el servidor a mano. La URL del servidor maestro es <code>https://master.open2077.net/</code> por defecto."
+        },
+        {
+          "title": "Ponlo en marcha",
+          "body": "Abre los puertos del juego y de descarga de recursos, y arranca el servidor configurado. Los servidores públicos se registran en el servidor maestro para que los jugadores puedan encontrarlos y entrar."
+        }
+      ],
+      "noticeTitle": "¿Vas a abrir un servidor público?",
+      "notice": "Abre en tu firewall los puertos del juego y de descarga de recursos, mantén tu clave de licencia fuera de scripts y capturas de pantalla, y protege tu acceso a Warden. La <guide>guía de alojamiento</guide> lo cubre todo antes de que invites a jugadores."
+    },
+    "requirements": {
+      "eyebrow": "Antes de alojar",
+      "title": "Qué necesitas.",
+      "items": [
+        {
+          "title": "No necesitas el juego",
+          "body": "Un servidor dedicado funciona con independencia de Cyberpunk 2077, de REDengine y del plugin del cliente. Nunca carga contenido del juego ni necesita una copia instalada."
+        },
+        {
+          "title": "Windows x64 o Linux x64",
+          "body": "Los dos paquetes oficiales incluyen el runtime de .NET y las dependencias nativas de red. No hace falta instalar .NET aparte en el servidor; la <guide>guía de instalación</guide> enumera los requisitos previos del sistema operativo."
+        },
+        {
+          "title": "Tus jugadores sí necesitan el juego",
+          "body": "Todos los que se conecten necesitan {requirement} en su propio equipo y una cuenta gratuita de OPEN//77. No hace falta solicitar acceso."
+        }
+      ],
+      "questions": "Preguntas",
+      "faq": [
+        {
+          "q": "¿Necesito aprobación para alojar un servidor?",
+          "a": "No. Las descargas del servidor de la Open Alpha son públicas, sin iniciar sesión ni aprobación. Crea una cuenta gratuita de OPEN//77 y verifica tu correo para generar una clave de licencia de servidor. No necesitas ninguna solicitud de desarrollador ni un rol de staff."
+        },
+        {
+          "q": "Las descargas del servidor no están disponibles.",
+          "a": "Las descargas son públicas. Si el servicio de publicación no está disponible temporalmente, recarga esta página o consulta el <status>estado del servicio</status>. No necesitas cuenta ni permiso de acceso para ver los archivos."
+        },
+        {
+          "q": "¿Dónde va la clave de licencia?",
+          "a": "Introdúcela en la configuración de primer arranque de Warden, o guárdala en <code>OP77_LICENSE_KEY</code> si configuras el servidor a mano. La <licensing>guía de licencias</licensing> explica la activación. Nunca pegues claves en scripts públicos ni en capturas de pantalla."
+        },
+        {
+          "q": "¿Cómo actualizo un servidor existente?",
+          "a": "Lee las notas de la versión, haz una copia de seguridad de tu configuración, tus recursos y tus datos, y detén el servidor antes de descomprimir el nuevo archivo encima. Comprueba la compatibilidad entre cliente y servidor y prueba tus propios recursos antes de volver a abrir."
+        }
+      ]
+    },
+    "tools": {
+      "eyebrow": "Siguientes pasos",
+      "title": "Herramientas de alojamiento.",
+      "items": [
+        {
+          "title": "Warden, el panel de administración",
+          "body": "Configura, supervisa y administra tu servidor desde su panel web: jugadores, recursos, instalaciones desde el Workshop.",
+          "action": "Conoce Warden"
+        },
+        {
+          "title": "La API de Lua",
+          "body": "Vehículos, marcadores, NPC, clima, interacciones: las mismas funciones nativas sujetas a permisos con las que están hechos los propios recursos de OPEN//77.",
+          "action": "Referencia de la API de Lua"
+        },
+        {
+          "title": "Recursos",
+          "body": "El formato de los recursos, el manifiesto y el ciclo de vida de un paquete que tu servidor carga y envía a los jugadores.",
+          "action": "Recursos y scripting"
+        },
+        {
+          "title": "¿Vienes a jugar?",
+          "body": "Los jugadores necesitan el launcher, no este archivo. Inicia tu sesión, comprueba tu juego y te lleva al explorador de servidores.",
+          "action": "Consigue el launcher"
+        }
+      ]
+    },
+    "builds": {
+      "unstableEyebrow": "Servidor Unstable · versión de prueba",
+      "stableEyebrow": "Último servidor estable",
+      "previewTag": "Versión preliminar",
+      "officialTag": "Versión oficial",
+      "published": "Publicado el {date}",
+      "compat": "Cliente compatible: <code>{client}</code> · Protocolo de red: <code>{protocol}</code>. Puede que los clientes del canal Stable no puedan entrar.",
+      "archiveKind": "{os} · archivo .{kind}",
+      "size": "Tamaño",
+      "notPublished": "No publicado",
+      "run": "Ejecutar",
+      "runtime": "Entorno",
+      "runtimeValue": ".NET incluido",
+      "downloadFor": "Descargar para {os}",
+      "downloadUnstableFor": "Descargar Unstable para {os}",
+      "details": "Detalles del archivo y verificación",
+      "file": "Archivo: <code>{file}</code>",
+      "shaIntro": "SHA-256 del archivo. Compáralo con el archivo descargado antes de extraerlo.",
+      "copySha": "Copiar el SHA-256 del archivo para {os}",
+      "noChecksum": "No se ha publicado la suma de comprobación del archivo para esta versión.",
+      "missing": "La compilación para esta plataforma aún no se ha publicado en esta versión. Usa «Buscar actualizaciones» más abajo para reintentarlo."
+    },
+    "unstable": {
+      "summary": "¿Buscas una versión preliminar?",
+      "tag": "Unstable",
+      "title": "Para pruebas. No para tu servidor en producción.",
+      "warning": "Unstable incluye cambios que pueden romper recursos o la compatibilidad. Haz una copia de seguridad de tu configuración, tus recursos y tu base de datos, y extráelo en una carpeta aparte. No sobrescribas un servidor en producción.",
+      "players": "Los jugadores deben seleccionar <strong>Unstable</strong> en los Ajustes del launcher e instalar un cliente compatible. Cambiar la versión del servidor no actualiza a tus jugadores automáticamente.",
+      "consent": "Entiendo los riesgos. Mostrar las descargas del canal Unstable.",
+      "none": "No hay ninguna versión Unstable verificada disponible ahora mismo. Usa «Buscar actualizaciones» más abajo para volver a intentarlo. Las descargas estables de arriba no se ven afectadas."
+    }
+  },
+  "ncwe": {
+    "metaTitle": "NCWE {version}, el editor de mundos de Night City",
+    "metaDescription": "Descarga NCWE Studio {version}, el editor de mundos estable para Cyberpunk 2077. Edita Night City, construye con carreteras, terreno, luces y tus propios modelos, y exporta mods de ArchiveXL o mundos multijugador de OPEN//77. Gratis y sin cuenta.",
+    "eyebrow": "Editor de mundos de Night City",
+    "stableTag": "Estable {version}",
+    "title": [
+      "Moldea",
+      "Night City",
+      "a tu gusto."
+    ],
+    "accent": [
+      2
+    ],
+    "lead": "<strong>NCWE</strong> es el editor de mundos gratuito para Cyberpunk 2077. Vuela por la ciudad real, mueve o elimina lo que hay, construye lugares nuevos con carreteras, terreno, luces y tus propios modelos, y publícalos como mod de ArchiveXL o como mundo multijugador de OPEN//77.",
+    "facts": {
+      "label": "NCWE de un vistazo",
+      "priceLabel": "Precio",
+      "priceValue": "Gratis y de código abierto",
+      "accountLabel": "Cuenta",
+      "accountValue": "No hace falta para crear",
+      "gameLabel": "Juego",
+      "gameValue": "Cyberpunk 2077 {game}",
+      "shipsLabel": "Se exporta como",
+      "shipsValue": "Mods de ArchiveXL · mundos de OPEN//77"
+    },
+    "heroDownload": "Descargar para Windows",
+    "heroNote": "Windows 10 y 11 · Cyberpunk 2077 {game} · sin cuenta",
+    "trailer": {
+      "watch": "Ver el tráiler",
+      "watchLength": "Ver el tráiler ({length})",
+      "eyebrow": "Tráiler · {length}"
+    },
+    "city": {
+      "eyebrow": "La ciudad real",
+      "title": [
+        "Night City, viva",
+        "alrededor de tu cámara."
+      ],
+      "lead": "Ni una cuadrícula vacía ni una copia: el editor lee la ciudad de tu propio juego y la dibuja mientras vuelas, así que lo que construyes está en las calles reales desde el primer clic.",
+      "points": [
+        {
+          "title": "Carga en streaming, como el juego.",
+          "body": "Ningún barrio que cargar: los sectores llegan alrededor de tu cámara tal como los elige el juego, y un lugar que ya has visitado vuelve casi al instante."
+        },
+        {
+          "title": "Se ve como el juego.",
+          "body": "Cerca de la cámara, las mallas llevan sus materiales reales: superficies por capas, cristal, decals, agua, neones, pantallas y vegetación, bajo un sol, un cielo y una vista previa nocturna."
+        },
+        {
+          "title": "No toca tu juego.",
+          "body": "Un proyecto es una lista de cambios sobre los datos del juego. No se reescribe nada de tu instalación, y cada exportación se comprueba contra lo que has editado."
+        }
+      ]
+    },
+    "tools": {
+      "eyebrow": "Las herramientas",
+      "title": [
+        "Todo lo que necesitas",
+        "para hacer mapas."
+      ],
+      "lead": "Un solo editor para todo el trabajo: cambia lo que el juego puso ahí y añade lo que nunca tuvo.",
+      "items": [
+        {
+          "title": "Mueve lo que hay",
+          "body": "Selecciona, mueve, rota, escala, oculta o sustituye los objetos del propio juego, con gizmos, ajuste magnético y deshacer ilimitado."
+        },
+        {
+          "title": "Carreteras",
+          "body": "Dibuja splines con cualquier tipo de carretera del juego, dales peralte y apóyalas en el suelo. Se exportan con una colisión que sigue la superficie."
+        },
+        {
+          "title": "Terreno",
+          "body": "Esculpe, recorta y pinta el suelo. Las plantas y los objetos que hay encima lo siguen."
+        },
+        {
+          "title": "Luces, efectos, decals, sonidos",
+          "body": "Coloca luces puntuales, focales y de área, partículas, decals y emisores de sonido, o edita los del propio juego."
+        },
+        {
+          "title": "Puertas y entidades",
+          "body": "Coloca cualquier plantilla de entidad, elige su apariencia y define cómo se abre, se cierra y se bloquea una puerta."
+        },
+        {
+          "title": "Ascensores",
+          "body": "Elige un tipo y haz clic en cada planta en la que para. Se exporta igual que los que construye el propio juego, con paneles de llamada y puertas de rellano."
+        },
+        {
+          "title": "Colisión y oclusión",
+          "body": "Ve la colisión y los oclusores reales del juego, edítalos, añade los tuyos o ajusta la colisión a una malla."
+        },
+        {
+          "title": "Tráfico",
+          "body": "Visualiza, edita, enlaza y dibuja los carriles que siguen los vehículos y los peatones."
+        },
+        {
+          "title": "Biblioteca y prefabs",
+          "body": "Explora los props y las entidades del juego con miniaturas y vistas previas 3D en tiempo real. Guarda tus propios prefabs y colócalos donde quieras."
+        }
+      ]
+    },
+    "reel": {
+      "eyebrow": "Dos minutos",
+      "title": [
+        "Míralo",
+        "en marcha."
+      ],
+      "accent": [
+        1
+      ]
+    },
+    "content": {
+      "eyebrow": "Tu propio contenido",
+      "title": [
+        "Trae lo que el juego",
+        "nunca incluyó."
+      ],
+      "lead": "Tu biblioteca vive junto a la del juego. Lo que usa un mundo viaja con él cuando lo exportas o lo compartes.",
+      "items": [
+        {
+          "tag": "Modelos",
+          "title": "Tus mallas",
+          "body": "Importa glTF, FBX u OBJ. NCWE los convierte en mallas y texturas del juego al exportar."
+        },
+        {
+          "tag": "Imágenes",
+          "title": "Tus decals",
+          "body": "Cualquier imagen se convierte en un decal, con su transparencia. Guárdalos en un banco y colócalos como los del juego."
+        },
+        {
+          "tag": "Audio",
+          "title": "Tus sonidos",
+          "body": "Ambientes y música para mundos de OPEN//77. Un bucle sincronizado suena en el mismo momento para todos los jugadores."
+        }
+      ]
+    },
+    "together": {
+      "eyebrow": "En equipo",
+      "title": "Construye con tu equipo.",
+      "items": [
+        {
+          "title": "Sesiones en directo.",
+          "body": "Los cambios de todos llegan en cuanto se hacen; ves las cámaras y las selecciones de los demás, con chat integrado."
+        },
+        {
+          "title": "Mundos compartidos.",
+          "body": "Comparte un mundo con un código de invitación: uno construye por la noche y otro sigue por la mañana."
+        },
+        {
+          "title": "Guardado en la nube.",
+          "body": "Todas las versiones de tus mundos, en cualquier PC, con los modelos y sonidos que usan."
+        }
+      ],
+      "note": "Estas tres funciones usan una cuenta gratuita de OPEN//77. Construir en solitario, nunca."
+    },
+    "agents": {
+      "eyebrow": "Agentes de IA",
+      "title": "O pásale las herramientas a un agente.",
+      "items": [
+        {
+          "title": "Incluye un servidor MCP.",
+          "body": "Claude Code, Codex o cualquier cliente MCP controla el editor mientras está abierto."
+        },
+        {
+          "title": "Lo ves trabajar.",
+          "body": "El agente dice lo que planea, mide en tu vista y cada lote es un solo paso de deshacer."
+        },
+        {
+          "title": "Las mismas herramientas que tú.",
+          "body": "Interiores, calles y lugares nuevos, construidos con lo que el editor ya sabe hacer."
+        }
+      ],
+      "note": "El canal de automatización es local y está limitado a tu usuario de Windows."
+    },
+    "ship": {
+      "eyebrow": "Publícalo",
+      "title": [
+        "Del editor",
+        "al juego."
+      ],
+      "lead": "Un proyecto, tres salidas. Cada exportación lleva un manifiesto de lo que cambia y de la versión para la que se creó.",
+      "items": [
+        {
+          "tag": "Un jugador",
+          "title": "Mod de ArchiveXL",
+          "body": "Un paquete para archive/pc/mod con sus propios sectores y parches protegidos. Instálalo y desinstálalo desde el editor."
+        },
+        {
+          "tag": "Multijugador",
+          "title": "Mundo de OPEN//77",
+          "body": "Un recurso de servidor que el launcher instala a cada jugador antes de que arranque el juego. Tu mapa, en tu servidor."
+        },
+        {
+          "tag": "WolvenKit",
+          "title": "World Builder",
+          "body": "Un archivo para el World Builder de WolvenKit, para llevar lo que has colocado a ese flujo de trabajo."
+        }
+      ],
+      "server": "¿Tienes un servidor?",
+      "serverLink": "Crea tu servidor de OPEN//77"
+    },
+    "download": {
+      "eyebrow": "Versión estable",
+      "title": [
+        "Consigue",
+        "NCWE."
+      ],
+      "accent": [
+        1
+      ],
+      "text": "Gratis, sin cuenta y sin nada más que instalar: .NET y el Windows App SDK vienen en el zip.",
+      "notes": "Novedades de NCWE {version}",
+      "button": "Descargar NCWE {version}",
+      "meta": "Windows 10 y 11, 64 bits · {size}",
+      "copySha": "Copiar el SHA-256 de la descarga",
+      "discord": "Opiniones y ayuda en Discord",
+      "stepsLabel": "Tres pasos",
+      "steps": [
+        {
+          "title": "Descarga y extrae",
+          "body": "Descomprime el archivo entero en la carpeta que quieras. No ejecutes NCWE desde dentro del zip."
+        },
+        {
+          "title": "Ejecuta NCWE.Studio.exe",
+          "body": "La versión aún no está firmada: si aparece Windows SmartScreen, elige Más información y luego Ejecutar de todas formas."
+        },
+        {
+          "title": "Abre Night City",
+          "body": "NCWE encuentra solo tu instalación de Cyberpunk 2077, o te pide su carpeta. Y a volar."
+        }
+      ]
+    },
+    "faq": {
+      "eyebrow": "Antes de empezar",
+      "title": "Preguntas.",
+      "items": [
+        {
+          "q": "¿Es gratis?",
+          "a": "Sí. NCWE es software libre con licencia GNU General Public License v3.0. No incluye datos del juego: lee la ciudad de tu propia instalación."
+        },
+        {
+          "q": "¿Necesito una cuenta?",
+          "a": "Para construir, no. Solo se pide una cuenta de OPEN//77 para el guardado en la nube y la colaboración en directo, y el inicio de sesión se hace en open2077.net, desde tu navegador."
+        },
+        {
+          "q": "¿Qué versión del juego?",
+          "a": "Cyberpunk 2077 {game}, en Windows 10 u 11 con una tarjeta gráfica DirectX 11. Para jugar lo que exportes, el juego necesita ArchiveXL y RED4ext. Instala <archivexl>nuestra build de ArchiveXL 1.28</archivexl> ({archivexlVersion}): la 1.28.0 oficial falla con los objetos del juego eliminados y conserva su colisión. El código fuente está en <source>GitHub</source>."
+        },
+        {
+          "q": "¿Cambiará mis archivos del juego?",
+          "a": "No. Los proyectos se guardan como cambios, y una exportación es un mod aparte que instalas y desinstalas. Tus archivos originales nunca se reescriben."
+        },
+        {
+          "q": "¿Cómo actualizo desde la beta?",
+          "a": "Cierra NCWE, descarga la versión estable y extráela en una carpeta nueva. Ejecuta NCWE.Studio.exe desde esa carpeta. Se conservan tus ajustes y tu sesión, y tus proyectos siguen donde los guardaste."
+        },
+        {
+          "q": "¿Dónde puedo informar de un problema?",
+          "a": "El menú Help > Open the logs folder reúne lo que necesitamos para un informe de bug. Lleva los logs y los pasos para reproducir el problema al Discord de OPEN//77."
+        }
+      ]
+    },
+    "thanks": "NCWE se apoya en <wolvenkit>WolvenKit</wolvenkit> y <archivexl>ArchiveXL</archivexl>. Sin ellos no existiría: gracias a sus autores.",
+    "fineprint": "NCWE es software libre (GPL-3.0). Es un proyecto comunitario independiente, sin relación con CD PROJEKT RED; Cyberpunk 2077 es una marca comercial de CD PROJEKT S.A. No incluye datos del juego."
+  },
+  "status": {
+    "metaTitle": "Estado del servicio",
+    "metaDescription": "Salud en directo de los servicios de Open//77, disponibilidad a 90 días, tiempos de respuesta, incidencias detectadas y mantenimientos programados del Master, el CDN, el launcher, la web y el Workshop.",
+    "hero": {
+      "watermark": "En línea",
+      "eyebrow": "// Red abierta · estado del servicio",
+      "title": [
+        "La red.",
+        "De un vistazo."
+      ],
+      "accent": [
+        1
+      ],
+      "lead": "Salud de los servicios en directo, disponibilidad medida y un registro transparente de cada interrupción, directamente desde el monitor.",
+      "refresh": "Actualizar estado",
+      "json": "JSON de estado"
+    },
+    "signal": {
+      "label": "Estado actual de la red",
+      "noSignal": "Sin señal en directo",
+      "connected": "Monitor conectado",
+      "connecting": "Conectando con el monitor…",
+      "titles": {
+        "operational": "Todos los sistemas funcionan con normalidad",
+        "degraded": "Algunos servicios responden con lentitud",
+        "outage": "Se ha detectado una interrupción del servicio",
+        "unknown": "Esperando datos de monitorización recientes"
+      },
+      "lastMeasured": "Última medición: {time} · comprobaciones cada 60 segundos",
+      "noHealthy": "Ningún servicio se marca como operativo hasta que llega una comprobación real.",
+      "services": "Servicios",
+      "pending": "Pendiente"
+    },
+    "states": {
+      "operational": "Operativo",
+      "degraded": "Respuestas lentas",
+      "outage": "Interrupción",
+      "unknown": "Sin datos recientes"
+    },
+    "alerts": {
+      "staleTitle": "Los datos de monitorización están desactualizados.",
+      "errorTitle": "No se ha podido actualizar el feed de monitorización.",
+      "staleBody": "El último historial registrado sigue más abajo. Las comprobaciones antiguas no se tratan como estado actual.",
+      "errorBody": "Esto no indica si los servicios están activos o caídos. Vuelve a intentarlo en breve.",
+      "noscript": "Las actualizaciones en directo necesitan JavaScript. El <feed>feed JSON público</feed> está disponible sin JavaScript."
+    },
+    "metrics": {
+      "operational": "Servicios operativos",
+      "now": "Ahora mismo",
+      "waiting": "Esperando una comprobación",
+      "availability": "Disponibilidad a {days} días",
+      "availabilityDetail": "Comprobaciones correctas ÷ completadas",
+      "coverage": "Cobertura de monitorización",
+      "coverageDetail": "Franjas de un minuto observadas",
+      "incidents": "Incidencias abiertas",
+      "incidentsRecorded": {
+        "one": "{count} registrada en 90 días",
+        "other": "{count} registradas en 90 días"
+      },
+      "historyUnavailable": "Historial no disponible"
+    },
+    "services": {
+      "eyebrow": "Disponibilidad",
+      "title": "Servicios de la plataforma",
+      "period": "Periodo de disponibilidad",
+      "days": {
+        "one": "{count} día",
+        "other": "{count} días"
+      },
+      "legend": "Leyenda",
+      "partial": "Rayado = cobertura parcial",
+      "uptime": "Disponibilidad a {days} días",
+      "coverage": "Cobertura: {value}",
+      "awaiting": "Esperando una comprobación reciente",
+      "lastLatency": "Último registro: {ms} ms",
+      "waiting": "Esperando datos de monitorización. El historial de disponibilidad aparecerá aquí cuando empiece la recogida de datos."
+    },
+    "bars": {
+      "group": "{name}: disponibilidad a {days} días, selecciona un día para ver los detalles",
+      "available": "{percent} disponible",
+      "noData": "sin datos",
+      "noObservations": "Sin observaciones",
+      "day": "{date}: {availability}, {checked} de {expected} comprobaciones, {failed} fallidas, {slow} lentas",
+      "detail": "{date} · {availability} · {checked}/{expected} comprobaciones · {failed} fallidas · {slow} lentas",
+      "today": "Hoy · UTC"
+    },
+    "latency": {
+      "eyebrow": "Tiempo de respuesta",
+      "title": "Cada milisegundo cuenta.",
+      "service": "Servicio",
+      "placeholderService": "API del Master",
+      "note": "Duración de la comprobación de extremo a extremo, no el ping en el juego. Las comprobaciones del CDN incluyen los metadatos de publicación y descargas parciales de 4 KiB. Las muestras que faltan nunca se enlazan por encima de los huecos.",
+      "average": "Media · últimas 24 h",
+      "slowest": "Intervalo más lento",
+      "measured": "Intervalos medidos",
+      "chartTitle": "Tiempo de respuesta de {service} en 24 horas. {count} intervalos de cinco minutos medidos. Los huecos indican que no hubo comprobaciones correctas.",
+      "noSample": "Sin muestra",
+      "empty": "// Aún no hay muestras de tiempo de respuesta",
+      "dayAgo": "Hace 24 h",
+      "halfDay": "12 h",
+      "now": "Ahora",
+      "view": "Ver los datos de tiempo de respuesta",
+      "caption": "Tiempo medio de comprobación por intervalos de cinco minutos, UTC, los más recientes primero",
+      "time": "Hora",
+      "responseTime": "Tiempo de respuesta",
+      "noSuccessful": "Ninguna muestra correcta"
+    },
+    "maintenance": {
+      "eyebrow": "Mantenimiento",
+      "title": "Atención.",
+      "none": "No hay mantenimiento programado",
+      "unavailable": "Calendario no disponible",
+      "noneBody": "No hay mantenimiento activo ni previsto en el último feed.",
+      "waiting": "Esperando una instantánea de monitorización.",
+      "inProgress": "En curso",
+      "scheduled": "Programado"
+    },
+    "monitor": {
+      "probe": "Sonda",
+      "interval": "Intervalo de comprobación",
+      "intervalValue": "{seconds} s",
+      "unknownAfter": "Desconocido tras",
+      "unknownAfterValue": "{seconds} s sin datos",
+      "since": "Recogiendo datos desde",
+      "retention": "Conservación",
+      "retentionValue": "90 días"
+    },
+    "incidents": {
+      "eyebrow": "Historial de incidencias",
+      "title": "Los hechos, no las conjeturas.",
+      "note": "Últimos 90 días · los más recientes primero",
+      "clearEyebrow": "// INCIDENTS.LOG clear",
+      "offlineEyebrow": "// INCIDENTS.LOG offline",
+      "nothing": "Nada que destacar",
+      "unavailable": "Historial no disponible",
+      "nothingBody": "No hay incidencias confirmadas en el periodo observado.",
+      "unavailableBody": "El historial de incidencias no está disponible hasta que responda el monitor.",
+      "recovered": "Recuperado",
+      "notConfirmed": "Recuperación sin confirmar",
+      "firstDetected": "Detectada por primera vez: {time}",
+      "recoveryConfirmed": " · Recuperación confirmada: {time} · duración observada: {duration}",
+      "awaiting": " · Esperando dos comprobaciones correctas",
+      "rules": "Una incidencia se abre tras dos comprobaciones fallidas seguidas y se cierra tras dos correctas. Los fallos aislados siguen apareciendo en la disponibilidad. La detección no es un diagnóstico de la causa."
+    },
+    "method": {
+      "summary": "Cómo medimos la disponibilidad",
+      "source": "Las mediciones proceden de {region}. Se ejecuta una comprobación cada minuto. Es un único punto de monitorización, no una garantía de nivel de servicio global. No cubre los servidores de juego de la comunidad ni el inicio de sesión de extremo a extremo.",
+      "configuredProbe": "la sonda configurada por el operador",
+      "formula": "Disponibilidad = comprobaciones correctas ÷ comprobaciones completadas. Las respuestas lentas pero correctas cuentan como disponibles. Cobertura = comprobaciones completadas ÷ franjas de un minuto programadas en los días naturales UTC seleccionados. Los periodos sin observar, incluido el anterior al inicio de la monitorización, son desconocidos y nunca cuentan como tiempo activo. El mantenimiento no borra las comprobaciones fallidas.",
+      "bars": "Las barras diarias muestran el peor resultado observado; las rayas indican una cobertura incompleta. El gráfico de respuesta promedia las comprobaciones correctas en intervalos de cinco minutos. Los datos de más de tres minutos pasan a ser desconocidos, aunque el último resultado fuera correcto.",
+      "started": "La recogida empezó el {time}. ",
+      "notStarted": "Aún no se sabe cuándo empezó la recogida. ",
+      "retention": "El historial se conserva 90 días. Una caída del monitor o de la red puede impedir las observaciones; las marcas de tiempo de las incidencias no prueban una caída ininterrumpida entre comprobaciones."
+    },
+    "footer": {
+      "probePending": "sonda pendiente",
+      "fineprint": "El estado refleja comprobaciones automáticas desde la ubicación de monitorización indicada, no una garantía de disponibilidad desde todas las redes.",
+      "support": "¿Falta algo aquí? Contacta con soporte"
+    },
+    "duration": {
+      "minutes": "{count} min",
+      "hours": "{hours} h {minutes} min",
+      "days": {
+        "one": "{count} día",
+        "other": "{count} días"
+      }
+    }
+  },
+  "auth": {
+    "pages": {
+      "account": {
+        "metaTitle": "Cuenta",
+        "metaDescription": "Tu cuenta de la plataforma OPEN//77: perfil, verificación del correo, identidades de juego vinculadas y claves de licencia de servidor."
+      },
+      "verify": {
+        "metaTitle": "Verificar correo",
+        "metaDescription": "Confirma la dirección de correo de tu cuenta de la plataforma OPEN//77."
+      },
+      "forgot": {
+        "metaTitle": "Contraseña olvidada",
+        "metaDescription": "Solicita un enlace para restablecer la contraseña de tu cuenta de la plataforma OPEN//77."
+      },
+      "reset": {
+        "metaTitle": "Restablecer contraseña",
+        "metaDescription": "Elige una nueva contraseña para tu cuenta de la plataforma OPEN//77."
+      },
+      "launcher": {
+        "metaTitle": "Autorizar el launcher",
+        "metaDescription": "Inicia sesión para conectar el launcher de OPEN//77 de tu dispositivo con tu cuenta de la plataforma."
+      }
+    },
+    "scenes": {
+      "account": {
+        "eyebrow": "Cuenta de la plataforma",
+        "title": [
+          "Tu",
+          "cuenta"
+        ],
+        "lead": "Una sola cuenta para toda la plataforma: el explorador de servidores, tus identidades de juego, tus creaciones del Workshop y las claves de licencia con las que funcionan tus servidores."
+      },
+      "forgot": {
+        "eyebrow": "// Recuperación de cuenta",
+        "title": [
+          "¿Olvidaste tu",
+          "contraseña?"
+        ],
+        "lead": "Le pasa a cualquiera. Te enviaremos por correo un enlace de un solo uso para elegir una nueva.",
+        "notes": [
+          "Usa el correo más reciente: los enlaces son de un solo uso y caducan al poco tiempo.",
+          "No compartas el enlace con nadie. Nadie de OPEN//77 te lo pedirá nunca."
+        ]
+      },
+      "reset": {
+        "eyebrow": "// Recuperación de cuenta",
+        "title": [
+          "Nueva",
+          "contraseña"
+        ],
+        "lead": "Has llegado desde un enlace de restablecimiento de tu bandeja de entrada. Elige la nueva contraseña de tu cuenta e inicia sesión con ella.",
+        "notes": [
+          "Usa el correo más reciente: los enlaces son de un solo uso y caducan al poco tiempo.",
+          "No compartas el enlace con nadie. Nadie de OPEN//77 te lo pedirá nunca."
+        ]
+      },
+      "verify": {
+        "eyebrow": "// Cuenta de la plataforma",
+        "title": [
+          "Verifica tu",
+          "correo"
+        ],
+        "lead": "Un clic y tu dirección queda confirmada. La verificación es obligatoria para poder crear claves de licencia de servidor.",
+        "notes": [
+          "Usa el correo más reciente: los enlaces son de un solo uso y caducan al poco tiempo."
+        ]
+      },
+      "launcher": {
+        "eyebrow": "// Launcher",
+        "title": [
+          "Autoriza el",
+          "launcher"
+        ],
+        "lead": "Conecta el launcher de OPEN//77 que se está ejecutando en este dispositivo con tu cuenta de la plataforma. El launcher nunca ve tu contraseña.",
+        "notes": [
+          "Aprueba solo lo que hayas iniciado tú: si no has abierto esta página desde el launcher, ciérrala.",
+          "El launcher recibe un código de corta duración. Tu contraseña nunca sale de esta página."
+        ]
+      },
+      "github": {
+        "eyebrow": "// Conexiones de creador",
+        "title": [
+          "Conecta",
+          "GitHub"
+        ],
+        "lead": "Verifica tu identidad pública e importa al Workshop los archivos de tus lanzamientos, sin conceder acceso de escritura a tus repositorios.",
+        "notes": [
+          "Aprueba solo lo que hayas iniciado tú: si no has abierto esta página desde GitHub, ciérrala.",
+          "Acceso de lectura a tu identidad pública y a tus lanzamientos. Sin permisos de escritura."
+        ]
+      },
+      "warden": {
+        "eyebrow": "// Conexiones de creador",
+        "title": [
+          "Aprueba",
+          "Warden"
+        ],
+        "lead": "Deja que el Warden de tu servidor prepare borradores de recursos del Workshop con tu cuenta. Revisa exactamente lo que pide antes de aprobarlo.",
+        "notes": [
+          "Aprueba solo lo que hayas iniciado tú: si no has abierto esta página desde tu Warden, ciérrala.",
+          "Un token limitado al proyecto que elijas, revocable desde tu cuenta."
+        ]
+      }
+    },
+    "watermarks": {
+      "players": "Conéctate",
+      "recovery": "Reinicio",
+      "verify": "Confirma",
+      "creator": "Conecta"
+    },
+    "footnote": {
+      "alpha": "Crea una cuenta gratuita para jugar y alojar. La Open Alpha no requiere aprobación de acceso.",
+      "alphaLink": "Empieza en la Open Alpha",
+      "master": "Las cuentas funcionan con el servidor maestro de OPEN//77."
+    },
+    "loading": "Cargando tu cuenta",
+    "verifying": "Verificando tu correo",
+    "pending": "Cuenta",
+    "identity": {
+      "signedIn": "Sesión iniciada",
+      "player": "Jugador",
+      "signOut": "Cerrar sesión",
+      "signingOut": "Cerrando sesión…"
+    },
+    "panel": {
+      "tabs": "Inicia sesión o crea una cuenta",
+      "signIn": "Iniciar sesión",
+      "register": "Crear cuenta",
+      "signInLead": "Tu cuenta de la plataforma OPEN//77, la misma que usa el launcher.",
+      "registerLead": "Gratis, y se hace en un minuto. La Open Alpha no requiere aprobación de acceso.",
+      "signInFailed": "Error al iniciar sesión",
+      "displayName": "Nombre visible",
+      "displayNamePlaceholder": "Cómo te ven los demás jugadores",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@ejemplo.net",
+      "password": "Contraseña",
+      "passwordNew": "Elige una contraseña segura",
+      "passwordCurrent": "Tu contraseña",
+      "passwordHint": "Al menos 8 caracteres. Lo mejor es una frase de contraseña.",
+      "signInInstead": "Inicia sesión",
+      "remember": "Mantener la sesión iniciada",
+      "forgot": "¿Olvidaste tu contraseña?",
+      "signingIn": "Iniciando sesión…",
+      "creating": "Creando tu cuenta…",
+      "registerNote": "Crea una cuenta gratuita para jugar y alojar en la <alpha>Open Alpha</alpha>. Sin solicitud de acceso.",
+      "verifyTitle": "Verifica tu correo",
+      "created": "Cuenta creada para <strong>{email}</strong>.",
+      "devToken": "Este servidor maestro de desarrollo no tiene servicio de correo, así que tu código de verificación ya aparece rellenado abajo.",
+      "codeSent": "Hemos enviado un código de verificación a tu bandeja de entrada.",
+      "resentTitle": "Correo de verificación solicitado",
+      "resentBody": "Usa el código del correo más reciente.",
+      "code": "Código de verificación",
+      "codePlaceholder": "Pega tu código de verificación",
+      "working": "Procesando…",
+      "verify": "Verificar e iniciar sesión",
+      "resend": "Reenviar el correo de verificación",
+      "skip": "Ahora no",
+      "verifyLater": "Puedes verificarlo más tarde; la verificación es obligatoria para poder crear claves de licencia de servidor."
+    },
+    "field": {
+      "show": "Mostrar {label}",
+      "hide": "Ocultar {label}"
+    },
+    "back": "Volver al inicio de sesión",
+    "sending": "Enviando…",
+    "generic": "Algo ha salido mal. Inténtalo de nuevo.",
+    "verification": {
+      "eyebrow": "Verificación del correo",
+      "confirmedTitle": "Dirección confirmada",
+      "confirmedNotice": "Correo verificado.",
+      "confirmedBody": "Tu dirección está confirmada. Ya puedes iniciar sesión y crear claves de licencia de servidor.",
+      "badLinkTitle": "Revisa tu enlace",
+      "badLinkFooter": "También puedes verificarlo desde la <account>página de tu cuenta</account> después de iniciar sesión.",
+      "badLinkBody": "Este enlace de verificación está incompleto. Vuelve a abrir el enlace desde tu correo, o cópialo entero en la barra de direcciones.",
+      "failedTitle": "Error de verificación",
+      "invalidLink": "Este enlace de verificación no es válido o ha caducado.",
+      "resend": "Reenviar el correo de verificación",
+      "resentTitle": "Un nuevo correo de verificación va de camino.",
+      "resentBody": "Se envía a <strong>{email}</strong>. El enlace más reciente sustituye a este.",
+      "resendFailed": "No se ha podido solicitar el correo. Espera un minuto y vuelve a intentarlo."
+    },
+    "forgot": {
+      "sentEyebrow": "Enlace solicitado",
+      "sentTitle": "Revisa tu bandeja de entrada",
+      "sentBody": "Si existe una cuenta para <strong>{email}</strong>, te hemos enviado un enlace para restablecer la contraseña. Revisa tu bandeja de entrada. El enlace caduca al poco tiempo.",
+      "eyebrow": "Restablecer contraseña",
+      "title": "Restablece tu contraseña",
+      "lead": "Introduce la dirección de correo de tu cuenta y te enviaremos un enlace para elegir una nueva contraseña.",
+      "submit": "Enviar enlace"
+    },
+    "reset": {
+      "tooShort": "La nueva contraseña debe tener al menos 8 caracteres.",
+      "mismatch": "Las dos contraseñas no coinciden.",
+      "linkEyebrow": "Enlace de restablecimiento",
+      "linkTitle": "Enlace no disponible",
+      "requestNew": "Solicitar un enlace nuevo",
+      "incomplete": "Este enlace de restablecimiento está incompleto. Vuelve a abrir el enlace desde tu correo, o cópialo entero en la barra de direcciones.",
+      "expired": "Este enlace de restablecimiento no es válido o ha caducado. Los enlaces de restablecimiento son de un solo uso y solo duran un rato.",
+      "eyebrow": "Restablecer contraseña",
+      "doneTitle": "Todo listo",
+      "doneNotice": "Contraseña cambiada.",
+      "doneBody": "Tu nueva contraseña ya está activa. Inicia sesión con ella.",
+      "title": "Elige una nueva contraseña",
+      "lead": "Nueva contraseña para <strong>{email}</strong>.",
+      "newPassword": "Nueva contraseña",
+      "newPlaceholder": "Elige una contraseña segura",
+      "hint": "Entre 8 y 128 caracteres. Una frase de contraseña única funciona bien.",
+      "confirm": "Confirma la nueva contraseña",
+      "confirmPlaceholder": "La misma contraseña otra vez",
+      "updating": "Actualizando…",
+      "submit": "Cambiar contraseña"
+    },
+    "launcher": {
+      "eyebrow": "Launcher",
+      "badRedirect": "A este enlace del launcher le falta una dirección de redirección válida.",
+      "hostile": "Este enlace del launcher apunta a un sitio al que no debería. Por tu seguridad, se ha detenido el inicio de sesión.",
+      "noState": "Este enlace del launcher está incompleto (falta el state).",
+      "badChallenge": "Este enlace del launcher está incompleto (challenge PKCE no válido).",
+      "stoppedTitle": "Conexión detenida",
+      "stoppedFooter": "Vuelve a abrir el launcher de OPEN//77 para obtener un nuevo enlace de inicio de sesión.",
+      "expired": "Tu sesión ha caducado. Vuelve a iniciar sesión para autorizar el launcher.",
+      "failed": "No se ha podido autorizar el launcher.",
+      "doneTitle": "Launcher autorizado",
+      "doneNotice": "Ya puedes volver al launcher de OPEN//77.",
+      "doneBody": "Está iniciando tu sesión ahora mismo. Puedes cerrar esta pestaña.",
+      "title": "Autoriza el launcher",
+      "authorizing": "Autorizando…",
+      "authorize": "Autorizar launcher",
+      "cancel": "Cancelar",
+      "lead": "El launcher de OPEN//77 de este dispositivo quiere iniciar sesión como:",
+      "account": "Cuenta",
+      "email": "Correo electrónico",
+      "hint": "El launcher recibe un código de corta duración y de un solo uso a través de una conexión local, nunca tu contraseña. Autoriza solo un launcher que hayas abierto tú."
+    },
+    "errors": {
+      "invalid_email": "Se necesita una dirección de correo válida.",
+      "invalid_password": "La contraseña debe tener entre 8 y 128 caracteres imprimibles.",
+      "invalid_display_name": "El nombre visible debe tener entre 1 y 32 caracteres imprimibles.",
+      "email_taken": "Ya existe una cuenta con esta dirección de correo.",
+      "invalid_credentials": "Correo o contraseña incorrectos.",
+      "account_suspended": "Esta cuenta está suspendida.",
+      "invalid_session": "La sesión es desconocida, ha caducado o se ha revocado.",
+      "invalid_verification": "Se necesitan una dirección de correo y un token válidos.",
+      "verification_rejected": "El token es desconocido, ha caducado o ya se ha usado.",
+      "invalid_reset": "Se necesitan una dirección de correo y un token de restablecimiento válidos.",
+      "reset_rejected": "El enlace de restablecimiento es desconocido, ha caducado o ya se ha usado.",
+      "email_unverified": "Verifica tu dirección de correo antes de crear una clave de licencia.",
+      "rate_limited": "Demasiados intentos. Espera un minuto y vuelve a intentarlo.",
+      "network": "No se puede contactar con el servidor maestro. Comprueba tu conexión y vuelve a intentarlo."
+    }
+  },
+  "servers": {
+    "meta": {
+      "title": "Explorador de servidores",
+      "description": "Explora en directo los servidores de la comunidad de OPEN//77 para Cyberpunk 2077. Busca, compara el número de jugadores y filtra por modo, región e idioma, directamente desde el directorio maestro de OPEN//77.",
+      "collectionName": "Explorador de servidores de OPEN//77",
+      "collectionDescription": "Directorio en directo de los servidores de la comunidad de OPEN//77 para Cyberpunk 2077, servido por el servidor maestro de OPEN//77.",
+      "breadcrumb": "Servidores",
+      "profileBreadcrumb": "Detalles del servidor",
+      "unavailableTitle": "Servidor no disponible",
+      "unavailableDescription": "Este servidor no está ahora mismo en el directorio público de OPEN//77.",
+      "profileTitle": "Servidor de la comunidad de OPEN//77",
+      "profileDescription": "Únete a {name}, un servidor multijugador de Cyberpunk 2077 en OPEN//77. Consulta los detalles del servidor y conéctate con el launcher."
+    },
+    "shared": {
+      "opening": "Abriendo el launcher de OPEN//77…",
+      "aboutServer": "Sobre este servidor",
+      "noDescription": "Este servidor aún no ha publicado una descripción.",
+      "addToFavorites": "Añadir a favoritos",
+      "tryAgain": "Reintentar",
+      "directoryUnreachable": "Directorio inaccesible",
+      "regionNotSpecified": "Región no especificada",
+      "badges": {
+        "featured": "Destacado",
+        "official": "Oficial",
+        "withMods": "Con mods"
+      },
+      "links": {
+        "discord": "Únete al Discord",
+        "website": "Visita la web"
+      }
+    },
+    "live": {
+      "previewLink": "Directorio en directo ↗",
+      "loadError": "No se ha podido contactar con el directorio de servidores.",
+      "refreshFailed": "Error al actualizar · se muestran los últimos resultados",
+      "unavailable": "Directorio no disponible",
+      "updating": "Actualizando…",
+      "updated": "Actualizado: {time}",
+      "errorTitle": "No se pueden cargar los servidores",
+      "loaderLabel": "DIRECTORIO",
+      "loading": "Leyendo el directorio en directo. Los mundos de la comunidad aparecerán aquí en cuanto responda el servidor maestro.",
+      "refreshTitle": "Actualizar el directorio",
+      "refreshing": "Actualizando…",
+      "refresh": "Actualizar"
+    },
+    "browser": {
+      "title": "Explorador de servidores",
+      "anyPlayers": "Cualquiera",
+      "minPlayersOption": "{count}+",
+      "sorts": {
+        "players": "Más jugadores",
+        "nearby": "Cerca de ti",
+        "name": "Nombre A–Z",
+        "recent": "Más recientes"
+      },
+      "demoConnect": "Servidor de demostración: las conexiones están desactivadas en esta vista previa.",
+      "chips": {
+        "search": "Búsqueda: {query}",
+        "favorites": "Favoritos",
+        "region": "Región: {region}",
+        "language": "Idioma: {lang}",
+        "countryNone": "País sin especificar",
+        "tag": "Etiqueta: {tag}",
+        "minPlayers": {
+          "one": "{count}+ jugadores",
+          "other": "{count}+ jugadores"
+        },
+        "hideEmpty": "Ocultar vacíos",
+        "hideFull": "Con plazas"
+      },
+      "filters": "Filtros",
+      "filtersCount": "Filtros · {count}",
+      "hideFilters": "Ocultar filtros",
+      "showFilters": "Mostrar filtros",
+      "searchLabel": "Buscar servidores",
+      "searchPlaceholder": "Servidores, etiquetas, países…",
+      "gameTypeFilter": "Filtrar por tipo de juego",
+      "allModes": "Todos",
+      "sort": "Ordenar",
+      "sortLabel": "Ordenar servidores",
+      "rail": {
+        "label": "Filtros del directorio",
+        "eyebrow": "Directorio",
+        "close": "Cerrar filtros",
+        "collections": "Colecciones de servidores",
+        "allServers": "Todos los servidores",
+        "favorites": "Favoritos",
+        "nearYou": "Cerca de ti",
+        "myCountry": "Mi país",
+        "myLanguage": "Mi idioma",
+        "gameType": "Tipo de juego",
+        "allTypes": "Todos los tipos",
+        "locationLabel": "Ubicación e idioma",
+        "location": "Ubicación",
+        "language": "Idioma",
+        "languageFilter": "Filtrar por idioma",
+        "anyLanguage": "Cualquier idioma",
+        "region": "Región",
+        "regionFilter": "Filtrar por región",
+        "anyRegion": "Cualquier región",
+        "country": "País",
+        "countryFilter": "Filtrar por país",
+        "anyCountry": "Cualquier país",
+        "countryNone": "Sin especificar",
+        "availability": "Disponibilidad",
+        "hideEmpty": "Ocultar servidores vacíos",
+        "hasRoom": "Con plazas libres",
+        "minPlayers": "Mín. jugadores",
+        "minPlayersFilter": "Mínimo de jugadores en línea",
+        "tags": "Etiquetas",
+        "createServer": "Crear un servidor",
+        "getLauncher": "Consigue el launcher"
+      },
+      "directoryLabel": "Directorio de servidores",
+      "empty": {
+        "eyebrow": "Directorio de OPEN//77",
+        "title": "No hay servidores en línea",
+        "action": "Crear un servidor",
+        "body": "El directorio está vacío ahora mismo. Los servidores nuevos aparecerán aquí automáticamente."
+      },
+      "summary": {
+        "servers": {
+          "one": "{count} servidor",
+          "other": "{count} servidores"
+        },
+        "serversOf": {
+          "one": "{count} servidor de {total}",
+          "other": "{count} servidores de {total}"
+        },
+        "players": {
+          "one": "{count} jugador en línea",
+          "other": "{count} jugadores en línea"
+        },
+        "line": "{servers}, {players}"
+      },
+      "removeFilter": "Quitar el filtro {label}",
+      "resetAll": "Quitar todo",
+      "featured": {
+        "label": "Comunidades destacadas",
+        "showLess": "Mostrar menos ↑",
+        "viewAll": "Ver todas ({count}) →",
+        "view": "Ver {name}"
+      },
+      "columns": {
+        "servers": "Servidores <b>{count}</b>",
+        "serversOf": "Servidores <b>{count}</b><i> de {total}</i>",
+        "favorites": "Favoritos <b>{count}</b>",
+        "favoritesOf": "Favoritos <b>{count}</b><i> de {total}</i>",
+        "players": "Jugadores",
+        "region": "Región"
+      },
+      "noMatch": {
+        "eyebrow": "Sin resultados",
+        "title": "Ningún servidor coincide",
+        "action": "Ver todos los servidores",
+        "body": "Quita un filtro o prueba otra búsqueda."
+      },
+      "featuredFirst": "Destacados primero",
+      "hints": "<kbd>↑</kbd> <kbd>↓</kbd> seleccionar · <kbd>Enter</kbd> conectar · <kbd>/</kbd> buscar · Se necesita la Open Alpha para jugar y alojar · <launcher>¿Necesitas el launcher?</launcher>",
+      "row": {
+        "select": "Seleccionar {name}",
+        "addFavorite": "Añadir {name} a favoritos",
+        "removeFavorite": "Quitar {name} de favoritos"
+      }
+    },
+    "inspector": {
+      "close": "Cerrar los detalles del servidor",
+      "playersOnline": "Jugadores en línea",
+      "join": "Unirse al servidor",
+      "saved": "Guardado en favoritos",
+      "facts": {
+        "country": "País",
+        "language": "Idioma",
+        "mode": "Modo de juego",
+        "location": "Ubicación",
+        "nearYou": "Cerca de ti"
+      },
+      "withMods": "<strong>Con mods.</strong> Este servidor instala su propio contenido para tu sesión. El launcher lo gestiona cuando entras y cuando sales.",
+      "fullProfileLabel": "Perfil completo de {name}",
+      "fullProfile": "Perfil completo",
+      "fullProfileHint": "Jugadores, dirección y detalles técnicos →"
+    },
+    "detail": {
+      "loadError": "No se han podido cargar los detalles de este servidor.",
+      "back": "Volver a la lista de servidores",
+      "label": "Detalles del servidor",
+      "loaderLabel": "SERVIDOR",
+      "loadingTitle": "Cargando el servidor",
+      "loadingBody": "Leyendo esta ficha en el directorio maestro de OPEN//77.",
+      "errorTitle": "Detalles del servidor no disponibles",
+      "backToBrowser": "Volver al explorador",
+      "missingEyebrow": "Servidor desconectado",
+      "missingTitle": "No está en el directorio ahora mismo",
+      "browseLive": "Explorar servidores en directo",
+      "missingBody": "Este servidor no está ahora mismo en el directorio en directo. Puede que se haya desconectado o que el enlace esté desactualizado. Los servidores solo aparecen aquí mientras están en marcha y dando señales de vida.",
+      "kicker": "// Servidor",
+      "live": "En línea",
+      "offline": "Desconectado",
+      "region": "Región {region}",
+      "stats": {
+        "players": "Jugadores",
+        "status": "Estado",
+        "uptime": "Tiempo activo",
+        "country": "País",
+        "language": "Idioma",
+        "version": "Versión"
+      },
+      "meter": {
+        "one": "{players} de {max} jugador",
+        "other": "{players} de {max} jugadores"
+      },
+      "connect": {
+        "title": "Conectar",
+        "address": "Dirección",
+        "copy": "Copiar dirección",
+        "note": "Conectar abre el launcher de OPEN//77 y arranca directamente en este mundo. Si no pasa nada, instala primero el launcher."
+      },
+      "info": {
+        "title": "Información del servidor",
+        "status": "Estado",
+        "uptime": "Tiempo activo",
+        "players": "Jugadores",
+        "version": "Versión",
+        "protocol": "Protocolo",
+        "gameBuild": "Versión del juego",
+        "locale": "Región e idioma",
+        "lastHeartbeat": "Última señal"
+      },
+      "roster": {
+        "title": "En línea ahora",
+        "private": "Este servidor no publica su lista de jugadores.",
+        "empty": "No hay nadie en línea ahora mismo.",
+        "sampled": "Lista actualizada {stamp}",
+        "asOf": "{time}",
+        "label": "Jugadores en línea",
+        "more": {
+          "one": "+ {count} más sin mostrar",
+          "other": "+ {count} más sin mostrar"
+        },
+        "timePlayed": "Tiempo jugado"
+      },
+      "relative": {
+        "seconds": {
+          "one": "hace {count} s",
+          "other": "hace {count} s"
+        },
+        "minutes": {
+          "one": "hace {count} min",
+          "other": "hace {count} min"
+        },
+        "hours": {
+          "one": "hace {count} h",
+          "other": "hace {count} h"
+        },
+        "days": {
+          "one": "hace {count} d",
+          "other": "hace {count} d"
+        }
+      },
+      "uptime": {
+        "justNow": "ahora mismo",
+        "daysHours": "{days} d {hours} h",
+        "hoursMinutes": "{hours} h {minutes} min",
+        "minutes": "{minutes} min"
+      }
+    },
+    "actions": {
+      "connect": "Conectar",
+      "favorite": "Favorito",
+      "removeFavorite": "Quitar de favoritos"
+    },
+    "activity": {
+      "peakTitle": "Máximo de jugadores registrado en las últimas 48 horas",
+      "peak": "Pico <b>{count}</b> <span>· 48 h</span>",
+      "peakLoading": "Pico…",
+      "peakNone": "Pico —",
+      "title": "Actividad de jugadores",
+      "subtitle": "Jugadores conectados a lo largo del tiempo",
+      "periods": "Periodo de actividad",
+      "period": "{hours} h",
+      "recordedPeak": "Pico registrado",
+      "recordedAverage": "Media registrada",
+      "loading": "Cargando la actividad de jugadores…",
+      "previewOnly": "La actividad está disponible para los servidores públicos en directo.",
+      "firstPending": "Aún no se ha registrado la primera lectura de actividad.",
+      "stale": "Se muestra la última actividad recibida. {error}",
+      "errors": {
+        "busy": "La actividad está ocupada. Se reintentará en breve.",
+        "missing": "Aún no hay historial de actividad público.",
+        "unavailable": "La actividad no está disponible temporalmente.",
+        "invalid": "Respuesta de actividad no válida"
+      },
+      "chart": {
+        "label": "Gráfico de actividad de jugadores. Usa las flechas izquierda y derecha para recorrer las lecturas registradas.",
+        "summary": {
+          "one": "Actividad de jugadores, {coverage}. Pico de {count} jugador.",
+          "other": "Actividad de jugadores, {coverage}. Pico de {count} jugadores."
+        },
+        "firstReading": "Primera lectura",
+        "recorded": "{hours} h {minutes} min registrados",
+        "lastHours": {
+          "one": "Última {count} hora",
+          "other": "Últimas {count} horas"
+        },
+        "players": {
+          "one": "{count} jugador",
+          "other": "{count} jugadores"
+        },
+        "legendPlayers": "Jugadores · cada 10 min",
+        "localTime": "Hora local",
+        "caption": "La línea une las lecturas registradas. Los valores intermedios no se miden."
+      }
+    },
+    "demo": {
+      "view": "Vista demo",
+      "scopePage": "// esta página de servidor usa datos de demostración",
+      "scopeListings": "// las fichas de servidores usan ahora datos de demostración",
+      "hide": "Ocultar",
+      "more": "¿Qué significa esto?",
+      "note": "Esta vista usa datos de demostración ilustrativos. Sus números de jugadores, pings y comunidades no son reales. Usa el <live>directorio en directo</live> para ver las fichas reales. La Open Alpha está abierta a todo el mundo; inicia sesión con tu cuenta de OPEN//77 para entrar en un mundo."
+    }
+  }
+}

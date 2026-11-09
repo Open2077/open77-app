@@ -67,7 +67,7 @@ export async function run(options) {
   let stage = "owned browser startup";
   function assert(ok, name) { stage = name; if (!ok) throw Error(name); evidence.checks.push(name); }
   try {
-    child = spawn(executable, ["--headless=new", "--remote-debugging-address=127.0.0.1", "--remote-debugging-port=0", `--user-data-dir=${profile}`, "--no-first-run", "--no-default-browser-check", "--disable-gpu", "about:blank"], { windowsHide: true, stdio: "ignore" });
+    child = spawn(executable, ["--headless=new", "--remote-debugging-address=127.0.0.1", "--lang=en-US", "--accept-lang=en-US,en", "--remote-debugging-port=0", `--user-data-dir=${profile}`, "--no-first-run", "--no-default-browser-check", "--disable-gpu", "about:blank"], { windowsHide: true, stdio: "ignore" });
     let launchError; child.on("error", error => { launchError = error; });
     let port;
     await until(async () => { if (launchError) throw launchError; try { port = Number((await fs.readFile(path.join(profile, "DevToolsActivePort"), "utf8")).split("\n")[0]); return port > 0; } catch { return false; } }, "owned browser startup");

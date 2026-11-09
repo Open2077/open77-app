@@ -1,20 +1,61 @@
 "use client";
 
-import { useId, useState, type PointerEvent } from "react";
+import { useId, useMemo, useState, type PointerEvent } from "react";
 
 import { Tag } from "@/components/ui/chip";
 import { Table } from "@/components/ui/data";
-import { dayState, LABELS, percent } from "@/lib/status/model";
+import { useLocale, useMessages } from "@/i18n/client";
+import { LOCALE_INFO, type Locale } from "@/i18n/config";
+import { fill, formatNumber, plural } from "@/i18n/format";
+import type { Messages } from "@/i18n/types";
+import { dayState, percent } from "@/lib/status/model";
 import type { Day, Service, ServiceState } from "@/lib/status/model";
 
 import styles from "./status.module.css";
 
-export const utc = (date: string) =>
-  new Date(date).toLocaleString("en-GB", { timeZone: "UTC", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) + " UTC";
-export const utcTime = (date: string) =>
-  new Date(date).toLocaleTimeString("en-GB", { timeZone: "UTC", hour: "2-digit", minute: "2-digit" });
-export const utcDay = (date: string) =>
-  new Date(date).toLocaleDateString("en-GB", { timeZone: "UTC", day: "2-digit", month: "short" });
+type StatusMessages = Messages["status"];
+
+/**
+ * Dates, percentages and durations in the page language. English keeps the
+ * en-GB day-month order it always had; times are UTC everywhere.
+ */
+export function statusFormat(locale: Locale, m: StatusMessages) {
+  const dateTag = locale === "en" ? "en-GB" : LOCALE_INFO[locale].tag;
+  const utcTime = (date: string) => new Date(date).toLocaleTimeString(dateTag, { timeZone: "UTC", hour: "2-digit", minute: "2-digit" });
+  return {
+    m,
+    locale,
+    utc: (date: string) =>
+      new Date(date).toLocaleString(dateTag, { timeZone: "UTC", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) +
+      " UTC",
+    utcTime,
+    utcDay: (date: string) => new Date(date).toLocaleDateString(dateTag, { timeZone: "UTC", day: "2-digit", month: "short" }),
+    /** {@link percent}'s rounding (never up to 100 %), written the language's way. */
+    pct: (value: number | null) => {
+      if (locale === "en" || value === null) return percent(value);
+      const floored = value < 100 ? Math.floor(value * 100) / 100 : 100;
+      return formatNumber(locale, floored / 100, { style: "percent", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    },
+    count: (value: number) => formatNumber(locale, value),
+    state: (state: ServiceState) => m.states[state],
+    /** "4 min", "2 h 05 min": how long a closed incident lasted, as observed. */
+    duration: (from: string, to: string) => {
+      const minutes = Math.max(1, Math.round((Date.parse(to) - Date.parse(from)) / 60000));
+      if (minutes < 60) return fill(m.duration.minutes, { count: minutes });
+      const hours = Math.floor(minutes / 60);
+      if (hours < 48) return fill(m.duration.hours, { hours, minutes: String(minutes % 60).padStart(2, "0") });
+      return plural(locale, m.duration.days, Math.round(hours / 24));
+    },
+  };
+}
+
+export type StatusFormat = ReturnType<typeof statusFormat>;
+
+export function useStatusFormat(): StatusFormat {
+  const locale = useLocale();
+  const m = useMessages("status");
+  return useMemo(() => statusFormat(locale, m), [locale, m]);
+}
 
 /** Status colours carry meaning of their own: cyan = healthy, yellow = slow, red = down, slate = unknown. */
 const TAG_TONE: Record<ServiceState, "blue" | "yellow" | "red" | "neutral"> = {
@@ -26,10 +67,11 @@ const TAG_TONE: Record<ServiceState, "blue" | "yellow" | "red" | "neutral"> = {
 
 /** A service state: lamp + label, never colour alone. */
 export function StateTag({ state, label }: { state: ServiceState; label?: string }) {
+  const f = useStatusFormat();
   return (
     <Tag tone={TAG_TONE[state]} className={styles.stateTag}>
       <span className={styles.lamp} data-state={state} aria-hidden="true" />
-      {label ?? LABELS[state]}
+      {label ?? f.state(state)}
     </Tag>
   );
 }
@@ -41,8 +83,12 @@ export function Swatch({ state, partial = false }: { state: ServiceState; partia
 
 /** One bar per UTC day; each bar is a button that reveals the day's numbers. */
 export function DayBars({ history, days, name }: { history: Day[]; days: number; name: string }) {
+  const f = useStatusFormat();
+  const b = f.m.bars;
   const [selected, setSelected] = useState<Day | null>(null);
   const shown = history.slice(-days);
+  const availability = (day: Day, empty: string) =>
+    day.checked ? fill(b.available, { percent: f.pct((day.available / day.checked) * 100) }) : empty;
   return (
     <div className={styles.barsBlock}>
       <div
@@ -50,10 +96,17 @@ export function DayBars({ history, days, name }: { history: Day[]; days: number;
         data-days={days}
         style={{ gridTemplateColumns: `repeat(${days}, minmax(0, 1fr))` }}
         role="group"
-        aria-label={`${name}: ${days}-day availability, select a day for details`}
+        aria-label={fill(b.group, { name, days })}
       >
         {shown.map((day) => {
-          const label = `${day.date}: ${day.checked ? percent((day.available / day.checked) * 100) + " available" : "no data"}, ${day.checked} of ${day.expected} checks, ${day.failed} failed, ${day.slow} slow`;
+          const label = fill(b.day, {
+            date: day.date,
+            availability: availability(day, b.noData),
+            checked: f.count(day.checked),
+            expected: f.count(day.expected),
+            failed: f.count(day.failed),
+            slow: f.count(day.slow),
+          });
           return (
             <button
               key={day.date}
@@ -72,12 +125,19 @@ export function DayBars({ history, days, name }: { history: Day[]; days: number;
       <div className={styles.axis} aria-hidden="true">
         <span>{shown[0]?.date}</span>
         <span className={styles.axisRule} />
-        <span>Today · UTC</span>
+        <span>{b.today}</span>
       </div>
       {selected ? (
         <p className={styles.dayDetail} role="status">
           <span className={styles.prompt} aria-hidden="true">{">"}</span>
-          {selected.date} · {selected.checked ? percent((selected.available / selected.checked) * 100) + " available" : "No observations"} · {selected.checked}/{selected.expected} checks · {selected.failed} failed · {selected.slow} slow
+          {fill(b.detail, {
+            date: selected.date,
+            availability: availability(selected, b.noObservations),
+            checked: f.count(selected.checked),
+            expected: f.count(selected.expected),
+            failed: f.count(selected.failed),
+            slow: f.count(selected.slow),
+          })}
         </p>
       ) : null}
     </div>
@@ -91,6 +151,8 @@ const BOTTOM = 186;
 
 /** 24 hours of five-minute response-time buckets. Gaps stay gaps. */
 export function LatencyChart({ service }: { service: Service | undefined }) {
+  const f = useStatusFormat();
+  const l = f.m.latency;
   const titleId = useId();
   const points = service?.latency ?? [];
   const measured = points.filter((point) => point.ms !== null);
@@ -134,17 +196,17 @@ export function LatencyChart({ service }: { service: Service | undefined }) {
         <p>
           <strong>{average === null ? "—" : average}</strong>
           {average === null ? null : <span className={styles.unit}>ms</span>}
-          <span className={styles.latencyLabel}>Average · last 24 h</span>
+          <span className={styles.latencyLabel}>{l.average}</span>
         </p>
         <p>
           <strong>{peak === null ? "—" : peak}</strong>
           {peak === null ? null : <span className={styles.unit}>ms</span>}
-          <span className={styles.latencyLabel}>Slowest bucket</span>
+          <span className={styles.latencyLabel}>{l.slowest}</span>
         </p>
         <p>
           <strong>{measured.length}</strong>
           <span className={styles.unit}>/ {points.length || 288}</span>
-          <span className={styles.latencyLabel}>Buckets measured</span>
+          <span className={styles.latencyLabel}>{l.measured}</span>
         </p>
       </div>
       <div className={styles.chart} onPointerMove={track} onPointerLeave={() => setHover(null)}>
@@ -161,7 +223,7 @@ export function LatencyChart({ service }: { service: Service | undefined }) {
           aria-labelledby={titleId}
         >
           <title id={titleId}>
-            {`${service?.name ?? "Service"} response time over 24 hours. ${measured.length} measured five-minute buckets. Gaps mean no successful checks.`}
+            {fill(l.chartTitle, { service: service?.name ?? l.service, count: f.count(measured.length) })}
           </title>
           {[TOP, (TOP + BOTTOM) / 2, BOTTOM].map((lineY) => (
             <line key={lineY} x1="0" y1={lineY} x2={WIDTH} y2={lineY} className={lineY === BOTTOM ? styles.baseline : styles.gridLine} />
@@ -180,35 +242,35 @@ export function LatencyChart({ service }: { service: Service | undefined }) {
             data-flip={(hover ?? 0) > points.length * 0.7 || undefined}
             aria-hidden="true"
           >
-            <strong>{point.ms === null ? "No sample" : `${point.ms} ms`}</strong>
-            <span>{utcTime(point.at)} UTC</span>
+            <strong>{point.ms === null ? l.noSample : `${point.ms} ms`}</strong>
+            <span>{f.utcTime(point.at)} UTC</span>
           </div>
         ) : null}
-        {!measured.length ? <span className={styles.chartEmpty}>{"// No response-time samples yet"}</span> : null}
+        {!measured.length ? <span className={styles.chartEmpty}>{l.empty}</span> : null}
       </div>
       <div className={styles.axis} aria-hidden="true">
-        <span>24 h ago</span>
+        <span>{l.dayAgo}</span>
         <span className={styles.axisRule} />
-        <span>12 h</span>
+        <span>{l.halfDay}</span>
         <span className={styles.axisRule} />
-        <span>Now</span>
+        <span>{l.now}</span>
       </div>
       <details className={styles.samples}>
-        <summary>View response-time data</summary>
-        <Table caption="Five-minute average check times, UTC, latest first" dense className={styles.sampleTable}>
+        <summary>{l.view}</summary>
+        <Table caption={l.caption} dense className={styles.sampleTable}>
           <thead>
             <tr>
-              <th scope="col">Time</th>
+              <th scope="col">{l.time}</th>
               <th scope="col" data-numeric>
-                Response time
+                {l.responseTime}
               </th>
             </tr>
           </thead>
           <tbody>
             {[...points].reverse().map((p) => (
               <tr key={p.at}>
-                <td>{utc(p.at)}</td>
-                <td data-numeric>{p.ms === null ? "No successful sample" : `${p.ms} ms`}</td>
+                <td>{f.utc(p.at)}</td>
+                <td data-numeric>{p.ms === null ? l.noSuccessful : `${p.ms} ms`}</td>
               </tr>
             ))}
           </tbody>
@@ -216,13 +278,4 @@ export function LatencyChart({ service }: { service: Service | undefined }) {
       </details>
     </div>
   );
-}
-
-/** "4 min", "2 h 05 min": how long a closed incident lasted, as observed. */
-export function duration(from: string, to: string) {
-  const minutes = Math.max(1, Math.round((Date.parse(to) - Date.parse(from)) / 60000));
-  if (minutes < 60) return `${minutes} min`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 48) return `${hours} h ${String(minutes % 60).padStart(2, "0")} min`;
-  return `${Math.round(hours / 24)} days`;
 }

@@ -21,7 +21,24 @@ function embed(id: string, parameters: Record<string, string>): string {
  * "Watch the trailer", or the poster lower on the page. The player only exists
  * while the dialog is open, so closing it stops the sound.
  */
-function Trailer({ videoId, title, length, poster }: { videoId: string; title: string; length: string; poster?: string }) {
+export type TrailerLabels = { watch: string; watchLength: string; eyebrow: string };
+
+const ENGLISH: TrailerLabels = { watch: "Watch the trailer", watchLength: "Watch the trailer ({length})", eyebrow: "Trailer · {length}" };
+
+function Trailer({
+  videoId,
+  title,
+  length,
+  poster,
+  labels = ENGLISH,
+}: {
+  videoId: string;
+  title: string;
+  length: string;
+  poster?: string;
+  labels?: TrailerLabels;
+}) {
+  const withLength = (text: string) => text.replace("{length}", length);
   const dialog = useRef<DialogHandle>(null);
   const [open, setOpen] = useState(false);
   const show = () => {
@@ -37,18 +54,18 @@ function Trailer({ videoId, title, length, poster }: { videoId: string; title: s
             <Icon glyph={play} />
           </span>
           <span className={styles.reelLabel}>
-            <span className={styles.reelTitle}>Watch the trailer</span>
+            <span className={styles.reelTitle}>{labels.watch}</span>
             <span className={styles.reelLength}>{length}</span>
           </span>
         </button>
       ) : (
         <span className={styles.trigger}>
-          <Button color="blue" border lines="none" icon={play} iconPosition="left" onClick={show} aria-label={`Watch the trailer (${length})`}>
-            Watch the trailer
+          <Button color="blue" border lines="none" icon={play} iconPosition="left" onClick={show} aria-label={withLength(labels.watchLength)}>
+            {labels.watch}
           </Button>
         </span>
       )}
-      <Dialog ref={dialog} title={title} eyebrow={`Trailer · ${length}`} size="lg" onClose={() => setOpen(false)}>
+      <Dialog ref={dialog} title={title} eyebrow={withLength(labels.eyebrow)} size="lg" onClose={() => setOpen(false)}>
         <div className={styles.screen}>
           {open ? (
             <iframe
@@ -66,11 +83,33 @@ function Trailer({ videoId, title, length, poster }: { videoId: string; title: s
 }
 
 /** "Watch the trailer": the secondary action of the hero. */
-export function NcweTrailerButton({ videoId, title, length }: { videoId: string; title: string; length: string }) {
-  return <Trailer videoId={videoId} title={title} length={length} />;
+export function NcweTrailerButton({
+  videoId,
+  title,
+  length,
+  labels,
+}: {
+  videoId: string;
+  title: string;
+  length: string;
+  labels?: TrailerLabels;
+}) {
+  return <Trailer videoId={videoId} title={title} length={length} labels={labels} />;
 }
 
 /** The trailer's poster as a large play button (the "see it move" band lower on the page). */
-export function NcweTrailerPoster({ videoId, title, poster, length }: { videoId: string; title: string; poster: string; length: string }) {
-  return <Trailer videoId={videoId} title={title} length={length} poster={poster} />;
+export function NcweTrailerPoster({
+  videoId,
+  title,
+  poster,
+  length,
+  labels,
+}: {
+  videoId: string;
+  title: string;
+  poster: string;
+  length: string;
+  labels?: TrailerLabels;
+}) {
+  return <Trailer videoId={videoId} title={title} length={length} poster={poster} labels={labels} />;
 }

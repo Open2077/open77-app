@@ -2,13 +2,22 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 // Public downloads must not depend on account APIs, entitlements or client hydration.
-const host = await readFile("src/app/host/page.tsx", "utf8");
+const host = await readFile("src/views/host.tsx", "utf8");
 assert.doesNotMatch(host, /HostGate|AuthPanel|canDownloadServer|index: false/);
 assert.match(host, /<ServerBuilds release=\{release\}/);
 assert.match(await readFile("src/app/sitemap.ts", "utf8"), /absoluteUrl\("\/host"\)/);
-for (const file of ["src/app/create/page.tsx", "src/components/account/account-overview.tsx"]) {
+
+// The direct "Download server" entry points. /create is translated, so its
+// label is a dictionary key; the English source must still say it plainly.
+const english = JSON.parse(await readFile("src/i18n/messages/en.json", "utf8"));
+assert.match(english.create.downloadServer, /^Download server$/, "en.json create.downloadServer");
+const entryPoints = [
+  ["src/views/create.tsx", /href="\/host">\s*\{m\.downloadServer\}/],
+  ["src/components/account/account-overview.tsx", /href="\/host">\s*Download server/],
+];
+for (const [file, entry] of entryPoints) {
   const component = await readFile(file, "utf8");
-  assert.match(component, /href="\/host">\s*Download server/, `${file}: direct download entry point`);
+  assert.match(component, entry, `${file}: direct download entry point`);
   assert.doesNotMatch(component, /canDownloadServer|account\.alphaAccess|alpha apply/);
 }
 const keymaster = await readFile("src/components/account/keymaster.tsx", "utf8");

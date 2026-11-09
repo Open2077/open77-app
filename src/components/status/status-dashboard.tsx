@@ -14,22 +14,20 @@ import { Panel } from "@/components/ui/panel";
 import { Prose } from "@/components/ui/prose";
 import { Tabs } from "@/components/ui/tabs";
 import { Display, Eyebrow } from "@/components/ui/typography";
-import { currentState, isStale, LABELS, overallState, parseSnapshot, percent, statistics } from "@/lib/status/model";
-import type { ServiceState, StatusSnapshot } from "@/lib/status/model";
-import { DayBars, duration, LatencyChart, StateTag, Swatch, utc, utcDay, utcTime } from "./status-parts";
+import { fill, plural, rich } from "@/i18n/format";
+import { currentState, isStale, overallState, parseSnapshot, statistics } from "@/lib/status/model";
+import type { StatusSnapshot } from "@/lib/status/model";
+import { DayBars, LatencyChart, StateTag, Swatch, useStatusFormat } from "./status-parts";
 
 import styles from "./status.module.css";
 
-const TITLES: Record<ServiceState, string> = {
-  operational: "All systems operational",
-  degraded: "Some services are responding slowly",
-  outage: "A service disruption was detected",
-  unknown: "Awaiting fresh monitoring data",
-};
 const SUPPORT_URL = "https://discord.open2077.net";
 const PERIODS = [7, 30, 90] as const;
 
 export function StatusDashboard() {
+  const f = useStatusFormat();
+  const { m, utc, utcDay, utcTime, duration, locale } = f;
+  const percent = f.pct;
   const [snapshot, setSnapshot] = useState<StatusSnapshot | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -98,44 +96,44 @@ export function StatusDashboard() {
       <PageHero
         size="compact"
         art={{ src: "/assets/home/hero/city-v1.webp", position: "center 58%" }}
-        watermark="Uptime"
-        eyebrow="// Open network · service status"
-        title={["The network.", "At a glance."]}
-        accent={[1]}
-        lead="Live service health, measured availability and a transparent record of every interruption, straight from the monitor."
+        watermark={m.hero.watermark}
+        eyebrow={m.hero.eyebrow}
+        title={m.hero.title}
+        accent={m.hero.accent}
+        lead={m.hero.lead}
         actions={
           <>
             <Button lines="left" icon={refreshGlyph} iconPosition="left" busy={loading} onClick={() => void refresh()}>
-              Refresh status
+              {m.hero.refresh}
             </Button>
             <a className={styles.feedLink} href="/api/status" target="_blank" rel="noreferrer">
               <Icon glyph={sourceCode} />
-              Status JSON
+              {m.hero.json}
               <Icon glyph={arrowUpRight01} />
             </a>
           </>
         }
         aside={
-          <Panel brackets className={styles.signal} data-state={connecting ? "unknown" : state} aria-label="Current network status">
+          <Panel brackets className={styles.signal} data-state={connecting ? "unknown" : state} aria-label={m.signal.label}>
             <div className={styles.signalHead}>
               <span className={styles.signalLamp} aria-hidden="true" />
               <span>{"// NETWORK.SIGNAL"}</span>
-              <span className={styles.signalLive}>{stale || !snapshot ? "No live signal" : "Monitor connected"}</span>
+              <span className={styles.signalLive}>{stale || !snapshot ? m.signal.noSignal : m.signal.connected}</span>
             </div>
             <div role="status" className={styles.signalCopy}>
-              <p className={styles.signalTitle}>{connecting ? "Connecting to the monitor…" : TITLES[state]}</p>
+              <p className={styles.signalTitle}>{connecting ? m.signal.connecting : m.signal.titles[state]}</p>
               <p className={styles.signalMeta}>
                 {snapshot
-                  ? `Last measured ${utc(snapshot.generatedAt)} · checks every 60 seconds`
-                  : "No service is marked healthy until a real check is received."}
+                  ? fill(m.signal.lastMeasured, { time: utc(snapshot.generatedAt) })
+                  : m.signal.noHealthy}
               </p>
             </div>
-            <ol className={styles.pips} aria-label="Services">
-              {(snapshot?.services ?? Array.from({ length: 7 }, (_, index) => ({ id: `pending-${index}`, name: "Pending" }))).map((service, index) => {
+            <ol className={styles.pips} aria-label={m.signal.services}>
+              {(snapshot?.services ?? Array.from({ length: 7 }, (_, index) => ({ id: `pending-${index}`, name: m.signal.pending }))).map((service, index) => {
                 const value = states[index] ?? "unknown";
                 return (
-                  <li key={service.id} className={styles.pip} data-state={value} title={`${service.name}: ${LABELS[value]}`}>
-                    <span className="sr-only">{`${service.name}: ${LABELS[value]}`}</span>
+                  <li key={service.id} className={styles.pip} data-state={value} title={`${service.name}: ${m.states[value]}`}>
+                    <span className="sr-only">{`${service.name}: ${m.states[value]}`}</span>
                   </li>
                 );
               })}
@@ -149,52 +147,56 @@ export function StatusDashboard() {
           <Notice
             kind={stale ? "warning" : "danger"}
             className={styles.alert}
-            title={stale ? "Monitoring data is out of date." : "The monitoring feed could not be refreshed."}
+            title={stale ? m.alerts.staleTitle : m.alerts.errorTitle}
           >
-            {snapshot
-              ? "The last recorded history remains below. Old checks are not treated as current health."
-              : "This does not establish whether services are up or down. Please retry shortly."}
+            {snapshot ? m.alerts.staleBody : m.alerts.errorBody}
           </Notice>
         ) : null}
         <noscript>
           <p className={styles.noscript}>
-            JavaScript is required for live updates. The <a href="/api/status">public JSON feed</a> is available without JavaScript.
+            {/* An API route, not a page: the rule matches it against the [lang] routes. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            {rich(m.alerts.noscript, { feed: (chunk) => <a href="/api/status">{chunk}</a> })}
           </p>
         </noscript>
 
         <div className={styles.metrics}>
-          <Stat value={snapshot ? `${operational}/${states.length}` : "—"} label="Services operational" detail={snapshot ? "Right now" : "Waiting for a check"} />
-          <Stat value={percent(total.availability)} label={`${days}-day availability`} detail="Successful ÷ completed checks" />
-          <Stat value={percent(snapshot ? total.coverage : null)} label="Monitoring coverage" detail="Observed minute slots" />
-          <Stat value={snapshot ? String(openIncidents.length) : "—"} label="Open incidents" detail={snapshot ? `${snapshot.incidents.length} recorded in 90 days` : "History unavailable"} />
+          <Stat value={snapshot ? `${operational}/${states.length}` : "—"} label={m.metrics.operational} detail={snapshot ? m.metrics.now : m.metrics.waiting} />
+          <Stat value={percent(total.availability)} label={fill(m.metrics.availability, { days })} detail={m.metrics.availabilityDetail} />
+          <Stat value={percent(snapshot ? total.coverage : null)} label={m.metrics.coverage} detail={m.metrics.coverageDetail} />
+          <Stat
+            value={snapshot ? String(openIncidents.length) : "—"}
+            label={m.metrics.incidents}
+            detail={snapshot ? plural(locale, m.metrics.incidentsRecorded, snapshot.incidents.length) : m.metrics.historyUnavailable}
+          />
         </div>
 
         <section className={styles.section} aria-labelledby="services-title">
           <header className={styles.head}>
             <div className={styles.headCopy}>
-              <Eyebrow index={1}>Availability</Eyebrow>
+              <Eyebrow index={1}>{m.services.eyebrow}</Eyebrow>
               <Display size="md" id="services-title">
-                Platform services
+                {m.services.title}
               </Display>
             </div>
             <Tabs
-              label="Availability period"
+              label={m.services.period}
               className={styles.periods}
-              items={PERIODS.map((value) => ({ value: String(value), label: `${value} days` }))}
+              items={PERIODS.map((value) => ({ value: String(value), label: plural(locale, m.services.days, value) }))}
               value={String(days)}
               onChange={(value) => setDays(Number(value))}
             />
           </header>
-          <ul className={styles.legend} aria-label="Legend">
+          <ul className={styles.legend} aria-label={m.services.legend}>
             {(["operational", "degraded", "outage", "unknown"] as const).map((value) => (
               <li key={value}>
                 <Swatch state={value} />
-                {LABELS[value]}
+                {m.states[value]}
               </li>
             ))}
             <li>
               <Swatch state="operational" partial />
-              Striped = partial coverage
+              {m.services.partial}
             </li>
           </ul>
 
@@ -217,13 +219,13 @@ export function StatusDashboard() {
                       <StateTag state={current} />
                       <p className={styles.uptime}>
                         <strong>{percent(stats.availability)}</strong>
-                        <span>{days}-day uptime</span>
+                        <span>{fill(m.services.uptime, { days })}</span>
                       </p>
                     </div>
                     <p className={styles.serviceFoot}>
-                      <span>{percent(stats.coverage)} coverage</span>
-                      <span>{current === "unknown" ? "Awaiting a fresh check" : service.detail}</span>
-                      {service.latencyMs !== null ? <span>{service.latencyMs} ms last recorded</span> : null}
+                      <span>{fill(m.services.coverage, { value: percent(stats.coverage) })}</span>
+                      <span>{current === "unknown" ? m.services.awaiting : service.detail}</span>
+                      {service.latencyMs !== null ? <span>{fill(m.services.lastLatency, { ms: service.latencyMs })}</span> : null}
                     </p>
                   </article>
                 );
@@ -234,9 +236,7 @@ export function StatusDashboard() {
               {loading ? (
                 <Loader label="STATUS.FEED" />
               ) : (
-                <p className={styles.pendingText}>
-                  Waiting for monitoring data. Availability history will appear here once collection is active.
-                </p>
+                <p className={styles.pendingText}>{m.services.waiting}</p>
               )}
               <div className={styles.skeleton} aria-hidden="true">
                 {Array.from({ length: 7 }, (_, index) => (
@@ -255,12 +255,12 @@ export function StatusDashboard() {
           <Panel as="section" className={styles.panel} aria-labelledby="latency-title" padding="lg">
             <header className={styles.panelHead}>
               <div className={styles.headCopy}>
-                <Eyebrow index={2}>Response time</Eyebrow>
+                <Eyebrow index={2}>{m.latency.eyebrow}</Eyebrow>
                 <Display size="sm" as="h2" id="latency-title">
-                  Every millisecond counts.
+                  {m.latency.title}
                 </Display>
               </div>
-              <Field label="Service" className={styles.serviceSelect}>
+              <Field label={m.latency.service} className={styles.serviceSelect}>
                 <Select compact value={selectedService} onChange={(event) => setSelectedService(event.target.value)} disabled={!snapshot}>
                   {snapshot ? (
                     snapshot.services.map((service) => (
@@ -269,33 +269,29 @@ export function StatusDashboard() {
                       </option>
                     ))
                   ) : (
-                    <option value="master">Master API</option>
+                    <option value="master">{m.latency.placeholderService}</option>
                   )}
                 </Select>
               </Field>
             </header>
             <LatencyChart service={snapshot?.services.find((service) => service.id === selectedService)} />
-            <p className={styles.note}>
-              End-to-end check duration, not in-game ping. CDN checks include release metadata and 4 KiB partial downloads. Missing samples are never joined across gaps.
-            </p>
+            <p className={styles.note}>{m.latency.note}</p>
           </Panel>
 
           <Panel as="section" className={styles.panel} aria-labelledby="maintenance-title" padding="lg">
             <header className={styles.panelHead}>
               <div className={styles.headCopy}>
-                <Eyebrow index={3}>Maintenance</Eyebrow>
+                <Eyebrow index={3}>{m.maintenance.eyebrow}</Eyebrow>
                 <Display size="sm" as="h2" id="maintenance-title">
-                  Heads up.
+                  {m.maintenance.title}
                 </Display>
               </div>
             </header>
             {!maintenance.length ? (
               <div className={styles.calm}>
                 <span className={styles.calmMark} aria-hidden="true" />
-                <p className={styles.calmTitle}>{snapshot ? "No scheduled maintenance" : "Schedule unavailable"}</p>
-                <p className={styles.calmText}>
-                  {snapshot ? "No active or upcoming maintenance in the latest feed." : "Waiting for a monitoring snapshot."}
-                </p>
+                <p className={styles.calmTitle}>{snapshot ? m.maintenance.none : m.maintenance.unavailable}</p>
+                <p className={styles.calmText}>{snapshot ? m.maintenance.noneBody : m.maintenance.waiting}</p>
               </div>
             ) : (
               <ul className={styles.maintenance}>
@@ -304,7 +300,7 @@ export function StatusDashboard() {
                   return (
                     <li key={item.id} className={styles.maintenanceItem}>
                       <Tag tone={running ? "yellow" : "blue"} variant={running ? "solid" : "outline"}>
-                        {running ? "In progress" : "Scheduled"}
+                        {running ? m.maintenance.inProgress : m.maintenance.scheduled}
                       </Tag>
                       <h3 className={styles.maintenanceTitle}>{item.title}</h3>
                       <p className={styles.maintenanceMessage}>{item.message}</p>
@@ -323,11 +319,17 @@ export function StatusDashboard() {
               </Eyebrow>
               <DefinitionList
                 items={[
-                  { label: "Probe", value: snapshot?.region ?? "—" },
-                  { label: "Check interval", value: snapshot ? `${snapshot.intervalSeconds} s` : "—" },
-                  { label: "Unknown after", value: snapshot ? `${snapshot.staleAfterSeconds} s without data` : "—" },
-                  { label: "Collecting since", value: snapshot?.startedAt ? utc(snapshot.startedAt) : "—" },
-                  { label: "Retention", value: "90 days" },
+                  { label: m.monitor.probe, value: snapshot?.region ?? "—" },
+                  {
+                    label: m.monitor.interval,
+                    value: snapshot ? fill(m.monitor.intervalValue, { seconds: snapshot.intervalSeconds }) : "—",
+                  },
+                  {
+                    label: m.monitor.unknownAfter,
+                    value: snapshot ? fill(m.monitor.unknownAfterValue, { seconds: snapshot.staleAfterSeconds }) : "—",
+                  },
+                  { label: m.monitor.since, value: snapshot?.startedAt ? utc(snapshot.startedAt) : "—" },
+                  { label: m.monitor.retention, value: m.monitor.retentionValue },
                 ]}
               />
             </div>
@@ -337,20 +339,20 @@ export function StatusDashboard() {
         <section className={styles.section} aria-labelledby="incidents-title">
           <header className={styles.head}>
             <div className={styles.headCopy}>
-              <Eyebrow index={4}>Incident history</Eyebrow>
+              <Eyebrow index={4}>{m.incidents.eyebrow}</Eyebrow>
               <Display size="md" id="incidents-title">
-                The record, not the guesswork.
+                {m.incidents.title}
               </Display>
             </div>
-            <p className={styles.headNote}>Last 90 days · newest first</p>
+            <p className={styles.headNote}>{m.incidents.note}</p>
           </header>
           {!snapshot?.incidents.length ? (
             <EmptyState
-              eyebrow={snapshot ? "// INCIDENTS.LOG clear" : "// INCIDENTS.LOG offline"}
-              title={snapshot ? "Nothing to report" : "History unavailable"}
+              eyebrow={snapshot ? m.incidents.clearEyebrow : m.incidents.offlineEyebrow}
+              title={snapshot ? m.incidents.nothing : m.incidents.unavailable}
               className={styles.empty}
             >
-              {snapshot ? "No confirmed incidents recorded in the observed period." : "Incident history is unavailable until the monitor responds."}
+              {snapshot ? m.incidents.nothingBody : m.incidents.unavailableBody}
             </EmptyState>
           ) : (
             <ol className={styles.incidents}>
@@ -364,46 +366,41 @@ export function StatusDashboard() {
                   <div className={styles.incidentBody}>
                     <h3 className={styles.incidentTitle}>
                       {serviceName(incident.service)}
-                      <StateTag state={incident.resolvedAt ? "operational" : "outage"} label={incident.resolvedAt ? "Recovered" : "Recovery not confirmed"} />
+                      <StateTag state={incident.resolvedAt ? "operational" : "outage"} label={incident.resolvedAt ? m.incidents.recovered : m.incidents.notConfirmed} />
                     </h3>
                     <p className={styles.incidentDetail}>
                       <span className={styles.prompt} aria-hidden="true">{">"}</span>
                       {incident.detail}
                     </p>
                     <p className={styles.incidentMeta}>
-                      First detected {utc(incident.startedAt)}
+                      {fill(m.incidents.firstDetected, { time: utc(incident.startedAt) })}
                       {incident.resolvedAt
-                        ? ` · Recovery confirmed ${utc(incident.resolvedAt)} · ${duration(incident.startedAt, incident.resolvedAt)} observed`
-                        : " · Awaiting two successful checks"}
+                        ? fill(m.incidents.recoveryConfirmed, {
+                            time: utc(incident.resolvedAt),
+                            duration: duration(incident.startedAt, incident.resolvedAt),
+                          })
+                        : m.incidents.awaiting}
                     </p>
                   </div>
                 </li>
               ))}
             </ol>
           )}
-          <p className={styles.note}>
-            Incidents open after two consecutive failed checks and close after two successful checks. Single failures still appear in availability. Detection is not a root-cause diagnosis.
-          </p>
+          <p className={styles.note}>{m.incidents.rules}</p>
         </section>
 
         <details className={styles.method}>
           <summary>
-            <span className={styles.methodLabel}>How we measure availability</span>
+            <span className={styles.methodLabel}>{m.method.summary}</span>
             <span className={styles.methodToggle} aria-hidden="true" />
           </summary>
           <Prose size="sm" className={styles.methodBody}>
+            <p>{fill(m.method.source, { region: snapshot?.region ?? m.method.configuredProbe })}</p>
+            <p>{m.method.formula}</p>
+            <p>{m.method.bars}</p>
             <p>
-              Measurements come from {snapshot?.region ?? "the configured operator probe"}. A check runs every minute. This is a single monitoring vantage point, not a global service-level guarantee. Community game servers and end-to-end sign-in are not covered.
-            </p>
-            <p>
-              Availability = successful checks ÷ completed checks. Slow but successful responses remain available. Coverage = completed checks ÷ scheduled minute slots in the selected UTC calendar days. Unobserved periods, including before monitoring began, are unknown — never counted as uptime. Maintenance does not erase failed checks.
-            </p>
-            <p>
-              Daily bars show the worst observed result; stripes indicate incomplete coverage. The response graph averages successful checks in five-minute buckets. Data older than three minutes becomes unknown, even if the last result was healthy.
-            </p>
-            <p>
-              {snapshot?.startedAt ? `Collection started ${utc(snapshot.startedAt)}. ` : "Collection start is not yet known. "}
-              History is retained for 90 days. A monitor or network outage may prevent observations; incident timestamps do not prove uninterrupted downtime between checks.
+              {snapshot?.startedAt ? fill(m.method.started, { time: utc(snapshot.startedAt) }) : m.method.notStarted}
+              {m.method.retention}
             </p>
           </Prose>
         </details>
@@ -411,13 +408,11 @@ export function StatusDashboard() {
         <footer className={styles.bottom}>
           <p>
             {"// OPEN//77 · PUBLIC TELEMETRY · "}
-            {snapshot?.region ?? "probe pending"}
+            {snapshot?.region ?? m.footer.probePending}
           </p>
-          <p className={styles.fineprint}>
-            Status reflects automated checks from the stated monitoring location, not a guarantee of availability from every network.
-          </p>
+          <p className={styles.fineprint}>{m.footer.fineprint}</p>
           <a className={styles.feedLink} href={SUPPORT_URL} target="_blank" rel="noreferrer">
-            Something not listed here? Contact support
+            {m.footer.support}
             <Icon glyph={arrowUpRight01} />
           </a>
         </footer>

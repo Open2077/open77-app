@@ -11,7 +11,14 @@ import { useRouter } from "next/navigation";
  * real effect in Node. The caller styles it through `className`
  * (see `ReleaseStatus` in components/downloads).
  */
-export function ReleaseRefresh({ className }: { className?: string } = {}) {
+const ENGLISH = {
+  note: "Live CDN versions · checked every minute while this page is visible.",
+  checking: "Checking CDN…",
+  check: "Check for updates",
+};
+
+/** `labels` carries the page language; it is a prop so this file stays free of the i18n modules. */
+export function ReleaseRefresh({ className, labels = ENGLISH }: { className?: string; labels?: typeof ENGLISH } = {}) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -38,7 +45,7 @@ export function ReleaseRefresh({ className }: { className?: string } = {}) {
 
   return (
     <div className={className} data-release-refresh data-pending={pending || undefined}>
-      <span>Live CDN versions · checked every minute while this page is visible.</span>
+      <span>{labels.note}</span>
       <button type="button" disabled={pending} onClick={() => startTransition(() => router.refresh())}>
         <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true">
           <path
@@ -50,7 +57,7 @@ export function ReleaseRefresh({ className }: { className?: string } = {}) {
             strokeLinejoin="round"
           />
         </svg>
-        <span role="status">{pending ? "Checking CDN…" : "Check for updates"}</span>
+        <span role="status">{pending ? labels.checking : labels.check}</span>
       </button>
     </div>
   );

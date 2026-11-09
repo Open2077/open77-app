@@ -1,5 +1,6 @@
 "use client";
 
+import { useOptionalMessages } from "@/i18n/client";
 import { useState } from "react";
 
 import { cx } from "@/components/ui/cx";
@@ -28,6 +29,7 @@ export function CopyLine({
   /** What is shown, when it differs from what is copied. */
   display?: string;
 }) {
+  const common = useOptionalMessages("common");
   const [copied, setCopied] = useState(false);
   const canCopy = useClipboardSupported();
 
@@ -55,11 +57,11 @@ export function CopyLine({
           }}
         >
           <Icon glyph={copied ? tick02 : copy01} />
-          <span aria-hidden="true">{copied ? "Copied" : "Copy"}</span>
+          <span aria-hidden="true">{copied ? (common?.copied ?? "Copied") : (common?.copy ?? "Copy")}</span>
         </button>
       ) : null}
       <span className="sr-only" aria-live="polite">
-        {copied ? "Copied to the clipboard" : ""}
+        {copied ? (common?.copiedToClipboard ?? "Copied to the clipboard") : ""}
       </span>
     </div>
   );

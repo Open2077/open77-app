@@ -13,6 +13,8 @@ import { Marquee } from "@/components/ui/marquee";
 import { useParallax } from "./parallax";
 import { DESKTOP_QUERY, useIsVerticalScroll } from "./scroll-mode";
 import { Video } from "@/components/ui/video";
+import { useMessages } from "@/i18n/client";
+import { rich } from "@/i18n/format";
 
 import characterStyles from "./hero-character.module.css";
 import styles from "./hero.module.css";
@@ -54,6 +56,8 @@ export function Hero() {
   const backgroundRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const vertical = useIsVerticalScroll();
+  const home = useMessages("home");
+  const m = home.hero;
 
   useParallax([{ ref: renderRef }, { ref: logoRef, depth: 3 }, { ref: backgroundRef, depth: -2 }]);
 
@@ -84,13 +88,13 @@ export function Hero() {
   return (
     <section ref={sectionRef} className={styles.hero} data-hero>
       {/* The design sets no visible page title; screen readers and search engines still get one. */}
-      <h1 className="sr-only">OPEN//77: Cyberpunk 2077 multiplayer</h1>
+      <h1 className="sr-only">{home.heading}</h1>
       <div className={styles.wrapper}>
         <div className={styles.content}>
           <Marquee pauseOnHover={false} className={styles.marquee} data-marquee>
             <>
-              <div className={styles.glitch} data-glitch="Multiplayer for">
-                Multiplayer for
+              <div className={styles.glitch} data-glitch={m.marquee}>
+                {m.marquee}
               </div>
               &nbsp;
             </>
@@ -107,24 +111,21 @@ export function Hero() {
             className={styles.logo}
           />
           <div className={styles.text}>
-            <p className={styles.intro}>
-              Play <strong>Cyberpunk&nbsp;2077 online</strong> on community servers, or create your own server and your
-              own multiplayer&nbsp;experience.{" "}
-            </p>
-            <p className={styles.alpha}>Open Alpha is here. Play, host your server and start building&nbsp;now.</p>
+            <p className={styles.intro}>{rich(m.intro, { strong: (chunk) => <strong>{chunk}</strong> })} </p>
+            <p className={styles.alpha}>{m.alpha}</p>
           </div>
         </div>
         <div ref={renderRef} className={styles.render}>
-          <HeroCharacter side="left" src="/home/img/hero-v-left.webp" alt="Hero Left" width={1092} height={1251} />
-          <HeroCharacter side="right" src="/home/img/hero-v-right.webp" alt="Hero Right" width={1784} height={2048} />
+          <HeroCharacter side="left" src="/home/img/hero-v-left.webp" alt={m.altLeft} width={1092} height={1251} />
+          <HeroCharacter side="right" src="/home/img/hero-v-right.webp" alt={m.altRight} width={1784} height={2048} />
         </div>
       </div>
       <div className={styles.buttons}>
         <Button className={cx(styles.button, styles.buttonLeft)} href="/download">
-          Download launcher
+          {m.download}
         </Button>
         <Button className={cx(styles.button, styles.buttonRight)} color="red" lines="left" href="/create">
-          Build your server
+          {m.build}
         </Button>
       </div>
       <div className={styles.bgWrapper}>

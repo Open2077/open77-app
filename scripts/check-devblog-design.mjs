@@ -9,7 +9,7 @@ const delay=ms=>new Promise(r=>setTimeout(r,ms));
 let failures=0;
 const check=(name,ok,detail)=>{console.log(`${ok?'PASS':'FAIL'} ${name}`);if(!ok){failures++;if(detail)console.log(detail);}};
 const profile=await fs.mkdtemp(path.join(os.tmpdir(),'open77-devblog-'));
-const child=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new',`--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,'--no-first-run','--no-default-browser-check','about:blank'],{windowsHide:true,stdio:'ignore'});
+const child=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new',`--lang=en-US`, `--accept-lang=en-US,en`, `--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,'--no-first-run','--no-default-browser-check','about:blank'],{windowsHide:true,stdio:'ignore'});
 let socket;
 try{
   let endpoint;

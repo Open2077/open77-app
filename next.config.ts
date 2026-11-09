@@ -21,6 +21,18 @@ const LEGACY_PAGES: Record<string, string> = {
   "/docs.html": "/docs/platform",
 };
 
+/**
+ * Language prefixes (see src/i18n/config.ts). English has none: its URLs are
+ * the canonical ones every e-mail, OAuth callback and launcher link points at.
+ */
+const LANGUAGE_PREFIX = "fr|es|pt-br|de|pl|ru|tr";
+
+/**
+ * Sections that exist in English only. A hand-typed or stale `/fr/docs/…`
+ * lands on the English page instead of a 404.
+ */
+const ENGLISH_ONLY = "docs|devblog|workshop|community|resources|creators|dev-tracker|admin|brand|design-system|md|api";
+
 const IMMUTABLE_ASSET_CACHE = "public, max-age=86400, stale-while-revalidate=2592000";
 
 const nextConfig: NextConfig = {
@@ -30,6 +42,14 @@ const nextConfig: NextConfig = {
   // nothing here.
   poweredByHeader: false,
 
+  experimental: {
+    // The site has two root layouts — `(en)` and `[lang]` — so the 404 for a URL
+    // that matches nothing is `app/global-not-found.tsx`.
+    globalNotFound: true,
+    // Local builds on a busy workstation can cap the static-generation workers
+    // (each one is a Node process); CI and Vercel leave it unset.
+    ...(process.env.OP77_BUILD_CPUS ? { cpus: Number(process.env.OP77_BUILD_CPUS) } : {}),
+  },
 
   images: {
     // AVIF first, WebP as the fallback: the hero and section art are large
@@ -69,6 +89,16 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // English has no prefix: `/en/…` is the unprefixed page.
+      { source: "/en", destination: "/", permanent: true },
+      { source: "/en/:path*", destination: "/:path*", permanent: true },
+      {
+        source: `/:lang(${LANGUAGE_PREFIX})/:section(${ENGLISH_ONLY})/:path*`,
+        destination: "/:section/:path*",
+        permanent: false,
+      },
+      // The signed-in account area is English for now; only its sign-in page is translated.
+      { source: `/:lang(${LANGUAGE_PREFIX})/account/:path+`, destination: "/account/:path+", permanent: false },
       // Preserve links to the retired access guide, including Markdown consumers.
       { source: "/docs/developer-preview", destination: "/docs/alpha-access", permanent: true },
       { source: "/docs/developer-preview.md", destination: "/docs/alpha-access.md", permanent: true },

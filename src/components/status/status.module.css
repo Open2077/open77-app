@@ -478,6 +478,21 @@
     flex-direction: column;
     gap: 0.5rem;
   }
+  /* The service name never shrinks below its longest word; a long translated
+     state ("Keine aktuellen Daten") or uptime caption wraps in the status column
+     instead of pushing the name under the uptime figure. The English labels
+     still fit on one line at phone width. */
+  .service {
+    grid-template-columns: minmax(min-content, 1fr) auto;
+  }
+  .stateTag {
+    white-space: normal;
+    text-align: right;
+    height: auto;
+    min-height: 1.55rem;
+    padding-block: 0.35em;
+    line-height: 1.3;
+  }
   .bars {
     gap: 1px;
     height: 2rem;

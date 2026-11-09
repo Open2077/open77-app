@@ -1,5 +1,6 @@
 "use client";
 
+import { useOptionalMessages } from "@/i18n/client";
 import { useState } from "react";
 
 import { cx } from "./cx";
@@ -9,7 +10,8 @@ import { copy01, tick02 } from "./icons";
 import styles from "./code-block.module.css";
 
 /** Copies `text`, then says so for a moment. */
-export function CopyButton({ text, label = "Copy", className }: { text: string; label?: string; className?: string }) {
+export function CopyButton({ text, label, className }: { text: string; label?: string; className?: string }) {
+  const common = useOptionalMessages("common");
   const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
   return (
     <button
@@ -27,7 +29,11 @@ export function CopyButton({ text, label = "Copy", className }: { text: string; 
       }}
     >
       <Icon glyph={state === "copied" ? tick02 : copy01} />
-      <span aria-live="polite">{state === "copied" ? "Copied" : state === "failed" ? "Copy unavailable" : label}</span>
+      <span aria-live="polite">{state === "copied"
+          ? (common?.copied ?? "Copied")
+          : state === "failed"
+            ? (common?.copyUnavailable ?? "Copy unavailable")
+            : (label ?? common?.copy ?? "Copy")}</span>
     </button>
   );
 }

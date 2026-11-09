@@ -1,5 +1,6 @@
 "use client";
 
+import { useMessages } from "@/i18n/client";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -44,6 +45,7 @@ function writePreference(on: boolean) {
  * across page changes. Nothing is downloaded until it is turned on.
  */
 export function MusicToggle({ className }: { className?: string }) {
+  const m = useMessages("chrome").music;
   const [on, setOn] = useState(false);
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -153,8 +155,8 @@ export function MusicToggle({ className }: { className?: string }) {
       className={cx(className, styles.music, playing && styles.playing)}
       onClick={toggle}
       aria-pressed={on}
-      aria-label={on ? "Turn the music off" : "Turn the music on"}
-      title={on ? "Music on · Cyberpunk 2077 original score" : "Music off"}
+      aria-label={on ? m.turnOff : m.turnOn}
+      title={on ? m.on : m.off}
       data-music={playing ? "playing" : on ? "on" : "off"}
     />
   );

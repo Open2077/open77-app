@@ -60,7 +60,25 @@ export function releaseArtefactUrl(value: unknown, channel: "server" | "launcher
 }
 
 /** `123456789` → `"117.7 MB"`. Binary-adjacent but decimal units, like browsers show. */
-export function formatBytes(bytes: number): string {
+export function formatBytes(bytes: number, languageTag?: string): string {
+  if (languageTag && languageTag !== "en") {
+    // A page in another language writes the number and unit its way ("117,7 Mo", "117,7 МБ").
+    const [value, unit, digits] =
+      bytes >= 1_000_000_000
+        ? [bytes / 1_000_000_000, "gigabyte", 2]
+        : bytes >= 1_000_000
+          ? [bytes / 1_000_000, "megabyte", 1]
+          : bytes >= 1_000
+            ? [bytes / 1_000, "kilobyte", 0]
+            : [bytes, "byte", 0];
+    return new Intl.NumberFormat(languageTag, {
+      style: "unit",
+      unit: unit as string,
+      unitDisplay: "short",
+      minimumFractionDigits: digits as number,
+      maximumFractionDigits: digits as number,
+    }).format(value as number);
+  }
   if (bytes >= 1_000_000_000) return `${(bytes / 1_000_000_000).toFixed(2)} GB`;
   if (bytes >= 1_000_000) return `${(bytes / 1_000_000).toFixed(1)} MB`;
   if (bytes >= 1_000) return `${(bytes / 1_000).toFixed(0)} KB`;
@@ -68,8 +86,8 @@ export function formatBytes(bytes: number): string {
 }
 
 /** ISO string → `"Aug 24, 2026"`, pinned to UTC so prerender and client agree. */
-export function formatReleaseDate(iso: string): string {
-  return new Intl.DateTimeFormat("en-US", {
+export function formatReleaseDate(iso: string, languageTag = "en-US"): string {
+  return new Intl.DateTimeFormat(languageTag === "en" ? "en-US" : languageTag, {
     month: "short",
     day: "numeric",
     year: "numeric",

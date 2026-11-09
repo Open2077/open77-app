@@ -33,7 +33,8 @@ export function Field({
   hint?: ReactNode;
   error?: ReactNode;
   children: ReactElement<{ id?: string; "aria-describedby"?: string; "aria-invalid"?: boolean }>;
-  optional?: boolean;
+  /** `true` shows "Optional"; a string shows that label instead (translated forms). */
+  optional?: boolean | string;
   className?: string;
 }) {
   const id = useId();
@@ -47,7 +48,7 @@ export function Field({
     <div className={cx(styles.field, error ? styles.invalid : undefined, className)}>
       <label htmlFor={id} className={styles.label}>
         {label}
-        {optional ? <span className={styles.optional}>Optional</span> : null}
+        {optional ? <span className={styles.optional}>{typeof optional === "string" ? optional : "Optional"}</span> : null}
       </label>
       {control}
       {hint ? (

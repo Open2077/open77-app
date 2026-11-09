@@ -7,6 +7,7 @@ import { ReactLenis, useLenis, type LenisRef } from "lenis/react";
 import { useEffect, useRef, type ReactNode } from "react";
 
 import { prefersReducedMotion } from "@/components/ui/device";
+import { splitLocalePath } from "@/i18n/config";
 import { getHorizontalTween, subscribeHorizontalTween } from "./horizontal";
 import { isHorizontalScroll } from "./scroll-mode";
 
@@ -249,7 +250,7 @@ function ResetDocumentOnLeave() {
   useEffect(
     () => () => {
       requestAnimationFrame(() => {
-        if (window.location.pathname === "/") return;
+        if (splitLocalePath(window.location.pathname).path === "/") return;
         const root = document.documentElement;
         delete root.dataset.scroll;
         delete root.dataset.activeTone;
