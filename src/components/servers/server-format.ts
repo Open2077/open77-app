@@ -16,7 +16,7 @@ export type ServersMessages = Messages["servers"];
  * the activity chart's "Local time" legend says; only their wording changes.
  */
 export function serverFormat(locale: Locale, m: ServersMessages) {
-  const tag = LOCALE_INFO[locale].tag;
+  const tag = LOCALE_INFO[locale].intl;
   const count = (forms: PluralForms, value: number, vars?: Vars) => plural(locale, forms, value, vars);
   return {
     m,

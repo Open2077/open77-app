@@ -9,10 +9,10 @@ import { IS_PRODUCTION_DEPLOY, SITE_URL, site } from "@/lib/site";
 
 /**
  * Root layout of the translated site (`/fr`, `/es`, `/pt-br`, `/de`, `/pl`,
- * `/ru`, `/tr`). Only the pages listed in `LOCALIZED_ROUTES` exist under it;
+ * `/ru`, `/tr`, `/ja`, `/th`). Only the pages listed in `LOCALIZED_ROUTES` exist under it;
  * English keeps its unprefixed URLs in the `(en)` group.
  *
- * The seven prefixes are generated here, but `dynamicParams = false` lives on
+ * The nine prefixes are generated here, but `dynamicParams = false` lives on
  * each fixed page rather than on this layout: Next applies a `false` from any
  * segment to the whole route, which would 404 every on-demand server profile
  * (`/fr/servers/<id>`). An unknown prefix that still reaches a page is a 404

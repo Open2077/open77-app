@@ -20,7 +20,7 @@ type StatusMessages = Messages["status"];
  * en-GB day-month order it always had; times are UTC everywhere.
  */
 export function statusFormat(locale: Locale, m: StatusMessages) {
-  const dateTag = locale === "en" ? "en-GB" : LOCALE_INFO[locale].tag;
+  const dateTag = locale === "en" ? "en-GB" : LOCALE_INFO[locale].intl;
   const utcTime = (date: string) => new Date(date).toLocaleTimeString(dateTag, { timeZone: "UTC", hour: "2-digit", minute: "2-digit" });
   return {
     m,

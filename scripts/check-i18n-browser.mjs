@@ -14,6 +14,9 @@
  *   listed for review;
  * - asks Chrome which fonts actually drew each text node (CSS.getPlatformFontsForNode)
  *   and fails on any glyph drawn by a system font where English used none;
+ * - checks Japanese and Thai typography: no tracking, no Japanese or Thai text
+ *   clipped by a box that hides its overflow (Thai marks reach far above and
+ *   below the Latin line), phrase-aware Japanese titles, no synthetic oblique;
  * - checks Turkish capitals (i → İ), the selector (cookie, same page, query
  *   kept, English-only notice), first-visit Accept-Language, the mobile menu,
  *   quick navigation and the server profile round trip in a prefixed language;
@@ -58,6 +61,8 @@ const LOCALES = [
   { locale: "pl", segment: "pl", tag: "pl", name: "Polski" },
   { locale: "ru", segment: "ru", tag: "ru", name: "Русский" },
   { locale: "tr", segment: "tr", tag: "tr", name: "Türkçe" },
+  { locale: "ja", segment: "ja", tag: "ja", name: "日本語" },
+  { locale: "th", segment: "th", tag: "th", name: "ไทย" },
 ];
 const ALL_ROUTES = ["/", "/download", "/servers", "/create", "/host", "/ncwe", "/status", "/account", "/verify-email", "/forgot-password", "/reset-password", "/launcher", "/missing-page"];
 const ROUTES = onlyRoutes ? ALL_ROUTES.filter((route) => onlyRoutes.includes(route)) : ALL_ROUTES;
@@ -405,6 +410,80 @@ try {
   `);
   check("tr: CSS capitals keep the dotted İ", capitals.count > 0 && capitals.dotless.length === 0, capitals);
 
+  /* ------------------------------------------- Japanese and Thai type --- */
+
+  // Ink is measured with canvas in the element's own font (fallback faces
+  // included) and placed on the DOM line from the primary font's ascent, so a
+  // tone mark above a tight label is caught even though the line box ignores it.
+  const SCRIPT_TYPE = `
+    const script = document.documentElement.lang === "th" ? /[\u0E00-\u0E7F]/ : /[\u3000-\u30FF\u4E00-\u9FFF\uFF00-\uFFEF]/;
+    const canvas = document.createElement("canvas").getContext("2d");
+    const tracked = new Set();
+    const clipped = [];
+    const titles = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+      const el = node.parentElement;
+      if (!el || !script.test(node.nodeValue) || el.closest("[aria-hidden=true], [hidden], script, style, noscript, .sr-only")) continue;
+      const style = getComputedStyle(el);
+      if (style.visibility === "hidden" || !el.getClientRects().length) continue;
+      if (style.letterSpacing !== "normal" && parseFloat(style.letterSpacing) !== 0) tracked.add(el.tagName.toLowerCase() + "." + [...el.classList].join(".") + " " + style.letterSpacing + " “" + node.nodeValue.trim().slice(0, 24) + "”");
+      canvas.font = style.fontStyle + " " + style.fontWeight + " " + style.fontSize + " " + style.fontFamily;
+      const ink = canvas.measureText(node.nodeValue.trim());
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      const rects = [...range.getClientRects()].filter((r) => r.width > 0 && r.height > 0);
+      const found = [];
+      let hidden = false;
+      for (let box = el; box && box !== document.body; box = box.parentElement) {
+        const boxStyle = getComputedStyle(box);
+        if (boxStyle.overflowY === "visible") continue; // clips sideways only (overflow-x: clip)
+        const r = box.getBoundingClientRect();
+        // Visually hidden text (a 1 px clipped box) is for screen readers only.
+        if (r.width <= 2 || r.height <= 2) {
+          hidden = true;
+          break;
+        }
+        const top = r.top + parseFloat(boxStyle.borderTopWidth);
+        const bottom = r.bottom - parseFloat(boxStyle.borderBottomWidth);
+        const scroller = ["auto", "scroll"].includes(boxStyle.overflowY);
+        for (const line of rects) {
+          // A line the box hides on purpose (clamp, marquee, a track panel off
+          // screen) or a line a scroller has half scrolled away: layout, not type.
+          const middle = (line.top + line.bottom) / 2;
+          if (middle <= top || middle >= bottom || (scroller && (line.top < top || line.bottom > bottom))) continue;
+          const baseline = line.top + ink.fontBoundingBoxAscent;
+          const over = Math.max(top - (baseline - ink.actualBoundingBoxAscent), baseline + ink.actualBoundingBoxDescent - bottom);
+          if (over > 1.5) {
+            found.push("“" + node.nodeValue.trim().slice(0, 30) + "” by " + box.tagName.toLowerCase() + "." + [...box.classList].join(".") + " (" + Math.round(over) + "px)");
+            break;
+          }
+        }
+      }
+      if (!hidden) clipped.push(...found);
+    }
+    for (const title of document.querySelectorAll("h1, h2")) {
+      if (!script.test(title.textContent) || !title.getClientRects().length) continue;
+      const style = getComputedStyle(title);
+      titles.push({ text: title.textContent.trim().slice(0, 30), wordBreak: style.wordBreak, synthesis: style.fontSynthesisStyle ?? style.fontSynthesis });
+    }
+    return { tracked: [...tracked].slice(0, 8), clipped: [...new Set(clipped)].slice(0, 8), titles };
+  `;
+  for (const segment of ["ja", "th"]) {
+    for (const route of ["/", "/download", "/servers", "/create", "/host", "/ncwe", "/status", "/account", "/launcher"]) {
+      const url = localized(route, segment);
+      for (const width of [1440, 390]) {
+        await resize(width);
+        await visit(url);
+        const type = await session.evaluate(SCRIPT_TYPE);
+        check(`${url} @${width}: no letter-spacing on ${segment} text`, type.tracked.length === 0, type.tracked.join("; "));
+        check(`${url} @${width}: no ${segment} glyph clipped by its box`, type.clipped.length === 0, type.clipped.join("; "));
+        check(`${url} @${width}: titles never slanted by synthesis`, type.titles.every((title) => title.synthesis === "none"), type.titles);
+        if (segment === "ja") check(`${url} @${width}: Japanese titles break between phrases`, type.titles.every((title) => title.wordBreak === "auto-phrase"), type.titles.filter((title) => title.wordBreak !== "auto-phrase"));
+      }
+    }
+  }
+
   /* ------------------------------------------------------------ selector --- */
 
   await session.send("Network.clearBrowserCookies");
@@ -473,7 +552,7 @@ try {
     const links = [...document.querySelectorAll("#site-menu a")].map((a) => a.getAttribute("href"));
     return { open: !document.getElementById("site-menu").hidden, download: links.includes("/de/download"), docs: links.some((h) => h.startsWith("/docs")), prefixedDocs: links.some((h) => /^\\/de\\/docs/.test(h)), languages: document.querySelectorAll("#site-menu a[hreflang]").length };
   `);
-  check("de mobile menu: localized links, English docs, language row", menu.open && menu.download && menu.docs && !menu.prefixedDocs && menu.languages === 8, menu);
+  check("de mobile menu: localized links, English docs, language row", menu.open && menu.download && menu.docs && !menu.prefixedDocs && menu.languages === LOCALES.length, menu);
 
   await resize(1440);
   await visit("/fr/servers");

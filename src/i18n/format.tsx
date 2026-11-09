@@ -23,8 +23,9 @@ export type Vars = Record<string, string | number>;
 /** CLDR plural forms; `other` is the only one every language needs. */
 export type PluralForms = { zero?: string; one?: string; two?: string; few?: string; many?: string; other: string };
 
+/** The tag `Intl` formats with (Thai adds the Gregorian calendar). */
 export function tag(locale: Locale): string {
-  return LOCALE_INFO[locale].tag;
+  return LOCALE_INFO[locale].intl;
 }
 
 const numberFormats = new Map<string, Intl.NumberFormat>();

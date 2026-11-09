@@ -90,10 +90,23 @@ function revealUpTo(letters: HTMLElement[], count: number) {
   });
 }
 
+/** Scripts written without spaces between words (Thai, Lao, Myanmar, Khmer, kana, kanji, full-width forms). */
+const UNSPACED = /[\u0E00-\u0EFF\u1000-\u109F\u1780-\u17FF\u3040-\u30FF\u3400-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF]/;
+
 /** Splits a `[data-typewrite]` element into hidden letters and returns the reveal tween. */
 function prepareTypewriter(element: HTMLElement): gsap.core.Tween | null {
   const text = element.textContent ?? "";
   if (!text.trim()) return null;
+  // Each word stays on one line while it types. Japanese and Thai put no spaces
+  // between words, so there the words come from the segmenter: a whole title in
+  // one unbreakable span would run out of its box. Letters are graphemes, so a
+  // Thai vowel or tone mark is never shaped apart from its consonant.
+  // Without Intl.Segmenter (Firefox before 125), whole parts and code points.
+  const locale = element.closest("[lang]")?.getAttribute("lang") || undefined;
+  const segmenter = typeof Intl.Segmenter === "function" ? Intl.Segmenter : null;
+  const words = segmenter ? new segmenter(locale, { granularity: "word" }) : null;
+  const graphemes = segmenter ? new segmenter(locale, { granularity: "grapheme" }) : null;
+  const split = (value: string, by: Intl.Segmenter | null) => (by ? Array.from(by.segment(value), ({ segment }) => segment) : Array.from(value));
   const letters: HTMLElement[] = [];
   element.replaceChildren();
   text.split(/(\s+)/).forEach((part) => {
@@ -102,16 +115,19 @@ function prepareTypewriter(element: HTMLElement): gsap.core.Tween | null {
       element.append(document.createTextNode(part));
       return;
     }
-    const word = document.createElement("span");
-    word.style.whiteSpace = "nowrap";
-    Array.from(part).forEach((character) => {
-      const letter = document.createElement("span");
-      letter.textContent = character;
-      letter.style.visibility = "hidden";
-      word.append(letter);
-      letters.push(letter);
+    const pieces = words && UNSPACED.test(part) ? split(part, words) : [part];
+    pieces.forEach((piece) => {
+      const word = document.createElement("span");
+      word.style.whiteSpace = "nowrap";
+      for (const character of split(piece, graphemes)) {
+        const letter = document.createElement("span");
+        letter.textContent = character;
+        letter.style.visibility = "hidden";
+        word.append(letter);
+        letters.push(letter);
+      }
+      element.append(word);
     });
-    element.append(word);
   });
   if (!letters.length) return null;
   element.setAttribute("aria-label", text);

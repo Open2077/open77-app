@@ -25,7 +25,7 @@ const LEGACY_PAGES: Record<string, string> = {
  * Language prefixes (see src/i18n/config.ts). English has none: its URLs are
  * the canonical ones every e-mail, OAuth callback and launcher link points at.
  */
-const LANGUAGE_PREFIX = "fr|es|pt-br|de|pl|ru|tr";
+const LANGUAGE_PREFIX = "fr|es|pt-br|de|pl|ru|tr|ja|th";
 
 /**
  * Sections that exist in English only. A hand-typed or stale `/fr/docs/…`
@@ -154,10 +154,11 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Brand and screenshot files are content-addressed by name only, so they
-        // get a day of browser caching and a month of CDN revalidation rather
-        // than `immutable`, which would strand a corrected asset.
-        source: "/:dir(assets|brand)/:path*",
+        // Brand, screenshot and fallback font files are content-addressed by name
+        // only (the Japanese font slices carry a hash), so they get a day of
+        // browser caching and a month of CDN revalidation rather than
+        // `immutable`, which would strand a corrected asset.
+        source: "/:dir(assets|brand|fonts)/:path*",
         headers: [{ key: "Cache-Control", value: IMMUTABLE_ASSET_CACHE }],
       },
       {

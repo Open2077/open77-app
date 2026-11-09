@@ -92,7 +92,7 @@ function CheckList({ items }: { items: Array<{ title: string; body: string }> })
 /** /ncwe: what the Night City World Editor is, and its download. Renders inside a blue <Page>. */
 export function NcweLanding({ locale }: { locale: Locale }) {
   const m = getMessages(locale).ncwe;
-  const size = megabytes(NCWE_RELEASE.bytes, LOCALE_INFO[locale].tag);
+  const size = megabytes(NCWE_RELEASE.bytes, LOCALE_INFO[locale].intl);
   const vars = { version: NCWE_RELEASE.version, game: NCWE_RELEASE.game, size, archivexlVersion: NCWE_ARCHIVEXL.version };
   const trailerLabels = {
     watch: m.trailer.watch,

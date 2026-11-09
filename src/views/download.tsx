@@ -95,7 +95,7 @@ export async function DownloadView({ locale }: { locale: Locale }) {
   const m = messages.download;
   const common = messages.common;
   const tags = pageTags(locale);
-  const languageTag = LOCALE_INFO[locale].tag;
+  const languageTag = LOCALE_INFO[locale].intl;
   const vars = {
     build: GAME_BUILD,
     expansion: common.expansion,

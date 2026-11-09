@@ -81,3 +81,21 @@
 .display .line[data-glitch] {
   white-space: normal;
 }
+
+/* Japanese titles: phrase-aware breaks, and room for kanji, which fill the em
+   box where Latin capitals leave air. Thai titles: room for stacked marks, below
+   the 1.6 of running Thai text (system.css). The joining space between title
+   lines is Latin punctuation: Japanese runs its phrases together. */
+.display:lang(ja) {
+  word-break: auto-phrase;
+  line-height: 1.12;
+}
+.display:lang(th),
+.display :lang(th),
+.display :lang(th)::before,
+.display :lang(th)::after {
+  line-height: 1.4 !important;
+}
+.gap:lang(ja) {
+  display: none;
+}

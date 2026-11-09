@@ -66,7 +66,7 @@ if (origin) {
     console.log(`served OK ${route}`);
   }
   // The translated pages keep the programme's name (see src/i18n/messages/GLOSSARY.md).
-  for (const segment of ["fr", "es", "pt-br", "de", "pl", "ru", "tr"]) {
+  for (const segment of ["fr", "es", "pt-br", "de", "pl", "ru", "tr", "ja", "th"]) {
     for (const route of ["", "/download", "/create", "/host", "/servers", "/account"]) {
       const response = await fetch(new URL(`/${segment}${route}`, origin), { signal: AbortSignal.timeout(60000) });
       assert.equal(response.status, 200, `/${segment}${route}`);

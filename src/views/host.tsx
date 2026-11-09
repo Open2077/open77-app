@@ -53,7 +53,7 @@ export async function HostView({ locale }: { locale: Locale }) {
   const messages = getMessages(locale);
   const m = messages.host;
   const common = messages.common;
-  const languageTag = LOCALE_INFO[locale].tag;
+  const languageTag = LOCALE_INFO[locale].intl;
   const link = (href: string) =>
     function LinkTag(chunk: ReactNode) {
       return <Link href={localizeHref(href, locale)}>{chunk}</Link>;

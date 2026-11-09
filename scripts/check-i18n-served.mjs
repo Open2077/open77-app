@@ -26,6 +26,8 @@ const LOCALES = [
   { locale: "pl", segment: "pl", tag: "pl", og: "pl_PL" },
   { locale: "ru", segment: "ru", tag: "ru", og: "ru_RU" },
   { locale: "tr", segment: "tr", tag: "tr", og: "tr_TR" },
+  { locale: "ja", segment: "ja", tag: "ja", og: "ja_JP" },
+  { locale: "th", segment: "th", tag: "th", og: "th_TH" },
 ];
 const INDEXED = ["/", "/download", "/servers", "/create", "/host", "/ncwe", "/status"];
 const NOINDEX = ["/account", "/verify-email", "/forgot-password", "/reset-password", "/launcher"];
@@ -111,7 +113,7 @@ for (const route of [...INDEXED, ...NOINDEX]) {
       const href = attr(anchor, "href");
       if (!href.startsWith("/") || href.startsWith("//") || /\shreflang=/i.test(anchor)) continue;
       const path = pathOf(href);
-      const prefix = /^\/(fr|es|pt-br|de|pl|ru|tr)(\/.*)?$/.exec(path);
+      const prefix = /^\/(fr|es|pt-br|de|pl|ru|tr|ja|th)(\/.*)?$/.exec(path);
       if (prefix) {
         const rest = prefix[2] ?? "/";
         if (!isLocalized(rest)) leaks.push(`${href} (English-only page under a prefix)`);
@@ -135,7 +137,10 @@ const proxy = [
   ["/account", { "accept-language": "pl-PL,pl" }, 307, "/pl/account"],
   ["/", { "accept-language": "es-419,es;q=0.9" }, 307, "/es"],
   ["/", { "accept-language": "en-GB,fr;q=0.8" }, 200],
-  ["/", { "accept-language": "ja,zh;q=0.8" }, 200],
+  ["/", { "accept-language": "ja,zh;q=0.8" }, 307, "/ja"],
+  ["/download", { "accept-language": "ja-JP,ja;q=0.9,en-US;q=0.8" }, 307, "/ja/download"],
+  ["/servers", { "accept-language": "th-TH,th;q=0.9" }, 307, "/th/servers"],
+  ["/", { "accept-language": "ko,zh;q=0.8" }, 200],
   ["/", { "accept-language": "fr;q=0" }, 200],
   ["/", {}, 200],
   ["/", { "accept-language": "fr", "user-agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" }, 200],
@@ -143,6 +148,7 @@ const proxy = [
   ["/", { cookie: "op77_lang=pl" }, 307, "/pl"],
   ["/", { cookie: "op77_lang=xx", "accept-language": "de" }, 307, "/de"],
   ["/fr/download", { cookie: "op77_lang=de" }, 307, "/de/download"],
+  ["/ja/download", { cookie: "op77_lang=th" }, 307, "/th/download"],
   ["/fr/download", { cookie: "op77_lang=en" }, 307, "/download"],
   ["/fr/download", { "accept-language": "en-US" }, 200],
   ["/fr/download", { "accept-language": "de", cookie: "op77_lang=xx" }, 200],
@@ -170,6 +176,8 @@ const redirects = [
   ["/fr/docs/platform", "/docs/platform"],
   ["/de/devblog", "/devblog"],
   ["/pt-br/workshop", "/workshop"],
+  ["/ja/docs/platform", "/docs/platform"],
+  ["/th/devblog", "/devblog"],
   ["/ru/account/keys", "/account/keys"],
 ];
 for (const [from, to] of redirects) {
@@ -186,6 +194,8 @@ const misses = [
   ["/ru/nope", "ru"],
   ["/tr/servers/a/b", "tr"],
   ["/pt-br/nope", "pt-BR"],
+  ["/ja/nope", "ja"],
+  ["/th/servers/a/b", "th"],
   ["/nope", "en"],
   ["/xx/create", "en"],
   ["/docs/does-not-exist", "en"],
@@ -215,7 +225,7 @@ for (const { tag, segment } of LOCALES.slice(1)) {
   check(`sitemap hreflang ${tag}`, new RegExp(`hreflang="${tag}"[^>]*href="[^"]*/${segment}/servers"`).test(sitemap));
 }
 check("sitemap x-default", /hreflang="x-default"[^>]*href="[^"]*\/download"/.test(sitemap));
-check("sitemap has no prefixed English-only page", !/\/(fr|es|pt-br|de|pl|ru|tr)\/(docs|devblog|workshop|brand)/.test(sitemap));
+check("sitemap has no prefixed English-only page", !/\/(fr|es|pt-br|de|pl|ru|tr|ja|th)\/(docs|devblog|workshop|brand)/.test(sitemap));
 check("sitemap keeps the English docs", sitemap.includes("/docs/platform</loc>"));
 
 console.log(`${passes}/${passes + failures} i18n checks passed.`);

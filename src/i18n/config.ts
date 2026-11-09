@@ -16,7 +16,7 @@
 
 import { parseLocaleTag } from "@/lib/locale";
 
-export const LOCALES = ["en", "fr", "es", "pt-BR", "de", "pl", "ru", "tr"] as const;
+export const LOCALES = ["en", "fr", "es", "pt-BR", "de", "pl", "ru", "tr", "ja", "th"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = "en";
@@ -40,8 +40,16 @@ export const NOT_FOUND_LOCALE_HEADER = "x-open77-locale";
 type LocaleInfo = {
   /** URL prefix segment, lowercase (`pt-br`). Empty for English. */
   segment: string;
-  /** BCP-47 tag for `<html lang>`, hreflang and `Intl`. */
+  /** BCP-47 tag for `<html lang>`, hreflang and the `lang` attribute. */
   tag: string;
+  /**
+   * BCP-47 tag for `Intl` (numbers, dates, plurals, case mapping). The same as
+   * `tag` except for Thai, whose locale data defaults to the Buddhist calendar
+   * (2569): dates on this site sit next to Gregorian release years and the
+   * game's own dates, so Thai pages format Gregorian years with Thai month
+   * names. A choice for the native reviewer to confirm.
+   */
+  intl: string;
   /** `og:locale`. */
   og: string;
   /** The language's own name, for the selector. */
@@ -51,14 +59,16 @@ type LocaleInfo = {
 };
 
 export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
-  en: { segment: "", tag: "en", og: "en_US", name: "English", short: "EN" },
-  fr: { segment: "fr", tag: "fr", og: "fr_FR", name: "Français", short: "FR" },
-  es: { segment: "es", tag: "es", og: "es_ES", name: "Español", short: "ES" },
-  "pt-BR": { segment: "pt-br", tag: "pt-BR", og: "pt_BR", name: "Português (Brasil)", short: "PT" },
-  de: { segment: "de", tag: "de", og: "de_DE", name: "Deutsch", short: "DE" },
-  pl: { segment: "pl", tag: "pl", og: "pl_PL", name: "Polski", short: "PL" },
-  ru: { segment: "ru", tag: "ru", og: "ru_RU", name: "Русский", short: "RU" },
-  tr: { segment: "tr", tag: "tr", og: "tr_TR", name: "Türkçe", short: "TR" },
+  en: { segment: "", tag: "en", intl: "en", og: "en_US", name: "English", short: "EN" },
+  fr: { segment: "fr", tag: "fr", intl: "fr", og: "fr_FR", name: "Français", short: "FR" },
+  es: { segment: "es", tag: "es", intl: "es", og: "es_ES", name: "Español", short: "ES" },
+  "pt-BR": { segment: "pt-br", tag: "pt-BR", intl: "pt-BR", og: "pt_BR", name: "Português (Brasil)", short: "PT" },
+  de: { segment: "de", tag: "de", intl: "de", og: "de_DE", name: "Deutsch", short: "DE" },
+  pl: { segment: "pl", tag: "pl", intl: "pl", og: "pl_PL", name: "Polski", short: "PL" },
+  ru: { segment: "ru", tag: "ru", intl: "ru", og: "ru_RU", name: "Русский", short: "RU" },
+  tr: { segment: "tr", tag: "tr", intl: "tr", og: "tr_TR", name: "Türkçe", short: "TR" },
+  ja: { segment: "ja", tag: "ja", intl: "ja", og: "ja_JP", name: "日本語", short: "JA" },
+  th: { segment: "th", tag: "th", intl: "th-u-ca-gregory", og: "th_TH", name: "ไทย", short: "TH" },
 };
 
 export function isLocale(value: unknown): value is Locale {

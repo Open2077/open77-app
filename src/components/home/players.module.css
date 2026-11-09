@@ -314,3 +314,8 @@
   width: 70%;
   line-height: 1.25;
 }
+
+/* Kana and kanji reach below the baseline the 0.05em drop was set for. */
+.marquee:lang(ja) > * {
+  top: 0;
+}

@@ -1,7 +1,7 @@
 import { routeLocale } from "@/i18n/route";
 import { authMetadata, LauncherView } from "@/views/auth";
 
-/** Only the seven generated language prefixes exist; anything else is a 404. */
+/** Only the generated language prefixes exist; anything else is a 404. */
 export const dynamicParams = false;
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {

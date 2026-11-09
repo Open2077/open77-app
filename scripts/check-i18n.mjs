@@ -14,10 +14,11 @@ import { editorialIssues } from "./docs-editorial.mjs";
  * titles free to split into a different number of lines (translators control
  * the split) with accent indices that point at a real line, and the brand
  * names left as they are. Also checks that every translated route exists in
- * both route trees and in the proxy matcher.
+ * both route trees and in the proxy matcher, and that the Japanese core font
+ * slice (src/styles/fallback-fonts.css) holds every kanji ja.json uses.
  */
 
-const LOCALES = ["en", "fr", "es", "pt-BR", "de", "pl", "ru", "tr"];
+const LOCALES = ["en", "fr", "es", "pt-BR", "de", "pl", "ru", "tr", "ja", "th"];
 const SOURCE = "en";
 const PLURAL_KEYS = new Set(["zero", "one", "two", "few", "many", "other"]);
 /** Written exactly as in English wherever English has them (see GLOSSARY.md). */
@@ -25,8 +26,16 @@ const BRANDS = [
   "OPEN//77", "Open77", "Open2077", "NCWE", "Workshop", "Warden", "Discord", "GitHub", "ArchiveXL", "WolvenKit", "RED4ext",
   "Cyberpunk 2077", "Phantom Liberty", "Night City", "CD PROJEKT RED", "REDengine", "Open Alpha",
 ];
-/** CD PROJEKT RED's own release titles where they differ from English (same rule as the launcher). */
-const LOCAL_TITLES = { pl: { "Phantom Liberty": "Widmo wolności" }, ru: { "Phantom Liberty": "Призрачная свобода" } };
+/**
+ * CD PROJEKT RED's own names where they differ from English (same rule as the
+ * launcher). The Japanese edition localizes the game, the city and the
+ * expansion: サイバーパンク2077, ナイトシティ, 仮初めの自由.
+ */
+const LOCAL_TITLES = {
+  pl: { "Phantom Liberty": "Widmo wolności" },
+  ru: { "Phantom Liberty": "Призрачная свобода" },
+  ja: { "Cyberpunk 2077": "サイバーパンク2077", "Night City": "ナイトシティ", "Phantom Liberty": "仮初めの自由" },
+};
 /** Above this share of strings identical to English, a dictionary is treated as untranslated. */
 const MAX_IDENTICAL = 0.3;
 
@@ -177,6 +186,26 @@ for (const route of routes) {
   }
   const segment = route.split("/")[1];
   if (segment && !proxy.includes(segment)) problems.push(`route ${route}: not in the proxy matcher`);
+}
+
+// The Japanese core font slice is cut from ja.json: a kanji outside it still
+// renders, but pulls a second slice on every Japanese page.
+const fallbackCss = await readFile("src/styles/fallback-fonts.css", "utf8");
+const coreRange = /url\("[^"]*\/ja\/body-core\.[^"]+"\)[\s\S]*?unicode-range: ([^;]+);/.exec(fallbackCss)?.[1];
+if (!coreRange) problems.push("src/styles/fallback-fonts.css: no Japanese core slice (run scripts/build-fallback-fonts.py)");
+else {
+  const core = new Set();
+  for (const part of coreRange.split(",")) {
+    const [from, to = from] = part.trim().replace("U+", "").split("-");
+    for (let cp = parseInt(from, 16); cp <= parseInt(to, 16); cp++) core.add(cp);
+  }
+  const kanji = new Set();
+  (function walk(value) {
+    if (typeof value === "string") for (const ch of value) if (/[\u4E00-\u9FFF]/.test(ch)) kanji.add(ch);
+    if (value && typeof value === "object") Object.values(value).forEach(walk);
+  })(dictionaries.ja);
+  const outside = [...kanji].filter((ch) => !core.has(ch.codePointAt(0)));
+  if (outside.length) problems.push(`ja: ${outside.length} kanji outside the core font slice (${outside.slice(0, 20).join("")}): run scripts/build-fallback-fonts.py`);
 }
 
 if (problems.length) {

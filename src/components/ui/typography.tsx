@@ -74,9 +74,10 @@ export function Display({
       {lines
         ? lines.map((line, index) => (
             // The lines are blocks; the space keeps the text a sentence for
-            // screen readers, search engines and copy-paste.
+            // screen readers, search engines and copy-paste (Japanese hides it:
+            // its phrases run together).
             <Fragment key={`${line}-${index}`}>
-              {index > 0 ? " " : null}
+              {index > 0 ? <span className={styles.gap}> </span> : null}
               <span
                 className={cx(styles.line, accent.includes(index) && styles.accent)}
                 data-glitch={glitch ? line : undefined}

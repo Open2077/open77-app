@@ -35,3 +35,12 @@
 .content:after {
   content: " ";
 }
+
+/* The box is cut at the baseline because the brand's capitals stop there; kana,
+   kanji and Thai marks reach below it. Those scripts keep the sideways clip and
+   show their full height. */
+.marquee:lang(ja),
+.marquee:lang(th) {
+  overflow-x: clip;
+  overflow-y: visible;
+}

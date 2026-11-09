@@ -76,7 +76,7 @@ export const config = {
     "/",
     "/:page(download|servers|create|host|ncwe|status|account|verify-email|forgot-password|reset-password|launcher)",
     "/servers/:id",
-    "/:lang(fr|es|pt-br|de|pl|ru|tr)",
-    "/:lang(fr|es|pt-br|de|pl|ru|tr)/:path+",
+    "/:lang(fr|es|pt-br|de|pl|ru|tr|ja|th)",
+    "/:lang(fr|es|pt-br|de|pl|ru|tr|ja|th)/:path+",
   ],
 };
