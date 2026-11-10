@@ -503,7 +503,8 @@
       "recommended": "Recommandée pour Linux",
       "description": "Preview Rust conçue pour une utilisation multiplateforme. Recommandée aux utilisateurs Linux.",
       "linux": "Linux · AppImage",
-      "windows": "Windows · x64"
+      "windows": "Windows · x64",
+      "source": "Sources et licences"
     },
     "release": {
       "latest": "Launcher actuel",

@@ -501,7 +501,8 @@
       "recommended": "Рекомендуется для Linux",
       "description": "Предварительная версия на Rust для разных платформ. Рекомендуется пользователям Linux.",
       "linux": "Linux · AppImage",
-      "windows": "Windows · x64"
+      "windows": "Windows · x64",
+      "source": "Исходный код и лицензии"
     },
     "release": {
       "latest": "Актуальный лаунчер",

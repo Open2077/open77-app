@@ -338,6 +338,7 @@ function LauncherPreview({ m }: { m: Messages["download"]["preview"] }) {
           tone="blue"
           fullWidth
         />
+        <a className={styles.previewSource} href="https://cdn.open77.dev/launcher/OPEN77-Xbox-Auth-SOURCE.zip">{m.source}</a>
       </div>
     </details>
   );

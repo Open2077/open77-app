@@ -501,7 +501,8 @@
       "recommended": "แนะนำสำหรับ Linux",
       "description": "เวอร์ชันพรีวิวที่พัฒนาด้วย Rust เพื่อใช้งานข้ามแพลตฟอร์ม แนะนำสำหรับผู้ใช้ Linux",
       "linux": "Linux · AppImage",
-      "windows": "Windows · x64"
+      "windows": "Windows · x64",
+      "source": "ซอร์สโค้ดและใบอนุญาต"
     },
     "release": {
       "latest": "ลันเชอร์ล่าสุด",

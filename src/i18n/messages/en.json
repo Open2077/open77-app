@@ -503,7 +503,8 @@
       "recommended": "Recommended for Linux",
       "description": "Rust preview designed for cross-platform use. Recommended for Linux users.",
       "linux": "Linux · AppImage",
-      "windows": "Windows · x64"
+      "windows": "Windows · x64",
+      "source": "Source & licenses"
     },
     "release": {
       "latest": "Latest launcher",

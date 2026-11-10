@@ -503,7 +503,8 @@
       "recommended": "Recomendada para Linux",
       "description": "Versión preliminar en Rust diseñada para varias plataformas. Recomendada para usuarios de Linux.",
       "linux": "Linux · AppImage",
-      "windows": "Windows · x64"
+      "windows": "Windows · x64",
+      "source": "Código fuente y licencias"
     },
     "release": {
       "latest": "Último launcher",

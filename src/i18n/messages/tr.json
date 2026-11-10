@@ -503,7 +503,8 @@
       "recommended": "Linux için önerilir",
       "description": "Farklı platformlarda kullanım için Rust ile geliştirilen önizleme. Linux kullanıcılarına önerilir.",
       "linux": "Linux · AppImage",
-      "windows": "Windows · x64"
+      "windows": "Windows · x64",
+      "source": "Kaynak kodu ve lisanslar"
     },
     "release": {
       "latest": "En son başlatıcı",

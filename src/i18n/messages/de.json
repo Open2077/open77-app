@@ -503,7 +503,8 @@
       "recommended": "Für Linux empfohlen",
       "description": "Rust-Vorschau für die plattformübergreifende Nutzung. Für Linux-Nutzer empfohlen.",
       "linux": "Linux · AppImage",
-      "windows": "Windows · x64"
+      "windows": "Windows · x64",
+      "source": "Quellcode und Lizenzen"
     },
     "release": {
       "latest": "Neuester Launcher",

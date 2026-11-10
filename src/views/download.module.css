@@ -311,3 +311,11 @@
     grid-template-columns: 1fr;
   }
 }
+
+.previewDownloads > .previewSource {
+  padding: 0;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}

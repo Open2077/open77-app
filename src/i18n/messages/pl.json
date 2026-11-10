@@ -503,7 +503,8 @@
       "recommended": "Zalecana dla Linux",
       "description": "Wersja testowa w Rust zaprojektowana do działania na wielu platformach. Zalecana użytkownikom Linux.",
       "linux": "Linux · AppImage",
-      "windows": "Windows · x64"
+      "windows": "Windows · x64",
+      "source": "Kod źródłowy i licencje"
     },
     "release": {
       "latest": "Najnowszy launcher",

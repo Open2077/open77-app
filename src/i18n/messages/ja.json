@@ -504,7 +504,8 @@
       "recommended": "Linux に推奨",
       "description": "クロスプラットフォーム向けに設計された Rust 版プレビューです。Linux ユーザーに推奨します。",
       "linux": "Linux · AppImage",
-      "windows": "Windows · x64"
+      "windows": "Windows · x64",
+      "source": "ソースとライセンス"
     },
     "release": {
       "latest": "最新のランチャー",
