@@ -26,5 +26,6 @@ reads the separate public `/api/v1/servers/upcoming` feed.
 Verified with the actual local Master and isolated MariaDB in a real browser:
 formatted names, plain-name search, offline licensed identities, date/languages/
 links, persistence, hide/unhide and the server update request. Production build,
-TypeScript, source lint and i18n checks pass. The public site has not been updated
-with this feature yet.
+TypeScript, source lint and i18n checks pass. Deployed with Master revision `82ef5fe` (schema 50) and site
+revision `d4ec194`. Windows NSIS and Linux AppImage previews are public on
+`cdn.open77.dev`; their downloaded bytes match the local SHA-256 checksums.
