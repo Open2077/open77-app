@@ -498,6 +498,13 @@
       "alphaTitle": "Bu bir Alpha yazılımı, kararlı bir sürüm değil.",
       "alphaBody": "Hatalar, çökmeler, eksik özellikler ve API’leri değiştiren güncellemeler bekle. <discord>Discord</discord> sunucumuzda yardım alabilir, tekrarlanabilir sorunları bildirebilir, diğer yapımcılarla tanışabilir ve değişiklik günlüğünü takip edebilirsin."
     },
+    "preview": {
+      "button": "Preview",
+      "recommended": "Linux için önerilir",
+      "description": "Farklı platformlarda kullanım için Rust ile geliştirilen önizleme. Linux kullanıcılarına önerilir.",
+      "linux": "Linux · AppImage",
+      "windows": "Windows · x64"
+    },
     "release": {
       "latest": "En son başlatıcı",
       "version": "Sürüm {version}",

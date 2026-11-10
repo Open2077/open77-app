@@ -498,6 +498,13 @@
       "alphaTitle": "This is Alpha software, not a stable release.",
       "alphaBody": "Expect bugs, crashes, incomplete features and updates that change APIs. The <discord>Discord</discord> is where you can get help, report reproducible issues, meet other creators and follow the changelog."
     },
+    "preview": {
+      "button": "Preview",
+      "recommended": "Recommended for Linux",
+      "description": "Rust preview designed for cross-platform use. Recommended for Linux users.",
+      "linux": "Linux · AppImage",
+      "windows": "Windows · x64"
+    },
     "release": {
       "latest": "Latest launcher",
       "version": "Version {version}",

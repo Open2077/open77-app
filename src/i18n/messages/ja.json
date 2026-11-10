@@ -499,6 +499,13 @@
       "alphaTitle": "これはAlpha版のソフトウェアで、安定版のリリースではありません。",
       "alphaBody": "バグ、クラッシュ、未完成の機能、APIが変わる更新があるものと考えてください。<discord>Discord</discord>では、サポートを受けたり、再現できる問題を報告したり、ほかのクリエイターと交流したり、変更履歴を追ったりできます。"
     },
+    "preview": {
+      "button": "Preview",
+      "recommended": "Linux に推奨",
+      "description": "クロスプラットフォーム向けに設計された Rust 版プレビューです。Linux ユーザーに推奨します。",
+      "linux": "Linux · AppImage",
+      "windows": "Windows · x64"
+    },
     "release": {
       "latest": "最新のランチャー",
       "version": "バージョン{version}",

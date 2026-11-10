@@ -498,6 +498,13 @@
       "alphaTitle": "Das ist Alpha-Software, kein stabiles Release.",
       "alphaBody": "Rechne mit Bugs, Abstürzen, unfertigen Features und Updates, die APIs ändern. Auf dem <discord>Discord</discord> bekommst du Hilfe, meldest reproduzierbare Probleme, triffst andere Creator und verfolgst das Changelog."
     },
+    "preview": {
+      "button": "Preview",
+      "recommended": "Für Linux empfohlen",
+      "description": "Rust-Vorschau für die plattformübergreifende Nutzung. Für Linux-Nutzer empfohlen.",
+      "linux": "Linux · AppImage",
+      "windows": "Windows · x64"
+    },
     "release": {
       "latest": "Neuester Launcher",
       "version": "Version {version}",

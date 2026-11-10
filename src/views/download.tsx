@@ -26,6 +26,7 @@ import { Notice } from "@/components/ui/feedback";
 import { GlitchFrame } from "@/components/ui/glitch-frame";
 import { Icon } from "@/components/ui/icon";
 import {
+  arrowDown01,
   checkmarkBadge01,
   checkmarkCircle02,
   download02,
@@ -131,9 +132,12 @@ export async function DownloadView({ locale }: { locale: Locale }) {
         >
           <div id="get" className={styles.get}>
             {release ? (
-              <LauncherDownload release={release} m={m.release} languageTag={languageTag} tags={tags} />
+              <LauncherDownload release={release} m={m.release} preview={m.preview} languageTag={languageTag} tags={tags} />
             ) : (
-              <UnavailableRelease kind="launcher" text={common.unavailable} />
+              <>
+                <UnavailableRelease kind="launcher" text={common.unavailable} />
+                <LauncherPreview m={m.preview} />
+              </>
             )}
           </div>
           <div className={styles.heroLinks}>
@@ -253,11 +257,13 @@ export async function DownloadView({ locale }: { locale: Locale }) {
 function LauncherDownload({
   release,
   m,
+  preview,
   languageTag,
   tags,
 }: {
   release: LauncherRelease;
   m: Messages["download"]["release"];
+  preview: Messages["download"]["preview"];
   languageTag: string;
   tags: ReturnType<typeof pageTags>;
 }) {
@@ -283,7 +289,10 @@ function LauncherDownload({
           </span>
         ) : null}
       </div>
-      <DownloadAction href={release.url} label={m.button} meta={[m.platform, size].filter(Boolean).join(" · ")} />
+      <div className={styles.downloadActions}>
+        <DownloadAction href={release.url} label={m.button} meta={[m.platform, size].filter(Boolean).join(" · ")} />
+        <LauncherPreview m={preview} />
+      </div>
       <FileDetails summary={m.details} className={styles.releaseDetails}>
         <p>{rich(m.file, tags, { file: release.fileName })}</p>
         {release.sha256 ? (
@@ -298,5 +307,38 @@ function LauncherDownload({
         <p>{m.official}</p>
       </FileDetails>
     </div>
+  );
+}
+
+function LauncherPreview({ m }: { m: Messages["download"]["preview"] }) {
+  return (
+    <details className={styles.preview}>
+      <summary className={styles.previewToggle}>
+        <span className={styles.previewLabel}>{m.button}</span>
+        <Icon glyph={arrowDown01} className={styles.previewChevron} />
+        <span className={styles.previewRecommendation}>{m.recommended}</span>
+      </summary>
+      <div className={styles.previewDownloads}>
+        <p>{m.description}</p>
+        <DownloadAction
+          href="https://cdn.open77.dev/launcher/OPEN77-0.1.0-linux-x86_64.AppImage"
+          label={m.linux}
+          meta={m.recommended}
+          note="0.1.0 · x86_64 · AppImage"
+          lines={false}
+          size="md"
+          fullWidth
+        />
+        <DownloadAction
+          href="https://cdn.open77.dev/launcher/OPEN77-Setup-0.1.0-x64.exe"
+          label={m.windows}
+          meta="0.1.0 · x64 · NSIS"
+          lines={false}
+          size="md"
+          tone="blue"
+          fullWidth
+        />
+      </div>
+    </details>
   );
 }

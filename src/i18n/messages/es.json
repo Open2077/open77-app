@@ -498,6 +498,13 @@
       "alphaTitle": "Esto es software en fase alfa, no una versión estable.",
       "alphaBody": "Cuenta con bugs, cierres inesperados, funciones incompletas y actualizaciones que cambian las API. En el <discord>Discord</discord> puedes pedir ayuda, informar de problemas reproducibles, conocer a otros creadores y seguir el registro de cambios."
     },
+    "preview": {
+      "button": "Preview",
+      "recommended": "Recomendada para Linux",
+      "description": "Versión preliminar en Rust diseñada para varias plataformas. Recomendada para usuarios de Linux.",
+      "linux": "Linux · AppImage",
+      "windows": "Windows · x64"
+    },
     "release": {
       "latest": "Último launcher",
       "version": "Versión {version}",

@@ -498,6 +498,13 @@
       "alphaTitle": "Ceci est un logiciel en Alpha, pas une version stable.",
       "alphaBody": "Attendez-vous à des bugs, des plantages, des fonctionnalités incomplètes et des mises à jour qui changent les API. Le <discord>Discord</discord> est l’endroit où obtenir de l’aide, signaler des problèmes reproductibles, rencontrer d’autres créateurs et suivre le changelog."
     },
+    "preview": {
+      "button": "Preview",
+      "recommended": "Recommandée pour Linux",
+      "description": "Preview Rust conçue pour une utilisation multiplateforme. Recommandée aux utilisateurs Linux.",
+      "linux": "Linux · AppImage",
+      "windows": "Windows · x64"
+    },
     "release": {
       "latest": "Launcher actuel",
       "version": "Version {version}",

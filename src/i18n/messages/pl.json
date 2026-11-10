@@ -498,6 +498,13 @@
       "alphaTitle": "To oprogramowanie w wersji Alpha, a nie stabilne wydanie.",
       "alphaBody": "Spodziewaj się błędów, crashy, niedokończonych funkcji i aktualizacji, które zmieniają API. Na serwerze <discord>Discord</discord> uzyskasz pomoc, zgłosisz powtarzalne problemy, poznasz innych twórców i będziesz na bieżąco z changelogiem."
     },
+    "preview": {
+      "button": "Preview",
+      "recommended": "Zalecana dla Linux",
+      "description": "Wersja testowa w Rust zaprojektowana do działania na wielu platformach. Zalecana użytkownikom Linux.",
+      "linux": "Linux · AppImage",
+      "windows": "Windows · x64"
+    },
     "release": {
       "latest": "Najnowszy launcher",
       "version": "Wersja {version}",
