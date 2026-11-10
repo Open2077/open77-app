@@ -15,9 +15,17 @@ for (const card of cards) {
   assert.ok(card.summary && card.returns.length && card.example, card.qualified);
 }
 const nav = JSON.parse(await read("content/docs/meta.json"));
-const pages = nav.sections.find((section) => section.id === "audio").pages;
-assert.equal(pages.findIndex((page) => page.slug === "voice-lipsync"),
-  pages.findIndex((page) => page.slug === "voice") + 1);
+const pages = nav.sections.find((section) => section.id === "voice").pages;
+assert.equal(pages[0].slug, "voice", "The voice overview opens the Voice topic");
+assert.ok(pages.findIndex((page) => page.slug === "voice-lipsync") > 0, "Voice lipsync belongs in the Voice topic");
+for (const slug of ["voice-channels", "voice-graph", "voice-effects", "voice-client", "voice-recipes"])
+  assert.ok(pages.some((page) => page.slug === slug && page.source === "authored"), slug);
+const overview = await read("content/docs/voice.md");
+for (const slug of ["voice-channels", "voice-graph", "voice-effects", "voice-client", "voice-recipes", "voice-lipsync", "guided-voice-setup"])
+  assert.ok(overview.includes(`(${slug}.md)`), `voice.md links ${slug}`);
+const effects = await read("content/guides/voice-effects.md");
+for (const preset of ["clean", "radio", "walkieTalkie", "phone", "megaphone", "robot", "helmet", "underwater", "cave", "intercom", "disguise", "lofi"])
+  assert.ok(effects.includes(`\`${preset}\``), `preset ${preset}`);
 const guide = await read("content/docs/voice-lipsync.md");
 for (const text of [...names, "voice.client", "audio-envelope", "male and female", "F7",
   "local presentation controls", "facial_graph_unavailable", "resource's", "not recognize phonemes",

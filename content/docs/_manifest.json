@@ -1492,9 +1492,9 @@
       "source": "wiki/voice.md",
       "target": "content/docs/voice.md",
       "slug": "voice",
-      "title": "Integrated voice chat",
-      "bytes": 15833,
-      "sha256": "369da759834b6a8fa50e90455fb40af5e36a4a4cc0fcc3a332d85749ec83fb4e",
+      "title": "Voice chat",
+      "bytes": 9964,
+      "sha256": "10bd3033575cf321c2a9eb6e3400560b8220a5d26af7c9eaf10a5eb7602cc436",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "55226fd769b2cce01f9a32c02b88b53eb77e1eff4ced607562311149f90451a0",
@@ -1502,6 +1502,13 @@
           "sourceRevision": "b5931d0e14eb434df9c306e2bca6725ce49647c9",
           "clientVersion": "2.31.21+op77.141",
           "review": "Link the custom locomotion and guided voice setup guides from their related system documentation."
+        },
+        "unifiedVoiceAmendment": {
+          "sourceRevision": "875dfb0dba8977309750b8d326b775e04fa6bafc",
+          "sourceWorkingTreeDirty": false,
+          "upstreamSha256": "aa3c60362742f802d8404ea000f02e2d32f68eda653bf58967f521091e12a475",
+          "clientVersion": "2.50.0-unstable+op77.211",
+          "review": "Rewrite the voice overview around the unified voice stack and split channels, the audio graph, effects, the client API and recipes into authored guides."
         }
       }
     },

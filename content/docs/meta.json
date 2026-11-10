@@ -1061,6 +1061,78 @@
       ]
     },
     {
+      "id": "nativeui",
+      "title": "NativeUI",
+      "group": "Game systems",
+      "description": "GPU interfaces drawn in the game's frame: RML documents driven from Lua, motion, effects, 3D HUDs and 3D scenes.",
+      "pages": [
+        {
+          "slug": "native-ui",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "NativeUI overview",
+          "title": "NativeUI",
+          "description": "Draw HUDs and menus on the game's own GPU with RML, RCSS and Lua: when to choose it over WebUI, requirements, a first HUD resource, layers, lifecycle, errors and developer tools."
+        },
+        {
+          "slug": "native-ui-documents",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Documents, data & events",
+          "title": "NativeUI documents, data and events",
+          "description": "Every Open77.ui call: create options, data models and bindings, model and DOM events, changing the document, reading layout, keyboard and mouse focus, images and fonts."
+        },
+        {
+          "slug": "native-ui-rml",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "RML & RCSS for web devs",
+          "title": "RML and RCSS for web developers",
+          "description": "What differs from HTML and CSS in NativeUI documents: the body is the document, dp units, flexbox pitfalls, events, styles, assets, large lists and debugging."
+        },
+        {
+          "slug": "native-ui-motion",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Motion",
+          "title": "NativeUI motion",
+          "description": "Native springs and tweens with ui:animate, keyframes, presets and easings, exit animations and automatic layout transitions."
+        },
+        {
+          "slug": "native-ui-effects",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Effects, shapes & themes",
+          "title": "NativeUI effects, shapes and themes",
+          "description": "The built-in Open77 design system, GPU filters, animated fx() decorators, custom HLSL effects, vector paths and shapes, runtime themes and fonts."
+        },
+        {
+          "slug": "native-ui-3d",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "3D HUDs",
+          "title": "NativeUI 3D HUDs",
+          "description": "Tilt a whole document in perspective with projection, float a HUD with the camera, and angle single panels with RCSS 3D transforms."
+        },
+        {
+          "slug": "native-ui-scenes",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "3D scenes & minimaps",
+          "title": "NativeUI 3D scenes and minimaps",
+          "description": "scene3d viewports: meshes, instanced markers, lines, views and cameras, object styles, draped areas and zones, road routes and anchored markers."
+        },
+        {
+          "slug": "native-ui-recipes",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Recipes",
+          "title": "NativeUI recipes",
+          "description": "Complete NativeUI examples: a keyboard and mouse menu, notification toasts, a keyboard-only composer, a server-driven scoreboard and a recolourable theme."
+        }
+      ]
+    },
+    {
       "id": "input",
       "title": "Input & controls",
       "group": "Game systems",
@@ -1162,7 +1234,7 @@
       "id": "audio",
       "title": "Audio & communication",
       "group": "Game systems",
-      "description": "Play package audio and configure text chat, voice and lipsync.",
+      "description": "Play package audio and resource sounds, and use text chat.",
       "pages": [
         {
           "slug": "package-audio",
@@ -1181,12 +1253,60 @@
           "kind": "guide",
           "nav": "Chat",
           "description": "Chat messages, slash commands, completion, and the built-in developer commands available to every player."
-        },
+        }
+      ]
+    },
+    {
+      "id": "voice",
+      "title": "Voice",
+      "group": "Game systems",
+      "description": "Proximity voice, radio and phone channels, the audio graph, voice effects and presets, client controls and lipsync.",
+      "pages": [
         {
           "slug": "voice",
           "kind": "guide",
-          "nav": "Voice chat",
-          "description": "Proximity voice, radio and phone channels, voice-driven lipsync, Lua APIs and settings."
+          "nav": "Voice chat overview",
+          "description": "Native proximity voice with acoustics, server configuration, the open77_voice and open-voice packages, reliability, bandwidth and diagnostics."
+        },
+        {
+          "slug": "voice-channels",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Radio & phone channels",
+          "title": "Voice channels",
+          "description": "Server voice channels: radio, phone, party, admin and spatial modes, memberships and permissions, mutes, proximity control, global policy and ownership."
+        },
+        {
+          "slug": "voice-graph",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Audio graph",
+          "title": "Voice audio graph",
+          "description": "Loudspeakers, microphones, direct listeners and synchronised music from the server: anchors, connections and intents, file playback, acoustics, events and limits."
+        },
+        {
+          "slug": "voice-effects",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Effects & presets",
+          "title": "Voice effects and presets",
+          "description": "The 36-parameter voice effect rack and its 12 built-in presets, custom presets, per-listener effects, targets, composition order and ownership."
+        },
+        {
+          "slug": "voice-client",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Client voice API",
+          "title": "Client voice API",
+          "description": "Client voice controls: devices and gains, push-to-talk and voice activation, transmit intents, reach requests, talkers, events, local music and generated PCM."
+        },
+        {
+          "slug": "voice-recipes",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Voice recipes",
+          "title": "Voice recipes",
+          "description": "Complete server voice examples: radio frequencies, phone calls, a vehicle megaphone, a club with music and a DJ, an intercom, voice disguise and admin broadcasts."
         },
         {
           "slug": "voice-lipsync",
