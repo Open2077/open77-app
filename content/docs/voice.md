@@ -1,41 +1,43 @@
-# Integrated voice chat
+# Voice chat
 
-Open77 voice captures 48 kHz mono audio and encodes it as 20 ms Opus frames. A frame can be routed through proximity and up to four selected channels without duplicating microphone bandwidth. PCM and Opus payloads are not exposed to Lua.
+Open77 voice is a native, server-authoritative VOIP stack built into the client and the server.
+Players talk in proximity with real acoustics (walls, rooms, direction), on radio and phone
+channels, and through an audio graph that places loudspeakers, microphones and music in the world.
+Every route can be coloured by a shared effect rack: 36 parameters and 12 built-in presets, from a
+walkie-talkie to a cave.
 
-The server is the only component that decides who may receive a frame. It checks the authenticated
-speaker, routing bucket, proximity, channel membership, per-channel permissions, mute/deaf state,
-sequence, quality, packet rate, and payload size before forwarding anything. A client transmit
-scope is only a request.
+The client captures one 48 kHz mono stream and encodes it as 20 ms Opus frames. One frame is sent
+once and can reach proximity listeners and up to four channels at the same time, so a radio call
+does not double the microphone bandwidth. The server alone decides who receives a frame: it checks
+the authenticated speaker, routing bucket, distance, channel membership and permissions, mutes,
+sequence, packet rate and size. Lua never sees PCM or Opus data.
 
-## Enable the reference resource
+## What is in this section
 
-To configure these preferences inside your own onboarding or server interface, use the [Guided voice setup API](guided-voice-setup.md). It provides device selection, a live meter, local microphone playback, keyboard/mouse push-to-talk bindings and optional completion tracking through the pause menu's settings owner.
+| Page | |
+|---|---|
+| Voice chat (this page) | setup, server configuration, the built-in packages, acoustics, diagnostics |
+| [Radio, phone and party channels](voice-channels.md) | server channels, memberships, mutes, proximity control |
+| [Audio graph: speakers, microphones, music](voice-graph.md) | loudspeakers, pickups, direct listeners, synchronised music, connections |
+| [Voice effects and presets](voice-effects.md) | the 36-parameter rack, the 12 presets, custom presets, per-listener effects |
+| [Client voice API](voice-client.md) | devices, push-to-talk, transmit intents, talkers, local music and generated PCM |
+| [Voice recipes](voice-recipes.md) | complete radio, phone, megaphone, intercom, club and disguise examples |
+| [Voice lipsync](voice-lipsync.md) | mouths that move with the voice |
+| [Guided voice setup](guided-voice-setup.md) | a microphone onboarding screen in your resource |
 
-[`open77_voice`](https://github.com/Open2077/open77-resources/tree/main/system/open77_voice) is an auto-start reference package. Its manifest requests `voice.manage` on the
-server and `voice.client`, `input.actions`, and `ui.nameplates` on the client. The default PTT key is
-`N`. The pause menu has a dedicated **VOICE** tab for:
+## Versions
 
-- microphone and output endpoint selection, including the Windows communications defaults;
-- independent 0–200% microphone and voice gains;
-- capture enable/disable;
-- the current proximity reach as read-only server policy;
-- a persistent, per-server push-to-talk key binding;
-- PTT or voice activation and its threshold;
-- local microphone loopback plus a live input meter.
+| Feature | Client and server |
+|---|---|
+| Proximity voice, channels, devices, push-to-talk, lipsync | every current release |
+| Audio graph, effect rack and presets, local broadcasters and PCM sources | **2.50.0-unstable+op77.211** or later on both sides (network protocol 1.52) |
 
-Preferences use endpoint- and resource-isolated client KVP storage. Device IDs may disappear after
-a Windows device change; an empty ID always selects the current communications default. Microphone
-test is forcibly stopped when the settings pane or pause menu closes. Because that KVP namespace is
-keyed by the authenticated server endpoint, the pause package restores it only after the session is
-active and the native audio endpoint catalogue is ready. A missing saved endpoint is retained and
-reported rather than silently overwritten with the Windows default.
+Protocol 1.52 and 1.51 builds do not connect to each other: a server using the graph or effect API
+needs players on the matching client channel.
 
-The activation threshold and input meter intentionally share the exact same normalized RMS scale
-(`-60..-10 dBFS` mapped to `0..100%`). A threshold of 40% therefore opens transmission only when
-the visible input meter reaches 40%; a short 250 ms hangover prevents clipped word endings. The
-white marker on the meter shows the configured threshold.
+## Turning it on
 
-Server configuration owns the codec quality for the whole session:
+Voice is configured in the server's `server.jsonc`:
 
 ```jsonc
 {
@@ -57,250 +59,147 @@ Server configuration owns the codec quality for the whole session:
 }
 ```
 
-Quality values are `low`, `standard`, `high`, and `ultra`. They select bounded Opus bitrate,
-complexity, packet-loss recovery, DTX, and maximum payload/rate limits. Clients cannot override the
-negotiated quality.
+| Setting | |
+|---|---|
+| `enabled` | voice on or off for the session |
+| `quality` | `low`, `standard`, `high` or `ultra`: Opus bitrate, complexity, loss recovery, DTX and payload limits. Clients cannot override it. |
+| `proximityDistance` | default reach in metres |
+| `minimumClientProximityDistance`, `maximumClientProximityDistance` | the range a client may request (whisper/shout modes) |
+| `maximumChannelAudience` | listeners one channel frame may reach |
+| `maximumSimultaneousTalkers`, `maximumTalkersPerRecipient` | fan-out limits |
+| `globalEgressKbps`, `recipientEgressKbps` | outgoing bandwidth budgets; `0` derives them from quality and capacity |
+| `ingressRejectLimit`, `ingressRejectWindowSeconds`, `ingressBackoffMilliseconds` | backoff, then disconnection, of a sender of sustained invalid media |
 
-The two bandwidth values use `0` for conservative automatic budgets derived from quality and
-server capacity. The remaining limits bound fan-out amplification and sustained invalid media;
-the server applies backoff before disconnecting an abusive voice sender.
+Resources change the policy at runtime with `Open77.voice.setQuality`, `setEnabled` and
+`setDefaultProximityDistance` (see [channels](voice-channels.md#global-policy)).
 
-`Open77.voice.status()` exposes those effective audience/talker/egress limits
-and the metadata-only rejection counters (`egressPacketsDroppedGlobal`,
-`egressPacketsDroppedRecipient`, `egressBytesDropped`,
-`channelAudienceRejected`, `talkerLimitRejected`,
-`recipientTalkerLimitRejected`, `ingressBackoffDrops`,
-`ingressDisconnects`, and `activeTalkers`) under `statistics`. It never exposes
-PCM or Opus payloads.
+## The built-in packages
 
-## `open-voice` gameplay package
+### `open77_voice`
 
-[`open-voice`](https://github.com/Open2077/open77-resources/tree/main/system/open-voice) is the pma-voice-style gameplay layer and auto-starts after
-`open77_voice`. The native resource remains the only capture/PTT/VAD/codec
-driver. `open-voice` adds a retained bottom-right HUD and an authoritative reach-mode policy. The
-CyberM/Open77 panel renders the real normalized native input level, encoder transmission state,
-canonical distance, server-defined presets, cycle key, PTT/VAD policy and active remote-talker
-count. Its five states are `LISTENING`, `SIGNAL DETECTED`, `TRANSMITTING`, `MIC DISABLED`, and
-`VOICE OFFLINE`; it never fabricates audio activity in JavaScript:
+The reference package starts automatically. It captures the microphone, drives push-to-talk
+(default key **N**) or voice activation, mirrors talking state into the nameplate speaker icon, and
+exposes a **VOICE** tab in the pause menu:
 
-- `WHISPER` — 3 m;
-- `NORMAL` — 20 m;
-- `SHOUT` — 40 m;
-- `F11` cycles to the next mode by sending a request to the server.
+- microphone and output device, including the Windows communications defaults;
+- microphone and voice volume, 0–200 % each;
+- capture on/off;
+- the current proximity reach (read-only server policy);
+- a per-server push-to-talk binding, including `MOUSE1`–`MOUSE5`;
+- push-to-talk or voice activation with its threshold;
+- a local microphone loopback with a live input meter.
 
-All values are configured in `resources/system/open-voice/server/config.lua`. The
-client request contains no distance or target mode: the server rate-limits the
-request, advances its own stored mode, calls `Open77.voice.setProximity`, then
-returns the canonical state. A player therefore cannot select an arbitrary
-reach from the pause menu or by forging the cycle event.
+The activation threshold and the meter share one scale (−60..−10 dBFS mapped to 0..100 %): a
+threshold of 40 % opens transmission when the meter reaches 40 %, with a 250 ms hangover so word
+endings are not clipped. Preferences are stored per server in client KVP storage; a device that
+disappears is kept and reported instead of being silently replaced.
 
-Trusted server resources may emit `open-voice:setPlayerMode(playerId, mode)` or
-`open-voice:cyclePlayerMode(playerId)` and observe
-`open-voice:modeApplied(playerId, mode, distance, label, color)`. These remain
-local server events and are deliberately not registered as client network
-events.
+The package exports `status`, `devices`, `getProximityDistance`, `setProximityDistance`,
+`getProximityMode`, `setProximityMode`, `cycleProximityMode`, `setPlayerVolume`,
+`setPlayerBlocked` and `setChannelVolume` to other client resources.
 
-The HUD keeps microphone activity and transmission distinct. The segmented
-meter follows normalized native capture activity; the `TRANSMITTING` state is
-shown only while the native encoder is inside a real authorized talkspurt.
-This distinction provides useful feedback in both PTT and voice-activation
-modes.
+### `open-voice`
 
-## Server Lua API
+`open-voice` adds a pma-voice-style reach mode and HUD on top of `open77_voice`. **F11** cycles
+the mode; the server owns the policy, so a player cannot pick an arbitrary reach:
 
-Every method below requires `voice.manage`. Channel mutations are resource-owned: a resource cannot
-alter another resource's channel. Non-persistent channels are removed automatically on stop or
-reload.
+| Mode | Reach |
+|---|---|
+| `WHISPER` | 3 m |
+| `NORMAL` | 20 m |
+| `SHOUT` | 40 m |
 
-| Method | Result | Purpose |
-|---|---|---|
-| `Open77.voice.status()` | `table` | Enabled state, quality/profile, default distance, counters. |
-| `channels()` / `getChannel(id)` | array / channel | Read canonical channel state. |
-| `participants()` / `getParticipant(playerId)` | array / participant | Read proximity, mute/deaf and memberships. |
-| `createChannel(options)` | channel | Create a `radio`, `phone`, `party`, `admin`, or `spatial` channel. |
-| `updateChannel(id, patch)` | channel | Change name, mode, reach, effect, or persistence. |
-| `removeChannel(id)` | `boolean, reason?` | Remove a channel owned by this resource. |
-| `addPlayer(id, playerId, permissions?)` | `boolean, reason?` | Add membership with speak/listen flags. |
-| `removePlayer(id, playerId)` | `boolean, reason?` | Remove membership. |
-| `setChannelPlayerMuted(id, playerId, muted)` | `boolean, reason?` | Mute inside one channel only. |
-| `setChannelPlayerPermissions(id, playerId, options)` | `boolean, reason?` | Change speak/listen independently. |
-| `setPlayerMuted(playerId, muted)` | `boolean, reason?` | Server-wide transmit mute. |
-| `setPlayerDeaf(playerId, deaf)` | `boolean, reason?` | Server-wide receive mute. |
-| `setProximity(playerId, options)` | `boolean, reason?` | Enable/disable proximity and set its reach. |
-| `setDefaultProximityDistance(distance, applyExisting?)` | `boolean, reason?` | Change the default reach. |
-| `setQuality(quality)` / `setEnabled(enabled)` | `boolean, reason?` | Change global voice policy. |
-
-Channel options and effect tuning:
+Modes, labels, colours, the cycle key and the request cooldown live in
+`resources/system/open-voice/server/config.lua`:
 
 ```lua
-local dispatch, reason = Open77.voice.createChannel({
-  name = "NCPD dispatch",
-  mode = "radio",
-  persistent = false,
-  effect = {
-    gain = 1.0,
-    highPassHz = 220.0,
-    lowPassHz = 4800.0,
-    distortion = 0.08,
-    radioNoise = 0.04,
-    spatialBlend = 0.0,
-    reverbWet = 0.22,
-    reverbRoomSize = 0.7,
-    reverbDecay = 1.8,
-    reverbDamping = 0.55,
-    reverbPreDelayMs = 24.0,
-  }
-})
-assert(dispatch, reason)
-
-assert(Open77.voice.addPlayer(dispatch.id, officerId, {
-  canSpeak = true,
-  canListen = true,
-}))
+OpenVoiceServerConfig = {
+    defaultMode = "normal",
+    cycleKey = "F11",
+    requestCooldownSeconds = 0.25,
+    modes = {
+        { name = "whisper", label = "WHISPER", distance = 3.0,  color = "#7CE7EE" },
+        { name = "normal",  label = "NORMAL",  distance = 20.0, color = "#22D8E2" },
+        { name = "shout",   label = "SHOUT",   distance = 40.0, color = "#F5C95C" },
+    },
+}
 ```
 
-| Effect field | Range | Meaning |
-|---|---:|---|
-| `gain` | `0.0..4.0` | Channel gain before the local player/channel volume. |
-| `highPassHz` | `0.0..20000.0` | Removes frequencies below the cutoff. Must be below `lowPassHz`. |
-| `lowPassHz` | `20.0..24000.0` | Removes frequencies above the cutoff. |
-| `distortion` | `0.0..1.0` | Soft saturation drive. |
-| `radioNoise` | `0.0..1.0` | Deterministic narrow-band radio noise. |
-| `spatialBlend` | `0.0..1.0` | `0` is non-spatial; `1` is fully positional. |
-| `reverbWet` | `0.0..1.0` | Wet/dry mix. `0` disables the reverb and its DSP allocation. |
-| `reverbRoomSize` | `0.0..1.0` | Scales the virtual reflection delays. |
-| `reverbDecay` | `0.1..10.0` | Approximate RT60 tail duration in seconds. |
-| `reverbDamping` | `0.0..1.0` | High-frequency absorption inside the tail. |
-| `reverbPreDelayMs` | `0.0..250.0` | Delay before the first reflected sound. |
+The HUD shows `LISTENING`, `SIGNAL DETECTED`, `TRANSMITTING`, `MIC DISABLED` or `VOICE OFFLINE`
+from the real native state: the meter follows the microphone level, and `TRANSMITTING` appears only
+while the encoder is inside an authorised talkspurt.
 
-`maxDistance` additionally constrains `spatial` channels. Reverb is a lightweight stereo delay
-network retained per talker/channel route, so its tail continues after the source stops speaking.
-Effects are canonical channel metadata; a client only renders effects received from the server.
-
-Server packages call these methods directly, preserving resource ownership of
-channel handles. A package can also wrap them in [server exports](server-exports.md):
-the provider still owns the channel and must authorize its callers.
-
-## Client Lua API
-
-Every method requires `voice.client`. Device/gain/block settings are local presentation policy;
-they never grant reachability or channel membership.
-
-| Method | Purpose |
-|---|---|
-| `Open77.voice.devices(flow?)` | Enumerate `input`, `output`, or `all` endpoints. |
-| `status()` | Capture/render/device/level/packet snapshot. |
-| `talkers()` | Remote talking state, level, local gain/block, and active routes. |
-| `selectDevice(flow, endpointId)` | Select an endpoint; `""` means Windows default. |
-| `setCaptureEnabled(enabled)` | Enable or disable microphone capture. |
-| `setTransmitting(enabled, intent?)` | Change PTT state and requested route intent. |
-| `setMicrophoneTest(enabled)` | Local loopback; no network transmission is implied. |
-| `setInputVolume(gain)` / `setOutputVolume(gain)` | Set a finite gain from `0.0` to `2.0`. |
-| `setVoiceActivation(enabled, threshold?)` | Enable VAD with normalized threshold `0.0..1.0`. |
-| `setProximityDistance(distance)` | Request a personal reach; the server clamps and republishes it. |
-| `setPlayerVolume(playerId, gain)` | Local per-talker gain. |
-| `setPlayerBlocked(playerId, blocked)` | Local per-talker silence. |
-| `setChannelVolume(channelId, gain)` | Local gain retained for current and future route streams. |
-
-Transmit intents are `proximity`, `channels`, `channel:<id>`, or `all`. `channels` selects up to
-four currently authorized speakable memberships; `all` selects the same channels plus proximity.
-Both are resolved by the native client in deterministic channel-ID order and are never sent as a
-wildcard on the wire.
-
-Proximity is the permanent default voice route. A client can change only its
-distance, never its enabled flag. `status()` exposes `proximityEnabled`, the
-canonical `proximityDistance`, an in-flight `requestedProximityDistance` /
-`proximityRequestPending`, and the server-advertised
-`defaultProximityDistance`, `minimumProximityDistance`, and
-`maximumProximityDistance`. A successful setter result means the reliable
-request was queued (or was already canonical), not that the requested value was
-accepted verbatim.
-
-The reference package maps `whisper=3`, `normal=server default`, and
-`shout=40`. All presets are configurable in `shared/config.lua`; setting a
-cycle key is intentionally opt-in to avoid stealing a gameplay binding:
+Trusted server resources can drive it with local server events:
 
 ```lua
--- In another input-capable package, using a rising edge rather than every tick.
-CreateThread(function()
-  local held = false
-  while true do
-    local down = not Open77.input.isCaptured() and Open77.input.isDown("Z")
-    if down and not held then
-      Open77.exports.call("open77_voice", "cycleProximityMode", true)
-    end
-    held = down
-    Wait(20)
-  end
+TriggerEvent("open-voice:setPlayerMode", playerId, "shout")
+TriggerEvent("open-voice:cyclePlayerMode", playerId)
+AddEventHandler("open-voice:modeApplied", function(playerId, mode, distance, label, color)
+    print(("player %d now %s (%.0f m)"):format(playerId, mode, distance))
 end)
 ```
 
-```lua
--- One Opus frame, heard by nearby players and two authorized radio/call groups.
-local ok, reason = Open77.voice.setTransmitting(
-  true, "all")
-assert(ok, reason)
-```
+## Environmental acoustics
 
-The host publishes `open77:voice:talkingChanged(playerId, talking, level, detail)` on the Lua tick
-thread. `open77_voice` mirrors it into `Open77.nameplates.setTalking`, which drives the native
-plate's talking indicator: three voice bars by default, or a speaker glyph with
-`Open77.nameplates.style({ voice = "speaker" })`. During a voice session the plate also reads the
-voice engine itself: it shows talking whenever the player is audible above a small threshold,
-asserted or not, and its bars follow his level. A bounded talker snapshot loop is the recovery path
-for late join, stream-in, and a dropped event. Puppet lip motion consumes the same native talking/level state; resources should not
-attempt to infer speech by polling network packets.
+Proximity voice reacts to the world without any setting or API call:
 
-For reach changes, the native host emits
-`open77:voice:proximityChanged(localPlayerId, enabled, 0, distance)` after the
-canonical participant revision arrives. The package additionally emits
-`open77:voice:proximityRequested(distance, mode)` and
-`open77:voice:proximityModeChanged(mode, canonicalDistance, enabled)`.
+- walls and closed doors lower the volume and remove high frequencies; several rays give partial
+  obstruction around openings, and collision materials and the thickness of a barrier change how
+  much passes;
+- interiors use the game's interior membership and nearby collision: room size, enclosure and
+  absorption drive early reflections and a decaying stereo reverb tail;
+- direction follows the listener's view, while distance and obstruction use head positions, so a
+  third-person camera moving through a wall does not move the listener through it;
+- ear delay, head shadow and front/back/elevation colouring place voices better than stereo
+  panning; changes interpolate smoothly.
 
-The package exports `status`, `devices`, `getProximityDistance`,
-`setProximityDistance`, `getProximityMode`, `setProximityMode`,
-`cycleProximityMode`, `setPlayerVolume`, `setPlayerBlocked`, and
-`setChannelVolume` for convenience.
+The filter is an analytic binaural approximation for stereo headphones. Reverb is simulated from
+geometry, not from the game's Wwise presets, and custom interiors need suitable collision for
+obstruction and room estimation. Radio and phone routes keep their own processing; the microphone
+test stays dry.
 
 ## Reliability and bandwidth
 
-- Opus uses one 20 ms stream per speaker, not one stream per route.
-- Native VAD does not emit silent talkspurts. Held PTT silence uses Opus DTX, while congestion
+- One 20 ms Opus stream per speaker, whatever the number of routes.
+- Voice activation sends no silent talkspurts; held push-to-talk silence uses Opus DTX; congestion
   drops old media instead of playing it late.
-- Media uses a bounded unreliable queue while config, membership, and channel state are reliable.
-- A jitter buffer, packet-loss concealment, and optional FEC live in the native audio engine.
-- Late join first receives canonical voice config, participant memberships, and channels; media is
-  buffered but silent until an authorized route exists.
-- Disconnect, resource reload, bucket changes, mute/deaf changes, and device restarts clear stale
-  routes and talking indicators.
-- Channel metadata is visible only to members, and another participant's private membership list
-  is projected only through channels shared with the viewer.
-- The client follows Windows communication-default changes and automatically retries an invalidated
-  input or output endpoint without blocking the game thread.
+- Media travels on a bounded unreliable queue; configuration, memberships and channels are
+  reliable. A received frame waits for its route configuration rather than playing without its
+  effects.
+- A jitter buffer, packet-loss concealment and optional FEC run in the native engine.
+- A late joiner first receives configuration, memberships and channels; media stays silent until an
+  authorised route exists.
+- Disconnects, reloads, bucket changes, mutes and device restarts clear stale routes and talking
+  indicators.
+- Channel metadata is visible only to members.
+- The client follows Windows communication-device changes and retries a lost device without
+  blocking the game.
 
-## Voice-driven lipsync
+## Diagnostics
 
-Client resources can enable or suppress mouth animation globally or per player.
-See [Voice lipsync](voice-lipsync.md) for the Lua API, supported facial graphs,
-resource ownership and limitations. This is an audio-energy envelope, not
-phoneme recognition or prerecorded quest dialogue.
+`Open77.voice.status()` (server) returns the effective limits and metadata-only counters under
+`statistics`: `egressPacketsDroppedGlobal`, `egressPacketsDroppedRecipient`, `egressBytesDropped`,
+`channelAudienceRejected`, `talkerLimitRejected`, `recipientTalkerLimitRejected`,
+`ingressBackoffDrops`, `ingressDisconnects` and `activeTalkers`.
 
-## Runtime diagnostics
-
-Authenticated development sessions expose metadata-only commands; no PCM or Opus payload is logged:
+Authenticated development sessions have console commands; none of them logs audio:
 
 ```text
-voice.status
+voice.status                         capture, render, devices, routes, DSP reservations
+voice.broadcasts                     network music sources: ids, resource, position, decode state
 voice.devices [input|output]
 voice.mictest on|off
-voice.transmit on|off [proximity|channels|all|channel:<id>]
-voice.lipsync <playerId> <0..1|off>
+voice.transmit on|off [proximity|channels|connections|all|channel:<id>]
+voice.acoustics                      listener room and every active source path
+voice.acoustics <x> <y> <z>          read-only acoustic probe toward a point (150 m)
+voice.acoustics.play <x> <y> <z>     plays a 240 ms synthetic burst from that point, locally
+voice.acoustics.stop
+voice.lipsync <playerId> <0..1|off>  visual lipsync override
 voice.lipsyncstate <playerId>
 ```
 
-`voice.lipsync` is a bounded visual laboratory override for validating a streamed proxy's facial
-graph. It is not a network or Lua route and is cleared on stream-out and session teardown.
+`voice.acoustics` reports obstruction, transmission gain, cutoff, direction, reflection amount,
+observation age and sampling cost for each path.
 
-Lua intentionally has no raw audio callback, recipient list, or codec-packet API. This keeps the
-audio thread isolated, prevents scripts from bypassing server reachability, and makes bandwidth
-limits enforceable.
+Lua has no raw audio callback, recipient list or codec-packet API. This keeps the audio thread
+isolated, prevents scripts from bypassing reachability, and keeps bandwidth limits enforceable.

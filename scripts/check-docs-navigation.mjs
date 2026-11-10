@@ -6,7 +6,7 @@ const nav = JSON.parse(await readFile("content/docs/meta.json", "utf8"));
 const pages = nav.sections.flatMap((section) => section.pages);
 assert.equal(new Set(nav.sections.map((section) => section.id)).size, nav.sections.length, "Duplicate topic IDs");
 assert.equal(new Set(pages.map((page) => page.slug)).size, pages.length, "A guide must have exactly one navigation home");
-assert.equal(pages.length, 164, "Review guide coverage when adding or removing pages");
+assert.equal(pages.length, 177, "Review guide coverage when adding or removing pages");
 const collections = [...new Set(nav.sections.map((section) => section.group))];
 assert.deepEqual(collections, ["Start & host", "Build resources", "Game systems", "Reference & tools"]);
 let previous = "";
@@ -41,8 +41,10 @@ for (const [id, slugs] of Object.entries({
   gamemodes: ["writing-a-gamemode", "gamemode-kernel", "deathmatch", "cordon", "chimera"],
   world: ["props", "gizmos"],
   cameras: ["perspective", "cameras", "third-person-camera", "remote-camera", "screen-transitions", "braindance", "photo-mode", "screenshots"],
-  audio: ["package-audio", "sound", "chat", "voice", "voice-lipsync", "guided-voice-setup"],
+  audio: ["package-audio", "sound", "chat"],
+  voice: ["voice", "voice-channels", "voice-graph", "voice-effects", "voice-client", "voice-recipes", "voice-lipsync", "guided-voice-setup"],
   interfaces: ["pause-menu", "loading-screens", "ui-kit", "webui-assets", "webui-budget", "notifications", "hud-visibility"],
+  nativeui: ["native-ui", "native-ui-documents", "native-ui-rml", "native-ui-motion", "native-ui-effects", "native-ui-3d", "native-ui-scenes", "native-ui-recipes"],
   input: ["webui-input", "webui-cursor", "keybindings", "input-blocking", "clipboard"],
   "world-interaction": ["world-interaction", "build-a-job", "actions", "transactions", "furniture"],
   "rp-jobs": ["rp-jobs", "rp-job-ripperdoc", "rp-job-chooh2", "rp-job-techie", "rp-job-netrunner", "rp-job-fixer", "rp-job-trauma-team", "rp-job-nomad"],

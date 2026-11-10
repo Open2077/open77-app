@@ -304,7 +304,9 @@ function usageGuide(raw: ApiEntryRaw, runtime: ApiRuntime) {
   if (raw.namespace === "Open77.voice") {
     return runtime === "client" && ["setLipSyncEnabled", "setPlayerLipSyncEnabled", "getLipSyncStatus", "getPlayerLipSyncState"].includes(raw.name)
       ? { usageGuideHref: "/docs/voice-lipsync", usageGuideLabel: "Voice lipsync guide" }
-      : { usageGuideHref: `/docs/voice#${runtime}-lua-api`, usageGuideLabel: "Integrated voice chat guide" };
+      : runtime === "client"
+        ? { usageGuideHref: "/docs/voice-client", usageGuideLabel: "Client voice API guide" }
+        : { usageGuideHref: "/docs/voice-channels", usageGuideLabel: "Voice channels guide" };
   }
   if (raw.namespace === "Open77.playerInteractions") {
     return { usageGuideHref: `/docs/player-interactions#${runtime}-api`, usageGuideLabel: "Player interactions guide" };
