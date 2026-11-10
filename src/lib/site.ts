@@ -72,7 +72,7 @@ export const site = {
     platformRepo: null as string | null,
     siteRepo: "https://github.com/Open2077/open77-app",
     /** The one official community — everything is discussed there directly. */
-    discord: "https://discord.open2077.net" as string | null,
+    discord: "https://discord.gg/open77" as string | null,
     x: "https://x.com/open2077" as string | null,
     tiktok: "https://www.tiktok.com/@open2077_network" as string | null,
     twitch: "https://www.twitch.tv/open2077",
@@ -147,7 +147,7 @@ export const footerNav = [
   {
     title: "Follow",
     links: [
-      { href: "https://discord.open2077.net", label: "Discord" },
+      { href: "https://discord.gg/open77", label: "Discord" },
       { href: "https://x.com/open2077", label: "X / Twitter" },
       { href: "https://www.tiktok.com/@open2077_network", label: "TikTok" },
       { href: site.links.twitch, label: "Twitch" },

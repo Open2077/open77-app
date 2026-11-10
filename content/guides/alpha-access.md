@@ -10,7 +10,7 @@ Open Alpha is still an early release, not a stable release. Expect bugs, crashes
 2. Let the launcher verify your game installation and install the multiplayer update.
 3. Choose a community server, or [download the dedicated server](/host) to create your own.
 
-Both launcher and server downloads are public. You do not need to join Discord or request access before using them. The [official Discord](https://discord.open2077.net) is there for support, release updates and meeting other players and creators.
+Both launcher and server downloads are public. You do not need to join Discord or request access before using them. The [official Discord](https://discord.gg/open77) is there for support, release updates and meeting other players and creators.
 
 A free account with a verified email can create [server license keys](/account/keys).
 There is no developer role, project review or Alpha entitlement to obtain. A license
@@ -79,7 +79,7 @@ linked client/server API entries. For a working gamemode example, browse the
 
 ## Report a problem
 
-Use the [official Discord](https://discord.open2077.net) with your launcher and
+Use the [official Discord](https://discord.gg/open77) with your launcher and
 client/server versions, operating system, steps to reproduce, expected result and
 actual result. Mention whether it happens after reconnecting, with a specific body
 type, animation, vehicle or custom resource.

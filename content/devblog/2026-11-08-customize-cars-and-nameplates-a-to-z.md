@@ -417,4 +417,4 @@ If a theme is not enough, you can still draw plates yourself in a page. `Open77.
 - [Light RP's packs](https://github.com/Open2077/light-rp/tree/main/resources/assets/models) and the [vehicle kit pipeline](https://github.com/Open2077/open77-resources/tree/next/tools/vehicle-kit).
 - [Nameplates exports and theme keys](/docs/resource-exports#open77_nameplates), and [Drawing in the world](/docs/world-drawing#nameplates).
 
-Built something with it? Show us on [Discord](https://discord.open2077.net). We would love to see your server's cars.
+Built something with it? Show us on [Discord](https://discord.gg/open77). We would love to see your server's cars.

@@ -179,7 +179,7 @@ export function CreateView({ locale }: { locale: Locale }) {
               lines="left"
               icon={discord}
               iconPosition="left"
-              href={site.links.discord ?? "https://discord.open2077.net"}
+              href={site.links.discord ?? "https://discord.gg/open77"}
             >
               {m.band.discord}
             </Button>

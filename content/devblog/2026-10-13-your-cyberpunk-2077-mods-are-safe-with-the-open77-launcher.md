@@ -102,7 +102,7 @@ The community's [Cyberpunk 2077 modding wiki](https://wiki.redmodding.org/cyberp
 
 ## Try it
 
-[Download the launcher](/download), sign in, and pick a world from the [server browser](/servers). The [launcher guide](/docs/launcher#mods-you-installed-yourself) covers the mod menu in full, and the [mods guide](/docs/mods) explains every layer for server owners and curious modders. Questions are welcome on [Discord](https://discord.open2077.net).
+[Download the launcher](/download), sign in, and pick a world from the [server browser](/servers). The [launcher guide](/docs/launcher#mods-you-installed-yourself) covers the mod menu in full, and the [mods guide](/docs/mods) explains every layer for server owners and curious modders. Questions are welcome on [Discord](https://discord.gg/open77).
 
 ---
 
@@ -114,5 +114,5 @@ community-hosted **dedicated servers**, with synced combat, vehicles and world
 state, an account-backed launcher, and Lua-scriptable servers for co-op,
 freeroam and RP. Browse [servers](https://open2077.net/servers), read the
 [docs](https://open2077.net/docs) to host your own, or join the
-[Discord](https://discord.open2077.net) to follow development. This devblog is
+[Discord](https://discord.gg/open77) to follow development. This devblog is
 published daily, straight from the work the team shipped that day.

@@ -21,7 +21,7 @@ import { DayBars, LatencyChart, StateTag, Swatch, useStatusFormat } from "./stat
 
 import styles from "./status.module.css";
 
-const SUPPORT_URL = "https://discord.open2077.net";
+const SUPPORT_URL = "https://discord.gg/open77";
 const PERIODS = [7, 30, 90] as const;
 
 export function StatusDashboard() {

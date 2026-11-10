@@ -33,7 +33,7 @@ const FACTS = [
 const PATHS = [
   { label: "For creators", title: ["Share what", "you built"], text: "Upload a ZIP or import a GitHub release, add screenshots, and let server owners install it through Warden.", link: "Start a creation", href: "/account/creations/new" },
   { label: "For server owners", title: ["Install with", "Warden"], text: "Browse the Workshop from your server console, review the plan, then install, update or roll back with one confirmation.", link: "Read the Warden guide", href: "/docs/community-hub-warden" },
-  { label: "Need help?", title: ["Ask the", "community"], text: "Platform bugs, missing APIs and general help live on the OPEN//77 Discord.", link: "Join the Discord", href: "https://discord.open2077.net" },
+  { label: "Need help?", title: ["Ask the", "community"], text: "Platform bugs, missing APIs and general help live on the OPEN//77 Discord.", link: "Join the Discord", href: "https://discord.gg/open77" },
 ];
 
 export default async function CommunityPage() {

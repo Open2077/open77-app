@@ -66,7 +66,7 @@ const STARTS = [
   {
     title: "Ask the community.",
     description: "Platform bugs, missing APIs and general help live on the OPEN//77 Discord.",
-    href: site.links.discord ?? "https://discord.open2077.net",
+    href: site.links.discord ?? "https://discord.gg/open77",
     action: "Join the Discord",
     glyph: discord,
     audience: "Everyone",

@@ -31,7 +31,7 @@ Weather sync could silently fail its first application and then never retry, lea
 - The website's server pages picked up the new **banner covers** (that's the other end of the banner pipeline above).
 - A batch of internal tooling and build fixes that make development faster but change nothing player-facing — we'll spare you those.
 
-More tomorrow. If you want the short version of these in your Discord feed, it's posted daily in the [community Discord](https://discord.open2077.net).
+More tomorrow. If you want the short version of these in your Discord feed, it's posted daily in the [community Discord](https://discord.gg/open77).
 
 ---
 
@@ -43,5 +43,5 @@ community-hosted **dedicated servers**, with synced combat, vehicles and world
 state, an account-backed launcher, and Lua-scriptable servers for co-op,
 freeroam and RP. Browse [servers](https://open2077.net/servers), read the
 [docs](https://open2077.net/docs) to host your own, or join the
-[Discord](https://discord.open2077.net) to follow development. This devblog is
+[Discord](https://discord.gg/open77) to follow development. This devblog is
 published daily, straight from the work the team shipped that day.

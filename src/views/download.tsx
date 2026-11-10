@@ -55,7 +55,7 @@ export function downloadMetadata(locale: Locale) {
   return pageMetadata({ title: m.metaTitle, description: m.metaDescription, path: "/download", locale });
 }
 
-const DISCORD = site.links.discord ?? "https://discord.open2077.net";
+const DISCORD = site.links.discord ?? "https://discord.gg/open77";
 
 /** PowerShell is on every supported Windows, so the check needs no install. */
 function verifyCommand(fileName: string): string {
