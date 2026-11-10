@@ -65,3 +65,53 @@
   flex: none;
   margin-top: 0.1rem;
 }
+.upcoming {
+  min-width: 10rem;
+  max-width: 15rem;
+  white-space: normal;
+}
+.upcoming > button {
+  margin-top: 0.7rem;
+}
+.announcementEditor {
+  padding: 1.5rem !important;
+  white-space: normal;
+  background: var(--body);
+}
+.editorHeading {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+.editorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.upcomingFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  padding-block: 0.9rem;
+}
+.upcomingFields > p,
+.wideField,
+.namePreview {
+  grid-column: 1 / -1;
+}
+.upcomingFields p {
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.namePreview {
+  padding: 0.6rem;
+  border: 1px solid var(--line);
+  background: var(--body);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .upcomingFields {
+    grid-template-columns: 1fr;
+  }
+}

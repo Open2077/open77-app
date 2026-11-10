@@ -16,6 +16,7 @@ export type AdminOverview = {
 };
 
 export type AdminServer = {
+  upcoming?: UpcomingServerProfile | null;
   hidden?: boolean;
   official?: boolean;
   featured?: boolean;
@@ -179,11 +180,24 @@ export function servers(token: string): Promise<AdminServer[]> {
   return masterCall("/api/v1/admin/servers", { token });
 }
 
-export type ServerDirectoryLabels = { official: boolean; featured: boolean; featuredOrder: number; directoryRevision: number; hidden: boolean };
+export type UpcomingServerProfile = {
+  enabled: boolean;
+  name: string;
+  community: string;
+  languages: string[];
+  opensAtUtc: string | null;
+  discord: string | null;
+  website: string | null;
+  description: string | null;
+  iconUrl: string | null;
+  bannerUrl: string | null;
+};
+
+export type ServerDirectoryLabels = { official: boolean; featured: boolean; featuredOrder: number; directoryRevision: number; hidden: boolean; upcoming?: UpcomingServerProfile | null };
 export function setServerDirectory(token: string, serverId: string, labels: ServerDirectoryLabels): Promise<ServerDirectoryLabels> {
   return masterCall(`/api/v1/admin/servers/${serverId}/directory`, {
     method: "PUT", token,
-    body: { official: labels.official, featured: labels.featured, featuredOrder: labels.featuredOrder, revision: labels.directoryRevision, hidden: labels.hidden },
+    body: { official: labels.official, featured: labels.featured, featuredOrder: labels.featuredOrder, revision: labels.directoryRevision, hidden: labels.hidden, upcoming: labels.upcoming },
   });
 }
 

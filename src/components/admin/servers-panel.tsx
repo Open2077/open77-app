@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { Fragment, useCallback, useRef, useState } from "react";
 
 import { useAdminActivity } from "@/components/admin/admin-activity";
 import {
@@ -21,6 +21,8 @@ import {
   cell,
 } from "@/components/admin/admin-kit";
 import { formatAge, shortId } from "@/components/admin/format";
+import { UpcomingServerEditor } from "@/components/admin/upcoming-server-editor";
+import { ServerText } from "@/components/servers/server-text";
 import { ErrorStrip, useAdminData } from "@/components/admin/use-admin-data";
 import { Button } from "@/components/admin/admin-button";
 import { Meter } from "@/components/ui/feedback";
@@ -29,6 +31,7 @@ import { Icon } from "@/components/ui/icon";
 import { alert02, refresh, serverStack01 } from "@/components/ui/icons";
 import { MasterApiError } from "@/lib/account/api";
 import * as admin from "@/lib/account/admin-api";
+import { plainLauncherText } from "@/lib/launcher-text";
 
 import styles from "./servers-panel.module.css";
 
@@ -51,10 +54,10 @@ export function ServersPanel() {
     const finish = begin();
     try {
       const updated = await admin.setServerDirectory(token, server.serverId, labels);
-      setData(current => current?.map(row => row.serverId === server.serverId ? { ...row, ...updated } : row) ?? null);
+      setData(current => current?.map(row => row.serverId === server.serverId ? { ...row, ...updated, upcoming: updated.upcoming ?? row.upcoming } : row) ?? null);
       setNotice(updated.hidden
-        ? `${server.name} is hidden from public lists. Direct connections remain available. Lists update on their next refresh.`
-        : `Directory settings saved for ${server.name}. Lists update on their next refresh.`);
+        ? `${plainLauncherText(server.name)} is hidden from public lists. Direct connections remain available. Lists update on their next refresh.`
+        : `Directory settings saved for ${plainLauncherText(server.name)}. Lists update on their next refresh.`);
       finish(true);
     } catch (err) {
       finish(false);
@@ -66,8 +69,8 @@ export function ServersPanel() {
   }
 
   const shown = data?.filter(row =>
-    (filter === "all" || (filter === "hidden" ? row.hidden : filter === "visible" ? !row.hidden : filter === "official" ? row.official : row.featured)) &&
-    `${row.name} ${row.connectEndpoint} ${row.serverId} ${row.ownerEmail || ""}`.toLowerCase().includes(query.toLowerCase()));
+    (filter === "all" || (filter === "hidden" ? row.hidden : filter === "visible" ? !row.hidden : filter === "official" ? row.official : filter === "upcoming" ? row.upcoming?.enabled : row.featured)) &&
+    plainLauncherText(`${row.name} ${row.upcoming?.name ?? ""} ${row.upcoming?.community ?? ""} ${row.upcoming?.languages.join(" ") ?? ""} ${row.connectEndpoint} ${row.serverId} ${row.ownerEmail || ""}`).toLowerCase().includes(query.toLowerCase()));
 
   return (
     <AdminPanel
@@ -84,7 +87,7 @@ export function ServersPanel() {
       <Footnote>
         Hide a server to remove it from public lists on the website and launcher, including Featured. It remains manageable
         here and accessible by direct connection: this is not a ban. Visibility and labels persist across restarts and are
-        audited. Lower featured order appears first.
+        audited. Lower featured order appears first, including upcoming announcements. An upcoming announcement stays available when the server is offline.
       </Footnote>
       <Toolbar className={styles.toolbar}>
         <ToolbarGroup className={styles.fields}>
@@ -97,6 +100,7 @@ export function ServersPanel() {
               <option value="visible">Not hidden</option>
               <option value="hidden">Hidden</option>
               <option value="featured">Featured</option>
+              <option value="upcoming">Upcoming</option>
               <option value="official">Official</option>
             </Select>
           </Field>
@@ -115,6 +119,7 @@ export function ServersPanel() {
               <th>Players / heartbeat</th>
               <th>Public visibility</th>
               <th>Official / featured order</th>
+              <th>Opening announcement</th>
               <th className={cell.actions}>Save settings</th>
             </tr>
           </thead>
@@ -138,22 +143,45 @@ function ServerRow({ server, disabled, save }: {
   const canEditVisibility = typeof server.hidden === "boolean";
   const [featured, setFeatured] = useState(server.featured ?? false);
   const [order, setOrder] = useState(String(server.featuredOrder ?? 0));
+  const name = plainLauncherText(server.name);
+  const canEditUpcoming = "upcoming" in server;
+  const initialUpcoming: admin.UpcomingServerProfile = server.upcoming ?? {
+    enabled: false, name: server.name, community: name, languages: [], opensAtUtc: null,
+    discord: null, website: null, description: null, iconUrl: null, bannerUrl: null,
+  };
+  const [upcoming, setUpcoming] = useState(initialUpcoming);
+  const [editingUpcoming, setEditingUpcoming] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const validOrder = /^\d{1,3}$/.test(order);
-  const changed = hidden !== !!server.hidden || official !== !!server.official || featured !== !!server.featured || Number(order) !== (server.featuredOrder ?? 0);
+  const upcomingChanged = JSON.stringify(upcoming) !== JSON.stringify(initialUpcoming);
+  const changed = hidden !== !!server.hidden || official !== !!server.official || featured !== !!server.featured || Number(order) !== (server.featuredOrder ?? 0) || upcomingChanged;
+  const validUpcoming = !upcoming.enabled || Boolean(upcoming.name.trim() && upcoming.community.trim() && upcoming.languages.length > 0 && upcoming.languages.length <= 8
+    && upcoming.languages.every(language => /^[a-z]{2,3}(-[a-z0-9]{2,8})*$/i.test(language) && language.length <= 35));
   async function submit() {
-    if (!validOrder || disabled || saving) return;
+    if (!validOrder || !validUpcoming || disabled || saving) return;
     setSaving(true); setError(null);
-    try { await save(server, { official, featured, featuredOrder: Number(order), directoryRevision: server.directoryRevision ?? 0, hidden }); }
+    try { await save(server, { official, featured, featuredOrder: Number(order), directoryRevision: server.directoryRevision ?? 0, hidden, upcoming: canEditUpcoming && (upcoming.enabled || upcomingChanged) ? upcoming : undefined }); }
     catch (err) { setError(err instanceof MasterApiError ? err.message : "Save failed. Please try again."); }
     finally { setSaving(false); }
   }
+  const saveButton = <Button
+          size="sm"
+          color={changed ? "red" : "neutral"}
+          border={!changed}
+          lines="none"
+          busy={saving}
+          disabled={disabled || !changed || !validOrder || !validUpcoming}
+          onClick={submit}
+        >
+          {saving ? "Saving…" : changed ? "Save changes" : "Saved"}
+        </Button>;
   const occupancy = server.maximumPlayers ? (server.connectedPlayers / server.maximumPlayers) * 100 : 0;
   return (
+    <Fragment>
     <tr className={changed ? cell.active : undefined}>
       <td className={styles.server}>
-        <Primary>{server.name}</Primary>
+        <Primary><ServerText text={server.name} /></Primary>
         <Sub>{server.connectEndpoint}</Sub>
         <Sub plain title={server.serverId}>{shortId(server.serverId)} · {server.ownerEmail ?? "Legacy enrollment"}</Sub>
         <span className={styles.license}>
@@ -173,7 +201,7 @@ function ServerRow({ server, disabled, save }: {
       </td>
       <td className={cell.nowrap}>
         <Stack>
-          <Checkbox checked={hidden} onChange={e => setHidden(e.target.checked)} disabled={disabled || !canEditVisibility} aria-label={`Hide from public list: ${server.name}`}>
+          <Checkbox checked={hidden} onChange={e => setHidden(e.target.checked)} disabled={disabled || !canEditVisibility} aria-label={`Hide from public list: ${name}`}>
             Hide from list
           </Checkbox>
           <StatusTag status={!canEditVisibility || server.hidden ? "warn" : "neutral"}>
@@ -182,11 +210,11 @@ function ServerRow({ server, disabled, save }: {
         </Stack>
       </td>
       <td className={styles.labels}>
-        <Checkbox checked={official} onChange={e => setOfficial(e.target.checked)} disabled={disabled} aria-label={`Official: ${server.name}`}>
+        <Checkbox checked={official} onChange={e => setOfficial(e.target.checked)} disabled={disabled} aria-label={`Official: ${name}`}>
           {official ? "Official" : "Community"}
         </Checkbox>
         <span className={styles.featured}>
-          <Checkbox checked={featured} onChange={e => setFeatured(e.target.checked)} disabled={disabled} aria-label={`Featured: ${server.name}`}>
+          <Checkbox checked={featured} onChange={e => setFeatured(e.target.checked)} disabled={disabled} aria-label={`Featured: ${name}`}>
             {featured ? "Featured" : "Standard"}
           </Checkbox>
           <Input
@@ -196,25 +224,27 @@ function ServerRow({ server, disabled, save }: {
           step={1}
           value={order}
           onChange={e => setOrder(e.target.value)}
-          disabled={disabled || !featured}
+          disabled={disabled || (!featured && !upcoming.enabled)}
           aria-invalid={!validOrder}
-          aria-label={`Featured order: ${server.name}`}
+          aria-label={`Featured order: ${name}`}
           className={styles.order}
           />
         </span>
       </td>
-      <td className={cell.actions}>
-        <Button
-          size="sm"
-          color={changed ? "red" : "neutral"}
-          border={!changed}
-          lines="none"
-          busy={saving}
-          disabled={disabled || !changed || !validOrder}
-          onClick={submit}
-        >
-          {saving ? "Saving…" : changed ? "Save changes" : "Saved"}
+      <td className={styles.upcoming}>
+        <Checkbox checked={upcoming.enabled} disabled={disabled || !canEditUpcoming} onChange={e => {
+          setUpcoming({ ...upcoming, enabled: e.target.checked });
+          if (e.target.checked) setEditingUpcoming(true);
+        }}>Upcoming server</Checkbox>
+        {upcoming.enabled ? <Sub><ServerText text={upcoming.community} /> · {upcoming.languages.join(" / ").toUpperCase()}</Sub> : null}
+        <Button size="sm" color="neutral" border lines="none" disabled={disabled || !canEditUpcoming} onClick={() => setEditingUpcoming(!editingUpcoming)}>
+          {editingUpcoming ? "Close announcement" : "Edit announcement"}
         </Button>
+        {!canEditUpcoming ? <Sub>Update Master to manage upcoming announcements.</Sub> : null}
+        {!validUpcoming ? <Sub>Add a name, community and 1–8 valid language tags before saving.</Sub> : null}
+      </td>
+      <td className={cell.actions}>
+        {saveButton}
         {error ? (
           <p className={styles.rowError} role="alert">
             <Icon glyph={alert02} />
@@ -223,5 +253,19 @@ function ServerRow({ server, disabled, save }: {
         ) : null}
       </td>
     </tr>
+    {editingUpcoming ? (
+      <tr>
+        <td colSpan={6} className={styles.announcementEditor}>
+          <div className={styles.editorHeading}><Primary>Opening announcement · <ServerText text={upcoming.name} /></Primary></div>
+          <UpcomingServerEditor value={upcoming} onChange={setUpcoming} disabled={disabled || !canEditUpcoming} />
+          <div className={styles.editorActions}>
+            {saveButton}
+            <Button size="sm" color="neutral" border lines="none" disabled={saving} onClick={() => setEditingUpcoming(false)}>Close editor</Button>
+          </div>
+          {error ? <p className={styles.rowError} role="alert">{error}</p> : null}
+        </td>
+      </tr>
+    ) : null}
+    </Fragment>
   );
 }
