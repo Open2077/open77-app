@@ -12,6 +12,9 @@
 .show {
   flex: 0 1 12rem;
 }
+.page {
+  flex: 0 1 8rem;
+}
 .compact {
   height: 2.35rem;
   font-size: 0.9rem;
