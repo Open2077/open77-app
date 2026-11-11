@@ -3,7 +3,7 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 113,
+  "guides": 114,
   "apiEntries": 1814,
   "files": [
     {
@@ -2427,6 +2427,16 @@
         "sourceWorkingTreeDirty": false,
         "clientVersion": "2.50.0-unstable+op77.167"
       }
+    },
+    {
+      "source": "wiki/quickhack.md",
+      "target": "content/docs/quickhack.md",
+      "slug": "quickhack",
+      "title": "Quickhacks (scanner and quickhack UI)",
+      "bytes": 10043,
+      "sha256": "cf54f555b9b1161f41b1da4203edead9efd8f1fe2d46f8a4c43055c7ba45f4fb",
+      "sourceRevision": "dff8a3e4f4578669b8a51e173bd1b2bf070ce1ba",
+      "sourceSyncedAt": "2026-11-11T14:03:40.294Z"
     }
   ],
   "partialSync": {
