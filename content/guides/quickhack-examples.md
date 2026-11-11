@@ -10,6 +10,45 @@
 What a quickhack *does* is up to your resource. This page shows complete resources you can copy
 and adapt, then a list of ideas. The full API is in the [Quickhacks reference](/docs/quickhack).
 
+## Start from the bundled Pings
+
+As soon as a resource depends on it, the framework makes players, every network NPC and every
+vehicle hackable, and offers one example quickhack per kind of target:
+
+| Quickhack | Targets | What the hacker gets |
+|---|---|---|
+| `ping_player` | players | name, id, speed, heading, vehicle, bucket, distance (the target sees the upload warning) |
+| `ping_npc` | network NPCs | record, owner resource, health, which player simulates it, distance |
+| `ping_vehicle` | vehicles | model, health, speed, lock, occupants, owner resource, distance |
+| `ping_device` | points and props | name, id, position, how many quickhacks it accepts, distance |
+
+Each one answers with a **report card** in the corner of the hacker's screen. The source is
+`resources/system/open77_quickhack/server/examples.lua`, which is written to be copied: one
+definition, one `onExecute` export, one effect. A custom quickhack is the same three steps in your
+own resource:
+
+```lua
+local qh = exports.open77_quickhack
+
+-- 1. the definition: what the list shows, what it costs, what it can target
+qh:register({ id = "scan_cargo", label = "Scan Cargo", icon = "data", category = "covert",
+    ram = 2, upload = 1.2, cooldown = 10, targets = { "vehicle" }, onExecute = "scanCargo" })
+
+-- 2. the effect, in an export of YOUR resource
+exports("scanCargo", function(ctx)              -- ctx = { source, target = { kind, id, position }, quickhack }
+    local cargo = myTrunks[ctx.target.id] or {}  -- your own data
+    -- 3. tell the hacker
+    qh:report(ctx.source, {
+        title = "CARGO SCAN", subtitle = ("%d items"):format(#cargo), tone = "device", icon = "data",
+        fields = { { "WEAPONS", tostring(cargo.weapons or 0) }, { "CASH", "E$ " .. (cargo.cash or 0) } },
+    })
+end)
+```
+
+Once your own quickhacks are in place, turn the examples off with
+`exports.open77_quickhack:setExamplesEnabled(false)`. You can also narrow what is targetable with
+`setAutoTargets({ npc = false })` and add only the NPCs you choose with `addTarget`.
+
 ## How a quickhack resource is built
 
 Every example below follows the same shape:
