@@ -97,7 +97,19 @@ The built-in icons are all of those, plus `blind`, `data`, `generic` and `ram`.
 
 ### Targets
 
-Players are targets unless `setAutoTargets({ player = false })`. Everything else is added:
+**What can be targeted without any code:**
+- **Players.**
+- **Every network NPC**, whichever resource created it. Crowd NPCs that the engine spawns on its own
+  have no network identity and are never targets.
+- **Every canonical vehicle.** Parked traffic that the engine owns is not a target either.
+
+Their DATA panel uses what the server knows. An NPC or a vehicle shows a readable name from its
+record (`Vehicle.v_sport2_quadra_type66` becomes `QUADRA TYPE66`), and vehicles get the blue device
+panel. Narrow this with `setAutoTargets({ npc = false, vehicle = false })` or `autoTargets` in
+`shared/config.lua`, or refuse case by case in `canUse`.
+
+Points (terminals, cameras, a door panel) and props are added. So is any entity you want to
+describe yourself:
 
 ```lua
 qh:addTarget({
@@ -129,6 +141,36 @@ exports("myLocate", function(target)          -- { kind, id }
     return npc and { x = npc.x, y = npc.y, z = npc.z, bucket = npc.bucket }
 end)
 ```
+
+### Report cards
+
+`report(playerId, card)` shows a result card on one player's screen. It stays even after the
+scanner closes, so it suits what a Ping found, a scan log or a mission hint. The card uses the red
+panel for `hostile` and the blue one for `device`, `neutral` and `friendly`. A bar drains for
+`seconds`.
+
+```lua
+qh:report(playerId, {
+    title = "PING // VEHICLE", subtitle = "QUADRA TYPE66", tone = "device", icon = "ping", seconds = 8,
+    fields = { { "MODEL", "Quadra Type-66" }, { "LOCKED", "YES" }, { "DISTANCE", "11.5 M" } },  -- up to 10
+})
+```
+
+### Example quickhacks (bundled)
+
+`server/examples.lua` registers one **Ping** per kind of target. Each one is a working template for a
+custom quickhack: a definition, an `onExecute` export, and an effect, which here is a report card.
+
+| Id | Targets | Reports |
+|---|---|---|
+| `ping_player` | `player` | name, id, speed, heading, vehicle, bucket, distance. The target sees the upload warning |
+| `ping_npc` | `npc` | record, owner resource, health, which player simulates it, id, distance |
+| `ping_vehicle` | `vehicle` | model, id, health, speed, lock, occupants, owner resource, distance |
+| `ping_device` | `point`, `prop` | name, id, kind, position, how many quickhacks it accepts, distance |
+
+They are on by default. Turn them off with `examples = false` in `shared/config.lua`, or from
+your resource with `exports.open77_quickhack:setExamplesEnabled(false)`. Players then only see your
+own quickhacks.
 
 ### Decks (RAM and loadout)
 
@@ -178,10 +220,22 @@ When a resource stops, its quickhacks and targets go with it.
 - **Other settings:** `scanRange`, `scanSeconds`, `rangeTolerance`, `visionRadius`,
   `visionMaxTargets`, `keys`, and the cosmetic `vendor` / `deckName`.
 
+## Permissions the framework holds
+
+| Permission | Why |
+|---|---|
+| `world.npcs` + `npcs.foreign` | `Open77.npcs.presence` / `all({ includeForeign = true })`: where another resource's NPC is, for range checks and the NPC Ping. The framework creates no NPC. |
+| `world.vehicles` | Server vehicle reads, for range checks and the vehicle Ping. Without it they come back empty. The framework changes no vehicle. |
+| `npcs.read`, `vehicles.read` | Client: NPCs and vehicles on screen, for the pick, the 1 / 3 cycle and following a vehicle. |
+| `player.aim.read`, `world.query` | The engine's look-at target. |
+| `world.effects` | The scanner vision and the game's UI sounds. |
+| `input.actions` | Key mappings and the blocks held while scanning. |
+
 ## Implementation notes
 
-- **Following targets.** Targets are followed with native anchors (`Open77.anchors`, invisible
-  `dot` anchors projected by the plugin every frame). Never read another body's transform
+- **Following targets.** Players and NPCs are followed with native anchors (`Open77.anchors`,
+  invisible `dot` anchors projected by the plugin every frame). A vehicle has no entity handle on
+  the client snapshot, so it is followed through its replicated position (`Open77.vehicles.get`). Never read another body's transform
   per frame with `Open77.character.frame` or `bonePosition`: each call costs about 0.6 s and froze the game.
 - **Picking.** While the focus vision is on, `Open77.character.aimedEntity()` mostly answers
   `aim_target_unavailable`. The pick therefore falls back to projecting the known targets (players

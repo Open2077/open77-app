@@ -897,7 +897,7 @@
           "slug": "quickhack",
           "kind": "guide",
           "nav": "Quickhacks",
-          "description": "The game's scanner and quickhack interface for your server: register quickhacks and targets, decks and RAM, server-checked uploads, hooks, events, client exports and the game's sounds."
+          "description": "The game's scanner and quickhack interface for your server: players, NPCs and vehicles as targets, quickhacks, decks and RAM, server-checked uploads, report cards, bundled Ping examples, hooks, events and the game's sounds."
         },
         {
           "slug": "quickhack-examples",
@@ -905,7 +905,7 @@
           "source": "authored",
           "nav": "Quickhack examples",
           "title": "Quickhack examples and ideas",
-          "description": "Complete quickhack resources to copy: a PvP netrunner class, a heist door breach, mission NPCs, a police ID scanner, safe-zone rules and a RAM economy, plus ideas."
+          "description": "Start from the bundled Ping quickhacks (player, NPC, vehicle, device), then complete resources to copy: a PvP netrunner class, a heist door breach, mission NPCs, a police ID scanner, safe-zone rules and a RAM economy."
         }
       ]
     },
