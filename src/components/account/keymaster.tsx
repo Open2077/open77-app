@@ -5,15 +5,18 @@ import { type FormEvent, type ReactNode, useCallback, useEffect, useRef, useStat
 import { Button } from "@/components/ui/button";
 import { cx } from "@/components/ui/cx";
 import { EmptyState, Notice } from "@/components/ui/feedback";
-import { Field, Input } from "@/components/ui/field";
+import { Field, Input, Select } from "@/components/ui/field";
 import { Icon } from "@/components/ui/icon";
-import { add01, copy01, key01, serverStack01, tag01, tick02 } from "@/components/ui/icons";
+import { add01, copy01, key01, serverStack01, tag01, tick02, refresh } from "@/components/ui/icons";
 import { Panel } from "@/components/ui/panel";
 import { Display, Eyebrow } from "@/components/ui/typography";
 import * as master from "@/lib/account/api";
-import { type CreatedLicense, type License, MasterApiError } from "@/lib/account/api";
+import { type CreatedLicense, MasterApiError } from "@/lib/account/api";
 import { type StoredSession, useSession } from "@/lib/account/session";
-import { ArrowLink, Block, ConfirmDialog, Glyph, Pending, Row, Rows, StateTag, formatDay } from "./kit";
+import * as owners from "@/lib/account/server-owner-api";
+import { plainLauncherText } from "@/lib/launcher-text";
+import { LicenseCard } from "./license-card";
+import { ArrowLink, Block, ConfirmDialog, Glyph, Pager, Pending } from "./kit";
 
 import styles from "./keymaster.module.css";
 
@@ -94,24 +97,31 @@ export function ServerLaunchBrief({ children }: { children?: ReactNode }) {
 export function Keymaster({ session, serverLaunch }: { session: StoredSession; serverLaunch: boolean }) {
   const { clear } = useSession();
   const { copied, copy } = useCopy();
-  const [licenses, setLicenses] = useState<License[] | null>(null);
+  const [workspace, setWorkspace] = useState<owners.OwnerLicenseWorkspace | null>(null);
+  const licenses = workspace?.licenses ?? null;
+  const quota = workspace?.quota;
+  const [filter, setFilter] = useState("active");
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [notice, setNotice] = useState("");
+  const inFlight = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const [createOpen, setCreateOpen] = useState(serverLaunch);
   const [label, setLabel] = useState(serverLaunch ? "My server" : "");
   const [created, setCreated] = useState<CreatedLicense | null>(null);
-  const [revoking, setRevoking] = useState<License | null>(null);
+  const [revoking, setRevoking] = useState<owners.OwnerLicense | null>(null);
   const [revokeError, setRevokeError] = useState<string | null>(null);
 
   const emailVerified = session.emailVerified;
 
   useEffect(() => {
     let cancelled = false;
-    master
-      .listLicenses(session.token)
+    owners
+      .licenseWorkspace(session.token)
       .then((result) => {
-        if (!cancelled) setLicenses(result);
+        if (!cancelled) setWorkspace(result);
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -121,11 +131,29 @@ export function Keymaster({ session, serverLaunch }: { session: StoredSession; s
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session.token]);
+  }, [session.token, clear]);
+
+  async function reloadWorkspace() {
+    if (inFlight.current) return;
+    inFlight.current = true; setBusy(true); setError(null);
+    try { setWorkspace(await owners.licenseWorkspace(session.token)); }
+    catch (err) { setError(err instanceof MasterApiError ? err.message : "Could not refresh your workspace."); }
+    finally { inFlight.current = false; setBusy(false); }
+  }
+
+  async function submitAnnouncement(licenseId: string, profile: owners.UpcomingServerProfile, revision: number) {
+    if (inFlight.current) throw new Error("Please wait for the current action.");
+    inFlight.current = true; setBusy(true); setNotice("");
+    try {
+      setWorkspace(await owners.submitUpcoming(session.token, licenseId, profile, revision));
+      setNotice("Announcement submitted for staff review. You can follow its status below.");
+    } finally { inFlight.current = false; setBusy(false); }
+  }
 
   async function onCreate(event: FormEvent) {
     event.preventDefault();
+    if (inFlight.current || !canCreate) return;
+    inFlight.current = true;
     setError(null);
     setBusy(true);
     try {
@@ -133,29 +161,23 @@ export function Keymaster({ session, serverLaunch }: { session: StoredSession; s
       setCreated(license);
       setCreateOpen(false);
       setLabel("");
-      setLicenses((current) =>
-        current
-          ? [
-              {
-                licenseId: license.licenseId,
-                label: license.label,
-                keyHint: license.keyHint,
-                createdAtUtc: license.createdAtUtc,
-                revokedAtUtc: null,
-              },
-              ...current,
-            ]
-          : current,
-      );
+      setWorkspace(current => current ? {
+        licenses: [{ licenseId: license.licenseId, label: license.label, keyHint: license.keyHint, createdAtUtc: license.createdAtUtc, revokedAtUtc: null, lastServer: null, upcoming: null }, ...current.licenses],
+        quota: { ...current.quota, active: current.quota.active + 1, createdToday: current.quota.createdToday + 1 },
+      } : current);
+      setFilter("active"); setQuery(""); setPage(1);
+      setWorkspace(await owners.licenseWorkspace(session.token));
     } catch (err) {
       setError(err instanceof MasterApiError ? err.message : "Could not create the key.");
     } finally {
+      inFlight.current = false;
       setBusy(false);
     }
   }
 
   async function onRevoke() {
-    if (!revoking || busy) return;
+    if (!revoking || inFlight.current) return;
+    inFlight.current = true;
     const licenseId = revoking.licenseId;
     setRevokeError(null);
     setError(null);
@@ -163,19 +185,30 @@ export function Keymaster({ session, serverLaunch }: { session: StoredSession; s
     try {
       await master.revokeLicense(session.token, licenseId);
       const now = new Date().toISOString();
-      setLicenses(
-        (current) => current?.map((license) => (license.licenseId === licenseId ? { ...license, revokedAtUtc: now } : license)) ?? null,
-      );
+      setWorkspace(current => current ? {
+        ...current,
+        quota: { ...current.quota, active: Math.max(0, current.quota.active - 1) },
+        licenses: current.licenses.map(license => license.licenseId === licenseId ? { ...license, revokedAtUtc: now } : license),
+      } : current);
       if (created?.licenseId === licenseId) setCreated(null);
       setRevoking(null);
+      setNotice("License revoked. This does not restore today's creation quota.");
+      setWorkspace(await owners.licenseWorkspace(session.token));
     } catch (err) {
       setRevokeError(err instanceof MasterApiError ? err.message : "Could not revoke the key.");
     } finally {
+      inFlight.current = false;
       setBusy(false);
     }
   }
 
-  const active = licenses?.filter((license) => !license.revokedAtUtc).length ?? 0;
+  const active = quota?.active ?? 0;
+  const canCreate = Boolean(emailVerified && quota && active < quota.maximumActive && quota.createdToday < quota.maximumDailyCreations);
+  const shown = licenses?.filter(license => (filter === "all" || (filter === "active" ? !license.revokedAtUtc : Boolean(license.revokedAtUtc)))
+    && plainLauncherText(`${license.label} ${license.licenseId} ${license.keyHint} ${license.lastServer?.name ?? ""} ${license.lastServer?.serverId ?? ""}`).toLowerCase().includes(query.toLowerCase())) ?? [];
+  const pages = Math.max(1, Math.ceil(shown.length / 10));
+  const currentPage = Math.min(page, pages);
+  const visible = shown.slice((currentPage - 1) * 10, currentPage * 10);
 
   return (
     <div className={styles.keymaster}>
@@ -206,6 +239,12 @@ export function Keymaster({ session, serverLaunch }: { session: StoredSession; s
 
       {error || (revokeError && !revoking) ? <Notice kind="danger">{error ?? revokeError}</Notice> : null}
 
+      {notice ? <Notice kind="success">{notice}</Notice> : null}
+      <div className={styles.quotaGrid} aria-label="License quotas">
+        <Panel padding="md"><Eyebrow>Active licenses</Eyebrow><strong>{quota ? `${active} / ${quota.maximumActive}` : "— / 5"}</strong><p>Revoke an unused license to free an active slot.</p></Panel>
+        <Panel padding="md"><Eyebrow>Created today · UTC</Eyebrow><strong>{quota ? `${quota.createdToday} / ${quota.maximumDailyCreations}` : "— / 5"}</strong><p>Revoking or deleting keys does not refund creations. Resets at 00:00 UTC{quota ? ` (${new Date(quota.resetsAtUtc).toLocaleString()} your time)` : ""}.</p></Panel>
+        <Panel padding="md"><Eyebrow>Upcoming launches</Eyebrow><strong>{licenses?.filter(license => !license.revokedAtUtc && license.upcoming?.status === "pending").length ?? 0} pending</strong><p>One approved announcement per license. Staff approval locks its content.</p></Panel>
+      </div>
       {created ? (
         <Panel as="section" brackets padding="lg" className={styles.reveal} aria-label="New license key" data-key-reveal>
           <div className={styles.revealHead}>
@@ -251,14 +290,13 @@ export function Keymaster({ session, serverLaunch }: { session: StoredSession; s
       <Block
         id="keys"
         eyebrow={licenses ? `${active} active · ${licenses.length - active} revoked` : "License keys"}
-        title="License keys"
-          lead="Every verified account can create keys in Open Alpha. Each key registers one dedicated server; no access application or approval is needed. Only you see its label."
+        title="Your server licenses"
+        lead="Manage your keys, inspect the last attached server and plan your community's upcoming launch. Revoked licenses are hidden by default."
         actions={
-          !createOpen ? (
-            <Button lines="none" icon={add01} iconPosition="left" disabled={!emailVerified} onClick={() => setCreateOpen(true)}>
-              New key
-            </Button>
-          ) : null
+          <div className={styles.cardActions}>
+            <Button size="sm" lines="none" border color="neutral" icon={refresh} disabled={busy} busy={busy} onClick={() => void reloadWorkspace()}>Refresh</Button>
+            {!createOpen ? <Button lines="none" icon={add01} iconPosition="left" disabled={busy || !canCreate} onClick={() => setCreateOpen(true)}>New license</Button> : null}
+          </div>
         }
       >
         {!emailVerified ? (
@@ -267,6 +305,9 @@ export function Keymaster({ session, serverLaunch }: { session: StoredSession; s
           </Notice>
         ) : null}
 
+        {emailVerified && quota && !canCreate ? <Notice kind="warning" title={active >= quota.maximumActive ? "Active license limit reached" : "Daily creation limit reached"}>
+          {active >= quota.maximumActive ? "You can keep up to 5 active licenses. Revoke an unused license to free a slot." : "You have created 5 licenses today. Even revoked or deleted licenses count. You can create another after 00:00 UTC."}
+        </Notice> : null}
         {createOpen ? (
           <form className={styles.create} onSubmit={onCreate} aria-label="Create a license key" data-key-form>
             <Field label="Key label" hint="Only you see the label. Name it after the server it runs.">
@@ -281,7 +322,7 @@ export function Keymaster({ session, serverLaunch }: { session: StoredSession; s
               />
             </Field>
             <div className={styles.createActions}>
-              <Button key={busy ? "Creating…" : "Create key"} type="submit" icon={key01} busy={busy} disabled={label.trim().length === 0 || !emailVerified}>
+              <Button key={busy ? "Creating…" : "Create key"} type="submit" icon={key01} busy={busy} disabled={busy || label.trim().length === 0 || !canCreate}>
                 {busy ? "Creating…" : "Create key"}
               </Button>
               <Button lines="none" border color="neutral" onClick={() => setCreateOpen(false)}>
@@ -291,52 +332,24 @@ export function Keymaster({ session, serverLaunch }: { session: StoredSession; s
           </form>
         ) : null}
 
+        <div className={styles.filters}>
+          <Field label="License status"><Select value={filter} onChange={event => { setFilter(event.target.value); setPage(1); }}><option value="active">Active licenses</option><option value="revoked">Revoked licenses</option><option value="all">All licenses</option></Select></Field>
+          <Field label="Find a license"><Input type="search" value={query} onChange={event => { setQuery(event.target.value); setPage(1); }} placeholder="Label, key hint or last server…" /></Field>
+        </div>
         {licenses === null ? (
-          error ? null : <Pending label="Loading keys" />
-        ) : licenses.length === 0 ? (
-          <div data-empty="keys">
-            <EmptyState eyebrow="Keymaster" title="No license keys yet">
-              Create one to bring your first server onto the platform.
-            </EmptyState>
-          </div>
-        ) : (
-          <Rows label="Your license keys">
-            {licenses.map((license) => (
-              <Row
-                key={license.licenseId}
-                marker={!license.revokedAtUtc}
-                muted={!!license.revokedAtUtc}
-                leading={<Glyph glyph={key01} tone={license.revokedAtUtc ? "neutral" : "yellow"} />}
-                meta={<>Created {formatDay(license.createdAtUtc)}{license.revokedAtUtc ? ` · Revoked ${formatDay(license.revokedAtUtc)}` : ""}</>}
-                title={license.label}
-                description={<code className={styles.hint}>op77_live_····{license.keyHint}</code>}
-                aside={
-                  license.revokedAtUtc ? (
-                    <StateTag state="revoked" />
-                  ) : (
-                    <>
-                      <StateTag state="active" />
-                      <Button
-                        lines="none"
-                        border
-                        color="red"
-                        size="sm"
-                        disabled={busy}
-                        aria-label={`Revoke ${license.label}`}
-                        onClick={() => {
-                          setRevokeError(null);
-                          setRevoking(license);
-                        }}
-                      >
-                        Revoke
-                      </Button>
-                    </>
-                  )
-                }
-              />
-            ))}
-          </Rows>
-        )}
+          error ? null : <Pending label="Loading license workspace" />
+        ) : shown.length === 0 ? (
+          <div data-empty="keys"><EmptyState eyebrow="Server workspace" title="No licenses in this view">{filter === "active" ? "Create a license to bring your server onto the platform, or use the filter to inspect revoked licenses." : "Change the status filter or search to find a license."}</EmptyState></div>
+        ) : <div className={styles.cards}>
+          {visible.map(license => <LicenseCard key={`${license.licenseId}:${license.upcoming?.revision ?? 0}:${license.revokedAtUtc ?? ""}`} license={license} disabled={busy || !emailVerified}
+            onRevoke={() => { setRevokeError(null); setRevoking(license); }}
+            onSubmit={(profile, revision) => submitAnnouncement(license.licenseId, profile, revision)} />)}
+        </div>}
+        {shown.length > 10 ? <Pager label="License pages">
+          <Button size="sm" color="neutral" border lines="none" disabled={busy || currentPage === 1} onClick={() => setPage(currentPage - 1)}>Previous</Button>
+          <span>{(currentPage - 1) * 10 + 1}–{Math.min(currentPage * 10, shown.length)} of {shown.length} · page {currentPage} of {pages}</span>
+          <Button size="sm" color="neutral" border lines="none" disabled={busy || currentPage === pages} onClick={() => setPage(currentPage + 1)}>Next</Button>
+        </Pager> : null}
       </Block>
 
       <ConfirmDialog
@@ -353,7 +366,7 @@ export function Keymaster({ session, serverLaunch }: { session: StoredSession; s
       >
         <p>
           A server using <strong>op77_live_····{revoking?.keyHint}</strong> can no longer register with the platform. Revoking cannot be undone;
-          create a new key to replace it.
+          create a new key to replace it. Revocation does not restore your daily creation quota and removes any upcoming announcement using this license.
         </p>
       </ConfirmDialog>
     </div>

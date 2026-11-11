@@ -29,7 +29,7 @@ const GROUPS: Array<{ label: string; items: Item[] }> = [
     items: [
       { href: "/account", label: "Overview", glyph: dashboardSquare01, match: (path) => path === "/account" },
       { href: "/account/profile", label: "Profile", glyph: user },
-      { href: "/account/keys", label: "License keys", glyph: key01 },
+      { href: "/account/keys", label: "Server licenses", glyph: key01 },
     ],
   },
   {

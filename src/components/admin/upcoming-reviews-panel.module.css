@@ -1,0 +1,9 @@
+.cards { display: grid; gap: 1rem; }
+.card { display: grid; gap: 1rem; min-width: 0; }
+.heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+.details { border-block: 1px solid var(--line); padding-block: 1rem; }
+.details summary { cursor: pointer; color: var(--tone); font-size: 0.9rem; }
+.details[open] summary { margin-bottom: 1.5rem; }
+.identity { display: grid; gap: 0.6rem; margin-top: 1.5rem; font-size: 0.85rem; color: var(--text-dim); overflow-wrap: anywhere; }
+.identity code { font-family: var(--font-mono); font-size: 0.8rem; }
+.actions { display: flex; flex-wrap: wrap; gap: 1rem; }

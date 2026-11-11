@@ -8,9 +8,9 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
   ...pageMetadata({
-    title: "Server license keys",
+    title: "Server owner workspace",
     description:
-      "The OPEN//77 keymaster: create, inspect and revoke the license keys that let your dedicated servers join the platform.",
+      "Manage server licenses, inspect attached servers and submit upcoming community launches for staff review.",
     path: "/account/keys",
   }),
   // An application surface, not content: never indexed, even in production.
@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 export default function KeysPage() {
   return (
     <AccountShell
-      eyebrow="Keymaster"
-      title={["License", "keys"]}
-      lead="A license key ties a dedicated server to your account. Keys are shown once at creation, stored as fingerprints, and revocable at any time."
+      eyebrow="Server owner workspace"
+      title={["Your servers.", "Your community."]}
+      lead="Manage your licenses, see your last attached servers and prepare your community's launch. Up to 5 active licenses and 5 creations per UTC day."
       guestLead="Sign in to create, inspect and revoke the license keys your dedicated servers register with."
     >
       {/* useSearchParams reads the ?source= flag, so the gate hangs below a

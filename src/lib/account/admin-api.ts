@@ -6,6 +6,8 @@
  */
 
 import { masterCall } from "./api";
+import type { UpcomingServerProfile } from "./server-owner-api";
+export type { UpcomingServerProfile } from "./server-owner-api";
 
 export type AdminOverview = {
   usersTotal: number;
@@ -180,19 +182,6 @@ export function servers(token: string): Promise<AdminServer[]> {
   return masterCall("/api/v1/admin/servers", { token });
 }
 
-export type UpcomingServerProfile = {
-  enabled: boolean;
-  name: string;
-  community: string;
-  languages: string[];
-  opensAtUtc: string | null;
-  discord: string | null;
-  website: string | null;
-  description: string | null;
-  iconUrl: string | null;
-  bannerUrl: string | null;
-};
-
 export type ServerDirectoryLabels = { official: boolean; featured: boolean; featuredOrder: number; directoryRevision: number; hidden: boolean; upcoming?: UpcomingServerProfile | null };
 export function setServerDirectory(token: string, serverId: string, labels: ServerDirectoryLabels): Promise<ServerDirectoryLabels> {
   return masterCall(`/api/v1/admin/servers/${serverId}/directory`, {
@@ -274,9 +263,10 @@ export function verifyUserEmail(token: string, accountId: string, email: string)
   });
 }
 
-export function licenses(token: string, query: string, limit = 50): Promise<AdminLicense[]> {
+export function licenses(token: string, query: string, limit = 50, status = "active"): Promise<AdminLicense[]> {
   const params = new URLSearchParams({ limit: String(limit) });
   if (query) params.set("query", query);
+  params.set("status", status);
   return masterCall(`/api/v1/admin/licenses?${params}`, { token });
 }
 

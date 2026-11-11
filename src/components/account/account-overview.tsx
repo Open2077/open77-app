@@ -287,7 +287,7 @@ export function AccountOverview({ session }: { session: StoredSession }) {
           label="Keymaster"
           title="Server license keys"
           glyph={key01}
-          description="License keys let your dedicated servers register on the OPEN//77 platform. Create, inspect and revoke them here."
+          description="Manage licenses, inspect attached servers and submit your community's upcoming launch for staff approval."
         />
         <Shortcut
           id="identities"

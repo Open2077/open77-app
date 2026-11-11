@@ -13,10 +13,11 @@ function localDate(value: string | null): string {
   return new Date(date.getTime() - date.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
 }
 
-export function UpcomingServerEditor({ value, onChange, disabled }: {
+export function UpcomingServerEditor({ value, onChange, disabled, audience = "admin" }: {
   value: UpcomingServerProfile;
   onChange: (value: UpcomingServerProfile) => void;
   disabled: boolean;
+  audience?: "admin" | "owner";
 }) {
   const [opening, setOpening] = useState(() => localDate(value.opensAtUtc));
   const [languages, setLanguages] = useState(value.languages.join(", "));
@@ -25,7 +26,9 @@ export function UpcomingServerEditor({ value, onChange, disabled }: {
   }
   return (
         <div className={styles.upcomingFields}>
-          <p>Shown in the Rust launcher, grouped by community and language. Upcoming servers leave the live list until you clear this flag. Hidden servers stay hidden everywhere.</p>
+          <p>{audience === "owner"
+            ? "After staff approval, your announcement appears in the launcher, grouped by community and language. Approval locks its content permanently for this license. The announcement follows the last server attached to the license."
+            : "Shown in the Rust launcher, grouped by community and language. Upcoming servers leave the live list until you clear this flag. Hidden servers stay hidden everywhere."}</p>
           <Field label="Community">
             <Input value={value.community} maxLength={96} disabled={disabled} required={value.enabled} onChange={e => update("community", e.target.value)} placeholder="Night City France" />
           </Field>

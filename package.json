@@ -11,6 +11,7 @@
     "test:servers": "node --test scripts/test-server-history.mjs scripts/test-server-profile-seo.mjs",
     "verify:servers:browser": "node scripts/check-server-directory-launcher.mjs",
     "verify:admin-servers:browser": "node scripts/check-admin-servers-browser.mjs",
+    "verify:owner-workspace:browser": "node scripts/check-owner-workspace-browser.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

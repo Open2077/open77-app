@@ -14,12 +14,14 @@ import {
   StatusTag,
   Sub,
   SuccessStrip,
+  Toolbar,
   cell,
 } from "@/components/admin/admin-kit";
 import { ArmButton } from "@/components/admin/arm-button";
 import { formatDateTime, shortId } from "@/components/admin/format";
 import { ErrorStrip, useAdminData } from "@/components/admin/use-admin-data";
 import { key01 } from "@/components/ui/icons";
+import { Field, Select } from "@/components/ui/field";
 import { MasterApiError } from "@/lib/account/api";
 import * as admin from "@/lib/account/admin-api";
 
@@ -27,6 +29,7 @@ import * as admin from "@/lib/account/admin-api";
 export function LicensesPanel() {
   const [input, setInput] = useState("");
   const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("active");
   const [busy, setBusy] = useState(false);
   const [lastRevoke, setLastRevoke] = useState<{ label: string; serversRevoked: number } | null>(
     null,
@@ -37,7 +40,7 @@ export function LicensesPanel() {
     return () => clearTimeout(timer);
   }, [input]);
 
-  const load = useCallback((token: string) => admin.licenses(token, query), [query]);
+  const load = useCallback((token: string) => admin.licenses(token, query, 50, status), [query, status]);
   const { token, data, setData, error, setError, loading } = useAdminData(load);
 
   async function revoke(licenseId: string, label: string) {
@@ -52,7 +55,7 @@ export function LicensesPanel() {
         (current) =>
           current?.map((license) =>
             license.licenseId === licenseId ? { ...license, revokedAtUtc: now } : license,
-          ) ?? null,
+          ).filter(license => status !== "active" || !license.revokedAtUtc) ?? null,
       );
     } catch (err) {
       setError(err instanceof MasterApiError ? err.message : "Request failed. Try again.");
@@ -75,6 +78,9 @@ export function LicensesPanel() {
         </>
       }
     >
+      <Toolbar><Field label="License status"><Select compact value={status} disabled={busy} onChange={event => setStatus(event.target.value)}>
+        <option value="active">Active licenses</option><option value="revoked">Revoked licenses</option><option value="all">All licenses</option>
+      </Select></Field><Count>Up to 50 matches · revoked licenses hidden by default</Count></Toolbar>
       <ErrorStrip message={error} />
       <SuccessStrip
         message={
