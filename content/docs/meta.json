@@ -453,6 +453,14 @@
           "nav": "Character creator",
           "title": "Building a character creator",
           "description": "Read the game's character-creator catalogue from Lua, turn choices into a body and back, apply looks live, and save them on the server with open77_appearance."
+        },
+        {
+          "slug": "runtime-character-creation",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Creation in the world",
+          "title": "Character creation in the world",
+          "description": "Spawn new players in the world instead of the vanilla creator and let them build a persistent character with open77_creator, the NativeUI creator freeroam uses."
         }
       ]
     },

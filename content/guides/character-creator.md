@@ -4,6 +4,8 @@ Edit the player's face, hair, skin, tattoos, makeup, cyberware and body shape fr
 
 Requires OPEN//77 **2.50.0-unstable+op77.225** (Unstable channel) or later, client and server. It works for both body types, whatever the loaded save, and combines with [runtime body type changes](runtime-body.md).
 
+To give new players a complete creator in the world instead of the vanilla one, use `open77_creator` as it is: see [Character creation in the world](runtime-character-creation.md).
+
 ## The three functions
 
 | Function | Permission | Returns |
