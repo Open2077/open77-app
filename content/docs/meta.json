@@ -433,6 +433,30 @@
       ]
     },
     {
+      "id": "player-body",
+      "title": "Player body & creator",
+      "group": "Game systems",
+      "description": "Change the player's body type at run time and build your own character creator on the game's catalogue.",
+      "pages": [
+        {
+          "slug": "runtime-body",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Body type at run time",
+          "title": "Changing body type at run time",
+          "description": "Switch the local player between a male and a female body without reloading a save: stats, inventory, worn clothing and weapons follow, other players see it in place."
+        },
+        {
+          "slug": "character-creator",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Character creator",
+          "title": "Building a character creator",
+          "description": "Read the game's character-creator catalogue from Lua, turn choices into a body and back, apply looks live, and save them on the server with open77_appearance."
+        }
+      ]
+    },
+    {
       "id": "animations",
       "title": "Animations & roleplay",
       "group": "Game systems",
