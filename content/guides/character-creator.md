@@ -13,12 +13,13 @@ Available from the next OPEN//77 client and server release. It works for both bo
 | `Open77.body.decompose(body)` | `player.body.read` | the choices of a body, or `nil, reason` |
 | `Open77.body.active(family, choices?)` | `player.body.read` | the options active for those choices, or `nil, reason` |
 
-Apply a body with `Open77.body.switch(family, body)`, which needs `player.body.switch` (it includes the reads):
+Apply a body with `Open77.body.switch(family, body)`, which needs `player.body.switch` (it includes the reads). Sending the look to your server also needs `network.events`:
 
 ```lua
 -- open77.lua
-permissions { "player.body.switch" }
+permissions { "player.body.switch", "network.events" }
 client_script "client.lua"
+server_script "server.lua"
 ```
 
 **Choices** are a table per part (`head`, `body`, `arms`), option name to choice index:
@@ -87,6 +88,7 @@ option = {
   labelKey       = "LocKey#...",
   default        = 0,
   hidden         = false,              -- true: not shown by the game's creator
+  applied        = true,               -- false: never changes an OPEN//77 body (genitals, photo mode)
   enabled        = true,
   link           = "skin color",       -- absent when not linked
   linkController = false,
@@ -121,7 +123,7 @@ Some links have **one controller per variant**. Each hairstyle has its own hair 
 
 To show the same options as the game's creator:
 
-- keep `not option.hidden` and `active[option.part][option.name]`;
+- keep `not option.hidden`, `option.applied` and `active[option.part][option.name]`;
 - skip followers (`option.link and not option.linkController`);
 - group them by `uiSlot`: the hair colour slot then holds the colour of the worn hairstyle only;
 - show `label` and the choices' `label` or `color`.
@@ -134,7 +136,7 @@ local function menuEntries(catalog, choices)
     local entries = {}
     for _, option in ipairs(catalog.options) do
         local follower = option.link ~= nil and not option.linkController
-        if not option.hidden and not follower and active[option.part][option.name] then
+        if not option.hidden and option.applied and not follower and active[option.part][option.name] then
             entries[#entries + 1] = {
                 part = option.part, name = option.name, kind = option.kind,
                 slot = option.uiSlot or option.name, label = option.label or option.name,
@@ -148,7 +150,7 @@ end
 
 ## Compose and decompose
 
-- `compose(family, choices)` returns the body for the choices. An option you leave out takes its catalogue default, so `compose(family)` alone gives the creator's default character. An unknown option fails with `unknown_option:<part>.<name>`. An index the option does not offer fails with `invalid_choice:<part>.<name>`.
+- `compose(family, choices)` returns the body for the choices. An option you leave out takes its catalogue default, so `compose(family)` alone gives the creator's default character. The body holds only the groups an OPEN//77 body uses (first person for its owner, third person for the others): about ten groups, small enough to send in one network event. An unknown option fails with `unknown_option:<part>.<name>`. An index the option does not offer fails with `invalid_choice:<part>.<name>`.
 - `decompose(body)` reads the choices back. It is exact for any body `compose` made: the creator's presets go through `compose`, `decompose` and `compose` again without losing anything. On a save's own body, every option is read back except, on some saves, the eyes, eyebrows and eyelashes, which are matched by colour name only.
 
 Keep **your choices table as the source of truth** of your creator. Store it with the body: it is smaller, readable, and survives game updates better than the body's hashes.
@@ -172,7 +174,7 @@ local function randomChoices(catalog)
     local choices = { head = {}, body = {}, arms = {} }
     for _, option in ipairs(catalog.options) do
         local follower = option.link ~= nil and not option.linkController
-        if not option.hidden and not follower and #option.choices > 0 then
+        if not option.hidden and option.applied and not follower and #option.choices > 0 then
             choices[option.part][option.name] = option.choices[math.random(#option.choices)].index
         end
     end
@@ -209,6 +211,12 @@ end)
 ```
 
 `setBodyFamily` validates the body and puts the player in it, re-dressed in place when the body type does not change. The other players see the new look. The body is stored for the character and the body type, so the player gets it back at the next connection. Passing `true` also saves the body type on the character.
+
+## Limits
+
+- The genitals options have `applied = false`: OPEN//77 bodies are always dressed, and that group is never applied.
+- On a save's own body, `decompose` matches the eyes, eyebrows and eyelashes by colour name.
+- A network event carries at most 1024 values. Send the body `compose` returns as is: the full catalogue groups would not fit.
 
 ## A complete flow
 
