@@ -2,7 +2,7 @@
 
 Edit the player's face, hair, skin, tattoos, makeup, cyberware and body shape from client Lua, with the same options as the game's character creator, and apply the result live without a mirror, a save or a reload. These functions are the building blocks of your own creator: you choose the interface (NativeUI, WebUI, commands), OPEN//77 provides the catalogue and turns choices into a body.
 
-Available from the next OPEN//77 client and server release. It works for both body types, whatever the loaded save, and combines with [runtime body type changes](runtime-body.md).
+Requires OPEN//77 **2.50.0-unstable+op77.225** (Unstable channel) or later, client and server. It works for both body types, whatever the loaded save, and combines with [runtime body type changes](runtime-body.md).
 
 ## The three functions
 

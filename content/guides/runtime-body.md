@@ -2,7 +2,7 @@
 
 Move the local player into a male or female body from client Lua **without reloading a save or leaving the world**. The camera, controls, HUD, stats, health and stamina, inventory, worn clothing, held weapons and the third-person view follow the new body. Other players see the change in place.
 
-Available from the next OPEN//77 client and server release. Every server uses the standard `open77_appearance` resource, which already relies on this API: switching body type from a server is one export call (see [With open77_appearance](#with-open77_appearance)).
+Requires OPEN//77 **2.50.0-unstable+op77.225** (Unstable channel) or later, client and server. The standard `open77_appearance` resource already relies on this API: switching body type from a server is one export call (see [With open77_appearance](#with-open77_appearance)).
 
 ## Switch body type
 
