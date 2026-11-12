@@ -321,24 +321,24 @@ function LauncherPreview({ m }: { m: Messages["download"]["preview"] }) {
       <div className={styles.previewDownloads}>
         <p>{m.description}</p>
         <DownloadAction
-          href="https://cdn.open77.dev/launcher-rune/0.2.4/OPEN77-0.2.4-linux-x86_64.AppImage"
+          href="https://cdn.open77.dev/launcher-rune/0.2.5/OPEN77-0.2.5-linux-x86_64.AppImage"
           label={m.linux}
           meta={m.recommended}
-          note="0.2.4 · x86_64 · AppImage"
+          note="0.2.5 · x86_64 · AppImage"
           lines={false}
           size="md"
           fullWidth
         />
         <DownloadAction
-          href="https://cdn.open77.dev/launcher-rune/0.2.4/OPEN77-Setup-0.2.4-x64.exe"
+          href="https://cdn.open77.dev/launcher-rune/0.2.5/OPEN77-Setup-0.2.5-x64.exe"
           label={m.windows}
-          meta="0.2.4 · x64 · NSIS"
+          meta="0.2.5 · x64 · NSIS"
           lines={false}
           size="md"
           tone="blue"
           fullWidth
         />
-        <a className={styles.previewSource} href="https://cdn.open77.dev/launcher-rune/0.2.4/OPEN77-XboxAuth-0.2.4-source.zip">{m.source}</a>
+        <a className={styles.previewSource} href="https://cdn.open77.dev/launcher-rune/0.2.5/OPEN77-XboxAuth-0.2.5-source.zip">{m.source}</a>
       </div>
     </details>
   );
