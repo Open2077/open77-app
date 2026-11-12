@@ -2,7 +2,7 @@
 
 New players spawn straight into the world and build their character there, with a complete creator drawn over the live game: no main-menu creator, no save to load first. Freeroam works this way, and it is the reference setup for your own server.
 
-Requires an OPEN//77 client and server **newer than 2.50.0-unstable+op77.225**, with `open77_appearance` 0.5.0 and `open77_creator` 1.0.0 or later.
+Requires OPEN//77 **2.50.0-unstable+op77.228** (Unstable channel) or later, client and server, with `open77_appearance` 0.5.0 and `open77_creator` 1.1.0 or later.
 
 ## What the player sees
 
