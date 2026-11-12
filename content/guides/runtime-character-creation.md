@@ -12,7 +12,7 @@ Requires an OPEN//77 client and server **newer than 2.50.0-unstable+op77.225**, 
 4. **Confirm** saves the look. **Later** keeps the default look and closes the creator; it opens again at the next connection until a look is saved.
 5. At the next connection they come back with their look, and the creator stays closed. `/creator` reopens it at any time; its **Cancel** button puts the previous look back.
 
-Controls: Q / E (or the arrows on screen) turn the character, the mouse wheel over the character zooms, Enter confirms, Esc cancels.
+Controls: Q / E turn the character, a drag over the character turns and pans, the mouse wheel over the character zooms, Enter confirms, Esc cancels. The camera travels from one category's shot to the next.
 
 ## Turning it on
 
@@ -113,6 +113,6 @@ Without a database, the look lasts for the server session only.
 
 ## Building your own creator
 
-`open77_creator` is an ordinary resource on the [character creator functions](character-creator.md): `Open77.body.catalog`, `compose`, `decompose`, `active` and `switch`. Copy it as a starting point: change its layout (`ui/creator.rml`, `ui/creator.rcss`), the camera shots and categories (`shared/config.lua`) or the labels (`shared/locale.lua`). It saves through `exports.open77_appearance:setBodyFamily(player, family, body, true)`.
+`open77_creator` is an ordinary resource on the [character creator functions](character-creator.md): `Open77.body.catalog`, `compose`, `decompose`, `active` and `switch`. Copy it as a starting point: change its layout (`ui/creator.rml`, `ui/creator.rcss`), the camera shots, travelling and panel depth, the categories and the starting-look pictures (`shared/config.lua`), or the labels (`shared/locale.lua`). It saves through `exports.open77_appearance:setBodyFamily(player, family, body, true)`.
 
 The thumbnails come from the game's character creation atlases. `tools/generate_thumbs.py` cuts them out and writes `shared/thumbs.lua`, which maps every option to its pictures. Run it again after a game update changes the creator's options.
