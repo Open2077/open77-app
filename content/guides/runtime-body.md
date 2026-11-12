@@ -77,7 +77,7 @@ Control then passes to the new body through the game's player system, the mechan
 
 ## With open77_appearance
 
-The standard appearance resource already uses runtime switching. When a server changes a player's body type, the client switches in place. Only a client too old for runtime switching falls back to reloading the session. The server validates the body published after the switch, sends it to the other players, and stores it per character and per body type. The next switch to that type then uses the player's own look.
+The standard appearance resource already uses runtime switching. When a server changes a player's body type, the client switches in place. Only a client too old for runtime switching falls back to reloading the session. The server validates the body published after the switch, sends it to the other players, and stores it per character and per body type. At the next connection the player is put back in that body, including a look made with a [character creator](character-creator.md) on the save's own body type. A look edited later in the in-game mirror replaces the stored body of that type.
 
 ```lua
 -- server
