@@ -91,7 +91,7 @@ export function GameOwnershipPanel() {
       >
         <Footnote>
           Approve an Open77 account when store verification is unavailable, including support cases and test accounts.
-          A manual approval allows game access without Steam or GOG when linking is required. Suspensions, bans and other
+          Supported stores: Steam, GOG, Epic Games, Xbox and Battle.net. A manual approval allows game access without a verified store link when linking is required. Suspensions, bans and other
           access rules still apply.
         </Footnote>
         <Toolbar>
@@ -140,6 +140,9 @@ export function GameOwnershipPanel() {
                     <StatusTag status={row.storeVerified ? "ok" : "neutral"}>{row.storeVerified ? "Verified once" : "Not verified"}</StatusTag>
                     <Sub>Steam: {row.steamId || "—"}</Sub>
                     <Sub>GOG: {row.gogId || "—"}</Sub>
+                    <Sub>Epic Games: {row.epicId || "—"}</Sub>
+                    <Sub>Xbox: {row.xboxId || "—"}</Sub>
+                    <Sub>Battle.net: {row.battleNetId || "—"}</Sub>
                   </td>
                   <td>
                     <StatusTag status={row.granted ? "live" : "neutral"}>{row.granted ? "Whitelisted" : "None"}</StatusTag>
@@ -214,7 +217,7 @@ export function GameOwnershipPanel() {
           <p className={styles.explain}>
             {selection?.granted
               ? "This removes the manual exception. Access follows the platform's current linking policy. Already verified store links remain valid."
-              : "This account can play without a verified Steam or GOG link. Its Open77 account identifier remains available to game servers."}
+              : "This account can play without a verified store link. Its Open77 account identifier remains available to game servers."}
           </p>
           <form id="game-ownership-decision" onSubmit={e => { e.preventDefault(); void save(); }}>
             <Field label="Reason for this decision" hint="Recorded in the audit log with your name.">

@@ -7,8 +7,9 @@ const base = process.env.OP77_TEST_APP || 'http://127.0.0.1:3029';
 const operator = { accountId: '10000000-0000-4000-8000-000000000001', email: 'operator@example.test', displayName: 'Operator', role: 'admin', emailVerified: true };
 const token = 'synthetic-session-not-a-real-token';
 const accountId = '20000000-0000-4000-8000-000000000002';
-const row = { accountId, email: 'xbox-player@example.test', displayName: 'Xbox player', role: 'user', status: 'active', storeVerified: false,
-  steamId: null, gogId: null, granted: false, revision: 0, reason: null, updatedBy: null, updatedAtUtc: null };
+const row = { accountId, email: 'xbox-player@example.test', displayName: 'Xbox player', role: 'user', status: 'active', storeVerified: true,
+  steamId: null, gogId: null, epicId: '1234567890abcdef1234567890abcdef', xboxId: '2535400000000042', battleNetId: '12345678',
+  granted: false, revision: 0, reason: null, updatedBy: null, updatedAtUtc: null };
 (async () => {
   const browser = await chromium.launch({ channel: 'msedge', headless: true });
   try {
@@ -41,6 +42,14 @@ const row = { accountId, email: 'xbox-player@example.test', displayName: 'Xbox p
     await page.goto(base + '/admin/game-ownership');
     const target = page.getByRole('row').filter({ hasText: row.email });
     const dialog = page.getByRole('dialog');
+    for (const text of ['Verified once', 'Steam: —', 'GOG: —', `Epic Games: ${row.epicId}`, `Xbox: ${row.xboxId}`, `Battle.net: ${row.battleNetId}`]) {
+      await target.getByText(text, { exact: true }).waitFor();
+    }
+    Object.assign(row, { storeVerified: false, epicId: null, xboxId: null, battleNetId: null });
+    await page.getByRole('button', { name: 'Refresh list', exact: true }).click();
+    for (const text of ['Not verified', 'Epic Games: —', 'Xbox: —', 'Battle.net: —']) {
+      await target.getByText(text, { exact: true }).waitFor();
+    }
     await target.getByRole('button', { name: 'Whitelist account', exact: true }).click();
     await dialog.waitFor();
     assert.equal(await dialog.getByRole('button', { name: 'Confirm whitelist' }).isDisabled(), true);
@@ -93,6 +102,6 @@ const row = { accountId, email: 'xbox-player@example.test', displayName: 'Xbox p
     await page.getByText('Administrator account required', { exact: true }).waitFor();
     assert.equal(await page.getByRole('button', { name: 'Whitelist account', exact: true }).count(), 0);
     assert.deepEqual(errors, []);
-    console.log('PASS: admin whitelist grant/revoke, reason required, cancellation, duplicate-submit guard, denied/stale responses, search/filter, mobile dialog, role gate, no invented store IDs.');
+    console.log('PASS: all five store identifiers, linked/unlinked accounts, admin whitelist grant/revoke, reason required, cancellation, duplicate-submit guard, denied/stale responses, search/filter, mobile dialog, role gate, no invented store IDs.');
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

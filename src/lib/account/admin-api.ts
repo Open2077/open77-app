@@ -160,6 +160,7 @@ export function overview(token: string): Promise<AdminOverview> {
 export type GameOwnershipRow = {
   accountId: string; email: string; displayName: string; role: string; status: string;
   storeVerified: boolean; steamId: string | null; gogId: string | null;
+  epicId?: string | null; xboxId?: string | null; battleNetId?: string | null;
   granted: boolean; revision: number; reason: string | null;
   updatedBy: string | null; updatedAtUtc: string | null;
 };
