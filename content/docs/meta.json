@@ -1103,6 +1103,14 @@
           "kind": "guide",
           "nav": "HUD visibility",
           "description": "Show and hide native HUD components, or mask the HUD, watermark and nonfocused resource interfaces with cinematic letterbox bars. Resource-owned claims, cleanup and native notifications."
+        },
+        {
+          "slug": "world-screens",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "World screens",
+          "title": "World screens",
+          "description": "Put a WebUI page or a NativeUI document on any mesh as its real material: a television with YouTube and 3D sound, monitors, billboards. Open77.screens, attaching to props and entities, and the scripted-camera mode to click on it."
         }
       ]
     },
