@@ -2356,8 +2356,8 @@
       "target": "content/docs/custom-clothing.md",
       "slug": "custom-clothing",
       "title": "Custom clothing",
-      "bytes": 12005,
-      "sha256": "2a0d1c9449375205d8dd195ca8791ed2f3d2e452ac034a860be65aa73f364b94",
+      "bytes": 12169,
+      "sha256": "7397533c6ea9c7559fe78e10038ed98f2e6fcc103ef0dc1f1d8644f981998325",
       "siteEditorial": {
         "owner": "website",
         "stable145Amendment": {
@@ -2379,6 +2379,12 @@
           "owner": "website",
           "sourceRevision": "916f32be5ca5b2a7f23e731c89b5b417c045d343",
           "clientVersion": "2.50.0+op77.156"
+        },
+        "layeredOutfitsAmendment": {
+          "owner": "website",
+          "sourceRevision": "ea08422d74c228ba9ea6d3a7580aad599f362697",
+          "sourceWorkingTreeDirty": false,
+          "review": "slot field: layer-only Equipment-EX accessories may name an OutfitSlots.* layer; links the new Layered outfits guide (open77-base PR #214)."
         }
       }
     },

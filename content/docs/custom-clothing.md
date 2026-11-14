@@ -102,7 +102,7 @@ These four functions are available on **both client and server**:
 
 | Field | Type / default | Meaning |
 | --- | --- | --- |
-| `slot` | Required string | `Head`, `Face`, `InnerChest`, `OuterChest`, `Legs`, `Feet`, `Outfit`, `UnderwearTop` or `UnderwearBottom`. Must match the native item. |
+| `slot` | Required string | `Head`, `Face`, `InnerChest`, `OuterChest`, `Legs`, `Feet`, `Outfit`, `UnderwearTop` or `UnderwearBottom`. Must match the native item. An Equipment-EX accessory without a base slot names its layer instead (`OutfitSlots.NecklaceShort`) and is worn through [layered outfits](layered-outfits.md) only. |
 | `body` | String, `"both"` | `"male"`, `"female"` or `"both"`. Declares which body families the assets support. |
 | `label` | Optional string | Wardrobe display/search label, at most 160 UTF-8 bytes. When omitted, the UI can derive a name from the record. |
 | `selectable` | Boolean, `true` | `false` keeps the definition discoverable but excludes ordinary wardrobe selection and persistent appearance requests. |
