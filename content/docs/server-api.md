@@ -2767,6 +2767,45 @@ Paths are relative to `data/` (or `":memory:"`); absolute paths and `..` fail wi
 32 handles, and stopping or reloading it closes them. Parameters bind `?`, `?NNN`, `@name`,
 `:name` and `$name`; up to 999 per statement. Full guide: [SQLite databases from Lua](/docs/sqlite).
 
+## Redis
+
+`Redis` (also `Open77.redis`) is a Redis client the resource drives itself. Nothing is configured
+in `server.jsonc`: `Redis.connect` takes a `redis://` / `rediss://` URL or a table of options,
+the returned handle is the connection, and `close` ends it. Requires `redis.access`. Commands use
+the same two forms as `MySQL`: a callback receiving `(result, err)`, or `.await` from a managed
+coroutine.
+
+```lua
+CreateThread(function()
+    local r = Redis.connect.await("redis://:secret@127.0.0.1:6379/0")
+    r.set.await("garage:" .. plate, identifier, { ex = 3600, nx = true })
+    r.hset.await("player:" .. identifier, { cash = 500, rank = "street" })
+    local player = r.hgetall.await("player:" .. identifier)
+    local replies = r.pipeline.await({ { "INCR", "visits" }, { "GET", "motd" } })
+    r.close.await()
+end)
+```
+
+| Function | Result |
+|---|---|
+| `Redis.connect(options, callback)` / `Redis.connect.await(options)` | A client handle. Options: `url`, `host`, `port`, `username`, `password`, `database`, `tls`, `tlsServerName`, `tlsVerify`, `protocol` (2 or 3), `name`, `connectTimeout`, `commandTimeout`, `maxReplyBytes`, `reconnect`. |
+| `r.<command>(args..., cb?)` | Any Redis command by name (`r.zadd`, `r.xadd`, `r.blpop`...); table arguments are flattened. |
+| `r.call(name, args..., cb?)` | Any command, name first. |
+| `r.set(key, value, options?, cb?)` | `SET` with `ex`, `px`, `exat`, `pxat`, `nx`, `xx`, `keepttl`, `get`. |
+| `r.hgetall(key, cb?)`, `r.configGet(pattern, cb?)` | A table `{ field = value }`. |
+| `r.pipeline(commands, cb?)` (`r.batch`) | Array of replies; a failed command is an error object in its slot. |
+| `r.multi(commands, { watch }?, cb?)` | `MULTI`/`EXEC`; `.await` returns the replies or `nil, reason`. |
+| `r.scanAll`, `r.sscanAll`, `r.hscanAll`, `r.zscanAll` | Walk a cursor with `match`, `count`, `type`, `limit`. |
+| `r.evalScript(source, keys?, args?, cb?)` | `EVALSHA` with the script cached per handle. |
+| `r.close(cb?)`, `r.isOpen()`, `r.database()`, `r.onState(handler)` | Close after pending commands; state; current database; connection changes. |
+| `Redis.subscriber(options, callback)` / `.await(options)` | A pub/sub handle: `subscribe`, `psubscribe`, `ssubscribe` with a trailing handler, their `un` forms, `on`, `onState`, `close`. |
+| `Redis.null`, `Redis.isNull`, `Redis.isError`, `Redis.toMap`, `Redis.parseInfo`, `Redis.openCount()` | Null sentinel inside tables, reply helpers, open connections. |
+
+A top-level null is `nil`; inside a table it is `Redis.null`. Blocking commands extend the
+client timeout by their own wait. A subscriber reconnects and resubscribes by itself. A resource
+holds at most 16 connections, and stopping or reloading it closes them. Full guide:
+[Redis from Lua](/docs/redis).
+
 ## Admin events
 
 Warden used to act in silence: a resource learned a player had been banned only by watching

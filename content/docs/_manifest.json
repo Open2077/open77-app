@@ -1209,9 +1209,14 @@
       "target": "content/docs/server-api.md",
       "slug": "server-api",
       "title": "Complete server Lua API",
-      "bytes": 211524,
-      "sha256": "2bd6ffee679ee5771f6e410e4b46e844aa633bcdf147398f0633dfffe6dc475b",
+      "bytes": 214300,
+      "sha256": "5974c5564a6544bd8781145a6c0877438d2bd6aa637a87e31e36df1f23887ab0",
       "siteEditorial": {
+        "redisAmendment": {
+          "sourceRevision": "756a33bdc3777caa5a4cbb062d0bf2322513d53f",
+          "sourceWorkingTreeDirty": false,
+          "review": "Redis section added by hand from docs/redis.md and wiki/server-api.md; full guide authored at content/guides/redis.md."
+        },
         "httpClientAmendment": {
           "sourceRevision": "cd001547b930e2b0859a6bce13df21d1783c2d86",
           "sourceWorkingTreeDirty": false,

@@ -4,6 +4,7 @@ const paths: Record<string, string> = {
   introduction: "M4 4h6l2 2 2-2h6v15h-6l-2 2-2-2H4V4m8 2v15",
   server: "M4 3h16v7H4V3m0 11h16v7H4v-7m3-8h1m-1 11h1m8-11h1m-1 11h1",
   scripting: "m8 7-5 5 5 5m8-10 5 5-5 5m-3-12-2 14",
+  data: "M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3m0 0v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3",
   networking: "M9 3h6v6H9V3m3 6v5m-6 0h12M6 14v3m12-3v3M3 17h6v5H3v-5m12 0h6v5h-6v-5",
   gamemodes: "M6 4v16m12-16v16M2 8h8m4 8h8M4 6h4v4H4V6m12 8h4v4h-4v-4",
   players: "M10 5a2 2 0 1 0 4 0 2 2 0 0 0-4 0m-4 7 4-3 4 1 3 5m-7-6-1 6-4 6m4-6 6 2 1 4",

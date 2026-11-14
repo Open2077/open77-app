@@ -181,22 +181,6 @@
           "description": "Local modules, published dependency libraries and `require`: the per-resource cache, the permissions a module runs under, what reload does to it, and how a module differs from an export."
         },
         {
-          "slug": "sqlite",
-          "kind": "guide",
-          "source": "authored",
-          "nav": "SQLite databases",
-          "title": "SQLite databases from Lua",
-          "description": "Open, configure and close SQLite files from server Lua with no server configuration: the sqlite.access permission, open options, query/insert/execute/batch/transaction/backup, parameters, concurrency, lifecycle, errors and limits."
-        },
-        {
-          "slug": "http-client",
-          "kind": "guide",
-          "source": "authored",
-          "nav": "HTTP requests",
-          "title": "HTTP requests from Lua",
-          "description": "Call web APIs, webhooks and file hosts from server Lua: every method, JSON, form and multipart bodies, binary data, authentication, redirects, timeouts, cancellation, uploads, downloads, the operator allow-list, errors and limits."
-        },
-        {
           "slug": "vectors",
           "kind": "guide",
           "nav": "Vectors and quaternions",
@@ -219,6 +203,38 @@
           "kind": "guide",
           "nav": "FiveM compatibility",
           "description": "The `Citizen` table, `SetTick`, generic promises and the shared-script helpers that let a FiveM script run unchanged, the three places OPEN//77 deliberately answers differently, and what is still missing."
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "title": "Data & services",
+      "group": "Build resources",
+      "description": "Store data and reach outside services from server Lua: SQLite files, Redis, and HTTP requests.",
+      "pages": [
+        {
+          "slug": "sqlite",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "SQLite databases",
+          "title": "SQLite databases from Lua",
+          "description": "Open, configure and close SQLite files from server Lua with no server configuration: the sqlite.access permission, open options, query/insert/execute/batch/transaction/backup, parameters, concurrency, lifecycle, errors and limits."
+        },
+        {
+          "slug": "redis",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Redis",
+          "title": "Redis from Lua",
+          "description": "Connect to Redis from server Lua with no server configuration: the redis.access permission, URLs and options, every command, pipelines, transactions with WATCH, server-side scripts, scans, blocking queues, publish/subscribe, reconnection, errors and limits."
+        },
+        {
+          "slug": "http-client",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "HTTP requests",
+          "title": "HTTP requests from Lua",
+          "description": "Call web APIs, webhooks and file hosts from server Lua: every method, JSON, form and multipart bodies, binary data, authentication, redirects, timeouts, cancellation, uploads, downloads, the operator allow-list, errors and limits."
         }
       ]
     },
