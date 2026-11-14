@@ -48,6 +48,9 @@ back on.
     the outermost one wins. A layer without a base slot (rings, earrings, toes) is simply not
     drawn.
   - A client that predates layers ignores them and shows the base equipment.
+- **Hair, feet and other body parts** follow the clothes actually drawn: under a layered look
+  the hidden base garments hide nothing, and the layers' own tags do (a cap hides the hair,
+  boots hide the feet), on other players and in the third-person view alike.
 
 ## The slots
 
