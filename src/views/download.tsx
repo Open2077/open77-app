@@ -3,7 +3,6 @@ import Link from "next/link";
 import { connection } from "next/server";
 import type { ReactNode } from "react";
 
-import { CopyLine } from "@/components/copy-line";
 import { DownloadAction } from "@/components/downloads/download-action";
 import { windowsGlyph } from "@/components/downloads/glyphs";
 import {
@@ -16,7 +15,6 @@ import {
   ReleaseStatus,
   SpecStrip,
   Steps,
-  UnavailableRelease,
 } from "@/components/downloads/product-blocks";
 import { ProductHero } from "@/components/downloads/product-hero";
 import { JsonLd } from "@/components/json-ld";
@@ -26,7 +24,6 @@ import { Notice } from "@/components/ui/feedback";
 import { GlitchFrame } from "@/components/ui/glitch-frame";
 import { Icon } from "@/components/ui/icon";
 import {
-  arrowDown01,
   checkmarkBadge01,
   checkmarkCircle02,
   download02,
@@ -37,12 +34,11 @@ import {
 } from "@/components/ui/icons";
 import { Page, Section } from "@/components/ui/page";
 import { Display, Eyebrow, Lead } from "@/components/ui/typography";
-import { LOCALE_INFO, localizeHref, type Locale } from "@/i18n/config";
+import { localizeHref, type Locale } from "@/i18n/config";
 import { fill, rich } from "@/i18n/format";
 import { getMessages } from "@/i18n/messages";
 import type { Messages } from "@/i18n/types";
-import { formatBytes, formatReleaseDate } from "@/lib/cdn";
-import { fetchLatestLauncherRelease, type LauncherRelease } from "@/lib/launcher-release";
+import type { LauncherRelease } from "@/lib/launcher-release";
 import { GAME_BUILD } from "@/lib/requirements";
 import { breadcrumbNode, jsonLdGraph, launcherApplicationNode, pageMetadata } from "@/lib/seo";
 import { fetchLatestServerRelease } from "@/lib/server-release";
@@ -57,10 +53,17 @@ export function downloadMetadata(locale: Locale) {
 
 const DISCORD = site.links.discord ?? "https://discord.gg/open77";
 
-/** PowerShell is on every supported Windows, so the check needs no install. */
-function verifyCommand(fileName: string): string {
-  return `Get-FileHash -Algorithm SHA256 .\\${fileName}`;
-}
+const LAUNCHER_VERSION = "0.2.9";
+const LAUNCHER_BASE = `https://cdn.open77.dev/launcher-rune/${LAUNCHER_VERSION}`;
+const WINDOWS_FILE = `OPEN77-Setup-${LAUNCHER_VERSION}-x64.exe`;
+const release: LauncherRelease = {
+  version: LAUNCHER_VERSION,
+  url: `${LAUNCHER_BASE}/${WINDOWS_FILE}`,
+  fileName: WINDOWS_FILE,
+  sha256: null,
+  sizeBytes: null,
+  publishedAtUtc: null,
+};
 
 const JOB_ICONS = [shield01, checkmarkCircle02, download02, layers01, play];
 
@@ -91,12 +94,11 @@ function pageTags(locale: Locale) {
 export async function DownloadView({ locale }: { locale: Locale }) {
   // Read each channel independently at request time; never substitute one version for another.
   await connection();
-  const [release, serverRelease] = await Promise.all([fetchLatestLauncherRelease(), fetchLatestServerRelease()]);
+  const serverRelease = await fetchLatestServerRelease();
   const messages = getMessages(locale);
   const m = messages.download;
   const common = messages.common;
   const tags = pageTags(locale);
-  const languageTag = LOCALE_INFO[locale].intl;
   const vars = {
     build: GAME_BUILD,
     expansion: common.expansion,
@@ -118,27 +120,15 @@ export async function DownloadView({ locale }: { locale: Locale }) {
             <SpecStrip
               label={common.atAGlance}
               facts={[
-                { icon: windowsGlyph, label: m.facts.platformLabel, value: m.facts.platformValue },
+                { icon: windowsGlyph, label: m.facts.platformLabel, value: "Windows / Linux · x64" },
                 { icon: gameController03, label: m.facts.buildLabel, value: fill(m.facts.buildValue, vars) },
                 { icon: checkmarkBadge01, label: m.facts.expansionLabel, value: common.expansion },
-                {
-                  icon: download02,
-                  label: m.facts.sizeLabel,
-                  value: release?.sizeBytes != null ? formatBytes(release.sizeBytes, languageTag) : m.facts.sizeUnavailable,
-                },
               ]}
             />
           }
         >
           <div id="get" className={styles.get}>
-            {release ? (
-              <LauncherDownload release={release} m={m.release} preview={m.preview} languageTag={languageTag} tags={tags} />
-            ) : (
-              <>
-                <UnavailableRelease kind="launcher" text={common.unavailable} />
-                <LauncherPreview m={m.preview} />
-              </>
-            )}
+            <LauncherDownload m={m.preview} details={m.release} />
           </div>
           <div className={styles.heroLinks}>
             <JumpLink href="#requirements">{m.jump.requirements}</JumpLink>
@@ -254,92 +244,22 @@ export async function DownloadView({ locale }: { locale: Locale }) {
   );
 }
 
-function LauncherDownload({
-  release,
-  m,
-  preview,
-  languageTag,
-  tags,
-}: {
-  release: LauncherRelease;
-  m: Messages["download"]["release"];
-  preview: Messages["download"]["preview"];
-  languageTag: string;
-  tags: ReturnType<typeof pageTags>;
-}) {
-  const size = release.sizeBytes !== null ? formatBytes(release.sizeBytes, languageTag) : null;
+function LauncherDownload({ m, details }: { m: Messages["download"]["preview"]; details: Messages["download"]["release"] }) {
   return (
-    <div
-      className={styles.release}
-      data-release-channel="launcher"
-      data-release-version={release.version}
-      data-channel-summary="launcher"
-    >
-      {/* One line: what it is, which version, when. The button is the card. */}
+    <div className={styles.release} data-release-channel="launcher" data-release-version={LAUNCHER_VERSION} data-channel-summary="launcher">
       <div className={styles.releaseHead}>
-        <Tag tone="yellow" variant="solid">
-          {m.latest}
-        </Tag>
-        <h2 className={styles.releaseVersion} aria-label={fill(m.version, { version: release.version })}>
-          {release.version}
-        </h2>
-        {release.publishedAtUtc ? (
-          <span className={styles.releaseDate}>
-            {fill(m.published, { date: formatReleaseDate(release.publishedAtUtc, languageTag) })}
-          </span>
-        ) : null}
+        <Tag tone="yellow" variant="solid">New</Tag>
+        <h2 className={styles.releaseVersion}>OPEN//77 Launcher · {LAUNCHER_VERSION}</h2>
       </div>
       <div className={styles.downloadActions}>
-        <DownloadAction href={release.url} label={m.button} meta={[m.platform, size].filter(Boolean).join(" · ")} />
-        <LauncherPreview m={preview} />
+        <DownloadAction href={release.url} label={m.windows} meta={`${LAUNCHER_VERSION} · x64 · NSIS`} lines={false} size="md" fullWidth />
+        <DownloadAction href={`${LAUNCHER_BASE}/OPEN77-${LAUNCHER_VERSION}-linux-x86_64.AppImage`} label={m.linux} meta={`${LAUNCHER_VERSION} · x86_64 · AppImage`} lines={false} size="md" tone="blue" fullWidth />
       </div>
-      <FileDetails summary={m.details} className={styles.releaseDetails}>
-        <p>{rich(m.file, tags, { file: release.fileName })}</p>
-        {release.sha256 ? (
-          <>
-            <p>{m.shaIntro}</p>
-            <CopyLine value={release.sha256} label={m.copySha} />
-            <CopyLine value={verifyCommand(release.fileName)} label={m.copyCommand} />
-          </>
-        ) : (
-          <p>{m.noChecksum}</p>
-        )}
-        <p>{m.official}</p>
+      <FileDetails summary={details.details}>
+        <a href={`https://github.com/Open2077/op77-launcher/releases/download/v${LAUNCHER_VERSION}/SHA256SUMS`}>SHA-256 · {LAUNCHER_VERSION}</a>
+        <p>{details.official}</p>
       </FileDetails>
+      <a className={styles.previewSource} href={`${LAUNCHER_BASE}/OPEN77-XboxAuth-${LAUNCHER_VERSION}-source.zip`}>{m.source}</a>
     </div>
-  );
-}
-
-function LauncherPreview({ m }: { m: Messages["download"]["preview"] }) {
-  return (
-    <details className={styles.preview}>
-      <summary className={styles.previewToggle}>
-        <span className={styles.previewLabel}>{m.button}</span>
-        <Icon glyph={arrowDown01} className={styles.previewChevron} />
-        <span className={styles.previewRecommendation}>{m.recommended}</span>
-      </summary>
-      <div className={styles.previewDownloads}>
-        <p>{m.description}</p>
-        <DownloadAction
-          href="https://cdn.open77.dev/launcher-rune/0.2.9/OPEN77-0.2.9-linux-x86_64.AppImage"
-          label={m.linux}
-          meta={m.recommended}
-          note="0.2.9 · x86_64 · AppImage"
-          lines={false}
-          size="md"
-          fullWidth
-        />
-        <DownloadAction
-          href="https://cdn.open77.dev/launcher-rune/0.2.9/OPEN77-Setup-0.2.9-x64.exe"
-          label={m.windows}
-          meta="0.2.9 · x64 · NSIS"
-          lines={false}
-          size="md"
-          tone="blue"
-          fullWidth
-        />
-        <a className={styles.previewSource} href="https://cdn.open77.dev/launcher-rune/0.2.9/OPEN77-XboxAuth-0.2.9-source.zip">{m.source}</a>
-      </div>
-    </details>
   );
 }

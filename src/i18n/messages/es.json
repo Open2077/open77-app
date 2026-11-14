@@ -364,9 +364,9 @@
   },
   "download": {
     "metaTitle": "Descarga el launcher",
-    "metaDescription": "Descarga el launcher de OPEN//77 para Windows. Inicia tu sesión, comprueba tu versión de Cyberpunk 2077, instala y actualiza el mod, y te lleva al explorador de servidores. Gratis; necesitas tu propia copia del juego.",
+    "metaDescription": "Descarga el launcher de OPEN//77 para Windows / Linux. Inicia tu sesión, comprueba tu versión de Cyberpunk 2077, instala y actualiza el mod, y te lleva al explorador de servidores. Gratis; necesitas tu propia copia del juego.",
     "breadcrumb": "Descargar el launcher",
-    "eyebrow": "Descarga · OPEN//77 para Windows",
+    "eyebrow": "Descarga · OPEN//77 para Windows / Linux",
     "title": [
       "Consigue el",
       "launcher"
@@ -374,7 +374,7 @@
     "accent": [
       1
     ],
-    "lead": "Una sola app para Windows: inicia tu sesión, comprueba tu juego, instala y actualiza el mod, y abre el explorador de servidores. La descarga es gratis; tú pones <strong>{requirement}</strong>.",
+    "lead": "Una sola app para Windows / Linux: inicia tu sesión, comprueba tu juego, instala y actualiza el mod, y abre el explorador de servidores. La descarga es gratis; tú pones <strong>{requirement}</strong>.",
     "facts": {
       "platformLabel": "Plataforma del jugador",
       "platformValue": "Windows 10 / 11 · 64 bits",
@@ -464,8 +464,8 @@
       "title": "Qué necesitas.",
       "items": [
         {
-          "title": "Windows 10 u 11, 64 bits",
-          "body": "El launcher es una aplicación de escritorio para Windows, y el cliente que instala es un plugin nativo que se carga dentro del proceso del juego. No hay versión para jugadores en macOS ni en Linux."
+          "title": "Windows 10 / 11 · Linux · x64",
+          "body": "El launcher es compatible con Windows y Linux. En Linux, usa la AppImage con Wine o Proton para ejecutar Cyberpunk 2077. No hay descarga para macOS."
         },
         {
           "title": "Tu propia copia de Cyberpunk 2077 {build}",

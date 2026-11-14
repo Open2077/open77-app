@@ -364,9 +364,9 @@
   },
   "download": {
     "metaTitle": "Başlatıcıyı indir",
-    "metaDescription": "Windows için OPEN//77 başlatıcısını indir. Giriş yapmanı sağlar, Cyberpunk 2077 sürümünü kontrol eder, modu kurup günceller ve seni sunucu listesine götürür. Ücretsiz; oyunun kendi kopyan gerekir.",
+    "metaDescription": "Windows / Linux için OPEN//77 başlatıcısını indir. Giriş yapmanı sağlar, Cyberpunk 2077 sürümünü kontrol eder, modu kurup günceller ve seni sunucu listesine götürür. Ücretsiz; oyunun kendi kopyan gerekir.",
     "breadcrumb": "Başlatıcıyı indir",
-    "eyebrow": "İndir · Windows için OPEN//77",
+    "eyebrow": "İndir · Windows / Linux için OPEN//77",
     "title": [
       "Başlatıcıyı",
       "indir"
@@ -374,7 +374,7 @@
     "accent": [
       0
     ],
-    "lead": "Tek bir Windows uygulaması: giriş yapmanı sağlar, oyununu kontrol eder, modu kurup günceller ve sunucu listesini açar. İndirmesi ücretsiz; senden istenen tek şey <strong>{requirement}</strong>.",
+    "lead": "Tek bir Windows / Linux uygulaması: giriş yapmanı sağlar, oyununu kontrol eder, modu kurup günceller ve sunucu listesini açar. İndirmesi ücretsiz; senden istenen tek şey <strong>{requirement}</strong>.",
     "facts": {
       "platformLabel": "Oyuncu platformu",
       "platformValue": "Windows 10 / 11 · 64 bit",
@@ -464,8 +464,8 @@
       "title": "Gerekenler.",
       "items": [
         {
-          "title": "Windows 10 ya da 11, 64 bit",
-          "body": "Başlatıcı bir Windows masaüstü uygulamasıdır; kurduğu istemci de oyun sürecinin içinde yüklenen native bir eklentidir. macOS ya da Linux için oyuncu sürümü yoktur."
+          "title": "Windows 10 / 11 · Linux · x64",
+          "body": "Başlatıcı Windows ve Linux sistemlerini destekler. Linux’ta Cyberpunk 2077 için AppImage ile Wine veya Proton kullanın. macOS sürümü sunulmamaktadır."
         },
         {
           "title": "Kendi Cyberpunk 2077 {build} kopyan",

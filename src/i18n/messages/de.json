@@ -364,9 +364,9 @@
   },
   "download": {
     "metaTitle": "Launcher herunterladen",
-    "metaDescription": "Lade den OPEN//77-Launcher für Windows herunter. Er meldet dich an, prüft deine Version von Cyberpunk 2077, installiert und aktualisiert die Mod und bringt dich zur Serverliste. Kostenlos; du brauchst eine eigene Kopie des Spiels.",
+    "metaDescription": "Lade den OPEN//77-Launcher für Windows / Linux herunter. Er meldet dich an, prüft deine Version von Cyberpunk 2077, installiert und aktualisiert die Mod und bringt dich zur Serverliste. Kostenlos; du brauchst eine eigene Kopie des Spiels.",
     "breadcrumb": "Launcher herunterladen",
-    "eyebrow": "Download · OPEN//77 für Windows",
+    "eyebrow": "Download · OPEN//77 für Windows / Linux",
     "title": [
       "Hol dir den",
       "Launcher"
@@ -374,7 +374,7 @@
     "accent": [
       1
     ],
-    "lead": "Eine Windows-App: Sie meldet dich an, prüft dein Spiel, installiert und aktualisiert die Mod und öffnet die Serverliste. Der Download ist kostenlos; du bringst nur <strong>{requirement}</strong> mit.",
+    "lead": "Eine Windows / Linux-App: Sie meldet dich an, prüft dein Spiel, installiert und aktualisiert die Mod und öffnet die Serverliste. Der Download ist kostenlos; du bringst nur <strong>{requirement}</strong> mit.",
     "facts": {
       "platformLabel": "Plattform für Spieler",
       "platformValue": "Windows 10 / 11 · 64-Bit",
@@ -464,8 +464,8 @@
       "title": "Was du brauchst.",
       "items": [
         {
-          "title": "Windows 10 oder 11, 64-Bit",
-          "body": "Der Launcher ist eine Windows-Desktopanwendung, und der Client, den er installiert, ist ein natives Plugin, das im Spielprozess geladen wird. Eine Spielerversion für macOS oder Linux gibt es nicht."
+          "title": "Windows 10 / 11 · Linux · x64",
+          "body": "Der Launcher unterstützt Windows und Linux. Nutze unter Linux das AppImage mit Wine oder Proton, um Cyberpunk 2077 zu starten. Es gibt keinen Launcher-Download für macOS."
         },
         {
           "title": "Deine eigene Kopie von Cyberpunk 2077 {build}",

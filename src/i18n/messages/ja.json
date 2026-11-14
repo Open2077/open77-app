@@ -365,9 +365,9 @@
   },
   "download": {
     "metaTitle": "ランチャーをダウンロード",
-    "metaDescription": "Windows版OPEN//77ランチャーをダウンロード。ログイン、サイバーパンク2077のバージョン確認、MODのインストールと更新を行い、サーバーブラウザーへ案内します。無料です。ゲーム本体はご自身でご用意ください。",
+    "metaDescription": "Windows / Linux版OPEN//77ランチャーをダウンロード。ログイン、サイバーパンク2077のバージョン確認、MODのインストールと更新を行い、サーバーブラウザーへ案内します。無料です。ゲーム本体はご自身でご用意ください。",
     "breadcrumb": "ランチャーのダウンロード",
-    "eyebrow": "ダウンロード · Windows版OPEN//77",
+    "eyebrow": "ダウンロード · Windows / Linux版OPEN//77",
     "title": [
       "ランチャーを",
       "入手"
@@ -375,7 +375,7 @@
     "accent": [
       0
     ],
-    "lead": "Windowsアプリひとつで、ログイン、ゲームの確認、MODのインストールと更新、サーバーブラウザーの起動まで行います。ダウンロードは無料。必要なのは<strong>{requirement}</strong>だけです。",
+    "lead": "Windows / Linuxアプリひとつで、ログイン、ゲームの確認、MODのインストールと更新、サーバーブラウザーの起動まで行います。ダウンロードは無料。必要なのは<strong>{requirement}</strong>だけです。",
     "facts": {
       "platformLabel": "対応プラットフォーム",
       "platformValue": "Windows 10 / 11 · 64ビット",
@@ -465,8 +465,8 @@
       "title": "必要なもの。",
       "items": [
         {
-          "title": "Windows 10または11（64ビット）",
-          "body": "ランチャーはWindowsのデスクトップアプリで、インストールされるクライアントはゲームのプロセス内で読み込まれるネイティブプラグインです。macOS版やLinux版のプレイヤー用ビルドはありません。"
+          "title": "Windows 10 / 11 · Linux · x64",
+          "body": "ランチャーはWindowsとLinuxに対応しています。LinuxではAppImageとWineまたはProtonを使ってサイバーパンク2077を起動してください。macOS版は提供していません。"
         },
         {
           "title": "正規版のサイバーパンク2077 Ver.{build}",

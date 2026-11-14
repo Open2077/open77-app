@@ -364,9 +364,9 @@
   },
   "download": {
     "metaTitle": "Pobierz launcher",
-    "metaDescription": "Pobierz launcher OPEN//77 na Windowsa. Loguje cię, sprawdza wersję gry Cyberpunk 2077, instaluje i aktualizuje mod, a potem przenosi cię do listy serwerów. Za darmo; wymaga własnej kopii gry.",
+    "metaDescription": "Pobierz launcher OPEN//77 na Windows / Linuxa. Loguje cię, sprawdza wersję gry Cyberpunk 2077, instaluje i aktualizuje mod, a potem przenosi cię do listy serwerów. Za darmo; wymaga własnej kopii gry.",
     "breadcrumb": "Pobierz launcher",
-    "eyebrow": "Pobieranie · OPEN//77 na Windowsa",
+    "eyebrow": "Pobieranie · OPEN//77 na Windows / Linuxa",
     "title": [
       "Pobierz",
       "launcher"
@@ -374,7 +374,7 @@
     "accent": [
       1
     ],
-    "lead": "Jedna aplikacja na Windowsa: loguje cię, sprawdza grę, instaluje i aktualizuje mod, a potem otwiera listę serwerów. Pobierasz za darmo, a ze swojej strony potrzebujesz tylko: <strong>{requirement}</strong>.",
+    "lead": "Jedna aplikacja na Windows / Linuxa: loguje cię, sprawdza grę, instaluje i aktualizuje mod, a potem otwiera listę serwerów. Pobierasz za darmo, a ze swojej strony potrzebujesz tylko: <strong>{requirement}</strong>.",
     "facts": {
       "platformLabel": "Platforma gracza",
       "platformValue": "Windows 10 / 11 · 64-bit",
@@ -464,8 +464,8 @@
       "title": "Czego potrzebujesz.",
       "items": [
         {
-          "title": "Windows 10 lub 11, 64-bit",
-          "body": "Launcher to aplikacja desktopowa na Windowsa, a instalowany przez niego klient to natywna wtyczka ładowana w procesie gry. Nie ma wersji dla graczy na macOS ani Linuksa."
+          "title": "Windows 10 / 11 · Linux · x64",
+          "body": "Launcher obsługuje Windows i Linux. W systemie Linux użyj AppImage oraz Wine lub Proton do uruchomienia Cyberpunk 2077. Nie ma wersji do pobrania na macOS."
         },
         {
           "title": "Własna kopia gry Cyberpunk 2077 {build}",

@@ -197,7 +197,7 @@ export function launcherApplicationNode(release: LauncherRelease): JsonLdNode {
     name: `${site.name} Launcher`,
     applicationCategory: "GameApplication",
     applicationSubCategory: "Game launcher and mod manager",
-    operatingSystem: "Windows 10, Windows 11 (64-bit)",
+    operatingSystem: "Windows 10, Windows 11, Linux (64-bit)",
     softwareVersion: release.version,
     url: absoluteUrl("/download"),
     installUrl: absoluteUrl("/download"),
@@ -210,7 +210,7 @@ export function launcherApplicationNode(release: LauncherRelease): JsonLdNode {
     isPartOf: { "@id": WEBSITE_ID },
     isAccessibleForFree: true,
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-    requirements: `A legally owned copy of Cyberpunk 2077 ${GAME_BUILD} with ${GAME_EXPANSION}, on 64-bit Windows`,
+    requirements: `A legally owned copy of Cyberpunk 2077 ${GAME_BUILD} with ${GAME_EXPANSION}, on 64-bit Windows or Linux`,
     ...(release.sizeBytes !== null ? { fileSize: formatBytes(release.sizeBytes) } : {}),
     ...(release.publishedAtUtc ? { datePublished: release.publishedAtUtc } : {}),
   };
