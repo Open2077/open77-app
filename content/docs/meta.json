@@ -445,6 +445,14 @@
           "kind": "guide",
           "nav": "Custom clothing",
           "description": "Register custom clothing on client and server, package native assets, browse and equip records, and preserve outfits through saves and resource reloads."
+        },
+        {
+          "slug": "layered-outfits",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Layered outfits",
+          "title": "Layered outfits",
+          "description": "Wear up to 54 Equipment-EX compatible clothing layers over the base slots, saved with the character and replicated in multiplayer: the fitting room LAYERS tab, server exports and convars, Open77.layers, events and Equipment-EX mods."
         }
       ]
     },
