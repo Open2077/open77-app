@@ -155,7 +155,7 @@ export function GameOwnershipPanel() {
                     {STORES.map(([provider, label, key]) => {
                       const subject = row[key];
                       return <div key={provider} className={styles.storeLink}>
-                        <Sub>{label}: {subject || "—"}</Sub>
+                        <Sub>{label}: {subject || "Not linked"}</Sub>
                         {subject ? <Button size="sm" color="red" border lines="none" disabled={busy || loading}
                           aria-label={`Unlink ${label} from ${row.email}`}
                           onClick={() => edit(row, { provider, label, subject })}>Unlink</Button> : null}
@@ -235,7 +235,7 @@ export function GameOwnershipPanel() {
           </div>
           <p className={styles.explain}>
             {store
-              ? "This removes this store’s ownership verification so the player can link again from the launcher. Other store links, manual approvals and player identity are preserved."
+              ? "This removes this store's ownership verification so the player can link again from the launcher. Other store links, manual approvals and player identity are preserved."
               : selection?.granted
               ? "This removes the manual exception. Access follows the platform's current linking policy. Already verified store links remain valid."
               : "This account can play without a verified store link. Its Open77 account identifier remains available to game servers."}
