@@ -53,7 +53,7 @@ export function downloadMetadata(locale: Locale) {
 
 const DISCORD = site.links.discord ?? "https://discord.gg/open77";
 
-const LAUNCHER_VERSION = "0.2.16";
+const LAUNCHER_VERSION = "0.2.17";
 const LAUNCHER_BASE = `https://cdn.open77.dev/launcher-rune/${LAUNCHER_VERSION}`;
 const WINDOWS_FILE = `OPEN77-Setup-${LAUNCHER_VERSION}-x64.exe`;
 const release: LauncherRelease = {
