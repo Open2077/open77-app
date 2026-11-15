@@ -37,12 +37,20 @@ import styles from "./game-ownership-panel.module.css";
 
 const FILTERS = [["all", "All accounts"], ["granted", "Whitelisted"], ["withheld", "Not whitelisted"]] as const;
 
+const STORES = [
+  ["steam", "Steam", "steamId"], ["gog", "GOG", "gogId"],
+  ["epic", "Epic Games", "epicId"], ["xbox", "Xbox", "xboxId"],
+  ["bnet", "Battle.net", "battleNetId"],
+] as const;
+type StoreSelection = { provider: admin.StoreProvider; label: string; subject: string };
+
 export function GameOwnershipPanel() {
   const [input, setInput] = useState("");
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [selection, setSelection] = useState<GameOwnershipRow | null>(null);
+  const [store, setStore] = useState<StoreSelection | null>(null);
   const [reason, setReason] = useState("");
   const [busy, setBusy] = useState(false);
   const [mutationError, setMutationError] = useState<string | null>(null);
@@ -61,7 +69,8 @@ export function GameOwnershipPanel() {
     filter === "all" ? undefined : filter === "granted", page), [query, filter, page]);
   const { token, data, error, loading, reload } = useAdminData(load);
 
-  function edit(row: GameOwnershipRow) {
+  function edit(row: GameOwnershipRow, linkedStore: StoreSelection | null = null) {
+    setStore(linkedStore);
     setReason(""); setMutationError(null); setSelection(row);
   }
   async function save() {
@@ -69,8 +78,13 @@ export function GameOwnershipPanel() {
     const row = selection;
     inFlight.current = true; setBusy(true); setMutationError(null);
     try {
-      await admin.setGameOwnership(token, row.accountId, !row.granted, row.revision, reason.trim());
-      setNotice(`${row.granted ? "Manual approval removed" : "Account whitelisted"} for ${row.email}.`);
+      if (store) {
+        await admin.unlinkGameStore(token, row.accountId, store.provider, store.subject, reason.trim());
+        setNotice(`${store.label} unlinked for ${row.email}. The player can link a store account again in the launcher.`);
+      } else {
+        await admin.setGameOwnership(token, row.accountId, !row.granted, row.revision, reason.trim());
+        setNotice(`${row.granted ? "Manual approval removed" : "Account whitelisted"} for ${row.email}.`);
+      }
       setSelection(null); reload();
     } catch (err) {
       setMutationError(err instanceof MasterApiError ? err.message : "The request failed. Refresh the list to check the current state.");
@@ -138,11 +152,15 @@ export function GameOwnershipPanel() {
                   </td>
                   <td>
                     <StatusTag status={row.storeVerified ? "ok" : "neutral"}>{row.storeVerified ? "Verified once" : "Not verified"}</StatusTag>
-                    <Sub>Steam: {row.steamId || "—"}</Sub>
-                    <Sub>GOG: {row.gogId || "—"}</Sub>
-                    <Sub>Epic Games: {row.epicId || "—"}</Sub>
-                    <Sub>Xbox: {row.xboxId || "—"}</Sub>
-                    <Sub>Battle.net: {row.battleNetId || "—"}</Sub>
+                    {STORES.map(([provider, label, key]) => {
+                      const subject = row[key];
+                      return <div key={provider} className={styles.storeLink}>
+                        <Sub>{label}: {subject || "�"}</Sub>
+                        {subject ? <Button size="sm" color="red" border lines="none" disabled={busy || loading}
+                          aria-label={`Unlink ${label} from ${row.email}`}
+                          onClick={() => edit(row, { provider, label, subject })}>Unlink</Button> : null}
+                      </div>;
+                    })}
                   </td>
                   <td>
                     <StatusTag status={row.granted ? "live" : "neutral"}>{row.granted ? "Whitelisted" : "None"}</StatusTag>
@@ -186,7 +204,7 @@ export function GameOwnershipPanel() {
         ref={dialog}
         size="sm"
         eyebrow="Genuine whitelist"
-        title={selection?.granted ? "Remove manual approval?" : "Whitelist this account?"}
+        title={store ? `Unlink ${store.label}?` : selection?.granted ? "Remove manual approval?" : "Whitelist this account?"}
         locked={() => inFlight.current}
         focusFooter
         onClose={() => setSelection(null)}
@@ -203,7 +221,7 @@ export function GameOwnershipPanel() {
               lines="none"
               disabled={busy || !token || !reason.trim()}
             >
-              {selection?.granted ? "Confirm removal" : "Confirm whitelist"}
+              {store ? `Unlink ${store.label}` : selection?.granted ? "Confirm removal" : "Confirm whitelist"}
             </Button>
           </>
         }
@@ -213,9 +231,12 @@ export function GameOwnershipPanel() {
             <Primary>{selection?.displayName}</Primary>
             <Sub>{selection?.email}</Sub>
             <Sub>{selection?.accountId}</Sub>
+            {store ? <Sub>{store.label}: {store.subject}</Sub> : null}
           </div>
           <p className={styles.explain}>
-            {selection?.granted
+            {store
+              ? "This removes this store�s ownership verification so the player can link again from the launcher. Other store links, manual approvals and player identity are preserved."
+              : selection?.granted
               ? "This removes the manual exception. Access follows the platform's current linking policy. Already verified store links remain valid."
               : "This account can play without a verified store link. Its Open77 account identifier remains available to game servers."}
           </p>

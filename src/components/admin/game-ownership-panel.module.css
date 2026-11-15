@@ -32,3 +32,12 @@
   color: var(--text-dim);
   line-height: 1.6;
 }
+
+.storeLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  overflow-wrap: anywhere;
+}

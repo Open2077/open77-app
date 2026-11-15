@@ -179,6 +179,13 @@ export function setGameOwnership(token: string, accountId: string, granted: bool
   });
 }
 
+export type StoreProvider = "steam" | "gog" | "epic" | "xbox" | "bnet";
+export function unlinkGameStore(token: string, accountId: string, provider: StoreProvider, expectedSubject: string, reason: string): Promise<GameOwnershipRow> {
+  return masterCall(`/api/v1/admin/game-ownership/${accountId}/stores/${provider}/unlink`, {
+    method: "POST", token, body: { expectedSubject, reason },
+  });
+}
+
 export function servers(token: string): Promise<AdminServer[]> {
   return masterCall("/api/v1/admin/servers", { token });
 }
