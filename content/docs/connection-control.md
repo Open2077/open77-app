@@ -2,6 +2,11 @@
 
 Control server admission with connection events, deferred checks, whitelists and bans. Resources can reject a connection with a player-facing message or remove an active player. See the [server Lua API](server-api.md#connection-control) for method signatures.
 
+To tell a player *before the game starts*, in the launcher, with a welcome or rules screen or a
+refusal page that says what to do, see [Connection preflight](connection-preflight.md). Preflight
+sits in front of everything on this page and replaces none of it: the stages below still run for
+every join.
+
 ## Where the gate sits
 
 A connection goes through these stages in order. Resources take part in the stages in bold.
@@ -15,6 +20,8 @@ A connection goes through these stages in order. Resources take part in the stag
 4. The server's own door list, `access.json` next to `server.jsonc`: a ban, or a closed whitelist
    the identity is not on, refuses here with the list's sentence. Warden, the console and
    `Open77.access` all edit the same list. See [The built-in door list](#the-built-in-door-list).
+   On a server with `preflight.required`, a hello whose account has no recent allowed
+   [preflight](connection-preflight.md#requiring-preflight) is refused next, before capacity.
 5. **`onPlayerConnecting`**, the resource gate. Every running resource that holds the
    `players.gate` permission and registered a handler is asked. Refuse, hold, or let through.
 6. The player is admitted: welcome packet, player id, **`playerJoining`** and then
@@ -59,6 +66,32 @@ The player has no player id yet, so `Open77.players.*` cannot be used on them. W
 | `publicKey` | string | The identity public key, base64. |
 | `fingerprint` | string | `sha256:<hex>` of the public key. The client console prints the same string for `identity.dump`, so a player can read it to an operator over voice. |
 | `ticket` | boolean | Whether a Master connect ticket was presented and verified. |
+| `preflight` | boolean | Whether the launcher's server check ([connection preflight](connection-preflight.md)) allowed this account within `preflight.passSeconds`. `false` for a launcher without the server check, and on a server with preflight disabled. |
+| `license` | string or nil | The Open77 account behind the identity, 32 hexadecimal characters. Present whenever the verified ticket carries ownership claims. |
+| `steam`, `gog`, `epic` | string or nil | The store accounts the player verified with the Master, in the formats of [the identifier table](#steam-gog-and-permanent-account-identifiers). Absent when not linked. |
+| `discord` | string or nil | The Discord user ID the player linked to their Open77 account, as a decimal string (a snowflake does not fit a Lua number). Absent when the account has no linked Discord. |
+
+The store and Discord fields come only from the Master-signed connect ticket, after its signature
+has been checked: the client cannot invent or alter them. They are the same values
+`Open77.players.identity(playerId)` returns once the player is admitted. `discord` is verified by
+the Master's own Discord sign-in, so a Discord-based whitelist can trust it without asking the
+player for anything:
+
+```lua
+AddEventHandler("onPlayerConnecting", function(player, deferrals)
+    if player.discord == nil then
+        deferrals.done("Link your Discord account in the OPEN//77 launcher to join this server.")
+        return
+    end
+    deferrals.defer()
+    -- look player.discord up in your guild (Open77.http) and answer with deferrals.done(...)
+end)
+```
+
+`discord` needs a Master and a server that both support it; on an older pairing the field is
+absent, exactly as for a player who has not linked Discord. Do not treat an absent `discord` as
+proof that the player has none unless you require one. The same fields are on `session.player`
+in a [preflight](preflight-lua.md#the-session) check.
 
 ### Deferrals
 
@@ -183,7 +216,8 @@ never disagree, because the first decision wins and the other is answered `gate_
 `Open77.players.identity(playerId)` (alias `GetPlayerIdentity`) returns
 `{ userId, name, publicKey, fingerprint, joinedAt }` for an admitted player, or `nil`. `joinedAt`
 is ISO 8601 UTC. Since `2.31.13+op77.101`, the table also includes `license`, `steam` and `gog`
-when carried by the verified Master ticket. No permission is needed. The existing `userId`
+when carried by the verified Master ticket, and current servers add `epic` and `discord` the same
+way. No permission is needed. The existing `userId`
 identifies the installation's cryptographic identity and remains the key accepted by
 `Open77.access`; use `license` for account-level persistence across linked devices.
 
@@ -262,7 +296,8 @@ once and permanently links that store account to the Open77 account. One qualify
 sufficient. Starting with `2.31.13+op77.102`, historical proof expiration does not require another
 store login or ownership check. The Master still issues a fresh, short-lived signed ticket for
 each connection. These identifiers come from the ticket verified by the server; scripts do not
-receive raw store tickets, access tokens or passwords. No Discord or Xbox identifier is exposed.
+receive raw store tickets, access tokens or passwords. No Xbox identifier is exposed; the linked
+Discord user ID is described with [the `player` table](#the-player-table).
 
 An Open77 administrator can also approve an account manually, for example when its store cannot
 be verified automatically. On server runtime `2.31.13+op77.102` or later, this account has a valid
@@ -352,27 +387,67 @@ whitelist                          state and listed identities
 whitelist.on | whitelist.off
 whitelist.add <userId> [label]
 whitelist.remove <userId>
+whitelist.requests                 pending and denied whitelist requests
+whitelist.approve <userId> [label] whitelist the identity and close its request
+whitelist.deny <userId> [note]     deny the request; the note is shown to the player
+whitelist.forget <userId>          drop a request, pending or denied (they may ask again)
 bans                               active bans
 ban.id <userId> [seconds|0] [reason]
 unban <userId>
 ```
 
+**Whitelist requests.** With the whitelist on, a player the launcher's server check refuses can
+apply from its screen (the default resource,
+[`open77_preflight`](connection-preflight.md#the-default-resource-open77_preflight), shows the
+form). The request is kept in `access.json` beside the whitelist: Warden lists it under
+*Whitelist & bans > Requests* with *Approve* and *Deny*, the console under `whitelist.requests`,
+Lua under `Open77.access.requests()`. Approving whitelists the identity, and a player still waiting
+on the launcher's screen is let through at once; denying keeps the request with a note the player
+reads. *Forget* (Warden) or `whitelist.forget` drops a request so the player may apply again.
+Whitelisting or banning an identity by any other means closes its request too. At most 500
+requests are kept: answered ones make room for new ones, pending ones never do.
+
 **Lua**, with the manifest permission `players.access`, through `Open77.access`:
 
 | Function | Result |
 |---|---|
-| `status()` | `{ whitelistEnabled, whitelist = { { userId, label, addedAt, addedBy } }, bans = { { userId, name, reason, bannedAt, expiresAt?, bannedBy } } }` |
-| `setWhitelist(enabled)` | `true` |
-| `allow(userId, label?)`, `disallow(userId)` | `true`; `disallow` returns `false` when the identity was not listed |
+| `status()` | `{ whitelistEnabled, whitelist = { { userId, label, addedAt, addedBy } }, bans = { { userId, name, reason, bannedAt, expiresAt?, bannedBy, bannedAtUnix, expiresAtUnix?, permanent } }, requests = { ... } }` |
+| `setWhitelist(enabled, actor?)` | `true` |
+| `allow(userId, label?, actor?)`, `disallow(userId, actor?)` | `true`; `disallow` returns `false` when the identity was not listed |
 | `isAllowed(userId)`, `isBanned(userId)` | boolean |
-| `ban(userId, reason?, seconds?, name?)` | `true`; nil or `0` seconds is permanent; disconnects the player if online |
-| `unban(userId)` | `true`, or `false` when there was no ban |
+| `ban(userId, reason?, seconds?, name?, actor?)` | `true`; nil or `0` seconds is permanent; disconnects the player if online |
+| `unban(userId, actor?)` | `true`, or `false` when there was no ban |
+| `getBan(userId)`, `getEntry(userId)` | The active ban, the whitelist entry, or `nil` |
+| `refusal(userId)` | `nil` when the identity may come in, else `{ code = "banned" \| "not_whitelisted", message }` with the sentence the player would read |
+| `refusals()` | The recent refused connections Warden shows, newest first: `{ { userId, name, code, message, at, atUnix } }` |
+| `requests("pending"?)`, `getRequest(userId)` | Whitelist requests: `{ userId, name, message, status, requestedAt, requestedAtUnix, source, note, decidedBy?, decidedAt? }` |
+| `request(userId, name?, message?, actor?)` | Files a whitelist request; `false, "already_allowed"`, `"banned"` or `"requests_full"` |
+| `approve(userId, label?, actor?)`, `deny(userId, note?, actor?)` | Answers a request; `false, "request_not_found"` or `"request_not_pending"` |
+| `forgetRequest(userId, actor?)` | Removes a request; `true` when there was one |
 
 Every call returns `false, reason` on failure: `permission_denied:players.access`,
-`invalid_user_id`, `access_unavailable`, `access_persistence_failed` (whitelist/allow/disallow/unban),
+`invalid_user_id`, `access_unavailable`, `access_persistence_failed` (whitelist/allow/disallow/unban/requests),
 or `ban_persistence_failed`. A persistence failure leaves the previous policy unchanged.
 Entries written from Lua carry `resource:<name>` as their
-author, so Warden shows which script let someone in.
+author, so Warden shows which script let someone in. The optional `actor` argument says whom the
+resource acted for (a staff member's name, the resource that called its export): it is recorded
+after the resource's own name, as `resource:<name>/<actor>`, and can never replace it.
+
+**`onAccessChanged(userId, change, actor)`** tells every resource that declares `players.access`
+that the list changed, whoever changed it: Warden (`actor` = `warden:<user>`), the console
+(`console`), a resource (`resource:<name>`), or the expiry of a ban (empty). `change` is one of
+`ban`, `unban`, `ban_expired`, `allow`, `disallow`, `whitelist_on`, `whitelist_off`, `request`,
+`request_approved`, `request_denied`, `request_removed`; `userId` is empty for the whitelist
+switch. It arrives on the tick after the change, and it is reserved: no resource can publish it.
+
+```lua
+AddEventHandler("onAccessChanged", function(userId, change, actor)
+    if change == "ban" then
+        local ban = Open77.access.getBan(userId)
+        print(("%s banned %s: %s"):format(actor, userId, ban and ban.reason or "?"))
+    end
+end)
+```
 
 ```lua
 -- A command that bans the speaker's target on the built-in list for a day.
@@ -557,6 +632,8 @@ end)
 | `Open77.players.identifier` / `name` | None | `(playerId)` |
 | `Open77.players.disconnect` / `kick` | `players.disconnect` | `(playerId, reason?)` |
 | `Open77.players.ban` | `players.ban` | `(playerId, reason?, durationSeconds?)` |
+| `Open77.access.getBan` / `getEntry` / `refusal` / `refusals` / `requests` / `getRequest` / `request` / `approve` / `deny` / `forgetRequest` | `players.access` | the door list's bans, entries, refusals and whitelist requests |
+| `onAccessChanged` (event) | `players.access` | `(userId, change, actor)` |
 | `Open77.access.status` / `setWhitelist` / `allow` / `disallow` / `isAllowed` / `isBanned` / `ban` / `unban` | `players.access` | the built-in door list, see above |
 | `Open77.time.unix` / `GetUnixTime` | None | `() -> seconds` |
 | `Open77.time.utc` / `GetUtcTimestamp` | None | `() -> ISO 8601 string` |

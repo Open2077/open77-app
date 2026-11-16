@@ -93,6 +93,13 @@
           "description": "How the OPEN//77 launcher reaches your world: how a server appears in the browser at all, what a catalogue row actually carries, the open77:// deep-link contract for your own Join buttons, what a connecting player must have, and how a world declares the mods every player must load."
         },
         {
+          "slug": "connection-preflight",
+          "kind": "guide",
+          "nav": "Connection preflight",
+          "title": "Connection preflight: the launcher's server check",
+          "description": "Check and greet players in the OPEN//77 launcher before the game starts: the server check flow, the preflight block of server.jsonc, the default open77_preflight resource (welcome, bans, whitelist applications, rules, maintenance), Warden requests, console commands, compatibility and troubleshooting."
+        },
+        {
           "slug": "server-branding",
           "kind": "guide",
           "source": "authored",
@@ -255,6 +262,14 @@
           "kind": "guide",
           "nav": "Connection control",
           "description": "Connect events, admission deferrals, whitelists, bans and disconnect reasons."
+        },
+        {
+          "slug": "preflight-lua",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Preflight in Lua",
+          "title": "Preflight in Lua",
+          "description": "Own the launcher's server check from a Lua resource: onPreflight and its events, the session object, fail-open rules, Open77.access for bans and whitelist requests, player.preflight at the gate, and recipes for applications, Discord, rules, maintenance and queues."
         },
         {
           "slug": "server-acl",
@@ -1207,6 +1222,14 @@
           "nav": "Recipes",
           "title": "NativeUI recipes",
           "description": "Complete NativeUI examples: a keyboard and mouse menu, notification toasts, a keyboard-only composer, a server-driven scoreboard and a recolourable theme."
+        },
+        {
+          "slug": "preflight-screens",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Preflight screens (Lite)",
+          "title": "Building preflight screens",
+          "description": "NativeUI Lite, the RML and RCSS subset the OPEN//77 launcher renders before the game starts: elements, styles, design tokens, data binding, events, inputs, images, limits, layout tips and a complete welcome and rules example."
         }
       ]
     },

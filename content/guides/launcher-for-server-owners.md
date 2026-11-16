@@ -153,6 +153,16 @@ That check is **advisory**: it is a warning at the launcher, and the real
 enforcement happens at ticket time. Do not treat a launcher warning as the thing
 keeping wrong builds off your server; the ticket is.
 
+## The server check before the game starts
+
+Before it downloads mods or starts the game, the launcher asks your server whether this player
+may come in (**Server check**, launcher 0.2.21 or later). Your server answers on its HTTP port,
+game port + 1, and can show a welcome on your server's page, rules to accept, a whitelist
+application form or a refusal page with your reason and links. Every server ships a default
+resource for it, `open77_preflight`. See [Connection preflight](connection-preflight.md) for the
+configuration, [Building preflight screens](preflight-screens.md) for the screens and
+[Preflight in Lua](preflight-lua.md) to write your own.
+
 ## Required mods and your server
 
 The launcher manages a signed index of packages,
@@ -204,5 +214,7 @@ and no restart. Reach for a required mod only when the content genuinely is not 
 - [Host your own server](/docs/host-a-server) — getting a server running at all.
 - [Server licensing](/docs/server-licensing) — the key that lets you register.
 - [Branding your server](server-branding.md) — the icon and banner on your row.
+- [Connection preflight](connection-preflight.md) — welcome, rules and refusal pages in the
+  launcher before the game starts.
 - [Server resources](/docs/server-resources) — how to actually ship content to
   your players.
