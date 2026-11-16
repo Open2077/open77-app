@@ -308,6 +308,15 @@ The directory is live. Sign in with your OPEN//77 account to join; no Alpha appr
 is empty, clear filters, refresh it and check the selected master and your connection.
 Local/private addresses are deliberately hidden from this list.
 
+### Server check
+
+Many servers ask a few questions before the game starts. After you press Join, the launcher's
+**Server check** step can show the server's own page: its rules to accept, a whitelist application
+form, a "server full" queue, or the reason you cannot join (a ban, maintenance, a Discord account
+to link). The page is written by the server, not by OPEN//77: never type your OPEN//77, Steam, GOG,
+Epic or Xbox password into it. A refusal offers **Retry** and **Back**; follow the server's
+instructions, then retry. Server owners: see [Connection preflight](connection-preflight.md).
+
 ### History and Direct Connect
 
 **History** lists confirmed connections, most recent first, including localhost

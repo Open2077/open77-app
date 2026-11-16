@@ -3,7 +3,7 @@
   "source": "https://github.com/Open2077/open77-base",
   "sourcePath": "wiki",
   "syncedAt": "2026-09-24T12:33:14.568Z",
-  "guides": 114,
+  "guides": 115,
   "apiEntries": 1814,
   "files": [
     {
@@ -292,13 +292,19 @@
       "target": "content/docs/connection-control.md",
       "slug": "connection-control",
       "title": "Connection control: connect events, whitelists and bans",
-      "bytes": 30090,
-      "sha256": "b8a9b721cd0cd577743e977cd841ce36ae9a072ededdc7dc3fcc46f437dbca68",
+      "bytes": 36227,
+      "sha256": "69fb58c344ea10d7e36aef33fb25901d0ab819d220c8560da803cf3c64a54c28",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "1240d7f0440b7b9a26ce04a5023d0bfdf68a93b3042bf76302fc5e3a9706c13f",
         "serverVersion": "2.31.15+op77.105",
-        "masterVersion": "2.31.13+op77.103"
+        "masterVersion": "2.31.13+op77.103",
+        "preflightAmendment": {
+          "owner": "website",
+          "sourceRevision": "554cba9d4283d016aa97fd2f9390a8e1184649e8",
+          "sourceWorkingTreeDirty": false,
+          "review": "Preflight: player.preflight, license/steam/gog/epic/discord on the gate's player table, preflight.required stage, whitelist requests, Open77.access request/approve/deny/forgetRequest/getBan/getEntry/refusal/refusals, actor argument, onAccessChanged."
+        }
       },
       "siteAmendment": {
         "verifiedStoreIdentifiers": "Server Lua license, Steam and GOG identifiers since 2.31.13+op77.101; reviewed against the ownership ticket runtime and Lua bindings. Upstream sync provenance preserved."
@@ -1209,8 +1215,8 @@
       "target": "content/docs/server-api.md",
       "slug": "server-api",
       "title": "Complete server Lua API",
-      "bytes": 214300,
-      "sha256": "5974c5564a6544bd8781145a6c0877438d2bd6aa637a87e31e36df1f23887ab0",
+      "bytes": 221430,
+      "sha256": "1b478eb3b3782be3e29042897e83cd76f0993df3cdbb4e47098b2cf13b4f8291",
       "siteEditorial": {
         "redisAmendment": {
           "sourceRevision": "756a33bdc3777caa5a4cbb062d0bf2322513d53f",
@@ -1253,6 +1259,12 @@
           "clientVersion": "2.31.21+op77.147",
           "serverVersion": "2.31.21+op77.147",
           "review": "Website guide reviewed against Stable 147 runtime contracts; examples, compatibility requirements and lifecycle semantics updated."
+        },
+        "preflightAmendment": {
+          "owner": "website",
+          "sourceRevision": "554cba9d4283d016aa97fd2f9390a8e1184649e8",
+          "sourceWorkingTreeDirty": false,
+          "review": "Connection preflight section (Open77.preflight, session, onPreflight* events), Open77.access additions and onAccessChanged, players.preflight permission; merged by hand from wiki/server-api.md."
         }
       },
       "siteAmendment": {
@@ -2448,6 +2460,24 @@
       "sha256": "1ca35f7023490023d3e1c28b702d9ba0a2fb8792abeac7599a1a779584ba1afa",
       "sourceRevision": "0812840d0314e84630c1bcf4c4d8bcd030a8377f",
       "sourceSyncedAt": "2026-11-11T14:24:49.852Z"
+    },
+    {
+      "source": "wiki/connection-preflight.md",
+      "target": "content/docs/connection-preflight.md",
+      "slug": "connection-preflight",
+      "title": "Connection preflight: the launcher's server check",
+      "bytes": 26235,
+      "sha256": "18b28cb1bc7b99f2e4ba9ae27cef92698f838ff94f7b3a83615bf7676d6c3dde",
+      "siteEditorial": {
+        "owner": "website",
+        "upstreamSnapshotSha256": "f5644e295327fb2bcb70169f450f7f8992878edcd02f06b6399246eb70a040fa",
+        "preflightAmendment": {
+          "owner": "website",
+          "sourceRevision": "554cba9d4283d016aa97fd2f9390a8e1184649e8",
+          "sourceWorkingTreeDirty": false,
+          "review": "Server owner guide written from wiki/connection-preflight.md, the open77_preflight resource, server.schema.json and the launcher 0.2.21 server check; markup and Lua moved to content/guides/preflight-screens.md and content/guides/preflight-lua.md."
+        }
+      }
     }
   ],
   "partialSync": {

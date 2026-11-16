@@ -752,7 +752,7 @@ Who gets in, decided in Lua. The guide, with a whitelist and a ban list to copy,
 
 | Event / function | Permission | Signature | Purpose |
 |---|---|---|---|
-| `onPlayerConnecting` | `players.gate` | `(player, deferrals)` | Emitted for every hello that passed the platform checks, before a player id exists. `player = { userId, name, publicKey, fingerprint, ticket }`. Return to accept; `deferrals.defer()` to hold, `deferrals.update(message)` to log progress, `deferrals.done()` to release, `deferrals.done(message)` to refuse with that text on the player's screen (127 bytes of UTF-8). One refusal wins; every participating resource must release to admit. |
+| `onPlayerConnecting` | `players.gate` | `(player, deferrals)` | Emitted for every hello that passed the platform checks, before a player id exists. `player = { userId, name, publicKey, fingerprint, ticket, preflight, license?, steam?, gog?, epic?, discord? }`; `preflight` says whether the launcher's [server check](connection-preflight.md) allowed this account within `preflight.passSeconds`. Return to accept; `deferrals.defer()` to hold, `deferrals.update(message)` to log progress, `deferrals.done()` to release, `deferrals.done(message)` to refuse with that text on the player's screen (127 bytes of UTF-8). One refusal wins; every participating resource must release to admit. |
 | `onPlayerRejected` | None | `(userId, name, code, message)` | Every refused connection, platform or gate. `code` is the lowercased reject reason (`protocolmismatch`, `gamebuildmismatch`, `invalidhello`, `serverfull`, `duplicatehello`, `refused`); `message` the machine token (`server_full`, `identity_proof_invalid`, `connect_ticket_required`, `connection_gate_timeout`, ...) or the gate's own text. `userId` and `name` are empty when the hello could not be read. |
 | `onPlayerConnected` | None | `(playerId, playerName)` | An admitted player has a session. Not an incarnation: see the readiness gate above before acting on them. |
 | `onPlayerDisconnected` | None | `(playerId, reason)` | `reason` is `connection_closed`, or the text given to `disconnect`, `kick` or `ban`. |
@@ -764,18 +764,60 @@ Who gets in, decided in Lua. The guide, with a whitelist and a ban list to copy,
 | `Open77.players.identity` / `GetPlayerIdentity` | None | `(playerId)` | `{ userId, name, publicKey, fingerprint, joinedAt, license?, steam?, gog? }` for an admitted player, or `nil`. Ownership fields come from the verified Master ticket since `2.31.13+op77.101`. |
 | `Open77.time.unix` / `GetUnixTime` | None | `()` | Wall-clock seconds since 1970 UTC, fractional. For expiring bans; the sandbox has no `os`. |
 | `Open77.time.utc` / `GetUtcTimestamp` | None | `()` | The same instant as an ISO 8601 string. |
-| `Open77.access.status` | `players.access` | `()` | The server's built-in door list, shared with Warden and the console: `{ whitelistEnabled, whitelist = { { userId, label, addedAt, addedBy } }, bans = { { userId, name, reason, bannedAt, expiresAt?, bannedBy } } }`. |
-| `Open77.access.setWhitelist` | `players.access` | `(enabled)` | Switch the built-in whitelist. `true`, or `false, reason`. |
-| `Open77.access.allow` / `disallow` | `players.access` | `(userId, label?)` / `(userId)` | Add an identity to the built-in whitelist, or take it off. |
+| `Open77.access.status` | `players.access` | `()` | The server's built-in door list, shared with Warden and the console: `{ whitelistEnabled, whitelist = { { userId, label, addedAt, addedBy } }, bans = { { userId, name, reason, bannedAt, expiresAt?, bannedBy, bannedAtUnix, expiresAtUnix?, permanent } }, requests = { ... } }`. |
+| `Open77.access.setWhitelist` | `players.access` | `(enabled, actor?)` | Switch the built-in whitelist. `true`, or `false, reason`. |
+| `Open77.access.allow` / `disallow` | `players.access` | `(userId, label?, actor?)` / `(userId, actor?)` | Add an identity to the built-in whitelist, or take it off. |
 | `Open77.access.isAllowed` / `isBanned` | `players.access` | `(userId)` | Read the built-in list. |
-| `Open77.access.ban` | `players.access` | `(userId, reason?, seconds?, name?)` | Ban an identity on the built-in list (`seconds` nil or 0 = permanent) and disconnect them if online. |
-| `Open77.access.unban` | `players.access` | `(userId)` | Lift a built-in ban. |
+| `Open77.access.ban` | `players.access` | `(userId, reason?, seconds?, name?, actor?)` | Ban an identity on the built-in list (`seconds` nil or 0 = permanent) and disconnect them if online. |
+| `Open77.access.unban` | `players.access` | `(userId, actor?)` | Lift a built-in ban. |
+| `Open77.access.getBan` / `getEntry` | `players.access` | `(userId)` | One record: the active ban (`{ userId, name, reason, bannedBy, bannedAt, bannedAtUnix, expiresAt?, expiresAtUnix?, permanent }`) or the whitelist entry (`{ userId, label, addedAt, addedBy }`), else `nil`. |
+| `Open77.access.refusal` | `players.access` | `(userId)` | What the door would answer this identity now: `nil`, or `{ code = "banned" \| "not_whitelisted", message }` with the handshake's sentence. |
+| `Open77.access.refusals` | `players.access` | `()` | Recent refused connections, newest first (Warden's *Refused*, 50 at most): `{ { userId, name, code, message, at, atUnix } }`. Covers the handshake and the launcher's server check. |
+| `Open77.access.requests` / `getRequest` | `players.access` | `("pending"?)` / `(userId)` | Whitelist requests, pending first: `{ userId, name, message, status = "pending" \| "denied", requestedAt, requestedAtUnix, source, note, decidedBy?, decidedAt? }`. |
+| `Open77.access.request` | `players.access` | `(userId, name?, message?, actor?)` | File or renew a whitelist request for an identity that is not listed (message cut at 300 characters). `false, "already_allowed"` / `"banned"` / `"requests_full"` (500 pending). |
+| `Open77.access.approve` / `deny` | `players.access` | `(userId, label?, actor?)` / `(userId, note?, actor?)` | Answer a request: `approve` whitelists the identity and removes the request; `deny` keeps it as `denied` with the note for the player. `false, "request_not_found"` / `"request_not_pending"`. |
+| `Open77.access.forgetRequest` | `players.access` | `(userId, actor?)` | Remove a request, pending or denied. `true` when there was one. |
+| `onAccessChanged` | `players.access` | `(userId, change, actor)` | The door list changed, whoever changed it: Warden (`warden:<user>`), the console (`console`), a resource (`resource:<name>`) or an expiry (empty actor). `change` is `ban`, `unban`, `ban_expired`, `allow`, `disallow`, `whitelist_on`, `whitelist_off`, `request`, `request_approved`, `request_denied` or `request_removed`; `userId` is empty for the whitelist switch. Delivered on the tick after the change. |
 
 The gate answers within `simulation.connectGateTimeoutSeconds` (default 8, allowed 0.5 to 9); a
 gate that never answers refuses the player with `connection_gate_timeout`. A handler error is
 logged and counts as an acceptance. A resource with a handler but without `players.gate` is
 ignored with one `WRN`.
 
+The optional `actor` of the `Open77.access` edits is recorded after the resource's own name, as
+`resource:<name>/<actor>`; it can never replace it.
+
+### Connection preflight
+
+The launcher's server check, before the game starts: one resource (`preflight.resource` in
+`server.jsonc`, `open77_preflight` by default) decides it. The server guide is
+[Connection preflight](connection-preflight.md), the markup [Building preflight screens](preflight-screens.md)
+and the full Lua reference [Preflight in Lua](preflight-lua.md). Every function returns
+`false, "not_preflight_resource"` to any other resource, and a script error never refuses a player.
+
+| Event / function | Permission | Signature | Purpose |
+|---|---|---|---|
+| `onPreflight` | `players.preflight` | `(session)` | A launcher opened a check and the door list admits the player. Decide with `session:allow` / `session:refuse`, or `session:hold()` to wait for the player. A handler error, or no decision within `preflight.decisionSeconds`, allows the player. Raised again on the same `session` when a refused player is admitted while the check is open. |
+| `onPreflightRefused` | `players.preflight` | `(session, code, message, details)` | The door list refuses this player (`banned` or `not_whitelisted`). Present it with `session:refuse(message, { view })` or `session:show` + `session:hold` (an application form); `session:allow()` answers `false, "door_refused"`. Without a handler the plain refusal is immediate. |
+| `onPreflightEvent` | `players.preflight` | `(session, name, data, inputs)` | A button or Enter in the screen. `data = { args = { ... } }` or nil; `inputs` maps input ids to their values. Untrusted. |
+| `onPreflightEnd` | `players.preflight` | `(session, reason)` | `allowed`, `refused`, `cancelled`, `expired`, `replaced` or `resource_stopped`. |
+| `onPreflightJoined` | `players.preflight` | `(session, playerId)` | The player who passed this check finished the in-game handshake. Once per check. |
+| `session.id` / `createdAt` / `phase` | `players.preflight` | fields | Opaque id, Unix seconds, and `checking`, `interactive`, `allowed`, `refused` or `expired`. |
+| `session.player` | `players.preflight` | `{ userId, name, publicKey, fingerprint, ticket, license?, steam?, gog?, epic?, discord? }` | The verified identity; the store and Discord identifiers come with a verified connect ticket. |
+| `session.launcher` / `server` / `door` | `players.preflight` | tables | What the launcher reports about itself (unverified); `{ name, description, players, maxPlayers, whitelist }` when the check opened; `{ code, message, details }` while the door list refuses the player. |
+| `session.endpoint` | `players.preflight` + `players.identity.sensitive` | string | The source IP address. |
+| `session:status` | `players.preflight` | `(text, progress?)` | Status line (200 characters) and optional progress 0..1; `nil` clears it. |
+| `session:show` / `hide` | `players.preflight` | `(view)` / `()` | `view` is an RML string or `{ document = ... \| file = "ui/x.rml", data = { ... } }`. Not well-formed XML with an `rml` root, or over 64 KiB: `false, reason`. |
+| `session:data` | `players.preflight` | `(patch)` | Shallow-merge into the screen's data (64 KiB of JSON at most). |
+| `session:hold` | `players.preflight` | `()` | Phase `interactive`: no decision deadline. |
+| `session:allow` / `refuse` | `players.preflight` | `(message?)` / `(message, { code?, view? }?)` | The verdict; final. |
+| `session:on` | `players.preflight` | `(name, fn(data, inputs))` | A handler for one event name on this check. |
+| `session:close` / `alive` | `players.preflight` | `()` | End the check now / whether it is still undecided. |
+| `Open77.preflight.welcome` | `players.preflight` | `(view \| nil)` | The anonymous screen on the server's page in the launcher. |
+| `Open77.preflight.sessions` / `get` / `find` | `players.preflight` | `()` / `(id)` / `(userId)` | The live checks, one by id, the live one of an account. |
+| `Open77.preflight.broadcast` | `players.preflight` | `(patch)` | A data patch for every open screen; returns the count. |
+| `Open77.preflight.passed` | `players.preflight` | `(userId)` | `{ at, age, sessionId }` when the account was allowed within `preflight.passSeconds`, else nil. Other resources read `player.preflight` at the gate. |
+| `Open77.preflight.status` / `server` | `players.preflight` | `()` | Configuration, live counts and counters / `{ name, description, players, maxPlayers, whitelist }` now. |
 Who can *see* whom is a separate pair of events, `onPlayerEnteredScope` / `onPlayerLeftScope`
 (and FiveM's `playerEnteredScope` / `playerLeftScope`): see [Scope events](#scope-events) under
 routing buckets, because scope is the bucket narrowed to the interest radius.
@@ -3107,6 +3149,7 @@ end)
 | `players.stats.apply` | Server-only health/stamina values, maximums and regeneration |
 | `players.gate` | `onPlayerConnecting` handlers: hold, admit or refuse a connecting player |
 | `players.access` | `Open77.access`: the server's built-in whitelist and ban list |
+| `players.preflight` | `Open77.preflight` and the `onPreflight*` events: decide the launcher's server check and show its screens. Only for the resource named by `preflight.resource` |
 | `acl.read` | `Open77.acl.isAllowed` / `roles` / `grants`: read the compiled ACL for an admitted session |
 | `acl.grant:<pattern>` | `Open77.acl.grant` / `revoke` / `addRole` / `removeRole`, bounded to permissions matching `<pattern>`. **There is no bare `acl.grant`**, and `acl.grant:*` is not a wildcard — it is dropped. The pattern is the delegation an operator sees before installing the resource. See [the ACL guide](server-acl.md#the-delegation-scope-is-the-security-model) |
 | `acl.define:<pattern>` | `Open77.acl.definePermission`: define or retune a runtime role whose every permission matches `<pattern>`. Separate from `acl.grant` because retuning a role changes the rights of everyone holding it, at once and retroactively |

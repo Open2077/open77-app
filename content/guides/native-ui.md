@@ -206,3 +206,5 @@ message every 10 seconds.
 - [3D HUDs](native-ui-3d.md) — tilted documents and 3D panels.
 - [3D scenes and minimaps](native-ui-scenes.md) — `<scene3d>`, views, routes and anchored markers.
 - [Recipes](native-ui-recipes.md) — complete menus, toasts, a chat composer and a minimap.
+- [Building preflight screens](preflight-screens.md) — NativeUI Lite, the subset the launcher
+  renders for welcome, rules and refusal pages before the game starts.
