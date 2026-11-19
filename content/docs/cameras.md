@@ -163,7 +163,11 @@ Three things follow:
   runs.
 * **Death and ragdoll outrank you.** Both fall back to first person, and the
   registry releases your camera from its own side at the same moment, so the two
-  never disagree.
+  never disagree. The exception is the [active ragdoll](active-ragdoll.md):
+  while the local player's third-person stand-in is a ragdoll, alive or dead,
+  the body on screen is the one that fell, so the view stays in third person and
+  a scripted camera is still allowed. `open77_ragdoll` uses exactly that for the
+  camera that rides the falling body.
 * **The arbiter never moves the player.** Neither does this API. A scripted
   camera is presentation only: the body stays exactly where gameplay put it,
   which is why a player can walk out from under your shot. If you need them to

@@ -995,6 +995,30 @@ the requesting resource's native ownership.
 The client half — `Open77.motion.knockdown`, `state` and `stop` — is a different API in a different
 runtime with different arguments; see the generated client reference.
 
+## Active ragdoll
+
+`Open77.ragdoll` grants **ragdoll leases**: the player's body falls as a physically simulated ragdoll
+that still reacts (it clutches a wound, flails, rolls, braces), on the owner's screen and on every
+observer's, and the player gets up where the body ended. Requires `players.ragdoll` and client
+and server **2.50.0-unstable+op77.252** or later; on older servers `Open77.ragdoll` is `nil`. The
+clients apply leases through the `open77_ragdoll` resource: without it loaded, a lease ends with
+`timeout` after two seconds. Failures are `nil, reason`.
+
+| Function | Signature | Result / purpose |
+|---|---|---|
+| `Open77.ragdoll.start` | `(playerId, { profile?, impulse?, point?, body?, durationMs?, getUp?, tension? }?)` | The lease's serial. `profile` defaults to `"stumble"`; `impulse` is a velocity change in m/s, each component within ±30; `durationMs` (default 3000, at most 30000, `0` = until stopped) counts from the moment the owner's ragdoll simulates. A new `start` replaces a lease (`replaced`). |
+| `Open77.ragdoll.impulse` | `(playerId, { impulse, point?, body? })` | `true`. Push a body that is down; at most 20 per second per player. |
+| `Open77.ragdoll.stop` | `(playerId)` | `true`. Ends the lease with `stopped`. |
+| `Open77.ragdoll.state` | `(playerId)` | `{ serial, phase, profile, startedAtMs, durationMs, getUp }` (`phase` is `pending` or `active`), or `nil`. |
+
+Refusals: `invalid_player`, `player_not_found`, `body_unavailable` (dead, not ready, in a vehicle),
+`motion_busy` (a forced motion owns the body, and the reverse), `invalid_options`, `invalid_profile`,
+`invalid_impulse`, `invalid_point`, `invalid_body`, `invalid_duration`, `invalid_tension`,
+`not_active`, `rate_limited`. `onPlayerRagdollChanged(playerId, state)` reports every `start`,
+`impulse` and `stop`, with the reason a lease ended. While a lease exists the owner may move at most
+40 m/s horizontally; faster ends it with `motion_speed_exceeded`. Profiles, the client API, the
+camera and every end reason: [Active ragdoll](active-ragdoll.md).
+
 ## Player clothing
 
 These asynchronous methods target the official [`open77_equipment`](https://github.com/Open2077/open77-resources/tree/main/standalone/open77_equipment) client relay. The calling server

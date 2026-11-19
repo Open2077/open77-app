@@ -182,8 +182,8 @@
       "target": "content/docs/cameras.md",
       "slug": "cameras",
       "title": "Scripted cameras",
-      "bytes": 24062,
-      "sha256": "14cfa96352c42df20d40d6fb5a779e6b3054aae817951f15e15731b97f54c020",
+      "bytes": 24398,
+      "sha256": "d01925728980b08d892d0b2d99f9fb97874aa4e6af173eac05e3815ce021ed11",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "6c54e370a7376dac061a3dc912d72415430d905629bc7cafd41abb314da54fab",
@@ -217,6 +217,12 @@
           ],
           "guideMode": "site-owned-technical-amendment",
           "apiMode": "merge-selected-cards-preserve-other-site-entries"
+        },
+        "activeRagdollAmendment": {
+          "owner": "website",
+          "sourceRevision": "a405e7304af5f8f1a47edd6341321523369a9394",
+          "sourceWorkingTreeDirty": false,
+          "review": "Death and ragdoll bullet: an active ragdoll of the local stand-in keeps third person and still allows a scripted camera (ScriptedCameraRig playerAlive, open77_ragdoll client/camera.lua); links the Active ragdoll guide."
         }
       }
     },
@@ -874,8 +880,8 @@
       "target": "content/docs/perspective.md",
       "slug": "perspective",
       "title": "Third person",
-      "bytes": 16549,
-      "sha256": "113e1d5d50d98b3077c4b15d65dcffd6f9ff459a033282473790ea8c67ffc4fe",
+      "bytes": 16680,
+      "sha256": "acc025e6c5372ce63873fc970a6e9d857146b291b576cb252286e010d05d5c33",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "830bbea825f6f6f2185b9ee714b9a3dca5291ede8170bded653a777545d29aec",
@@ -909,6 +915,12 @@
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries",
           "upstreamGuideSha256": "76d3176f101f45b4206cdd6d8a73597f3cbd3bf758f3e32141d21568d49f4291"
+        },
+        "activeRagdollAmendment": {
+          "owner": "website",
+          "sourceRevision": "a405e7304af5f8f1a47edd6341321523369a9394",
+          "sourceWorkingTreeDirty": false,
+          "review": "Death and ragdoll row: an active ragdoll of the third-person stand-in keeps the view in third person (PerspectiveArbiter ProbeDead/ProbeRagdoll); links the Active ragdoll guide."
         }
       }
     },
@@ -929,8 +941,8 @@
       "target": "content/docs/player-freeze.md",
       "slug": "player-freeze",
       "title": "Freezing a player",
-      "bytes": 10566,
-      "sha256": "8c835009e4fdbb05a46eefbc57e9203ec1f9ec5cc59a6310248339d41bf9cb52",
+      "bytes": 10814,
+      "sha256": "9152c6b24892350ba7efa2be3d6c4a633ba55425aa79df373322706fa28e726c",
       "siteEditorial": {
         "owner": "website",
         "upstreamSnapshotSha256": "b805702f65dc1b5c8f4613d28f448a81c9992ca061f87e4b42995a8a96c675d3",
@@ -950,6 +962,12 @@
             "server:Open77.players.ragdoll"
           ],
           "apiMode": "merge-selected-cards-preserve-other-site-entries"
+        },
+        "activeRagdollAmendment": {
+          "owner": "website",
+          "sourceRevision": "a405e7304af5f8f1a47edd6341321523369a9394",
+          "sourceWorkingTreeDirty": false,
+          "review": "Players.ragdoll note: distinguishes the knockdown motion lease from the active ragdoll (Open77.ragdoll.start, players.ragdoll, motion_busy both ways); links the Active ragdoll guide."
         }
       }
     },
@@ -1215,8 +1233,8 @@
       "target": "content/docs/server-api.md",
       "slug": "server-api",
       "title": "Complete server Lua API",
-      "bytes": 221430,
-      "sha256": "1b478eb3b3782be3e29042897e83cd76f0993df3cdbb4e47098b2cf13b4f8291",
+      "bytes": 223484,
+      "sha256": "124348843399e4021df4abe29202f69f1dc9bac5f1e835a268420b258b911049",
       "siteEditorial": {
         "redisAmendment": {
           "sourceRevision": "756a33bdc3777caa5a4cbb062d0bf2322513d53f",
@@ -1265,6 +1283,12 @@
           "sourceRevision": "554cba9d4283d016aa97fd2f9390a8e1184649e8",
           "sourceWorkingTreeDirty": false,
           "review": "Connection preflight section (Open77.preflight, session, onPreflight* events), Open77.access additions and onAccessChanged, players.preflight permission; merged by hand from wiki/server-api.md."
+        },
+        "activeRagdollAmendment": {
+          "owner": "website",
+          "sourceRevision": "a405e7304af5f8f1a47edd6341321523369a9394",
+          "sourceWorkingTreeDirty": false,
+          "review": "Active ragdoll section added by hand from wiki/ragdoll.md, scripting/src/RagdollBindings.inl and the server half (op77-server-rs docs/RAGDOLL.md, Lua surface and RagdollService); full guide authored at content/guides/active-ragdoll.md."
         }
       },
       "siteAmendment": {

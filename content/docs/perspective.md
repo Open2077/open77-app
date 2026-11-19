@@ -126,7 +126,7 @@ cameras are the fallback, and they are always allowed to win.
 | In a vehicle | The engine owns the view, and it obeys the player's own vanilla preference. |
 | Scenes and scripted sequences | Native camera. |
 | Photo mode | Native camera. |
-| Death and ragdoll | Native camera. |
+| Death and ragdoll | Native camera, except an [active ragdoll](active-ragdoll.md) of the third-person stand-in: the view stays in third person, on the body that fell. |
 | Sliding, and vaulting | First person for the length of the move, then straight back. |
 | The pre-game UI, including character creation | The engine owns the screen for as long as it needs it. |
 

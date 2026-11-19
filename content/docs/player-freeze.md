@@ -135,7 +135,7 @@ Open77.players.ragdoll(id, { direction = { x = 0, y = 1 }, distance = 2 })  -- a
   canonical body, an alive life state, an open readiness session and matching
   incarnation and routing bucket.
 
-**Physics ragdoll is not exposed to Lua.** Scripted knockdowns use an alive-only motion lease, separate from the death and respawn ragdoll path. The lease ends as soon as the player leaves the `alive` phase.
+**This is not the physics ragdoll.** Scripted knockdowns use an alive-only motion lease, separate from the death and respawn ragdoll path. The lease ends as soon as the player leaves the `alive` phase. A body that really falls, reacts and gets up where it landed, for up to 30 seconds, is the [active ragdoll](active-ragdoll.md) (`Open77.ragdoll.start`, permission `players.ragdoll`, Unstable 252 and later); the two exclude each other with `motion_busy`.
 
 ```lua
 -- A stun grenade: everybody within 6 m goes down for two seconds.

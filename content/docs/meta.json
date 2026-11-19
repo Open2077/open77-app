@@ -398,6 +398,14 @@
           "description": "Hold a player's body still: the authoritative server freeze on the engine's own movement restriction, the presentation-local client hold, what a freeze stops and what it deliberately does not."
         },
         {
+          "slug": "active-ragdoll",
+          "kind": "guide",
+          "source": "authored",
+          "nav": "Active ragdoll",
+          "title": "Active ragdoll",
+          "description": "Knock players down with a physically simulated body that still reacts, seen by every player: server leases and profiles, the client Open77.ragdoll API, the reaction library, the camera that follows the body, and the limits."
+        },
+        {
           "slug": "travel",
           "kind": "guide",
           "nav": "Travel and settling",
