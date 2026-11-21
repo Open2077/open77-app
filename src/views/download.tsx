@@ -256,7 +256,7 @@ function LauncherDownload({ m, details }: { m: Messages["download"]["preview"]; 
         <DownloadAction href={`${LAUNCHER_BASE}/OPEN77-${LAUNCHER_VERSION}-linux-x86_64.AppImage`} label={m.linux} meta={`${LAUNCHER_VERSION} · x86_64 · AppImage`} lines={false} size="md" tone="blue" fullWidth />
       </div>
       <FileDetails summary={details.details}>
-        <a href={`https://github.com/Open2077/op77-launcher/releases/download/v${LAUNCHER_VERSION}/SHA256SUMS`}>SHA-256 · {LAUNCHER_VERSION}</a>
+        <a href={`${LAUNCHER_BASE}/SHA256SUMS`}>SHA-256 · {LAUNCHER_VERSION}</a>
         <p>{details.official}</p>
       </FileDetails>
       <a className={styles.previewSource} href={`${LAUNCHER_BASE}/OPEN77-XboxAuth-${LAUNCHER_VERSION}-source.zip`}>{m.source}</a>
