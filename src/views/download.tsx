@@ -53,16 +53,16 @@ export function downloadMetadata(locale: Locale) {
 
 const DISCORD = site.links.discord ?? "https://discord.gg/open77";
 
-const LAUNCHER_VERSION = "0.2.27";
+const LAUNCHER_VERSION = "0.2.28";
 const LAUNCHER_BASE = `https://cdn.open77.dev/launcher-rune/${LAUNCHER_VERSION}`;
 const WINDOWS_FILE = `OPEN77-Setup-${LAUNCHER_VERSION}-x64.exe`;
 const release: LauncherRelease = {
   version: LAUNCHER_VERSION,
   url: `${LAUNCHER_BASE}/${WINDOWS_FILE}`,
   fileName: WINDOWS_FILE,
-  sha256: "b5fb6a009aa50bf5407d7e8f772975187cea58aa36d89987ce20d2b94a088595",
-  sizeBytes: 20010272,
-  publishedAtUtc: "2026-11-21T15:22:43Z",
+  sha256: "da4544564790c2d4b7e2b76aa253aee2a3067cbb8592305bc57f01528e8cb1b2",
+  sizeBytes: 20056018,
+  publishedAtUtc: "2026-11-23T12:26:45Z",
 };
 
 const JOB_ICONS = [shield01, checkmarkCircle02, download02, layers01, play];
